@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 
 async function migrateToLatest() {
 	const pool = new pg.Pool({
-		connectionString: process.env.DATABASE_URL,
+		connectionString: process.env.DATABASE_URL!,
 	});
 	const db = new Kysely<Database>({
 		dialect: new PostgresDialect({ pool }),
