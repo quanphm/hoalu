@@ -1,0 +1,21 @@
+{
+	"name": "@tssd/hook-form-elements",
+	"private": true,
+	"sideEffects": false,
+	"scripts": {
+		"lint": "biome lint",
+		"format": "biome check --write ."
+	},
+	"exports": {
+		".": "./src/index.tsx"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.11",
+		"@tssd/tsconfig": "workspace:*"
+	},
+	"peerDependencies": {
+		"@tssd/ui": "workspace:*",
+		"react": "^18.3.1",
+		"react-hook-form": "^7.53.0"
+	}
+}

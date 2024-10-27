@@ -1,0 +1,6 @@
+
+
+> @tssd/ui@ format /Users/phammikun/Development/tssd/packages/ui
+> biome check --write --unsafe .
+
+[0m[34mChecked [0m[0m[34m29[0m[0m[34m [0m[0m[34mfiles[0m[0m[34m in [0m[0m[34m14[0m[0m[2m[34mms[0m[0m[34m.[0m[0m[34m No fixes applied.[0m

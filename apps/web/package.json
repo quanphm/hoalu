@@ -1,0 +1,32 @@
+{
+	"name": "tssd",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vinxi dev",
+		"build": "vinxi build",
+		"start": "vinxi start",
+		"check": "biome check --write ."
+	},
+	"devDependencies": {
+		"@tssd/tsconfig": "workspace:*",
+		"@types/pg": "^8.11.6",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.3",
+		"vite-tsconfig-paths": "^5.0.1"
+	},
+	"dependencies": {
+		"@t3-oss/env-nextjs": "^0.11.1",
+		"@tanstack/react-router": "^1.76.3",
+		"@tanstack/start": "^1.76.3",
+		"@tssd/database": "workspace:*",
+		"@tssd/ui": "workspace:*",
+		"axios": "^1.7.7",
+		"pg": "^8.13.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"vinxi": "^0.4.3",
+		"zod": "^3.23.8"
+	}
+}

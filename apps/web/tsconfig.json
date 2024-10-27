@@ -1,0 +1,12 @@
+{
+	"extends": "@tssd/tsconfig/vite.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"allowJs": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./app/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx"]
+}
