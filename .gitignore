@@ -7,6 +7,7 @@ dist
 .vinxi
 .wrangler
 .dev.vars
+.turbo
 
 # misc
 .DS_Store
