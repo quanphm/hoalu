@@ -1,5 +1,6 @@
 import { db } from "@/lib/database";
 import { userTable } from "@/lib/database/schema";
+import { httpClient } from "@/utils/http-client";
 import { newId } from "@/utils/id";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
@@ -8,16 +9,16 @@ const addUser = createServerFn("POST", async (name: string) => {
 	await db.insert(userTable).values({
 		id: newId("user"),
 		username: name,
-		email: name + "@mail.com",
+		email: `${name}@mail.com`,
 	});
 });
 
 export const Route = createFileRoute("/")({
-	component: Home,
 	loader: async () => {
-		const users = await db.select().from(userTable);
-		return users;
+		const response = await httpClient.get("/users");
+		return response.data;
 	},
+	component: Home,
 });
 
 function Home() {
@@ -37,7 +38,6 @@ function Home() {
 			>
 				Add user
 			</button>
-
 			{state.users.map((user) => {
 				return <p key={user.id}>{user.username}</p>;
 			})}

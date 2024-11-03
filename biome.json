@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["node_modules", ".next", "build", "dist"]
+		"ignore": ["node_modules", ".next", "build", "dist", ".vinxi", ".output"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -21,11 +21,21 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"fix": "safe",
+					"options": {}
+				}
+			},
 			"style": {
 				"noNonNullAssertion": "off"
 			},
 			"suspicious": {
 				"noExplicitAny": "off"
+			},
+			"a11y": {
+				"useButtonType": "off"
 			}
 		}
 	},

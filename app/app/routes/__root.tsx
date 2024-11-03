@@ -1,7 +1,18 @@
 import { NotFound } from "@/components/not-found";
+import { seo } from "@/utils/seo";
 import { createRootRoute } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { Body, Head, Html, Meta, Scripts } from "@tanstack/start";
+import globalCss from "@tssd/ui/global.css?url";
+import { lazy } from "react";
+
+const TanStackRouterDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/router-devtools").then((res) => ({
+				default: res.TanStackRouterDevtools,
+			})),
+		);
 
 export const Route = createRootRoute({
 	meta: () => [
@@ -12,12 +23,18 @@ export const Route = createRootRoute({
 			name: "viewport",
 			content: "width=device-width, initial-scale=1",
 		},
+		...seo({
+			title: "Tssd | Tanstack Start with Drizzle",
+		}),
+	],
+	links: () => [
 		{
-			title: "tssd",
+			rel: "stylesheet",
+			href: globalCss,
 		},
 	],
-	component: RootComponent,
 	notFoundComponent: () => <NotFound />,
+	component: RootComponent,
 });
 
 function RootComponent() {
@@ -36,6 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</Head>
 			<Body>
 				{children}
+				<TanStackRouterDevtools position="bottom-right" />
 				<ScrollRestoration />
 				<Scripts />
 			</Body>
