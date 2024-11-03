@@ -7,11 +7,12 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["node_modules", ".next", "build", "dist", ".vinxi", ".output"]
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"lineWidth": 100,
+		"formatWithErrors": true
 	},
 	"organizeImports": {
 		"enabled": true
@@ -19,7 +20,23 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"fix": "safe",
+					"options": {}
+				}
+			},
+			"style": {
+				"noNonNullAssertion": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"a11y": {
+				"useButtonType": "off"
+			}
 		}
 	},
 	"javascript": {

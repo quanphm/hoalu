@@ -1,11 +1,13 @@
 # dependencies
 node_modules
 
-# production
 build
 dist
 .vercel
 .vinxi
+.wrangler
+.dev.vars
+.turbo
 
 # misc
 .DS_Store

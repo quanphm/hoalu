@@ -1,0 +1,7 @@
+{
+	"extends": "@tssd/tsconfig/react-library.json",
+	"compilerOptions": {
+		"noImplicitAny": false
+	},
+	"include": ["src"]
+}

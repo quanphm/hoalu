@@ -1,0 +1,39 @@
+{
+	"name": "@tssd/app",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vinxi dev",
+		"build": "vinxi build",
+		"format": "biome check --write .",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"dependencies": {
+		"@t3-oss/env-nextjs": "^0.11.1",
+		"@tanstack/react-query": "^5.59.17",
+		"@tanstack/react-router": "^1.78.2",
+		"@tanstack/react-router-with-query": "^1.78.2",
+		"@tanstack/router-devtools": "^1.78.2",
+		"@tanstack/start": "^1.78.2",
+		"@tssd/ui": "workspace:*",
+		"drizzle-orm": "^0.36.0",
+		"nanoid": "^5.0.7",
+		"pg": "^8.13.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"redaxios": "^0.5.1",
+		"vinxi": "^0.4.3",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@tssd/tsconfig": "workspace:*",
+		"@types/pg": "^8.11.10",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.3",
+		"dotenv": "^16.4.5",
+		"drizzle-kit": "^0.27.1",
+		"vite-tsconfig-paths": "^5.0.1"
+	}
+}
