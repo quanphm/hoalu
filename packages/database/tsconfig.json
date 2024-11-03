@@ -1,8 +1,0 @@
-{
-	"extends": "@tssd/tsconfig/base.json",
-	"compilerOptions": {
-		"target": "ES2022",
-		"noImplicitAny": false
-	},
-	"include": ["src", "drizzle", "migrations", "**/*.ts"]
-}

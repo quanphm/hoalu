@@ -1,13 +1,8 @@
 import { Form } from "@trekapply/ui/form";
 import type { ComponentProps } from "react";
-import type {
-	FieldValues,
-	SubmitHandler,
-	UseFormReturn,
-} from "react-hook-form";
+import type { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
-interface HookFormProps<T extends FieldValues>
-	extends Omit<ComponentProps<"form">, "onSubmit"> {
+interface HookFormProps<T extends FieldValues> extends Omit<ComponentProps<"form">, "onSubmit"> {
 	form: UseFormReturn<T>;
 	onSubmit: SubmitHandler<T>;
 	disabled?: boolean | undefined;

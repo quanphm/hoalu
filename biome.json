@@ -11,7 +11,8 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"lineWidth": 100,
+		"formatWithErrors": true
 	},
 	"organizeImports": {
 		"enabled": true

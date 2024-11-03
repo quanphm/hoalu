@@ -6,23 +6,28 @@
 		"dev": "vinxi dev",
 		"build": "vinxi build",
 		"start": "vinxi start",
-		"check": "biome check --write ."
+		"check": "biome check --write .",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"devDependencies": {
 		"@tssd/tsconfig": "workspace:*",
-		"@types/pg": "^8.11.6",
+		"@types/pg": "^8.11.10",
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
 		"@vitejs/plugin-react": "^4.3.3",
+		"dotenv": "^16.4.5",
+		"drizzle-kit": "^0.27.1",
 		"vite-tsconfig-paths": "^5.0.1"
 	},
 	"dependencies": {
 		"@t3-oss/env-nextjs": "^0.11.1",
 		"@tanstack/react-router": "^1.78.2",
 		"@tanstack/start": "^1.78.2",
-		"@tssd/database": "workspace:*",
 		"@tssd/ui": "workspace:*",
 		"axios": "^1.7.7",
+		"drizzle-orm": "^0.36.0",
+		"nanoid": "^5.0.7",
 		"pg": "^8.13.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",

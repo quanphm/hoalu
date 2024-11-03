@@ -3,26 +3,6 @@
 	"private": true,
 	"sideEffects": false,
 	"exports": {
-		"./alert": "./src/components/alert.tsx",
-		"./badge": "./src/components/badge.tsx",
-		"./button": "./src/components/button.tsx",
-		"./card": "./src/components/card.tsx",
-		"./checkbox": "./src/components/checkbox.tsx",
-		"./collapsible": "./src/components/collapsible.tsx",
-		"./command": "./src/components/command.tsx",
-		"./dialog": "./src/components/dialog.tsx",
-		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
-		"./form": "./src/components/form.tsx",
-		"./input": "./src/components/input.tsx",
-		"./label": "./src/components/label.tsx",
-		"./popover": "./src/components/popover.tsx",
-		"./scroll-area": "./src/components/scroll-area.tsx",
-		"./select": "./src/components/select.tsx",
-		"./separator": "./src/components/separator.tsx",
-		"./table": "./src/components/table.tsx",
-		"./textarea": "./src/components/textarea.tsx",
-		"./toaster": "./src/components/toaster.tsx",
-		"./tooltip": "./src/components/tooltip.tsx",
 		"./tailwind.config": "./tailwind.config.ts",
 		"./global.css": "./src/global.css",
 		"./utils": "./src/utils/index.ts",
@@ -33,8 +13,9 @@
 		"format": "biome check --write ."
 	},
 	"devDependencies": {
+		"@tssd/tsconfig": "workspace:*",
 		"@types/react": "^18.3.11",
-		"@tssd/tsconfig": "workspace:*"
+		"tailwindcss": "^3.4.14"
 	},
 	"dependencies": {
 		"@radix-ui/react-checkbox": "^1.1.2",
@@ -50,17 +31,15 @@
 		"@radix-ui/react-tooltip": "^1.1.3",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
-		"cmdk": "^1.0.0",
-		"date-fns": "^4.1.0",
-		"lucide-react": "^0.441.0",
-		"react-day-picker": "^9.1.3",
+		"cmdk": "^1.0.3",
+		"lucide-react": "^0.454.0",
+		"sonner": "^1.6.1",
 		"tailwind-merge": "^2.5.3",
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"peerDependencies": {
 		"next-themes": "^0.3.0",
 		"react": "^18.3.1",
-		"sonner": "^1.5.0",
 		"tailwindcss": "^3.4.13"
 	}
 }

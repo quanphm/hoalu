@@ -25,9 +25,5 @@ const getNetworkStateServerSnapshot = () => {
 };
 
 export function useOnlineStatus() {
-	return useSyncExternalStore(
-		subscribe,
-		getSnapshot,
-		getNetworkStateServerSnapshot,
-	);
+	return useSyncExternalStore(subscribe, getSnapshot, getNetworkStateServerSnapshot);
 }
