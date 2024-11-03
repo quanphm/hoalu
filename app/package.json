@@ -18,8 +18,8 @@
 	},
 	"dependencies": {
 		"@t3-oss/env-nextjs": "^0.11.1",
-		"@tanstack/react-router": "^1.76.3",
-		"@tanstack/start": "^1.76.3",
+		"@tanstack/react-router": "^1.78.2",
+		"@tanstack/start": "^1.78.2",
 		"@tssd/database": "workspace:*",
 		"@tssd/ui": "workspace:*",
 		"axios": "^1.7.7",
