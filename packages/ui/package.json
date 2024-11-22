@@ -1,5 +1,5 @@
 {
-	"name": "@tssd/ui",
+	"name": "@woben/ui",
 	"private": true,
 	"sideEffects": false,
 	"exports": {
@@ -13,7 +13,7 @@
 		"format": "biome check --write ."
 	},
 	"devDependencies": {
-		"@tssd/tsconfig": "workspace:*",
+		"@woben/tsconfig": "workspace:*",
 		"@types/react": "^18.3.11",
 		"tailwindcss": "^3.4.14"
 	},

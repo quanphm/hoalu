@@ -1,5 +1,5 @@
 {
-	"name": "tssd",
+	"name": "woben-space",
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@biomejs/biome": "^1.9.3",
-		"turbo": "^2.1.3",
+		"turbo": "^2.3.1",
 		"typescript": "^5.6.3"
 	},
 	"packageManager": "pnpm@9.12.2"

@@ -1,5 +1,5 @@
 {
-	"extends": "@tssd/tsconfig/react-library.json",
+	"extends": "@woben/tsconfig/react-library.json",
 	"compilerOptions": {
 		"noImplicitAny": false
 	},

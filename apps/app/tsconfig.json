@@ -1,12 +1,11 @@
 {
-	"extends": "@tssd/tsconfig/vite.json",
+	"extends": "@woben/tsconfig/app.json",
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"allowJs": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./app/*"]
+			"@/*": ["src/*"]
 		}
-	},
-	"include": ["**/*.ts", "**/*.tsx"]
+	}
 }
