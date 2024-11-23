@@ -1,5 +1,5 @@
 {
-	"name": "woben-space",
+	"name": "woben",
 	"private": true,
 	"scripts": {
 		"build": "turbo build",

@@ -3,19 +3,24 @@ import { userTable } from "@/lib/db/schema";
 import { newId } from "@/utils/id";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
+import * as v from "valibot";
 
 const getUser = createServerFn({ method: "GET" }).handler(async () => {
 	const users = await db.select().from(userTable);
 	return users;
 });
 
+const userSchema = v.object({
+	name: v.string(),
+});
+
 const addUser = createServerFn({ method: "POST" })
-	.validator((data: string) => data)
+	.validator(userSchema)
 	.handler(async ({ data }) => {
 		await db.insert(userTable).values({
 			id: newId("user"),
-			username: data,
-			email: `${data}@mail.com`,
+			username: data.name,
+			email: `${data.name}@mail.com`,
 		});
 	});
 
@@ -36,7 +41,7 @@ function Home() {
 			<button
 				type="button"
 				onClick={() => {
-					addUser({ data: "Quan" }).then(() => {
+					addUser({ data: { name: "quan" } }).then(() => {
 						router.invalidate();
 					});
 				}}
