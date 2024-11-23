@@ -19,7 +19,6 @@
 		"@woben/ui": "workspace:*",
 		"drizzle-orm": "^0.36.3",
 		"nanoid": "^5.0.8",
-		"pg": "^8.13.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redaxios": "^0.5.1",
@@ -27,7 +26,6 @@
 		"vinxi": "^0.4.3"
 	},
 	"devDependencies": {
-		"@types/pg": "^8.11.10",
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
 		"@vitejs/plugin-react": "^4.3.3",
