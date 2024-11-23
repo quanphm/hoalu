@@ -1,0 +1,36 @@
+{
+	"editor.tabSize": 2,
+	"editor.foldingStrategy": "indentation",
+	"editor.formatOnSave": false,
+	"editor.wordWrap": "on",
+	"editor.suggestSelection": "first",
+	"[javascript]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascriptreact]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[css]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[json]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"typescript.implementationsCodeLens.enabled": false,
+	"typescript.referencesCodeLens.enabled": false,
+	"typescript.suggest.autoImports": true,
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true
+}

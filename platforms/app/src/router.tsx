@@ -7,11 +7,14 @@ import { routeTree } from "./routeTree.gen";
 
 export function createRouter() {
 	const queryClient = new QueryClient();
+	const routerContext = {
+		queryClient,
+	};
 
 	return routerWithQueryClient(
 		createTanStackRouter({
 			routeTree,
-			context: { queryClient },
+			context: routerContext,
 			defaultPreload: "intent",
 			defaultErrorComponent: DefaultCatchBoundary,
 			defaultNotFoundComponent: () => <NotFound />,

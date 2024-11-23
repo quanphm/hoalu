@@ -13,7 +13,10 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 		strict: false,
 		select: (state) => state.id === rootRouteId,
 	});
-	console.error(error);
+	const onGoBackClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+		e.preventDefault();
+		window.history.back();
+	};
 
 	return (
 		<div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-4">
@@ -38,10 +41,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 					<Link
 						to="/"
 						className="rounded bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
-						onClick={(e) => {
-							e.preventDefault();
-							window.history.back();
-						}}
+						onClick={onGoBackClick}
 					>
 						Go Back
 					</Link>

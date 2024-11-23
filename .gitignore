@@ -3,15 +3,11 @@ node_modules
 
 build
 dist
-.vercel
+.output
 .vinxi
 .wrangler
 .dev.vars
 .turbo
-
-# misc
-.DS_Store
-*.pem
 
 # debug
 npm-debug.log*
@@ -25,3 +21,6 @@ yarn-error.log*
 !.env.template
 !.env.example
 
+# misc
+.DS_Store
+*.pem

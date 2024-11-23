@@ -1,0 +1,22 @@
+services:
+  woben_app:
+    build: .
+    container_name: woben_app
+    restart: always
+    networks:
+      - traefik_network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.woben.entrypoints=websecure
+      - traefik.http.routers.woben.rule=Host(`woben.local.${DOMAIN}`)
+      - traefik.http.routers.woben.tls=true
+      - traefik.http.routers.woben.tls.certresolver=cloudflare
+      - traefik.http.routers.woben.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben.middlewares=internal-gateway@file
+      - traefik.http.routers.woben.service=woben
+      - traefik.http.services.woben.loadbalancer.server.port=3000
+
+networks:
+  traefik_network:
+    external: true
