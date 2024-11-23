@@ -3,6 +3,7 @@ node_modules
 
 build
 dist
+.output
 .vinxi
 .wrangler
 .dev.vars

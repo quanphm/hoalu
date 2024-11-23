@@ -1,11 +1,7 @@
-FROM node:23-slim AS base
+FROM node:20-slim AS base
 WORKDIR /woben
-
-ENV APP_PORT=3000
-ENV NODE_ENV="production"
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-
 RUN corepack enable
 
 FROM base AS turbo
@@ -20,8 +16,8 @@ RUN apt-get update -qq && \
 COPY --from=turbo /woben/out/json/ .
 RUN pnpm install
 COPY --from=turbo /woben/out/full/ .
-# RUN pnpm --filter=@woben/app db:generare
-# RUN pnpm --filter=@woben/app db:migrate
+RUN pnpm --filter=@woben/app run db:generare
+RUN pnpm --filter=@woben/app run db:migrate
 RUN pnpm run build --filter=@woben/app...
 
 FROM base AS runner
@@ -30,8 +26,8 @@ RUN adduser --system --uid 1001 woben-app
 USER woben-app
 
 COPY --from=build --chown=woben:woben-app /woben/platforms/app/.output .
-# COPY --from=build --chown=woben:woben-app /woben/app/web/public ./web/public
+COPY --from=build --chown=woben:woben-app /woben/platforms/app/.env .
 
-EXPOSE $APP_PORT
-CMD ["node", "--env-file=./platforms/app/.env", "./platforms/app/.output/server/index.mjs"]
+EXPOSE 3000
+CMD ["node", "--env-file=.env", "server/index.mjs"]
 
