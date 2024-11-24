@@ -1,10 +1,30 @@
 services:
-  woben_app:
-    build: .
-    container_name: woben_app
+  database:
+    container_name: woben_postgres
+    image: postgres:16
     restart: always
     networks:
+      - woben_network
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - ../pg-data:/var/lib/postgresql/data
+
+  app:
+    container_name: woben_app
+    build:
+      context: ../
+      dockerfile: ./deployment/Dockerfile
+      args:
+        - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+    restart: always
+    networks:
+      - woben_network
       - traefik_network
+    depends_on:
+      - database
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben.entrypoints=websecure
@@ -18,5 +38,8 @@ services:
       - traefik.http.services.woben.loadbalancer.server.port=3000
 
 networks:
+  woben_network:
+    name: woben_network
+    driver: bridge
   traefik_network:
     external: true

@@ -1,5 +1,9 @@
 FROM node:20-slim AS base
 WORKDIR /woben
+
+ARG DB_URL
+ENV DATABASE_URL ${DB_URL}
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -30,4 +34,3 @@ COPY --from=build --chown=woben:woben-app /woben/platforms/app/.env .
 
 EXPOSE 3000
 CMD ["node", "--env-file=.env", "server/index.mjs"]
-

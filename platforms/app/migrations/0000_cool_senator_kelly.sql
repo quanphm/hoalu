@@ -7,5 +7,3 @@ CREATE TABLE IF NOT EXISTS "user" (
 	CONSTRAINT "user_username_unique" UNIQUE("username"),
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
---> statement-breakpoint
-ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;
