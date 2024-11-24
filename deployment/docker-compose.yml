@@ -1,6 +1,8 @@
 services:
   woben_app:
-    build: .
+    build:
+      context: ../
+      dockerfile: ./deployment/Dockerfile
     container_name: woben_app
     restart: always
     networks:
