@@ -2,9 +2,10 @@ import { serverEnv } from "@/env";
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-export function createNodePostgresClient() {
+export async function createNodePostgresClient() {
 	const client = new pg.Pool({
 		connectionString: serverEnv.DATABASE_URL,
 	});
-	return drizzle({ client });
+	const db = drizzle({ client });
+	return db;
 }
