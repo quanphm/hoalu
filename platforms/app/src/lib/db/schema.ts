@@ -6,4 +6,4 @@ export const userTable = pgTable("user", {
 	email: text().notNull().unique(),
 	created_at: timestamp().notNull().defaultNow(),
 	updated_at: timestamp().notNull().defaultNow(),
-}).enableRLS();
+});

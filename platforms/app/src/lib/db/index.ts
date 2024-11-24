@@ -1,6 +1,7 @@
 import { serverEnv } from "@/env";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { createNeonClient } from "./neon-client";
+import { createNodePostgresClient } from "./node-postgres-client";
 
-const sql = neon(serverEnv.DATABASE_URL);
-export const db = drizzle({ client: sql });
+export const db = serverEnv.DATABASE_URL.includes("neon.tech")
+	? createNeonClient()
+	: createNodePostgresClient();
