@@ -9,6 +9,9 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
+      interval: 5m
     volumes:
       - ../pg-data:/var/lib/postgresql/data
 
@@ -16,13 +19,15 @@ services:
     container_name: woben_app
     build:
       context: ../
-      dockerfile: ./deployment/Dockerfile
-      args:
-        - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+      dockerfile: ./deployment/app.Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
     restart: always
     networks:
       - woben_network
       - traefik_network
+    ports:
+      - 3000:3000
     depends_on:
       - database
     labels:
@@ -36,6 +41,19 @@ services:
       - traefik.http.routers.woben.middlewares=internal-gateway@file
       - traefik.http.routers.woben.service=woben
       - traefik.http.services.woben.loadbalancer.server.port=3000
+
+  migration:
+    container_name: woben_db_migration
+    build:
+      context: ../
+      dockerfile: ./deployment/migration.Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+    restart: on-failure
+    networks:
+      - woben_network
+    depends_on:
+      - database
 
 networks:
   woben_network:
