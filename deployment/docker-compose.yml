@@ -26,8 +26,6 @@ services:
     networks:
       - woben_network
       - traefik_network
-    ports:
-      - 3000:3000
     depends_on:
       - database
     labels:
