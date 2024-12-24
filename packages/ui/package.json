@@ -6,15 +6,16 @@
 		"./tailwind.config": "./tailwind.config.ts",
 		"./global.css": "./src/global.css",
 		"./utils": "./src/utils/index.ts",
-		"./hooks": "./src/hooks/index.ts"
+		"./hooks": "./src/hooks/index.ts",
+		"./button": "./src/components/button.tsx"
 	},
 	"scripts": {
 		"lint": "biome lint",
 		"format": "biome check --write ."
 	},
 	"devDependencies": {
-		"@types/react": "^18.3.18",
 		"@woben/tsconfig": "workspace:*",
+		"@types/react": "^19.0.0",
 		"tailwindcss": "^3.4.17"
 	},
 	"dependencies": {
@@ -38,8 +39,6 @@
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"peerDependencies": {
-		"next-themes": "^0.3.0",
-		"react": "^18.3.1",
-		"tailwindcss": "^3.4.13"
+		"react": "^19.0.0"
 	}
 }

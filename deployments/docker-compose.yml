@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: woben_postgres
+    container_name: woben_db
     image: postgres:16
     restart: always
     networks:
@@ -9,11 +9,26 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
     healthcheck:
       test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
       interval: 5m
     volumes:
       - ../pg-data:/var/lib/postgresql/data
+
+  electric:
+    container_name: woben_electric
+    image: electricsql/electric
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
 
   app:
     container_name: woben_app
@@ -28,6 +43,7 @@ services:
       - traefik_network
     depends_on:
       - database
+      - electric
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben.entrypoints=websecure
@@ -41,7 +57,7 @@ services:
       - traefik.http.services.woben.loadbalancer.server.port=3000
 
   migration:
-    container_name: woben_db_migration
+    container_name: woben_migration
     build:
       context: ../
       dockerfile: ./deployment/migration.Dockerfile

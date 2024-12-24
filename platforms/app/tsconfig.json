@@ -1,11 +1,11 @@
 {
-  "extends": "@woben/tsconfig/app.json",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
-  }
+	"extends": "@woben/tsconfig/app.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"allowJs": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		}
+	}
 }

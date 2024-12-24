@@ -1,6 +1,7 @@
 {
 	"name": "woben",
 	"private": true,
+	"workspaces": ["packages/*", "platforms/*"],
 	"scripts": {
 		"build": "turbo build",
 		"dev": "turbo dev --parallel",
@@ -12,5 +13,5 @@
 		"turbo": "^2.3.3",
 		"typescript": "^5.7.2"
 	},
-	"packageManager": "pnpm@9.12.2"
+	"packageManager": "bun@1.1.42"
 }
