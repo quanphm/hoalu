@@ -21,6 +21,6 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
     ports:
-      - 3000:3000
+      - 4000:3000
     depends_on:
       - database

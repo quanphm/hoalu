@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vinxi dev",
+		"dev": "vinxi dev --port 5173",
 		"build": "vinxi build",
 		"format": "biome check --write .",
 		"db:generate": "drizzle-kit generate",
