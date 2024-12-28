@@ -13,9 +13,9 @@ services:
       - "postgres"
       - "-c"
       - "wal_level=logical"
-    healthcheck:
-      test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
-      interval: 5m
+    # healthcheck:
+    #   test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
+    #   interval: 5m
     volumes:
       - ../pg-data:/var/lib/postgresql/data
 
@@ -25,8 +25,6 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
-    ports:
-      - 4000:3000
     depends_on:
       - database
 
