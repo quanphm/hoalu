@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 
 const client = new pg.Pool({
-	host: "localhost",
+	host: serverEnv.DB_HOST,
 	port: 5432,
 	user: serverEnv.DB_USER,
 	password: serverEnv.DB_PASSWORD,
