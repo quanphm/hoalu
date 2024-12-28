@@ -10,7 +10,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-await migrate(db, {
+migrate(db, {
 	migrationsFolder: "./drizzle/",
 }).then(() => {
 	console.log("Migration completed");
