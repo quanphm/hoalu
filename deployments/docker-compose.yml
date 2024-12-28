@@ -23,6 +23,8 @@ services:
     container_name: woben-electric
     image: electricsql/electric
     restart: always
+    networks:
+      - woben_network
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
     depends_on:
@@ -63,7 +65,7 @@ services:
       context: ../
       dockerfile: ./deployments/migration.Dockerfile
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
     restart: on-failure
     networks:
       - woben_network
