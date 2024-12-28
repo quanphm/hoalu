@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { userTable } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { userTable } from "@/server/db/schema";
 import { newId } from "@/utils/id";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";

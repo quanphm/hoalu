@@ -7,7 +7,7 @@ import { Meta, Scripts } from "@tanstack/start";
 import globalCss from "@woben/ui/global.css?url";
 import { lazy } from "react";
 
-const TanStackRouterDevtools = import.meta.env.PROD
+const RouterDevtools = import.meta.env.PROD
 	? () => null
 	: lazy(() =>
 			import("@tanstack/router-devtools").then((res) => ({
@@ -23,7 +23,7 @@ export const Route = createRootRoute({
 			},
 			{
 				name: "viewport",
-				content: "width=device-width, initial-scale=1",
+				content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=1",
 			},
 			...seo({
 				title: "Woben | The Everyday Digital Craftsman's Space",
@@ -37,7 +37,7 @@ export const Route = createRootRoute({
 		],
 	}),
 	errorComponent: ErrorComponent,
-	notFoundComponent: () => <NotFound />,
+	notFoundComponent: NotFound,
 	component: RootComponent,
 });
 
@@ -65,9 +65,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
-				<TanStackRouterDevtools position="bottom-right" />
 				<ScrollRestoration />
 				<Scripts />
+				<RouterDevtools position="bottom-right" />
 			</body>
 		</html>
 	);

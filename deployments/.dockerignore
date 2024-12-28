@@ -9,4 +9,5 @@
 **/*.vinxi
 **/*.git
 **/.DS_Store
+**/*.env
 fly.toml

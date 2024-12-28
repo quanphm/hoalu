@@ -1,3 +1,5 @@
 packages:
-  - "platforms/*"
-  - "packages/*"
+  - 'platforms/*'
+  - 'packages/*'
+
+
