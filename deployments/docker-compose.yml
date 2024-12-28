@@ -33,8 +33,8 @@ services:
   app:
     container_name: woben-app
     build:
-      context: ../
-      dockerfile: ./deployment/app.Dockerfile
+      context: .
+      dockerfile: app.Dockerfile
     environment:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -62,8 +62,8 @@ services:
   migration:
     container_name: woben-migration
     build:
-      context: ../
-      dockerfile: ./deployment/migration.Dockerfile
+      context: .
+      dockerfile: migration.Dockerfile
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
     restart: on-failure
