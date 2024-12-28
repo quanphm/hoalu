@@ -11,7 +11,7 @@ COPY . .
 RUN turbo prune @woben/app --docker
 
 FROM base AS build
-RUN set -eux; \
+RUN set -eu; \
     apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
@@ -22,11 +22,10 @@ RUN pnpm run build --filter=@woben/app...
 
 FROM base AS runner
 RUN addgroup --system --gid 1001 woben
-RUN adduser --system --uid 1001 woben-app
-USER woben-app
-COPY --from=build --chown=woben:woben-app /woben/platforms/app/.output .
+RUN adduser --system --uid 1001 woben
+USER woben
 
-ENV DATABASE_URL ""
+COPY --from=build --chown=woben:woben /woben/platforms/app/.output .
 
 EXPOSE 3000
 CMD ["node", "server/index.mjs"]

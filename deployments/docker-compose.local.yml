@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: woben_db
+    container_name: woben-db
     image: postgres:16-alpine
     restart: always
     ports:

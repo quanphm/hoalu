@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: woben_db
+    container_name: woben-db
     image: postgres:16
     restart: always
     networks:
@@ -20,7 +20,7 @@ services:
       - ../pg-data:/var/lib/postgresql/data
 
   electric:
-    container_name: woben_electric
+    container_name: woben-electric
     image: electricsql/electric
     restart: always
     environment:
@@ -31,12 +31,15 @@ services:
       - database
 
   app:
-    container_name: woben_app
+    container_name: woben-app
     build:
       context: ../
       dockerfile: ./deployment/app.Dockerfile
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
     restart: always
     networks:
       - woben_network
@@ -57,7 +60,7 @@ services:
       - traefik.http.services.woben.loadbalancer.server.port=3000
 
   migration:
-    container_name: woben_migration
+    container_name: woben-migration
     build:
       context: ../
       dockerfile: ./deployment/migration.Dockerfile
