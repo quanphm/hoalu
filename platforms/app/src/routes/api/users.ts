@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { userTable } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { userTable } from "@/server/db/schema";
 import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
 
