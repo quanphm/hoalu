@@ -1,5 +1,5 @@
 {
-  "id": "efdd60be-a196-4436-accb-27d5ff1fd3fa",
+  "id": "81da55c2-22cd-40a9-8afa-7490ac9ca460",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,8 +10,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "bigint",
           "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "user_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "public_id": {
+          "name": "public_id",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "username": {
@@ -45,6 +62,13 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "user_public_id_unique": {
+          "name": "user_public_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "public_id"
+          ]
+        },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
