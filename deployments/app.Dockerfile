@@ -1,12 +1,8 @@
-FROM node:20-slim AS base
+FROM oven/bun:1 AS base
 WORKDIR /woben
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-
 FROM base AS turbo
-RUN pnpm add -g turbo
+RUN bun install -g turbo
 COPY . .
 RUN turbo prune @woben/app --docker
 
@@ -16,7 +12,7 @@ RUN set -eu; \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 COPY --from=turbo /woben/out/json/ .
-RUN pnpm install
+RUN bun install
 COPY --from=turbo /woben/out/full/ .
 RUN pnpm run build --filter=@woben/app...
 
@@ -28,4 +24,4 @@ USER woben
 COPY --from=build --chown=woben:woben /woben/platforms/app/.output .
 
 EXPOSE 3000
-CMD ["node", "server/index.mjs"]
+CMD ["bun", "server/index.mjs"]
