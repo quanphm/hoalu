@@ -14,7 +14,7 @@ RUN set -eu; \
 COPY --from=turbo /woben/out/json/ .
 RUN bun install
 COPY --from=turbo /woben/out/full/ .
-RUN pnpm run build --filter=@woben/app...
+RUN bun run build --filter=@woben/app...
 
 FROM base AS runner
 RUN addgroup --system --gid 1001 woben
