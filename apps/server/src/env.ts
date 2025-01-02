@@ -1,4 +1,4 @@
-import { validateEnv } from "@/utils/validate-env";
+import { validateEnv } from "@woben/common/validate-env";
 import * as v from "valibot";
 
 const ServerSchema = v.object({

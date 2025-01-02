@@ -1,7 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter, isRedirect } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import { lazy } from "react";
 import { DefaultCatchBoundary } from "./components/default-catch-boundary";
 import { routeTree } from "./routeTree.gen";
 
@@ -16,13 +15,9 @@ export function createRouter() {
 		},
 	});
 
-	const routerContext = {
-		queryClient,
-	};
-
 	const router = createTanStackRouter({
 		routeTree,
-		context: routerContext,
+		context: { queryClient },
 		defaultPreload: "intent",
 		defaultErrorComponent: DefaultCatchBoundary,
 	});
@@ -50,7 +45,6 @@ export function createRouter() {
 		window.getQueryClient = () => queryClient;
 	}
 
-	// @ts-ignore
 	return routerWithQueryClient(router, queryClient);
 }
 
@@ -66,11 +60,3 @@ declare global {
 		getQueryClient: () => QueryClient;
 	}
 }
-
-export const TanStackRouterDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/router-devtools").then((res) => ({
-				default: res.TanStackRouterDevtools,
-			})),
-		);

@@ -1,0 +1,21 @@
+{
+	"name": "@woben/server",
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"dependencies": {
+		"@woben/common": "workspace:*",
+		"drizzle-orm": "^0.38.3",
+		"hono": "^4.6.15",
+		"nanoid": "^5.0.9",
+		"pg": "^8.13.1"
+	},
+	"devDependencies": {
+		"@woben/tsconfig": "workspace:*",
+		"@types/bun": "latest",
+		"@types/pg": "^8.11.10",
+		"drizzle-kit": "^0.30.1"
+	}
+}

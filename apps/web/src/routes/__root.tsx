@@ -1,7 +1,12 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { seo } from "@/utils/seo";
-import { type ErrorComponentProps, createRootRoute } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import {
+	type ErrorComponentProps,
+	createRootRoute,
+	createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import globalCss from "@woben/ui/global.css?url";
@@ -15,7 +20,17 @@ const RouterDevtools = import.meta.env.PROD
 			})),
 		);
 
-export const Route = createRootRoute({
+const QueryDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/react-query-devtools").then((res) => ({
+				default: res.ReactQueryDevtools,
+			})),
+		);
+
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+}>()({
 	head: () => ({
 		meta: [
 			{
@@ -67,6 +82,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
+
+				<QueryDevtools buttonPosition="top-right" />
 				<RouterDevtools position="bottom-right" />
 			</body>
 		</html>

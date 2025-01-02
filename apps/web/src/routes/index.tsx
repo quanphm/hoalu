@@ -1,56 +1,21 @@
-import { db } from "@/server/db";
-import { userTable } from "@/server/db/schema";
-import { newId } from "@/utils/id";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/start";
-import * as v from "valibot";
-
-const getUser = createServerFn({ method: "GET" }).handler(async () => {
-	const users = await db.select().from(userTable);
-	return users;
-});
-
-const userSchema = v.object({
-	name: v.string(),
-});
-
-const addUser = createServerFn({ method: "POST" })
-	.validator(userSchema)
-	.handler(async ({ data }) => {
-		await db.insert(userTable).values({
-			id: newId("user"),
-			username: data.name,
-			email: `${data.name}@mail.com`,
-		});
-	});
+import { usersQueryOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-	loader: async () => {
-		const users = await getUser();
-		return users;
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(usersQueryOptions());
 	},
-	component: Home,
+	component: RouteComponent,
 });
 
-function Home() {
-	const router = useRouter();
-	const users = Route.useLoaderData();
+function RouteComponent() {
+	const usersQuery = useSuspenseQuery(usersQueryOptions());
+	console.log(usersQuery.data);
 
 	return (
 		<div>
-			<button
-				type="button"
-				onClick={() => {
-					addUser({ data: { name: "quan" } }).then(() => {
-						router.invalidate();
-					});
-				}}
-			>
-				Add user
-			</button>
-			{users.map((user) => {
-				return <p key={user.id}>{user.username}</p>;
-			})}
+			<button type="button">Add user</button>
 		</div>
 	);
 }
