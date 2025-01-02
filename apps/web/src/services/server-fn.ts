@@ -9,7 +9,7 @@ import { createServerFn } from "@tanstack/start";
 export const fetchUsers = createServerFn({ method: "GET" }).handler(async () => {
 	try {
 		const result = await apiClient.get("/users").then((r) => r.data);
-		return result;
+		return result.data;
 	} catch (err) {
 		if ((err as any).status === 404) {
 			throw notFound();

@@ -2,11 +2,7 @@ import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { seo } from "@/utils/seo";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-	type ErrorComponentProps,
-	createRootRoute,
-	createRootRouteWithContext,
-} from "@tanstack/react-router";
+import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import globalCss from "@woben/ui/global.css?url";
@@ -38,7 +34,7 @@ export const Route = createRootRouteWithContext<{
 			},
 			{
 				name: "viewport",
-				content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=1",
+				content: "width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1",
 			},
 			...seo({
 				title: "Woben | The Everyday Digital Craftsman's Space",

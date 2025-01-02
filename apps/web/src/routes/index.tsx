@@ -10,12 +10,14 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-	const usersQuery = useSuspenseQuery(usersQueryOptions());
-	console.log(usersQuery.data);
+	const { data } = useSuspenseQuery(usersQueryOptions());
 
 	return (
 		<div>
 			<button type="button">Add user</button>
+			{data.map((u: any) => (
+				<p key={u.id}>{u.username}</p>
+			))}
 		</div>
 	);
 }

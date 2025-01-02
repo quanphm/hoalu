@@ -1,16 +1,18 @@
 {
 	"name": "@woben/server",
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
+		"dev": "bun run --watch src/index.ts",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@hono/valibot-validator": "^0.5.1",
 		"@woben/common": "workspace:*",
 		"drizzle-orm": "^0.38.3",
 		"hono": "^4.6.15",
 		"nanoid": "^5.0.9",
-		"pg": "^8.13.1"
+		"pg": "^8.13.1",
+		"valibot": "^1.0.0-beta.9"
 	},
 	"devDependencies": {
 		"@woben/tsconfig": "workspace:*",

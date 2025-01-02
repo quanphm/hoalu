@@ -1,25 +1,11 @@
+import { api } from "@/routes/api";
 import { Hono } from "hono";
-import { db } from "./db";
-import { userTable } from "./db/schema";
 
 const app = new Hono();
 
-app.get("/", (c) => {
-	return c.text("Hello Hono!");
-});
+app.get("/", (c) => c.text("Welcome to Woben API"));
+app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));
 
-app.get("/users", async (c) => {
-	const result = await db
-		.select({
-			id: userTable.id,
-			username: userTable.username,
-			public_id: userTable.public_id,
-		})
-		.from(userTable);
-
-	return c.json({
-		data: result,
-	});
-});
+app.route("/api", api);
 
 export default app;

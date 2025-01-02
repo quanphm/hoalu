@@ -1,17 +1,18 @@
 {
-  "name": "@woben/common",
-  "description": "Shared common utils libs & functions",
-  "private": true,
-  "sideEffects": false,
-  "exports": {
-    "./validate-env": "./src/validate-env.ts",
-    "./generate-id": "./src/generate-id.ts"
-  },
-  "devDependencies": {
-    "@woben/tsconfig": "workspace:*"
-  },
-  "dependencies": {
-    "nanoid": "^5.0.9",
-    "valibot": "^1.0.0-beta.9"
-  }
+	"name": "@woben/common",
+	"description": "Shared common utils libs & functions",
+	"private": true,
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts",
+		"./validate-env": "./src/validate-env.ts",
+		"./generate-id": "./src/generate-id.ts"
+	},
+	"devDependencies": {
+		"@woben/tsconfig": "workspace:*"
+	},
+	"dependencies": {
+		"nanoid": "^5.0.9",
+		"valibot": "^1.0.0-beta.9"
+	}
 }
