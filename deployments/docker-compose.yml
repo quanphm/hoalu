@@ -31,7 +31,7 @@ services:
       - database
 
   app:
-    container_name: woben-app
+    container_name: woben-web
     build:
       context: ../
       dockerfile: ./deployments/app.Dockerfile
