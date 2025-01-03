@@ -27,8 +27,8 @@ RUN adduser --system --uid 1001 hono
 
 COPY --from=build --chown=hono:nodejs /woben/apps/server/build .
 
-USER hono
 EXPOSE 3000
+USER hono
 
 CMD ["node", "index.js"]
 

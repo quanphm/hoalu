@@ -61,6 +61,7 @@ services:
     depends_on:
       - database
       - electric
+      - server
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben.entrypoints=websecure
