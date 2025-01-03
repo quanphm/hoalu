@@ -16,6 +16,9 @@ services:
     # healthcheck:
     #   test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
     #   interval: 5m
+    security_opt:
+      - no-new-privileges:true
+    user: postgres:postgres
     volumes:
       - ../pg-data:/var/lib/postgresql/data
 
