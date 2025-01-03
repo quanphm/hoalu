@@ -43,7 +43,6 @@ services:
     restart: always
     networks:
       - woben_network
-      - traefik_network
     depends_on:
       - database
       - electric
