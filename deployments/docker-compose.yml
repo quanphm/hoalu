@@ -9,6 +9,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+      - PGDATA=/var/lib/postgresql/data/pgdata
     command:
       - "postgres"
       - "-c"
@@ -16,11 +17,8 @@ services:
     # healthcheck:
     #   test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
     #   interval: 5m
-    security_opt:
-      - no-new-privileges:true
-    user: postgres:postgres
     volumes:
-      - ../pg-data:/var/lib/postgresql/data
+      - ../pgdata:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric

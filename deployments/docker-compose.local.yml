@@ -3,17 +3,15 @@ services:
     container_name: woben-db
     image: postgres:16-alpine
     restart: always
-    security_opt:
-      - no-new-privileges:true
-    user: postgres:postgres
     volumes:
-      - ../pg-data:/var/lib/postgresql/data
+      - ../pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+      - PGDATA=/var/lib/postgresql/data/pgdata
     command:
       - -c
       - listen_addresses=*
