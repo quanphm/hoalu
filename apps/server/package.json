@@ -5,10 +5,14 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},
+	"exports": {
+		".": "./src/index.ts"
+	},
 	"dependencies": {
 		"@hono/valibot-validator": "^0.5.1",
 		"@woben/common": "workspace:*",
 		"drizzle-orm": "^0.38.3",
+		"drizzle-valibot": "^0.3.1",
 		"hono": "^4.6.15",
 		"nanoid": "^5.0.9",
 		"pg": "^8.13.1",

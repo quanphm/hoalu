@@ -1,8 +1,4 @@
-import axios from "redaxios";
+import type { ServerRoutes } from "@woben/server";
+import { hc } from "hono/client";
 
-export const apiClient = axios.create({
-	baseURL: "http://localhost:3000/api",
-	headers: {
-		"Content-Type": "application/json",
-	},
-});
+export const honoClient = hc<ServerRoutes>("http://localhost:3000/");

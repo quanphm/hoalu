@@ -1,11 +1,19 @@
-import { api } from "@/routes/api";
 import { Hono } from "hono";
+import { logger } from "hono/logger";
+import { usersRoute } from "./routes/user.route";
 
-const app = new Hono();
+export const app = new Hono();
+
+app.use(logger());
 
 app.get("/", (c) => c.text("Welcome to Woben API"));
 app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));
 
-app.route("/api", api);
+const routes = app.basePath("/api").route("/users", usersRoute);
 
-export default app;
+export default {
+	port: 3000,
+	fetch: app.fetch,
+};
+
+export type ServerRoutes = typeof routes;

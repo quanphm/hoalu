@@ -1,6 +1,6 @@
-import { serverEnv } from "@/env";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
+import { serverEnv } from "../env";
 
 const client = new pg.Pool({
 	user: serverEnv.DB_USER,

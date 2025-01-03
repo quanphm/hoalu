@@ -1,6 +1,6 @@
+import { createUser } from "@/services/api";
 import { userKeys } from "@/services/query-key-factory";
 import { usersQueryOptions } from "@/services/query-options";
-import { createUser } from "@/services/server-fn";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -16,7 +16,15 @@ function RouteComponent() {
 	const { data } = useSuspenseQuery(usersQueryOptions());
 
 	async function formAction(formData: FormData) {
-		await createUser({ data: formData });
+		const username = formData.get("username");
+		const email = formData.get("email");
+		const res = await createUser({
+			data: {
+				username,
+				email,
+			},
+		});
+		console.log(res);
 		queryClient.invalidateQueries({
 			queryKey: userKeys.all,
 		});
