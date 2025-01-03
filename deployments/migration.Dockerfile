@@ -8,4 +8,4 @@ RUN pnpm add drizzle-orm pg tsx dotenv
 COPY ./apps/server/production-migrate.ts .
 COPY ./apps/server/migrations ./migrations
 
-CMD ["tsx", "production-migrate.ts"]
+CMD ["pnpm", "tsx", "production-migrate.ts"]
