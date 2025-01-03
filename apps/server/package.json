@@ -1,7 +1,10 @@
 {
 	"name": "@woben/server",
+	"type": "module",
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
+		"start": "bun run src/index.ts",
+		"build": "bun build src/index.ts --target bun --outdir ./build --minify",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},

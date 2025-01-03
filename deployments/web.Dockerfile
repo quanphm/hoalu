@@ -4,7 +4,7 @@ WORKDIR /woben
 FROM base AS turbo
 RUN bun install -g turbo
 COPY . .
-RUN turbo prune @woben/app --docker
+RUN turbo prune @woben/web --docker
 
 FROM base AS build
 RUN set -eu; \
@@ -14,14 +14,17 @@ RUN set -eu; \
 COPY --from=turbo /woben/out/json/ .
 RUN bun install
 COPY --from=turbo /woben/out/full/ .
-RUN bun run build --filter=@woben/app...
+RUN bun run build --filter=@woben/web...
 
 FROM base AS runner
+WORKDIR /web
+
 RUN addgroup --system --gid 1001 woben
 RUN adduser --system --uid 1001 woben
-USER woben
 
-COPY --from=build --chown=woben:woben /woben/platforms/app/.output .
+COPY --from=build --chown=woben:woben /woben/apps/web/.output .
 
 EXPOSE 3000
+USER woben
+
 CMD ["bun", "server/index.mjs"]
