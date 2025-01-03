@@ -30,16 +30,30 @@ services:
     depends_on:
       - database
 
-  app:
-    container_name: woben-app
+  server:
+    container_name: woben-server
     build:
       context: ../
-      dockerfile: ./deployments/app.Dockerfile
+      dockerfile: ./deployments/server.Dockerfile
     environment:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
+    restart: always
+    networks:
+      - woben_network
+    depends_on:
+      - database
+      - electric
+
+  app:
+    container_name: woben-web
+    build:
+      context: ../
+      dockerfile: ./deployments/web.Dockerfile
+    environment:
+      - API_URL=${API_URL}
     restart: always
     networks:
       - woben_network
@@ -65,7 +79,10 @@ services:
       context: ../
       dockerfile: ./deployments/migration.Dockerfile
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
     restart: on-failure
     networks:
       - woben_network
