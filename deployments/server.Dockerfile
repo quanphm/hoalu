@@ -1,8 +1,11 @@
-FROM oven/bun:1 AS base
+FROM node:23-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 WORKDIR /woben
 
 FROM base AS turbo
-RUN bun install -g turbo
+RUN pnpm install -g turbo
 COPY . .
 RUN turbo prune @woben/server --docker
 
@@ -12,9 +15,9 @@ RUN set -eu; \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 gcompat
 
 COPY --from=turbo /woben/out/json/ .
-RUN bun install
+RUN pnpm install
 COPY --from=turbo /woben/out/full/ .
-RUN bun run build --filter=@woben/server...
+RUN pnpm run build --filter=@woben/server...
 
 FROM base AS runner
 WORKDIR /server
@@ -27,5 +30,5 @@ COPY --from=build --chown=hono:nodejs /woben/apps/server/build .
 USER hono
 EXPOSE 3000
 
-CMD ["bun", "index.js"]
+CMD ["node", "index.js"]
 

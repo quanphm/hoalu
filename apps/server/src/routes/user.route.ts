@@ -1,7 +1,7 @@
 import { vValidator } from "@hono/valibot-validator";
 import { generateId } from "@woben/common";
 import { Hono } from "hono";
-import { DatabaseError } from "pg";
+import pg from "pg";
 import * as v from "valibot";
 import { db } from "../db";
 import { userTable } from "../db/schema";
@@ -59,7 +59,7 @@ export const usersRoute = new Hono()
 					});
 				return c.json({ ok: true, data: result[0] }, 201);
 			} catch (err) {
-				if (err instanceof DatabaseError) {
+				if (err instanceof pg.DatabaseError) {
 					return c.json({ ok: false, message: err.message }, 400);
 				}
 				return c.json({ ok: false, message: "unknown error" }, 400);
