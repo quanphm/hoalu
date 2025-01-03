@@ -3,6 +3,7 @@ import { userKeys } from "@/services/query-key-factory";
 import { usersQueryOptions } from "@/services/query-options";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useFormStatus } from "react-dom";
 
 export const Route = createFileRoute("/")({
 	loader: async ({ context }) => {
@@ -18,16 +19,19 @@ function RouteComponent() {
 	async function formAction(formData: FormData) {
 		const username = formData.get("username");
 		const email = formData.get("email");
-		const res = await createUser({
+
+		if (!username || !email) {
+			throw new Error("username or email can not be empty");
+		}
+
+		await createUser({
 			data: {
-				username,
-				email,
+				username: username.toString(),
+				email: email.toString(),
 			},
 		});
-		console.log(res);
-		queryClient.invalidateQueries({
-			queryKey: userKeys.all,
-		});
+
+		queryClient.invalidateQueries({ queryKey: userKeys.all });
 	}
 
 	return (
@@ -37,10 +41,21 @@ function RouteComponent() {
 			))}
 
 			<form action={formAction}>
-				<input name="username" />
-				<input name="email" />
-				<button type="submit">Submit</button>
+				<label htmlFor="username">username</label>
+				<input id="username" name="username" autoComplete="off" />
+				<label htmlFor="email">email</label>
+				<input id="email" name="email" autoComplete="off" />
+				<Submit />
 			</form>
 		</div>
+	);
+}
+
+function Submit() {
+	const { pending } = useFormStatus();
+	return (
+		<button type="submit" disabled={pending}>
+			{pending ? "Submitting..." : "Submit"}
+		</button>
 	);
 }

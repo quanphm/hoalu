@@ -1,4 +1,4 @@
 import type { ServerRoutes } from "@woben/server";
-import { hc } from "hono/client";
+import { hc as honoClient } from "hono/client";
 
-export const honoClient = hc<ServerRoutes>("http://localhost:3000/");
+export const hc = honoClient<ServerRoutes>("http://localhost:3000/");

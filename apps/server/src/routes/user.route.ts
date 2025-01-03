@@ -46,12 +46,18 @@ export const usersRoute = new Hono()
 			const userReq = await c.req.json();
 			const publicId = generateId("user");
 			try {
-				await db.insert(userTable).values({
-					public_id: publicId,
-					username: userReq.username,
-					email: userReq.email,
-				});
-				return c.json({ ok: true }, 201);
+				const result = await db
+					.insert(userTable)
+					.values({
+						public_id: publicId,
+						username: userReq.username,
+						email: userReq.email,
+					})
+					.returning({
+						id: userTable.id,
+						public_id: userTable.public_id,
+					});
+				return c.json({ ok: true, data: result[0] }, 201);
 			} catch (err) {
 				if (err instanceof DatabaseError) {
 					return c.json({ ok: false, message: err.message }, 400);

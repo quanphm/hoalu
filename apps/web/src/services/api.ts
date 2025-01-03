@@ -2,14 +2,14 @@
  * @see https://tanstack.com/router/latest/docs/framework/react/start/server-functions
  */
 
-import { honoClient } from "@/utils/http-client";
+import { hc } from "@/utils/http-client";
 import { createServerFn } from "@tanstack/start";
 import * as v from "valibot";
 
 export const fetchUsers = createServerFn({ method: "GET" }).handler(async () => {
-	const response = await honoClient.api.users.$get();
-	const result = await response.json();
-	return result.data;
+	const response = await hc.api.users.$get();
+	const { data } = await response.json();
+	return data;
 });
 
 export const createUser = createServerFn()
@@ -20,11 +20,18 @@ export const createUser = createServerFn()
 		}),
 	)
 	.handler(async ({ data }) => {
-		const result = await honoClient.api.users.$post({
+		const response = await hc.api.users.$post({
 			json: {
 				username: data.username,
 				email: data.email,
 			},
 		});
-		return await result.json();
+
+		if (response.status === 400) {
+			const result = await response.json();
+			throw new Error(result.message);
+		}
+
+		const result = await response.json();
+		return result.data;
 	});
