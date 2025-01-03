@@ -2,7 +2,7 @@ FROM node:23-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
-WORKDIR /woben
+WORKDIR /repo
 
 FROM base AS turbo
 RUN pnpm install -g turbo
@@ -10,13 +10,13 @@ COPY . .
 RUN turbo prune @woben/web --docker
 
 FROM base AS build
-RUN set -eu; \
-    apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+RUN apk update
+RUN apk add --no-cache libc6-compat gcompat
+WORKDIR /repo
 
-COPY --from=turbo /woben/out/json/ .
+COPY --from=turbo /repo/out/json/ .
 RUN pnpm install
-COPY --from=turbo /woben/out/full/ .
+COPY --from=turbo /repo/out/full/ .
 RUN pnpm run build --filter=@woben/web...
 
 FROM base AS runner
@@ -25,7 +25,7 @@ WORKDIR /web
 RUN addgroup --system --gid 1001 woben
 RUN adduser --system --uid 1001 woben
 
-COPY --from=build --chown=woben:woben /woben/apps/web/.output .
+COPY --from=build --chown=woben:woben /repo/apps/web/.output .
 
 EXPOSE 3000
 USER woben
