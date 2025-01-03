@@ -16,6 +16,7 @@
 		"@tanstack/start": "^1.92.11",
 		"@woben/common": "workspace:*",
 		"@woben/ui": "workspace:*",
+		"dotenv": "^16.4.7",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"redaxios": "^0.5.1",
