@@ -10,9 +10,8 @@ COPY . .
 RUN turbo prune @woben/server --docker
 
 FROM base AS build
-RUN set -eu; \
-    apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 gcompat
+RUN apk update
+RUN apk add --no-cache libc6-compat
 
 COPY --from=turbo /woben/out/json/ .
 RUN pnpm install
