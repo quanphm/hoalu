@@ -58,7 +58,7 @@ services:
       - traefik.http.routers.woben.tls.domains[0].sans=*.local.${DOMAIN}
       - traefik.http.routers.woben.middlewares=internal-gateway@file
       - traefik.http.routers.woben.service=woben
-      - traefik.http.services.woben.loadbalancer.server.port=3000
+      - traefik.http.services.woben.loadbalancer.server.port=8080
 
   migration:
     container_name: woben-migration
