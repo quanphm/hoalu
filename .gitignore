@@ -26,4 +26,6 @@ npm-debug.log*
 *.pem
 
 # data
-pgdata
+data
+data/postgresql
+data/electric

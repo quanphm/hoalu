@@ -3,27 +3,30 @@ services:
     container_name: woben-db
     image: postgres:16-alpine
     restart: always
-    volumes:
-      - ../pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGDATA=/var/lib/postgresql/data/woben-data
     command:
       - -c
       - listen_addresses=*
       - -c
       - wal_level=logical
+    volumes:
+      - ./data/postgresql/data:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric
     image: electricsql/electric
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
+      - ELECTRIC_PORT=4000
     ports:
-      - 4000:3000
+      - 4000:4000
     depends_on:
       - database
+    volumes:
+      - ./data/electric/persistent:/app/persistent
