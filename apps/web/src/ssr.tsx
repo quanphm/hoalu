@@ -3,6 +3,9 @@
 import { getRouterManifest } from "@tanstack/start/router-manifest";
 import { createStartHandler, defaultStreamHandler } from "@tanstack/start/server";
 import { createRouter } from "./router";
+import { verifyEnv } from "./utils/env";
+
+verifyEnv();
 
 export default createStartHandler({
 	createRouter,

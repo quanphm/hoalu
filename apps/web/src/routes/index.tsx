@@ -1,12 +1,19 @@
 import { createUser } from "@/services/api";
 import { userKeys } from "@/services/query-key-factory";
 import { usersQueryOptions } from "@/services/query-options";
+import { getShapeStream } from "@electric-sql/react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useFormStatus } from "react-dom";
 
 export const Route = createFileRoute("/")({
 	loader: async ({ context }) => {
+		const usersStream = getShapeStream({
+			url: new URL("/v1/shape", import.meta.env.VITE_ELECTRIC_URL).href,
+			params: {
+				table: "user",
+			},
+		});
 		await context.queryClient.ensureQueryData(usersQueryOptions());
 	},
 	component: RouteComponent,
@@ -14,7 +21,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const queryClient = useQueryClient();
-	const { data } = useSuspenseQuery(usersQueryOptions());
+	const { data: users } = useSuspenseQuery(usersQueryOptions());
 
 	async function formAction(formData: FormData) {
 		const username = formData.get("username");
@@ -36,7 +43,7 @@ function RouteComponent() {
 
 	return (
 		<div>
-			{data.map((u: any) => (
+			{users.map((u) => (
 				<p key={u.id}>{u.username}</p>
 			))}
 
