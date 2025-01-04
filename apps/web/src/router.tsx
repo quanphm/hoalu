@@ -4,21 +4,14 @@ import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { DefaultCatchBoundary } from "./components/default-catch-boundary";
 import { routeTree } from "./routeTree.gen";
 
-export function createRouter() {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-				// With SSR, we usually want to set some default staleTime
-				// above 0 to avoid refetching immediately on the client
-				staleTime: 60 * 1000,
-			},
-		},
-	});
+export const queryClient = new QueryClient();
 
+export function createRouter() {
 	const router = createTanStackRouter({
 		routeTree,
 		context: { queryClient },
 		defaultPreload: "intent",
+		defaultPreloadStaleTime: 0,
 		defaultErrorComponent: DefaultCatchBoundary,
 	});
 
@@ -39,24 +32,11 @@ export function createRouter() {
 		}
 	}
 
-	// expose router and query client to window for use outside React (e.g. for Better Auth)
-	if (typeof window !== "undefined") {
-		window.getRouter = () => router;
-		window.getQueryClient = () => queryClient;
-	}
-
 	return routerWithQueryClient(router, queryClient);
 }
 
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: ReturnType<typeof createRouter>;
-	}
-}
-
-declare global {
-	interface Window {
-		getRouter: () => ReturnType<typeof createRouter>;
-		getQueryClient: () => QueryClient;
 	}
 }

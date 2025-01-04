@@ -5,7 +5,9 @@
 		"build": "turbo build",
 		"dev": "turbo dev --parallel",
 		"lint": "turbo lint",
-		"format": "turbo format"
+		"format": "turbo format",
+		"server": "pnpm --filter ./apps/server",
+		"web": "pnpm --filter ./apps/web"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^1.9.3",

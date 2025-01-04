@@ -1,5 +1,5 @@
 {
-	"extends": "@woben/tsconfig/vite.json",
+	"extends": "@ltm/tsconfig/vite.json",
 	"files": [],
 	"references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

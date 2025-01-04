@@ -1,11 +1,16 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
+import { verifyEnv } from "./env";
 import { usersRoute } from "./routes/user.route";
+import { cors } from "hono/cors";
+
+verifyEnv();
 
 export const app = new Hono();
 
 app.use(logger());
+app.use(cors());
 
 app.get("/", (c) => c.text("Welcome to Woben API"));
 app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));

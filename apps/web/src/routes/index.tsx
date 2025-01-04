@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const queryClient = useQueryClient();
-	const { data } = useSuspenseQuery(usersQueryOptions());
+	const { data: users } = useSuspenseQuery(usersQueryOptions());
 
 	async function formAction(formData: FormData) {
 		const username = formData.get("username");
@@ -25,10 +25,8 @@ function RouteComponent() {
 		}
 
 		await createUser({
-			data: {
-				username: username.toString(),
-				email: email.toString(),
-			},
+			username: username.toString(),
+			email: email.toString(),
 		});
 
 		queryClient.invalidateQueries({ queryKey: userKeys.all });
@@ -36,7 +34,7 @@ function RouteComponent() {
 
 	return (
 		<div>
-			{data.map((u: any) => (
+			{users.map((u) => (
 				<p key={u.id}>{u.username}</p>
 			))}
 
