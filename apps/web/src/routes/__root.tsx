@@ -4,7 +4,6 @@ import { seo } from "@/utils/seo";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
-import { Meta, Scripts } from "@tanstack/start";
 import globalCss from "@woben/ui/global.css?url";
 import { lazy } from "react";
 
@@ -70,18 +69,11 @@ function ErrorComponent(props: ErrorComponentProps) {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html>
-			<head>
-				<Meta />
-			</head>
-			<body>
-				{children}
-				<ScrollRestoration />
-				<Scripts />
-
-				<QueryDevtools buttonPosition="top-right" />
-				<RouterDevtools position="bottom-right" />
-			</body>
-		</html>
+		<>
+			{children}
+			<ScrollRestoration />
+			<QueryDevtools buttonPosition="top-right" />
+			<RouterDevtools position="bottom-right" />
+		</>
 	);
 }

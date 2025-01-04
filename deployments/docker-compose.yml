@@ -18,20 +18,6 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
-  electric:
-    container_name: woben-electric
-    image: electricsql/electric
-    restart: always
-    networks:
-      - woben_network
-    environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
-      - ELECTRIC_PORT=4000
-    depends_on:
-      - database
-    volumes:
-      - electric_data:/app/persistent
-
   server:
     container_name: woben-server
     build:
@@ -47,7 +33,6 @@ services:
       - woben_network
     depends_on:
       - database
-      - electric
 
   web:
     container_name: woben-web
@@ -62,7 +47,6 @@ services:
       - traefik_network
     depends_on:
       - database
-      - electric
       - server
     labels:
       - traefik.enable=true
@@ -94,8 +78,6 @@ services:
 
 volumes:
   pg_data:
-    driver: local
-  electric_data:
     driver: local
 
 networks:

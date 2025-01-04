@@ -25,7 +25,7 @@ WORKDIR /server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 hono
 
-COPY --from=build --chown=hono:nodejs /repo/apps/server/build .
+COPY --from=build --chown=hono:nodejs /repo/apps/server/dist .
 
 EXPOSE 3000
 USER hono

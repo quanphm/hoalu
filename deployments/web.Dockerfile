@@ -19,15 +19,14 @@ RUN pnpm install
 COPY --from=turbo /repo/out/full/ .
 RUN pnpm run build --filter=@woben/web...
 
-FROM base AS runner
-WORKDIR /web
-
+FROM nginx:1.25.4-alpine-slim AS runner
 RUN addgroup --system --gid 1001 woben
 RUN adduser --system --uid 1001 woben
 
-COPY --from=build --chown=woben:woben /repo/apps/web/.output .
+COPY --from=build --chown=woben:woben /repo/apps/web/dist /usr/share/nginx/html
+COPY --from=build --chown=woben:woben /repo/apps/web/nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 3000
+EXPOSE 80
 USER woben
 
-CMD ["node", "server/index.mjs"]
+

@@ -1,0 +1,13 @@
+{
+	"extends": "@woben/tsconfig/vite.json",
+	"compilerOptions": {
+		"strict": true,
+		"jsx": "react-jsx",
+		"allowJs": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		}
+	},
+	"include": ["src", "tailwind.config.ts"]
+}

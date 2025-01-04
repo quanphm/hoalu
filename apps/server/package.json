@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
-		"build": "esbuild src/index.ts --bundle --platform=node --minify --outfile=build/index.js",
+		"build": "esbuild src/index.ts --bundle --platform=node --minify --outfile=dist/index.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},
