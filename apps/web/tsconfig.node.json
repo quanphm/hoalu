@@ -1,10 +1,10 @@
 {
-  "extends": "@woben/tsconfig/vite.json",
-  "compilerOptions": {
-    "lib": ["ES2023"],
-    "moduleResolution": "bundler",
-    "moduleDetection": "force",
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["vite.config.ts"]
+	"extends": "@woben/tsconfig/vite.json",
+	"compilerOptions": {
+		"lib": ["ES2023"],
+		"moduleResolution": "bundler",
+		"moduleDetection": "force",
+		"noFallthroughCasesInSwitch": true
+	},
+	"include": ["vite.config.ts"]
 }

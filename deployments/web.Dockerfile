@@ -3,9 +3,6 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-ARG PUBLIC_API_URL
-ENV PUBLIC_API_URL=$PUBLIC_API_URL
-
 WORKDIR /repo
 
 FROM base AS turbo
@@ -21,6 +18,11 @@ WORKDIR /repo
 COPY --from=turbo /repo/out/json/ .
 RUN pnpm install
 COPY --from=turbo /repo/out/full/ .
+
+ARG PUBLIC_API_URL
+RUN printf "PUBLIC_API_URL=%s" \
+"${PUBLIC_API_URL}" > /repo/apps/web/.env
+
 RUN pnpm run build --filter=@woben/web...
 
 FROM nginx:alpine
@@ -28,5 +30,3 @@ COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
 COPY --from=build /repo/apps/web/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
-
-
