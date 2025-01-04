@@ -6,9 +6,7 @@ const PublicEnvSchema = v.object({
 });
 
 export function verifyEnv() {
-	const result = validateEnv(PublicEnvSchema, import.meta.env);
-	const total = Object.keys(result).length;
-	console.info(`Environment variables parsed successfully (${total} variables)`);
+	validateEnv(PublicEnvSchema, import.meta.env);
 }
 
 interface ViteBuiltInEnv {
