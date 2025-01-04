@@ -39,8 +39,10 @@ services:
     build:
       context: ../
       dockerfile: ./deployments/web.Dockerfile
-    environment:
-      - PUBLIC_API_URL=${PUBLIC_API_URL}
+      args:
+        - PUBLIC_API_URL=${PUBLIC_API_URL}
+    # environment:
+    #   - PUBLIC_API_URL=${PUBLIC_API_URL}
     restart: always
     networks:
       - woben_network

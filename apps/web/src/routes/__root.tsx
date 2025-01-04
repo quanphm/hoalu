@@ -1,6 +1,5 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
-import { seo } from "@/utils/seo";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
@@ -27,18 +26,6 @@ export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
 }>()({
 	head: () => ({
-		meta: [
-			{
-				charSet: "utf-8",
-			},
-			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1",
-			},
-			...seo({
-				title: "Woben | The Everyday Digital Craftsman's Space",
-			}),
-		],
 		links: [
 			{
 				rel: "stylesheet",

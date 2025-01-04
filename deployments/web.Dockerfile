@@ -2,6 +2,10 @@ FROM node:23-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+
+ARG PUBLIC_API_URL
+ENV PUBLIC_API_URL=$PUBLIC_API_URL
+
 WORKDIR /repo
 
 FROM base AS turbo
@@ -19,9 +23,10 @@ RUN pnpm install
 COPY --from=turbo /repo/out/full/ .
 RUN pnpm run build --filter=@woben/web...
 
-FROM nginx:1.25.4-alpine-slim AS runner
+FROM nginx:alpine
 COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
 COPY --from=build /repo/apps/web/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]
 
 
