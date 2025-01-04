@@ -31,4 +31,3 @@ EXPOSE 3000
 USER hono
 
 CMD ["node", "index.js"]
-
