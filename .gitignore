@@ -24,8 +24,3 @@ npm-debug.log*
 # misc
 .DS_Store
 *.pem
-
-# data
-data
-data/postgresql
-data/electric
