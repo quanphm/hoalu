@@ -11,14 +11,11 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      - PGDATA=/var/lib/postgresql/data/woben-data
     command:
       - -c
       - listen_addresses=*
       - -c
       - wal_level=logical
-    volumes:
-      - ./data/postgresql/data:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric
@@ -30,5 +27,3 @@ services:
       - 4000:4000
     depends_on:
       - database
-    volumes:
-      - ./data/electric/persistent:/app/persistent
