@@ -1,3 +1,5 @@
+name: woben
+
 services:
   database:
     container_name: woben-db

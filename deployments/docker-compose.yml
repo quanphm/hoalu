@@ -1,3 +1,5 @@
+name: woben
+
 services:
   database:
     container_name: woben-db
@@ -47,7 +49,7 @@ services:
       - database
       - electric
 
-  app:
+  web:
     container_name: woben-web
     build:
       context: ../
@@ -91,9 +93,9 @@ services:
       - database
 
 volumes:
-  woben_pg_data:
+  pg_data:
     driver: local
-  woben_electric_data:
+  electric_data:
     driver: local
 
 networks:
