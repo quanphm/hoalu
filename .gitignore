@@ -27,5 +27,5 @@ npm-debug.log*
 
 # data
 data
-data/pg-data
-data/electric-data
+data/postgresql
+data/electric
