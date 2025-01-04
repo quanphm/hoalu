@@ -9,16 +9,13 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGDATA=/var/lib/postgresql/data/woben-data
     command:
       - "postgres"
       - "-c"
       - "wal_level=logical"
-    # healthcheck:
-    #   test: pg_isready --dbname='${DB_NAME}' --username='${DB_USER}'
-    #   interval: 5m
     volumes:
-      - ../pgdata:/var/lib/postgresql/data
+      - ./data/postgresql/data:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric
@@ -28,8 +25,11 @@ services:
       - woben_network
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
+      - ELECTRIC_PORT=4000
     depends_on:
       - database
+    volumes:
+      - ./data/electric/persistent:/app/persistent
 
   server:
     container_name: woben-server
