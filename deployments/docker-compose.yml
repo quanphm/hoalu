@@ -16,7 +16,7 @@ services:
       - "-c"
       - "wal_level=logical"
     volumes:
-      - woben_pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric
@@ -30,7 +30,7 @@ services:
     depends_on:
       - database
     volumes:
-      - woben_electric_data:/app/persistent
+      - electric_data:/app/persistent
 
   server:
     container_name: woben-server
