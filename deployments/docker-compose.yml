@@ -1,7 +1,7 @@
 services:
   database:
     container_name: woben-db
-    image: postgres:16
+    image: postgres:16-alpine
     restart: always
     networks:
       - woben_network
@@ -9,13 +9,12 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      - PGDATA=/var/lib/postgresql/data/woben-data
     command:
       - "postgres"
       - "-c"
       - "wal_level=logical"
     volumes:
-      - ./data/postgresql/data:/var/lib/postgresql/data
+      - woben_pg_data:/var/lib/postgresql/data
 
   electric:
     container_name: woben-electric
@@ -29,7 +28,7 @@ services:
     depends_on:
       - database
     volumes:
-      - ./data/electric/persistent:/app/persistent
+      - woben_electric_data:/app/persistent
 
   server:
     container_name: woben-server
@@ -90,6 +89,12 @@ services:
       - woben_network
     depends_on:
       - database
+
+volumes:
+  woben_pg_data:
+    driver: local
+  woben_electric_data:
+    driver: local
 
 networks:
   woben_network:
