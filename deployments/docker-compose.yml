@@ -35,7 +35,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben-sync.entrypoints=websecure
-      - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}/sync`)
+      - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/sync`)
       - traefik.http.routers.woben-sync.tls=true
       - traefik.http.routers.woben-sync.tls.certresolver=cloudflare
       - traefik.http.routers.woben-sync.tls.domains[0].main=local.${DOMAIN}
@@ -63,7 +63,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben-server.entrypoints=websecure
-      - traefik.http.routers.woben-server.rule=Host(`woben.local.${DOMAIN}/api`)
+      - traefik.http.routers.woben-server.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.routers.woben-server.tls=true
       - traefik.http.routers.woben-server.tls.certresolver=cloudflare
       - traefik.http.routers.woben-server.tls.domains[0].main=local.${DOMAIN}
