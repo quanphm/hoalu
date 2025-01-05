@@ -36,11 +36,13 @@ services:
       - traefik.enable=true
       - traefik.http.routers.woben-sync.entrypoints=websecure
       - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/sync`)
+      - traefik.http.middlewares.strip-path-prefix.stripprefix.prefixes=/sync
       - traefik.http.routers.woben-sync.tls=true
       - traefik.http.routers.woben-sync.tls.certresolver=cloudflare
       - traefik.http.routers.woben-sync.tls.domains[0].main=local.${DOMAIN}
       - traefik.http.routers.woben-sync.tls.domains[0].sans=*.local.${DOMAIN}
       - traefik.http.routers.woben-sync.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-sync.middlewares=strip-path-prefix
       - traefik.http.routers.woben-sync.service=woben-sync
       - traefik.http.services.woben-sync.loadbalancer.server.port=4000
 
@@ -64,11 +66,13 @@ services:
       - traefik.enable=true
       - traefik.http.routers.woben-server.entrypoints=websecure
       - traefik.http.routers.woben-server.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.middlewares.strip-path-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.woben-server.tls=true
       - traefik.http.routers.woben-server.tls.certresolver=cloudflare
       - traefik.http.routers.woben-server.tls.domains[0].main=local.${DOMAIN}
       - traefik.http.routers.woben-server.tls.domains[0].sans=*.local.${DOMAIN}
       - traefik.http.routers.woben-server.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-server.middlewares=strip-path-prefix
       - traefik.http.routers.woben-server.service=woben-server
       - traefik.http.services.woben-server.loadbalancer.server.port=3000
 

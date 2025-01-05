@@ -72,6 +72,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@electric-sql/react':
+        specifier: 1.0.0-beta.2
+        version: 1.0.0-beta.2(react@19.0.0)
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.62.11(react@19.0.0)
@@ -93,6 +96,9 @@ importers:
       '@woben/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      hono:
+        specifier: ^4.6.15
+        version: 4.6.15
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -127,9 +133,6 @@ importers:
       '@woben/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      hono:
-        specifier: ^4.6.15
-        version: 4.6.15
       vite:
         specifier: ^6.0.7
         version: 6.0.7(@types/node@22.10.5)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
@@ -805,6 +808,17 @@ packages:
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
+
+  '@electric-sql/client@1.0.0-beta.2':
+    resolution: {integrity: sha512-JbDOI9KhH+JuVOp1j4WbgkUtHeH7DUiPTWCxD1BLepbzA+xU1DU0BCQwh0xxBQXrIgddddzot5bumHqSj1yMhA==}
+
+  '@electric-sql/react@1.0.0-beta.2':
+    resolution: {integrity: sha512-iqheKhqpQqcm6mlgmdL4n1pqNS2c9ZlRaU4dJnXO4SXpPx37YNyXwzrh6Rtfi5LYzm8Jd0/Oizy8YuGnWTHUkA==}
+    peerDependencies:
+      react: ^18.3.1
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
@@ -4614,6 +4628,17 @@ snapshots:
     optional: true
 
   '@drizzle-team/brocli@0.10.2': {}
+
+  '@electric-sql/client@1.0.0-beta.2':
+    optionalDependencies:
+      '@rollup/rollup-darwin-arm64': 4.29.1
+
+  '@electric-sql/react@1.0.0-beta.2(react@19.0.0)':
+    dependencies:
+      '@electric-sql/client': 1.0.0-beta.2
+      use-sync-external-store: 1.4.0(react@19.0.0)
+    optionalDependencies:
+      react: 19.0.0
 
   '@esbuild-kit/core-utils@3.3.2':
     dependencies:
