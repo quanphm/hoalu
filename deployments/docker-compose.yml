@@ -18,6 +18,32 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  electric:
+    container_name: woben-electric
+    image: electricsql/electric
+    restart: always
+    networks:
+      - woben_network
+      - traefik_network
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
+      - ELECTRIC_PORT=4000
+    depends_on:
+      - database
+    volumes:
+      - electric_data:/app/persistent
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.woben-sync.entrypoints=websecure
+      - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}/sync`)
+      - traefik.http.routers.woben-sync.tls=true
+      - traefik.http.routers.woben-sync.tls.certresolver=cloudflare
+      - traefik.http.routers.woben-sync.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben-sync.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben-sync.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-sync.service=woben-sync
+      - traefik.http.services.woben-sync.loadbalancer.server.port=4000
+
   server:
     container_name: woben-server
     build:
@@ -31,8 +57,20 @@ services:
     restart: always
     networks:
       - woben_network
+      - traefik_network
     depends_on:
       - database
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.woben-server.entrypoints=websecure
+      - traefik.http.routers.woben-server.rule=Host(`woben.local.${DOMAIN}/api`)
+      - traefik.http.routers.woben-server.tls=true
+      - traefik.http.routers.woben-server.tls.certresolver=cloudflare
+      - traefik.http.routers.woben-server.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben-server.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben-server.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-server.service=woben-server
+      - traefik.http.services.woben-server.loadbalancer.server.port=3000
 
   web:
     container_name: woben-web
@@ -41,26 +79,26 @@ services:
       dockerfile: ./deployments/web.Dockerfile
       args:
         - PUBLIC_API_URL=${PUBLIC_API_URL}
-    # environment:
-    #   - PUBLIC_API_URL=${PUBLIC_API_URL}
+        - PUBLIC_SYNC_URL=${PUBLIC_SYNC_URL}
     restart: always
     networks:
       - woben_network
       - traefik_network
     depends_on:
       - database
+      - electric
       - server
     labels:
       - traefik.enable=true
-      - traefik.http.routers.woben.entrypoints=websecure
-      - traefik.http.routers.woben.rule=Host(`woben.local.${DOMAIN}`)
-      - traefik.http.routers.woben.tls=true
-      - traefik.http.routers.woben.tls.certresolver=cloudflare
-      - traefik.http.routers.woben.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben.middlewares=internal-gateway@file
-      - traefik.http.routers.woben.service=woben
-      - traefik.http.services.woben.loadbalancer.server.port=8080
+      - traefik.http.routers.woben-web.entrypoints=websecure
+      - traefik.http.routers.woben-web.rule=Host(`woben.local.${DOMAIN}`)
+      - traefik.http.routers.woben-web.tls=true
+      - traefik.http.routers.woben-web.tls.certresolver=cloudflare
+      - traefik.http.routers.woben-web.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben-web.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben-web.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-web.service=woben-web
+      - traefik.http.services.woben-web.loadbalancer.server.port=8080
 
   migration:
     container_name: woben-migration
@@ -80,6 +118,8 @@ services:
 
 volumes:
   pg_data:
+    driver: local
+  electric_data:
     driver: local
 
 networks:

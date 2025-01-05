@@ -20,8 +20,12 @@ RUN pnpm install
 COPY --from=turbo /repo/out/full/ .
 
 ARG PUBLIC_API_URL
-RUN printf "PUBLIC_API_URL=%s" \
-"${PUBLIC_API_URL}" > /repo/apps/web/.env
+ARG PUBLIC_SYNC_URL
+
+RUN printf "PUBLIC_API_URL=%s\n\
+PUBLIC_SYNC_URL=%s\n" \
+"${PUBLIC_API_URL}" \ 
+"${PUBLIC_SYNC_URL}" > /repo/apps/web/.env
 
 RUN pnpm run build --filter=@woben/web...
 
