@@ -17,7 +17,7 @@ function RouteComponent() {
 	const queryClient = useQueryClient();
 	const { data: users } = useSuspenseQuery(usersQueryOptions());
 	const { data: shapeData } = useShape({
-		url: new URL("/v1/shape", import.meta.env.PUBLIC_SYNC_URL + "/").href,
+		url: new URL(import.meta.env.PUBLIC_SYNC_URL + "/v1/shape").href,
 		params: {
 			table: "user",
 		},
