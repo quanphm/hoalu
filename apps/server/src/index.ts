@@ -15,7 +15,7 @@ app.use(cors());
 app.get("/", (c) => c.text("Welcome to Woben API"));
 app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));
 
-const routes = app.basePath("/api").route("/users", usersRoute);
+const routes = app.route("/users", usersRoute);
 
 serve({
 	port: 3000,

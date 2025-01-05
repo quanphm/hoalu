@@ -8,7 +8,6 @@ const container = document.getElementById("root");
 const root = createRoot(container as HTMLElement);
 const router = createRouter();
 
-console.log(import.meta.env);
 verifyEnv();
 
 root.render(
