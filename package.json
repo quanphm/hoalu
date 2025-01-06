@@ -1,18 +1,10 @@
 {
 	"name": "woben",
 	"private": true,
-	"scripts": {
-		"build": "turbo build",
-		"dev": "turbo dev --parallel",
-		"lint": "turbo lint",
-		"format": "turbo format",
-		"server": "pnpm --filter ./apps/server",
-		"web": "pnpm --filter ./apps/web"
-	},
+	"workspaces": ["apps/*", "packages/*"],
 	"dependencies": {
 		"@biomejs/biome": "^1.9.3",
-		"turbo": "^2.3.3",
 		"typescript": "^5.7.2"
 	},
-	"packageManager": "pnpm@9.15.2"
+	"packageManager": "bun@1.1.42"
 }

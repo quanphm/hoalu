@@ -1,33 +1,30 @@
-FROM node:23-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM oven/bun:latest as base
 WORKDIR /repo
 
-FROM base AS turbo
-RUN pnpm install -g turbo
-COPY . .
-RUN turbo prune @woben/server --docker
-
-FROM base AS build
-RUN apk update
-RUN apk add --no-cache libc6-compat gcompat
+FROM base as deps
 WORKDIR /repo
+COPY package.json bun.lockb ./
+COPY apps/server/package.json ./apps/server/
+COPY apps/web/package.json ./apps/web/
+COPY packages/tsconfig/package.json ./packages/tsconfig/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/common/package.json ./packages/common/
 
-COPY --from=turbo /repo/out/json/ .
-RUN pnpm install
-COPY --from=turbo /repo/out/full/ .
-RUN pnpm run build --filter=@woben/server...
+FROM deps AS build
+WORKDIR /repo
+RUN bun install
+
+COPY apps/server ./apps/server
+COPY packages/tsconfig ./packages/tsconfig
+COPY packages/common ./packages/common
+
+WORKDIR /repo/apps/server
+RUN bun run build
 
 FROM base AS runner
 WORKDIR /server
+COPY --from=build /repo/apps/server/dist .
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 hono
-
-COPY --from=build --chown=hono:nodejs /repo/apps/server/dist .
-
+USER bun
 EXPOSE 3000
-USER hono
-
-CMD ["node", "index.js"]
+CMD ["bun", "run", "index.js"]

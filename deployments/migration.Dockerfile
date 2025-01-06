@@ -1,11 +1,9 @@
-FROM node:23-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM oven/bun:latest
 WORKDIR /migrations
 
-RUN pnpm add drizzle-orm pg tsx dotenv
+RUN bun install add drizzle-orm pg 
 COPY ./apps/server/production-migrate.ts .
 COPY ./apps/server/migrations ./migrations
 
-CMD ["pnpm", "tsx", "production-migrate.ts"]
+USER bun
+CMD ["bun", "run", "production-migrate.ts"]

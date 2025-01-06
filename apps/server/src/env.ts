@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { validateEnv } from "@woben/common/validate-env";
 import * as v from "valibot";
 

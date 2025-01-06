@@ -2,8 +2,8 @@
 	"name": "@woben/server",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
-		"build": "esbuild src/index.ts --bundle --platform=node --minify --outfile=dist/index.js",
+		"dev": "bun --watch src/index.ts",
+		"build": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},
@@ -11,10 +11,8 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"@hono/node-server": "^1.13.7",
 		"@hono/valibot-validator": "^0.5.1",
 		"@woben/common": "workspace:*",
-		"dotenv": "^16.4.7",
 		"drizzle-orm": "^0.38.3",
 		"drizzle-valibot": "^0.3.1",
 		"hono": "^4.6.15",
@@ -26,8 +24,6 @@
 		"@types/bun": "latest",
 		"@types/pg": "^8.11.10",
 		"@woben/tsconfig": "workspace:*",
-		"drizzle-kit": "^0.30.1",
-		"esbuild": "^0.24.2",
-		"tsx": "^4.19.2"
+		"drizzle-kit": "^0.30.1"
 	}
 }
