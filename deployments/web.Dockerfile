@@ -1,6 +1,8 @@
-FROM oven/bun:latest as base
+FROM oven/bun:alpine as base
 WORKDIR /repo
 
+FROM base as deps
+WORKDIR /repo
 COPY package.json bun.lockb ./
 COPY apps/server/package.json ./apps/server/
 COPY apps/web/package.json ./apps/web/
