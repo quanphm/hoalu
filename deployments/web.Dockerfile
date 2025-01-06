@@ -1,33 +1,32 @@
-FROM node:23-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-
+FROM oven/bun:latest as base
 WORKDIR /repo
 
-FROM base AS turbo
-RUN pnpm install -g turbo
-COPY . .
-RUN turbo prune @woben/web --docker
+COPY package.json bun.lockb ./
+COPY apps/server/package.json ./apps/server/
+COPY apps/web/package.json ./apps/web/
+COPY packages/tsconfig/package.json ./packages/tsconfig/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/common/package.json ./packages/common/
 
 FROM base AS build
-RUN apk update
-RUN apk add --no-cache libc6-compat gcompat
 WORKDIR /repo
+RUN bun install
 
-COPY --from=turbo /repo/out/json/ .
-RUN pnpm install
-COPY --from=turbo /repo/out/full/ .
+COPY apps/server ./apps/server
+COPY apps/web ./apps/web
+COPY packages/tsconfig ./packages/tsconfig
+COPY packages/ui ./packages/ui
+COPY packages/common ./packages/common
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_SYNC_URL
-
 RUN printf "PUBLIC_API_URL=%s\n\
 PUBLIC_SYNC_URL=%s\n" \
 "${PUBLIC_API_URL}" \ 
 "${PUBLIC_SYNC_URL}" > /repo/apps/web/.env
 
-RUN pnpm run build --filter=@woben/web...
+WORKDIR /repo/apps/web
+RUN bun run build
 
 FROM nginx:alpine
 COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
