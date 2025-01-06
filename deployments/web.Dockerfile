@@ -1,7 +1,7 @@
-FROM oven/bun:alpine as base
+FROM oven/bun:alpine AS base
 WORKDIR /repo
 
-FROM base as deps
+FROM base AS deps
 WORKDIR /repo
 COPY package.json bun.lockb ./
 COPY apps/server/package.json ./apps/server/
@@ -10,7 +10,7 @@ COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/common/package.json ./packages/common/
 
-FROM base AS build
+FROM deps AS build
 WORKDIR /repo
 RUN bun install
 

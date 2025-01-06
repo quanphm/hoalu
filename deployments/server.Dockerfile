@@ -1,7 +1,7 @@
-FROM oven/bun:alpine as base
+FROM oven/bun:alpine AS base
 WORKDIR /repo
 
-FROM base as deps
+FROM base AS deps
 WORKDIR /repo
 COPY package.json bun.lockb ./
 COPY apps/server/package.json ./apps/server/
