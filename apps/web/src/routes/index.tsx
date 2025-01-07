@@ -4,6 +4,9 @@ import { usersQueryOptions } from "@/services/query-options";
 import { useShape } from "@electric-sql/react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@woben/ui/button";
+import { Input } from "@woben/ui/input";
+import { Label } from "@woben/ui/label";
 import { useFormStatus } from "react-dom";
 
 export const Route = createFileRoute("/")({
@@ -48,10 +51,10 @@ function RouteComponent() {
 			))}
 
 			<form action={formAction}>
-				<label htmlFor="username">username</label>
-				<input id="username" name="username" autoComplete="off" />
-				<label htmlFor="email">email</label>
-				<input id="email" name="email" autoComplete="off" />
+				<Label htmlFor="username">username</Label>
+				<Input id="username" name="username" autoComplete="off" />
+				<Label htmlFor="email">email</Label>
+				<Input id="email" name="email" autoComplete="off" />
 				<Submit />
 			</form>
 		</div>
@@ -61,8 +64,8 @@ function RouteComponent() {
 function Submit() {
 	const { pending } = useFormStatus();
 	return (
-		<button type="submit" disabled={pending}>
+		<Button type="submit" disabled={pending}>
 			{pending ? "Submitting..." : "Submit"}
-		</button>
+		</Button>
 	);
 }

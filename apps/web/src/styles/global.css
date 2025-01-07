@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "@woben/ui/theme.css";
+
+@layer base {
+  * {
+    @apply box-border border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply relative antialiased bg-background text-foreground;
+    font-synthesis-weight: none;
+    font-feature-settings: tabular-nums lining-nums;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+  }
+
+  body,
+  html {
+    width: 100%;
+    min-height: 100vh;
+  }
+}
