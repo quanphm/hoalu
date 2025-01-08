@@ -7,8 +7,14 @@
 		"./utils": "./src/utils/index.ts",
 		"./hooks": "./src/hooks/index.ts",
 		"./button": "./src/components/button.tsx",
+		"./card": "./src/components/card.tsx",
 		"./input": "./src/components/input.tsx",
-		"./label": "./src/components/label.tsx"
+		"./label": "./src/components/label.tsx",
+		"./separator": "./src/components/separator.tsx",
+		"./sheet": "./src/components/sheet.tsx",
+		"./sidebar": "./src/components/sidebar.tsx",
+		"./skeleton": "./src/components/skeleton.tsx",
+		"./tooltip": "./src/components/tooltip.tsx"
 	},
 	"scripts": {
 		"lint": "biome lint",
@@ -33,10 +39,10 @@
 		"@radix-ui/react-separator": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.1",
 		"@radix-ui/react-tooltip": "^1.1.6",
+		"@woben/icons": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.0.4",
-		"lucide-react": "^0.469.0",
 		"sonner": "^1.7.1",
 		"tailwind-merge": "^2.6.0"
 	},

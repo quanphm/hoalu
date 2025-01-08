@@ -1,0 +1,13 @@
+{
+	"name": "@woben/icons",
+	"private": true,
+	"main": "./src/index.tsx",
+	"devDependencies": {
+		"@woben/tsconfig": "workspace:*",
+		"@types/react": "^19.0.0",
+		"react": "^19.0.0"
+	},
+	"dependencies": {
+		"lucide-react": "^0.460.0"
+	}
+}
