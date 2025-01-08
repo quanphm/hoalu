@@ -2,6 +2,10 @@
 	"name": "@woben/icons",
 	"private": true,
 	"main": "./src/index.tsx",
+	"exports": {
+		"./lucide": "./src/lucide/index.tsx",
+		"./pixelart": "./src/pixelart/index.tsx"
+	},
 	"devDependencies": {
 		"@woben/tsconfig": "workspace:*",
 		"@types/react": "^19.0.0",
