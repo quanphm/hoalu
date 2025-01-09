@@ -1,3 +1,6 @@
+import { createUser } from "@/services/api";
+import { userKeys } from "@/services/query-key-factory";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@woben/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@woben/ui/card";
@@ -6,6 +9,23 @@ import { Label } from "@woben/ui/label";
 import { cn } from "@woben/ui/utils";
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+	const queryClient = useQueryClient();
+
+	async function formAction(formData: FormData) {
+		const username = formData.get("username");
+		const email = formData.get("email");
+
+		if (!username || !email) {
+			throw new Error("username or email can not be empty");
+		}
+
+		await createUser({
+			username: username.toString(),
+			email: email.toString(),
+		});
+		queryClient.invalidateQueries({ queryKey: userKeys.all });
+	}
+
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
@@ -14,14 +34,18 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 					<CardDescription>Login into your Woben account</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form>
+					<form action={formAction}>
 						<div className="grid gap-6">
 							<div className="grid gap-6">
 								<div className="grid gap-2">
-									<Label htmlFor="email">Email</Label>
-									<Input id="email" type="email" required />
+									<Label htmlFor="username">Username</Label>
+									<Input id="username" name="username" required />
 								</div>
 								<div className="grid gap-2">
+									<Label htmlFor="email">Email</Label>
+									<Input id="email" name="email" type="email" required />
+								</div>
+								{/*<div className="grid gap-2">
 									<div className="flex items-center">
 										<Label htmlFor="password">Password</Label>
 										<Link to="/" className="ml-auto text-sm underline-offset-4 hover:underline">
@@ -29,9 +53,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 										</Link>
 									</div>
 									<Input id="password" type="password" required />
-								</div>
+								</div> */}
 								<Button type="submit" className="w-full">
-									Login
+									Sign up
 								</Button>
 							</div>
 							<div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">

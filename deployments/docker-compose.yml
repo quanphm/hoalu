@@ -24,7 +24,6 @@ services:
     restart: always
     networks:
       - woben_network
-      - traefik_network
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
@@ -32,19 +31,19 @@ services:
       - database
     volumes:
       - electric_data:/app/persistent
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.woben-sync.entrypoints=websecure
-      - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/sync`)
-      - traefik.http.middlewares.strip-sync-prefix.stripprefix.prefixes=/sync
-      - traefik.http.routers.woben-sync.tls=true
-      - traefik.http.routers.woben-sync.tls.certresolver=cloudflare
-      - traefik.http.routers.woben-sync.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben-sync.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben-sync.middlewares=internal-gateway@file
-      - traefik.http.routers.woben-sync.middlewares=strip-sync-prefix
-      - traefik.http.routers.woben-sync.service=woben-sync
-      - traefik.http.services.woben-sync.loadbalancer.server.port=4000
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.http.routers.woben-sync.entrypoints=websecure
+    #   - traefik.http.routers.woben-sync.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/sync`)
+    #   - traefik.http.middlewares.strip-sync-prefix.stripprefix.prefixes=/sync
+    #   - traefik.http.routers.woben-sync.tls=true
+    #   - traefik.http.routers.woben-sync.tls.certresolver=cloudflare
+    #   - traefik.http.routers.woben-sync.tls.domains[0].main=local.${DOMAIN}
+    #   - traefik.http.routers.woben-sync.tls.domains[0].sans=*.local.${DOMAIN}
+    #   - traefik.http.routers.woben-sync.middlewares=internal-gateway@file
+    #   - traefik.http.routers.woben-sync.middlewares=strip-sync-prefix
+    #   - traefik.http.routers.woben-sync.service=woben-sync
+    #   - traefik.http.services.woben-sync.loadbalancer.server.port=4000
 
   server:
     container_name: woben-server
@@ -56,6 +55,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
+      - SYNC_URL=${SYNC_URL}
     restart: always
     networks:
       - woben_network
@@ -83,7 +83,6 @@ services:
       dockerfile: ./deployments/web.Dockerfile
       args:
         - PUBLIC_API_URL=${PUBLIC_API_URL}
-        - PUBLIC_SYNC_URL=${PUBLIC_SYNC_URL}
     restart: always
     networks:
       - woben_network

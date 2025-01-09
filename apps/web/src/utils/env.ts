@@ -3,7 +3,6 @@ import * as v from "valibot";
 
 const PublicEnvSchema = v.object({
 	PUBLIC_API_URL: v.pipe(v.string(), v.url()),
-	PUBLIC_SYNC_URL: v.pipe(v.string(), v.url()),
 });
 
 export function verifyEnv() {
