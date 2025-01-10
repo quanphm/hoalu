@@ -1,4 +1,4 @@
-FROM oven/bun:alpine AS base
+FROM oven/bun:1.1.43 AS base
 WORKDIR /repo
 
 FROM base AS deps
