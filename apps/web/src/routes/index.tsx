@@ -1,5 +1,7 @@
 import { LoginForm } from "@/components/forms/login";
+import { usersQueryOptions } from "@/services/query-options";
 import { preloadShape, useShape } from "@electric-sql/react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 const userShape = () => ({
@@ -10,13 +12,17 @@ const userShape = () => ({
 });
 
 export const Route = createFileRoute("/")({
-	loader: async () => {
+	loader: async ({ context }) => {
 		preloadShape(userShape());
+		await context.queryClient.ensureQueryData(usersQueryOptions());
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { data: users } = useSuspenseQuery(usersQueryOptions());
+	console.log(users);
+
 	const { data: shapeData } = useShape<any>(userShape());
 
 	return (
