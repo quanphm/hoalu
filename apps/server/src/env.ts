@@ -6,6 +6,7 @@ const ServerEnvSchema = v.object({
 	DB_NAME: v.pipe(v.string(), v.nonEmpty()),
 	DB_USER: v.pipe(v.string(), v.nonEmpty()),
 	DB_PASSWORD: v.pipe(v.string(), v.nonEmpty()),
+	SYNC_URL: v.pipe(v.string(), v.url()),
 });
 
 export function verifyEnv() {

@@ -3,7 +3,6 @@ import { NotFound } from "@/components/not-found";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
-import globalCss from "@woben/ui/global.css?url";
 import { lazy } from "react";
 
 const RouterDevtools = import.meta.env.PROD
@@ -25,14 +24,6 @@ const QueryDevtools = import.meta.env.PROD
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
 }>()({
-	head: () => ({
-		links: [
-			{
-				rel: "stylesheet",
-				href: globalCss,
-			},
-		],
-	}),
 	errorComponent: ErrorComponent,
 	notFoundComponent: NotFound,
 	component: RootComponent,
