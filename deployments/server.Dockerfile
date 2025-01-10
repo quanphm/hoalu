@@ -8,6 +8,7 @@ COPY apps/server/package.json ./apps/server/
 COPY apps/web/package.json ./apps/web/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
+COPY packages/icons/package.json ./packages/icons/
 COPY packages/common/package.json ./packages/common/
 
 FROM deps AS build
