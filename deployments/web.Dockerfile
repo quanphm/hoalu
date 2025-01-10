@@ -8,6 +8,7 @@ COPY apps/server/package.json ./apps/server/
 COPY apps/web/package.json ./apps/web/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
+COPY packages/icons/package.json ./packages/icons/
 COPY packages/common/package.json ./packages/common/
 
 FROM deps AS build
@@ -18,6 +19,7 @@ COPY apps/server ./apps/server
 COPY apps/web ./apps/web
 COPY packages/tsconfig ./packages/tsconfig
 COPY packages/ui ./packages/ui
+COPY packages/icons ./packages/icons
 COPY packages/common ./packages/common
 
 ARG PUBLIC_API_URL
