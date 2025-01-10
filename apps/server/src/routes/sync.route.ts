@@ -1,36 +1,47 @@
 import { Hono } from "hono";
-import { timeout } from "hono/timeout";
 
-export const syncRoute = new Hono().get("/", timeout(60000), async (c) => {
-	try {
-		const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
+export const syncRoute = new Hono().get("/", async (c) => {
+	const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
 
-		const searchParams = new URL(c.req.url).searchParams;
-		searchParams.forEach((value, key) => {
-			if ([`live`, `table`, `handle`, `offset`, `cursor`].includes(key)) {
-				shapeUrl.searchParams.set(key, value);
-			}
-		});
+	const searchParams = new URL(c.req.url).searchParams;
+	searchParams.forEach((value, key) => {
+		shapeUrl.searchParams.set(key, value);
+	});
 
-		const resp = await fetch(shapeUrl.toString());
+	const electricResponse = await fetch(shapeUrl.toString());
 
-		// forward electric headers
-		const headers = new Headers(resp.headers);
-		if (resp.headers.get("content-encoding")) {
-			headers.delete("content-encoding");
-			headers.delete("content-length");
-		}
-		for (const [name, value] of headers.entries()) {
-			c.header(name, value);
-		}
-
-		if (resp.status === 204) {
-			c.status(204);
-			return c.body(null);
-		}
-		return resp;
-	} catch (error) {
-		console.error("Error proxying shape request:", error);
-		return c.json({ error: "Failed to fetch schema from Electric" }, 500);
+	if (electricResponse.status > 204) {
+		console.error("Error: ", electricResponse.status);
+		return c.json(
+			{
+				ok: false,
+			},
+			400,
+		);
 	}
+
+	const electricHeaders = new Headers(electricResponse.headers);
+
+	if (electricResponse.status === 204) {
+		electricHeaders.set("electric-up-to-date", "");
+		return c.body(null, 204, {
+			...Object.fromEntries(electricResponse.headers),
+		});
+	}
+
+	const data: any = await electricResponse.json();
+
+	if (electricHeaders.get("content-encoding")) {
+		electricHeaders.delete("content-encoding");
+		electricHeaders.delete("content-length");
+	}
+
+	const isUpToDate = data.find((d: any) => d?.headers.control === "up-to-date");
+	if (isUpToDate) {
+		electricHeaders.set("electric-up-to-date", "");
+	}
+
+	return c.json(data, 200, {
+		...Object.fromEntries(electricHeaders),
+	});
 });

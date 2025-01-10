@@ -1,3 +1,4 @@
+import type { Serve } from "bun";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -20,6 +21,7 @@ const routes = app.route("/sync", syncRoute).route("/users", usersRoute);
 export default {
 	port: 3000,
 	fetch: app.fetch,
-};
+	idleTimeout: 120,
+} satisfies Serve;
 
 export type ServerRoutes = typeof routes;
