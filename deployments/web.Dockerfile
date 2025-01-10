@@ -23,11 +23,8 @@ COPY packages/icons ./packages/icons
 COPY packages/common ./packages/common
 
 ARG PUBLIC_API_URL
-ARG PUBLIC_SYNC_URL
-RUN printf "PUBLIC_API_URL=%s\n\
-PUBLIC_SYNC_URL=%s\n" \
-"${PUBLIC_API_URL}" \ 
-"${PUBLIC_SYNC_URL}" > /repo/apps/web/.env
+RUN printf "PUBLIC_API_URL=%s\n" \
+"${PUBLIC_API_URL}" > /repo/apps/web/.env
 
 WORKDIR /repo/apps/web
 RUN bun run build
