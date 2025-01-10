@@ -3,7 +3,7 @@ import { preloadShape, useShape } from "@electric-sql/react";
 import { createFileRoute } from "@tanstack/react-router";
 
 const userShape = () => ({
-	url: "http://localhost:4000/v1/shape",
+	url: `${import.meta.env.PUBLIC_API_URL}/sync`,
 	params: {
 		table: "user",
 	},
