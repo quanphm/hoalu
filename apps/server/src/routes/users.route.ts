@@ -1,30 +1,43 @@
-import { vValidator } from "@hono/valibot-validator";
+import { AllUsersSchema, selectAllUsers } from "@/queries/user";
 import { generateId } from "@woben/common";
 import { Hono } from "hono";
+import { describeRoute } from "hono-openapi";
+import { resolver, validator } from "hono-openapi/valibot";
 import pg from "pg";
 import * as v from "valibot";
 import { db } from "../db";
 import { userTable } from "../db/schema";
 
-export const usersRoute = new Hono()
-	.get("/", async (c) => {
-		const result = await db
-			.select({
-				id: userTable.id,
-				public_id: userTable.public_id,
-				username: userTable.username,
-				email: userTable.email,
-			})
-			.from(userTable);
+const responseSchema = v.object({
+	ok: v.boolean(),
+	data: AllUsersSchema,
+});
 
-		return c.json({
-			ok: true,
-			data: result,
-		});
-	})
+export const usersRoute = new Hono()
+	.get(
+		"/",
+		describeRoute({
+			description: "Retrieve all users",
+			responses: {
+				"200": {
+					description: "Successful response",
+					content: {
+						"application/json": { schema: resolver(responseSchema) },
+					},
+				},
+			},
+		}),
+		async (c) => {
+			const result = await selectAllUsers();
+			return c.json({
+				ok: true,
+				data: result,
+			});
+		},
+	)
 	.post(
 		"/",
-		vValidator(
+		validator(
 			"json",
 			v.object({
 				username: v.pipe(v.string(), v.nonEmpty()),
