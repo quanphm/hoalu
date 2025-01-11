@@ -1,0 +1,13 @@
+{
+	"name": "@woben/furnace",
+	"description": "Utilities for Woben server - Hono",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./utils": "./src/utils/index.ts",
+		"./handlers": "./src/handlers/index.ts"
+	},
+	"peerDependencies": {
+		"hono": "^4.0.0"
+	}
+}

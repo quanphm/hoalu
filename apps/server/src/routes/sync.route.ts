@@ -1,3 +1,4 @@
+import { StatusCodes } from "@woben/furnace/utils";
 import { Hono } from "hono";
 
 export const syncRoute = new Hono().get("/", async (c) => {
@@ -16,15 +17,15 @@ export const syncRoute = new Hono().get("/", async (c) => {
 			{
 				ok: false,
 			},
-			400,
+			StatusCodes.BAD_REQUEST,
 		);
 	}
 
 	const electricHeaders = new Headers(electricResponse.headers);
 
-	if (electricResponse.status === 204) {
+	if (electricResponse.status === StatusCodes.NO_CONTENT) {
 		electricHeaders.set("electric-up-to-date", "");
-		return c.body(null, 204, {
+		return c.body(null, StatusCodes.NO_CONTENT, {
 			...Object.fromEntries(electricResponse.headers),
 		});
 	}
@@ -41,7 +42,7 @@ export const syncRoute = new Hono().get("/", async (c) => {
 		electricHeaders.set("electric-up-to-date", "");
 	}
 
-	return c.json(data, 200, {
+	return c.json(data, StatusCodes.OK, {
 		...Object.fromEntries(electricHeaders),
 	});
 });

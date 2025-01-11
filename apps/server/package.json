@@ -15,6 +15,7 @@
 		"@scalar/hono-api-reference": "^0.5.165",
 		"@valibot/to-json-schema": "^1.0.0-beta.4",
 		"@woben/common": "workspace:*",
+		"@woben/furnace": "workspace:*",
 		"drizzle-orm": "^0.38.3",
 		"hono": "^4.6.15",
 		"hono-openapi": "^0.3.1",
