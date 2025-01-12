@@ -28,7 +28,7 @@ export function configureOpenAPI(app: HonoApp) {
 			"/docs",
 			apiReference({
 				theme: "kepler",
-				spec: { url: "/openapi" },
+				spec: { url: "openapi" },
 			}),
 		);
 }
