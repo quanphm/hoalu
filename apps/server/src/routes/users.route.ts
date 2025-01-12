@@ -1,20 +1,17 @@
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { AllUsersSchema, selectAllUsers } from "@/queries/user";
+import { createHonoInstance } from "@/utils/create-app";
 import { generateId } from "@woben/common";
 import { StatusCodes } from "@woben/furnace/utils";
-import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/valibot";
 import pg from "pg";
 import * as v from "valibot";
 
-const responseSchema = v.object({
-	ok: v.boolean(),
-	data: AllUsersSchema,
-});
+const app = createHonoInstance();
 
-export const usersRoute = new Hono()
+export const usersRoute = app
 	.get(
 		"/",
 		describeRoute({
@@ -23,7 +20,14 @@ export const usersRoute = new Hono()
 				[StatusCodes.OK]: {
 					description: "Successful response",
 					content: {
-						"application/json": { schema: resolver(responseSchema) },
+						"application/json": {
+							schema: resolver(
+								v.object({
+									ok: v.boolean(),
+									data: AllUsersSchema,
+								}),
+							),
+						},
 					},
 				},
 			},

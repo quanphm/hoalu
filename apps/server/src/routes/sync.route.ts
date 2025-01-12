@@ -1,7 +1,9 @@
+import { createHonoInstance } from "@/utils/create-app";
 import { StatusCodes } from "@woben/furnace/utils";
-import { Hono } from "hono";
 
-export const syncRoute = new Hono().get("/", async (c) => {
+const app = createHonoInstance();
+
+export const syncRoute = app.get("/", async (c) => {
 	const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
 
 	const searchParams = new URL(c.req.url).searchParams;
