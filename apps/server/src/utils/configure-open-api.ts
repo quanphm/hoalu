@@ -1,7 +1,6 @@
+import type { HonoApp } from "@/types";
 import { apiReference } from "@scalar/hono-api-reference";
 import { openAPISpecs } from "hono-openapi";
-import packageJson from "../../package.json";
-import type { HonoApp } from "@/types";
 
 export function configureOpenAPI(app: HonoApp) {
 	app
@@ -12,7 +11,7 @@ export function configureOpenAPI(app: HonoApp) {
 					info: {
 						title: "Woben HTTP API",
 						description: "OpenAPI documentation",
-						version: packageJson.version,
+						version: "0.0.1",
 					},
 					servers: [
 						{ url: "http://localhost:3000", description: "Local Server" },

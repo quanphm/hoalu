@@ -1,4 +1,3 @@
-import type { ApiRoutes } from "@woben/server/types";
-import { hc } from "hono/client";
+import { hc } from "@woben/server/hc";
 
-export const apiClient = hc<ApiRoutes>(import.meta.env.PUBLIC_API_URL);
+export const apiClient = hc(import.meta.env.PUBLIC_API_URL);

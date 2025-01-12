@@ -2,12 +2,9 @@
 	"name": "woben",
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
-	"scripts": {
-		"dev": "bun --filter '*' dev"
-	},
 	"dependencies": {
 		"@biomejs/biome": "^1.9.3",
 		"typescript": "^5.7.2"
 	},
-	"packageManager": "bun@1.1.42"
+	"packageManager": "bun@1.1.43"
 }

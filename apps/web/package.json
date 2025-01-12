@@ -1,5 +1,6 @@
 {
 	"name": "@woben/web",
+	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -16,9 +17,8 @@
 		"@tanstack/react-router-with-query": "^1.92.11",
 		"@tanstack/router-devtools": "^1.92.11",
 		"@woben/common": "workspace:*",
-		"@woben/ui": "workspace:*",
 		"@woben/icons": "workspace:*",
-		"hono": "^4.6.15",
+		"@woben/ui": "workspace:*",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"valibot": "1.0.0-beta.9"
