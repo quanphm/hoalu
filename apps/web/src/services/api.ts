@@ -1,14 +1,13 @@
-import { hc } from "@/utils/http-client";
-// import * as v from "valibot";
+import { apiClient } from "@/utils/http-client";
 
 export const fetchUsers = async () => {
-	const response = await hc.users.$get();
+	const response = await apiClient.users.$get();
 	const { data } = await response.json();
 	return data;
 };
 
 export const createUser = async (payload: { username: string; email: string }) => {
-	const response = await hc.users.$post({
+	const response = await apiClient.users.$post({
 		json: {
 			username: payload.username,
 			email: payload.email,

@@ -6,6 +6,11 @@ const ServerEnvSchema = v.object({
 	DB_NAME: v.pipe(v.string(), v.nonEmpty()),
 	DB_USER: v.pipe(v.string(), v.nonEmpty()),
 	DB_PASSWORD: v.pipe(v.string(), v.nonEmpty()),
+	DOMAIN: v.pipe(v.string(), v.nonEmpty()),
+	S3_ACCESS_KEY_ID: v.pipe(v.string(), v.nonEmpty()),
+	S3_SECRET_KEY: v.pipe(v.string(), v.nonEmpty()),
+	S3_BUCKET: v.pipe(v.string(), v.nonEmpty()),
+	S3_ENDPOINT: v.pipe(v.string(), v.nonEmpty()),
 	SYNC_URL: v.pipe(v.string(), v.url()),
 });
 

@@ -1,30 +1,44 @@
-import { vValidator } from "@hono/valibot-validator";
+import { db } from "@/db";
+import { userTable } from "@/db/schema";
+import { AllUsersSchema, selectAllUsers } from "@/queries/user";
 import { generateId } from "@woben/common";
+import { StatusCodes } from "@woben/furnace/utils";
 import { Hono } from "hono";
+import { describeRoute } from "hono-openapi";
+import { resolver, validator } from "hono-openapi/valibot";
 import pg from "pg";
 import * as v from "valibot";
-import { db } from "../db";
-import { userTable } from "../db/schema";
+
+const responseSchema = v.object({
+	ok: v.boolean(),
+	data: AllUsersSchema,
+});
 
 export const usersRoute = new Hono()
-	.get("/", async (c) => {
-		const result = await db
-			.select({
-				id: userTable.id,
-				public_id: userTable.public_id,
-				username: userTable.username,
-				email: userTable.email,
-			})
-			.from(userTable);
-
-		return c.json({
-			ok: true,
-			data: result,
-		});
-	})
+	.get(
+		"/",
+		describeRoute({
+			description: "Retrieve all users",
+			responses: {
+				[StatusCodes.OK]: {
+					description: "Successful response",
+					content: {
+						"application/json": { schema: resolver(responseSchema) },
+					},
+				},
+			},
+		}),
+		async (c) => {
+			const result = await selectAllUsers();
+			return c.json({
+				ok: true,
+				data: result,
+			});
+		},
+	)
 	.post(
 		"/",
-		vValidator(
+		validator(
 			"json",
 			v.object({
 				username: v.pipe(v.string(), v.nonEmpty()),
@@ -37,14 +51,15 @@ export const usersRoute = new Hono()
 							ok: false,
 							message: "validation failed",
 						},
-						400,
+						StatusCodes.BAD_REQUEST,
 					);
 				}
 			},
 		),
 		async (c) => {
-			const userReq = await c.req.json();
+			const userReq = c.req.valid("json");
 			const publicId = generateId("user");
+
 			try {
 				const result = await db
 					.insert(userTable)
@@ -57,12 +72,12 @@ export const usersRoute = new Hono()
 						id: userTable.id,
 						public_id: userTable.public_id,
 					});
-				return c.json({ ok: true, data: result[0] }, 201);
+				return c.json({ ok: true, data: result[0] }, StatusCodes.CREATED);
 			} catch (err) {
 				if (err instanceof pg.DatabaseError) {
-					return c.json({ ok: false, message: err.message }, 400);
+					return c.json({ ok: false, message: err.message }, StatusCodes.BAD_REQUEST);
 				}
-				return c.json({ ok: false, message: "unknown error" }, 400);
+				return c.json({ ok: false, message: "unknown error" }, StatusCodes.BAD_REQUEST);
 			}
 		},
 	);

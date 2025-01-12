@@ -1,7 +1,8 @@
 {
 	"name": "@woben/common",
-	"description": "Shared common utils libs & functions",
+	"description": "Shared utilities functions for Woben server & client",
 	"private": true,
+	"type": "module",
 	"sideEffects": false,
 	"exports": {
 		".": "./src/index.ts",
