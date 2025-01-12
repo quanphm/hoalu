@@ -1,3 +1,3 @@
-import { hcWithType } from "@woben/server/hc";
+import { hc } from "@woben/server/hc";
 
-export const apiClient = hcWithType(import.meta.env.PUBLIC_API_URL);
+export const apiClient = hc(import.meta.env.PUBLIC_API_URL);
