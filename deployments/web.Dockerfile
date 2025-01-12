@@ -23,6 +23,7 @@ COPY packages/tsconfig ./packages/tsconfig
 COPY packages/ui ./packages/ui
 COPY packages/icons ./packages/icons
 COPY packages/common ./packages/common
+COPY packages/furnace ./packages/furnace
 
 ARG PUBLIC_API_URL
 RUN printf "PUBLIC_API_URL=%s\n" \
