@@ -8,7 +8,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"exports": {
-		".": "./src/index.ts"
+		"./types": "./src/types.ts"
 	},
 	"dependencies": {
 		"@hono/valibot-validator": "^0.5.2",

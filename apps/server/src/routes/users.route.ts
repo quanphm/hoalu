@@ -1,3 +1,5 @@
+import { db } from "@/db";
+import { userTable } from "@/db/schema";
 import { AllUsersSchema, selectAllUsers } from "@/queries/user";
 import { generateId } from "@woben/common";
 import { StatusCodes } from "@woben/furnace/utils";
@@ -6,8 +8,6 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/valibot";
 import pg from "pg";
 import * as v from "valibot";
-import { db } from "../db";
-import { userTable } from "../db/schema";
 
 const responseSchema = v.object({
 	ok: v.boolean(),

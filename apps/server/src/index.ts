@@ -1,6 +1,6 @@
+import { verifyEnv } from "@/utils/env";
 import type { Serve } from "bun";
-import { app, type routes } from "./app";
-import { verifyEnv } from "./env";
+import { app } from "./app";
 
 verifyEnv();
 
@@ -9,5 +9,3 @@ export default {
 	fetch: app.fetch,
 	idleTimeout: 60,
 } satisfies Serve;
-
-export type ApiRoutes = typeof routes;
