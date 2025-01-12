@@ -27,7 +27,7 @@ RUN bun run build
 
 FROM base AS runner
 WORKDIR /server
-COPY --from=build /repo/apps/server/dist .
+COPY --from=build /repo/apps/server/dist/index.js .
 
 USER bun
 EXPOSE 3000
