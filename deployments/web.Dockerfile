@@ -41,4 +41,4 @@ COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
 COPY --from=build /repo/apps/web/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off"]
+CMD ["nginx", "-g", "daemon off;"]
