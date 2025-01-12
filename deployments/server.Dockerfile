@@ -23,11 +23,11 @@ COPY packages/common ./packages/common
 COPY packages/furnace ./packages/furnace
 
 WORKDIR /repo/apps/server
-RUN bun run build
+RUN bun run build:server
 
 FROM base AS runner
 WORKDIR /server
-COPY --from=build /repo/apps/server/dist/index.js .
+COPY --from=build /repo/apps/server/dist .
 
 USER bun
 EXPOSE 3000

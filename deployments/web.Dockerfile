@@ -31,7 +31,7 @@ RUN printf "PUBLIC_API_URL=%s\n" \
 
 # build server to get `hono/client` for honoRPC import in `web`
 WORKDIR /repo/apps/server
-RUN bun run build
+RUN bun run build:types
 
 WORKDIR /repo/apps/web
 RUN bun run build
