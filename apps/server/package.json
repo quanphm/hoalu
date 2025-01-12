@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"build": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
+		"compile": "bun build --compile --minify --bytecode ./src/index.ts --outfile ./dist/app",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"
 	},

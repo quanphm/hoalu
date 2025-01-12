@@ -1,4 +1,4 @@
-FROM oven/bun:1.1.43 AS base
+FROM oven/bun:1.1.43-alpine AS base
 WORKDIR /repo
 
 FROM base AS deps
@@ -15,7 +15,7 @@ COPY packages/furnace/package.json ./packages/furnace/
 
 FROM deps AS build
 WORKDIR /repo
-RUN bun install
+RUN bun install --production
 
 COPY apps/server ./apps/server
 COPY packages/tsconfig ./packages/tsconfig
