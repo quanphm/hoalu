@@ -1,6 +1,7 @@
 {
 	"name": "@woben/furnace",
 	"description": "Utilities for Woben server - Hono",
+	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"exports": {

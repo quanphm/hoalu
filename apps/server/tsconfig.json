@@ -2,6 +2,7 @@
 	"extends": "@woben/tsconfig/node.json",
 	"compilerOptions": {
 		"strict": true,
+		"types": ["bun-types"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
 		"baseUrl": ".",
@@ -9,5 +10,5 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"exclude": ["node_modules"]
+	"include": ["src"]
 }

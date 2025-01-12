@@ -21,8 +21,9 @@ export function createApp() {
 		}),
 	);
 
-	// handlers
 	app.get("/", (c) => c.text("Welcome to Woben API"));
+
+	// handlers
 	app.notFound(notFound);
 	app.onError(onError);
 
