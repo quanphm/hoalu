@@ -15,7 +15,7 @@ COPY packages/furnace/package.json ./packages/furnace/
 
 FROM deps AS build
 WORKDIR /repo
-RUN bun install
+RUN bun install --production
 
 COPY apps/server ./apps/server
 COPY packages/tsconfig ./packages/tsconfig
@@ -23,7 +23,7 @@ COPY packages/common ./packages/common
 COPY packages/furnace ./packages/furnace
 
 WORKDIR /repo/apps/server
-RUN bun run build
+RUN bun run build:server
 
 FROM base AS runner
 WORKDIR /server

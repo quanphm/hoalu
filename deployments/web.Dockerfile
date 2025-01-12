@@ -29,9 +29,9 @@ ARG PUBLIC_API_URL
 RUN printf "PUBLIC_API_URL=%s\n" \
 "${PUBLIC_API_URL}" > /repo/apps/web/.env
 
-# build server to get `hono/client` for honoRPC import in `web`
+# for import HonoRPC types in client.
 WORKDIR /repo/apps/server
-RUN bun run build
+RUN bun run build:types
 
 WORKDIR /repo/apps/web
 RUN bun run build

@@ -1,10 +1,12 @@
 {
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"outDir": "./dist",
+		"outDir": "./dist/types",
 		"noEmit": false,
 		"allowImportingTsExtensions": false,
+		"emitDeclarationOnly": true,
 		"declaration": true,
 		"declarationMap": false
-	}
+	},
+	"include": ["src/app.ts"]
 }

@@ -19,6 +19,7 @@
 		"@woben/common": "workspace:*",
 		"@woben/icons": "workspace:*",
 		"@woben/ui": "workspace:*",
+		"hono": "^4.6.16",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"valibot": "1.0.0-beta.9"

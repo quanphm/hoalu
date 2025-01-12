@@ -2,20 +2,20 @@
 	"name": "@woben/server",
 	"version": "0.3.0",
 	"type": "module",
+	"files": ["dist"],
 	"exports": {
-		"./hc": {
-			"import": {
-				"default": "./dist/hc.js",
-				"types": "./dist/hc.d.ts"
-			}
-		}
+		"./types": "./dist/types/app.d.ts"
 	},
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
-		"prebuild": "rimraf -rf dist",
-		"build": "bun run tsc -p tsconfig.build.json",
+		"clean": "rimraf -rf dist",
+		"prebuild": "bun run clean",
+		"build:server": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
+		"build:types": "tsc -p tsconfig.build.json",
+		"build": "bun run build:server && bun run build:types",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate"
+		"db:migrate": "drizzle-kit migrate",
+		"lint": "biome lint ./src"
 	},
 	"dependencies": {
 		"@hono/valibot-validator": "^0.5.2",
@@ -24,7 +24,7 @@
 		"@woben/common": "workspace:*",
 		"@woben/furnace": "workspace:*",
 		"drizzle-orm": "^0.38.3",
-		"hono": "^4.6.15",
+		"hono": "^4.6.16",
 		"hono-openapi": "^0.3.1",
 		"minio": "^8.0.3",
 		"nanoid": "^5.0.9",
