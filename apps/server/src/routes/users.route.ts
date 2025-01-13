@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { userTable } from "@/db/schema";
+import { userTable } from "@/db/schema/auth";
 import { AllUsersSchema, selectAllUsers } from "@/queries/user";
 import { createHonoInstance } from "@/utils/create-app";
 import { generateId } from "@woben/common";
