@@ -26,8 +26,12 @@ COPY packages/common ./packages/common
 COPY packages/furnace ./packages/furnace
 
 ARG PUBLIC_API_URL
-RUN printf "PUBLIC_API_URL=%s\n" \
-"${PUBLIC_API_URL}" > /repo/apps/app/.env
+ARG PUBLIC_APP_BASE_URL
+
+RUN printf "PUBLIC_API_URL=%s\n\
+PUBLIC_APP_BASE_URL=%s\n" \
+"${PUBLIC_API_URL}" \
+"${PUBLIC_APP_BASE_URL}" > /repo/apps/app/.env
 
 # for import HonoRPC types in client.
 WORKDIR /repo/apps/server
