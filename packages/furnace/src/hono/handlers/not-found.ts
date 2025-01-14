@@ -1,5 +1,5 @@
 import type { NotFoundHandler } from "hono";
-import { StatusCodes, StatusPhrases } from "../utils";
+import { StatusCodes, StatusPhrases } from "../../utils";
 
 export const notFound: NotFoundHandler = (c) => {
 	return c.json(

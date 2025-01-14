@@ -9,7 +9,7 @@ export const userPublicId = () =>
 				fields: {
 					publicId: {
 						type: "string",
-						required: true,
+						required: false,
 						unique: true,
 						input: false,
 					},

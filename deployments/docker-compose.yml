@@ -59,13 +59,14 @@ services:
       - traefik.http.routers.woben-server.service=woben-server
       - traefik.http.services.woben-server.loadbalancer.server.port=3000
 
-  web:
-    container_name: woben-web
+  app:
+    container_name: woben-app
     build:
       context: ../
-      dockerfile: ./deployments/web.Dockerfile
+      dockerfile: ./deployments/app.Dockerfile
       args:
         - PUBLIC_API_URL=${PUBLIC_API_URL}
+        - PUBLIC_APP_BASE_URL=${PUBLIC_APP_BASE_URL}
     restart: always
     networks:
       - woben_network

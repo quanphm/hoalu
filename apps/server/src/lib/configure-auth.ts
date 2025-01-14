@@ -6,7 +6,7 @@ export function configureAuth(app: HonoApp) {
 	app.use(
 		"/auth/*",
 		cors({
-			origin: "http://localhost:5173",
+			origin: process.env.PUBLIC_APP_BASE_URL,
 			allowHeaders: ["Content-Type", "Authorization"],
 			allowMethods: ["POST", "GET", "OPTIONS"],
 			exposeHeaders: ["Content-Length"],
