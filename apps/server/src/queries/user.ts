@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { userTable } from "@/db/schema/auth";
+import { user } from "@/db/schema/auth";
 import * as v from "valibot";
 
 export const AllUsersSchema = v.array(
@@ -7,18 +7,19 @@ export const AllUsersSchema = v.array(
 		id: v.number(),
 		email: v.string(),
 		name: v.string(),
+		public_id: v.string(),
 	}),
 );
 
 export async function selectAllUsers() {
 	const result = await db
 		.select({
-			id: userTable.id,
-			// public_id: userTable.public_id,
-			name: userTable.name,
-			email: userTable.email,
+			id: user.id,
+			public_id: user.publicId,
+			name: user.name,
+			email: user.email,
 		})
-		.from(userTable);
+		.from(user);
 
 	const parsed = v.parse(AllUsersSchema, result);
 

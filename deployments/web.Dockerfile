@@ -33,7 +33,9 @@ RUN printf "PUBLIC_API_URL=%s\n" \
 WORKDIR /repo/apps/server
 RUN bun run build:types
 
+
 WORKDIR /repo/apps/web
+ENV NODE_ENV='production'
 RUN bun run build
 
 FROM nginx:alpine

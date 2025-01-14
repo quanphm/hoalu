@@ -2,6 +2,8 @@ import { validateEnv } from "@woben/common/validate-env";
 import * as v from "valibot";
 
 const ServerEnvSchema = v.object({
+	AUTH_SECRET: v.pipe(v.string(), v.nonEmpty()),
+	AUTH_URL: v.pipe(v.string(), v.url()),
 	DB_HOST: v.pipe(v.string(), v.nonEmpty()),
 	DB_NAME: v.pipe(v.string(), v.nonEmpty()),
 	DB_USER: v.pipe(v.string(), v.nonEmpty()),
@@ -12,6 +14,7 @@ const ServerEnvSchema = v.object({
 	S3_BUCKET: v.pipe(v.string(), v.nonEmpty()),
 	S3_ENDPOINT: v.pipe(v.string(), v.nonEmpty()),
 	SYNC_URL: v.pipe(v.string(), v.url()),
+	NODE_ENV: v.optional(v.string()),
 });
 
 export function verifyEnv() {

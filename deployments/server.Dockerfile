@@ -29,6 +29,8 @@ FROM base AS runner
 WORKDIR /server
 COPY --from=build /repo/apps/server/dist .
 
+ENV NODE_ENV='production'
+
 USER bun
 EXPOSE 3000
 CMD ["bun", "run", "index.js"]

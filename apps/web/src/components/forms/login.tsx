@@ -1,4 +1,4 @@
-import { createUser } from "@/services/api";
+import { authClient } from "@/lib/auth-client";
 import { userKeys } from "@/services/query-key-factory";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -12,17 +12,21 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	const queryClient = useQueryClient();
 
 	async function formAction(formData: FormData) {
-		const username = formData.get("username");
+		const name = formData.get("name");
 		const email = formData.get("email");
+		const password = formData.get("password");
 
-		if (!username || !email) {
-			throw new Error("username or email can not be empty");
-		}
+		if (!name) throw new Error("name can not be empty");
+		if (!email) throw new Error("email can not be empty");
+		if (!password) throw new Error("password can not be empty");
 
-		await createUser({
-			username: username.toString(),
+		const { data } = await authClient.signUp.email({
+			name: name.toString(),
 			email: email.toString(),
+			password: password.toString(),
 		});
+		console.log(data);
+
 		queryClient.invalidateQueries({ queryKey: userKeys.all });
 	}
 
@@ -38,22 +42,22 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 						<div className="grid gap-6">
 							<div className="grid gap-6">
 								<div className="grid gap-2">
-									<Label htmlFor="username">Username</Label>
-									<Input id="username" name="username" required />
+									<Label htmlFor="name">Name</Label>
+									<Input id="name" name="name" required />
 								</div>
 								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
 									<Input id="email" name="email" type="email" required />
 								</div>
-								{/*<div className="grid gap-2">
+								<div className="grid gap-2">
 									<div className="flex items-center">
 										<Label htmlFor="password">Password</Label>
 										<Link to="/" className="ml-auto text-sm underline-offset-4 hover:underline">
 											Forgot your password?
 										</Link>
 									</div>
-									<Input id="password" type="password" required />
-								</div> */}
+									<Input id="password" name="password" type="password" required />
+								</div>
 								<Button type="submit" className="w-full">
 									Sign up
 								</Button>

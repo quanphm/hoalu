@@ -1,4 +1,4 @@
-import { verifyEnv } from "@/utils/env";
+import { verifyEnv } from "@/lib/env";
 import type { Serve } from "bun";
 import { app } from "./app";
 

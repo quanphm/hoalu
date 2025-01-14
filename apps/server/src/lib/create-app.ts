@@ -1,8 +1,6 @@
 import type { AppBindings } from "@/types";
-import { notFound, onError } from "@woben/furnace/handlers";
-import { logger } from "@woben/furnace/middlewares";
+import { logger, notFound, onError } from "@woben/furnace/hono";
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
 
 export function createHonoInstance() {
@@ -13,10 +11,10 @@ export function createApp() {
 	const app = createHonoInstance();
 
 	// middlewares
-	app.use(cors());
 	app.use(requestId());
 	app.use(
 		logger({
+			pretty: process.env.NODE_ENV === "development" ? true : false,
 			excludePaths: ["/docs", "/openapi"],
 		}),
 	);

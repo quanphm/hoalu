@@ -1,53 +1,52 @@
 import { bigint, boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { number } from "valibot";
 
-export const userTable = pgTable("user", {
-	id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-	name: text().notNull(),
-	email: text().notNull().unique(),
-	email_verified: boolean().notNull(),
-	image: text(),
-	public_id: text().notNull(),
-	created_at: timestamp().notNull(),
-	updated_at: timestamp().notNull(),
+export const user = pgTable("user", {
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	name: text("name").notNull(),
+	email: text("email").notNull().unique(),
+	emailVerified: boolean("email_verified").default(false).notNull(),
+	image: text("image"),
+	createdAt: timestamp("created_at").notNull(),
+	updatedAt: timestamp("updated_at").notNull(),
+	publicId: text("public_id").notNull().unique(),
 });
 
-export const sessionTable = pgTable("session", {
-	id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-	expires_at: timestamp().notNull(),
-	token: text().notNull().unique(),
-	created_at: timestamp().notNull(),
-	updated_at: timestamp().notNull(),
-	ip_address: text(),
-	user_agent: text(),
-	user_id: bigint({ mode: "number" })
+export const session = pgTable("session", {
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	expiresAt: timestamp("expires_at").notNull(),
+	token: text("token").notNull().unique(),
+	createdAt: timestamp("created_at").notNull(),
+	updatedAt: timestamp("updated_at").notNull(),
+	ipAddress: text("ip_address"),
+	userAgent: text("user_agent"),
+	userId: bigint("user_id", { mode: "number" })
 		.notNull()
-		.references(() => userTable.id),
+		.references(() => user.id),
 });
 
-export const accountTable = pgTable("account", {
-	id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-	account_id: text().notNull(),
-	provider_id: text().notNull(),
-	user_id: bigint({ mode: "number" })
+export const account = pgTable("account", {
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	accountId: text("account_id").notNull(),
+	providerId: text("provider_id").notNull(),
+	userId: bigint("user_id", { mode: "number" })
 		.notNull()
-		.references(() => userTable.id),
-	access_token: text(),
-	refresh_token: text(),
-	id_token: text(),
-	access_token_expires_at: timestamp(),
-	refresh_token_expires_at: timestamp(),
-	scope: text(),
-	password: text(),
-	created_at: timestamp().notNull(),
-	updated_at: timestamp().notNull(),
+		.references(() => user.id),
+	accessToken: text("access_token"),
+	refreshToken: text("refresh_token"),
+	idToken: text("id_token"),
+	accessTokenExpiresAt: timestamp("access_token_expires_at"),
+	refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+	scope: text("scope"),
+	password: text("password"),
+	createdAt: timestamp("created_at").notNull(),
+	updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const verificationTable = pgTable("verification", {
-	id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-	identifier: text().notNull(),
-	value: text().notNull(),
-	expires_at: timestamp().notNull(),
-	created_at: timestamp(),
-	updated_at: timestamp(),
+export const verification = pgTable("verification", {
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	identifier: text("identifier").notNull(),
+	value: text("value").notNull(),
+	expiresAt: timestamp("expires_at").notNull(),
+	createdAt: timestamp("created_at"),
+	updatedAt: timestamp("updated_at"),
 });
