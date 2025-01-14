@@ -14,7 +14,7 @@ export function createApp() {
 	app.use(requestId());
 	app.use(
 		logger({
-			pretty: process.env.NODE_ENV === "development" ? true : false,
+			pretty: process.env.NODE_ENV === "development",
 			excludePaths: ["/docs", "/openapi"],
 		}),
 	);
