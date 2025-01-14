@@ -6,7 +6,7 @@ WORKDIR /repo
 
 COPY package.json bun.lockb ./
 COPY apps/server/package.json ./apps/server/
-COPY apps/web/package.json ./apps/web/
+COPY apps/app/package.json ./apps/app/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/icons/package.json ./packages/icons/
