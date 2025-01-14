@@ -15,6 +15,7 @@ COPY packages/furnace/package.json ./packages/furnace/
 
 FROM deps AS build
 WORKDIR /repo
+ENV NODE_ENV='production'
 RUN bun install --production
 
 COPY apps/server ./apps/server
@@ -28,8 +29,6 @@ RUN bun run build:server
 FROM base AS runner
 WORKDIR /server
 COPY --from=build /repo/apps/server/dist .
-
-ENV NODE_ENV='production'
 
 USER bun
 EXPOSE 3000
