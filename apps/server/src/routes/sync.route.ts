@@ -1,4 +1,4 @@
-import { createHonoInstance } from "@/utils/create-app";
+import { createHonoInstance } from "@/lib/create-app";
 import { StatusCodes } from "@woben/furnace/utils";
 
 const app = createHonoInstance();

@@ -59,13 +59,14 @@ services:
       - traefik.http.routers.woben-server.service=woben-server
       - traefik.http.services.woben-server.loadbalancer.server.port=3000
 
-  web:
-    container_name: woben-web
+  app:
+    container_name: woben-app
     build:
       context: ../
-      dockerfile: ./deployments/web.Dockerfile
+      dockerfile: ./deployments/app.Dockerfile
       args:
         - PUBLIC_API_URL=${PUBLIC_API_URL}
+        - PUBLIC_APP_BASE_URL=${PUBLIC_APP_BASE_URL}
     restart: always
     networks:
       - woben_network
@@ -76,15 +77,15 @@ services:
       - server
     labels:
       - traefik.enable=true
-      - traefik.http.routers.woben-web.entrypoints=websecure
-      - traefik.http.routers.woben-web.rule=Host(`woben.local.${DOMAIN}`)
-      - traefik.http.routers.woben-web.tls=true
-      - traefik.http.routers.woben-web.tls.certresolver=cloudflare
-      - traefik.http.routers.woben-web.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben-web.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben-web.middlewares=internal-gateway@file
-      - traefik.http.routers.woben-web.service=woben-web
-      - traefik.http.services.woben-web.loadbalancer.server.port=8080
+      - traefik.http.routers.woben-app.entrypoints=websecure
+      - traefik.http.routers.woben-app.rule=Host(`woben.local.${DOMAIN}`)
+      - traefik.http.routers.woben-app.tls=true
+      - traefik.http.routers.woben-app.tls.certresolver=cloudflare
+      - traefik.http.routers.woben-app.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben-app.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben-app.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-app.service=woben-app
+      - traefik.http.services.woben-app.loadbalancer.server.port=8080
 
   migration:
     container_name: woben-migration

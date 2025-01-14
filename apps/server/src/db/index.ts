@@ -1,5 +1,10 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
+import * as authSchema from "./schema/auth";
+
+const schema = {
+	...authSchema,
+};
 
 const client = new pg.Pool({
 	user: process.env.DB_USER,
@@ -10,4 +15,4 @@ const client = new pg.Pool({
 	ssl: false,
 });
 
-export const db = drizzle({ client });
+export const db = drizzle({ client, schema });

@@ -31,13 +31,11 @@ export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) 
 						url: c.req.url,
 						method: c.req.method,
 						query: c.req.query(),
-						// headers: c.req.header(),
 					},
 				}),
 				onResBindings: (c) => ({
 					res: {
 						status: c.res.status,
-						// headers: c.res.headers,
 					},
 				}),
 			},
