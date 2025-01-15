@@ -3,13 +3,15 @@ import { configureElectricSync } from "@/lib/configure-electric-sync";
 import { configureOpenAPI } from "@/lib/configure-openapi";
 import { createApp } from "@/lib/create-app";
 import { tasksRoute } from "@/routes/tasks";
+import { authGuard } from "@woben/furnace/hono";
+import type { AppBindings } from "./types";
 
 export const app = createApp();
 
 configureAuth(app);
-configureElectricSync(app);
 configureOpenAPI(app);
+configureElectricSync(app);
 
-const routes = app.route("/tasks", tasksRoute);
+const routes = app.use(authGuard<AppBindings>()).route("/tasks", tasksRoute);
 
 export type ApiRoutes = typeof routes;

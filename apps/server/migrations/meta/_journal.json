@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1736770684565,
-      "tag": "0000_absent_junta",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1736906269859,
-      "tag": "0001_legal_blockbuster",
+      "when": 1736931209659,
+      "tag": "0000_smooth_bucky",
       "breakpoints": true
     }
   ]

@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import * as authSchema from "./schema/auth";
+import * as taskSchema from "./schema/task";
 
 const client = new pg.Pool({
 	user: process.env.DB_USER,
@@ -13,6 +14,7 @@ const client = new pg.Pool({
 
 const schema = {
 	...authSchema,
+	...taskSchema,
 };
 
 export const db = drizzle({ client, schema });

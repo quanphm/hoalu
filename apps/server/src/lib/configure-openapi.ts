@@ -9,9 +9,9 @@ export function configureOpenAPI(app: HonoApp) {
 			openAPISpecs(app, {
 				documentation: {
 					info: {
-						title: "Woben HTTP API",
+						title: "Woben API",
 						description: "OpenAPI documentation",
-						version: "0.0.1",
+						version: "0.3.0",
 					},
 					servers: [
 						{ url: "http://localhost:3000", description: "Local Server" },
@@ -27,7 +27,9 @@ export function configureOpenAPI(app: HonoApp) {
 			"/docs",
 			apiReference({
 				theme: "kepler",
+				layout: "classic",
 				spec: { url: "openapi" },
+				hideDownloadButton: true,
 			}),
 		);
 }
