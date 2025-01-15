@@ -1,5 +1,6 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
+import type { AuthClient } from "@/lib/auth-client";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
@@ -22,8 +23,16 @@ const QueryDevtools = import.meta.env.PROD
 		);
 
 export const Route = createRootRouteWithContext<{
+	authClient: AuthClient;
 	queryClient: QueryClient;
 }>()({
+	beforeLoad: async ({ context }) => {
+		const { data } = await context.authClient.getSession();
+		return {
+			user: data?.user,
+			session: data?.session,
+		};
+	},
 	errorComponent: ErrorComponent,
 	notFoundComponent: NotFound,
 	component: RootComponent,

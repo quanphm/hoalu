@@ -15,6 +15,7 @@ COPY packages/furnace/package.json ./packages/furnace/
 
 FROM deps AS build
 WORKDIR /repo
+ENV NODE_ENV='production'
 RUN bun install
 
 COPY apps/server ./apps/server

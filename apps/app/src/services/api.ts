@@ -1,12 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 
-export const fetchUsers = async () => {
-	const response = await apiClient.users.$get();
+export const fetchTasks = async () => {
+	const response = await apiClient.tasks.$get();
 	const { data } = await response.json();
 	return data;
-};
-
-export const createUser = async (payload: { username: string; email: string }) => {
-	console.log(payload);
-	return {};
 };

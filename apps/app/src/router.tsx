@@ -1,7 +1,8 @@
+import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
+import { authClient } from "@/lib/auth-client";
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter, isRedirect } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import { DefaultCatchBoundary } from "./components/default-catch-boundary";
 import { routeTree } from "./routeTree.gen";
 
 export const queryClient = new QueryClient();
@@ -9,7 +10,7 @@ export const queryClient = new QueryClient();
 export function createRouter() {
 	const router = createTanStackRouter({
 		routeTree,
-		context: { queryClient },
+		context: { authClient, queryClient },
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
 		defaultErrorComponent: DefaultCatchBoundary,

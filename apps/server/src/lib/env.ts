@@ -15,7 +15,7 @@ const ServerEnvSchema = v.object({
 	S3_BUCKET: v.pipe(v.string(), v.nonEmpty()),
 	S3_ENDPOINT: v.pipe(v.string(), v.nonEmpty()),
 	SYNC_URL: v.pipe(v.string(), v.url()),
-	NODE_ENV: v.pipe(v.string(), v.nonEmpty()),
+	NODE_ENV: v.optional(v.string(), "development"),
 });
 
 export function verifyEnv() {

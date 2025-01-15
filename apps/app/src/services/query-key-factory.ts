@@ -3,6 +3,6 @@
  * @see - https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
  */
 
-export const userKeys = {
-	all: ["users"] as const,
+export const tasksKeys = {
+	all: ["tasks"] as const,
 };

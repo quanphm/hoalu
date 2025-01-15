@@ -1,4 +1,4 @@
-import { generateId } from "@woben/common";
+import { generateId } from "@woben/common/generate-id";
 import type { BetterAuthPlugin } from "better-auth";
 
 export const userPublicId = () =>

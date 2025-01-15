@@ -1,12 +1,15 @@
 import { configureAuth } from "@/lib/configure-auth";
+import { configureElectricSync } from "@/lib/configure-electric-sync";
 import { configureOpenAPI } from "@/lib/configure-openapi";
 import { createApp } from "@/lib/create-app";
-import { syncRoute } from "@/routes/sync.route";
-import { usersRoute } from "./routes/users.route";
+import { tasksRoute } from "@/routes/tasks";
 
 export const app = createApp();
 
 configureAuth(app);
+configureElectricSync(app);
 configureOpenAPI(app);
 
-export const routes = app.route("/sync", syncRoute).route("/users", usersRoute);
+const routes = app.route("/tasks", tasksRoute);
+
+export type ApiRoutes = typeof routes;

@@ -1,16 +1,13 @@
 import { authClient } from "@/lib/auth-client";
-import { userKeys } from "@/services/query-key-factory";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { Button } from "@woben/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@woben/ui/card";
 import { Input } from "@woben/ui/input";
 import { Label } from "@woben/ui/label";
 import { cn } from "@woben/ui/utils";
 
-export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-	const queryClient = useQueryClient();
-
+export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+	const router = useRouter();
 	async function formAction(formData: FormData) {
 		const name = formData.get("name");
 		const email = formData.get("email");
@@ -26,8 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 			password: password.toString(),
 		});
 		console.log(data);
-
-		queryClient.invalidateQueries({ queryKey: userKeys.all });
+		router.invalidate();
 	}
 
 	return (
