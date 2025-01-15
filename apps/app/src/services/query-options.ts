@@ -1,10 +1,10 @@
+import * as api from "@/services/api";
+import { tasksKeys } from "@/services/query-key-factory";
 import { queryOptions } from "@tanstack/react-query";
-import * as api from "./api";
-import { userKeys } from "./query-key-factory";
 
-export const usersQueryOptions = () => {
+export const tasksQueryOptions = () => {
 	return queryOptions({
-		queryKey: userKeys.all,
-		queryFn: () => api.fetchUsers(),
+		queryKey: tasksKeys.all,
+		queryFn: () => api.fetchTasks(),
 	});
 };

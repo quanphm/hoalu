@@ -1,5 +1,4 @@
 import { createHonoInstance } from "@/lib/create-app";
-import { AllUsersSchema, selectAllUsers } from "@/queries/user";
 import { StatusCodes } from "@woben/furnace/utils";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
@@ -10,10 +9,10 @@ const app = createHonoInstance();
 
 app.use(cors());
 
-export const usersRoute = app.get(
+export const tasksRoute = app.get(
 	"/",
 	describeRoute({
-		description: "Retrieve all users",
+		description: "Retrieve all tasks",
 		responses: {
 			[StatusCodes.OK]: {
 				description: "Successful response",
@@ -22,7 +21,7 @@ export const usersRoute = app.get(
 						schema: resolver(
 							v.object({
 								ok: v.boolean(),
-								data: AllUsersSchema,
+								data: v.array(v.any()),
 							}),
 						),
 					},
@@ -31,10 +30,9 @@ export const usersRoute = app.get(
 		},
 	}),
 	async (c) => {
-		const result = await selectAllUsers();
 		return c.json({
 			ok: true,
-			data: result,
+			data: [],
 		});
 	},
 );

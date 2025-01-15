@@ -11,7 +11,7 @@
 	},
 	"peerDependencies": {
 		"better-auth": "^1.1.11",
-		"hono": "^4.0.0"
+		"hono": "^4.6.16"
 	},
 	"dependencies": {
 		"@woben/common": "workspace:*",
