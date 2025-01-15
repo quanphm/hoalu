@@ -17,6 +17,11 @@ services:
       - "wal_level=logical"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
 
   electric:
     container_name: woben-electric
@@ -31,6 +36,11 @@ services:
       - database
     volumes:
       - electric_data:/app/persistent
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
 
   server:
     container_name: woben-server
@@ -45,6 +55,11 @@ services:
       - traefik_network
     depends_on:
       - database
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben-server.entrypoints=websecure
@@ -75,6 +90,11 @@ services:
       - database
       - electric
       - server
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
     labels:
       - traefik.enable=true
       - traefik.http.routers.woben-app.entrypoints=websecure
