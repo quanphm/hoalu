@@ -18,21 +18,22 @@ const app = createHonoInstance();
 
 app.use(cors());
 
-const selectSchema = v.omit(createSelectSchema(task), ["userId", "createdAt", "updatedAt"]);
+const selectSchema = v.omit(createSelectSchema(task), ["userId"]);
 const insertSchema = v.omit(
 	createInsertSchema(task, {
 		name: (schema) => v.pipe(schema, v.nonEmpty()),
 		done: (schema) => v.optional(schema, false),
 	}),
-	["userId"],
+	["userId", "createdAt", "updatedAt"],
 );
 
 export const tasksRoute = app
 	.get(
 		"/",
 		describeRoute({
-			tags: ["tasks"],
-			description: "Retrieve all tasks",
+			tags: ["Tasks"],
+			summary: "Get all tasks",
+			description: "Get all tasks related to the user",
 			responses: {
 				...openAPIUnauthorized(),
 				[StatusCodes.UNPROCESSABLE_ENTITY]: openAPIContent(
@@ -82,8 +83,9 @@ export const tasksRoute = app
 	.post(
 		"/",
 		describeRoute({
-			tags: ["tasks"],
-			description: "Create new task",
+			tags: ["Tasks"],
+			summary: "Create a task",
+			description: "Create a new task related to the user",
 			responses: {
 				...openAPIUnauthorized(),
 				[StatusCodes.BAD_REQUEST]: openAPIContent(

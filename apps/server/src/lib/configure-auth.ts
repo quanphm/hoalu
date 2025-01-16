@@ -1,4 +1,4 @@
-import type { HonoApp } from "@/types";
+import type { HonoApp, User } from "@/types";
 import { cors } from "hono/cors";
 import { auth } from "./auth";
 
@@ -25,7 +25,7 @@ export function configureAuth(app: HonoApp) {
 			return next();
 		}
 
-		c.set("user", session.user);
+		c.set("user", session.user as unknown as User);
 		c.set("session", session.session);
 		return next();
 	});

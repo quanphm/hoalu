@@ -9,7 +9,7 @@ export const task = pgTable(
 		done: boolean("done").notNull(),
 		userId: bigint("user_id", { mode: "number" })
 			.notNull()
-			.references(() => user.id),
+			.references(() => user.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 		updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 	},

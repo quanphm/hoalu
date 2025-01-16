@@ -19,6 +19,10 @@ export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) 
 			return next();
 		}
 
+		if (c.req.method === "OPTIONS") {
+			return next();
+		}
+
 		return pinoLogger({
 			pino: pino(
 				{

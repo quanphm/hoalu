@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { hash, verify } from "@node-rs/argon2";
 import { userPublicId } from "@woben/furnace/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -18,13 +19,17 @@ export const auth = betterAuth({
 		enabled: true,
 		minPasswordLength: 6,
 		password: {
-			hash: (password) =>
-				Bun.password.hash(password, {
-					memoryCost: 12288,
-					timeCost: 3,
-					algorithm: "argon2id",
-				}),
-			verify: ({ hash, password }) => Bun.password.verify(hash, password),
+			hash: async (password) => {
+				return await hash(password, {
+					memoryCost: 19456,
+					timeCost: 2,
+					outputLen: 32,
+					parallelism: 1,
+				});
+			},
+			verify: async ({ hash, password }) => {
+				return await verify(hash, password);
+			},
 		},
 	},
 	plugins: [userPublicId()],

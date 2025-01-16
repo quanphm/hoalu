@@ -4,6 +4,7 @@ import type { AuthClient } from "@/lib/auth-client";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
+import { Toaster } from "@woben/ui/sonner";
 import { lazy } from "react";
 
 const RouterDevtools = import.meta.env.PROD
@@ -58,6 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			{children}
+			<Toaster />
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="top-right" />
 			<RouterDevtools position="bottom-right" />

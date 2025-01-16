@@ -1,7 +1,6 @@
-import { useRouteContext } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
 
 export function User() {
-	const context = useRouteContext({ from: "__root__" });
-	const user = context.user;
+	const { user } = useAuth();
 	return <pre>{JSON.stringify(user, null, 2)}</pre>;
 }
