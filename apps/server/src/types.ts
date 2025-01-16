@@ -2,10 +2,15 @@ import type { PinoLogger } from "@woben/furnace/hono";
 import type { Hono } from "hono";
 import type { auth } from "./lib/auth";
 
+export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
+	id: number;
+};
+export type Session = typeof auth.$Infer.Session.session;
+
 export interface AppBindings {
 	Variables: {
-		user: typeof auth.$Infer.Session.user | null;
-		session: typeof auth.$Infer.Session.session | null;
+		user: User | null;
+		session: Session | null;
 		logger: PinoLogger;
 	};
 }

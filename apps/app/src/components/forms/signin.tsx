@@ -7,23 +7,22 @@ import { Label } from "@woben/ui/label";
 import { toast } from "@woben/ui/sonner";
 import { cn } from "@woben/ui/utils";
 
-export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export function SigninForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const router = useRouter();
 
 	async function formAction(formData: FormData) {
-		const name = formData.get("name");
 		const email = formData.get("email");
 		const password = formData.get("password");
 
-		if (!name) throw new Error("name can not be empty");
 		if (!email) throw new Error("email can not be empty");
 		if (!password) throw new Error("password can not be empty");
 
-		await authClient.signUp.email(
+		await authClient.signIn.email(
 			{
-				name: name.toString(),
 				email: email.toString(),
 				password: password.toString(),
+				callbackURL: "/",
+				rememberMe: true,
 			},
 			{
 				onError: (ctx) => {
@@ -39,17 +38,13 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Get started with Woben</CardTitle>
-					<CardDescription>Create your new account</CardDescription>
+					<CardTitle className="text-xl">Welcome back</CardTitle>
+					<CardDescription>Sign in to your Woben account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>
 						<div className="grid gap-6">
 							<div className="grid gap-6">
-								<div className="grid gap-2">
-									<Label htmlFor="name">Name</Label>
-									<Input id="name" name="name" required />
-								</div>
 								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
 									<Input id="email" name="email" type="email" required />
@@ -57,6 +52,13 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 								<div className="grid gap-2">
 									<div className="flex items-center">
 										<Label htmlFor="password">Password</Label>
+										<Link
+											to="/"
+											preload={false}
+											className="ml-auto text-sm underline-offset-4 hover:underline"
+										>
+											Forgot your password?
+										</Link>
 									</div>
 									<Input id="password" name="password" type="password" required />
 								</div>
@@ -73,9 +75,9 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 								</Button>
 							</div>
 							<div className="text-center text-sm">
-								Already have an account?{" "}
-								<Link to="/auth/signin" className="underline underline-offset-4">
-									Sign in
+								Don&apos;t have an account?{" "}
+								<Link to="/auth/signup" className="underline underline-offset-4">
+									Sign up
 								</Link>
 							</div>
 						</div>

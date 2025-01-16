@@ -9,6 +9,7 @@ const ServerEnvSchema = v.object({
 	DB_USER: v.pipe(v.string(), v.nonEmpty()),
 	DB_PASSWORD: v.pipe(v.string(), v.nonEmpty()),
 	DOMAIN: v.pipe(v.string(), v.nonEmpty()),
+	PUBLIC_API_URL: v.pipe(v.string(), v.url()),
 	PUBLIC_APP_BASE_URL: v.pipe(v.string(), v.url()),
 	S3_ACCESS_KEY_ID: v.pipe(v.string(), v.nonEmpty()),
 	S3_SECRET_KEY: v.pipe(v.string(), v.nonEmpty()),

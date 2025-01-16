@@ -8,6 +8,7 @@ export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) 
 		if (!options?.excludePaths) {
 			return false;
 		}
+
 		return options.excludePaths.some(
 			(excludedPath) => path.startsWith(excludedPath) || path.startsWith(`/${excludedPath}`),
 		);
@@ -17,6 +18,11 @@ export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) 
 		if (shouldExcludePath(c.req.path)) {
 			return next();
 		}
+
+		if (c.req.method === "OPTIONS") {
+			return next();
+		}
+
 		return pinoLogger({
 			pino: pino(
 				{

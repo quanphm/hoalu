@@ -1,13 +1,13 @@
 import * as v from "valibot";
 import type { BaseIssue, BaseSchema } from "valibot";
 
-interface ReducedIssue {
+interface ReducedValibotIssue {
 	attribute: string | undefined;
 	input: unknown;
 	message: string;
 }
 
-function reduceIssues(issues: BaseIssue<any>[]): ReducedIssue[] {
+export function reduceValibotIssues(issues: BaseIssue<any>[]): ReducedValibotIssue[] {
 	return issues.map((issue) => {
 		const attribute = typeof issue.path?.[0].key === "string" ? issue.path?.[0].key : undefined;
 
@@ -25,7 +25,7 @@ export function validateEnv<TSchema extends BaseSchema<unknown, unknown, BaseIss
 ) {
 	const parsed = v.safeParse(schema, envVars);
 	if (!parsed.success) {
-		const reducedIssues: ReducedIssue[] = reduceIssues(parsed.issues);
+		const reducedIssues: ReducedValibotIssue[] = reduceValibotIssues(parsed.issues);
 		throw new Error(`❌ Invalid environment variables: ${JSON.stringify(reducedIssues)}`);
 	}
 	return parsed.output;

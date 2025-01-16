@@ -9,25 +9,21 @@ export function configureOpenAPI(app: HonoApp) {
 			openAPISpecs(app, {
 				documentation: {
 					info: {
-						title: "Woben HTTP API",
+						title: "Woben API",
 						description: "OpenAPI documentation",
-						version: "0.0.1",
+						version: "0.3.0",
 					},
-					servers: [
-						{ url: "http://localhost:3000", description: "Local Server" },
-						{
-							url: `https://woben.local.${process.env.DOMAIN}/api`,
-							description: "Production Server",
-						},
-					],
+					servers: [{ url: process.env.PUBLIC_API_URL }],
 				},
 			}),
 		)
 		.get(
-			"/docs",
+			"/reference",
 			apiReference({
-				theme: "kepler",
+				theme: "saturn",
+				layout: "modern",
 				spec: { url: "openapi" },
+				hideDownloadButton: true,
 			}),
 		);
 }
