@@ -109,7 +109,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		findMemberByOrgId: async (data: {
 			userId: string;
-			organizationId: string;
+			organizationId: number;
 		}) => {
 			const [member, user] = await Promise.all([
 				await adapter.findOne<Member>({
@@ -242,7 +242,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					: undefined,
 			};
 		},
-		deleteOrganization: async (organizationId: string) => {
+		deleteOrganization: async (organizationId: number) => {
 			await adapter.delete({
 				model: "member",
 				where: [
@@ -272,13 +272,13 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return organizationId;
 		},
-		setActiveOrganization: async (sessionToken: string, organizationId: string | null) => {
+		setActiveOrganization: async (sessionToken: string, organizationId: number | null) => {
 			const session = await context.internalAdapter.updateSession(sessionToken, {
 				activeOrganizationId: organizationId,
 			});
 			return session as Session;
 		},
-		findOrganizationById: async (organizationId: string) => {
+		findOrganizationById: async (organizationId: number) => {
 			const organization = await adapter.findOne<Workspace>({
 				model: "organization",
 				where: [

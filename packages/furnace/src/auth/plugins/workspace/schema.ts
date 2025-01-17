@@ -1,5 +1,4 @@
-import { type ZodLiteral, z } from "zod";
-import type { WorkspaceOptions } from "./index";
+import { z } from "zod";
 
 export const role = z.string();
 
@@ -11,6 +10,7 @@ export const workspaceSchema = z.object({
 	id: z.number(),
 	name: z.string(),
 	slug: z.string(),
+	publicId: z.string(),
 	logo: z.string().nullish(),
 	metadata: z
 		.record(z.string())

@@ -5,6 +5,8 @@ import { z } from "zod";
 import { getOrgAdapter } from "../adapter";
 import { orgMiddleware, orgSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
+import { generateId } from "@woben/common/generate-id";
+import { StatusCodes } from "../../../../utils";
 
 export const createOrganization = createAuthEndpoint(
 	"/organization/create",
@@ -39,7 +41,7 @@ export const createOrganization = createAuthEndpoint(
 			openapi: {
 				description: "Create an organization",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -69,7 +71,7 @@ export const createOrganization = createAuthEndpoint(
 		}
 		if (!user) {
 			return ctx.json(null, {
-				status: 401,
+				status: StatusCodes.UNAUTHORIZED,
 			});
 		}
 		const options = ctx.context.orgOptions;
@@ -112,6 +114,7 @@ export const createOrganization = createAuthEndpoint(
 				slug: ctx.body.slug,
 				name: ctx.body.name,
 				logo: ctx.body.logo,
+				publicId: generateId("workspace"),
 				createdAt: new Date(),
 				metadata: ctx.body.metadata,
 			},
@@ -161,7 +164,7 @@ export const updateOrganization = createAuthEndpoint(
 			openapi: {
 				description: "Update an organization",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -187,7 +190,7 @@ export const updateOrganization = createAuthEndpoint(
 		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
 		if (!organizationId) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 				},
@@ -196,11 +199,11 @@ export const updateOrganization = createAuthEndpoint(
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const member = await adapter.findMemberByOrgId({
 			userId: session.user.id,
-			organizationId: organizationId,
+			organizationId: Number.parseInt(organizationId),
 		});
 		if (!member) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 				},
@@ -209,7 +212,7 @@ export const updateOrganization = createAuthEndpoint(
 		const role = ctx.context.roles[member.role];
 		if (!role) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: "Role not found!",
 				},
@@ -236,7 +239,7 @@ export const deleteOrganization = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			organizationId: z.string({
+			organizationId: z.number({
 				description: "The organization id to delete",
 			}),
 		}),
@@ -246,7 +249,7 @@ export const deleteOrganization = createAuthEndpoint(
 			openapi: {
 				description: "Delete an organization",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -265,13 +268,13 @@ export const deleteOrganization = createAuthEndpoint(
 		const session = await ctx.context.getSession(ctx);
 		if (!session) {
 			return ctx.json(null, {
-				status: 401,
+				status: StatusCodes.UNAUTHORIZED,
 			});
 		}
-		const organizationId: any = ctx.body.organizationId;
+		const organizationId = ctx.body.organizationId;
 		if (!organizationId) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 				},
@@ -284,7 +287,7 @@ export const deleteOrganization = createAuthEndpoint(
 		});
 		if (!member) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 				},
@@ -293,7 +296,7 @@ export const deleteOrganization = createAuthEndpoint(
 		const role = ctx.context.roles[member.role];
 		if (!role) {
 			return ctx.json(null, {
-				status: 400,
+				status: StatusCodes.BAD_REQUEST,
 				body: {
 					message: "Role not found!",
 				},
@@ -307,7 +310,10 @@ export const deleteOrganization = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE,
 			});
 		}
-		if (organizationId === session.session.activeOrganizationId) {
+		if (
+			session.session.activeOrganizationId &&
+			organizationId === Number.parseInt(session.session.activeOrganizationId)
+		) {
 			/**
 			 * If the organization is deleted, we set the active organization to null
 			 */
@@ -362,7 +368,7 @@ export const getFullOrganization = createAuthEndpoint(
 			openapi: {
 				description: "Get the full organization",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -433,7 +439,7 @@ export const setActiveOrganization = createAuthEndpoint(
 			openapi: {
 				description: "Set the active organization",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -509,7 +515,7 @@ export const listOrganizations = createAuthEndpoint(
 			openapi: {
 				description: "List all organizations",
 				responses: {
-					"200": {
+					[StatusCodes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {

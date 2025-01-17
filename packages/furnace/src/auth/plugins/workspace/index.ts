@@ -1,14 +1,15 @@
-import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
+import { generateId } from "@woben/common/generate-id";
+import { createAuthEndpoint, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
+import {
+	defaultRoles,
+	type AccessControl,
+	type Role,
+	type defaultStatements,
+} from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
 import { APIError } from "better-call";
 import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import { shimContext } from "../../internal-utils/shim";
-import {
-	type AccessControl,
-	type Role,
-	defaultRoles,
-	// type defaultStatements,
-} from "better-auth/plugins/access";
 import { getOrgAdapter } from "./adapter";
 import { orgSessionMiddleware } from "./call";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
@@ -252,12 +253,12 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		},
 	});
 
-	// type DefaultStatements = typeof defaultStatements;
-	// type Statements = O["ac"] extends AccessControl<infer S>
-	// 	? S extends Record<string, any>
-	// 		? S & DefaultStatements
-	// 		: DefaultStatements
-	// 	: DefaultStatements;
+	type DefaultStatements = typeof defaultStatements;
+	type Statements = O["ac"] extends AccessControl<infer S>
+		? S extends Record<string, any>
+			? S & DefaultStatements
+			: DefaultStatements
+		: DefaultStatements;
 
 	return {
 		id: "workspace",
@@ -272,13 +273,12 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						organizationId: z.string().optional(),
 						permission: z.record(z.string(), z.array(z.string())),
 					}) as unknown as ZodObject<{
-						// permission: ZodObject<{
-						// 	[key in keyof Statements]: ZodOptional<
-						// 		//@ts-expect-error TODO: fix this
-						// 		ZodArray<ZodLiteral<Statements[key][number]>>
-						// 	>;
-						// }>;
-						permission: ZodObject<{ ZodString: ZodArray<ZodString> }>;
+						permission: ZodObject<{
+							[key in keyof Statements]: ZodOptional<
+								//@ts-expect-error TODO: fix this
+								ZodArray<ZodLiteral<Statements[key][number]>>
+							>;
+						}>;
 						organizationId: ZodOptional<ZodString>;
 					}>,
 					use: [orgSessionMiddleware],
@@ -391,6 +391,12 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						type: "string",
 						unique: true,
 						fieldName: options?.schema?.organization?.fields?.slug,
+					},
+					publicId: {
+						type: "string",
+						unique: true,
+						required: true,
+						input: false,
 					},
 					logo: {
 						type: "string",
