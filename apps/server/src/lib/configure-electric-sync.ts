@@ -1,7 +1,7 @@
-import type { HonoApp } from "@/types";
 import { authGuard } from "@woben/furnace/hono";
 import { StatusCodes } from "@woben/furnace/utils";
 import { cors } from "hono/cors";
+import type { HonoApp } from "../types";
 
 export function configureElectricSync(app: HonoApp) {
 	app

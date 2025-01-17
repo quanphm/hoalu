@@ -1,6 +1,3 @@
-import { db } from "@/db";
-import { task } from "@/db/schema/task";
-import { createHonoInstance } from "@/lib/create-app";
 import { reduceValibotIssues } from "@woben/common/validate-env";
 import {
 	StatusCodes,
@@ -13,6 +10,9 @@ import { describeRoute } from "hono-openapi";
 import { validator as vValidator } from "hono-openapi/valibot";
 import { cors } from "hono/cors";
 import * as v from "valibot";
+import { db } from "../db";
+import { task } from "../db/schema/task";
+import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();
 

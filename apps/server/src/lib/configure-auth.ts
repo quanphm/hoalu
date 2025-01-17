@@ -1,12 +1,12 @@
-import type { HonoApp, User } from "@/types";
 import { cors } from "hono/cors";
+import type { HonoApp, User } from "../types";
 import { auth } from "./auth";
 
 export function configureAuth(app: HonoApp) {
 	app.use(
 		"/auth/*",
 		cors({
-			origin: process.env.PUBLIC_APP_BASE_URL!,
+			origin: process.env.PUBLIC_APP_BASE_URL,
 			allowHeaders: ["Content-Type", "Authorization"],
 			allowMethods: ["POST", "GET", "OPTIONS"],
 			exposeHeaders: ["Content-Length"],
