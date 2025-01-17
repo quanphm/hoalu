@@ -1,5 +1,5 @@
-import { authGuard } from "@woben/furnace/hono";
-import { StatusCodes } from "@woben/furnace/utils";
+import { authGuard } from "@woben/furnace";
+import { HTTPStatus } from "@woben/common/http-status";
 import { cors } from "hono/cors";
 import type { HonoApp } from "../types";
 
@@ -23,15 +23,15 @@ export function configureElectricSync(app: HonoApp) {
 					{
 						ok: false,
 					},
-					StatusCodes.BAD_REQUEST,
+					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 
 			const electricHeaders = new Headers(electricResponse.headers);
 
-			if (electricResponse.status === StatusCodes.NO_CONTENT) {
+			if (electricResponse.status === HTTPStatus.codes.NO_CONTENT) {
 				electricHeaders.set("electric-up-to-date", "");
-				return c.body(null, StatusCodes.NO_CONTENT, {
+				return c.body(null, HTTPStatus.codes.NO_CONTENT, {
 					...Object.fromEntries(electricResponse.headers),
 				});
 			}
@@ -48,7 +48,7 @@ export function configureElectricSync(app: HonoApp) {
 				electricHeaders.set("electric-up-to-date", "");
 			}
 
-			return c.json(data, StatusCodes.OK, {
+			return c.json(data, HTTPStatus.codes.OK, {
 				...Object.fromEntries(electricHeaders),
 			});
 		});

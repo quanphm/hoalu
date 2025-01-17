@@ -1,3 +1,4 @@
+import { HTTPStatus } from "@woben/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
@@ -33,7 +34,7 @@ export const createInvitation = createAuthEndpoint(
 			openapi: {
 				description: "Invite a user to an organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -196,7 +197,7 @@ export const acceptInvitation = createAuthEndpoint(
 			openapi: {
 				description: "Accept an invitation to an organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -232,7 +233,7 @@ export const acceptInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
-		const acceptedI = await adapter.updateInvitation({
+		const acceptedId = await adapter.updateInvitation({
 			invitationId: ctx.body.invitationId,
 			status: "accepted",
 		});
@@ -243,16 +244,16 @@ export const acceptInvitation = createAuthEndpoint(
 			createdAt: new Date(),
 		});
 		await adapter.setActiveOrganization(session.session.token, invitation.workspaceId as any);
-		if (!acceptedI) {
+		if (!acceptedId) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND,
 				},
 			});
 		}
 		return ctx.json({
-			invitation: acceptedI,
+			invitation: acceptedId,
 			member,
 		});
 	},
@@ -272,7 +273,7 @@ export const rejectInvitation = createAuthEndpoint(
 			openapi: {
 				description: "Reject an invitation to an organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -332,7 +333,7 @@ export const cancelInvitation = createAuthEndpoint(
 		openapi: {
 			description: "Cancel an invitation to an organization",
 			responses: {
-				"200": {
+				[HTTPStatus.codes.OK]: {
 					description: "Success",
 					content: {
 						"application/json": {
@@ -399,7 +400,7 @@ export const getInvitation = createAuthEndpoint(
 			openapi: {
 				description: "Get an invitation by ID",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {

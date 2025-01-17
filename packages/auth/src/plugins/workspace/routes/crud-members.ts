@@ -1,3 +1,4 @@
+import { HTTPStatus } from "@woben/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
@@ -32,7 +33,7 @@ export const addMember = createAuthEndpoint(
 		const orgId = ctx.body.organizationId || session?.session.activeOrganizationId;
 		if (!orgId) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				},
@@ -93,7 +94,7 @@ export const removeMember = createAuthEndpoint(
 			openapi: {
 				description: "Remove a member from an organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -133,7 +134,7 @@ export const removeMember = createAuthEndpoint(
 		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
 		if (!organizationId) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				},
@@ -213,14 +214,14 @@ export const updateMemberRole = createAuthEndpoint(
 			/**
 			 * If not provided, the active organization will be used
 			 */
-			organizationId: z.string().optional(),
+			organizationId: z.number().optional(),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Update the role of a member in an organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -260,7 +261,7 @@ export const updateMemberRole = createAuthEndpoint(
 		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
 		if (!organizationId) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				},
@@ -273,7 +274,7 @@ export const updateMemberRole = createAuthEndpoint(
 		});
 		if (!member) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 				},
@@ -282,7 +283,7 @@ export const updateMemberRole = createAuthEndpoint(
 		const role = ctx.context.roles[member.role];
 		if (!role) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
 				},
@@ -302,14 +303,14 @@ export const updateMemberRole = createAuthEndpoint(
 				body: {
 					message: "You are not allowed to update this member",
 				},
-				status: 403,
+				status: HTTPStatus.codes.FORBIDDEN,
 			});
 		}
 
 		const updatedMember = await adapter.updateMember(ctx.body.memberId, ctx.body.role as string);
 		if (!updatedMember) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 				},
@@ -328,7 +329,7 @@ export const getActiveMember = createAuthEndpoint(
 			openapi: {
 				description: "Get the active member in the organization",
 				responses: {
-					"200": {
+					[HTTPStatus.codes.OK]: {
 						description: "Success",
 						content: {
 							"application/json": {
@@ -362,7 +363,7 @@ export const getActiveMember = createAuthEndpoint(
 		const organizationId = session.session.activeOrganizationId;
 		if (!organizationId) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				},
@@ -375,7 +376,7 @@ export const getActiveMember = createAuthEndpoint(
 		});
 		if (!member) {
 			return ctx.json(null, {
-				status: 400,
+				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
 					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 				},

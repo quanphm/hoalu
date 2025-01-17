@@ -1,7 +1,7 @@
 import { BetterAuthError } from "better-auth";
 import type { AuthContext, Session, User } from "better-auth/types";
-import { getDate } from "../../internal-utils/date";
-import { parseJSON } from "../../internal-utils/parser";
+import { getDate } from "../../utils/date";
+import { parseJSON } from "../../utils/parser";
 import type { WorkspaceOptions } from "./index";
 import type {
 	Invitation,

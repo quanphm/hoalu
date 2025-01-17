@@ -1,29 +1,22 @@
 {
 	"name": "@woben/furnace",
-	"description": "Server utilities - use Hono & Better Auth",
+	"description": "Hono server utilities",
 	"version": "0.3.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./utils": "./src/utils/index.ts",
-		"./auth": "./src/auth/index.ts",
-		"./hono": "./src/hono/index.ts"
+		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"better-auth": "^1.1.14",
 		"hono": "^4.6.16"
 	},
 	"dependencies": {
-		"@better-auth/utils": "^0.2.3",
 		"@woben/common": "workspace:*",
-		"better-call": "^0.3.3",
 		"hono-openapi": "^0.4.1",
 		"hono-pino": "^0.7.0",
-		"nanostores": "^0.11.3",
 		"pino": "^9.6.0",
 		"pino-pretty": "^13.0.0",
-		"valibot": "^1.0.0-beta.12",
-		"zod": "^3.24.1"
+		"valibot": "^1.0.0-beta.12"
 	},
 	"devDependencies": {
 		"vitest": "^3.0.1"

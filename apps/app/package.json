@@ -16,6 +16,7 @@
 		"@tanstack/react-router": "^1.97.1",
 		"@tanstack/react-router-with-query": "^1.97.1",
 		"@tanstack/router-devtools": "^1.97.1",
+		"@woben/auth": "workspace:*",
 		"@woben/common": "workspace:*",
 		"@woben/icons": "workspace:*",
 		"@woben/ui": "workspace:*",

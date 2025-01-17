@@ -1,4 +1,4 @@
-import { userPublicId, workspace } from "@woben/furnace/auth";
+import { userPublicId, workspace } from "@woben/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db";

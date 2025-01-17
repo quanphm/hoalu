@@ -1,7 +1,7 @@
 import { getSessionFromCtx } from "better-auth/api";
 import { defaultRoles, type AccessControl, type Role } from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
-import { shimContext } from "../../internal-utils/shim";
+import { shimContext } from "../../utils/shim";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
 	acceptInvitation,

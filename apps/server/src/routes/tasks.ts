@@ -1,5 +1,6 @@
 import { reduceValibotIssues } from "@woben/common/validate-env";
-import { StatusCodes, OpenAPI } from "@woben/furnace/utils";
+import { HTTPStatus } from "@woben/common/http-status";
+import { OpenAPI } from "@woben/furnace";
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { describeRoute } from "hono-openapi";
 import { validator as vValidator } from "hono-openapi/valibot";
@@ -32,7 +33,7 @@ export const tasksRoute = app
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(v.object({ data: v.array(selectSchema) }), StatusCodes.OK),
+				...OpenAPI.response(v.object({ data: v.array(selectSchema) }), HTTPStatus.codes.OK),
 			},
 		}),
 		async (c) => {
@@ -48,7 +49,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(parsed.issues),
 					},
-					StatusCodes.UNPROCESSABLE_ENTITY,
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
@@ -56,7 +57,7 @@ export const tasksRoute = app
 				{
 					data: parsed.output,
 				},
-				StatusCodes.OK,
+				HTTPStatus.codes.OK,
 			);
 		},
 	)
@@ -70,7 +71,7 @@ export const tasksRoute = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(v.object({ data: insertSchema }), StatusCodes.CREATED),
+				...OpenAPI.response(v.object({ data: insertSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		vValidator("json", insertSchema, (result, c) => {
@@ -79,7 +80,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(result.issues),
 					},
-					StatusCodes.BAD_REQUEST,
+					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 		}),
@@ -103,7 +104,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(parsed.issues),
 					},
-					StatusCodes.UNPROCESSABLE_ENTITY,
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
@@ -111,7 +112,7 @@ export const tasksRoute = app
 				{
 					data: parsed.output,
 				},
-				StatusCodes.CREATED,
+				HTTPStatus.codes.CREATED,
 			);
 		},
 	);

@@ -1,9 +1,8 @@
+import { HTTPStatus } from "@woben/common/http-status";
 import type { ResolverResult } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import type { BaseIssue, BaseSchema } from "valibot";
 import * as v from "valibot";
-import * as StatusCodes from "./http-status-codes";
-import * as StatusPhrases from "./http-status-phrases";
 
 interface Response {
 	description: string;
@@ -17,7 +16,7 @@ interface Response {
 /**
  * General response. Mostly use for `200`, `201` & `204` response.
  */
-export function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
+function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
 	schema: T,
 	status: number,
 	description?: string,
@@ -29,24 +28,24 @@ export function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknow
 					schema: resolver<T>(schema),
 				},
 			},
-			description: description || StatusCodes[status],
+			description: description || HTTPStatus.phrases[status],
 		},
 	};
 }
 
-export function unauthorized(): Record<401, Response> {
+function unauthorized(): Record<401, Response> {
 	return {
-		[StatusCodes.UNAUTHORIZED]: {
+		[HTTPStatus.codes.UNAUTHORIZED]: {
 			content: {
 				"application/json": {
 					schema: resolver(
 						v.object({
-							message: v.literal(StatusPhrases.UNAUTHORIZED),
+							message: v.literal(HTTPStatus.phrases.UNAUTHORIZED),
 						}),
 					),
 				},
 			},
-			description: StatusPhrases.UNAUTHORIZED,
+			description: HTTPStatus.phrases.UNAUTHORIZED,
 		},
 	};
 }
@@ -54,9 +53,9 @@ export function unauthorized(): Record<401, Response> {
 /**
  * Invalid body requerst from client.
  */
-export function bad_request(description?: string): Record<400, Response> {
+function bad_request(description?: string): Record<400, Response> {
 	return {
-		[StatusCodes.BAD_REQUEST]: {
+		[HTTPStatus.codes.BAD_REQUEST]: {
 			content: {
 				"application/json": {
 					schema: resolver(
@@ -64,7 +63,7 @@ export function bad_request(description?: string): Record<400, Response> {
 							error: v.array(
 								v.object({
 									attribute: v.undefinedable(v.string()),
-									message: v.optional(v.string(), StatusPhrases.BAD_REQUEST),
+									message: v.optional(v.string(), HTTPStatus.phrases.BAD_REQUEST),
 								}),
 							),
 						}),
@@ -79,9 +78,9 @@ export function bad_request(description?: string): Record<400, Response> {
 /**
  * For some reasons, valibot couldn't parse the database result correctly.
  */
-export function server_parse_error(description?: string): Record<422, Response> {
+function server_parse_error(description?: string): Record<422, Response> {
 	return {
-		[StatusCodes.UNPROCESSABLE_ENTITY]: {
+		[HTTPStatus.codes.UNPROCESSABLE_ENTITY]: {
 			content: {
 				"application/json": {
 					schema: resolver(
@@ -89,7 +88,7 @@ export function server_parse_error(description?: string): Record<422, Response> 
 							error: v.array(
 								v.object({
 									attribute: v.undefinedable(v.string()),
-									message: v.optional(v.string(), StatusPhrases.UNPROCESSABLE_ENTITY),
+									message: v.optional(v.string(), HTTPStatus.phrases.UNPROCESSABLE_ENTITY),
 								}),
 							),
 						}),
@@ -100,3 +99,10 @@ export function server_parse_error(description?: string): Record<422, Response> 
 		},
 	};
 }
+
+export const OpenAPI = {
+	unauthorized,
+	bad_request,
+	server_parse_error,
+	response,
+};
