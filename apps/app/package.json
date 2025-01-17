@@ -23,7 +23,7 @@
 		"hono": "^4.6.16",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"valibot": "1.0.0-beta.11"
+		"valibot": "^1.0.0-beta.12"
 	},
 	"devDependencies": {
 		"@tailwindcss/vite": "^4.0.0-beta.9",
