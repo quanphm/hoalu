@@ -35,6 +35,7 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 					if (match) {
 						const hookRes = await hook.handler(context);
 						if (hookRes && "context" in hookRes) {
+							// @ts-ignorets
 							context = {
 								...context,
 								...hookRes.context,
@@ -45,7 +46,7 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 				}
 			}
 		}
-		//@ts-ignore
+		// @ts-ignorets
 		const endpointRes = value({
 			...context,
 			context: {

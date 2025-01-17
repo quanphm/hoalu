@@ -2,7 +2,7 @@ import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
 import { getOrgAdapter } from "../adapter";
-import { orgMiddleware, orgSessionMiddleware } from "../call";
+import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
 
@@ -10,7 +10,7 @@ export const createInvitation = createAuthEndpoint(
 	"/organization/invite-member",
 	{
 		method: "POST",
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		body: z.object({
 			email: z.string({
 				description: "The email address of the user to invite",
@@ -19,7 +19,7 @@ export const createInvitation = createAuthEndpoint(
 				description: "The role to assign to the user",
 			}),
 			organizationId: z
-				.string({
+				.number({
 					description: "The organization ID to invite the user to",
 				})
 				.optional(),
@@ -191,7 +191,7 @@ export const acceptInvitation = createAuthEndpoint(
 				description: "The ID of the invitation to accept",
 			}),
 		}),
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Accept an invitation to an organization",
@@ -237,12 +237,12 @@ export const acceptInvitation = createAuthEndpoint(
 			status: "accepted",
 		});
 		const member = await adapter.createMember({
-			organizationId: invitation.organizationId,
+			workspaceId: invitation.workspaceId,
 			userId: session.user.id,
 			role: invitation.role,
 			createdAt: new Date(),
 		});
-		await adapter.setActiveOrganization(session.session.token, invitation.organizationId as any);
+		await adapter.setActiveOrganization(session.session.token, invitation.workspaceId as any);
 		if (!acceptedI) {
 			return ctx.json(null, {
 				status: 400,
@@ -267,7 +267,7 @@ export const rejectInvitation = createAuthEndpoint(
 				description: "The ID of the invitation to reject",
 			}),
 		}),
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Reject an invitation to an organization",
@@ -328,7 +328,7 @@ export const cancelInvitation = createAuthEndpoint(
 				description: "The ID of the invitation to cancel",
 			}),
 		}),
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		openapi: {
 			description: "Cancel an invitation to an organization",
 			responses: {
@@ -361,7 +361,7 @@ export const cancelInvitation = createAuthEndpoint(
 		}
 		const member = await adapter.findMemberByOrgId({
 			userId: session.user.id,
-			organizationId: invitation.organizationId as any,
+			organizationId: invitation.workspaceId as any,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {
@@ -388,7 +388,7 @@ export const getInvitation = createAuthEndpoint(
 	"/organization/get-invitation",
 	{
 		method: "GET",
-		use: [orgMiddleware],
+		use: [workspaceMiddleware],
 		requireHeaders: true,
 		query: z.object({
 			id: z.string({
@@ -476,7 +476,7 @@ export const getInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
-		const organization = await adapter.findOrganizationById(invitation.organizationId as any);
+		const organization = await adapter.findOrganizationById(invitation.workspaceId as any);
 		if (!organization) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -484,7 +484,7 @@ export const getInvitation = createAuthEndpoint(
 		}
 		const member = await adapter.findMemberByOrgId({
 			userId: invitation.inviterId,
-			organizationId: invitation.organizationId as any,
+			organizationId: invitation.workspaceId as any,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {

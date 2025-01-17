@@ -26,20 +26,22 @@ export const organizationClient = <O extends OrganizationClientOptions>(options?
 	const $activeOrgSignal = atom<boolean>(false);
 	const $activeMemberSignal = atom<boolean>(false);
 
-	type DefaultStatements = typeof defaultStatements;
-	type Statements = O["ac"] extends AccessControl<infer S>
-		? S extends Record<string, Array<any>>
-			? S & DefaultStatements
-			: DefaultStatements
-		: DefaultStatements;
 	const roles = {
 		admin: adminAc,
 		member: memberAc,
 		owner: ownerAc,
 		...options?.roles,
 	};
+
+	type DefaultStatements = typeof defaultStatements;
+	type Statements = O["ac"] extends AccessControl<infer S>
+		? S extends Record<string, Array<any>>
+			? S & DefaultStatements
+			: DefaultStatements
+		: DefaultStatements;
+
 	return {
-		id: "organization",
+		id: "workspace",
 		$InferServerPlugin: {} as ReturnType<
 			typeof workspace<{
 				ac: O["ac"] extends AccessControl ? O["ac"] : AccessControl<DefaultStatements>;
@@ -54,7 +56,7 @@ export const organizationClient = <O extends OrganizationClientOptions>(options?
 		>,
 		getActions: ($fetch) => ({
 			$Infer: {
-				ActiveOrganization: {} as Prettify<
+				ActiveWorkspace: {} as Prettify<
 					Workspace & {
 						members: Prettify<
 							Member & {
@@ -69,11 +71,11 @@ export const organizationClient = <O extends OrganizationClientOptions>(options?
 						invitations: Invitation[];
 					}
 				>,
-				Organization: {} as Workspace,
+				Workspace: {} as Workspace,
 				Invitation: {} as Invitation,
 				Member: {} as Member,
 			},
-			organization: {
+			workspace: {
 				checkRolePermission: <
 					R extends O extends { roles: any } ? keyof O["roles"] : "admin" | "member" | "owner",
 				>(data: {
@@ -99,6 +101,7 @@ export const organizationClient = <O extends OrganizationClientOptions>(options?
 			const listOrganizations = useAuthQuery<Workspace[]>($listOrg, "/organization/list", $fetch, {
 				method: "GET",
 			});
+
 			const activeOrganization = useAuthQuery<
 				Prettify<
 					Workspace & {

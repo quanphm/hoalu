@@ -22,7 +22,7 @@ const workspaceSchemaInput = workspaceSchema.omit({ id: true });
 
 export const memberSchema = z.object({
 	id: z.number(),
-	organizationId: z.number(),
+	workspaceId: z.number(),
 	userId: z.string(),
 	role,
 	createdAt: z.date(),
@@ -31,7 +31,7 @@ const memberSchemaInput = memberSchema.omit({ id: true });
 
 export const invitationSchema = z.object({
 	id: z.number(),
-	organizationId: z.number(),
+	workspaceId: z.number(),
 	email: z.string(),
 	role,
 	status: invitationStatus,

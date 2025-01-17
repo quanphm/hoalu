@@ -1,12 +1,18 @@
+import { generateId } from "@woben/common/generate-id";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
+import {
+	type AccessControl,
+	type Role,
+	defaultRoles,
+	type defaultStatements,
+} from "better-auth/plugins/access";
 import { APIError } from "better-call";
-import { z } from "zod";
-import { getOrgAdapter } from "../adapter";
-import { orgMiddleware, orgSessionMiddleware } from "../call";
-import { WORKSPACE_ERROR_CODES } from "../error-codes";
-import { generateId } from "@woben/common/generate-id";
+import { type ZodArray, type ZodNumber, type ZodObject, type ZodOptional, z } from "zod";
 import { StatusCodes } from "../../../../utils";
+import { getOrgAdapter } from "../adapter";
+import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
+import { WORKSPACE_ERROR_CODES } from "../error-codes";
 
 export const createOrganization = createAuthEndpoint(
 	"/organization/create",
@@ -36,7 +42,7 @@ export const createOrganization = createAuthEndpoint(
 				})
 				.optional(),
 		}),
-		use: [orgMiddleware],
+		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
 				description: "Create an organization",
@@ -156,10 +162,10 @@ export const updateOrganization = createAuthEndpoint(
 						.optional(),
 				})
 				.partial(),
-			organizationId: z.string().optional(),
+			organizationId: z.number().optional(),
 		}),
 		requireHeaders: true,
-		use: [orgMiddleware],
+		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
 				description: "Update an organization",
@@ -199,7 +205,7 @@ export const updateOrganization = createAuthEndpoint(
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const member = await adapter.findMemberByOrgId({
 			userId: session.user.id,
-			organizationId: Number.parseInt(organizationId),
+			organizationId: organizationId,
 		});
 		if (!member) {
 			return ctx.json(null, {
@@ -244,7 +250,7 @@ export const deleteOrganization = createAuthEndpoint(
 			}),
 		}),
 		requireHeaders: true,
-		use: [orgMiddleware],
+		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
 				description: "Delete an organization",
@@ -312,7 +318,7 @@ export const deleteOrganization = createAuthEndpoint(
 		}
 		if (
 			session.session.activeOrganizationId &&
-			organizationId === Number.parseInt(session.session.activeOrganizationId)
+			organizationId === session.session.activeOrganizationId
 		) {
 			/**
 			 * If the organization is deleted, we set the active organization to null
@@ -351,7 +357,7 @@ export const getFullOrganization = createAuthEndpoint(
 		query: z.optional(
 			z.object({
 				organizationId: z
-					.string({
+					.number({
 						description: "The organization id to get",
 					})
 					.optional(),
@@ -363,7 +369,7 @@ export const getFullOrganization = createAuthEndpoint(
 			}),
 		),
 		requireHeaders: true,
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Get the full organization",
@@ -386,31 +392,42 @@ export const getFullOrganization = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId =
-			ctx.query?.organizationSlug ||
-			ctx.query?.organizationId ||
-			session.session.activeOrganizationId;
-		if (!organizationId) {
+		const organizationId = ctx.query?.organizationId || session.session.activeOrganizationId;
+		const organizationSlug = ctx.query?.organizationSlug;
+
+		if (!organizationId && !organizationSlug) {
 			return ctx.json(null, {
 				status: 200,
 			});
 		}
+
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const organization = await adapter.findFullOrganization({
-			organizationId,
-			isSlug: !!ctx.query?.organizationSlug,
-		});
-		const isMember = organization?.members.find((member) => member.userId === session.user.id);
-		if (!isMember) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
+		let organization: Awaited<ReturnType<typeof adapter.findFullOrganization>> = null;
+
+		if (organizationId) {
+			organization = await adapter.findFullOrganization({
+				organizationId: organizationId,
+			});
+		} else if (organizationSlug) {
+			organization = await adapter.findFullOrganization({
+				organizationId: organizationSlug,
+				isSlug: true,
 			});
 		}
+
 		if (!organization) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
+
+		const isMember = organization.members.find((member) => member.userId === session.user.id);
+		if (!isMember) {
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
+			});
+		}
+
 		return ctx.json(organization);
 	},
 );
@@ -421,7 +438,7 @@ export const setActiveOrganization = createAuthEndpoint(
 		method: "POST",
 		body: z.object({
 			organizationId: z
-				.string({
+				.number({
 					description:
 						"The organization id to set as active. It can be null to unset the active organization",
 				})
@@ -434,7 +451,7 @@ export const setActiveOrganization = createAuthEndpoint(
 				})
 				.optional(),
 		}),
-		use: [orgSessionMiddleware, orgMiddleware],
+		use: [workspaceSessionMiddleware, workspaceMiddleware],
 		metadata: {
 			openapi: {
 				description: "Set the active organization",
@@ -459,6 +476,7 @@ export const setActiveOrganization = createAuthEndpoint(
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const session = ctx.context.session;
 		let organizationId = ctx.body.organizationSlug || ctx.body.organizationId;
+
 		if (organizationId === null) {
 			const sessionOrgId = session.session.activeOrganizationId;
 			if (!sessionOrgId) {
@@ -510,7 +528,7 @@ export const listOrganizations = createAuthEndpoint(
 	"/organization/list",
 	{
 		method: "GET",
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "List all organizations",
@@ -538,3 +556,118 @@ export const listOrganizations = createAuthEndpoint(
 		return ctx.json(organizations);
 	},
 );
+
+type DefaultStatements = typeof defaultStatements;
+type Statements = AccessControl extends AccessControl<infer S>
+	? S extends Record<string, any>
+		? S & DefaultStatements
+		: DefaultStatements
+	: DefaultStatements;
+
+export const hasOrganizationPermission = (roles: Record<string, any>) =>
+	createAuthEndpoint(
+		"/organization/has-permission",
+		{
+			method: "POST",
+			requireHeaders: true,
+			body: z.object({
+				organizationId: z.string().optional(),
+				permission: z.record(z.string(), z.array(z.string())),
+			}) as unknown as ZodObject<{
+				permission: ZodObject<{
+					[key in keyof Statements]: ZodOptional<
+						//@ts-expect-error TODO: fix this
+						ZodArray<ZodLiteral<Statements[key][number]>>
+					>;
+				}>;
+				organizationId: ZodOptional<ZodNumber>;
+			}>,
+			use: [workspaceSessionMiddleware],
+			metadata: {
+				openapi: {
+					description: "Check if the user has permission",
+					requestBody: {
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									properties: {
+										permission: {
+											type: "object",
+											description: "The permission to check",
+										},
+									},
+									required: ["permission"],
+								},
+							},
+						},
+					},
+					responses: {
+						[StatusCodes.OK]: {
+							description: "Success",
+							content: {
+								"application/json": {
+									schema: {
+										type: "object",
+										properties: {
+											error: {
+												type: "string",
+											},
+											success: {
+												type: "boolean",
+											},
+										},
+										required: ["success"],
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		async (ctx) => {
+			if (!ctx.body.permission || Object.keys(ctx.body.permission).length > 1) {
+				throw new APIError("BAD_REQUEST", {
+					message:
+						"invalid permission check. you can only check one resource permission at a time.",
+				});
+			}
+			const activeOrganizationId =
+				ctx.body.organizationId || ctx.context.session.session.activeOrganizationId;
+			if (!activeOrganizationId) {
+				throw new APIError("BAD_REQUEST", {
+					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
+				});
+			}
+			const adapter = getOrgAdapter(ctx.context);
+			const member = await adapter.findMemberByOrgId({
+				userId: ctx.context.session.user.id,
+				organizationId: activeOrganizationId,
+			});
+			if (!member) {
+				throw new APIError("UNAUTHORIZED", {
+					message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
+				});
+			}
+			const role = roles[member.role];
+			const result = role.authorize(ctx.body.permission as any);
+
+			if (result.error) {
+				return ctx.json(
+					{
+						error: result.error,
+						success: false,
+					},
+					{
+						status: 403,
+					},
+				);
+			}
+
+			return ctx.json({
+				error: null,
+				success: true,
+			});
+		},
+	);

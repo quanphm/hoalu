@@ -1,17 +1,7 @@
-import { generateId } from "@woben/common/generate-id";
-import { createAuthEndpoint, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
-import {
-	defaultRoles,
-	type AccessControl,
-	type Role,
-	type defaultStatements,
-} from "better-auth/plugins/access";
+import { getSessionFromCtx } from "better-auth/api";
+import { defaultRoles, type AccessControl, type Role } from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
-import { APIError } from "better-call";
-import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import { shimContext } from "../../internal-utils/shim";
-import { getOrgAdapter } from "./adapter";
-import { orgSessionMiddleware } from "./call";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
 	acceptInvitation,
@@ -25,6 +15,7 @@ import {
 	createOrganization,
 	deleteOrganization,
 	getFullOrganization,
+	hasOrganizationPermission,
 	listOrganizations,
 	setActiveOrganization,
 	updateOrganization,
@@ -111,7 +102,7 @@ export interface WorkspaceOptions {
 			/**
 			 * the invitation id
 			 */
-			id: string;
+			id: number;
 			/**
 			 * the role of the user
 			 */
@@ -145,7 +136,7 @@ export interface WorkspaceOptions {
 				activeOrganizationId?: string;
 			};
 		};
-		organization?: {
+		workspace?: {
 			modelName?: string;
 			fields?: {
 				[key in keyof Omit<Workspace, "id">]?: string;
@@ -221,6 +212,11 @@ export interface WorkspaceOptions {
  * ```
  */
 export const workspace = <O extends WorkspaceOptions>(options?: O) => {
+	const roles = {
+		...defaultRoles,
+		...options?.roles,
+	};
+
 	const endpoints = {
 		createOrganization,
 		updateOrganization,
@@ -237,11 +233,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		removeMember,
 		updateMemberRole,
 		getActiveMember,
-	};
-
-	const roles = {
-		...defaultRoles,
-		...options?.roles,
+		hasOrganizationPermission: hasOrganizationPermission(roles),
 	};
 
 	const api = shimContext(endpoints, {
@@ -253,184 +245,61 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		},
 	});
 
-	type DefaultStatements = typeof defaultStatements;
-	type Statements = O["ac"] extends AccessControl<infer S>
-		? S extends Record<string, any>
-			? S & DefaultStatements
-			: DefaultStatements
-		: DefaultStatements;
-
 	return {
 		id: "workspace",
-		endpoints: {
-			...api,
-			hasPermission: createAuthEndpoint(
-				"/organization/has-permission",
-				{
-					method: "POST",
-					requireHeaders: true,
-					body: z.object({
-						organizationId: z.string().optional(),
-						permission: z.record(z.string(), z.array(z.string())),
-					}) as unknown as ZodObject<{
-						permission: ZodObject<{
-							[key in keyof Statements]: ZodOptional<
-								//@ts-expect-error TODO: fix this
-								ZodArray<ZodLiteral<Statements[key][number]>>
-							>;
-						}>;
-						organizationId: ZodOptional<ZodString>;
-					}>,
-					use: [orgSessionMiddleware],
-					metadata: {
-						openapi: {
-							description: "Check if the user has permission",
-							requestBody: {
-								content: {
-									"application/json": {
-										schema: {
-											type: "object",
-											properties: {
-												permission: {
-													type: "object",
-													description: "The permission to check",
-												},
-											},
-											required: ["permission"],
-										},
-									},
-								},
-							},
-							responses: {
-								"200": {
-									description: "Success",
-									content: {
-										"application/json": {
-											schema: {
-												type: "object",
-												properties: {
-													error: {
-														type: "string",
-													},
-													success: {
-														type: "boolean",
-													},
-												},
-												required: ["success"],
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				async (ctx) => {
-					if (!ctx.body.permission || Object.keys(ctx.body.permission).length > 1) {
-						throw new APIError("BAD_REQUEST", {
-							message:
-								"invalid permission check. you can only check one resource permission at a time.",
-						});
-					}
-					const activeOrganizationId =
-						ctx.body.organizationId || ctx.context.session.session.activeOrganizationId;
-					if (!activeOrganizationId) {
-						throw new APIError("BAD_REQUEST", {
-							message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-						});
-					}
-					const adapter = getOrgAdapter(ctx.context);
-					const member = await adapter.findMemberByOrgId({
-						userId: ctx.context.session.user.id,
-						organizationId: activeOrganizationId,
-					});
-					if (!member) {
-						throw new APIError("UNAUTHORIZED", {
-							message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
-						});
-					}
-					const role = roles[member.role as keyof typeof roles];
-					const result = role.authorize(ctx.body.permission as any);
-					if (result.error) {
-						return ctx.json(
-							{
-								error: result.error,
-								success: false,
-							},
-							{
-								status: 403,
-							},
-						);
-					}
-					return ctx.json({
-						error: null,
-						success: true,
-					});
-				},
-			),
-		},
+		endpoints: api,
 		schema: {
 			session: {
 				fields: {
 					activeOrganizationId: {
-						type: "string",
+						type: "number",
 						required: false,
-						fieldName: options?.schema?.session?.fields?.activeOrganizationId,
 					},
 				},
 			},
-			organization: {
-				modelName: options?.schema?.organization?.modelName,
+			workspace: {
 				fields: {
 					name: {
 						type: "string",
 						required: true,
-						fieldName: options?.schema?.organization?.fields?.name,
 					},
 					slug: {
 						type: "string",
 						unique: true,
-						fieldName: options?.schema?.organization?.fields?.slug,
 					},
 					publicId: {
 						type: "string",
 						unique: true,
 						required: true,
-						input: false,
 					},
 					logo: {
 						type: "string",
 						required: false,
-						fieldName: options?.schema?.organization?.fields?.logo,
 					},
 					createdAt: {
 						type: "date",
 						required: true,
-						fieldName: options?.schema?.organization?.fields?.createdAt,
 					},
 					metadata: {
 						type: "string",
 						required: false,
-						fieldName: options?.schema?.organization?.fields?.metadata,
 					},
 				},
 			},
 			member: {
-				modelName: options?.schema?.member?.modelName,
 				fields: {
-					organizationId: {
+					workspaceId: {
 						type: "string",
 						required: true,
 						references: {
-							model: "organization",
+							model: "workspace",
 							field: "id",
+							onDelete: "cascade",
 						},
-						fieldName: options?.schema?.member?.fields?.organizationId,
 					},
 					userId: {
 						type: "string",
 						required: true,
-						fieldName: options?.schema?.member?.fields?.userId,
 						references: {
 							model: "user",
 							field: "id",
@@ -440,47 +309,41 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						type: "string",
 						required: true,
 						defaultValue: "member",
-						fieldName: options?.schema?.member?.fields?.role,
 					},
 					createdAt: {
 						type: "date",
 						required: true,
-						fieldName: options?.schema?.member?.fields?.createdAt,
 					},
 				},
 			},
 			invitation: {
 				modelName: options?.schema?.invitation?.modelName,
 				fields: {
-					organizationId: {
+					workspaceId: {
 						type: "string",
 						required: true,
 						references: {
-							model: "organization",
+							model: "workspace",
 							field: "id",
+							onDelete: "cascade",
 						},
-						fieldName: options?.schema?.invitation?.fields?.organizationId,
 					},
 					email: {
 						type: "string",
 						required: true,
-						fieldName: options?.schema?.invitation?.fields?.email,
 					},
 					role: {
 						type: "string",
 						required: false,
-						fieldName: options?.schema?.invitation?.fields?.role,
 					},
 					status: {
 						type: "string",
 						required: true,
 						defaultValue: "pending",
-						fieldName: options?.schema?.invitation?.fields?.status,
 					},
 					expiresAt: {
 						type: "date",
 						required: true,
-						fieldName: options?.schema?.invitation?.fields?.expiresAt,
 					},
 					inviterId: {
 						type: "string",
@@ -488,17 +351,16 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 							model: "user",
 							field: "id",
 						},
-						fieldName: options?.schema?.invitation?.fields?.inviterId,
 						required: true,
 					},
 				},
 			},
 		},
 		$Infer: {
-			Organization: {} as Workspace,
+			Workspace: {} as Workspace,
 			Invitation: {} as Invitation,
 			Member: {} as Member,
-			ActiveOrganization: {} as Prettify<
+			ActiveWorkspace: {} as Prettify<
 				Workspace & {
 					members: Prettify<
 						Member & {

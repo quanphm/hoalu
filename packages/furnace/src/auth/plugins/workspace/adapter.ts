@@ -14,6 +14,7 @@ import type {
 
 export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) => {
 	const adapter = context.adapter;
+
 	return {
 		findOrganizationBySlug: async (slug: string) => {
 			const organization = await adapter.findOne<Workspace>({
@@ -43,7 +44,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			const member = await adapter.create<MemberInput>({
 				model: "member",
 				data: {
-					organizationId: organization.id,
+					workspaceId: organization.id,
 					userId: data.user.id,
 					createdAt: new Date(),
 					role: options?.creatorRole || "owner",
@@ -67,7 +68,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		findMemberByEmail: async (data: {
 			email: string;
-			organizationId: string;
+			organizationId: number;
 		}) => {
 			const user = await adapter.findOne<User>({
 				model: "user",
@@ -205,7 +206,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return member;
 		},
-		deleteMember: async (memberId: string) => {
+		deleteMember: async (memberId: number) => {
 			const member = await adapter.delete<Member>({
 				model: "member",
 				where: [
@@ -217,7 +218,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return member;
 		},
-		updateOrganization: async (organizationId: string, data: Partial<Workspace>) => {
+		updateOrganization: async (organizationId: number, data: Partial<Workspace>) => {
 			const organization = await adapter.update<Workspace>({
 				model: "organization",
 				where: [
@@ -290,14 +291,11 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return organization;
 		},
-		/**
-		 * @requires db
-		 */
 		findFullOrganization: async ({
 			organizationId,
 			isSlug,
 		}: {
-			organizationId: string;
+			organizationId: number | string;
 			isSlug?: boolean;
 		}) => {
 			const org = await adapter.findOne<Workspace>({
@@ -364,7 +362,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				return [];
 			}
 
-			const organizationIds = members.map((member) => member.organizationId);
+			const organizationIds = members.map((member) => member.workspaceId);
 
 			const organizations = await adapter.findMany<Workspace>({
 				model: "organization",
@@ -396,7 +394,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				data: {
 					email: invitation.email,
 					role: invitation.role,
-					organizationId: invitation.organizationId,
+					workspaceId: invitation.organizationId,
 					status: "pending",
 					expiresAt,
 					inviterId: user.id,
@@ -419,7 +417,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		findPendingInvitation: async (data: {
 			email: string;
-			organizationId: string;
+			organizationId: number;
 		}) => {
 			const invitation = await adapter.findMany<Invitation>({
 				model: "invitation",

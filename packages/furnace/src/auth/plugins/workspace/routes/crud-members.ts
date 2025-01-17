@@ -2,7 +2,7 @@ import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
 import { getOrgAdapter } from "../adapter";
-import { orgMiddleware, orgSessionMiddleware } from "../call";
+import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
 import type { Member } from "../schema";
@@ -16,7 +16,7 @@ export const addMember = createAuthEndpoint(
 			role: z.string() as any,
 			organizationId: z.string().optional(),
 		}),
-		use: [orgMiddleware],
+		use: [workspaceMiddleware],
 		metadata: {
 			SERVER_ONLY: true,
 		},
@@ -60,7 +60,7 @@ export const addMember = createAuthEndpoint(
 		}
 
 		const createdMember = await adapter.createMember({
-			organizationId: orgId,
+			workspaceId: orgId,
 			userId: user.id,
 			role: ctx.body.role as string,
 			createdAt: new Date(),
@@ -82,13 +82,13 @@ export const removeMember = createAuthEndpoint(
 			 * If not provided, the active organization will be used
 			 */
 			organizationId: z
-				.string({
+				.number({
 					description:
 						"The ID of the organization to remove the member from. If not provided, the active organization will be used",
 				})
 				.optional(),
 		}),
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Remove a member from an organization",
@@ -185,16 +185,15 @@ export const removeMember = createAuthEndpoint(
 		} else {
 			existing = await adapter.findMemberById(ctx.body.memberIdOrEmail);
 		}
-		// @ts-expect-error
-		if (existing?.organizationId !== organizationId) {
+		if (existing?.workspaceId !== organizationId) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 			});
 		}
-		await adapter.deleteMember(existing.id as unknown as number);
+		await adapter.deleteMember(existing.id);
 		if (
 			session.user.id === existing.userId &&
-			session.session.activeOrganizationId === existing.organizationId
+			session.session.activeOrganizationId === existing.workspaceId
 		) {
 			await adapter.setActiveOrganization(session.session.token, null);
 		}
@@ -216,7 +215,7 @@ export const updateMemberRole = createAuthEndpoint(
 			 */
 			organizationId: z.string().optional(),
 		}),
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Update the role of a member in an organization",
@@ -324,7 +323,7 @@ export const getActiveMember = createAuthEndpoint(
 	"/organization/get-active-member",
 	{
 		method: "GET",
-		use: [orgMiddleware, orgSessionMiddleware],
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
 				description: "Get the active member in the organization",
