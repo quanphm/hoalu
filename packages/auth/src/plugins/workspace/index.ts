@@ -290,12 +290,11 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 			member: {
 				fields: {
 					workspaceId: {
-						type: "string",
+						type: "number",
 						required: true,
 						references: {
 							model: "workspace",
 							field: "id",
-							onDelete: "cascade",
 						},
 					},
 					userId: {
@@ -321,12 +320,11 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 				modelName: options?.schema?.invitation?.modelName,
 				fields: {
 					workspaceId: {
-						type: "string",
+						type: "number",
 						required: true,
 						references: {
 							model: "workspace",
 							field: "id",
-							onDelete: "cascade",
 						},
 					},
 					email: {

@@ -18,7 +18,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 	return {
 		findOrganizationBySlug: async (slug: string) => {
 			const organization = await adapter.findOne<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [
 					{
 						field: "slug",
@@ -33,7 +33,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			user: User;
 		}) => {
 			const organization = await adapter.create<WorkspaceInput, Workspace>({
-				model: "organization",
+				model: "workspace",
 				data: {
 					...data.organization,
 					metadata: data.organization.metadata
@@ -220,7 +220,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		updateOrganization: async (organizationId: number, data: Partial<Workspace>) => {
 			const organization = await adapter.update<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [
 					{
 						field: "id",
@@ -263,7 +263,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				],
 			});
 			await adapter.delete<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [
 					{
 						field: "id",
@@ -281,7 +281,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		findOrganizationById: async (organizationId: number) => {
 			const organization = await adapter.findOne<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [
 					{
 						field: "id",
@@ -299,7 +299,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			isSlug?: boolean;
 		}) => {
 			const org = await adapter.findOne<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [{ field: isSlug ? "slug" : "id", value: organizationId }],
 			});
 			if (!org) {
@@ -365,7 +365,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			const organizationIds = members.map((member) => member.workspaceId);
 
 			const organizations = await adapter.findMany<Workspace>({
-				model: "organization",
+				model: "workspace",
 				where: [
 					{
 						field: "id",

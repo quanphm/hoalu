@@ -21,14 +21,15 @@ export const member = pgTable(
 		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 		workspaceId: integer("workspace_id")
 			.notNull()
-			.references(() => workspace.id),
+			.references(() => workspace.id, { onDelete: "cascade" }),
 		userId: integer("user_id")
 			.notNull()
-			.references(() => user.id),
+			.references(() => user.id, { onDelete: "cascade" }),
 		role: text("role").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 	},
-	(table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
+	// [TODO]: back to this later
+	// (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
 );
 
 export const invitation = pgTable("invitation", {
@@ -38,7 +39,7 @@ export const invitation = pgTable("invitation", {
 	status: text("status").notNull(),
 	workspaceId: integer("workspace_id")
 		.notNull()
-		.references(() => workspace.id),
+		.references(() => workspace.id, { onDelete: "cascade" }),
 	inviterId: integer("inviter_id")
 		.notNull()
 		.references(() => user.id),

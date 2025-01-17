@@ -28,7 +28,7 @@ function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
 					schema: resolver<T>(schema),
 				},
 			},
-			description: description || HTTPStatus.phrases[status],
+			description: description || "Success",
 		},
 	};
 }

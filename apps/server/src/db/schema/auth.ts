@@ -21,6 +21,7 @@ export const session = pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		ipAddress: text("ip_address"),
 		userAgent: text("user_agent"),
+		activeOrganizationId: integer("active_organization_id"),
 		expiresAt: timestamp("expires_at").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 		updatedAt: timestamp("updated_at").notNull(),
