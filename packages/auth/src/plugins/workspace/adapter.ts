@@ -207,7 +207,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			return member;
 		},
 		deleteMember: async (memberId: number) => {
-			const member = await adapter.delete<Member>({
+			await adapter.delete<Member>({
 				model: "member",
 				where: [
 					{
@@ -216,7 +216,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					},
 				],
 			});
-			return member;
+			return memberId;
 		},
 		updateOrganization: async (organizationId: number, data: Partial<Workspace>) => {
 			const organization = await adapter.update<Workspace>({
@@ -244,24 +244,6 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			};
 		},
 		deleteOrganization: async (organizationId: number) => {
-			await adapter.delete({
-				model: "member",
-				where: [
-					{
-						field: "workspaceId",
-						value: organizationId,
-					},
-				],
-			});
-			await adapter.delete({
-				model: "invitation",
-				where: [
-					{
-						field: "workspaceId",
-						value: organizationId,
-					},
-				],
-			});
 			await adapter.delete<Workspace>({
 				model: "workspace",
 				where: [
