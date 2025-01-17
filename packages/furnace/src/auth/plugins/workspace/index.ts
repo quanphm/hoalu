@@ -1,16 +1,14 @@
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
 import { APIError } from "better-call";
-import {
-	type ZodArray,
-	type ZodLiteral,
-	type ZodObject,
-	type ZodOptional,
-	type ZodString,
-	z,
-} from "zod";
+import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import { shimContext } from "../../internal-utils/shim";
-import { type AccessControl, type Role, defaultRoles, type defaultStatements } from "./access";
+import {
+	type AccessControl,
+	type Role,
+	defaultRoles,
+	// type defaultStatements,
+} from "better-auth/plugins/access";
 import { getOrgAdapter } from "./adapter";
 import { orgSessionMiddleware } from "./call";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
@@ -229,14 +227,14 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		setActiveOrganization,
 		getFullOrganization,
 		listOrganizations,
-		createInvitation: createInvitation(options as O),
+		createInvitation,
 		cancelInvitation,
 		acceptInvitation,
 		getInvitation,
 		rejectInvitation,
-		addMember: addMember<O>(),
+		addMember,
 		removeMember,
-		updateMemberRole: updateMemberRole(options as O),
+		updateMemberRole,
 		getActiveMember,
 	};
 
@@ -254,14 +252,15 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		},
 	});
 
-	type DefaultStatements = typeof defaultStatements;
-	type Statements = O["ac"] extends AccessControl<infer S>
-		? S extends Record<string, any>
-			? S & DefaultStatements
-			: DefaultStatements
-		: DefaultStatements;
+	// type DefaultStatements = typeof defaultStatements;
+	// type Statements = O["ac"] extends AccessControl<infer S>
+	// 	? S extends Record<string, any>
+	// 		? S & DefaultStatements
+	// 		: DefaultStatements
+	// 	: DefaultStatements;
+
 	return {
-		id: "organization",
+		id: "workspace",
 		endpoints: {
 			...api,
 			hasPermission: createAuthEndpoint(
@@ -273,12 +272,13 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						organizationId: z.string().optional(),
 						permission: z.record(z.string(), z.array(z.string())),
 					}) as unknown as ZodObject<{
-						permission: ZodObject<{
-							[key in keyof Statements]: ZodOptional<
-								//@ts-expect-error TODO: fix this
-								ZodArray<ZodLiteral<Statements[key][number]>>
-							>;
-						}>;
+						// permission: ZodObject<{
+						// 	[key in keyof Statements]: ZodOptional<
+						// 		//@ts-expect-error TODO: fix this
+						// 		ZodArray<ZodLiteral<Statements[key][number]>>
+						// 	>;
+						// }>;
+						permission: ZodObject<{ ZodString: ZodArray<ZodString> }>;
 						organizationId: ZodOptional<ZodString>;
 					}>,
 					use: [orgSessionMiddleware],

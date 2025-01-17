@@ -43,7 +43,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			const member = await adapter.create<MemberInput>({
 				model: "member",
 				data: {
-					organizationId: organization.id as unknown as bigint,
+					organizationId: organization.id,
 					userId: data.user.id,
 					createdAt: new Date(),
 					role: options?.creatorRole || "owner",
@@ -205,7 +205,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return member;
 		},
-		deleteMember: async (memberId: number) => {
+		deleteMember: async (memberId: string) => {
 			const member = await adapter.delete<Member>({
 				model: "member",
 				where: [
@@ -272,22 +272,19 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return organizationId;
 		},
-		setActiveOrganization: async (
-			sessionToken: string,
-			organizationId: bigint | null | undefined,
-		) => {
+		setActiveOrganization: async (sessionToken: string, organizationId: string | null) => {
 			const session = await context.internalAdapter.updateSession(sessionToken, {
 				activeOrganizationId: organizationId,
 			});
 			return session as Session;
 		},
-		findOrganizationById: async (organizationId: bigint) => {
+		findOrganizationById: async (organizationId: string) => {
 			const organization = await adapter.findOne<Workspace>({
 				model: "organization",
 				where: [
 					{
 						field: "id",
-						value: organizationId as unknown as number,
+						value: organizationId,
 					},
 				],
 			});
@@ -313,11 +310,11 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			const [invitations, members] = await Promise.all([
 				adapter.findMany<Invitation>({
 					model: "invitation",
-					where: [{ field: "organizationId", value: org.id as unknown as number }],
+					where: [{ field: "organizationId", value: org.id }],
 				}),
 				adapter.findMany<Member>({
 					model: "member",
-					where: [{ field: "organizationId", value: org.id as unknown as number }],
+					where: [{ field: "organizationId", value: org.id }],
 				}),
 			]);
 
@@ -374,7 +371,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				where: [
 					{
 						field: "id",
-						value: organizationIds as unknown as number[],
+						value: organizationIds,
 						operator: "in",
 					},
 				],
@@ -388,7 +385,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			invitation: {
 				email: string;
 				role: string;
-				organizationId: bigint;
+				organizationId: number;
 			};
 			user: User;
 		}) => {

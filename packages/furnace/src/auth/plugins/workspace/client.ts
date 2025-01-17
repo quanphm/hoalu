@@ -10,7 +10,7 @@ import {
 	type defaultStatements,
 	memberAc,
 	ownerAc,
-} from "./access";
+} from "better-auth/plugins/access";
 import type { workspace } from "./index";
 import type { Invitation, Member, Workspace } from "./schema";
 

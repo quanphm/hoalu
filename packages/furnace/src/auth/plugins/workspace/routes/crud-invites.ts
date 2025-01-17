@@ -5,75 +5,72 @@ import { getOrgAdapter } from "../adapter";
 import { orgMiddleware, orgSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
-import type { InferRolesFromOption } from "../schema";
 
-export const createInvitation = <O extends WorkspaceOptions | undefined>(option: O) =>
-	createAuthEndpoint(
-		"/organization/invite-member",
-		{
-			method: "POST",
-			use: [orgMiddleware, orgSessionMiddleware],
-			body: z.object({
-				email: z.string({
-					description: "The email address of the user to invite",
-				}),
-				role: z.string({
-					description: "The role to assign to the user",
-				}) as unknown as InferRolesFromOption<O>,
-				organizationId: z
-					.string({
-						description: "The organization ID to invite the user to",
-					})
-					.optional(),
-				resend: z
-					.boolean({
-						description: "Resend the invitation email, if the user is already invited",
-					})
-					.optional(),
+export const createInvitation = createAuthEndpoint(
+	"/organization/invite-member",
+	{
+		method: "POST",
+		use: [orgMiddleware, orgSessionMiddleware],
+		body: z.object({
+			email: z.string({
+				description: "The email address of the user to invite",
 			}),
-			metadata: {
-				openapi: {
-					description: "Invite a user to an organization",
-					responses: {
-						"200": {
-							description: "Success",
-							content: {
-								"application/json": {
-									schema: {
-										type: "object",
-										properties: {
-											id: {
-												type: "string",
-											},
-											email: {
-												type: "string",
-											},
-											role: {
-												type: "string",
-											},
-											organizationId: {
-												type: "string",
-											},
-											inviterId: {
-												type: "string",
-											},
-											status: {
-												type: "string",
-											},
-											expiresAt: {
-												type: "string",
-											},
+			role: z.string({
+				description: "The role to assign to the user",
+			}),
+			organizationId: z
+				.string({
+					description: "The organization ID to invite the user to",
+				})
+				.optional(),
+			resend: z
+				.boolean({
+					description: "Resend the invitation email, if the user is already invited",
+				})
+				.optional(),
+		}),
+		metadata: {
+			openapi: {
+				description: "Invite a user to an organization",
+				responses: {
+					"200": {
+						description: "Success",
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									properties: {
+										id: {
+											type: "string",
 										},
-										required: [
-											"id",
-											"email",
-											"role",
-											"organizationId",
-											"inviterId",
-											"status",
-											"expiresAt",
-										],
+										email: {
+											type: "string",
+										},
+										role: {
+											type: "string",
+										},
+										organizationId: {
+											type: "string",
+										},
+										inviterId: {
+											type: "string",
+										},
+										status: {
+											type: "string",
+										},
+										expiresAt: {
+											type: "string",
+										},
 									},
+									required: [
+										"id",
+										"email",
+										"role",
+										"organizationId",
+										"inviterId",
+										"status",
+										"expiresAt",
+									],
 								},
 							},
 						},
@@ -81,108 +78,109 @@ export const createInvitation = <O extends WorkspaceOptions | undefined>(option:
 				},
 			},
 		},
-		async (ctx) => {
-			if (!ctx.context.orgOptions.sendInvitationEmail) {
-				ctx.context.logger.warn(
-					"Invitation email is not enabled. Pass `sendInvitationEmail` to the plugin options to enable it.",
-				);
-				throw new APIError("BAD_REQUEST", {
-					message: "Invitation email is not enabled",
-				});
-			}
-
-			const session = ctx.context.session;
-			const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
-			if (!organizationId) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				});
-			}
-			const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-			const member = await adapter.findMemberByOrgId({
-				userId: session.user.id,
-				organizationId: organizationId,
-			});
-			if (!member) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-				});
-			}
-			const role = ctx.context.roles[member.role];
-			if (!role) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
-				});
-			}
-			const canInvite = role.authorize({
-				invitation: ["create"],
-			});
-			if (canInvite.error) {
-				throw new APIError("FORBIDDEN", {
-					message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_WORKSPACE,
-				});
-			}
-
-			const creatorRole = ctx.context.orgOptions.creatorRole || "owner";
-
-			if (member.role !== creatorRole && ctx.body.role === creatorRole) {
-				throw new APIError("FORBIDDEN", {
-					message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE,
-				});
-			}
-
-			const alreadyMember = await adapter.findMemberByEmail({
-				email: ctx.body.email,
-				organizationId: organizationId,
-			});
-			if (alreadyMember) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
-				});
-			}
-			const alreadyInvited = await adapter.findPendingInvitation({
-				email: ctx.body.email,
-				organizationId: organizationId,
-			});
-			if (alreadyInvited.length && !ctx.body.resend) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_INVITED_TO_THIS_WORKSPACE,
-				});
-			}
-
-			const invitation = await adapter.createInvitation({
-				invitation: {
-					role: ctx.body.role as string,
-					email: ctx.body.email,
-					organizationId: organizationId,
-				},
-				user: session.user,
-			});
-
-			const organization = await adapter.findOrganizationById(organizationId as any);
-
-			if (!organization) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				});
-			}
-
-			await ctx.context.orgOptions.sendInvitationEmail?.(
-				{
-					id: invitation.id,
-					role: invitation.role as string,
-					email: invitation.email,
-					organization: organization,
-					inviter: {
-						...member,
-						user: session.user,
-					},
-				},
-				ctx.request,
+	},
+	async (ctx) => {
+		if (!ctx.context.orgOptions.sendInvitationEmail) {
+			ctx.context.logger.warn(
+				"Invitation email is not enabled. Pass `sendInvitationEmail` to the plugin options to enable it.",
 			);
-			return ctx.json(invitation);
-		},
-	);
+			throw new APIError("BAD_REQUEST", {
+				message: "Invitation email is not enabled",
+			});
+		}
+
+		const session = ctx.context.session;
+		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		if (!organizationId) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			});
+		}
+		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const member = await adapter.findMemberByOrgId({
+			userId: session.user.id,
+			organizationId: organizationId,
+		});
+		if (!member) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
+			});
+		}
+		const role = ctx.context.roles[member.role];
+		if (!role) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
+			});
+		}
+		const canInvite = role.authorize({
+			invitation: ["create"],
+		});
+		if (canInvite.error) {
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_WORKSPACE,
+			});
+		}
+
+		const creatorRole = ctx.context.orgOptions.creatorRole || "owner";
+
+		if (member.role !== creatorRole && ctx.body.role === creatorRole) {
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE,
+			});
+		}
+
+		const alreadyMember = await adapter.findMemberByEmail({
+			email: ctx.body.email,
+			organizationId: organizationId,
+		});
+		if (alreadyMember) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
+			});
+		}
+		const alreadyInvited = await adapter.findPendingInvitation({
+			email: ctx.body.email,
+			organizationId: organizationId,
+		});
+		if (alreadyInvited.length && !ctx.body.resend) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_INVITED_TO_THIS_WORKSPACE,
+			});
+		}
+
+		const invitation = await adapter.createInvitation({
+			invitation: {
+				role: ctx.body.role as string,
+				email: ctx.body.email,
+				organizationId: organizationId,
+			},
+			user: session.user,
+		});
+
+		const organization = await adapter.findOrganizationById(organizationId as any);
+
+		if (!organization) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			});
+		}
+
+		await ctx.context.orgOptions.sendInvitationEmail?.(
+			{
+				id: invitation.id,
+				role: invitation.role as string,
+				email: invitation.email,
+				organization: organization,
+				inviter: {
+					...member,
+					user: session.user,
+				},
+			},
+			ctx.request,
+		);
+		return ctx.json(invitation);
+	},
+);
 
 export const acceptInvitation = createAuthEndpoint(
 	"/organization/accept-invitation",

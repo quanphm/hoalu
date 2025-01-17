@@ -29,7 +29,7 @@
 		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"typescript.implementationsCodeLens.enabled": false,
-	"typescript.referencesCodeLens.enabled": false,
+	"typescript.referencesCodeLens.enabled": true,
 	"typescript.suggest.autoImports": true,
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true

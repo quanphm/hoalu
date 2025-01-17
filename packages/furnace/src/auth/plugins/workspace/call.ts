@@ -1,7 +1,7 @@
 import { createAuthMiddleware, sessionMiddleware } from "better-auth/api";
 import type { Session, User } from "better-auth/types";
 import type { Context } from "better-call";
-import type { Role, defaultRoles } from "./access";
+import type { Role, defaultRoles } from "better-auth/plugins/access";
 import type { WorkspaceOptions } from "./index";
 
 export const orgMiddleware = createAuthMiddleware(async (ctx) => {

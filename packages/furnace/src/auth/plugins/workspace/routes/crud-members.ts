@@ -5,71 +5,70 @@ import { getOrgAdapter } from "../adapter";
 import { orgMiddleware, orgSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
-import type { InferRolesFromOption, Member } from "../schema";
+import type { Member } from "../schema";
 
-export const addMember = <O extends WorkspaceOptions>() =>
-	createAuthEndpoint(
-		"/organization/add-member",
-		{
-			method: "POST",
-			body: z.object({
-				userId: z.string(),
-				role: z.string() as unknown as InferRolesFromOption<O>,
-				organizationId: z.string().optional(),
-			}),
-			use: [orgMiddleware],
-			metadata: {
-				SERVER_ONLY: true,
-			},
+export const addMember = createAuthEndpoint(
+	"/organization/add-member",
+	{
+		method: "POST",
+		body: z.object({
+			userId: z.string(),
+			role: z.string() as any,
+			organizationId: z.string().optional(),
+		}),
+		use: [orgMiddleware],
+		metadata: {
+			SERVER_ONLY: true,
 		},
-		async (ctx) => {
-			const session = ctx.body.userId
-				? await getSessionFromCtx<{
-						session: {
-							activeOrganizationId?: string;
-						};
-					}>(ctx).catch((e) => null)
-				: null;
-			const orgId = ctx.body.organizationId || session?.session.activeOrganizationId;
-			if (!orgId) {
-				return ctx.json(null, {
-					status: 400,
-					body: {
-						message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-					},
-				});
-			}
-
-			const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-
-			const user = await ctx.context.internalAdapter.findUserById(ctx.body.userId);
-
-			if (!user) {
-				throw new APIError("BAD_REQUEST", {
-					message: "User not found",
-				});
-			}
-
-			const alreadyMember = await adapter.findMemberByEmail({
-				email: user.email,
-				organizationId: orgId,
+	},
+	async (ctx) => {
+		const session = ctx.body.userId
+			? await getSessionFromCtx<{
+					session: {
+						activeOrganizationId?: string;
+					};
+				}>(ctx).catch((e) => null)
+			: null;
+		const orgId = ctx.body.organizationId || session?.session.activeOrganizationId;
+		if (!orgId) {
+			return ctx.json(null, {
+				status: 400,
+				body: {
+					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
+				},
 			});
-			if (alreadyMember) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
-				});
-			}
+		}
 
-			const createdMember = await adapter.createMember({
-				organizationId: orgId,
-				userId: user.id,
-				role: ctx.body.role as string,
-				createdAt: new Date(),
+		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+
+		const user = await ctx.context.internalAdapter.findUserById(ctx.body.userId);
+
+		if (!user) {
+			throw new APIError("BAD_REQUEST", {
+				message: "User not found",
 			});
+		}
 
-			return ctx.json(createdMember);
-		},
-	);
+		const alreadyMember = await adapter.findMemberByEmail({
+			email: user.email,
+			organizationId: orgId,
+		});
+		if (alreadyMember) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
+			});
+		}
+
+		const createdMember = await adapter.createMember({
+			organizationId: orgId,
+			userId: user.id,
+			role: ctx.body.role as string,
+			createdAt: new Date(),
+		});
+
+		return ctx.json(createdMember);
+	},
+);
 
 export const removeMember = createAuthEndpoint(
 	"/organization/remove-member",
@@ -186,6 +185,7 @@ export const removeMember = createAuthEndpoint(
 		} else {
 			existing = await adapter.findMemberById(ctx.body.memberIdOrEmail);
 		}
+		// @ts-expect-error
 		if (existing?.organizationId !== organizationId) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
@@ -204,52 +204,50 @@ export const removeMember = createAuthEndpoint(
 	},
 );
 
-export const updateMemberRole = <O extends WorkspaceOptions>(option: O) =>
-	createAuthEndpoint(
-		"/organization/update-member-role",
-		{
-			method: "POST",
-			body: z.object({
-				role: z.string() as unknown as InferRolesFromOption<O>,
-				memberId: z.string(),
-				/**
-				 * If not provided, the active organization will be used
-				 */
-				organizationId: z.string().optional(),
-			}),
-			use: [orgMiddleware, orgSessionMiddleware],
-			metadata: {
-				openapi: {
-					description: "Update the role of a member in an organization",
-					responses: {
-						"200": {
-							description: "Success",
-							content: {
-								"application/json": {
-									schema: {
-										type: "object",
-										properties: {
-											member: {
-												type: "object",
-												properties: {
-													id: {
-														type: "string",
-													},
-													userId: {
-														type: "string",
-													},
-													organizationId: {
-														type: "string",
-													},
-													role: {
-														type: "string",
-													},
+export const updateMemberRole = createAuthEndpoint(
+	"/organization/update-member-role",
+	{
+		method: "POST",
+		body: z.object({
+			role: z.string() as any,
+			memberId: z.string(),
+			/**
+			 * If not provided, the active organization will be used
+			 */
+			organizationId: z.string().optional(),
+		}),
+		use: [orgMiddleware, orgSessionMiddleware],
+		metadata: {
+			openapi: {
+				description: "Update the role of a member in an organization",
+				responses: {
+					"200": {
+						description: "Success",
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									properties: {
+										member: {
+											type: "object",
+											properties: {
+												id: {
+													type: "string",
 												},
-												required: ["id", "userId", "organizationId", "role"],
+												userId: {
+													type: "string",
+												},
+												organizationId: {
+													type: "string",
+												},
+												role: {
+													type: "string",
+												},
 											},
+											required: ["id", "userId", "organizationId", "role"],
 										},
-										required: ["member"],
 									},
+									required: ["member"],
 								},
 							},
 						},
@@ -257,69 +255,70 @@ export const updateMemberRole = <O extends WorkspaceOptions>(option: O) =>
 				},
 			},
 		},
-		async (ctx) => {
-			const session = ctx.context.session;
-			const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
-			if (!organizationId) {
-				return ctx.json(null, {
-					status: 400,
-					body: {
-						message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-					},
-				});
-			}
-			const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-			const member = await adapter.findMemberByOrgId({
-				userId: session.user.id,
-				organizationId: organizationId,
+	},
+	async (ctx) => {
+		const session = ctx.context.session;
+		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		if (!organizationId) {
+			return ctx.json(null, {
+				status: 400,
+				body: {
+					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
+				},
 			});
-			if (!member) {
-				return ctx.json(null, {
-					status: 400,
-					body: {
-						message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-					},
-				});
-			}
-			const role = ctx.context.roles[member.role];
-			if (!role) {
-				return ctx.json(null, {
-					status: 400,
-					body: {
-						message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
-					},
-				});
-			}
-			/**
-			 * If the member is not an owner, they cannot update the role of another member
-			 * as an owner.
-			 */
-			const canUpdateMember =
-				role.authorize({
-					member: ["update"],
-				}).error ||
-				(ctx.body.role === "owner" && member.role !== "owner");
-			if (canUpdateMember) {
-				return ctx.json(null, {
-					body: {
-						message: "You are not allowed to update this member",
-					},
-					status: 403,
-				});
-			}
+		}
+		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const member = await adapter.findMemberByOrgId({
+			userId: session.user.id,
+			organizationId: organizationId,
+		});
+		if (!member) {
+			return ctx.json(null, {
+				status: 400,
+				body: {
+					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
+				},
+			});
+		}
+		const role = ctx.context.roles[member.role];
+		if (!role) {
+			return ctx.json(null, {
+				status: 400,
+				body: {
+					message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
+				},
+			});
+		}
+		/**
+		 * If the member is not an owner, they cannot update the role of another member
+		 * as an owner.
+		 */
+		const canUpdateMember =
+			role.authorize({
+				member: ["update"],
+			}).error ||
+			(ctx.body.role === "owner" && member.role !== "owner");
+		if (canUpdateMember) {
+			return ctx.json(null, {
+				body: {
+					message: "You are not allowed to update this member",
+				},
+				status: 403,
+			});
+		}
 
-			const updatedMember = await adapter.updateMember(ctx.body.memberId, ctx.body.role as string);
-			if (!updatedMember) {
-				return ctx.json(null, {
-					status: 400,
-					body: {
-						message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-					},
-				});
-			}
-			return ctx.json(updatedMember);
-		},
-	);
+		const updatedMember = await adapter.updateMember(ctx.body.memberId, ctx.body.role as string);
+		if (!updatedMember) {
+			return ctx.json(null, {
+				status: 400,
+				body: {
+					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
+				},
+			});
+		}
+		return ctx.json(updatedMember);
+	},
+);
 
 export const getActiveMember = createAuthEndpoint(
 	"/organization/get-active-member",
