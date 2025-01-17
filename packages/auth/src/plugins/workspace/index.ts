@@ -19,7 +19,7 @@ import {
 	listOrganizations,
 	setActiveOrganization,
 	updateOrganization,
-} from "./routes/crud-org";
+} from "./routes/crud-workspaces";
 import type { Invitation, Member, Workspace } from "./schema";
 
 export interface WorkspaceOptions {
@@ -266,6 +266,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 					slug: {
 						type: "string",
 						unique: true,
+						required: true,
 					},
 					publicId: {
 						type: "string",
