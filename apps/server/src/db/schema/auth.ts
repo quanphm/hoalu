@@ -1,12 +1,12 @@
-import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { bigint, boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	publicId: text("public_id").notNull().unique(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
 	image: text("image"),
-	publicId: text("public_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull(),
 	updatedAt: timestamp("updated_at").notNull(),
 });
@@ -14,14 +14,14 @@ export const user = pgTable("user", {
 export const session = pgTable(
 	"session",
 	{
-		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
 		token: text("token").notNull().unique(),
-		userId: integer("user_id")
+		userId: bigint("user_id", { mode: "number" })
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 		ipAddress: text("ip_address"),
 		userAgent: text("user_agent"),
-		activeOrganizationId: integer("active_organization_id"),
+		activeOrganizationId: bigint("active_organization_id", { mode: "number" }),
 		expiresAt: timestamp("expires_at").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 		updatedAt: timestamp("updated_at").notNull(),
@@ -30,10 +30,10 @@ export const session = pgTable(
 );
 
 export const account = pgTable("account", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
 	accountId: text("account_id").notNull(),
 	providerId: text("provider_id").notNull(),
-	userId: integer("user_id")
+	userId: bigint("user_id", { mode: "number" })
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	accessToken: text("access_token"),
@@ -48,7 +48,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),
