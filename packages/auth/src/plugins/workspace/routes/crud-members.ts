@@ -110,14 +110,14 @@ export const removeMember = createAuthEndpoint(
 												userId: {
 													type: "string",
 												},
-												organizationId: {
+												workspaceId: {
 													type: "string",
 												},
 												role: {
 													type: "string",
 												},
 											},
-											required: ["id", "userId", "organizationId", "role"],
+											required: ["id", "userId", "workspaceId", "role"],
 										},
 									},
 									required: ["member"],
@@ -237,14 +237,14 @@ export const updateMemberRole = createAuthEndpoint(
 												userId: {
 													type: "string",
 												},
-												organizationId: {
+												workspaceId: {
 													type: "string",
 												},
 												role: {
 													type: "string",
 												},
 											},
-											required: ["id", "userId", "organizationId", "role"],
+											required: ["id", "userId", "workspaceId", "role"],
 										},
 									},
 									required: ["member"],
@@ -342,14 +342,14 @@ export const getActiveMember = createAuthEndpoint(
 										userId: {
 											type: "string",
 										},
-										organizationId: {
+										workspaceId: {
 											type: "string",
 										},
 										role: {
 											type: "string",
 										},
 									},
-									required: ["id", "userId", "organizationId", "role"],
+									required: ["id", "userId", "workspaceId", "role"],
 								},
 							},
 						},
