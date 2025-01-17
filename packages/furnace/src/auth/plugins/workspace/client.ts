@@ -14,14 +14,14 @@ import {
 import type { workspace } from "./index";
 import type { Invitation, Member, Workspace } from "./schema";
 
-interface OrganizationClientOptions {
+interface WorkspaceClientOptions {
 	ac: AccessControl;
 	roles: {
 		[key in string]: Role;
 	};
 }
 
-export const organizationClient = <O extends OrganizationClientOptions>(options?: O) => {
+export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) => {
 	const $listOrg = atom<boolean>(false);
 	const $activeOrgSignal = atom<boolean>(false);
 	const $activeMemberSignal = atom<boolean>(false);

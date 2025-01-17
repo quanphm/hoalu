@@ -1,0 +1,8 @@
+{
+	"extends": "@woben/tsconfig/node.json",
+	"compilerOptions": {
+		"target": "ES2022",
+		"noImplicitAny": false
+	},
+	"include": ["src"]
+}

@@ -1,0 +1,25 @@
+{
+	"name": "@woben/auth",
+	"description": "Customizations & Plugins for Better Auth",
+	"version": "0.3.0",
+	"private": true,
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts",
+		"./client": "./src/client.ts"
+	},
+	"peerDependencies": {
+		"better-auth": "^1.1.14"
+	},
+	"dependencies": {
+		"@better-auth/utils": "^0.2.3",
+		"@woben/common": "workspace:*",
+		"better-call": "^0.3.3",
+		"nanostores": "^0.11.3",
+		"zod": "^3.24.1"
+	},
+	"devDependencies": {
+		"vitest": "^3.0.1"
+	}
+}
