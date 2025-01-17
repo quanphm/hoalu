@@ -26,7 +26,6 @@ COPY packages/ui ./packages/ui
 COPY packages/icons ./packages/icons
 COPY packages/common ./packages/common
 COPY packages/auth ./packages/auth
-COPY packages/furnace ./packages/furnace
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_APP_BASE_URL
@@ -39,7 +38,6 @@ PUBLIC_APP_BASE_URL=%s\n" \
 # for import HonoRPC types in client.
 WORKDIR /repo/apps/server
 RUN bun run build:types
-
 
 WORKDIR /repo/apps/app
 ENV NODE_ENV='production'

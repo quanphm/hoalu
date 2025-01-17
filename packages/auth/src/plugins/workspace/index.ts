@@ -70,7 +70,7 @@ export interface WorkspaceOptions {
 	/**
 	 * The expiration time for the invitation link.
 	 *
-	 * @default 48 hours
+	 * @default 24 hours
 	 */
 	invitationExpiresIn?: number;
 	/**
@@ -127,34 +127,6 @@ export interface WorkspaceOptions {
 		 */
 		request?: Request,
 	) => Promise<void>;
-	/**
-	 * The schema for the organization plugin.
-	 */
-	schema?: {
-		session?: {
-			fields?: {
-				activeOrganizationId?: string;
-			};
-		};
-		workspace?: {
-			modelName?: string;
-			fields?: {
-				[key in keyof Omit<Workspace, "id">]?: string;
-			};
-		};
-		member?: {
-			modelName?: string;
-			fields?: {
-				[key in keyof Omit<Member, "id">]?: string;
-			};
-		};
-		invitation?: {
-			modelName?: string;
-			fields?: {
-				[key in keyof Omit<Invitation, "id">]?: string;
-			};
-		};
-	};
 	/**
 	 * Configure how organization deletion is handled
 	 */
@@ -268,11 +240,6 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						unique: true,
 						required: true,
 					},
-					publicId: {
-						type: "string",
-						unique: true,
-						required: true,
-					},
 					logo: {
 						type: "string",
 						required: false,
@@ -317,7 +284,6 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 				},
 			},
 			invitation: {
-				modelName: options?.schema?.invitation?.modelName,
 				fields: {
 					workspaceId: {
 						type: "number",

@@ -27,7 +27,6 @@ export const member = pgTable(
 		role: text("role").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 	},
-	// [TODO]: back to this later
 	// (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
 );
 

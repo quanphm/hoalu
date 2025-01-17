@@ -1,4 +1,3 @@
-import { generateId } from "@woben/common/generate-id";
 import { HTTPStatus } from "@woben/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
@@ -120,7 +119,6 @@ export const createOrganization = createAuthEndpoint(
 				slug: ctx.body.slug,
 				name: ctx.body.name,
 				logo: ctx.body.logo,
-				publicId: generateId("workspace"),
 				createdAt: new Date(),
 				metadata: ctx.body.metadata,
 			},

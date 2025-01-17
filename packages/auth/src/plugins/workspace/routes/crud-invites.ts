@@ -50,7 +50,7 @@ export const createInvitation = createAuthEndpoint(
 										role: {
 											type: "string",
 										},
-										organizationId: {
+										workspaceId: {
 											type: "string",
 										},
 										inviterId: {
@@ -67,7 +67,7 @@ export const createInvitation = createAuthEndpoint(
 										"id",
 										"email",
 										"role",
-										"organizationId",
+										"workspaceId",
 										"inviterId",
 										"status",
 										"expiresAt",
@@ -416,7 +416,7 @@ export const getInvitation = createAuthEndpoint(
 										role: {
 											type: "string",
 										},
-										organizationId: {
+										workspaceId: {
 											type: "string",
 										},
 										inviterId: {
@@ -428,10 +428,10 @@ export const getInvitation = createAuthEndpoint(
 										expiresAt: {
 											type: "string",
 										},
-										organizationName: {
+										workspaceName: {
 											type: "string",
 										},
-										organizationSlug: {
+										workspaceSlug: {
 											type: "string",
 										},
 										inviterEmail: {
@@ -442,12 +442,12 @@ export const getInvitation = createAuthEndpoint(
 										"id",
 										"email",
 										"role",
-										"organizationId",
+										"workspaceId",
 										"inviterId",
 										"status",
 										"expiresAt",
-										"organizationName",
-										"organizationSlug",
+										"workspaceName",
+										"workspaceSlug",
 										"inviterEmail",
 									],
 								},
@@ -477,7 +477,7 @@ export const getInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
-		const organization = await adapter.findOrganizationById(invitation.workspaceId as any);
+		const organization = await adapter.findOrganizationById(invitation.workspaceId);
 		if (!organization) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -495,8 +495,8 @@ export const getInvitation = createAuthEndpoint(
 
 		return ctx.json({
 			...invitation,
-			organizationName: organization.name,
-			organizationSlug: organization.slug,
+			workspaceName: organization.name,
+			workspaceSlug: organization.slug,
 			inviterEmail: member.user.email,
 		});
 	},

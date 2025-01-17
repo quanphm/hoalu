@@ -86,7 +86,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				model: "member",
 				where: [
 					{
-						field: "organizationId",
+						field: "workspaceId",
 						value: data.organizationId,
 					},
 					{
@@ -121,7 +121,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 							value: data.userId,
 						},
 						{
-							field: "organizationId",
+							field: "workspaceId",
 							value: data.organizationId,
 						},
 					],
@@ -248,7 +248,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				model: "member",
 				where: [
 					{
-						field: "organizationId",
+						field: "workspaceId",
 						value: organizationId,
 					},
 				],
@@ -257,7 +257,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				model: "invitation",
 				where: [
 					{
-						field: "organizationId",
+						field: "workspaceId",
 						value: organizationId,
 					},
 				],
@@ -308,11 +308,11 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			const [invitations, members] = await Promise.all([
 				adapter.findMany<Invitation>({
 					model: "invitation",
-					where: [{ field: "organizationId", value: org.id }],
+					where: [{ field: "workspaceId", value: org.id }],
 				}),
 				adapter.findMany<Member>({
 					model: "member",
-					where: [{ field: "organizationId", value: org.id }],
+					where: [{ field: "workspaceId", value: org.id }],
 				}),
 			]);
 
@@ -387,7 +387,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			};
 			user: User;
 		}) => {
-			const defaultExpiration = 1000 * 60 * 60 * 48;
+			const defaultExpiration = 1000 * 60 * 60 * 24;
 			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration);
 			const invite = await adapter.create<InvitationInput, Invitation>({
 				model: "invitation",
@@ -427,7 +427,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 						value: data.email,
 					},
 					{
-						field: "organizationId",
+						field: "workspaceId",
 						value: data.organizationId,
 					},
 					{
