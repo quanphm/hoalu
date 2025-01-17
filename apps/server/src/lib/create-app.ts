@@ -1,7 +1,7 @@
-import type { AppBindings } from "@/types";
-import { logger, notFound, onError } from "@woben/furnace/hono";
+import { logger, notFound, onError } from "@woben/furnace";
 import { Hono } from "hono";
 import { requestId } from "hono/request-id";
+import type { AppBindings } from "../types";
 
 export function createHonoInstance() {
 	return new Hono<AppBindings>();

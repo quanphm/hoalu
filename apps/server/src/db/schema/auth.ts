@@ -1,7 +1,7 @@
-import { bigint, boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
@@ -14,13 +14,14 @@ export const user = pgTable("user", {
 export const session = pgTable(
 	"session",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 		token: text("token").notNull().unique(),
-		userId: bigint("user_id", { mode: "number" })
+		userId: integer("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 		ipAddress: text("ip_address"),
 		userAgent: text("user_agent"),
+		activeOrganizationId: integer("active_organization_id"),
 		expiresAt: timestamp("expires_at").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 		updatedAt: timestamp("updated_at").notNull(),
@@ -29,10 +30,10 @@ export const session = pgTable(
 );
 
 export const account = pgTable("account", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	accountId: text("account_id").notNull(),
 	providerId: text("provider_id").notNull(),
-	userId: bigint("user_id", { mode: "number" })
+	userId: integer("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	accessToken: text("access_token"),
@@ -47,7 +48,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),

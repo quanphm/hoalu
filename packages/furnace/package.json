@@ -1,16 +1,13 @@
 {
 	"name": "@woben/furnace",
-	"description": "Utilities for Woben server - Hono",
+	"description": "Hono server utilities",
 	"version": "0.3.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./utils": "./src/utils/index.ts",
-		"./auth": "./src/auth/index.ts",
-		"./hono": "./src/hono/index.ts"
+		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"better-auth": "^1.1.11",
 		"hono": "^4.6.16"
 	},
 	"dependencies": {
@@ -19,6 +16,9 @@
 		"hono-pino": "^0.7.0",
 		"pino": "^9.6.0",
 		"pino-pretty": "^13.0.0",
-		"valibot": "^1.0.0-beta.11"
+		"valibot": "^1.0.0-beta.12"
+	},
+	"devDependencies": {
+		"vitest": "^3.0.1"
 	}
 }

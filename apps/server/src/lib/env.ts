@@ -1,7 +1,7 @@
 import { validateEnv } from "@woben/common/validate-env";
 import * as v from "valibot";
 
-const ServerEnvSchema = v.object({
+export const ServerEnvSchema = v.object({
 	AUTH_SECRET: v.pipe(v.string(), v.nonEmpty()),
 	AUTH_URL: v.pipe(v.string(), v.url()),
 	DB_HOST: v.pipe(v.string(), v.nonEmpty()),
@@ -23,10 +23,4 @@ export function verifyEnv() {
 	const result = validateEnv(ServerEnvSchema, process.env);
 	const total = Object.keys(result).length;
 	console.info(`Environment variables parsed successfully (${total} variables)`);
-}
-
-declare global {
-	namespace NodeJS {
-		interface ProcessEnv extends v.InferInput<typeof ServerEnvSchema> {}
-	}
 }

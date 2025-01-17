@@ -7,13 +7,14 @@
 	"sideEffects": false,
 	"exports": {
 		"./validate-env": "./src/validate-env.ts",
-		"./generate-id": "./src/generate-id.ts"
+		"./generate-id": "./src/generate-id.ts",
+		"./http-status": "./src/http-status/index.ts"
 	},
 	"devDependencies": {
 		"@woben/tsconfig": "workspace:*"
 	},
 	"dependencies": {
 		"nanoid": "^5.0.9",
-		"valibot": "^1.0.0-beta.11"
+		"valibot": "^1.0.0-beta.12"
 	}
 }

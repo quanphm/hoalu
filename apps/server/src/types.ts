@@ -1,6 +1,8 @@
-import type { PinoLogger } from "@woben/furnace/hono";
+import type { PinoLogger } from "@woben/furnace";
 import type { Hono } from "hono";
+import type * as v from "valibot";
 import type { auth } from "./lib/auth";
+import type { ServerEnvSchema } from "./lib/env";
 
 export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
 	id: number;
@@ -16,3 +18,9 @@ export interface AppBindings {
 }
 
 export type HonoApp = Hono<AppBindings>;
+
+declare global {
+	namespace NodeJS {
+		interface ProcessEnv extends v.InferInput<typeof ServerEnvSchema> {}
+	}
+}

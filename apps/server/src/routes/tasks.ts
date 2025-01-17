@@ -1,18 +1,14 @@
-import { db } from "@/db";
-import { task } from "@/db/schema/task";
-import { createHonoInstance } from "@/lib/create-app";
 import { reduceValibotIssues } from "@woben/common/validate-env";
-import {
-	StatusCodes,
-	StatusPhrases,
-	openAPIContent,
-	openAPIUnauthorized,
-} from "@woben/furnace/utils";
+import { HTTPStatus } from "@woben/common/http-status";
+import { OpenAPI } from "@woben/furnace";
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { describeRoute } from "hono-openapi";
 import { validator as vValidator } from "hono-openapi/valibot";
 import { cors } from "hono/cors";
 import * as v from "valibot";
+import { db } from "../db";
+import { task } from "../db/schema/task";
+import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();
 
@@ -35,24 +31,9 @@ export const tasksRoute = app
 			summary: "Get all tasks",
 			description: "Get all tasks related to the user",
 			responses: {
-				...openAPIUnauthorized(),
-				[StatusCodes.UNPROCESSABLE_ENTITY]: openAPIContent(
-					v.object({
-						error: v.array(
-							v.object({
-								attribute: v.undefinedable(v.string()),
-								message: v.string(),
-							}),
-						),
-					}),
-					"Validation errors",
-				),
-				[StatusCodes.OK]: openAPIContent(
-					v.object({
-						data: v.array(selectSchema),
-					}),
-					StatusPhrases.OK,
-				),
+				...OpenAPI.unauthorized(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(v.object({ data: v.array(selectSchema) }), HTTPStatus.codes.OK),
 			},
 		}),
 		async (c) => {
@@ -68,7 +49,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(parsed.issues),
 					},
-					StatusCodes.UNPROCESSABLE_ENTITY,
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
@@ -76,7 +57,7 @@ export const tasksRoute = app
 				{
 					data: parsed.output,
 				},
-				StatusCodes.OK,
+				HTTPStatus.codes.OK,
 			);
 		},
 	)
@@ -87,35 +68,10 @@ export const tasksRoute = app
 			summary: "Create a task",
 			description: "Create a new task related to the user",
 			responses: {
-				...openAPIUnauthorized(),
-				[StatusCodes.BAD_REQUEST]: openAPIContent(
-					v.object({
-						error: v.array(
-							v.object({
-								attribute: v.undefinedable(v.string()),
-								message: v.string(),
-							}),
-						),
-					}),
-					"Invalid request body",
-				),
-				[StatusCodes.UNPROCESSABLE_ENTITY]: openAPIContent(
-					v.object({
-						error: v.array(
-							v.object({
-								attribute: v.undefinedable(v.string()),
-								message: v.string(),
-							}),
-						),
-					}),
-					"Validation errors",
-				),
-				[StatusCodes.CREATED]: openAPIContent(
-					v.object({
-						data: insertSchema,
-					}),
-					StatusPhrases.CREATED,
-				),
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(v.object({ data: insertSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		vValidator("json", insertSchema, (result, c) => {
@@ -124,7 +80,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(result.issues),
 					},
-					StatusCodes.BAD_REQUEST,
+					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 		}),
@@ -148,7 +104,7 @@ export const tasksRoute = app
 					{
 						error: reduceValibotIssues(parsed.issues),
 					},
-					StatusCodes.UNPROCESSABLE_ENTITY,
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
@@ -156,7 +112,7 @@ export const tasksRoute = app
 				{
 					data: parsed.output,
 				},
-				StatusCodes.CREATED,
+				HTTPStatus.codes.CREATED,
 			);
 		},
 	);

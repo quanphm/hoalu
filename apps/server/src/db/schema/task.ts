@@ -1,13 +1,13 @@
-import { bigint, boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const task = pgTable(
 	"task",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 		name: text("name").notNull(),
 		done: boolean("done").notNull(),
-		userId: bigint("user_id", { mode: "number" })
+		userId: integer("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),

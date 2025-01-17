@@ -1,8 +1,8 @@
 import { generateId } from "@woben/common/generate-id";
 import type { BetterAuthPlugin } from "better-auth";
 
-export const userPublicId = () =>
-	({
+export const userPublicId = () => {
+	return {
 		id: "user-public-id",
 		schema: {
 			user: {
@@ -36,4 +36,5 @@ export const userPublicId = () =>
 				},
 			};
 		},
-	}) satisfies BetterAuthPlugin;
+	} satisfies BetterAuthPlugin;
+};

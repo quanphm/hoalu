@@ -16,7 +16,7 @@ function RouteComponent() {
 	const router = useRouter();
 	const { authClient } = useAuth();
 
-	async function formAction(formData: FormData) {
+	async function formAction() {
 		authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {

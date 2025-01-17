@@ -1,6 +1,6 @@
-import { verifyEnv } from "@/lib/env";
 import type { Serve } from "bun";
 import { app } from "./app";
+import { verifyEnv } from "./lib/env";
 
 verifyEnv();
 
