@@ -11,6 +11,7 @@ COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/icons/package.json ./packages/icons/
 COPY packages/common/package.json ./packages/common/
+COPY packages/auth/package.json ./packages/auth/
 COPY packages/furnace/package.json ./packages/furnace/
 
 FROM deps AS build
@@ -24,6 +25,7 @@ COPY packages/tsconfig ./packages/tsconfig
 COPY packages/ui ./packages/ui
 COPY packages/icons ./packages/icons
 COPY packages/common ./packages/common
+COPY packages/auth ./packages/auth
 COPY packages/furnace ./packages/furnace
 
 ARG PUBLIC_API_URL
