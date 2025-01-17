@@ -1,0 +1,23 @@
+// biome-ignore format: keep inline
+export const WORKSPACE_ERROR_CODES = {
+	YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_WORKSPACE: "You are not allowed to create a new workspace",
+	YOU_HAVE_REACHED_THE_MAXIMUM_NUMBER_OF_WORKSPACES: "You have reached the maximum number of workspaces",
+	WORKSPACE_ALREADY_EXISTS: "Organization already exists",
+	WORKSPACE_NOT_FOUND: "Organization not found",
+	USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE: "User is not a member of the workspace",
+	YOU_ARE_NOT_ALLOWED_TO_UPDATE_THIS_WORKSPACE: "You are not allowed to update this workspace",
+	YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE: "You are not allowed to delete this workspace",
+	NO_ACTIVE_WORKSPACE: "No active workspace",
+	USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE: "User is already a member of this workspace",
+	MEMBER_NOT_FOUND: "Member not found",
+	ROLE_NOT_FOUND: "Role not found",
+	YOU_CANNOT_LEAVE_THE_WORKSPACE_AS_THE_ONLY_OWNER: "You cannot leave the workspace as the only owner",
+	YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_MEMBER: "You are not allowed to delete this member",
+	YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_WORKSPACE: "You are not allowed to invite users to this workspace",
+	USER_IS_ALREADY_INVITED_TO_THIS_WORKSPACE: "User is already invited to this workspace",
+	INVITATION_NOT_FOUND: "Invitation not found",
+	YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION: "You are not the recipient of the invitation",
+	YOU_ARE_NOT_ALLOWED_TO_CANCEL_THIS_INVITATION: "You are not allowed to cancel this invitation",
+	INVITER_IS_NO_LONGER_A_MEMBER_OF_THE_WORKSPACE: "Inviter is no longer a member of the workspace",
+	YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE: "you are not allowed to invite user with this role",
+} as const;

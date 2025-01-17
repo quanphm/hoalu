@@ -2,10 +2,10 @@ import type { ResolverResult } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import type { BaseIssue, BaseSchema } from "valibot";
 import * as v from "valibot";
-import { UNAUTHORIZED as UnauthorizedCode } from "./http-status-codes";
-import { UNAUTHORIZED as UnauthorizedPhrase } from "./http-status-phrases";
+import * as StatusCodes from "./http-status-codes";
+import * as StatusPhrases from "./http-status-phrases";
 
-interface OpenAPIContent {
+interface Response {
 	description: string;
 	content: {
 		"application/json": {
@@ -14,33 +14,89 @@ interface OpenAPIContent {
 	};
 }
 
-export function openAPIContent<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
+/**
+ * General response. Mostly use for `200`, `201` & `204` response.
+ */
+export function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
 	schema: T,
-	description: string,
-): OpenAPIContent {
+	status: number,
+	description?: string,
+): Record<number, Response> {
 	return {
-		content: {
-			"application/json": {
-				schema: resolver<T>(schema),
+		[status]: {
+			content: {
+				"application/json": {
+					schema: resolver<T>(schema),
+				},
 			},
+			description: description || StatusCodes[status],
 		},
-		description,
 	};
 }
 
-export function openAPIUnauthorized() {
+export function unauthorized(): Record<401, Response> {
 	return {
-		[UnauthorizedCode]: {
+		[StatusCodes.UNAUTHORIZED]: {
 			content: {
 				"application/json": {
 					schema: resolver(
 						v.object({
-							message: v.literal(UnauthorizedPhrase),
+							message: v.literal(StatusPhrases.UNAUTHORIZED),
 						}),
 					),
 				},
 			},
-			description: UnauthorizedPhrase,
+			description: StatusPhrases.UNAUTHORIZED,
+		},
+	};
+}
+
+/**
+ * Invalid body requerst from client.
+ */
+export function bad_request(description?: string): Record<400, Response> {
+	return {
+		[StatusCodes.BAD_REQUEST]: {
+			content: {
+				"application/json": {
+					schema: resolver(
+						v.object({
+							error: v.array(
+								v.object({
+									attribute: v.undefinedable(v.string()),
+									message: v.optional(v.string(), StatusPhrases.BAD_REQUEST),
+								}),
+							),
+						}),
+					),
+				},
+			},
+			description: description || "Invalid request body",
+		},
+	};
+}
+
+/**
+ * For some reasons, valibot couldn't parse the database result correctly.
+ */
+export function server_parse_error(description?: string): Record<422, Response> {
+	return {
+		[StatusCodes.UNPROCESSABLE_ENTITY]: {
+			content: {
+				"application/json": {
+					schema: resolver(
+						v.object({
+							error: v.array(
+								v.object({
+									attribute: v.undefinedable(v.string()),
+									message: v.optional(v.string(), StatusPhrases.UNPROCESSABLE_ENTITY),
+								}),
+							),
+						}),
+					),
+				},
+			},
+			description: description || "Server validation/parse errors",
 		},
 	};
 }

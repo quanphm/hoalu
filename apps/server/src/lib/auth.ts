@@ -1,7 +1,6 @@
-import { userPublicId } from "@woben/furnace/auth";
+import { userPublicId, workspace } from "@woben/furnace/auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { organization } from "better-auth/plugins";
 import { db } from "../db";
 
 export const auth = betterAuth({
@@ -31,5 +30,5 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	plugins: [userPublicId(), organization()],
+	plugins: [userPublicId(), workspace()],
 });
