@@ -1,7 +1,7 @@
-import { userPublicId, workspace } from "@woben/auth";
+import { userPublicId, workspace } from "@woben/auth/plugins";
 import { betterAuth } from "better-auth";
-import { openAPI } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { openAPI } from "better-auth/plugins";
 import { db } from "../db";
 
 export const auth = betterAuth({

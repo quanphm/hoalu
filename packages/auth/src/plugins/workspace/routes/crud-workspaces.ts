@@ -13,8 +13,8 @@ import { getOrgAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 
-export const createOrganization = createAuthEndpoint(
-	"/organization/create",
+export const createWorkspace = createAuthEndpoint(
+	"/workspace/create",
 	{
 		method: "POST",
 		body: z.object({
@@ -131,8 +131,8 @@ export const createOrganization = createAuthEndpoint(
 	},
 );
 
-export const updateOrganization = createAuthEndpoint(
-	"/organization/update",
+export const updateWorkspace = createAuthEndpoint(
+	"/workspace/update",
 	{
 		method: "POST",
 		body: z.object({
@@ -191,7 +191,7 @@ export const updateOrganization = createAuthEndpoint(
 				message: "User not found",
 			});
 		}
-		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
 		if (!organizationId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -238,8 +238,8 @@ export const updateOrganization = createAuthEndpoint(
 	},
 );
 
-export const deleteOrganization = createAuthEndpoint(
-	"/organization/delete",
+export const deleteWorkspace = createAuthEndpoint(
+	"/workspace/delete",
 	{
 		method: "POST",
 		body: z.object({
@@ -314,10 +314,7 @@ export const deleteOrganization = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE,
 			});
 		}
-		if (
-			session.session.activeOrganizationId &&
-			organizationId === session.session.activeOrganizationId
-		) {
+		if (session.session.activeWorkspaceId && organizationId === session.session.activeWorkspaceId) {
 			/**
 			 * If the organization is deleted, we set the active organization to null
 			 */
@@ -348,8 +345,8 @@ export const deleteOrganization = createAuthEndpoint(
 	},
 );
 
-export const getFullOrganization = createAuthEndpoint(
-	"/organization/get-full-organization",
+export const getFullWorkspace = createAuthEndpoint(
+	"/workspace/get-full-workspace",
 	{
 		method: "GET",
 		query: z.optional(
@@ -390,7 +387,7 @@ export const getFullOrganization = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId = ctx.query?.organizationId || session.session.activeOrganizationId;
+		const organizationId = ctx.query?.organizationId || session.session.activeWorkspaceId;
 		const organizationSlug = ctx.query?.organizationSlug;
 
 		if (!organizationId && !organizationSlug) {
@@ -430,8 +427,8 @@ export const getFullOrganization = createAuthEndpoint(
 	},
 );
 
-export const setActiveOrganization = createAuthEndpoint(
-	"/organization/set-active",
+export const setActiveWorkspace = createAuthEndpoint(
+	"/workspace/set-active",
 	{
 		method: "POST",
 		body: z.object({
@@ -476,7 +473,7 @@ export const setActiveOrganization = createAuthEndpoint(
 		let organizationId = ctx.body.organizationSlug || ctx.body.organizationId;
 
 		if (organizationId === null) {
-			const sessionOrgId = session.session.activeOrganizationId;
+			const sessionOrgId = session.session.activeWorkspaceId;
 			if (!sessionOrgId) {
 				return ctx.json(null);
 			}
@@ -488,7 +485,7 @@ export const setActiveOrganization = createAuthEndpoint(
 			return ctx.json(null);
 		}
 		if (!organizationId) {
-			const sessionOrgId = session.session.activeOrganizationId;
+			const sessionOrgId = session.session.activeWorkspaceId;
 			if (!sessionOrgId) {
 				return ctx.json(null);
 			}
@@ -522,8 +519,8 @@ export const setActiveOrganization = createAuthEndpoint(
 	},
 );
 
-export const listOrganizations = createAuthEndpoint(
-	"/organization/list",
+export const listWorkspaces = createAuthEndpoint(
+	"/workspace/list",
 	{
 		method: "GET",
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
@@ -562,9 +559,9 @@ type Statements = AccessControl extends AccessControl<infer S>
 		: DefaultStatements
 	: DefaultStatements;
 
-export const hasOrganizationPermission = (roles: Record<string, any>) =>
+export const hasWorkspacePermission = (roles: Record<string, any>) =>
 	createAuthEndpoint(
-		"/organization/has-permission",
+		"/workspace/has-permission",
 		{
 			method: "POST",
 			requireHeaders: true,
@@ -631,9 +628,9 @@ export const hasOrganizationPermission = (roles: Record<string, any>) =>
 						"invalid permission check. you can only check one resource permission at a time.",
 				});
 			}
-			const activeOrganizationId =
-				ctx.body.organizationId || ctx.context.session.session.activeOrganizationId;
-			if (!activeOrganizationId) {
+			const activeWorkspaceId =
+				ctx.body.organizationId || ctx.context.session.session.activeWorkspaceId;
+			if (!activeWorkspaceId) {
 				throw new APIError("BAD_REQUEST", {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				});
@@ -641,7 +638,7 @@ export const hasOrganizationPermission = (roles: Record<string, any>) =>
 			const adapter = getOrgAdapter(ctx.context);
 			const member = await adapter.findMemberByOrgId({
 				userId: ctx.context.session.user.id,
-				organizationId: activeOrganizationId,
+				organizationId: activeWorkspaceId,
 			});
 			if (!member) {
 				throw new APIError("UNAUTHORIZED", {

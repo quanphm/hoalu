@@ -257,7 +257,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		setActiveOrganization: async (sessionToken: string, organizationId: number | null) => {
 			const session = await context.internalAdapter.updateSession(sessionToken, {
-				activeOrganizationId: organizationId,
+				activeWorkspaceId: organizationId,
 			});
 			return session as Session;
 		},

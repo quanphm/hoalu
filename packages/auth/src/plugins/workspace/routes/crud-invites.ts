@@ -8,7 +8,7 @@ import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
 
 export const createInvitation = createAuthEndpoint(
-	"/organization/invite-member",
+	"/workspace/invite-member",
 	{
 		method: "POST",
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
@@ -91,7 +91,7 @@ export const createInvitation = createAuthEndpoint(
 		}
 
 		const session = ctx.context.session;
-		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
 		if (!organizationId) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -184,7 +184,7 @@ export const createInvitation = createAuthEndpoint(
 );
 
 export const acceptInvitation = createAuthEndpoint(
-	"/organization/accept-invitation",
+	"/workspace/accept-invitation",
 	{
 		method: "POST",
 		body: z.object({
@@ -260,7 +260,7 @@ export const acceptInvitation = createAuthEndpoint(
 );
 
 export const rejectInvitation = createAuthEndpoint(
-	"/organization/reject-invitation",
+	"/workspace/reject-invitation",
 	{
 		method: "POST",
 		body: z.object({
@@ -321,7 +321,7 @@ export const rejectInvitation = createAuthEndpoint(
 );
 
 export const cancelInvitation = createAuthEndpoint(
-	"/organization/cancel-invitation",
+	"/workspace/cancel-invitation",
 	{
 		method: "POST",
 		body: z.object({
@@ -386,7 +386,7 @@ export const cancelInvitation = createAuthEndpoint(
 );
 
 export const getInvitation = createAuthEndpoint(
-	"/organization/get-invitation",
+	"/workspace/get-invitation",
 	{
 		method: "GET",
 		use: [workspaceMiddleware],

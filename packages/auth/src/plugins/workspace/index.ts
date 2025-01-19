@@ -1,5 +1,5 @@
 import { getSessionFromCtx } from "better-auth/api";
-import { defaultRoles, type AccessControl, type Role } from "better-auth/plugins/access";
+import { type AccessControl, type Role, defaultRoles } from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
 import { shimContext } from "../../utils/shim";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
@@ -12,13 +12,13 @@ import {
 } from "./routes/crud-invites";
 import { addMember, getActiveMember, removeMember, updateMemberRole } from "./routes/crud-members";
 import {
-	createOrganization,
-	deleteOrganization,
-	getFullOrganization,
-	hasOrganizationPermission,
-	listOrganizations,
-	setActiveOrganization,
-	updateOrganization,
+	createWorkspace,
+	deleteWorkspace,
+	getFullWorkspace,
+	hasWorkspacePermission,
+	listWorkspaces,
+	setActiveWorkspace,
+	updateWorkspace,
 } from "./routes/crud-workspaces";
 import type { Invitation, Member, Workspace } from "./schema";
 
@@ -190,12 +190,12 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 	};
 
 	const endpoints = {
-		createOrganization,
-		updateOrganization,
-		deleteOrganization,
-		setActiveOrganization,
-		getFullOrganization,
-		listOrganizations,
+		createWorkspace,
+		updateWorkspace,
+		deleteWorkspace,
+		setActiveWorkspace,
+		getFullWorkspace,
+		listWorkspaces,
 		createInvitation,
 		cancelInvitation,
 		acceptInvitation,
@@ -205,7 +205,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		removeMember,
 		updateMemberRole,
 		getActiveMember,
-		hasOrganizationPermission: hasOrganizationPermission(roles),
+		hasWorkspacePermission: hasWorkspacePermission(roles),
 	};
 
 	const api = shimContext(endpoints, {
@@ -333,6 +333,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 								id: string;
 								name: string;
 								email: string;
+								publicId: string;
 								image?: string | null;
 							};
 						}

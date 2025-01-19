@@ -6,7 +6,8 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		"./plugins": "./src/plugins/index.ts",
+		"./client/plugins": "./src/client/plugins/index.ts"
 	},
 	"peerDependencies": {
 		"better-auth": "^1.1.14"
