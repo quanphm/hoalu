@@ -17,6 +17,7 @@ export const auth = betterAuth({
 	},
 	emailAndPassword: {
 		enabled: true,
+		autoSignIn: true,
 		minPasswordLength: 6,
 		password: {
 			hash: async (password) => {
@@ -29,6 +30,24 @@ export const auth = betterAuth({
 			verify: async ({ password, hash }) => {
 				return await Bun.password.verify(password, hash);
 			},
+		},
+	},
+	emailVerification: {
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+		sendVerificationEmail: async ({ user, url, token }, request) => {
+			await fetch("https://api.useplunk.com/v1/send", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${process.env.PLUNK_SECRET_KEY}`,
+				},
+				body: JSON.stringify({
+					to: user.email,
+					subject: "Verify your email address",
+					body: `Click the link to verify your email: ${url}`,
+				}),
+			});
 		},
 	},
 	plugins: [userPublicId(), workspace(), openAPI()],
