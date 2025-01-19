@@ -1,8 +1,5 @@
 import { BetterAuthError } from "better-auth";
 import { useAuthQuery } from "better-auth/client";
-import type { Prettify } from "better-auth/types";
-import type { BetterAuthClientPlugin } from "better-auth/types";
-import { atom } from "nanostores";
 import {
 	type AccessControl,
 	type Role,
@@ -11,6 +8,9 @@ import {
 	memberAc,
 	ownerAc,
 } from "better-auth/plugins/access";
+import type { Prettify } from "better-auth/types";
+import type { BetterAuthClientPlugin } from "better-auth/types";
+import { atom } from "nanostores";
 import type { workspace } from "./index";
 import type { Invitation, Member, Workspace } from "./schema";
 
@@ -26,19 +26,19 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 	const $activeOrgSignal = atom<boolean>(false);
 	const $activeMemberSignal = atom<boolean>(false);
 
-	const roles = {
-		admin: adminAc,
-		member: memberAc,
-		owner: ownerAc,
-		...options?.roles,
-	};
-
 	type DefaultStatements = typeof defaultStatements;
 	type Statements = O["ac"] extends AccessControl<infer S>
 		? S extends Record<string, Array<any>>
 			? S & DefaultStatements
 			: DefaultStatements
 		: DefaultStatements;
+
+	const roles = {
+		admin: adminAc,
+		member: memberAc,
+		owner: ownerAc,
+		...options?.roles,
+	};
 
 	return {
 		id: "workspace",
@@ -64,6 +64,7 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 									id: string;
 									name: string;
 									email: string;
+									publicId: string;
 									image?: string | null;
 								};
 							}
@@ -101,7 +102,6 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 			const listOrganizations = useAuthQuery<Workspace[]>($listOrg, "/organization/list", $fetch, {
 				method: "GET",
 			});
-
 			const activeOrganization = useAuthQuery<
 				Prettify<
 					Workspace & {
@@ -144,7 +144,11 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 		atomListeners: [
 			{
 				matcher(path) {
-					return path === "/organization/create" || path === "/organization/delete";
+					return (
+						path === "/organization/create" ||
+						path === "/organization/delete" ||
+						path === "/organization/update"
+					);
 				},
 				signal: "$listOrg",
 			},

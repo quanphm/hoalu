@@ -20,7 +20,7 @@ CREATE TABLE "session" (
 	"user_id" bigint NOT NULL,
 	"ip_address" text,
 	"user_agent" text,
-	"active_organization_id" bigint,
+	"active_workspace_id" bigint,
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,

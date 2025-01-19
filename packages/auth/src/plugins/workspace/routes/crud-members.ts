@@ -1,4 +1,5 @@
 import { HTTPStatus } from "@woben/common/http-status";
+import type { User } from "better-auth";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
@@ -9,13 +10,13 @@ import type { WorkspaceOptions } from "../index";
 import type { Member } from "../schema";
 
 export const addMember = createAuthEndpoint(
-	"/organization/add-member",
+	"/workspace/add-member",
 	{
 		method: "POST",
 		body: z.object({
 			userId: z.string(),
 			role: z.string() as any,
-			organizationId: z.string().optional(),
+			organizationId: z.number().optional(),
 		}),
 		use: [workspaceMiddleware],
 		metadata: {
@@ -24,13 +25,14 @@ export const addMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.body.userId
-			? await getSessionFromCtx<{
-					session: {
-						activeOrganizationId?: string;
-					};
-				}>(ctx).catch((e) => null)
+			? await getSessionFromCtx<
+					User,
+					{
+						activeWorkspaceId?: number;
+					}
+				>(ctx).catch((_e) => null)
 			: null;
-		const orgId = ctx.body.organizationId || session?.session.activeOrganizationId;
+		const orgId = ctx.body.organizationId || session?.session.activeWorkspaceId;
 		if (!orgId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -72,7 +74,7 @@ export const addMember = createAuthEndpoint(
 );
 
 export const removeMember = createAuthEndpoint(
-	"/organization/remove-member",
+	"/workspace/remove-member",
 	{
 		method: "POST",
 		body: z.object({
@@ -131,7 +133,7 @@ export const removeMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
 		if (!organizationId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -194,7 +196,7 @@ export const removeMember = createAuthEndpoint(
 		await adapter.deleteMember(existing.id);
 		if (
 			session.user.id === existing.userId &&
-			session.session.activeOrganizationId === existing.workspaceId
+			session.session.activeWorkspaceId === existing.workspaceId
 		) {
 			await adapter.setActiveOrganization(session.session.token, null);
 		}
@@ -205,7 +207,7 @@ export const removeMember = createAuthEndpoint(
 );
 
 export const updateMemberRole = createAuthEndpoint(
-	"/organization/update-member-role",
+	"/workspace/update-member-role",
 	{
 		method: "POST",
 		body: z.object({
@@ -258,7 +260,7 @@ export const updateMemberRole = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId = ctx.body.organizationId || session.session.activeOrganizationId;
+		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
 		if (!organizationId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -321,7 +323,7 @@ export const updateMemberRole = createAuthEndpoint(
 );
 
 export const getActiveMember = createAuthEndpoint(
-	"/organization/get-active-member",
+	"/workspace/get-active-member",
 	{
 		method: "GET",
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
@@ -360,7 +362,7 @@ export const getActiveMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId = session.session.activeOrganizationId;
+		const organizationId = session.session.activeWorkspaceId;
 		if (!organizationId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
