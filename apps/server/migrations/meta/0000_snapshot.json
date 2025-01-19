@@ -1,5 +1,5 @@
 {
-  "id": "d8cc7c2d-cfc3-43b2-bcde-03674a960ac1",
+  "id": "f76f6435-9a54-4ce8-a099-7df913ff5c00",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -165,8 +165,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "active_organization_id": {
-          "name": "active_organization_id",
+        "active_workspace_id": {
+          "name": "active_workspace_id",
           "type": "bigint",
           "primaryKey": false,
           "notNull": false

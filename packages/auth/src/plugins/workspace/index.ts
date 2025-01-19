@@ -223,7 +223,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		schema: {
 			session: {
 				fields: {
-					activeOrganizationId: {
+					activeWorkspaceId: {
 						type: "number",
 						required: false,
 					},
