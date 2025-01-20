@@ -4,6 +4,10 @@
 	"editor.formatOnSave": false,
 	"editor.wordWrap": "on",
 	"editor.suggestSelection": "first",
+	"editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+  },
 	"[javascript]": {
 		"editor.formatOnSave": true,
 		"editor.defaultFormatter": "biomejs.biome"

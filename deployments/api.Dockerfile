@@ -1,4 +1,4 @@
-FROM oven/bun:1.1.43 AS base
+FROM oven/bun:1.1.43-alpine AS base
 WORKDIR /repo
 
 FROM base AS deps
@@ -18,37 +18,22 @@ COPY packages/ui/package.json ./packages/ui/
 FROM deps AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
-RUN bun install
+RUN bun install --production
 
 COPY apps/api ./apps/api
-COPY apps/app ./apps/app
 COPY packages/auth ./packages/auth
 COPY packages/common ./packages/common
-COPY packages/email/package.json ./packages/email
+COPY packages/email ./packages/email
 COPY packages/furnace ./packages/furnace
-COPY packages/icons ./packages/icons
 COPY packages/tsconfig ./packages/tsconfig
-COPY packages/ui ./packages/ui
 
-ARG PUBLIC_API_URL
-ARG PUBLIC_APP_BASE_URL
-
-RUN printf "PUBLIC_API_URL=%s\n\
-PUBLIC_APP_BASE_URL=%s\n" \
-"${PUBLIC_API_URL}" \
-"${PUBLIC_APP_BASE_URL}" > /repo/apps/app/.env
-
-# for import HonoRPC types in client.
 WORKDIR /repo/apps/api
-RUN bun run build:types
+RUN bun run build:api
 
-WORKDIR /repo/apps/app
-ENV NODE_ENV='production'
-RUN bun run build
+FROM base AS runner
+WORKDIR /api
+COPY --from=build /repo/apps/api/dist .
 
-FROM nginx:alpine
-COPY --from=build /repo/apps/app/dist /usr/share/nginx/html
-COPY --from=build /repo/apps/app/nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+USER bun
+EXPOSE 3000
+CMD ["bun", "run", "index.js"]

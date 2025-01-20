@@ -6,7 +6,7 @@ import { Button } from "@woben/ui/button";
 export const Route = createFileRoute("/")({
 	beforeLoad: ({ context: { user } }) => {
 		if (!user) {
-			throw redirect({ to: "/auth/signin" });
+			throw redirect({ to: "/login" });
 		}
 	},
 	component: RouteComponent,

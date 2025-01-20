@@ -1,0 +1,7 @@
+{
+	"extends": "@woben/tsconfig/react-library.json",
+	"compilerOptions": {
+		"noImplicitAny": false
+	},
+	"include": ["emails"]
+}

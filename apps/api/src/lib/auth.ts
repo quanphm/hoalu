@@ -1,8 +1,10 @@
 import { userPublicId, workspace } from "@woben/auth/plugins";
+import VerificationEmail from "@woben/email/verification-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
 import { db } from "../db";
+import { sendEmail } from "./email";
 
 export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL,
@@ -17,6 +19,7 @@ export const auth = betterAuth({
 	},
 	emailAndPassword: {
 		enabled: true,
+		autoSignIn: true,
 		minPasswordLength: 6,
 		password: {
 			hash: async (password) => {
@@ -29,6 +32,17 @@ export const auth = betterAuth({
 			verify: async ({ password, hash }) => {
 				return await Bun.password.verify(password, hash);
 			},
+		},
+	},
+	emailVerification: {
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+		sendVerificationEmail: async ({ user, url, token }, _request) => {
+			sendEmail({
+				to: user.email,
+				subject: "[Woben] Please verify your email address",
+				react: VerificationEmail({ url, name: user.name }),
+			});
 		},
 	},
 	plugins: [userPublicId(), workspace(), openAPI()],

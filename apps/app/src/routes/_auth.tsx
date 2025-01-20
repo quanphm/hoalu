@@ -1,16 +1,9 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { toast } from "@woben/ui/sonner";
 
-export const Route = createFileRoute("/auth")({
-	beforeLoad: ({ context: { user }, location, preload }) => {
+export const Route = createFileRoute("/_auth")({
+	beforeLoad: ({ context: { user } }) => {
 		if (user) {
-			if (!preload) {
-				toast.info("Already authenticated, Redirecting...");
-			}
 			throw redirect({ to: "/" });
-		}
-		if (location.pathname === "/auth" || location.pathname === "/auth/") {
-			throw redirect({ to: "/auth/signin" });
 		}
 	},
 	component: RouteComponent,
