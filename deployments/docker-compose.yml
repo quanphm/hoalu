@@ -42,11 +42,11 @@ services:
           cpus: "1.0"
           memory: 1G
 
-  server:
-    container_name: woben-server
+  api:
+    container_name: woben-api
     build:
       context: ../
-      dockerfile: ./deployments/server.Dockerfile
+      dockerfile: ./deployments/api.Dockerfile
     env_file:
       - .env
     restart: always
@@ -62,17 +62,17 @@ services:
           memory: 1G
     labels:
       - traefik.enable=true
-      - traefik.http.routers.woben-server.entrypoints=websecure
-      - traefik.http.routers.woben-server.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.woben-api.entrypoints=websecure
+      - traefik.http.routers.woben-api.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api
-      - traefik.http.routers.woben-server.tls=true
-      - traefik.http.routers.woben-server.tls.certresolver=cloudflare
-      - traefik.http.routers.woben-server.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben-server.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben-server.middlewares=internal-gateway@file
-      - traefik.http.routers.woben-server.middlewares=strip-api-prefix
-      - traefik.http.routers.woben-server.service=woben-server
-      - traefik.http.services.woben-server.loadbalancer.server.port=3000
+      - traefik.http.routers.woben-api.tls=true
+      - traefik.http.routers.woben-api.tls.certresolver=cloudflare
+      - traefik.http.routers.woben-api.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.woben-api.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.woben-api.middlewares=internal-gateway@file
+      - traefik.http.routers.woben-api.middlewares=strip-api-prefix
+      - traefik.http.routers.woben-api.service=woben-api
+      - traefik.http.services.woben-api.loadbalancer.server.port=3000
 
   app:
     container_name: woben-app

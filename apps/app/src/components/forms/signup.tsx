@@ -39,8 +39,8 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Get started with Woben</CardTitle>
-					<CardDescription>Create a new account</CardDescription>
+					<CardTitle className="text-xl">Welcome to Woben</CardTitle>
+					<CardDescription>Let's set up your account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>

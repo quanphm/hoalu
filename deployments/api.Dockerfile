@@ -5,7 +5,7 @@ FROM base AS deps
 WORKDIR /repo
 
 COPY package.json bun.lockb ./
-COPY apps/server/package.json ./apps/server/
+COPY apps/api/package.json ./apps/api/
 COPY apps/app/package.json ./apps/app/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
@@ -19,18 +19,18 @@ WORKDIR /repo
 ENV NODE_ENV='production'
 RUN bun install --production
 
-COPY apps/server ./apps/server
+COPY apps/api ./apps/api
 COPY packages/tsconfig ./packages/tsconfig
 COPY packages/common ./packages/common
 COPY packages/auth ./packages/auth
 COPY packages/furnace ./packages/furnace
 
-WORKDIR /repo/apps/server
-RUN bun run build:server
+WORKDIR /repo/apps/api
+RUN bun run build:api
 
 FROM base AS runner
-WORKDIR /server
-COPY --from=build /repo/apps/server/dist .
+WORKDIR /api
+COPY --from=build /repo/apps/api/dist .
 
 USER bun
 EXPOSE 3000

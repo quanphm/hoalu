@@ -35,7 +35,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 			<Card>
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Welcome back</CardTitle>
-					<CardDescription>Sign in to your Woben account</CardDescription>
+					<CardDescription>Log in to your Woben account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>
@@ -66,7 +66,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 									</Link>
 								</div>
 								<Button type="submit" className="w-full" tabIndex={4}>
-									Sign In
+									Log In
 								</Button>
 							</div>
 							<div className="text-center text-sm">

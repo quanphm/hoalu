@@ -44,7 +44,7 @@ export const auth = betterAuth({
 				},
 				body: JSON.stringify({
 					to: user.email,
-					subject: "Verify your email address",
+					subject: "Verify your email",
 					body: `Click the link to verify your email: ${url}`,
 				}),
 			});

@@ -1,0 +1,8 @@
+{
+	"extends": "@woben/tsconfig/react-library.json",
+	"compilerOptions": {
+		"noImplicitAny": false
+	},
+	"include": ["."],
+  "exclude": ["node_modules"]
+}

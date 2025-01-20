@@ -1,5 +1,5 @@
 {
-	"name": "@woben/server",
+	"name": "@woben/api",
 	"version": "0.3.0",
 	"type": "module",
 	"files": ["dist"],
@@ -10,9 +10,9 @@
 		"dev": "bun --watch src/index.ts",
 		"clean": "rimraf -rf dist",
 		"prebuild": "bun run clean",
-		"build:server": "bun build ./src/index.ts --outdir ./dist --target bun --minify --sourcemap",
+		"build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify --sourcemap",
 		"build:types": "tsc -p tsconfig.build.json",
-		"build": "bun run build:server && bun run build:types",
+		"build": "bun run build:api && bun run build:types",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"lint": "biome lint ./src"

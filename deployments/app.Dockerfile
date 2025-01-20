@@ -5,7 +5,7 @@ FROM base AS deps
 WORKDIR /repo
 
 COPY package.json bun.lockb ./
-COPY apps/server/package.json ./apps/server/
+COPY apps/api/package.json ./apps/api/
 COPY apps/app/package.json ./apps/app/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
@@ -19,7 +19,7 @@ WORKDIR /repo
 ENV NODE_ENV='production'
 RUN bun install
 
-COPY apps/server ./apps/server
+COPY apps/api ./apps/api
 COPY apps/app ./apps/app
 COPY packages/tsconfig ./packages/tsconfig
 COPY packages/ui ./packages/ui
@@ -37,7 +37,7 @@ PUBLIC_APP_BASE_URL=%s\n" \
 "${PUBLIC_APP_BASE_URL}" > /repo/apps/app/.env
 
 # for import HonoRPC types in client.
-WORKDIR /repo/apps/server
+WORKDIR /repo/apps/api
 RUN bun run build:types
 
 WORKDIR /repo/apps/app
