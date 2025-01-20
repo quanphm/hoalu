@@ -24,7 +24,7 @@ COPY apps/api ./apps/api
 COPY apps/app ./apps/app
 COPY packages/auth ./packages/auth
 COPY packages/common ./packages/common
-COPY packages/email/package.json ./packages/email
+COPY packages/email ./packages/email
 COPY packages/furnace ./packages/furnace
 COPY packages/icons ./packages/icons
 COPY packages/tsconfig ./packages/tsconfig
