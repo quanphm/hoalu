@@ -3,6 +3,5 @@
 	"compilerOptions": {
 		"noImplicitAny": false
 	},
-	"include": ["."],
-  "exclude": ["node_modules"]
+	"include": ["emails"]
 }

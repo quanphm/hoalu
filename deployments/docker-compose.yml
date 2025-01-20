@@ -89,7 +89,7 @@ services:
     depends_on:
       - database
       - electric
-      - server
+      - api
     deploy:
       resources:
         limits:

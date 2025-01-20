@@ -4,13 +4,13 @@
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
+	"exports": {
+		"./verification-email": "./emails/verification-email.tsx"
+	},
 	"scripts": {
 		"lint": "biome check ./emails",
 		"format": "biome format --write .",
-		"typecheck": "tsc --noEmit",
-		"dev": "email dev -p 3003",
-		"build": "email build",
-		"start": "email start"
+		"dev": "email dev -p 3003"
 	},
 	"devDependencies": {
 		"@woben/tsconfig": "workspace:*",

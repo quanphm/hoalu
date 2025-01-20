@@ -1,8 +1,10 @@
 import { userPublicId, workspace } from "@woben/auth/plugins";
+import VerificationEmail from "@woben/email/verification-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
 import { db } from "../db";
+import { sendEmail } from "./email";
 
 export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL,
@@ -35,18 +37,11 @@ export const auth = betterAuth({
 	emailVerification: {
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
-		sendVerificationEmail: async ({ user, url, token }, request) => {
-			await fetch("https://api.useplunk.com/v1/send", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${process.env.PLUNK_SECRET_KEY}`,
-				},
-				body: JSON.stringify({
-					to: user.email,
-					subject: "Verify your email",
-					body: `Click the link to verify your email: ${url}`,
-				}),
+		sendVerificationEmail: async ({ user, url, token }, _request) => {
+			sendEmail({
+				to: user.email,
+				subject: "[Woben] Please verify your email address",
+				react: VerificationEmail({ url, name: user.name }),
 			});
 		},
 	},
