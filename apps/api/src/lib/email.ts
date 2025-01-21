@@ -26,12 +26,12 @@ export async function sendEmail({
 		}),
 	});
 
-	if (response.status === 200) {
-		console.log("Email sent");
-	} else {
+	if (response.status !== 200) {
+		console.error(response);
 		throw new APIError("BAD_REQUEST", {
 			message: "Error while sending email.",
 		});
 	}
+
 	return response;
 }
