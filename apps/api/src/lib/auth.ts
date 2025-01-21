@@ -38,14 +38,14 @@ export const auth = betterAuth({
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
 		sendVerificationEmail: async ({ user, token }, _request) => {
-			const verificationUrl = new URL(`${process.env.PUBLIC_API_URL}/auth/verify-email`);
-			verificationUrl.searchParams.set("token", token);
-			verificationUrl.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
+			const url = new URL(`${process.env.PUBLIC_API_URL}/auth/verify-email`);
+			url.searchParams.set("token", token);
+			url.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
 
 			sendEmail({
 				to: user.email,
 				subject: "[Woben] Please verify your email address",
-				react: VerificationEmail({ url: verificationUrl.href, name: user.name }),
+				react: VerificationEmail({ url: url.href, name: user.name }),
 			});
 		},
 	},

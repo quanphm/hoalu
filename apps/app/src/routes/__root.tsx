@@ -1,5 +1,6 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
+import { ThemeProvider } from "@/components/theme-prodiver";
 import type { AuthClient } from "@/lib/auth-client";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
@@ -58,8 +59,10 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			{children}
-			<Toaster />
+			<ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+				{children}
+				<Toaster />
+			</ThemeProvider>
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="top-right" />
 			<RouterDevtools position="bottom-right" />
