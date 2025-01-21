@@ -33,6 +33,5 @@ export async function sendEmail({
 			message: "Error while sending email.",
 		});
 	}
-	console.log(response);
 	return response;
 }

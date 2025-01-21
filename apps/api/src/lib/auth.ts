@@ -7,9 +7,8 @@ import { db } from "../db";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
-	baseURL: process.env.AUTH_URL,
+	baseURL: `${process.env.AUTH_URL}/auth`,
 	secret: process.env.AUTH_SECRET,
-	basePath: "/auth",
 	trustedOrigins: [process.env.PUBLIC_APP_BASE_URL],
 	database: drizzleAdapter(db, {
 		provider: "pg",
@@ -37,11 +36,15 @@ export const auth = betterAuth({
 	emailVerification: {
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
-		sendVerificationEmail: async ({ user, url, token }, _request) => {
-			sendEmail({
+		sendVerificationEmail: async ({ user, token }, _request) => {
+			const verificationUrl = new URL(`${process.env.PUBLIC_API_URL}/auth/verify-email`);
+			verificationUrl.searchParams.set("token", token);
+			verificationUrl.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
+
+			await sendEmail({
 				to: user.email,
 				subject: "[Woben] Please verify your email address",
-				react: VerificationEmail({ url, name: user.name }),
+				react: VerificationEmail({ url: verificationUrl.href, name: user.name }),
 			});
 		},
 	},

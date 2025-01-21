@@ -41,7 +41,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 					<form action={formAction}>
 						<div className="grid gap-6">
 							<div className="flex flex-col gap-4">
-								<Button variant="outline" className="w-full" tabIndex={1}>
+								<Button variant="outline" className="w-full">
 									Continue with Google
 								</Button>
 							</div>
@@ -51,21 +51,20 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 							<div className="grid gap-6">
 								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
-									<Input id="email" name="email" type="email" required tabIndex={2} />
+									<Input id="email" name="email" type="email" required />
 								</div>
 								<div className="grid gap-2">
 									<Label htmlFor="password">Password</Label>
-									<Input id="password" name="password" type="password" required tabIndex={3} />
+									<Input id="password" name="password" type="password" required />
 									<Link
 										to="/"
 										preload={false}
 										className="-mt-1 text-sm underline-offset-4 hover:underline"
-										tabIndex={5}
 									>
 										Forgot password?
 									</Link>
 								</div>
-								<Button type="submit" className="w-full" tabIndex={4}>
+								<Button type="submit" className="w-full">
 									Log In
 								</Button>
 							</div>
