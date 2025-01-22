@@ -24,41 +24,39 @@ import type { Invitation, Member, Workspace } from "./schema";
 
 export interface WorkspaceOptions {
 	/**
-	 * Configure whether new users are able to create new organizations.
+	 * Configure whether new users are able to create new workspaces.
 	 * You can also pass a function that returns a boolean.
 	 *
 	 * 	@example
 	 * ```ts
-	 * allowUserToCreateOrganization: async (user) => {
+	 * allowUserToCreateWorkspace: async (user) => {
 	 * 		const plan = await getUserPlan(user);
 	 *      return plan.name === "pro";
 	 * }
 	 * ```
 	 * @default true
 	 */
-	allowUserToCreateOrganization?: boolean | ((user: User) => Promise<boolean> | boolean);
+	allowUserToCreateWorkspace?: boolean | ((user: User) => Promise<boolean> | boolean);
 	/**
-	 * The maximum number of organizations a user can create.
+	 * The maximum number of workspaces a user can create.
 	 *
 	 * You can also pass a function that returns a boolean
 	 */
-	organizationLimit?: number | ((user: User) => Promise<boolean> | boolean);
+	workspaceLimit?: number | ((user: User) => Promise<boolean> | boolean);
 	/**
-	 * The role that is assigned to the creator of the
-	 * organization.
+	 * The role that is assigned to the creator of the workspace.
 	 *
 	 * @default "owner"
 	 */
 	creatorRole?: string;
 	/**
-	 * The number of memberships a user can have in an organization.
+	 * The number of memberships a user can have in an workspace.
 	 *
 	 * @default "unlimited"
 	 */
 	membershipLimit?: number;
 	/**
-	 * Configure the roles and permissions for the
-	 * organization plugin.
+	 * Configure the roles and permissions for the workspace plugin.
 	 */
 	ac?: AccessControl;
 	/**
@@ -89,11 +87,11 @@ export interface WorkspaceOptions {
 	 * @example
 	 * ```ts
 	 * sendInvitationEmail: async (data) => {
-	 * 	const url = `https://yourapp.com/organization/
+	 * 	const url = `https://yourapp.com/workspace/
 	 * accept-invitation?id=${data.id}`;
 	 * 	await sendEmail(data.email, "Invitation to join
-	 * organization", `Click the link to join the
-	 * organization: ${url}`);
+	 * workspace", `Click the link to join the
+	 * workspace: ${url}`);
 	 * }
 	 * ```
 	 */
@@ -112,9 +110,9 @@ export interface WorkspaceOptions {
 			 */
 			email: string;
 			/**
-			 * the organization the user is invited to join
+			 * the workspace the user is invited to join
 			 */
-			organization: Workspace;
+			workspace: Workspace;
 			/**
 			 * the member who is inviting the user
 			 */
@@ -128,39 +126,38 @@ export interface WorkspaceOptions {
 		request?: Request,
 	) => Promise<void>;
 	/**
-	 * Configure how organization deletion is handled
+	 * Configure how workspace deletion is handled
 	 */
-	organizationDeletion?: {
+	workspaceDeletion?: {
 		/**
-		 * disable deleting organization
+		 * disable deleting workspace
 		 */
 		disabled?: boolean;
 		/**
-		 * A callback that runs before the organization is
-		 * deleted
+		 * A callback that runs before the workspace is deleted
 		 *
-		 * @param data - organization and user object
+		 * @param data - workspace and user object
 		 * @param request - the request object
 		 * @returns
 		 */
 		beforeDelete?: (
 			data: {
-				organization: Workspace;
+				workspace: Workspace;
 				user: User;
 			},
 			request?: Request,
 		) => Promise<void>;
 		/**
-		 * A callback that runs after the organization is
+		 * A callback that runs after the workspace is
 		 * deleted
 		 *
-		 * @param data - organization and user object
+		 * @param data - workspace and user object
 		 * @param request - the request object
 		 * @returns
 		 */
 		afterDelete?: (
 			data: {
-				organization: Workspace;
+				workspace: Workspace;
 				user: User;
 			},
 			request?: Request,
@@ -169,7 +166,7 @@ export interface WorkspaceOptions {
 }
 
 /**
- * Organization plugin for Better Auth. Organization allows you to create teams, members,
+ * Workspace plugin for Better Auth. Workspace allows you to create teams, members,
  * and manage access control for your users.
  *
  * @example
@@ -177,7 +174,7 @@ export interface WorkspaceOptions {
  * const auth = createAuth({
  * 	plugins: [
  * 		workspace({
- * 			allowUserToCreateOrganization: true,
+ * 			allowUserToCreateWorkspace: true,
  * 		}),
  * 	],
  * });
@@ -236,6 +233,11 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						required: true,
 					},
 					slug: {
+						type: "string",
+						unique: true,
+						required: true,
+					},
+					publicId: {
 						type: "string",
 						unique: true,
 						required: true,

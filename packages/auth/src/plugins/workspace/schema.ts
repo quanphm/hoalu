@@ -10,6 +10,7 @@ export const workspaceSchema = z.object({
 	id: z.number(),
 	name: z.string(),
 	slug: z.string(),
+	publicId: z.string(),
 	logo: z.string().nullish(),
 	metadata: z
 		.record(z.string())

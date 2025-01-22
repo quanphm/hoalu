@@ -2,8 +2,8 @@
 export const WORKSPACE_ERROR_CODES = {
 	YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_WORKSPACE: "You are not allowed to create a new workspace",
 	YOU_HAVE_REACHED_THE_MAXIMUM_NUMBER_OF_WORKSPACES: "You have reached the maximum number of workspaces",
-	WORKSPACE_ALREADY_EXISTS: "Organization already exists",
-	WORKSPACE_NOT_FOUND: "Organization not found",
+	WORKSPACE_ALREADY_EXISTS: "Workspace already exists",
+	WORKSPACE_NOT_FOUND: "Workspace not found",
 	USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE: "User is not a member of the workspace",
 	YOU_ARE_NOT_ALLOWED_TO_UPDATE_THIS_WORKSPACE: "You are not allowed to update this workspace",
 	YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE: "You are not allowed to delete this workspace",
