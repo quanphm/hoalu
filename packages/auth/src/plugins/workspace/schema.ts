@@ -23,7 +23,7 @@ const workspaceSchemaInput = workspaceSchema.omit({ id: true });
 export const memberSchema = z.object({
 	id: z.number(),
 	workspaceId: z.number(),
-	userId: z.string(),
+	userId: z.number(),
 	role,
 	createdAt: z.date(),
 });
@@ -38,7 +38,7 @@ export const invitationSchema = z.object({
 	/**
 	 * The id of the user who invited the user.
 	 */
-	inviterId: z.string(),
+	inviterId: z.number(),
 	expiresAt: z.date(),
 });
 const invitationSchemaInput = invitationSchema.omit({ id: true });

@@ -1,7 +1,8 @@
 import { BetterAuthError } from "better-auth";
-import type { AuthContext, Session, User } from "better-auth/types";
+import type { AuthContext, Session } from "better-auth/types";
 import { getDate } from "../../utils/date";
 import { parseJSON } from "../../utils/parser";
+import type { User } from "../../utils/types";
 import type { WorkspaceOptions } from "./index";
 import type {
 	Invitation,
@@ -212,7 +213,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			};
 		},
 		findMemberByWorkspaceId: async (data: {
-			userId: string;
+			userId: number;
 			workspaceId: number;
 		}) => {
 			const [member, user] = await Promise.all([
@@ -252,13 +253,13 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				},
 			};
 		},
-		findMemberById: async (memberId: string) => {
+		findMemberByUserId: async (id: number) => {
 			const member = await adapter.findOne<Member>({
 				model: "member",
 				where: [
 					{
-						field: "id",
-						value: memberId,
+						field: "userId",
+						value: id,
 					},
 				],
 			});
@@ -279,12 +280,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			}
 			return {
 				...member,
-				user: {
-					id: user.id,
-					name: user.name,
-					email: user.email,
-					image: user.image,
-				},
+				user,
 			};
 		},
 		createMember: async (data: MemberInput) => {
@@ -294,7 +290,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return member;
 		},
-		updateMember: async (memberId: string, role: string) => {
+		updateMember: async (memberId: number, role: string) => {
 			const member = await adapter.update<Member>({
 				model: "member",
 				where: [
@@ -392,7 +388,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 
 			return invite;
 		},
-		findInvitationById: async (id: string) => {
+		findInvitationById: async (id: number) => {
 			const invitation = await adapter.findOne<Invitation>({
 				model: "invitation",
 				where: [
@@ -428,7 +424,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			return invitation.filter((invite) => new Date(invite.expiresAt) > new Date());
 		},
 		updateInvitation: async (data: {
-			invitationId: string;
+			invitationId: number;
 			status: "accepted" | "canceled" | "rejected";
 		}) => {
 			const invitation = await adapter.update<Invitation>({

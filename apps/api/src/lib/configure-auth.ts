@@ -1,5 +1,5 @@
 import { cors } from "hono/cors";
-import type { HonoApp, User } from "../types";
+import type { HonoApp, Session, User } from "../types";
 import { auth } from "./auth";
 
 export function configureAuth(app: HonoApp) {
@@ -18,16 +18,9 @@ export function configureAuth(app: HonoApp) {
 	app.use("*", async (c, next) => {
 		// @ts-ignore
 		const session = await auth.api.getSession({ headers: c.req.raw.headers });
-
-		if (!session) {
-			c.set("user", null);
-			c.set("session", null);
-			return next();
-		}
-
-		c.set("user", session.user as unknown as User);
-		c.set("session", session.session);
-		return next();
+		c.set("user", (session?.user as unknown as User) || null);
+		c.set("session", (session?.session as unknown as Session) || null);
+		await next();
 	});
 
 	app.all("/auth/*", (c) => {

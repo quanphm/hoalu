@@ -42,6 +42,11 @@ export const auth = betterAuth({
 			url.searchParams.set("token", token);
 			url.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
 
+			if (process.env.NODE_ENV === "development") {
+				console.log("Verification Link:", url.href);
+				return;
+			}
+
 			sendEmail({
 				to: user.email,
 				subject: "[Woben] Please verify your email address",

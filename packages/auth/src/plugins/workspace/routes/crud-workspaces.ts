@@ -10,6 +10,7 @@ import {
 } from "better-auth/plugins/access";
 import { APIError } from "better-call";
 import { type ZodArray, type ZodNumber, type ZodObject, type ZodOptional, z } from "zod";
+import type { Session, User } from "../../../utils/types";
 import { getOrgAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
@@ -58,7 +59,7 @@ export const createWorkspace = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const session = await getSessionFromCtx(ctx);
+		const session = await getSessionFromCtx<User, Session>(ctx);
 		if (!session && (ctx.request || ctx.headers)) {
 			throw new APIError("UNAUTHORIZED");
 		}
@@ -110,7 +111,7 @@ export const createWorkspace = createAuthEndpoint(
 				createdAt: new Date(),
 				metadata: ctx.body.metadata,
 			},
-			user,
+			user: user,
 		});
 		if (ctx.context.session) {
 			await adapter.setActiveWorkspace(ctx.context.session.session.token, workspace.id);

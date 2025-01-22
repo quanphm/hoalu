@@ -1,7 +1,8 @@
 import { getSessionFromCtx } from "better-auth/api";
 import { type AccessControl, type Role, defaultRoles } from "better-auth/plugins/access";
-import type { AuthContext, BetterAuthPlugin, Prettify, User } from "better-auth/types";
+import type { AuthContext, BetterAuthPlugin, Prettify } from "better-auth/types";
 import { shimContext } from "../../utils/shim";
+import type { User } from "../../utils/types";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
 	acceptInvitation,
@@ -267,7 +268,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						},
 					},
 					userId: {
-						type: "string",
+						type: "number",
 						required: true,
 						references: {
 							model: "user",
@@ -313,7 +314,7 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						required: true,
 					},
 					inviterId: {
-						type: "string",
+						type: "number",
 						references: {
 							model: "user",
 							field: "id",
