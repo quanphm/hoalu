@@ -1,5 +1,5 @@
 {
-	"extends": "@woben/tsconfig/node.json",
+	"extends": "@hoalu/tsconfig/node.json",
 	"compilerOptions": {
 		"strict": true,
 		"types": ["bun-types"],

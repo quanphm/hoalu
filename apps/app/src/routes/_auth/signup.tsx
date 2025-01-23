@@ -1,11 +1,11 @@
 import { authClient } from "@/lib/auth-client";
+import { Button } from "@hoalu/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Input } from "@hoalu/ui/input";
+import { Label } from "@hoalu/ui/label";
+import { toast } from "@hoalu/ui/sonner";
 import { Link, useRouter } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@woben/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@woben/ui/card";
-import { Input } from "@woben/ui/input";
-import { Label } from "@woben/ui/label";
-import { toast } from "@woben/ui/sonner";
 
 export const Route = createFileRoute("/_auth/signup")({
 	component: RouteComponent,
@@ -43,7 +43,7 @@ function RouteComponent() {
 		<div className="flex flex-col gap-6">
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome to Woben</CardTitle>
+					<CardTitle className="text-xl">Welcome to Hoalu</CardTitle>
 					<CardDescription>Let's set up your account</CardDescription>
 				</CardHeader>
 				<CardContent>

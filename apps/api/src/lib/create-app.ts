@@ -1,4 +1,4 @@
-import { logger, notFound, onError } from "@woben/furnace";
+import { logger, notFound, onError } from "@hoalu/furnace";
 import { Hono } from "hono";
 import { requestId } from "hono/request-id";
 import type { AppBindings } from "../types";
@@ -19,7 +19,7 @@ export function createApp() {
 		}),
 	);
 
-	app.get("/", (c) => c.text("Welcome to Woben API"));
+	app.get("/", (c) => c.text("Welcome to Hoalu"));
 
 	// handlers
 	app.notFound(notFound);

@@ -1,12 +1,12 @@
-name: woben
+name: hoalu
 
 services:
   database:
-    container_name: woben-db
+    container_name: hoalu-db
     image: postgres:17-alpine
     restart: always
     networks:
-      - woben_network
+      - hoalu_network
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -24,11 +24,11 @@ services:
           memory: 2G
 
   electric:
-    container_name: woben-electric
+    container_name: hoalu-electric
     image: electricsql/electric:latest
     restart: always
     networks:
-      - woben_network
+      - hoalu_network
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
@@ -43,7 +43,7 @@ services:
           memory: 1G
 
   api:
-    container_name: woben-api
+    container_name: hoalu-api
     build:
       context: ../
       dockerfile: ./deployments/api.Dockerfile
@@ -51,7 +51,7 @@ services:
       - .env
     restart: always
     networks:
-      - woben_network
+      - hoalu_network
       - traefik_network
     depends_on:
       - database
@@ -62,20 +62,20 @@ services:
           memory: 1G
     labels:
       - traefik.enable=true
-      - traefik.http.routers.woben-api.entrypoints=websecure
-      - traefik.http.routers.woben-api.rule=Host(`woben.local.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.hoalu-api.entrypoints=websecure
+      - traefik.http.routers.hoalu-api.rule=Host(`hoalu.local.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api
-      - traefik.http.routers.woben-api.tls=true
-      - traefik.http.routers.woben-api.tls.certresolver=cloudflare
-      - traefik.http.routers.woben-api.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben-api.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben-api.middlewares=internal-gateway@file
-      - traefik.http.routers.woben-api.middlewares=strip-api-prefix
-      - traefik.http.routers.woben-api.service=woben-api
-      - traefik.http.services.woben-api.loadbalancer.server.port=3000
+      - traefik.http.routers.hoalu-api.tls=true
+      - traefik.http.routers.hoalu-api.tls.certresolver=cloudflare
+      - traefik.http.routers.hoalu-api.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.hoalu-api.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.hoalu-api.middlewares=internal-gateway@file
+      - traefik.http.routers.hoalu-api.middlewares=strip-api-prefix
+      - traefik.http.routers.hoalu-api.service=hoalu-api
+      - traefik.http.services.hoalu-api.loadbalancer.server.port=3000
 
   app:
-    container_name: woben-app
+    container_name: hoalu-app
     build:
       context: ../
       dockerfile: ./deployments/app.Dockerfile
@@ -84,7 +84,7 @@ services:
         - PUBLIC_APP_BASE_URL=${PUBLIC_APP_BASE_URL}
     restart: always
     networks:
-      - woben_network
+      - hoalu_network
       - traefik_network
     depends_on:
       - database
@@ -97,18 +97,18 @@ services:
           memory: 1G
     labels:
       - traefik.enable=true
-      - traefik.http.routers.woben-app.entrypoints=websecure
-      - traefik.http.routers.woben-app.rule=Host(`woben.local.${DOMAIN}`)
-      - traefik.http.routers.woben-app.tls=true
-      - traefik.http.routers.woben-app.tls.certresolver=cloudflare
-      - traefik.http.routers.woben-app.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.woben-app.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.woben-app.middlewares=internal-gateway@file
-      - traefik.http.routers.woben-app.service=woben-app
-      - traefik.http.services.woben-app.loadbalancer.server.port=8080
+      - traefik.http.routers.hoalu-app.entrypoints=websecure
+      - traefik.http.routers.hoalu-app.rule=Host(`hoalu.local.${DOMAIN}`)
+      - traefik.http.routers.hoalu-app.tls=true
+      - traefik.http.routers.hoalu-app.tls.certresolver=cloudflare
+      - traefik.http.routers.hoalu-app.tls.domains[0].main=local.${DOMAIN}
+      - traefik.http.routers.hoalu-app.tls.domains[0].sans=*.local.${DOMAIN}
+      - traefik.http.routers.hoalu-app.middlewares=internal-gateway@file
+      - traefik.http.routers.hoalu-app.service=hoalu-app
+      - traefik.http.services.hoalu-app.loadbalancer.server.port=8080
 
   migration:
-    container_name: woben-migration
+    container_name: hoalu-migration
     build:
       context: ../
       dockerfile: ./deployments/migration.Dockerfile
@@ -119,7 +119,7 @@ services:
       - DB_NAME=${DB_NAME}
     restart: on-failure
     networks:
-      - woben_network
+      - hoalu_network
     depends_on:
       - database
 
@@ -130,8 +130,8 @@ volumes:
     driver: local
 
 networks:
-  woben_network:
-    name: woben_network
+  hoalu_network:
+    name: hoalu_network
     driver: bridge
   traefik_network:
     external: true

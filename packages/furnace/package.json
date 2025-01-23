@@ -1,5 +1,5 @@
 {
-	"name": "@woben/furnace",
+	"name": "@hoalu/furnace",
 	"description": "Hono server utilities",
 	"version": "0.3.0",
 	"private": true,
@@ -11,7 +11,7 @@
 		"hono": "^4.6.17"
 	},
 	"dependencies": {
-		"@woben/common": "workspace:*",
+		"@hoalu/common": "workspace:*",
 		"hono-openapi": "^0.4.3",
 		"hono-pino": "^0.7.0",
 		"pino": "^9.6.0",

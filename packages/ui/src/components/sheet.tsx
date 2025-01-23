@@ -1,5 +1,5 @@
+import { CloseIcon } from "@hoalu/icons/pixelart";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { CloseIcon } from "@woben/icons/pixelart";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "../utils";
 
@@ -55,7 +55,7 @@ const SheetContent = ({
 		<SheetOverlay />
 		<SheetPrimitive.Content className={cn(sheetVariants({ side }), className)} {...props}>
 			{children}
-			<SheetPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+			<SheetPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
 				<CloseIcon className="h-4 w-4" />
 				<span className="sr-only">Close</span>
 			</SheetPrimitive.Close>

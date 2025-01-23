@@ -2,10 +2,10 @@ import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme-prodiver";
 import type { AuthClient } from "@/lib/auth-client";
+import { Toaster } from "@hoalu/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
-import { Toaster } from "@woben/ui/sonner";
 import { lazy } from "react";
 
 export const Route = createRootRouteWithContext<{
@@ -47,6 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				{children}
 				<Toaster />
 			</ThemeProvider>
+
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="top-right" />
 			<RouterDevtools position="bottom-right" />

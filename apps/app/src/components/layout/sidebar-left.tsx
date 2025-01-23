@@ -1,7 +1,6 @@
 import { NavMain } from "@/components/layout/nav-main";
 import { NavUser } from "@/components/layout/nav-user";
-import { Link } from "@tanstack/react-router";
-import { Command } from "@woben/icons/lucide";
+import { Command } from "@hoalu/icons/lucide";
 import {
 	Sidebar,
 	SidebarContent,
@@ -10,7 +9,8 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@woben/ui/sidebar";
+} from "@hoalu/ui/sidebar";
+import { Link } from "@tanstack/react-router";
 import type * as React from "react";
 
 export function SidebarLeft({ ...props }: React.ComponentProps<typeof Sidebar>) {

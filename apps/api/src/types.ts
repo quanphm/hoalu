@@ -1,4 +1,4 @@
-import type { PinoLogger } from "@woben/furnace";
+import type { PinoLogger } from "@hoalu/furnace";
 import type { Hono } from "hono";
 import type * as v from "valibot";
 import type { auth } from "./lib/auth";

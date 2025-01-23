@@ -1,8 +1,8 @@
-name: woben
+name: hoalu
 
 services:
   database:
-    container_name: woben-db
+    container_name: hoalu-db
     image: postgres:17-alpine
     restart: always
     ports:
@@ -18,7 +18,7 @@ services:
       - wal_level=logical
 
   electric:
-    container_name: woben-electric
+    container_name: hoalu-electric
     image: electricsql/electric:latest
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
@@ -29,7 +29,7 @@ services:
       - database
 
   migration:
-    container_name: woben-migration
+    container_name: hoalu-migration
     build:
       context: ../
       dockerfile: ./deployments/migration.Dockerfile

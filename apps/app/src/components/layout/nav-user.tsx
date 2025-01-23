@@ -1,8 +1,8 @@
+import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { useAuth } from "@/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "@tanstack/react-router";
-import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, LogOutIcon } from "@woben/icons/lucide";
-import { Avatar, AvatarFallback, AvatarImage } from "@woben/ui/avatar";
+import { ChevronsUpDownIcon, LogOutIcon } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,8 +10,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@woben/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@woben/ui/sidebar";
+} from "@hoalu/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
+import { useRouter } from "@tanstack/react-router";
 
 export function NavUser() {
 	const { user } = useAuth();
@@ -32,7 +33,9 @@ export function NavUser() {
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage src={user.image || ""} alt={user.name} />
-								<AvatarFallback className="rounded-lg">{user.name}</AvatarFallback>
+								<AvatarFallback className="rounded-lg">
+									{extractLetterFromName(user.name)}
+								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">{user.name}</span>

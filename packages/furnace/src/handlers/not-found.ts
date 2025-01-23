@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@woben/common/http-status";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import type { NotFoundHandler } from "hono";
 
 export const notFound: NotFoundHandler = (c) => {

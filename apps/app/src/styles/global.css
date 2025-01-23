@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@woben/ui/theme.css";
+@import "@hoalu/ui/theme.css";
 
 @plugin "tailwind-scrollbar";
 

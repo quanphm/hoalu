@@ -1,5 +1,5 @@
-import { HTTPStatus } from "@woben/common/http-status";
-import { authGuard } from "@woben/furnace";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { authGuard } from "@hoalu/furnace";
 import { cors } from "hono/cors";
 import type { HonoApp } from "../types";
 

@@ -8,7 +8,8 @@ export const Route = createFileRoute("/_dashboard/")({
 		}
 		const { data: workspace } = await authClient.workspace.list();
 		if (!workspace || !workspace.length) {
-			throw redirect({ to: "/404" });
+			console.log("create workspace");
+			return {};
 		}
 
 		const selectedWorkspace = workspace[0];

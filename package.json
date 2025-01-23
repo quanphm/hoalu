@@ -1,5 +1,5 @@
 {
-	"name": "woben",
+	"name": "hoalu",
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
 	"dependencies": {
