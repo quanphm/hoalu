@@ -11,7 +11,7 @@ function RouteComponent() {
 		<SidebarProvider>
 			<SidebarLeft />
 			<SidebarInset>
-				<main className="flex-1 overflow-y-auto overflow-x-hidden bg-bunker-800 px-4 pb-4 dark:[color-scheme:dark]">
+				<main className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4">
 					{/* <header className="mx-auto max-w-7xl py-4">Title</header> */}
 					<div className="mx-auto flex max-w-7xl py-4">
 						<div className="mb-4 flex flex-col items-start justify-start">

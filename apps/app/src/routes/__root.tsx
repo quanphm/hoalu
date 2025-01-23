@@ -47,6 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				{children}
 				<Toaster />
 			</ThemeProvider>
+
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="top-right" />
 			<RouterDevtools position="bottom-right" />

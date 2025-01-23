@@ -10,13 +10,13 @@ export function NotFound() {
 				<button
 					type="button"
 					onClick={() => window.history.back()}
-					className="rounded bg-emerald-500 px-2 py-1 font-black text-sm text-white uppercase"
+					className="rounded-sm bg-emerald-500 px-2 py-1 font-black text-sm text-white uppercase"
 				>
 					Go back
 				</button>
 				<Link
 					to="/"
-					className="rounded bg-cyan-600 px-2 py-1 font-black text-sm text-white uppercase"
+					className="rounded-sm bg-cyan-600 px-2 py-1 font-black text-sm text-white uppercase"
 				>
 					Start Over
 				</Link>
