@@ -13,7 +13,6 @@
 		"./card": "./src/components/card.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
-		"./form": "./src/components/form.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",
 		"./separator": "./src/components/separator.tsx",

@@ -1,8 +1,13 @@
 import { SidebarLeft } from "@/components/layout/sidebar-left";
 import { SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard")({
+	beforeLoad: async ({ context: { user } }) => {
+		if (!user) {
+			throw redirect({ to: "/login" });
+		}
+	},
 	component: RouteComponent,
 });
 
