@@ -4,7 +4,7 @@ WORKDIR /repo
 FROM base AS deps
 WORKDIR /repo
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 COPY apps/api/package.json ./apps/api/
 COPY apps/app/package.json ./apps/app/
 COPY packages/auth/package.json ./packages/auth/
