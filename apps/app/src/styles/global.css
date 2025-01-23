@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@woben/ui/theme.css";
 
+@plugin "tailwind-scrollbar";
+
 @layer base {
 	* {
 		@apply box-border border-border;
@@ -25,5 +27,3 @@
 		min-height: 100vh;
 	}
 }
-
-@plugin "tailwind-scrollbar";
