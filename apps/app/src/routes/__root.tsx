@@ -8,22 +8,6 @@ import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { Toaster } from "@woben/ui/sonner";
 import { lazy } from "react";
 
-const RouterDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/router-devtools").then((res) => ({
-				default: res.TanStackRouterDevtools,
-			})),
-		);
-
-const QueryDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/react-query-devtools").then((res) => ({
-				default: res.ReactQueryDevtools,
-			})),
-		);
-
 export const Route = createRootRouteWithContext<{
 	authClient: AuthClient;
 	queryClient: QueryClient;
@@ -69,3 +53,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		</>
 	);
 }
+
+const RouterDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/router-devtools").then((res) => ({
+				default: res.TanStackRouterDevtools,
+			})),
+		);
+
+const QueryDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/react-query-devtools").then((res) => ({
+				default: res.ReactQueryDevtools,
+			})),
+		);

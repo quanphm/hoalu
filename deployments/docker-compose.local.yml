@@ -27,3 +27,17 @@ services:
       - 4000:4000
     depends_on:
       - database
+
+  migration:
+    container_name: woben-migration
+    build:
+      context: ../
+      dockerfile: ./deployments/migration.Dockerfile
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=database
+      - DB_NAME=${DB_NAME}
+    restart: on-failure
+    depends_on:
+      - database

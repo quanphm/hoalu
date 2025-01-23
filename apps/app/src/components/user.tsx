@@ -1,8 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 
 export function User() {
-	const { user, authClient } = useAuth();
-	const { data: workspace } = authClient.useActiveWorkspace();
+	const { user, workspace } = useAuth();
 
 	return (
 		<div>

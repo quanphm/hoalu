@@ -1,8 +1,7 @@
-import { ChevronRight, type LucideIcon } from "@woben/icons/lucide";
+import { Bot, ChevronRight, Settings2, SquareTerminal } from "@woben/icons/lucide";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@woben/ui/collapsible";
 import {
 	SidebarGroup,
-	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuAction,
 	SidebarMenuButton,
@@ -12,26 +11,76 @@ import {
 	SidebarMenuSubItem,
 } from "@woben/ui/sidebar";
 
-export function NavMain({
-	items,
-}: {
-	items: {
-		title: string;
-		url: string;
-		icon: LucideIcon;
-		isActive?: boolean;
-		items?: {
-			title: string;
-			url: string;
-		}[];
-	}[];
-}) {
+const data = [
+	{
+		title: "Playground",
+		url: "#",
+		icon: SquareTerminal,
+		items: [
+			{
+				title: "History",
+				url: "#",
+			},
+			{
+				title: "Starred",
+				url: "#",
+			},
+			{
+				title: "Settings",
+				url: "#",
+			},
+		],
+	},
+	{
+		title: "Models",
+		url: "#",
+		icon: Bot,
+		items: [
+			{
+				title: "Genesis",
+				url: "#",
+			},
+			{
+				title: "Explorer",
+				url: "#",
+			},
+			{
+				title: "Quantum",
+				url: "#",
+			},
+		],
+	},
+	{
+		title: "Settings",
+		url: "#",
+		icon: Settings2,
+		items: [
+			{
+				title: "General",
+				url: "#",
+			},
+			{
+				title: "Team",
+				url: "#",
+			},
+			{
+				title: "Billing",
+				url: "#",
+			},
+			{
+				title: "Limits",
+				url: "#",
+			},
+		],
+	},
+];
+
+export function NavMain() {
 	return (
 		<SidebarGroup>
-			<SidebarGroupLabel>Platform</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item) => (
-					<Collapsible key={item.title} asChild defaultOpen={item.isActive}>
+				{data.map((item) => (
+					<Collapsible key={item.title} asChild>
 						<SidebarMenuItem>
 							<SidebarMenuButton asChild tooltip={item.title}>
 								<a href={item.url}>

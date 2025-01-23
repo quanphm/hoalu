@@ -34,15 +34,12 @@
 		"minio": "^8.0.3",
 		"nanoid": "^5.0.9",
 		"nodemailer": "^6.9.16",
-		"pg": "^8.13.1",
+		"postgres": "^3.4.5",
 		"react": "^19.0.0",
-		"redaxios": "^0.5.1",
 		"valibot": "^1.0.0-beta.12"
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
-		"@types/nodemailer": "^6.4.17",
-		"@types/pg": "^8.11.10",
 		"@woben/tsconfig": "workspace:*",
 		"drizzle-kit": "^0.30.2",
 		"rimraf": "^6.0.1"
