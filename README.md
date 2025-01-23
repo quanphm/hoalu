@@ -2,5 +2,5 @@
   Woben
 </h1>
 <p align="center">
-  <b>The open-source digital craftman's garage</b>
+  <b>The Open-Source Digital Craftsman's Garage</b>
 </p>
