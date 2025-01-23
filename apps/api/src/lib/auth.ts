@@ -37,11 +37,20 @@ export const auth = betterAuth({
 	emailVerification: {
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
-		sendVerificationEmail: async ({ user, url, token }, _request) => {
+		sendVerificationEmail: async ({ user, token }, _request) => {
+			const url = new URL(`${process.env.PUBLIC_API_URL}/auth/verify-email`);
+			url.searchParams.set("token", token);
+			url.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
+
+			if (process.env.NODE_ENV === "development") {
+				console.log("Verification Link:", url.href);
+				return;
+			}
+
 			sendEmail({
 				to: user.email,
 				subject: "[Woben] Please verify your email address",
-				react: VerificationEmail({ url, name: user.name }),
+				react: VerificationEmail({ url: url.href, name: user.name }),
 			});
 		},
 	},

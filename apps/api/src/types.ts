@@ -7,7 +7,10 @@ import type { ServerEnvSchema } from "./lib/env";
 export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
 	id: number;
 };
-export type Session = typeof auth.$Infer.Session.session;
+export type Session = Omit<typeof auth.$Infer.Session.session, "id" | "userId"> & {
+	id: number;
+	userId: number;
+};
 
 export interface AppBindings {
 	Variables: {

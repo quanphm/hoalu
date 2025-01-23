@@ -1,3 +1,4 @@
+import { generateId } from "@woben/common/generate-id";
 import { HTTPStatus } from "@woben/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
@@ -9,6 +10,7 @@ import {
 } from "better-auth/plugins/access";
 import { APIError } from "better-call";
 import { type ZodArray, type ZodNumber, type ZodObject, type ZodOptional, z } from "zod";
+import type { Session, User } from "../../../utils/types";
 import { getOrgAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
@@ -19,32 +21,26 @@ export const createWorkspace = createAuthEndpoint(
 		method: "POST",
 		body: z.object({
 			name: z.string({
-				description: "The name of the organization",
+				description: "The name of the workspace",
 			}),
 			slug: z.string({
-				description: "The slug of the organization",
+				description: "The slug of the workspace",
 			}),
-			userId: z
-				.string({
-					description:
-						"The user id of the organization creator. If not provided, the current user will be used. Should only be used by admins or when called by the server.",
-				})
-				.optional(),
 			logo: z
 				.string({
-					description: "The logo of the organization",
+					description: "The logo of the workspace",
 				})
 				.optional(),
 			metadata: z
 				.record(z.string(), z.any(), {
-					description: "The metadata of the organization",
+					description: "The metadata of the workspace",
 				})
 				.optional(),
 		}),
 		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
-				description: "Create an organization",
+				description: "Create an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -52,8 +48,8 @@ export const createWorkspace = createAuthEndpoint(
 							"application/json": {
 								schema: {
 									type: "object",
-									description: "The organization that was created",
-									$ref: "#/components/schemas/Organization",
+									description: "The workspace that was created",
+									$ref: "#/components/schemas/Workspace",
 								},
 							},
 						},
@@ -63,71 +59,64 @@ export const createWorkspace = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const session = await getSessionFromCtx(ctx);
+		const session = await getSessionFromCtx<User, Session>(ctx);
 		if (!session && (ctx.request || ctx.headers)) {
 			throw new APIError("UNAUTHORIZED");
 		}
-		let user = session?.user || null;
+		const user = session?.user || null;
 		if (!user) {
-			if (!ctx.body.userId) {
-				throw new APIError("UNAUTHORIZED");
-			}
-			user = await ctx.context.internalAdapter.findUserById(ctx.body.userId);
-		}
-		if (!user) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.UNAUTHORIZED,
-			});
+			throw new APIError("UNAUTHORIZED");
 		}
 		const options = ctx.context.orgOptions;
-		const canCreateOrg =
-			typeof options?.allowUserToCreateOrganization === "function"
-				? await options.allowUserToCreateOrganization(user)
-				: options?.allowUserToCreateOrganization === undefined
+		const canCreateWorkspace =
+			typeof options?.allowUserToCreateWorkspace === "function"
+				? await options.allowUserToCreateWorkspace(user)
+				: options?.allowUserToCreateWorkspace === undefined
 					? true
-					: options.allowUserToCreateOrganization;
+					: options.allowUserToCreateWorkspace;
 
-		if (!canCreateOrg) {
+		if (!canCreateWorkspace) {
 			throw new APIError("FORBIDDEN", {
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_WORKSPACE,
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, options);
 
-		const userOrganizations = await adapter.listOrganizations(user.id);
-		const hasReachedOrgLimit =
-			typeof options.organizationLimit === "number"
-				? userOrganizations.length >= options.organizationLimit
-				: typeof options.organizationLimit === "function"
-					? await options.organizationLimit(user)
+		const userWorkspaces = await adapter.listWorkspaces(user.id);
+		const hasReachedWorkspaceLimit =
+			typeof options.workspaceLimit === "number"
+				? userWorkspaces.length >= options.workspaceLimit
+				: typeof options.workspaceLimit === "function"
+					? await options.workspaceLimit(user)
 					: false;
 
-		if (hasReachedOrgLimit) {
+		if (hasReachedWorkspaceLimit) {
 			throw new APIError("FORBIDDEN", {
 				message: WORKSPACE_ERROR_CODES.YOU_HAVE_REACHED_THE_MAXIMUM_NUMBER_OF_WORKSPACES,
 			});
 		}
 
-		const existingOrganization = await adapter.findOrganizationBySlug(ctx.body.slug);
-		if (existingOrganization) {
+		const existingWorkspace = await adapter.findWorkspaceBySlug(ctx.body.slug);
+		if (existingWorkspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_ALREADY_EXISTS,
 			});
 		}
-		const organization = await adapter.createOrganization({
-			organization: {
+		const workspace = await adapter.createWorkspace({
+			workspace: {
 				slug: ctx.body.slug,
 				name: ctx.body.name,
+				publicId: generateId("workspace"),
 				logo: ctx.body.logo,
 				createdAt: new Date(),
 				metadata: ctx.body.metadata,
 			},
-			user,
+			user: user,
 		});
 		if (ctx.context.session) {
-			await adapter.setActiveOrganization(ctx.context.session.session.token, organization.id);
+			await adapter.setActiveWorkspace(ctx.context.session.session.token, workspace.id);
 		}
-		return ctx.json(organization);
+		return ctx.json(workspace);
 	},
 );
 
@@ -140,33 +129,33 @@ export const updateWorkspace = createAuthEndpoint(
 				.object({
 					name: z
 						.string({
-							description: "The name of the organization",
+							description: "The name of the workspace",
 						})
 						.optional(),
 					slug: z
 						.string({
-							description: "The slug of the organization",
+							description: "The slug of the workspace",
 						})
 						.optional(),
 					logo: z
 						.string({
-							description: "The logo of the organization",
+							description: "The logo of the workspace",
 						})
 						.optional(),
 					metadata: z
 						.record(z.string(), z.any(), {
-							description: "The metadata of the organization",
+							description: "The metadata of the workspace",
 						})
 						.optional(),
 				})
 				.partial(),
-			organizationId: z.number().optional(),
+			workspaceId: z.number().optional(),
 		}),
 		requireHeaders: true,
 		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
-				description: "Update an organization",
+				description: "Update an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -174,8 +163,8 @@ export const updateWorkspace = createAuthEndpoint(
 							"application/json": {
 								schema: {
 									type: "object",
-									description: "The updated organization",
-									$ref: "#/components/schemas/Organization",
+									description: "The updated workspace",
+									$ref: "#/components/schemas/Workspace",
 								},
 							},
 						},
@@ -191,8 +180,8 @@ export const updateWorkspace = createAuthEndpoint(
 				message: "User not found",
 			});
 		}
-		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
-		if (!organizationId) {
+		const workspaceId = ctx.body.workspaceId || session.session.activeWorkspaceId;
+		if (!workspaceId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
@@ -201,9 +190,9 @@ export const updateWorkspace = createAuthEndpoint(
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const member = await adapter.findMemberByOrgId({
+		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			organizationId: organizationId,
+			workspaceId,
 		});
 		if (!member) {
 			return ctx.json(null, {
@@ -233,7 +222,7 @@ export const updateWorkspace = createAuthEndpoint(
 				status: 403,
 			});
 		}
-		const updatedOrg = await adapter.updateOrganization(organizationId, ctx.body.data);
+		const updatedOrg = await adapter.updateWorkspace(workspaceId, ctx.body.data);
 		return ctx.json(updatedOrg);
 	},
 );
@@ -243,15 +232,15 @@ export const deleteWorkspace = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			organizationId: z.number({
-				description: "The organization id to delete",
+			workspaceId: z.number({
+				description: "The workspace id or slug to delete",
 			}),
 		}),
 		requireHeaders: true,
 		use: [workspaceMiddleware],
 		metadata: {
 			openapi: {
-				description: "Delete an organization",
+				description: "Delete an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -259,7 +248,7 @@ export const deleteWorkspace = createAuthEndpoint(
 							"application/json": {
 								schema: {
 									type: "string",
-									description: "The organization id that was deleted",
+									description: "The workspace id that was deleted",
 								},
 							},
 						},
@@ -275,8 +264,8 @@ export const deleteWorkspace = createAuthEndpoint(
 				status: HTTPStatus.codes.UNAUTHORIZED,
 			});
 		}
-		const organizationId = ctx.body.organizationId;
-		if (!organizationId) {
+		const workspaceId = ctx.body.workspaceId;
+		if (!workspaceId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
@@ -285,9 +274,9 @@ export const deleteWorkspace = createAuthEndpoint(
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const member = await adapter.findMemberByOrgId({
+		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			organizationId: organizationId,
+			workspaceId,
 		});
 		if (!member) {
 			return ctx.json(null, {
@@ -314,30 +303,30 @@ export const deleteWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE,
 			});
 		}
-		if (session.session.activeWorkspaceId && organizationId === session.session.activeWorkspaceId) {
+		if (session.session.activeWorkspaceId && workspaceId === session.session.activeWorkspaceId) {
 			/**
-			 * If the organization is deleted, we set the active organization to null
+			 * If the workspace is deleted, we set the active workspace to null
 			 */
-			await adapter.setActiveOrganization(session.session.token, null);
+			await adapter.setActiveWorkspace(session.session.token, null);
 		}
-		const option = ctx.context.orgOptions.organizationDeletion;
+		const option = ctx.context.orgOptions.workspaceDeletion;
 		if (option?.disabled) {
 			throw new APIError("FORBIDDEN");
 		}
-		const org = await adapter.findOrganizationById(organizationId);
+		const org = await adapter.findWorkspaceById(workspaceId);
 		if (!org) {
 			throw new APIError("BAD_REQUEST");
 		}
 		if (option?.beforeDelete) {
 			await option.beforeDelete({
-				organization: org,
+				workspace: org,
 				user: session.user,
 			});
 		}
-		await adapter.deleteOrganization(organizationId);
+		await adapter.deleteWorkspace(workspaceId);
 		if (option?.afterDelete) {
 			await option.afterDelete({
-				organization: org,
+				workspace: org,
 				user: session.user,
 			});
 		}
@@ -351,14 +340,14 @@ export const getFullWorkspace = createAuthEndpoint(
 		method: "GET",
 		query: z.optional(
 			z.object({
-				organizationId: z
+				workspaceId: z
 					.number({
-						description: "The organization id to get",
+						description: "The workspace id to get",
 					})
 					.optional(),
-				organizationSlug: z
+				workspaceSlug: z
 					.string({
-						description: "The organization slug to get",
+						description: "The workspace slug to get",
 					})
 					.optional(),
 			}),
@@ -367,7 +356,7 @@ export const getFullWorkspace = createAuthEndpoint(
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
-				description: "Get the full organization",
+				description: "Get the full workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -375,8 +364,8 @@ export const getFullWorkspace = createAuthEndpoint(
 							"application/json": {
 								schema: {
 									type: "object",
-									description: "The organization",
-									$ref: "#/components/schemas/Organization",
+									description: "The workspace",
+									$ref: "#/components/schemas/Workspace",
 								},
 							},
 						},
@@ -387,43 +376,43 @@ export const getFullWorkspace = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const organizationId = ctx.query?.organizationId || session.session.activeWorkspaceId;
-		const organizationSlug = ctx.query?.organizationSlug;
+		const workspaceId = ctx.query?.workspaceId || session.session.activeWorkspaceId;
+		const workspaceSlug = ctx.query?.workspaceSlug;
 
-		if (!organizationId && !organizationSlug) {
+		if (!workspaceId && !workspaceSlug) {
 			return ctx.json(null, {
 				status: 200,
 			});
 		}
 
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		let organization: Awaited<ReturnType<typeof adapter.findFullOrganization>> = null;
+		let workspace: Awaited<ReturnType<typeof adapter.findFullWorkspace>> = null;
 
-		if (organizationId) {
-			organization = await adapter.findFullOrganization({
-				organizationId: organizationId,
+		if (workspaceId) {
+			workspace = await adapter.findFullWorkspace({
+				workspaceId,
 			});
-		} else if (organizationSlug) {
-			organization = await adapter.findFullOrganization({
-				organizationId: organizationSlug,
+		} else if (workspaceSlug) {
+			workspace = await adapter.findFullWorkspace({
+				workspaceId: workspaceSlug,
 				isSlug: true,
 			});
 		}
 
-		if (!organization) {
+		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 
-		const isMember = organization.members.find((member) => member.userId === session.user.id);
+		const isMember = workspace.members.find((member) => member.userId === session.user.id);
 		if (!isMember) {
 			throw new APIError("FORBIDDEN", {
 				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
 
-		return ctx.json(organization);
+		return ctx.json(workspace);
 	},
 );
 
@@ -432,24 +421,24 @@ export const setActiveWorkspace = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			organizationId: z
+			workspaceId: z
 				.number({
 					description:
-						"The organization id to set as active. It can be null to unset the active organization",
+						"The workspace id to set as active. It can be null to unset the active workspace",
 				})
 				.nullable()
 				.optional(),
-			organizationSlug: z
+			workspaceSlug: z
 				.string({
 					description:
-						"The organization slug to set as active. It can be null to unset the active organization if organizationId is not provided",
+						"The workspace slug to set as active. It can be null to unset the active workspace if workspaceId is not provided",
 				})
 				.optional(),
 		}),
 		use: [workspaceSessionMiddleware, workspaceMiddleware],
 		metadata: {
 			openapi: {
-				description: "Set the active organization",
+				description: "Set the active workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -457,8 +446,8 @@ export const setActiveWorkspace = createAuthEndpoint(
 							"application/json": {
 								schema: {
 									type: "object",
-									description: "The organization",
-									$ref: "#/components/schemas/Organization",
+									description: "The workspace",
+									$ref: "#/components/schemas/Workspace",
 								},
 							},
 						},
@@ -470,52 +459,49 @@ export const setActiveWorkspace = createAuthEndpoint(
 	async (ctx) => {
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const session = ctx.context.session;
-		let organizationId = ctx.body.organizationSlug || ctx.body.organizationId;
+		let idOrSlug = ctx.body.workspaceSlug || ctx.body.workspaceId;
 
-		if (organizationId === null) {
+		if (idOrSlug === null) {
 			const sessionOrgId = session.session.activeWorkspaceId;
 			if (!sessionOrgId) {
 				return ctx.json(null);
 			}
-			const updatedSession = await adapter.setActiveOrganization(session.session.token, null);
+			const updatedSession = await adapter.setActiveWorkspace(session.session.token, null);
 			await setSessionCookie(ctx, {
 				session: updatedSession,
 				user: session.user,
 			});
 			return ctx.json(null);
 		}
-		if (!organizationId) {
+		if (!idOrSlug) {
 			const sessionOrgId = session.session.activeWorkspaceId;
 			if (!sessionOrgId) {
 				return ctx.json(null);
 			}
-			organizationId = sessionOrgId;
+			idOrSlug = sessionOrgId;
 		}
-		const organization = await adapter.findFullOrganization({
-			organizationId,
-			isSlug: !!ctx.body.organizationSlug,
+		const workspace = await adapter.findFullWorkspace({
+			workspaceId: idOrSlug,
+			isSlug: !!ctx.body.workspaceSlug,
 		});
-		const isMember = organization?.members.find((member) => member.userId === session.user.id);
+		const isMember = workspace?.members.find((member) => member.userId === session.user.id);
 		if (!isMember) {
-			await adapter.setActiveOrganization(session.session.token, null);
+			await adapter.setActiveWorkspace(session.session.token, null);
 			throw new APIError("FORBIDDEN", {
 				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
-		if (!organization) {
+		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
-		const updatedSession = await adapter.setActiveOrganization(
-			session.session.token,
-			organization.id,
-		);
+		const updatedSession = await adapter.setActiveWorkspace(session.session.token, workspace.id);
 		await setSessionCookie(ctx, {
 			session: updatedSession,
 			user: session.user,
 		});
-		return ctx.json(organization);
+		return ctx.json(workspace);
 	},
 );
 
@@ -526,7 +512,7 @@ export const listWorkspaces = createAuthEndpoint(
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
-				description: "List all organizations",
+				description: "List all workspaces",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -535,7 +521,7 @@ export const listWorkspaces = createAuthEndpoint(
 								schema: {
 									type: "array",
 									items: {
-										$ref: "#/components/schemas/Organization",
+										$ref: "#/components/schemas/Workspace",
 									},
 								},
 							},
@@ -547,8 +533,8 @@ export const listWorkspaces = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const organizations = await adapter.listOrganizations(ctx.context.session.user.id);
-		return ctx.json(organizations);
+		const workspaces = await adapter.listWorkspaces(ctx.context.session.user.id);
+		return ctx.json(workspaces);
 	},
 );
 
@@ -566,7 +552,7 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 			method: "POST",
 			requireHeaders: true,
 			body: z.object({
-				organizationId: z.string().optional(),
+				workspaceId: z.string().optional(),
 				permission: z.record(z.string(), z.array(z.string())),
 			}) as unknown as ZodObject<{
 				permission: ZodObject<{
@@ -575,7 +561,7 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 						ZodArray<ZodLiteral<Statements[key][number]>>
 					>;
 				}>;
-				organizationId: ZodOptional<ZodNumber>;
+				workspaceId: ZodOptional<ZodNumber>;
 			}>,
 			use: [workspaceSessionMiddleware],
 			metadata: {
@@ -629,16 +615,16 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 				});
 			}
 			const activeWorkspaceId =
-				ctx.body.organizationId || ctx.context.session.session.activeWorkspaceId;
+				ctx.body.workspaceId || ctx.context.session.session.activeWorkspaceId;
 			if (!activeWorkspaceId) {
 				throw new APIError("BAD_REQUEST", {
 					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 				});
 			}
 			const adapter = getOrgAdapter(ctx.context);
-			const member = await adapter.findMemberByOrgId({
+			const member = await adapter.findMemberByWorkspaceId({
 				userId: ctx.context.session.user.id,
-				organizationId: activeWorkspaceId,
+				workspaceId: activeWorkspaceId,
 			});
 			if (!member) {
 				throw new APIError("UNAUTHORIZED", {
@@ -646,7 +632,7 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 				});
 			}
 			const role = roles[member.role];
-			const result = role.authorize(ctx.body.permission as any);
+			const result = role.authorize(ctx.body.permission);
 
 			if (result.error) {
 				return ctx.json(

@@ -3,7 +3,7 @@ name: woben
 services:
   database:
     container_name: woben-db
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: always
     ports:
       - 5432:5432
@@ -19,11 +19,25 @@ services:
 
   electric:
     container_name: woben-electric
-    image: electricsql/electric
+    image: electricsql/electric:latest
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
     ports:
       - 4000:4000
+    depends_on:
+      - database
+
+  migration:
+    container_name: woben-migration
+    build:
+      context: ../
+      dockerfile: ./deployments/migration.Dockerfile
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=database
+      - DB_NAME=${DB_NAME}
+    restart: on-failure
     depends_on:
       - database

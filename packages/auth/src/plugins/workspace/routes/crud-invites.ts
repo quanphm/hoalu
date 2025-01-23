@@ -19,9 +19,9 @@ export const createInvitation = createAuthEndpoint(
 			role: z.string({
 				description: "The role to assign to the user",
 			}),
-			organizationId: z
+			workspaceId: z
 				.number({
-					description: "The organization ID to invite the user to",
+					description: "The workspace ID to invite the user to",
 				})
 				.optional(),
 			resend: z
@@ -32,7 +32,7 @@ export const createInvitation = createAuthEndpoint(
 		}),
 		metadata: {
 			openapi: {
-				description: "Invite a user to an organization",
+				description: "Invite a user to an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -91,16 +91,16 @@ export const createInvitation = createAuthEndpoint(
 		}
 
 		const session = ctx.context.session;
-		const organizationId = ctx.body.organizationId || session.session.activeWorkspaceId;
-		if (!organizationId) {
+		const workspaceId = ctx.body.workspaceId || session.session.activeWorkspaceId;
+		if (!workspaceId) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const member = await adapter.findMemberByOrgId({
+		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			organizationId: organizationId,
+			workspaceId,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {
@@ -132,7 +132,7 @@ export const createInvitation = createAuthEndpoint(
 
 		const alreadyMember = await adapter.findMemberByEmail({
 			email: ctx.body.email,
-			organizationId: organizationId,
+			workspaceId,
 		});
 		if (alreadyMember) {
 			throw new APIError("BAD_REQUEST", {
@@ -141,7 +141,7 @@ export const createInvitation = createAuthEndpoint(
 		}
 		const alreadyInvited = await adapter.findPendingInvitation({
 			email: ctx.body.email,
-			organizationId: organizationId,
+			workspaceId,
 		});
 		if (alreadyInvited.length && !ctx.body.resend) {
 			throw new APIError("BAD_REQUEST", {
@@ -153,14 +153,14 @@ export const createInvitation = createAuthEndpoint(
 			invitation: {
 				role: ctx.body.role as string,
 				email: ctx.body.email,
-				organizationId: organizationId,
+				workspaceId,
 			},
 			user: session.user,
 		});
 
-		const organization = await adapter.findOrganizationById(organizationId as any);
+		const workspace = await adapter.findWorkspaceById(workspaceId);
 
-		if (!organization) {
+		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
@@ -171,7 +171,7 @@ export const createInvitation = createAuthEndpoint(
 				id: invitation.id,
 				role: invitation.role as string,
 				email: invitation.email,
-				organization: organization,
+				workspace: workspace,
 				inviter: {
 					...member,
 					user: session.user,
@@ -188,14 +188,14 @@ export const acceptInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.number({
 				description: "The ID of the invitation to accept",
 			}),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
-				description: "Accept an invitation to an organization",
+				description: "Accept an invitation to an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -243,7 +243,7 @@ export const acceptInvitation = createAuthEndpoint(
 			role: invitation.role,
 			createdAt: new Date(),
 		});
-		await adapter.setActiveOrganization(session.session.token, invitation.workspaceId as any);
+		await adapter.setActiveWorkspace(session.session.token, invitation.workspaceId as any);
 		if (!acceptedId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -264,14 +264,14 @@ export const rejectInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.number({
 				description: "The ID of the invitation to reject",
 			}),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
-				description: "Reject an invitation to an organization",
+				description: "Reject an invitation to an workspace",
 				responses: {
 					[HTTPStatus.codes.OK]: {
 						description: "Success",
@@ -325,13 +325,13 @@ export const cancelInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.number({
 				description: "The ID of the invitation to cancel",
 			}),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		openapi: {
-			description: "Cancel an invitation to an organization",
+			description: "Cancel an invitation to an workspace",
 			responses: {
 				[HTTPStatus.codes.OK]: {
 					description: "Success",
@@ -360,9 +360,9 @@ export const cancelInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND,
 			});
 		}
-		const member = await adapter.findMemberByOrgId({
+		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			organizationId: invitation.workspaceId as any,
+			workspaceId: invitation.workspaceId as any,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {
@@ -392,7 +392,7 @@ export const getInvitation = createAuthEndpoint(
 		use: [workspaceMiddleware],
 		requireHeaders: true,
 		query: z.object({
-			id: z.string({
+			id: z.number({
 				description: "The ID of the invitation to get",
 			}),
 		}),
@@ -477,15 +477,15 @@ export const getInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
-		const organization = await adapter.findOrganizationById(invitation.workspaceId);
-		if (!organization) {
+		const workspace = await adapter.findWorkspaceById(invitation.workspaceId);
+		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
-		const member = await adapter.findMemberByOrgId({
+		const member = await adapter.findMemberByWorkspaceId({
 			userId: invitation.inviterId,
-			organizationId: invitation.workspaceId as any,
+			workspaceId: invitation.workspaceId as any,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {
@@ -495,8 +495,8 @@ export const getInvitation = createAuthEndpoint(
 
 		return ctx.json({
 			...invitation,
-			workspaceName: organization.name,
-			workspaceSlug: organization.slug,
+			workspaceName: workspace.name,
+			workspaceSlug: workspace.slug,
 			inviterEmail: member.user.email,
 		});
 	},

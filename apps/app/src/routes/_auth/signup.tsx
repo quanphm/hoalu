@@ -1,26 +1,33 @@
 import { authClient } from "@/lib/auth-client";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@woben/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@woben/ui/card";
 import { Input } from "@woben/ui/input";
 import { Label } from "@woben/ui/label";
 import { toast } from "@woben/ui/sonner";
-import { cn } from "@woben/ui/utils";
 
-export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export const Route = createFileRoute("/_auth/signup")({
+	component: RouteComponent,
+});
+
+function RouteComponent() {
+	const router = useRouter();
+
 	async function formAction(formData: FormData) {
+		const name = formData.get("name");
 		const email = formData.get("email");
 		const password = formData.get("password");
 
+		if (!name) throw new Error("name can not be empty");
 		if (!email) throw new Error("email can not be empty");
 		if (!password) throw new Error("password can not be empty");
 
-		await authClient.signIn.email(
+		await authClient.signUp.email(
 			{
+				name: name.toString(),
 				email: email.toString(),
 				password: password.toString(),
-				callbackURL: "/",
-				rememberMe: true,
 			},
 			{
 				onError: (ctx) => {
@@ -28,20 +35,22 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				},
 			},
 		);
+
+		router.invalidate();
 	}
 
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className="flex flex-col gap-6">
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome back</CardTitle>
-					<CardDescription>Log in to your Woben account</CardDescription>
+					<CardTitle className="text-xl">Welcome to Woben</CardTitle>
+					<CardDescription>Let's set up your account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>
 						<div className="grid gap-6">
 							<div className="flex flex-col gap-4">
-								<Button variant="outline" className="w-full" tabIndex={1}>
+								<Button variant="outline" className="w-full">
 									Continue with Google
 								</Button>
 							</div>
@@ -50,29 +59,27 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 							</div>
 							<div className="grid gap-6">
 								<div className="grid gap-2">
-									<Label htmlFor="email">Email</Label>
-									<Input id="email" name="email" type="email" required tabIndex={2} />
+									<Label htmlFor="name">Name</Label>
+									<Input id="name" name="name" required />
 								</div>
 								<div className="grid gap-2">
-									<Label htmlFor="password">Password</Label>
-									<Input id="password" name="password" type="password" required tabIndex={3} />
-									<Link
-										to="/"
-										preload={false}
-										className="-mt-1 text-sm underline-offset-4 hover:underline"
-										tabIndex={5}
-									>
-										Forgot password?
-									</Link>
+									<Label htmlFor="email">Email</Label>
+									<Input id="email" name="email" type="email" required />
 								</div>
-								<Button type="submit" className="w-full" tabIndex={4}>
-									Log In
+								<div className="grid gap-2">
+									<div className="flex items-center">
+										<Label htmlFor="password">Password</Label>
+									</div>
+									<Input id="password" name="password" type="password" required />
+								</div>
+								<Button type="submit" className="w-full">
+									Sign Up
 								</Button>
 							</div>
 							<div className="text-center text-sm">
-								Don&apos;t have an account?{" "}
-								<Link to="/signup" className="underline underline-offset-4">
-									Sign up
+								Already have an account?{" "}
+								<Link to="/login" className="underline underline-offset-4">
+									Sign in
 								</Link>
 							</div>
 						</div>

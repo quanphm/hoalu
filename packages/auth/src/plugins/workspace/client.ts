@@ -22,8 +22,8 @@ interface WorkspaceClientOptions {
 }
 
 export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) => {
-	const $listOrg = atom<boolean>(false);
-	const $activeOrgSignal = atom<boolean>(false);
+	const $listWorkspace = atom<boolean>(false);
+	const $activeWorkspaceSignal = atom<boolean>(false);
 	const $activeMemberSignal = atom<boolean>(false);
 
 	type DefaultStatements = typeof defaultStatements;
@@ -99,10 +99,11 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 			},
 		}),
 		getAtoms: ($fetch) => {
-			const listOrganizations = useAuthQuery<Workspace[]>($listOrg, "/organization/list", $fetch, {
+			const listWorkspaces = useAuthQuery<Workspace[]>($listWorkspace, "/workspace/list", $fetch, {
 				method: "GET",
 			});
-			const activeOrganization = useAuthQuery<
+
+			const activeWorkspace = useAuthQuery<
 				Prettify<
 					Workspace & {
 						members: (Member & {
@@ -116,13 +117,13 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 						invitations: Invitation[];
 					}
 				>
-			>([$activeOrgSignal], "/organization/get-full-organization", $fetch, () => ({
+			>([$activeWorkspaceSignal], "/workspace/get-full-workspace", $fetch, () => ({
 				method: "GET",
 			}));
 
 			const activeMember = useAuthQuery<Member>(
 				[$activeMemberSignal],
-				"/organization/get-active-member",
+				"/workspace/get-active-member",
 				$fetch,
 				{
 					method: "GET",
@@ -130,37 +131,37 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 			);
 
 			return {
-				$listOrg,
-				$activeOrgSignal,
+				$listWorkspace,
+				$activeWorkspaceSignal,
 				$activeMemberSignal,
-				activeOrganization,
-				listOrganizations,
+				listWorkspaces,
+				activeWorkspace,
 				activeMember,
 			};
 		},
 		pathMethods: {
-			"/organization/get-full-organization": "GET",
+			"/workspace/get-full-workspace": "GET",
 		},
 		atomListeners: [
 			{
 				matcher(path) {
 					return (
-						path === "/organization/create" ||
-						path === "/organization/delete" ||
-						path === "/organization/update"
+						path === "/workspace/create" ||
+						path === "/workspace/delete" ||
+						path === "/workspace/update"
 					);
 				},
 				signal: "$listOrg",
 			},
 			{
 				matcher(path) {
-					return path.startsWith("/organization");
+					return path.startsWith("/workspace");
 				},
 				signal: "$activeOrgSignal",
 			},
 			{
 				matcher(path) {
-					return path.includes("/organization/update-member-role");
+					return path.includes("/workspace/update-member-role");
 				},
 				signal: "$activeMemberSignal",
 			},

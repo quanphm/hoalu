@@ -5,8 +5,9 @@ export const workspace = pgTable(
 	"workspace",
 	{
 		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-		name: text("name").notNull(),
 		slug: text("slug").notNull().unique(),
+		publicId: text("public_id").notNull().unique(),
+		name: text("name").notNull(),
 		logo: text("logo"),
 		createdAt: timestamp("created_at").notNull(),
 		metadata: text("metadata"),

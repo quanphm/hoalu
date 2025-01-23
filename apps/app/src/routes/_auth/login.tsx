@@ -1,29 +1,30 @@
 import { authClient } from "@/lib/auth-client";
-import { Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@woben/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@woben/ui/card";
 import { Input } from "@woben/ui/input";
 import { Label } from "@woben/ui/label";
 import { toast } from "@woben/ui/sonner";
-import { cn } from "@woben/ui/utils";
 
-export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-	const router = useRouter();
+export const Route = createFileRoute("/_auth/login")({
+	component: RouteComponent,
+});
 
+function RouteComponent() {
 	async function formAction(formData: FormData) {
-		const name = formData.get("name");
 		const email = formData.get("email");
 		const password = formData.get("password");
 
-		if (!name) throw new Error("name can not be empty");
 		if (!email) throw new Error("email can not be empty");
 		if (!password) throw new Error("password can not be empty");
 
-		await authClient.signUp.email(
+		await authClient.signIn.email(
 			{
-				name: name.toString(),
 				email: email.toString(),
 				password: password.toString(),
+				callbackURL: "/",
+				rememberMe: true,
 			},
 			{
 				onError: (ctx) => {
@@ -31,16 +32,14 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 				},
 			},
 		);
-
-		router.invalidate();
 	}
 
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className="flex flex-col gap-6">
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome to Woben</CardTitle>
-					<CardDescription>Let's set up your account</CardDescription>
+					<CardTitle className="text-xl">Welcome back</CardTitle>
+					<CardDescription>Log in to your Woben account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>
@@ -55,27 +54,30 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
 							</div>
 							<div className="grid gap-6">
 								<div className="grid gap-2">
-									<Label htmlFor="name">Name</Label>
-									<Input id="name" name="name" required />
-								</div>
-								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
 									<Input id="email" name="email" type="email" required />
 								</div>
 								<div className="grid gap-2">
-									<div className="flex items-center">
-										<Label htmlFor="password">Password</Label>
-									</div>
+									<Label htmlFor="password">Password</Label>
 									<Input id="password" name="password" type="password" required />
+									<div>
+										<Link
+											to="/"
+											preload={false}
+											className="text-sm underline-offset-4 hover:underline"
+										>
+											Forgot password?
+										</Link>
+									</div>
 								</div>
 								<Button type="submit" className="w-full">
-									Sign Up
+									Log In
 								</Button>
 							</div>
 							<div className="text-center text-sm">
-								Already have an account?{" "}
-								<Link to="/login" className="underline underline-offset-4">
-									Sign in
+								Don&apos;t have an account?{" "}
+								<Link to="/signup" className="underline underline-offset-4">
+									Sign up
 								</Link>
 							</div>
 						</div>

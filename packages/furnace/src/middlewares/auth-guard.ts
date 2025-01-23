@@ -10,8 +10,8 @@ type AuthEnv = {
 	};
 } & Env;
 
-export const authGuard = <T extends AuthEnv>() => {
-	return createMiddleware<T>(async (c, next) => {
+export const authGuard = <E extends AuthEnv>() => {
+	return createMiddleware<E>(async (c, next) => {
 		const user = c.get("user");
 
 		if (!user) {

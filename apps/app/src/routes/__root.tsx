@@ -1,27 +1,12 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
+import { ThemeProvider } from "@/components/theme-prodiver";
 import type { AuthClient } from "@/lib/auth-client";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { Toaster } from "@woben/ui/sonner";
 import { lazy } from "react";
-
-const RouterDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/router-devtools").then((res) => ({
-				default: res.TanStackRouterDevtools,
-			})),
-		);
-
-const QueryDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/react-query-devtools").then((res) => ({
-				default: res.ReactQueryDevtools,
-			})),
-		);
 
 export const Route = createRootRouteWithContext<{
 	authClient: AuthClient;
@@ -58,11 +43,29 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			{children}
-			<Toaster />
+			<ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+				{children}
+				<Toaster />
+			</ThemeProvider>
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="top-right" />
 			<RouterDevtools position="bottom-right" />
 		</>
 	);
 }
+
+const RouterDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/router-devtools").then((res) => ({
+				default: res.TanStackRouterDevtools,
+			})),
+		);
+
+const QueryDevtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import("@tanstack/react-query-devtools").then((res) => ({
+				default: res.ReactQueryDevtools,
+			})),
+		);

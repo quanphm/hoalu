@@ -3,7 +3,7 @@ name: woben
 services:
   database:
     container_name: woben-db
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: always
     networks:
       - woben_network
@@ -25,7 +25,7 @@ services:
 
   electric:
     container_name: woben-electric
-    image: electricsql/electric
+    image: electricsql/electric:latest
     restart: always
     networks:
       - woben_network
