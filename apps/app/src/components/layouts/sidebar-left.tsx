@@ -1,5 +1,6 @@
-import { NavMain } from "@/components/layout/nav-main";
-import { NavUser } from "@/components/layout/nav-user";
+import { NavMain } from "@/components/layouts/nav-main";
+import { NavUser } from "@/components/layouts/nav-user";
+import { authClient } from "@/lib/auth-client";
 import { Command } from "@hoalu/icons/lucide";
 import {
 	Sidebar,
@@ -14,13 +15,16 @@ import { Link } from "@tanstack/react-router";
 import type * as React from "react";
 
 export function SidebarLeft({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const { data: workspace } = authClient.useActiveWorkspace();
+	const homeUrl = workspace ? `/ws/${workspace.slug}` : "/";
+
 	return (
 		<Sidebar variant="inset" {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
-							<Link to="/">
+							<Link to={homeUrl}>
 								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 									<Command className="size-4" />
 								</div>
