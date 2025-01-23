@@ -9,17 +9,17 @@
       },
     },
     "apps/api": {
-      "name": "@woben/api",
+      "name": "@hoalu/api",
       "version": "0.3.0",
       "dependencies": {
+        "@hoalu/auth": "workspace:*",
+        "@hoalu/common": "workspace:*",
+        "@hoalu/email": "workspace:*",
+        "@hoalu/furnace": "workspace:*",
         "@hono/valibot-validator": "^0.5.2",
         "@react-email/render": "^1.0.4",
         "@scalar/hono-api-reference": "^0.5.168",
         "@valibot/to-json-schema": "^1.0.0-beta.5",
-        "@woben/auth": "workspace:*",
-        "@woben/common": "workspace:*",
-        "@woben/email": "workspace:*",
-        "@woben/furnace": "workspace:*",
         "better-auth": "^1.1.14",
         "drizzle-orm": "^0.38.4",
         "drizzle-valibot": "^0.3.1",
@@ -33,26 +33,26 @@
         "valibot": "^1.0.0-beta.14",
       },
       "devDependencies": {
+        "@hoalu/tsconfig": "workspace:*",
         "@types/bun": "latest",
-        "@woben/tsconfig": "workspace:*",
         "drizzle-kit": "^0.30.2",
         "rimraf": "^6.0.1",
       },
     },
     "apps/app": {
-      "name": "@woben/app",
+      "name": "@hoalu/app",
       "version": "0.3.0",
       "dependencies": {
         "@electric-sql/react": "1.0.0-beta.2",
+        "@hoalu/auth": "workspace:*",
+        "@hoalu/common": "workspace:*",
+        "@hoalu/icons": "workspace:*",
+        "@hoalu/ui": "workspace:*",
         "@tanstack/react-query": "^5.64.2",
         "@tanstack/react-query-devtools": "^5.64.2",
         "@tanstack/react-router": "^1.97.14",
         "@tanstack/react-router-with-query": "^1.97.14",
         "@tanstack/router-devtools": "^1.97.14",
-        "@woben/auth": "workspace:*",
-        "@woben/common": "workspace:*",
-        "@woben/icons": "workspace:*",
-        "@woben/ui": "workspace:*",
         "better-auth": "^1.1.14",
         "hono": "^4.6.17",
         "next-themes": "^0.4.4",
@@ -61,6 +61,8 @@
         "valibot": "^1.0.0-beta.14",
       },
       "devDependencies": {
+        "@hoalu/api": "workspace:*",
+        "@hoalu/tsconfig": "workspace:*",
         "@tailwindcss/vite": "^4.0.0",
         "@tanstack/router-plugin": "^1.97.14",
         "@types/bun": "latest",
@@ -68,8 +70,6 @@
         "@types/react": "^19.0.7",
         "@types/react-dom": "^19.0.3",
         "@vitejs/plugin-react-swc": "^3.7.2",
-        "@woben/api": "workspace:*",
-        "@woben/tsconfig": "workspace:*",
         "tailwind-scrollbar": "4.0.0-beta.0",
         "tailwindcss": "^4.0.0",
         "vite": "^6.0.11",
@@ -78,11 +78,11 @@
       },
     },
     "packages/auth": {
-      "name": "@woben/auth",
+      "name": "@hoalu/auth",
       "version": "0.3.0",
       "dependencies": {
         "@better-auth/utils": "^0.2.3",
-        "@woben/common": "workspace:*",
+        "@hoalu/common": "workspace:*",
         "better-call": "^0.3.3",
         "nanostores": "^0.11.3",
         "zod": "^3.24.1",
@@ -95,25 +95,25 @@
       },
     },
     "packages/common": {
-      "name": "@woben/common",
+      "name": "@hoalu/common",
       "version": "0.3.0",
       "dependencies": {
         "nanoid": "^5.0.9",
         "valibot": "^1.0.0-beta.14",
       },
       "devDependencies": {
-        "@woben/tsconfig": "workspace:*",
+        "@hoalu/tsconfig": "workspace:*",
       },
     },
     "packages/email": {
-      "name": "@woben/email",
+      "name": "@hoalu/email",
       "version": "0.3.0",
       "dependencies": {
         "@react-email/components": "^0.0.32",
         "@react-email/tailwind": "^1.0.4",
       },
       "devDependencies": {
-        "@woben/tsconfig": "workspace:*",
+        "@hoalu/tsconfig": "workspace:*",
         "react-email": "3.0.6",
       },
       "peerDependencies": {
@@ -121,10 +121,10 @@
       },
     },
     "packages/furnace": {
-      "name": "@woben/furnace",
+      "name": "@hoalu/furnace",
       "version": "0.3.0",
       "dependencies": {
-        "@woben/common": "workspace:*",
+        "@hoalu/common": "workspace:*",
         "hono-openapi": "^0.4.3",
         "hono-pino": "^0.7.0",
         "pino": "^9.6.0",
@@ -139,25 +139,26 @@
       },
     },
     "packages/icons": {
-      "name": "@woben/icons",
+      "name": "@hoalu/icons",
       "version": "0.3.0",
       "dependencies": {
         "lucide-react": "^0.460.0",
       },
       "devDependencies": {
+        "@hoalu/tsconfig": "workspace:*",
         "@types/react": "^19.0.7",
-        "@woben/tsconfig": "workspace:*",
         "react": "^19.0.0",
       },
     },
     "packages/tsconfig": {
-      "name": "@woben/tsconfig",
+      "name": "@hoalu/tsconfig",
       "version": "0.3.0",
     },
     "packages/ui": {
-      "name": "@woben/ui",
+      "name": "@hoalu/ui",
       "version": "0.3.0",
       "dependencies": {
+        "@hoalu/icons": "workspace:*",
         "@radix-ui/react-avatar": "^1.1.2",
         "@radix-ui/react-checkbox": "^1.1.3",
         "@radix-ui/react-collapsible": "^1.1.2",
@@ -170,7 +171,6 @@
         "@radix-ui/react-separator": "^1.1.1",
         "@radix-ui/react-slot": "^1.1.1",
         "@radix-ui/react-tooltip": "^1.1.7",
-        "@woben/icons": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "cmdk": "^1.0.4",
@@ -180,8 +180,8 @@
         "tailwindcss-animate": "^1.0.7",
       },
       "devDependencies": {
+        "@hoalu/tsconfig": "workspace:*",
         "@types/react": "^19.0.7",
-        "@woben/tsconfig": "workspace:*",
         "tailwindcss": "^4.0.0",
       },
       "peerDependencies": {
@@ -469,6 +469,24 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.9", "", {}, "sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg=="],
 
     "@hexagon/base64": ["@hexagon/base64@1.1.28", "", {}, "sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw=="],
+
+    "@hoalu/api": ["@hoalu/api@workspace:apps/api"],
+
+    "@hoalu/app": ["@hoalu/app@workspace:apps/app"],
+
+    "@hoalu/auth": ["@hoalu/auth@workspace:packages/auth"],
+
+    "@hoalu/common": ["@hoalu/common@workspace:packages/common"],
+
+    "@hoalu/email": ["@hoalu/email@workspace:packages/email"],
+
+    "@hoalu/furnace": ["@hoalu/furnace@workspace:packages/furnace"],
+
+    "@hoalu/icons": ["@hoalu/icons@workspace:packages/icons"],
+
+    "@hoalu/tsconfig": ["@hoalu/tsconfig@workspace:packages/tsconfig"],
+
+    "@hoalu/ui": ["@hoalu/ui@workspace:packages/ui"],
 
     "@hono/valibot-validator": ["@hono/valibot-validator@0.5.2", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw=="],
 
@@ -877,24 +895,6 @@
     "@vitest/spy": ["@vitest/spy@3.0.3", "", { "dependencies": { "tinyspy": "^3.0.2" } }, "sha512-7/dgux8ZBbF7lEIKNnEqQlyRaER9nkAL9eTmdKJkDO3hS8p59ATGwKOCUDHcBLKr7h/oi/6hP+7djQk8049T2A=="],
 
     "@vitest/utils": ["@vitest/utils@3.0.3", "", { "dependencies": { "@vitest/pretty-format": "3.0.3", "loupe": "^3.1.2", "tinyrainbow": "^2.0.0" } }, "sha512-f+s8CvyzPtMFY1eZKkIHGhPsQgYo5qCm6O8KZoim9qm1/jT64qBgGpO5tHscNH6BzRHM+edLNOP+3vO8+8pE/A=="],
-
-    "@woben/api": ["@woben/api@workspace:apps/api"],
-
-    "@woben/app": ["@woben/app@workspace:apps/app"],
-
-    "@woben/auth": ["@woben/auth@workspace:packages/auth"],
-
-    "@woben/common": ["@woben/common@workspace:packages/common"],
-
-    "@woben/email": ["@woben/email@workspace:packages/email"],
-
-    "@woben/furnace": ["@woben/furnace@workspace:packages/furnace"],
-
-    "@woben/icons": ["@woben/icons@workspace:packages/icons"],
-
-    "@woben/tsconfig": ["@woben/tsconfig@workspace:packages/tsconfig"],
-
-    "@woben/ui": ["@woben/ui@workspace:packages/ui"],
 
     "@zxing/text-encoding": ["@zxing/text-encoding@0.9.0", "", {}, "sha512-U/4aVJ2mxI0aDNI8Uq0wEhMgY+u4CNtEb0om3+y3+niDAsoTCOB33UF0sxpzqzdqXLqmvc+vZyAt4O8pPdfkwA=="],
 
