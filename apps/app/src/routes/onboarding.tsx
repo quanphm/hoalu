@@ -1,4 +1,4 @@
-import { SingleColumn } from "@/components/layout/single-column";
+import { SingleColumn } from "@/components/layouts/single-column";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";

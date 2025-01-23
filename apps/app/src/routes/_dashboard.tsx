@@ -1,4 +1,4 @@
-import { SidebarLeft } from "@/components/layout/sidebar-left";
+import { SidebarLeft } from "@/components/layouts/sidebar-left";
 import { SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 

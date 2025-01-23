@@ -1,4 +1,4 @@
-import { SingleColumn } from "@/components/layout/single-column";
+import { SingleColumn } from "@/components/layouts/single-column";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({

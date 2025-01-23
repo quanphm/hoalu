@@ -1,5 +1,5 @@
-import { NavMain } from "@/components/layout/nav-main";
-import { NavUser } from "@/components/layout/nav-user";
+import { NavMain } from "@/components/layouts/nav-main";
+import { NavUser } from "@/components/layouts/nav-user";
 import { authClient } from "@/lib/auth-client";
 import { Command } from "@hoalu/icons/lucide";
 import {
