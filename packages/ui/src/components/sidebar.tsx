@@ -1,5 +1,5 @@
+import { LayoutSidebarLeftIcon } from "@hoalu/icons/pixelart";
 import { Slot } from "@radix-ui/react-slot";
-import { LayoutSidebarLeftIcon } from "@woben/icons/pixelart";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";

@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@woben/common/http-status";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";

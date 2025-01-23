@@ -1,5 +1,5 @@
+import { CloseIcon } from "@hoalu/icons/pixelart";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { CloseIcon } from "@woben/icons/pixelart";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "../utils";
 

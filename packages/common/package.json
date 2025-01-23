@@ -1,6 +1,6 @@
 {
-	"name": "@woben/common",
-	"description": "Shared utilities functions for Woben server & client",
+	"name": "@hoalu/common",
+	"description": "Shared utilities for Hoalu server & client",
 	"version": "0.3.0",
 	"private": true,
 	"type": "module",
@@ -11,7 +11,7 @@
 		"./http-status": "./src/http-status/index.ts"
 	},
 	"devDependencies": {
-		"@woben/tsconfig": "workspace:*"
+		"@hoalu/tsconfig": "workspace:*"
 	},
 	"dependencies": {
 		"nanoid": "^5.0.9",

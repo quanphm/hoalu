@@ -1,5 +1,5 @@
-import { Bot, ChevronRight, Settings2, SquareTerminal } from "@woben/icons/lucide";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@woben/ui/collapsible";
+import { Bot, ChevronRight, Settings2, SquareTerminal } from "@hoalu/icons/lucide";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hoalu/ui/collapsible";
 import {
 	SidebarGroup,
 	SidebarMenu,
@@ -9,7 +9,7 @@ import {
 	SidebarMenuSub,
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
-} from "@woben/ui/sidebar";
+} from "@hoalu/ui/sidebar";
 
 const data = [
 	{

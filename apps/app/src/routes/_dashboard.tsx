@@ -1,6 +1,6 @@
 import { SidebarLeft } from "@/components/layout/sidebar-left";
+import { SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { SidebarInset, SidebarProvider } from "@woben/ui/sidebar";
 
 export const Route = createFileRoute("/_dashboard")({
 	component: RouteComponent,

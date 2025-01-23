@@ -1,6 +1,6 @@
-import { HTTPStatus } from "@woben/common/http-status";
-import { reduceValibotIssues } from "@woben/common/validate-env";
-import { OpenAPI } from "@woben/furnace";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { reduceValibotIssues } from "@hoalu/common/validate-env";
+import { OpenAPI } from "@hoalu/furnace";
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { describeRoute } from "hono-openapi";
 import { validator as vValidator } from "hono-openapi/valibot";

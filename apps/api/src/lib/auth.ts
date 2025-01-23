@@ -1,5 +1,5 @@
-import { userPublicId, workspace } from "@woben/auth/plugins";
-import VerificationEmail from "@woben/email/verification-email";
+import { userPublicId, workspace } from "@hoalu/auth/plugins";
+import VerificationEmail from "@hoalu/email/verification-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
@@ -49,7 +49,7 @@ export const auth = betterAuth({
 
 			sendEmail({
 				to: user.email,
-				subject: "[Woben] Please verify your email address",
+				subject: "[Hoalu] Please verify your email address",
 				react: VerificationEmail({ url: url.href, name: user.name }),
 			});
 		},

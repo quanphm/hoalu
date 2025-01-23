@@ -1,5 +1,5 @@
 {
-	"extends": "@woben/tsconfig/vite.json",
+	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"strict": true,
 		"jsx": "react-jsx",

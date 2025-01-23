@@ -1,5 +1,5 @@
 {
-	"name": "@woben/ui",
+	"name": "@hoalu/ui",
 	"version": "0.3.0",
 	"private": true,
 	"sideEffects": false,
@@ -28,7 +28,7 @@
 	},
 	"devDependencies": {
 		"@types/react": "^19.0.7",
-		"@woben/tsconfig": "workspace:*",
+		"@hoalu/tsconfig": "workspace:*",
 		"tailwindcss": "^4.0.0"
 	},
 	"dependencies": {
@@ -44,7 +44,7 @@
 		"@radix-ui/react-separator": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.1",
 		"@radix-ui/react-tooltip": "^1.1.7",
-		"@woben/icons": "workspace:*",
+		"@hoalu/icons": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.0.4",

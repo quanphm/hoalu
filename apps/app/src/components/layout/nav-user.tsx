@@ -1,9 +1,8 @@
 import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { useAuth } from "@/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "@tanstack/react-router";
-import { ChevronsUpDownIcon, LogOutIcon } from "@woben/icons/lucide";
-import { Avatar, AvatarFallback, AvatarImage } from "@woben/ui/avatar";
+import { ChevronsUpDownIcon, LogOutIcon } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -11,8 +10,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@woben/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@woben/ui/sidebar";
+} from "@hoalu/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
+import { useRouter } from "@tanstack/react-router";
 
 export function NavUser() {
 	const { user } = useAuth();

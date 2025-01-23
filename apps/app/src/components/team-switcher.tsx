@@ -1,4 +1,4 @@
-import { ChevronDown, Plus } from "@woben/icons/lucide";
+import { ChevronDown, Plus } from "@hoalu/icons/lucide";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -7,8 +7,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@woben/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@woben/ui/sidebar";
+} from "@hoalu/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { useState } from "react";
 
 export function TeamSwitcher({

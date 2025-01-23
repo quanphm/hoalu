@@ -1,4 +1,4 @@
-import { authGuard } from "@woben/furnace";
+import { authGuard } from "@hoalu/furnace";
 import { configureAuth } from "./lib/configure-auth";
 import { configureElectricSync } from "./lib/configure-electric-sync";
 import { configureOpenAPI } from "./lib/configure-openapi";

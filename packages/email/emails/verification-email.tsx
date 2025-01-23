@@ -21,7 +21,7 @@ export default function VerificationEmail({ url, name }: Props) {
 		<Html>
 			<Head />
 			<Preview>
-				Hello {name}, please help us verify your Woben account email address by clicking the button
+				Hello {name}, please help us verify your Hoalu account email address by clicking the button
 				bellow.
 			</Preview>
 			<Tailwind>
@@ -51,7 +51,7 @@ export default function VerificationEmail({ url, name }: Props) {
 						<Text>
 							Thank you,
 							<br />
-							Quan from Woben
+							Quan from Hoalu
 						</Text>
 					</Container>
 				</Body>

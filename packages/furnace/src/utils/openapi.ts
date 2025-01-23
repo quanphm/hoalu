@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@woben/common/http-status";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import type { ResolverResult } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import type { BaseIssue, BaseSchema } from "valibot";

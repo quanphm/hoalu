@@ -1,5 +1,5 @@
 {
-	"name": "@woben/icons",
+	"name": "@hoalu/icons",
 	"version": "0.3.0",
 	"private": true,
 	"main": "./src/index.tsx",
@@ -8,7 +8,7 @@
 		"./pixelart": "./src/pixelart/index.tsx"
 	},
 	"devDependencies": {
-		"@woben/tsconfig": "workspace:*",
+		"@hoalu/tsconfig": "workspace:*",
 		"@types/react": "^19.0.7",
 		"react": "^19.0.0"
 	},

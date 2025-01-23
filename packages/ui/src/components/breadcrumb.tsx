@@ -1,5 +1,5 @@
+import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
 import { Slot } from "@radix-ui/react-slot";
-import { ChevronRight, MoreHorizontal } from "@woben/icons/lucide";
 import type * as React from "react";
 import { cn } from "../utils";
 

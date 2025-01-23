@@ -1,4 +1,4 @@
-import { workspaceClient } from "@woben/auth/client/plugins";
+import { workspaceClient } from "@hoalu/auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({

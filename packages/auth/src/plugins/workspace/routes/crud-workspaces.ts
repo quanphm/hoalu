@@ -1,5 +1,5 @@
-import { generateId } from "@woben/common/generate-id";
-import { HTTPStatus } from "@woben/common/http-status";
+import { generateId } from "@hoalu/common/generate-id";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import {

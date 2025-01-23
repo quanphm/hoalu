@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@woben/common/http-status";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import type { Env } from "hono";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";

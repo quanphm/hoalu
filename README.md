@@ -1,6 +1,3 @@
 <h1 align="center">
-  Woben
+  Hoalu
 </h1>
-<p align="center">
-  <b>The Open-Source Digital Craftsman's Garage</b>
-</p>

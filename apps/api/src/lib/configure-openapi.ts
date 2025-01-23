@@ -9,7 +9,7 @@ export function configureOpenAPI(app: HonoApp) {
 			openAPISpecs(app, {
 				documentation: {
 					info: {
-						title: "Woben API",
+						title: "Hoalu API",
 						description: "OpenAPI documentation",
 						version: "0.3.0",
 					},

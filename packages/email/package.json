@@ -1,5 +1,5 @@
 {
-	"name": "@woben/email",
+	"name": "@hoalu/email",
 	"version": "0.3.0",
 	"private": true,
 	"sideEffects": false,
@@ -13,7 +13,7 @@
 		"dev": "email dev -p 3003"
 	},
 	"devDependencies": {
-		"@woben/tsconfig": "workspace:*",
+		"@hoalu/tsconfig": "workspace:*",
 		"react-email": "3.0.6"
 	},
 	"dependencies": {
