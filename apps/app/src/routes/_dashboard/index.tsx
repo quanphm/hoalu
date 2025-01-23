@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_dashboard/")({
 		const { data: workspace } = await authClient.workspace.list();
 		if (!workspace || !workspace.length) {
 			console.log("create workspace");
-			return {};
+			throw redirect({ to: "/onboarding" });
 		}
 
 		const selectedWorkspace = workspace[0];
