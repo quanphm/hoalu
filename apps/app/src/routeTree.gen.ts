@@ -15,9 +15,10 @@ import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as DashboardImport } from './routes/_dashboard'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as DashboardIndexImport } from './routes/_dashboard/index'
+import { Route as DashboardHelloImport } from './routes/_dashboard/hello'
+import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
-import { Route as DashboardWsSlugImport } from './routes/_dashboard/ws.$slug'
 
 // Create/Update Routes
 
@@ -43,6 +44,18 @@ const DashboardIndexRoute = DashboardIndexImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
+const DashboardHelloRoute = DashboardHelloImport.update({
+  id: '/hello',
+  path: '/hello',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardSlugRoute = DashboardSlugImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
 const AuthSignupRoute = AuthSignupImport.update({
   id: '/signup',
   path: '/signup',
@@ -53,12 +66,6 @@ const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRoute,
-} as any)
-
-const DashboardWsSlugRoute = DashboardWsSlugImport.update({
-  id: '/ws/$slug',
-  path: '/ws/$slug',
-  getParentRoute: () => DashboardRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -100,18 +107,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupImport
       parentRoute: typeof AuthImport
     }
+    '/_dashboard/$slug': {
+      id: '/_dashboard/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof DashboardSlugImport
+      parentRoute: typeof DashboardImport
+    }
+    '/_dashboard/hello': {
+      id: '/_dashboard/hello'
+      path: '/hello'
+      fullPath: '/hello'
+      preLoaderRoute: typeof DashboardHelloImport
+      parentRoute: typeof DashboardImport
+    }
     '/_dashboard/': {
       id: '/_dashboard/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardImport
-    }
-    '/_dashboard/ws/$slug': {
-      id: '/_dashboard/ws/$slug'
-      path: '/ws/$slug'
-      fullPath: '/ws/$slug'
-      preLoaderRoute: typeof DashboardWsSlugImport
       parentRoute: typeof DashboardImport
     }
   }
@@ -132,13 +146,15 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardSlugRoute: typeof DashboardSlugRoute
+  DashboardHelloRoute: typeof DashboardHelloRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardWsSlugRoute: typeof DashboardWsSlugRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardSlugRoute: DashboardSlugRoute,
+  DashboardHelloRoute: DashboardHelloRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-  DashboardWsSlugRoute: DashboardWsSlugRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -150,8 +166,9 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
+  '/$slug': typeof DashboardSlugRoute
+  '/hello': typeof DashboardHelloRoute
   '/': typeof DashboardIndexRoute
-  '/ws/$slug': typeof DashboardWsSlugRoute
 }
 
 export interface FileRoutesByTo {
@@ -159,8 +176,9 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
+  '/$slug': typeof DashboardSlugRoute
+  '/hello': typeof DashboardHelloRoute
   '/': typeof DashboardIndexRoute
-  '/ws/$slug': typeof DashboardWsSlugRoute
 }
 
 export interface FileRoutesById {
@@ -170,15 +188,23 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_dashboard/$slug': typeof DashboardSlugRoute
+  '/_dashboard/hello': typeof DashboardHelloRoute
   '/_dashboard/': typeof DashboardIndexRoute
-  '/_dashboard/ws/$slug': typeof DashboardWsSlugRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/onboarding' | '/login' | '/signup' | '/' | '/ws/$slug'
+  fullPaths:
+    | ''
+    | '/onboarding'
+    | '/login'
+    | '/signup'
+    | '/$slug'
+    | '/hello'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/onboarding' | '/login' | '/signup' | '/' | '/ws/$slug'
+  to: '' | '/onboarding' | '/login' | '/signup' | '/$slug' | '/hello' | '/'
   id:
     | '__root__'
     | '/_auth'
@@ -186,8 +212,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/_auth/login'
     | '/_auth/signup'
+    | '/_dashboard/$slug'
+    | '/_dashboard/hello'
     | '/_dashboard/'
-    | '/_dashboard/ws/$slug'
   fileRoutesById: FileRoutesById
 }
 
@@ -228,8 +255,9 @@ export const routeTree = rootRoute
     "/_dashboard": {
       "filePath": "_dashboard.tsx",
       "children": [
-        "/_dashboard/",
-        "/_dashboard/ws/$slug"
+        "/_dashboard/$slug",
+        "/_dashboard/hello",
+        "/_dashboard/"
       ]
     },
     "/onboarding": {
@@ -243,12 +271,16 @@ export const routeTree = rootRoute
       "filePath": "_auth/signup.tsx",
       "parent": "/_auth"
     },
-    "/_dashboard/": {
-      "filePath": "_dashboard/index.tsx",
+    "/_dashboard/$slug": {
+      "filePath": "_dashboard/$slug.tsx",
       "parent": "/_dashboard"
     },
-    "/_dashboard/ws/$slug": {
-      "filePath": "_dashboard/ws.$slug.tsx",
+    "/_dashboard/hello": {
+      "filePath": "_dashboard/hello.tsx",
+      "parent": "/_dashboard"
+    },
+    "/_dashboard/": {
+      "filePath": "_dashboard/index.tsx",
       "parent": "/_dashboard"
     }
   }

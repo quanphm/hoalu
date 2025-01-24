@@ -33,7 +33,7 @@ function RouteComponent() {
 			onSuccess: (ctx) => {
 				toast.success("🎉 Workspace created.");
 				navigate({
-					to: "/ws/$slug",
+					to: "/$slug",
 					params: {
 						slug: ctx.data.slug,
 					},
