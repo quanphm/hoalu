@@ -1,11 +1,13 @@
-import { SingleColumn } from "@/components/layouts/single-column";
+import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
+import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { authClient } from "@/lib/auth-client";
+import { WorkspaceFormSchema, type WorkspaceInputSchema } from "@/lib/schema";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { Input } from "@hoalu/ui/input";
-import { Label } from "@hoalu/ui/label";
 import { toast } from "@hoalu/ui/sonner";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/onboarding")({
 	beforeLoad: async ({ context: { user } }) => {
@@ -18,63 +20,66 @@ export const Route = createFileRoute("/onboarding")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
+	const form = useForm<WorkspaceInputSchema>({
+		resolver: valibotResolver(WorkspaceFormSchema),
+		values: {
+			name: "",
+			slug: "",
+		},
+	});
 
-	async function formAction(formData: FormData) {
-		const name = formData.get("name");
-		const slug = formData.get("slug");
-
-		if (!name || !slug) throw new Error("Workspace name or slug can not be empty");
-
-		await authClient.workspace.create(
-			{
-				name: name.toString(),
-				slug: slug.toString(),
+	async function onSubmit(values: WorkspaceInputSchema) {
+		await authClient.workspace.create(values, {
+			onSuccess: (ctx) => {
+				toast.success("🎉 Workspace created.");
+				navigate({
+					to: "/ws/$slug",
+					params: {
+						slug: ctx.data.slug,
+					},
+				});
 			},
-			{
-				onSuccess: (ctx) => {
-					toast.success("Workspace created.");
-					navigate({
-						to: "/ws/$slug",
-						params: {
-							slug: ctx.data.slug,
-						},
-					});
-				},
-				onError: (ctx) => {
-					toast.error(ctx.error.message);
-				},
+			onError: (ctx) => {
+				toast.error(ctx.error.message);
 			},
-		);
+		});
 	}
 
 	return (
-		<SingleColumn>
+		<SuperCenteredLayout className="max-w-md">
 			<div className="flex flex-col gap-6">
 				<Card>
 					<CardHeader className="text-center">
 						<CardTitle className="text-xl">Create a new workspace</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<form action={formAction}>
+						<HookForm form={form} onSubmit={onSubmit}>
 							<div className="grid gap-6">
 								<div className="grid gap-6">
-									<div className="grid gap-2">
-										<Label htmlFor="name">Workspace Name</Label>
-										<Input id="name" name="name" required autoComplete="off" />
-									</div>
-									<div className="grid gap-2">
-										<Label htmlFor="slug">Workspace URL</Label>
-										<Input id="slug" name="slug" required autoComplete="off" />
-									</div>
+									<HookFormInput
+										label="Workspace Name"
+										name="name"
+										autoFocus
+										required
+										autoComplete="off"
+										placeholder="Acme Inc."
+									/>
+									<HookFormInputWithPrefix
+										label="Workspace URL"
+										name="slug"
+										required
+										autoComplete="off"
+										placeholder="acme"
+									/>
 									<Button type="submit" className="w-full">
 										Create workspace
 									</Button>
 								</div>
 							</div>
-						</form>
+						</HookForm>
 					</CardContent>
 				</Card>
 			</div>
-		</SingleColumn>
+		</SuperCenteredLayout>
 	);
 }

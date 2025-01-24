@@ -1,4 +1,4 @@
-import { SingleColumn } from "@/components/layouts/single-column";
+import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({
@@ -12,8 +12,8 @@ export const Route = createFileRoute("/_auth")({
 
 function RouteComponent() {
 	return (
-		<SingleColumn>
+		<SuperCenteredLayout>
 			<Outlet />
-		</SingleColumn>
+		</SuperCenteredLayout>
 	);
 }

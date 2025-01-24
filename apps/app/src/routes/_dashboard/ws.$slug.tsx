@@ -6,5 +6,9 @@ export const Route = createFileRoute("/_dashboard/ws/$slug")({
 });
 
 function RouteComponent() {
-	return <User />;
+	return (
+		<>
+			<User />
+		</>
+	);
 }

@@ -1,4 +1,6 @@
-export function extractLetterFromName(name: string) {
+export function extractLetterFromName(name: string | undefined) {
+	if (!name) return "";
+
 	return name
 		.split(" ")
 		.map((word) => word[0])
