@@ -22,14 +22,14 @@ export const HookFormInputWithPrefix = (props: HookFormInputProps) => {
 				return (
 					<FormItem>
 						{props.label && <FormLabel>{props.label}</FormLabel>}
-						<FormControl>
-							<div className="flex rounded-lg">
-								<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
-									hoalu.app/
-								</span>
+						<div className="flex rounded-lg">
+							<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
+								hoalu.app/
+							</span>
+							<FormControl>
 								<Input {...props} {...field} className="-ms-px rounded-s-none" />
-							</div>
-						</FormControl>
+							</FormControl>
+						</div>
 						{props.description && <FormDescription>{props.description}</FormDescription>}
 						<FormMessage />
 					</FormItem>
