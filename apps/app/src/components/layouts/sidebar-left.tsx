@@ -26,7 +26,7 @@ export function SidebarLeft() {
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
 							<Link to="/$slug" params={{ slug: workspace.slug }}>
-								<Avatar className="h-8 w-8 rounded-lg">
+								<Avatar className="h-8 w-8">
 									<AvatarImage src={workspace.logo || ""} alt={workspace.name} />
 									<AvatarFallback>{extractLetterFromName(workspace.name)}</AvatarFallback>
 								</Avatar>

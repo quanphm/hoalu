@@ -31,7 +31,7 @@ export function NavUser() {
 							size="lg"
 							className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<Avatar className="h-8 w-8 rounded-lg">
+							<Avatar className="h-8 w-8">
 								<AvatarImage src={user.image || ""} alt={user.name} />
 								<AvatarFallback>{extractLetterFromName(user.name)}</AvatarFallback>
 							</Avatar>
