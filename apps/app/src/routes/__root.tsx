@@ -43,13 +43,13 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+			<ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
 				{children}
 				<Toaster />
 			</ThemeProvider>
 
 			<ScrollRestoration />
-			<QueryDevtools buttonPosition="top-right" />
+			<QueryDevtools buttonPosition="bottom-left" />
 			<RouterDevtools position="bottom-right" />
 		</>
 	);

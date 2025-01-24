@@ -1,21 +1,14 @@
 import { Calendar as UICalendar } from "@hoalu/ui/calendar";
-import { addDays } from "date-fns";
-import { useState } from "react";
+// import { addDays } from "date-fns";
 
 export function Calendar() {
-	const today = new Date();
-	const selectedDay = addDays(today, -28);
-	const [month, setMonth] = useState(selectedDay);
-	const [date, setDate] = useState<Date | undefined>(selectedDay);
-
 	return (
-		<div className="rounded-lg border border-border p-2">
+		<div>
 			<UICalendar
 				mode="single"
-				selected={date}
-				onSelect={setDate}
-				month={month}
-				onMonthChange={setMonth}
+				classNames={{
+					today: "rounded-full bg-red-600 *:after:content-none",
+				}}
 			/>
 		</div>
 	);

@@ -1,12 +1,10 @@
 import { NavMain } from "@/components/layouts/nav-main";
-import { NavUser } from "@/components/layouts/nav-user";
 import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -40,14 +38,9 @@ export function SidebarLeft() {
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
-
 			<SidebarContent>
 				<NavMain />
 			</SidebarContent>
-
-			<SidebarFooter>
-				<NavUser />
-			</SidebarFooter>
 		</Sidebar>
 	);
 }

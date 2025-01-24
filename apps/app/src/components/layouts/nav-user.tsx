@@ -44,8 +44,8 @@ export function NavUser() {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-48 rounded-lg"
-						side="right"
-						align="end"
+						side="bottom"
+						align="center"
 					>
 						<DropdownMenuGroup>
 							<DropdownMenuItem>Account settings</DropdownMenuItem>

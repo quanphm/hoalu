@@ -7,8 +7,8 @@ export const Route = createFileRoute("/_dashboard/ws/$slug")({
 
 function RouteComponent() {
 	return (
-		<>
+		<div className="overflow-hidden">
 			<User />
-		</>
+		</div>
 	);
 }
