@@ -1,12 +1,11 @@
 import { useAuth } from "@/hooks/useAuth";
 
 export function User() {
-	const { user, workspace } = useAuth();
+	const { user } = useAuth();
 
 	return (
 		<div>
 			<pre>{JSON.stringify(user, null, 2)}</pre>
-			<pre>{JSON.stringify(workspace, null, 2)}</pre>
 		</div>
 	);
 }

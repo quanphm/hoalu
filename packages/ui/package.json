@@ -10,6 +10,7 @@
 		"./avatar": "./src/components/avatar.tsx",
 		"./breadcrumb": "./src/components/breadcrumb.tsx",
 		"./button": "./src/components/button.tsx",
+		"./calendar": "./src/components/calendar.tsx",
 		"./card": "./src/components/card.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
@@ -20,6 +21,7 @@
 		"./sidebar": "./src/components/sidebar.tsx",
 		"./skeleton": "./src/components/skeleton.tsx",
 		"./sonner": "./src/components/sonner.tsx",
+		"./textarea": "./src/components/textarea.tsx",
 		"./tooltip": "./src/components/tooltip.tsx"
 	},
 	"scripts": {
@@ -48,7 +50,9 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.0.4",
+		"date-fns": "^4.1.0",
 		"next-themes": "^0.4.4",
+		"react-day-picker": "^9.5.0",
 		"sonner": "^1.7.2",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7"

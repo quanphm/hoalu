@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_dashboard/")({
 
 		return redirect({
 			statusCode: HTTPStatus.codes.TEMPORARY_REDIRECT,
-			to: "/ws/$slug",
+			to: "/$slug",
 			params: {
 				slug: selectedWorkspace.slug,
 			},

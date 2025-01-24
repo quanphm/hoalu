@@ -1,49 +1,46 @@
 import { NavMain } from "@/components/layouts/nav-main";
-import { NavUser } from "@/components/layouts/nav-user";
+import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { authClient } from "@/lib/auth-client";
-import { Command } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import type * as React from "react";
 
-export function SidebarLeft({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function SidebarLeft() {
 	const { data: workspace } = authClient.useActiveWorkspace();
-	const homeUrl = workspace ? `/ws/${workspace.slug}` : "/";
+
+	if (!workspace) {
+		return null;
+	}
 
 	return (
-		<Sidebar variant="inset" {...props}>
+		<Sidebar variant="inset">
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
-							<Link to={homeUrl}>
-								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-									<Command className="size-4" />
-								</div>
+							<Link to="/$slug" params={{ slug: workspace.slug }}>
+								<Avatar className="h-8 w-8">
+									<AvatarImage src={workspace.logo || ""} alt={workspace.name} />
+									<AvatarFallback>{extractLetterFromName(workspace.name)}</AvatarFallback>
+								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">Acme Inc</span>
+									<span className="truncate font-semibold">{workspace.name}</span>
 								</div>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
-
 			<SidebarContent>
 				<NavMain />
 			</SidebarContent>
-
-			<SidebarFooter>
-				<NavUser />
-			</SidebarFooter>
 		</Sidebar>
 	);
 }

@@ -14,7 +14,7 @@ interface HookFormInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 	description?: string;
 }
 
-export const HookFormInput = (props: HookFormInputProps) => {
+export const HookFormInputWithPrefix = (props: HookFormInputProps) => {
 	return (
 		<FormField
 			name={props.name}
@@ -22,9 +22,14 @@ export const HookFormInput = (props: HookFormInputProps) => {
 				return (
 					<FormItem>
 						{props.label && <FormLabel>{props.label}</FormLabel>}
-						<FormControl>
-							<Input {...props} {...field} />
-						</FormControl>
+						<div className="flex rounded-lg">
+							<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
+								hoalu.app/
+							</span>
+							<FormControl>
+								<Input {...props} {...field} className="-ms-px rounded-s-none" />
+							</FormControl>
+						</div>
 						{props.description && <FormDescription>{props.description}</FormDescription>}
 						<FormMessage />
 					</FormItem>
