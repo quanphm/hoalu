@@ -70,6 +70,7 @@ services:
       - traefik.http.routers.hoalu-api.tls.domains[0].main=local.${DOMAIN}
       - traefik.http.routers.hoalu-api.tls.domains[0].sans=*.local.${DOMAIN}
       - traefik.http.routers.hoalu-api.middlewares=internal-gateway@file
+      - traefik.http.routers.hoalu-api.middlewares=web-compression@file
       - traefik.http.routers.hoalu-api.middlewares=strip-api-prefix
       - traefik.http.routers.hoalu-api.service=hoalu-api
       - traefik.http.services.hoalu-api.loadbalancer.server.port=3000
@@ -104,6 +105,7 @@ services:
       - traefik.http.routers.hoalu-app.tls.domains[0].main=local.${DOMAIN}
       - traefik.http.routers.hoalu-app.tls.domains[0].sans=*.local.${DOMAIN}
       - traefik.http.routers.hoalu-app.middlewares=internal-gateway@file
+      - traefik.http.routers.hoalu-app.middlewares=web-compression@file
       - traefik.http.routers.hoalu-app.service=hoalu-app
       - traefik.http.services.hoalu-app.loadbalancer.server.port=8080
 
