@@ -2,7 +2,7 @@ import { NavUser } from "@/components/layouts/nav-user";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarHeader } from "@hoalu/ui/sidebar";
 import { Calendar } from "../calendar";
 
-export function SidebarRight() {
+export function AppSidebarRight() {
 	return (
 		<Sidebar
 			variant="inset"

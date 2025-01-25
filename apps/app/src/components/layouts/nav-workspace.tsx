@@ -2,6 +2,7 @@ import { Bot, ChevronRight, Settings2, SquareTerminal } from "@hoalu/icons/lucid
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hoalu/ui/collapsible";
 import {
 	SidebarGroup,
+	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuAction,
 	SidebarMenuButton,
@@ -75,9 +76,10 @@ const data = [
 	},
 ];
 
-export function NavMain() {
+export function NavWorkspace() {
 	return (
 		<SidebarGroup>
+			<SidebarGroupLabel>Workspace</SidebarGroupLabel>
 			<SidebarMenu>
 				{data.map((item) => (
 					<Collapsible key={item.title} asChild>

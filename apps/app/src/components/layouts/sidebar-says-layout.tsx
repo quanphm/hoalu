@@ -1,8 +1,8 @@
 import { SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useTheme } from "next-themes";
-import { SidebarLeft } from "./sidebar-left";
-import { SidebarRight } from "./sidebar-right";
+import { AppSidebarLeft } from "./app-sidebar-left";
+import { AppSidebarRight } from "./app-sidebar-right";
 
 /**
  * A layout where the sidebar is on the left and content is on the right.
@@ -14,12 +14,12 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<SidebarLeft />
+			<AppSidebarLeft />
 			<SidebarInset className="max-w-[calc(100%-30rem)] flex-1 overflow-y-auto overflow-x-hidden">
 				<header className="max-w-full px-6 py-4">Title</header>
 				<div className="flex h-[100vh] max-w-full flex-1 flex-col gap-4 px-6 py-4">{children}</div>
 			</SidebarInset>
-			<SidebarRight />
+			<AppSidebarRight />
 		</SidebarProvider>
 	);
 }
