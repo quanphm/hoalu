@@ -1,33 +1,21 @@
-import { ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
-import { AudioWaveformIcon, CommandIcon, GalleryVerticalEndIcon } from "@hoalu/icons/lucide";
+import { WorkspaceAvatar } from "@/components/workspace-avatar";
+import { authClient } from "@/lib/auth-client";
+import { ChevronsUpDownIcon, ExternalLinkIcon, HomeIcon, PlusIcon } from "@hoalu/icons/lucide";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
-
-const teams = [
-	{
-		name: "Acme Inc",
-		logo: GalleryVerticalEndIcon,
-	},
-	{
-		name: "Acme Corp.",
-		logo: AudioWaveformIcon,
-	},
-	{
-		name: "Evil Corp.",
-		logo: CommandIcon,
-	},
-];
+import { Link } from "@tanstack/react-router";
 
 export function WorkspaceSwitcher() {
-	const activeTeam = teams[0];
+	const { data: workspaces } = authClient.useListWorkspaces();
+	const { data: activeWorkspace } = authClient.useActiveWorkspace();
+	const listWorkspaces = workspaces || [];
 
 	return (
 		<SidebarMenu>
@@ -39,10 +27,10 @@ export function WorkspaceSwitcher() {
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-								<activeTeam.logo className="size-4" />
+								<WorkspaceAvatar logo={activeWorkspace?.logo} name={activeWorkspace?.name || ""} />
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-semibold">{activeTeam.name}</span>
+								<span className="truncate font-semibold">{activeWorkspace?.name}</span>
 							</div>
 							<ChevronsUpDownIcon className="ml-auto" />
 						</SidebarMenuButton>
@@ -54,24 +42,36 @@ export function WorkspaceSwitcher() {
 						side="bottom"
 						sideOffset={4}
 					>
+						<DropdownMenuItem className="gap-2 p-2" asChild>
+							<Link to="/">
+								<HomeIcon />
+								<span>Home</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem className="gap-2 p-2" asChild>
+							<a href="https://hoalu.app" target="_blank" rel="noreferrer">
+								<ExternalLinkIcon />
+								<span>Hoalu website</span>
+							</a>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
 						<DropdownMenuLabel className="text-muted-foreground text-xs">
-							Workspace
+							Workspaces
 						</DropdownMenuLabel>
-						{teams.map((team, index) => (
-							<DropdownMenuItem key={team.name} className="gap-2 p-2">
-								<div className="flex size-6 items-center justify-center rounded-sm border">
-									<team.logo className="size-4 shrink-0" />
-								</div>
-								{team.name}
-								<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+						{listWorkspaces.map((ws) => (
+							<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
+								<Link to="/$slug" params={{ slug: ws.slug }}>
+									<WorkspaceAvatar logo={ws.logo} name={ws.name} size="sm" />
+									{ws.name}
+								</Link>
 							</DropdownMenuItem>
 						))}
 						<DropdownMenuSeparator />
-						<DropdownMenuItem className="gap-2 p-2">
+						<DropdownMenuItem className="gap-2 p-2" disabled>
 							<div className="flex size-6 items-center justify-center rounded-md border bg-background">
 								<PlusIcon className="size-4" />
 							</div>
-							<div className="font-medium text-muted-foreground">Create Workspace</div>
+							<div className="font-medium text-muted-foreground">Create new workspace</div>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

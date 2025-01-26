@@ -1,6 +1,13 @@
+import { Calendar } from "@/components/calendar";
 import { NavUser } from "@/components/layouts/nav-user";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarHeader } from "@hoalu/ui/sidebar";
-import { Calendar } from "../calendar";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuItem,
+} from "@hoalu/ui/sidebar";
 
 export function AppSidebarRight() {
 	return (
@@ -12,11 +19,12 @@ export function AppSidebarRight() {
 			<SidebarHeader>
 				<NavUser />
 			</SidebarHeader>
-			<SidebarContent className="border-border border-t">
-				<SidebarGroup>
+			<SidebarContent />
+			<SidebarFooter>
+				<SidebarMenu>
 					<Calendar />
-				</SidebarGroup>
-			</SidebarContent>
+				</SidebarMenu>
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

@@ -17,6 +17,7 @@ import { Route as DashboardIndexImport } from './routes/_dashboard/index'
 import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as DashboardSlugIndexImport } from './routes/_dashboard/$slug/index'
 
 // Create/Update Routes
 
@@ -52,6 +53,12 @@ const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRoute,
+} as any)
+
+const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardSlugRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -100,6 +107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardImport
     }
+    '/_dashboard/$slug/': {
+      id: '/_dashboard/$slug/'
+      path: '/'
+      fullPath: '/$slug/'
+      preLoaderRoute: typeof DashboardSlugIndexImport
+      parentRoute: typeof DashboardSlugImport
+    }
   }
 }
 
@@ -117,13 +131,25 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface DashboardSlugRouteChildren {
+  DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
+}
+
+const DashboardSlugRouteChildren: DashboardSlugRouteChildren = {
+  DashboardSlugIndexRoute: DashboardSlugIndexRoute,
+}
+
+const DashboardSlugRouteWithChildren = DashboardSlugRoute._addFileChildren(
+  DashboardSlugRouteChildren,
+)
+
 interface DashboardRouteChildren {
-  DashboardSlugRoute: typeof DashboardSlugRoute
+  DashboardSlugRoute: typeof DashboardSlugRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardSlugRoute: DashboardSlugRoute,
+  DashboardSlugRoute: DashboardSlugRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -135,16 +161,17 @@ export interface FileRoutesByFullPath {
   '': typeof DashboardRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
-  '/$slug': typeof DashboardSlugRoute
+  '/$slug': typeof DashboardSlugRouteWithChildren
   '/': typeof DashboardIndexRoute
+  '/$slug/': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
-  '/$slug': typeof DashboardSlugRoute
   '/': typeof DashboardIndexRoute
+  '/$slug': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRoutesById {
@@ -153,15 +180,16 @@ export interface FileRoutesById {
   '/_dashboard': typeof DashboardRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
-  '/_dashboard/$slug': typeof DashboardSlugRoute
+  '/_dashboard/$slug': typeof DashboardSlugRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/signup' | '/$slug' | '/'
+  fullPaths: '' | '/login' | '/signup' | '/$slug' | '/' | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/login' | '/signup' | '/$slug' | '/'
+  to: '' | '/login' | '/signup' | '/' | '/$slug'
   id:
     | '__root__'
     | '/_auth'
@@ -170,6 +198,7 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_dashboard/$slug'
     | '/_dashboard/'
+    | '/_dashboard/$slug/'
   fileRoutesById: FileRoutesById
 }
 
@@ -221,11 +250,18 @@ export const routeTree = rootRoute
     },
     "/_dashboard/$slug": {
       "filePath": "_dashboard/$slug.tsx",
-      "parent": "/_dashboard"
+      "parent": "/_dashboard",
+      "children": [
+        "/_dashboard/$slug/"
+      ]
     },
     "/_dashboard/": {
       "filePath": "_dashboard/index.tsx",
       "parent": "/_dashboard"
+    },
+    "/_dashboard/$slug/": {
+      "filePath": "_dashboard/$slug/index.tsx",
+      "parent": "/_dashboard/$slug"
     }
   }
 }

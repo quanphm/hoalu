@@ -1,18 +1,19 @@
-import { authClient } from "@/lib/auth-client";
+import { AppLogo } from "@/components/layouts/app-logo";
+import { NavAccount } from "@/components/layouts/nav-account";
+import { NavWorkspace } from "@/components/layouts/nav-workspace";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
-import { WorkspaceSwitcher } from "../workspace-switcher";
-import { AppLogo } from "./app-logo";
-import { NavAccount } from "./nav-account";
-import { NavWorkspace } from "./nav-workspace";
+import { useParams } from "@tanstack/react-router";
 
 export function AppSidebarLeft() {
-	const { data: workspace } = authClient.useActiveWorkspace();
+	const params = useParams({ strict: false });
+	const hasSlug = !!params.slug;
 
 	return (
 		<Sidebar variant="inset">
-			<SidebarHeader>{workspace ? <WorkspaceSwitcher /> : <AppLogo />}</SidebarHeader>
+			<SidebarHeader>{hasSlug ? <WorkspaceSwitcher /> : <AppLogo />}</SidebarHeader>
 			<SidebarContent>
-				<NavWorkspace />
+				{hasSlug && <NavWorkspace />}
 				<NavAccount />
 			</SidebarContent>
 		</Sidebar>

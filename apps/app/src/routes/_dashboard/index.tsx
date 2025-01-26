@@ -1,33 +1,14 @@
 import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
+import { PageContent } from "@/components/layouts/page-content";
 import { authClient } from "@/lib/auth-client";
 import { WorkspaceFormSchema, type WorkspaceInputSchema } from "@/lib/schema";
-import { HTTPStatus } from "@hoalu/common/http-status";
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/_dashboard/")({
-	beforeLoad: async ({ context: { session } }) => {
-		const { data: workspaces } = await authClient.workspace.list();
-
-		if (workspaces && workspaces.length > 0) {
-			const workspaceFromSession = workspaces.find((ws) => ws.id === session?.activeWorkspaceId);
-			const selectedWorkspace = workspaceFromSession || workspaces[0];
-			await authClient.workspace.setActive({ workspaceId: selectedWorkspace.id });
-
-			redirect({
-				statusCode: HTTPStatus.codes.TEMPORARY_REDIRECT,
-				to: "/$slug",
-				params: {
-					slug: selectedWorkspace.slug,
-				},
-				throw: true,
-			});
-		}
-	},
 	component: RouteComponent,
 });
 
@@ -59,38 +40,36 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex flex-col gap-6">
-			<Card>
-				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Create a new workspace</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<HookForm form={form} onSubmit={onSubmit}>
-						<div className="grid gap-6">
-							<div className="grid gap-6">
-								<HookFormInput
-									label="Workspace Name"
-									name="name"
-									autoFocus
-									required
-									autoComplete="off"
-									placeholder="Acme Inc."
-								/>
-								<HookFormInputWithPrefix
-									label="Workspace URL"
-									name="slug"
-									required
-									autoComplete="off"
-									placeholder="acme"
-								/>
-								<Button type="submit" className="w-full">
-									Create workspace
-								</Button>
-							</div>
-						</div>
-					</HookForm>
-				</CardContent>
-			</Card>
-		</div>
+		<PageContent>
+			<div className="flex max-w-xl flex-col">
+				<h3 className="mb-4 scroll-m-20 font-semibold text-2xl">Create a new workspace</h3>
+				<span className="mb-6 text-muted-foreground text-sm">
+					Workspaces are shared environments where members share, manage and interact with content
+					together.
+				</span>
+				<HookForm form={form} onSubmit={onSubmit}>
+					<div className="grid gap-6">
+						<HookFormInput
+							label="Workspace name"
+							name="name"
+							autoFocus
+							required
+							autoComplete="off"
+							placeholder="Acme Inc."
+						/>
+						<HookFormInputWithPrefix
+							label="Workspace slug"
+							name="slug"
+							required
+							autoComplete="off"
+							placeholder="acme"
+						/>
+						<Button type="submit" className="ml-auto w-fit">
+							Create
+						</Button>
+					</div>
+				</HookForm>
+			</div>
+		</PageContent>
 	);
 }

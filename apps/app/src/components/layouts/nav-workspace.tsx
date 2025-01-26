@@ -1,121 +1,53 @@
-import { Bot, ChevronRight, Settings2, SquareTerminal } from "@hoalu/icons/lucide";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hoalu/ui/collapsible";
+import { GalleryVerticalIcon, ListTodoIcon, UsersIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
-	SidebarMenuSubItem,
 } from "@hoalu/ui/sidebar";
-
-const data = [
-	{
-		title: "Playground",
-		url: "#",
-		icon: SquareTerminal,
-		items: [
-			{
-				title: "History",
-				url: "#",
-			},
-			{
-				title: "Starred",
-				url: "#",
-			},
-			{
-				title: "Settings",
-				url: "#",
-			},
-		],
-	},
-	{
-		title: "Models",
-		url: "#",
-		icon: Bot,
-		items: [
-			{
-				title: "Genesis",
-				url: "#",
-			},
-			{
-				title: "Explorer",
-				url: "#",
-			},
-			{
-				title: "Quantum",
-				url: "#",
-			},
-		],
-	},
-	{
-		title: "Settings",
-		url: "#",
-		icon: Settings2,
-		items: [
-			{
-				title: "General",
-				url: "#",
-			},
-			{
-				title: "Team",
-				url: "#",
-			},
-			{
-				title: "Billing",
-				url: "#",
-			},
-			{
-				title: "Limits",
-				url: "#",
-			},
-		],
-	},
-];
+import { Link } from "@tanstack/react-router";
 
 export function NavWorkspace() {
 	return (
-		<SidebarGroup>
+		<SidebarGroup id="nav-workspace">
 			<SidebarGroupLabel>Workspace</SidebarGroupLabel>
 			<SidebarMenu>
-				{data.map((item) => (
-					<Collapsible key={item.title} asChild>
-						<SidebarMenuItem>
-							<SidebarMenuButton asChild tooltip={item.title}>
-								<a href={item.url}>
-									<item.icon />
-									<span>{item.title}</span>
-								</a>
-							</SidebarMenuButton>
-							{item.items?.length ? (
-								<>
-									<CollapsibleTrigger asChild>
-										<SidebarMenuAction className="data-[state=open]:rotate-90">
-											<ChevronRight />
-											<span className="sr-only">Toggle</span>
-										</SidebarMenuAction>
-									</CollapsibleTrigger>
-									<CollapsibleContent>
-										<SidebarMenuSub>
-											{item.items?.map((subItem) => (
-												<SidebarMenuSubItem key={subItem.title}>
-													<SidebarMenuSubButton asChild>
-														<a href={subItem.url}>
-															<span>{subItem.title}</span>
-														</a>
-													</SidebarMenuSubButton>
-												</SidebarMenuSubItem>
-											))}
-										</SidebarMenuSub>
-									</CollapsibleContent>
-								</>
-							) : null}
-						</SidebarMenuItem>
-					</Collapsible>
-				))}
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Dashboard">
+						<Link from="/$slug/" to=".">
+							<GalleryVerticalIcon />
+							<span>Overview</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Finance">
+						<Link from="/$slug/" to=".">
+							<GalleryVerticalIcon />
+							<span>Finance</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Planner">
+						<Link from="/$slug/" to=".">
+							<ListTodoIcon />
+							<span>Planner</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Members">
+						<Link from="/$slug/" to=".">
+							<UsersIcon />
+							<span>Members</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
 			</SidebarMenu>
 		</SidebarGroup>
 	);
