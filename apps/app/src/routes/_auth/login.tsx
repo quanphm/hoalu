@@ -12,18 +12,20 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 function RouteComponent() {
+	const search = Route.useSearch();
+
 	async function formAction(formData: FormData) {
 		const email = formData.get("email");
 		const password = formData.get("password");
 
-		if (!email) throw new Error("email can not be empty");
-		if (!password) throw new Error("password can not be empty");
+		if (!email) throw new Error("Email can not be empty");
+		if (!password) throw new Error("Password can not be empty");
 
 		await authClient.signIn.email(
 			{
 				email: email.toString(),
 				password: password.toString(),
-				callbackURL: "/",
+				callbackURL: search.redirect || "/",
 				rememberMe: true,
 			},
 			{
@@ -83,7 +85,7 @@ function RouteComponent() {
 									</div>
 								</div>
 								<Button type="submit" className="w-full">
-									Log In
+									Log in
 								</Button>
 							</div>
 							<div className="text-center text-sm">

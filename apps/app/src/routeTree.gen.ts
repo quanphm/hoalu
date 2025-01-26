@@ -11,22 +11,15 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as DashboardImport } from './routes/_dashboard'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as DashboardIndexImport } from './routes/_dashboard/index'
-import { Route as DashboardHelloImport } from './routes/_dashboard/hello'
 import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as DashboardSlugIndexImport } from './routes/_dashboard/$slug/index'
 
 // Create/Update Routes
-
-const OnboardingRoute = OnboardingImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const DashboardRoute = DashboardImport.update({
   id: '/_dashboard',
@@ -41,12 +34,6 @@ const AuthRoute = AuthImport.update({
 const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const DashboardHelloRoute = DashboardHelloImport.update({
-  id: '/hello',
-  path: '/hello',
   getParentRoute: () => DashboardRoute,
 } as any)
 
@@ -68,6 +55,12 @@ const AuthLoginRoute = AuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardSlugRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -84,13 +77,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof DashboardImport
-      parentRoute: typeof rootRoute
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login': {
@@ -114,19 +100,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugImport
       parentRoute: typeof DashboardImport
     }
-    '/_dashboard/hello': {
-      id: '/_dashboard/hello'
-      path: '/hello'
-      fullPath: '/hello'
-      preLoaderRoute: typeof DashboardHelloImport
-      parentRoute: typeof DashboardImport
-    }
     '/_dashboard/': {
       id: '/_dashboard/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardImport
+    }
+    '/_dashboard/$slug/': {
+      id: '/_dashboard/$slug/'
+      path: '/'
+      fullPath: '/$slug/'
+      preLoaderRoute: typeof DashboardSlugIndexImport
+      parentRoute: typeof DashboardSlugImport
     }
   }
 }
@@ -145,15 +131,25 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface DashboardSlugRouteChildren {
+  DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
+}
+
+const DashboardSlugRouteChildren: DashboardSlugRouteChildren = {
+  DashboardSlugIndexRoute: DashboardSlugIndexRoute,
+}
+
+const DashboardSlugRouteWithChildren = DashboardSlugRoute._addFileChildren(
+  DashboardSlugRouteChildren,
+)
+
 interface DashboardRouteChildren {
-  DashboardSlugRoute: typeof DashboardSlugRoute
-  DashboardHelloRoute: typeof DashboardHelloRoute
+  DashboardSlugRoute: typeof DashboardSlugRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardSlugRoute: DashboardSlugRoute,
-  DashboardHelloRoute: DashboardHelloRoute,
+  DashboardSlugRoute: DashboardSlugRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -163,71 +159,57 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof DashboardRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
-  '/$slug': typeof DashboardSlugRoute
-  '/hello': typeof DashboardHelloRoute
+  '/$slug': typeof DashboardSlugRouteWithChildren
   '/': typeof DashboardIndexRoute
+  '/$slug/': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
-  '/$slug': typeof DashboardSlugRoute
-  '/hello': typeof DashboardHelloRoute
   '/': typeof DashboardIndexRoute
+  '/$slug': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_dashboard': typeof DashboardRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
-  '/_dashboard/$slug': typeof DashboardSlugRoute
-  '/_dashboard/hello': typeof DashboardHelloRoute
+  '/_dashboard/$slug': typeof DashboardSlugRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/onboarding'
-    | '/login'
-    | '/signup'
-    | '/$slug'
-    | '/hello'
-    | '/'
+  fullPaths: '' | '/login' | '/signup' | '/$slug' | '/' | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/onboarding' | '/login' | '/signup' | '/$slug' | '/hello' | '/'
+  to: '' | '/login' | '/signup' | '/' | '/$slug'
   id:
     | '__root__'
     | '/_auth'
     | '/_dashboard'
-    | '/onboarding'
     | '/_auth/login'
     | '/_auth/signup'
     | '/_dashboard/$slug'
-    | '/_dashboard/hello'
     | '/_dashboard/'
+    | '/_dashboard/$slug/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
-  OnboardingRoute: typeof OnboardingRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
-  OnboardingRoute: OnboardingRoute,
 }
 
 export const routeTree = rootRoute
@@ -241,8 +223,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_dashboard",
-        "/onboarding"
+        "/_dashboard"
       ]
     },
     "/_auth": {
@@ -256,12 +237,8 @@ export const routeTree = rootRoute
       "filePath": "_dashboard.tsx",
       "children": [
         "/_dashboard/$slug",
-        "/_dashboard/hello",
         "/_dashboard/"
       ]
-    },
-    "/onboarding": {
-      "filePath": "onboarding.tsx"
     },
     "/_auth/login": {
       "filePath": "_auth/login.tsx",
@@ -273,15 +250,18 @@ export const routeTree = rootRoute
     },
     "/_dashboard/$slug": {
       "filePath": "_dashboard/$slug.tsx",
-      "parent": "/_dashboard"
-    },
-    "/_dashboard/hello": {
-      "filePath": "_dashboard/hello.tsx",
-      "parent": "/_dashboard"
+      "parent": "/_dashboard",
+      "children": [
+        "/_dashboard/$slug/"
+      ]
     },
     "/_dashboard/": {
       "filePath": "_dashboard/index.tsx",
       "parent": "/_dashboard"
+    },
+    "/_dashboard/$slug/": {
+      "filePath": "_dashboard/$slug/index.tsx",
+      "parent": "/_dashboard/$slug"
     }
   }
 }

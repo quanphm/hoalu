@@ -110,7 +110,7 @@ const FormDescription = ({ className, ...props }: React.ComponentPropsWithRef<"p
 			id={formDescriptionId}
 			role="region"
 			aria-live="polite"
-			className={cn("text-muted-foreground text-sm", className)}
+			className={cn("text-[0.8rem] text-muted-foreground", className)}
 			{...props}
 		/>
 	);
@@ -130,7 +130,7 @@ const FormMessage = ({ className, children, ...props }: React.ComponentPropsWith
 			id={formMessageId}
 			role="alert"
 			aria-live="polite"
-			className={cn("text-destructive text-xs", className)}
+			className={cn("font-medium text-[0.8rem] text-destructive", className)}
 			{...props}
 		>
 			{body}

@@ -19,9 +19,9 @@ function RouteComponent() {
 		const email = formData.get("email");
 		const password = formData.get("password");
 
-		if (!name) throw new Error("name can not be empty");
-		if (!email) throw new Error("email can not be empty");
-		if (!password) throw new Error("password can not be empty");
+		if (!name) throw new Error("Name can not be empty");
+		if (!email) throw new Error("Email can not be empty");
+		if (!password) throw new Error("Password can not be empty");
 
 		await authClient.signUp.email(
 			{
@@ -44,7 +44,7 @@ function RouteComponent() {
 			<Card>
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Welcome to Hoalu</CardTitle>
-					<CardDescription>Let's set up your account</CardDescription>
+					<CardDescription>Let's set up your new account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form action={formAction}>
@@ -59,7 +59,7 @@ function RouteComponent() {
 							</div>
 							<div className="grid gap-4">
 								<div className="grid gap-2">
-									<Label htmlFor="name">Name</Label>
+									<Label htmlFor="name">Full name</Label>
 									<Input id="name" name="name" required />
 								</div>
 								<div className="grid gap-2">
@@ -73,13 +73,13 @@ function RouteComponent() {
 									<Input id="password" name="password" type="password" required />
 								</div>
 								<Button type="submit" className="w-full">
-									Sign Up
+									Sign up
 								</Button>
 							</div>
 							<div className="text-center text-sm">
 								Already have an account?{" "}
 								<Link to="/login" className="underline underline-offset-4">
-									Sign in
+									Log in
 								</Link>
 							</div>
 						</div>

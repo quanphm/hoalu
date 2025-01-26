@@ -1,7 +1,7 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme-prodiver";
-import type { AuthClient } from "@/lib/auth-client";
+import { type AuthClient, authClient } from "@/lib/auth-client";
 import { Toaster } from "@hoalu/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
@@ -12,8 +12,8 @@ export const Route = createRootRouteWithContext<{
 	authClient: AuthClient;
 	queryClient: QueryClient;
 }>()({
-	beforeLoad: async ({ context }) => {
-		const { data } = await context.authClient.getSession();
+	beforeLoad: async () => {
+		const { data } = await authClient.getSession();
 		return {
 			user: data?.user,
 			session: data?.session,
@@ -50,7 +50,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 			<ScrollRestoration />
 			<QueryDevtools buttonPosition="bottom-left" />
-			<RouterDevtools position="bottom-right" />
+			<RouterDevtools position="bottom-left" />
 		</>
 	);
 }
