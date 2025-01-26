@@ -18,19 +18,19 @@ const workspaceAvatarVariants = cva("rounded-lg", {
 
 interface Props {
 	logo: string | null | undefined;
-	name: string;
+	name: string | undefined;
 	className?: string;
 }
 
 export function WorkspaceAvatar({
-	logo = "",
-	name,
+	logo = undefined,
+	name = "Hoa Lu",
 	size,
 	className,
 }: Props & VariantProps<typeof workspaceAvatarVariants>) {
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage src={logo || ""} alt={name} />
+			<AvatarImage src={logo || undefined} alt={name} />
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{extractLetterFromName(name)}
 			</AvatarFallback>

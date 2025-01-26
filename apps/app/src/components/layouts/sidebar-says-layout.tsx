@@ -1,7 +1,13 @@
-import { AppSidebarLeft } from "@/components/layouts/app-sidebar-left";
-import { AppSidebarRight } from "@/components/layouts/app-sidebar-right";
-import { SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
+import { Calendar } from "@/components/calendar";
+import { AppLogo } from "@/components/layouts/app-logo";
+import { NavAccount } from "@/components/layouts/nav-account";
+import { NavUser } from "@/components/layouts/nav-user";
+import { NavWorkspace } from "@/components/layouts/nav-workspace";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
+import { SidebarFooter, SidebarInset, SidebarMenu, SidebarProvider } from "@hoalu/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
+import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
 /**
@@ -11,14 +17,38 @@ import { useTheme } from "next-themes";
  */
 export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 	const { theme } = useTheme();
+	const params = useParams({ strict: false });
+	const hasSlug = !!params.slug;
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<AppSidebarLeft />
+			<Sidebar variant="inset">
+				<SidebarHeader>{hasSlug ? <WorkspaceSwitcher /> : <AppLogo />}</SidebarHeader>
+				<SidebarContent>
+					{hasSlug && <NavWorkspace />}
+					<NavAccount />
+				</SidebarContent>
+			</Sidebar>
+
 			<SidebarInset className="max-w-[calc(100%-30rem)] flex-1 overflow-y-auto overflow-x-hidden">
 				{children}
 			</SidebarInset>
-			<AppSidebarRight />
+
+			<Sidebar
+				variant="inset"
+				collapsible="none"
+				className="fixed inset-y-0 right-0 flex h-svh w-[16rem] gap-2 p-2"
+			>
+				<SidebarHeader>
+					<NavUser />
+				</SidebarHeader>
+				<SidebarContent />
+				<SidebarFooter>
+					<SidebarMenu>
+						<Calendar />
+					</SidebarMenu>
+				</SidebarFooter>
+			</Sidebar>
 		</SidebarProvider>
 	);
 }

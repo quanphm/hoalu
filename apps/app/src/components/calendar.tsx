@@ -6,7 +6,7 @@ export function Calendar() {
 		<div>
 			<UICalendar
 				mode="single"
-				className="pb-4"
+				className="pb-2"
 				classNames={{
 					today: "rounded-lg bg-zinc-600",
 				}}

@@ -1,10 +1,14 @@
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import * as v from "valibot";
 
 export const Route = createFileRoute("/_auth")({
-	beforeLoad: ({ context: { user } }) => {
+	validateSearch: v.object({
+		redirect: v.optional(v.fallback(v.string(), "/"), "/"),
+	}),
+	beforeLoad: ({ context: { user }, search }) => {
 		if (user) {
-			throw redirect({ to: "/" });
+			throw redirect({ to: search.redirect || "/" });
 		}
 	},
 	component: RouteComponent,

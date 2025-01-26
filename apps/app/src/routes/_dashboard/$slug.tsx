@@ -1,8 +1,9 @@
+import { listWorkspacesOptions } from "@/lib/query-options";
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
-	beforeLoad: async ({ context: { authClient }, params: { slug } }) => {
-		const { data: workspaces } = await authClient.workspace.list();
+	beforeLoad: async ({ context: { queryClient }, params: { slug } }) => {
+		const workspaces = await queryClient.ensureQueryData(listWorkspacesOptions());
 		if (!workspaces || workspaces.length === 0) {
 			throw notFound();
 		}
@@ -10,7 +11,6 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 		if (!maybeWorkspace) {
 			throw notFound();
 		}
-		await authClient.workspace.setActive({ workspaceId: maybeWorkspace.id });
 	},
 	component: RouteComponent,
 });

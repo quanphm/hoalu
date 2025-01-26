@@ -12,6 +12,8 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 function RouteComponent() {
+	const search = Route.useSearch();
+
 	async function formAction(formData: FormData) {
 		const email = formData.get("email");
 		const password = formData.get("password");
@@ -23,7 +25,7 @@ function RouteComponent() {
 			{
 				email: email.toString(),
 				password: password.toString(),
-				callbackURL: "/",
+				callbackURL: search.redirect || "/",
 				rememberMe: true,
 			},
 			{
