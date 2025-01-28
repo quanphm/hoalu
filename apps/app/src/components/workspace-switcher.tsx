@@ -68,7 +68,7 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 						<DropdownMenuLabel className="text-muted-foreground/60 text-xs">
 							Workspaces
 						</DropdownMenuLabel>
-						<ScrollArea className="h-72">
+						<ScrollArea className="max-h-72">
 							{workspaces.map((ws) => (
 								<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
 									<Link to="/$slug" params={{ slug: ws.slug }}>

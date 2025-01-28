@@ -1,13 +1,13 @@
 import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
 import { CreateWorkspaceFormSchema, type WorkspaceInputSchema } from "@/lib/schema";
+import { slugify } from "@hoalu/common/slugify";
 import { Button } from "@hoalu/ui/button";
-
 import { toast } from "@hoalu/ui/sonner";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import { useForm } from "react-hook-form";
 
 export function CreateWorkspaceForm() {
@@ -22,6 +22,8 @@ export function CreateWorkspaceForm() {
 			slug: "",
 		},
 	});
+	const { watch, setValue } = form;
+	const watchName = watch("name");
 
 	async function onSubmit(values: WorkspaceInputSchema) {
 		await authClient.workspace.create(values, {
@@ -43,6 +45,10 @@ export function CreateWorkspaceForm() {
 		});
 	}
 
+	useEffect(() => {
+		setValue("slug", slugify(watchName));
+	}, [watchName, setValue]);
+
 	return (
 		<HookForm id={id} form={form} onSubmit={onSubmit}>
 			<div className="grid gap-6">
@@ -57,9 +63,11 @@ export function CreateWorkspaceForm() {
 				<HookFormInputWithPrefix
 					label="Workspace URL"
 					name="slug"
+					pattern="[a-z0-9\-]+$"
 					required
 					autoComplete="off"
-					placeholder="acme"
+					placeholder="acme-inc-42"
+					description="Use only lowercase letters, numbers and hyphens."
 				/>
 				<Button type="submit" form={id} className="ml-auto w-fit">
 					Create workspace

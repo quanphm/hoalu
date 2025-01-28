@@ -8,7 +8,8 @@
 	"exports": {
 		"./validate-env": "./src/validate-env.ts",
 		"./generate-id": "./src/generate-id.ts",
-		"./http-status": "./src/http-status/index.ts"
+		"./http-status": "./src/http-status/index.ts",
+		"./slugify": "./src/slugify.ts"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
