@@ -7,8 +7,7 @@ const workspaceAvatarVariants = cva("rounded-lg", {
 	variants: {
 		size: {
 			default: "h-8 w-8",
-			sm: "h-4 w-4 rounded-sm",
-			lg: "h-12 w-12",
+			sm: "h-6 w-6 rounded-sm",
 		},
 	},
 	defaultVariants: {

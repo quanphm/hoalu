@@ -1,7 +1,6 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
-import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme-prodiver";
-import { type AuthClient, authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@hoalu/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
@@ -9,7 +8,6 @@ import { Outlet, ScrollRestoration } from "@tanstack/react-router";
 import { lazy } from "react";
 
 export const Route = createRootRouteWithContext<{
-	authClient: AuthClient;
 	queryClient: QueryClient;
 }>()({
 	beforeLoad: async () => {
@@ -20,7 +18,6 @@ export const Route = createRootRouteWithContext<{
 		};
 	},
 	errorComponent: ErrorComponent,
-	notFoundComponent: NotFound,
 	component: RootComponent,
 });
 
@@ -43,7 +40,7 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+			<ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
 				{children}
 				<Toaster />
 			</ThemeProvider>

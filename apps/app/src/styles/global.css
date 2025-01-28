@@ -3,13 +3,11 @@
 
 @plugin "tailwind-scrollbar";
 
+@variant dark (&:where(.dark, .dark *));
+
 @layer base {
 	* {
-		@apply box-border border-border scrollbar-none;
-	}
-
-	html {
-		scroll-behavior: smooth;
+		@apply box-border border-border;
 	}
 
 	body {

@@ -16,7 +16,7 @@ interface Props {
 export function WorkspaceCard(props: Props) {
 	return (
 		<Link to="/$slug" params={{ slug: props.slug }}>
-			<Card className="hover:border-white/20">
+			<Card className="hover:border-foreground/20">
 				<CardHeader className="flex flex-row items-start justify-between p-4">
 					<CardTitle className="text-base">{props.name}</CardTitle>
 					<Button variant="link" size="icon" className="h-4 w-4">

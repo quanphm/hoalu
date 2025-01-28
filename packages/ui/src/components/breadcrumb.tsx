@@ -4,14 +4,16 @@ import type * as React from "react";
 import { cn } from "../utils";
 
 const Breadcrumb = ({
+	ref,
 	...props
 }: React.ComponentPropsWithRef<"nav"> & {
 	separator?: React.ReactNode;
-}) => <nav aria-label="breadcrumb" {...props} />;
+}) => <nav ref={ref} aria-label="breadcrumb" {...props} />;
 Breadcrumb.displayName = "Breadcrumb";
 
-const BreadcrumbList = ({ className, ...props }: React.ComponentPropsWithRef<"ol">) => (
+const BreadcrumbList = ({ className, ref, ...props }: React.ComponentPropsWithRef<"ol">) => (
 	<ol
+		ref={ref}
 		className={cn(
 			"flex flex-wrap items-center gap-1.5 break-words text-muted-foreground text-sm sm:gap-2.5",
 			className,
@@ -21,27 +23,35 @@ const BreadcrumbList = ({ className, ...props }: React.ComponentPropsWithRef<"ol
 );
 BreadcrumbList.displayName = "BreadcrumbList";
 
-const BreadcrumbItem = ({ className, ...props }: React.ComponentPropsWithRef<"li">) => (
-	<li className={cn("inline-flex items-center gap-1.5", className)} {...props} />
+const BreadcrumbItem = ({ className, ref, ...props }: React.ComponentPropsWithRef<"li">) => (
+	<li ref={ref} className={cn("inline-flex items-center gap-1.5", className)} {...props} />
 );
 BreadcrumbItem.displayName = "BreadcrumbItem";
 
 const BreadcrumbLink = ({
 	asChild,
 	className,
+	ref,
 	...props
 }: React.ComponentPropsWithRef<"a"> & {
 	asChild?: boolean;
 }) => {
 	const Comp = asChild ? Slot : "a";
 
-	return <Comp className={cn("transition-colors hover:text-foreground", className)} {...props} />;
+	return (
+		<Comp
+			ref={ref}
+			className={cn("transition-colors hover:text-foreground", className)}
+			{...props}
+		/>
+	);
 };
 BreadcrumbLink.displayName = "BreadcrumbLink";
 
-const BreadcrumbPage = ({ className, ...props }: React.ComponentPropsWithRef<"span">) => (
+const BreadcrumbPage = ({ className, ref, ...props }: React.ComponentPropsWithRef<"span">) => (
 	// biome-ignore lint/a11y/useFocusableInteractive: bypass
 	<span
+		ref={ref}
 		role="link"
 		aria-disabled="true"
 		aria-current="page"

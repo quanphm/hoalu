@@ -5,5 +5,6 @@ export function extractLetterFromName(name: string | undefined) {
 		.split(" ")
 		.map((word) => word[0])
 		.join("")
-		.slice(0, 2);
+		.slice(0, 2)
+		.toLocaleUpperCase();
 }

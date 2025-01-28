@@ -1,8 +1,7 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
-import { authClient } from "@/lib/auth-client";
+import { NotFound } from "@/components/not-found";
 import { QueryClient } from "@tanstack/react-query";
-import { createRouter as createTanStackRouter, isRedirect } from "@tanstack/react-router";
-import { routerWithQueryClient } from "@tanstack/react-router-with-query";
+import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const queryClient = new QueryClient();
@@ -10,30 +9,14 @@ export const queryClient = new QueryClient();
 export function createRouter() {
 	const router = createTanStackRouter({
 		routeTree,
-		context: { authClient, queryClient },
+		context: { queryClient },
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
+		defaultNotFoundComponent: NotFound,
 		defaultErrorComponent: DefaultCatchBoundary,
 	});
 
-	/**
-	 * @see https://github.com/nekochan0122/tanstack-boilerplate/blob/main/src/router.ts#L37
-	 */
-	queryClient.getQueryCache().config.onError = handleRedirectError;
-	queryClient.getMutationCache().config.onError = handleRedirectError;
-
-	function handleRedirectError(error: Error) {
-		if (isRedirect(error)) {
-			router.navigate(
-				router.resolveRedirect({
-					...error,
-					_fromLocation: router.state.location,
-				}),
-			);
-		}
-	}
-
-	return routerWithQueryClient(router, queryClient);
+	return router;
 }
 
 declare module "@tanstack/react-router" {

@@ -16,12 +16,13 @@ export const HookForm = <T extends FieldValues>({
 	disabled,
 	className,
 	children,
+	id,
 }: HookFormProps<T>) => {
 	const { isSubmitting } = form.formState;
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)}>
+			<form id={id} onSubmit={form.handleSubmit(onSubmit)}>
 				<fieldset disabled={isSubmitting || disabled} className={className}>
 					{children}
 				</fieldset>

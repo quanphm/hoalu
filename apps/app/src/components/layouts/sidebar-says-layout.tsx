@@ -4,9 +4,11 @@ import { NavAccount } from "@/components/layouts/nav-account";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/workspace-switcher";
+import { listWorkspacesOptions } from "@/lib/query-options";
 import { SidebarFooter, SidebarInset, SidebarMenu, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
@@ -17,13 +19,23 @@ import { useTheme } from "next-themes";
  */
 export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 	const { theme } = useTheme();
+
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;
+
+	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
+	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
 
 	return (
 		<SidebarProvider className={cn(theme)}>
 			<Sidebar variant="inset">
-				<SidebarHeader>{hasSlug ? <WorkspaceSwitcher /> : <AppLogo />}</SidebarHeader>
+				<SidebarHeader>
+					{hasSlug && currentWorkspace ? (
+						<WorkspaceSwitcher currentWorkspace={currentWorkspace} />
+					) : (
+						<AppLogo />
+					)}
+				</SidebarHeader>
 				<SidebarContent>
 					{hasSlug && <NavWorkspace />}
 					<NavAccount />
