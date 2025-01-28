@@ -8,7 +8,7 @@
 		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"hono": "^4.6.17"
+		"hono": "^4.6.19"
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
@@ -19,6 +19,6 @@
 		"valibot": "^1.0.0-beta.14"
 	},
 	"devDependencies": {
-		"vitest": "^3.0.3"
+		"vitest": "^3.0.4"
 	}
 }

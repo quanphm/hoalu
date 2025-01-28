@@ -9,7 +9,7 @@
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@types/react": "^19.0.7",
+		"@types/react": "^19.0.8",
 		"react": "^19.0.0"
 	},
 	"dependencies": {
