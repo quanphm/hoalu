@@ -1,4 +1,4 @@
-import { User } from "@/components/user";
+import { Chart } from "@/components/chart";
 import { listWorkspacesOptions } from "@/lib/query-options";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
@@ -11,11 +11,11 @@ function RouteComponent() {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const params = useParams({ strict: false });
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
+	console.log(currentWorkspace);
 
 	return (
 		<>
-			<User />
-			<pre>{JSON.stringify(currentWorkspace, null, 2)}</pre>
+			<Chart />
 		</>
 	);
 }

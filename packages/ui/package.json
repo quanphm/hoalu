@@ -12,6 +12,7 @@
 		"./button": "./src/components/button.tsx",
 		"./calendar": "./src/components/calendar.tsx",
 		"./card": "./src/components/card.tsx",
+		"./chart": "./src/components/chart.tsx",
 		"./dialog": "./src/components/dialog.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
@@ -55,6 +56,7 @@
 		"date-fns": "^4.1.0",
 		"next-themes": "^0.4.4",
 		"react-day-picker": "^9.5.1",
+		"recharts": "^2.15.1",
 		"sonner": "^1.7.2",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7"

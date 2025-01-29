@@ -18,6 +18,11 @@ import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as DashboardSlugIndexImport } from './routes/_dashboard/$slug/index'
+import { Route as DashboardAccountTokensImport } from './routes/_dashboard/account/tokens'
+import { Route as DashboardAccountPreferencesImport } from './routes/_dashboard/account/preferences'
+import { Route as DashboardSlugTasksImport } from './routes/_dashboard/$slug/tasks'
+import { Route as DashboardSlugSettingsImport } from './routes/_dashboard/$slug/settings'
+import { Route as DashboardSlugFinanceImport } from './routes/_dashboard/$slug/finance'
 
 // Create/Update Routes
 
@@ -58,6 +63,37 @@ const AuthLoginRoute = AuthLoginImport.update({
 const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardSlugRoute,
+} as any)
+
+const DashboardAccountTokensRoute = DashboardAccountTokensImport.update({
+  id: '/account/tokens',
+  path: '/account/tokens',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardAccountPreferencesRoute =
+  DashboardAccountPreferencesImport.update({
+    id: '/account/preferences',
+    path: '/account/preferences',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+
+const DashboardSlugTasksRoute = DashboardSlugTasksImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => DashboardSlugRoute,
+} as any)
+
+const DashboardSlugSettingsRoute = DashboardSlugSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardSlugRoute,
+} as any)
+
+const DashboardSlugFinanceRoute = DashboardSlugFinanceImport.update({
+  id: '/finance',
+  path: '/finance',
   getParentRoute: () => DashboardSlugRoute,
 } as any)
 
@@ -107,6 +143,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardImport
     }
+    '/_dashboard/$slug/finance': {
+      id: '/_dashboard/$slug/finance'
+      path: '/finance'
+      fullPath: '/$slug/finance'
+      preLoaderRoute: typeof DashboardSlugFinanceImport
+      parentRoute: typeof DashboardSlugImport
+    }
+    '/_dashboard/$slug/settings': {
+      id: '/_dashboard/$slug/settings'
+      path: '/settings'
+      fullPath: '/$slug/settings'
+      preLoaderRoute: typeof DashboardSlugSettingsImport
+      parentRoute: typeof DashboardSlugImport
+    }
+    '/_dashboard/$slug/tasks': {
+      id: '/_dashboard/$slug/tasks'
+      path: '/tasks'
+      fullPath: '/$slug/tasks'
+      preLoaderRoute: typeof DashboardSlugTasksImport
+      parentRoute: typeof DashboardSlugImport
+    }
+    '/_dashboard/account/preferences': {
+      id: '/_dashboard/account/preferences'
+      path: '/account/preferences'
+      fullPath: '/account/preferences'
+      preLoaderRoute: typeof DashboardAccountPreferencesImport
+      parentRoute: typeof DashboardImport
+    }
+    '/_dashboard/account/tokens': {
+      id: '/_dashboard/account/tokens'
+      path: '/account/tokens'
+      fullPath: '/account/tokens'
+      preLoaderRoute: typeof DashboardAccountTokensImport
+      parentRoute: typeof DashboardImport
+    }
     '/_dashboard/$slug/': {
       id: '/_dashboard/$slug/'
       path: '/'
@@ -132,10 +203,16 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardSlugRouteChildren {
+  DashboardSlugFinanceRoute: typeof DashboardSlugFinanceRoute
+  DashboardSlugSettingsRoute: typeof DashboardSlugSettingsRoute
+  DashboardSlugTasksRoute: typeof DashboardSlugTasksRoute
   DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
 }
 
 const DashboardSlugRouteChildren: DashboardSlugRouteChildren = {
+  DashboardSlugFinanceRoute: DashboardSlugFinanceRoute,
+  DashboardSlugSettingsRoute: DashboardSlugSettingsRoute,
+  DashboardSlugTasksRoute: DashboardSlugTasksRoute,
   DashboardSlugIndexRoute: DashboardSlugIndexRoute,
 }
 
@@ -146,11 +223,15 @@ const DashboardSlugRouteWithChildren = DashboardSlugRoute._addFileChildren(
 interface DashboardRouteChildren {
   DashboardSlugRoute: typeof DashboardSlugRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAccountPreferencesRoute: typeof DashboardAccountPreferencesRoute
+  DashboardAccountTokensRoute: typeof DashboardAccountTokensRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSlugRoute: DashboardSlugRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardAccountPreferencesRoute: DashboardAccountPreferencesRoute,
+  DashboardAccountTokensRoute: DashboardAccountTokensRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -163,6 +244,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/$slug': typeof DashboardSlugRouteWithChildren
   '/': typeof DashboardIndexRoute
+  '/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/$slug/settings': typeof DashboardSlugSettingsRoute
+  '/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/account/preferences': typeof DashboardAccountPreferencesRoute
+  '/account/tokens': typeof DashboardAccountTokensRoute
   '/$slug/': typeof DashboardSlugIndexRoute
 }
 
@@ -171,6 +257,11 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
+  '/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/$slug/settings': typeof DashboardSlugSettingsRoute
+  '/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/account/preferences': typeof DashboardAccountPreferencesRoute
+  '/account/tokens': typeof DashboardAccountTokensRoute
   '/$slug': typeof DashboardSlugIndexRoute
 }
 
@@ -182,14 +273,40 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/$slug': typeof DashboardSlugRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRoute
+  '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
+  '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/signup' | '/$slug' | '/' | '/$slug/'
+  fullPaths:
+    | ''
+    | '/login'
+    | '/signup'
+    | '/$slug'
+    | '/'
+    | '/$slug/finance'
+    | '/$slug/settings'
+    | '/$slug/tasks'
+    | '/account/preferences'
+    | '/account/tokens'
+    | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/login' | '/signup' | '/' | '/$slug'
+  to:
+    | ''
+    | '/login'
+    | '/signup'
+    | '/'
+    | '/$slug/finance'
+    | '/$slug/settings'
+    | '/$slug/tasks'
+    | '/account/preferences'
+    | '/account/tokens'
+    | '/$slug'
   id:
     | '__root__'
     | '/_auth'
@@ -198,6 +315,11 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_dashboard/$slug'
     | '/_dashboard/'
+    | '/_dashboard/$slug/finance'
+    | '/_dashboard/$slug/settings'
+    | '/_dashboard/$slug/tasks'
+    | '/_dashboard/account/preferences'
+    | '/_dashboard/account/tokens'
     | '/_dashboard/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -237,7 +359,9 @@ export const routeTree = rootRoute
       "filePath": "_dashboard.tsx",
       "children": [
         "/_dashboard/$slug",
-        "/_dashboard/"
+        "/_dashboard/",
+        "/_dashboard/account/preferences",
+        "/_dashboard/account/tokens"
       ]
     },
     "/_auth/login": {
@@ -252,11 +376,34 @@ export const routeTree = rootRoute
       "filePath": "_dashboard/$slug.tsx",
       "parent": "/_dashboard",
       "children": [
+        "/_dashboard/$slug/finance",
+        "/_dashboard/$slug/settings",
+        "/_dashboard/$slug/tasks",
         "/_dashboard/$slug/"
       ]
     },
     "/_dashboard/": {
       "filePath": "_dashboard/index.tsx",
+      "parent": "/_dashboard"
+    },
+    "/_dashboard/$slug/finance": {
+      "filePath": "_dashboard/$slug/finance.tsx",
+      "parent": "/_dashboard/$slug"
+    },
+    "/_dashboard/$slug/settings": {
+      "filePath": "_dashboard/$slug/settings.tsx",
+      "parent": "/_dashboard/$slug"
+    },
+    "/_dashboard/$slug/tasks": {
+      "filePath": "_dashboard/$slug/tasks.tsx",
+      "parent": "/_dashboard/$slug"
+    },
+    "/_dashboard/account/preferences": {
+      "filePath": "_dashboard/account/preferences.tsx",
+      "parent": "/_dashboard"
+    },
+    "/_dashboard/account/tokens": {
+      "filePath": "_dashboard/account/tokens.tsx",
       "parent": "/_dashboard"
     },
     "/_dashboard/$slug/": {
