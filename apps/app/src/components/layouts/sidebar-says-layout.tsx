@@ -42,7 +42,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 				</SidebarContent>
 			</Sidebar>
 
-			<SidebarInset className="max-w-[calc(100%-30rem)] flex-1 overflow-y-auto overflow-x-hidden">
+			<SidebarInset className="max-w-[calc(100%-30rem)] flex-1 overflow-y-auto overflow-x-hidden border md:peer-data-[variant=inset]:shadow-none">
 				{children}
 			</SidebarInset>
 

@@ -8,13 +8,13 @@ import {
 	FormMessage,
 } from "./components";
 
-interface HookFormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface HookFormInputWithPrefixProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name: string;
 	label?: string;
 	description?: string;
 }
 
-export const HookFormInputWithPrefix = (props: HookFormInputProps) => {
+export const HookFormInputWithPrefix = (props: HookFormInputWithPrefixProps) => {
 	return (
 		<FormField
 			name={props.name}

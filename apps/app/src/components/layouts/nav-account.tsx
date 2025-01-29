@@ -1,4 +1,4 @@
-import { Settings2Icon } from "@hoalu/icons/lucide";
+import { KeyRoundIcon, SettingsIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -16,8 +16,16 @@ export function NavAccount() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Settings">
 						<Link to="/">
-							<Settings2Icon />
+							<SettingsIcon />
 							<span>Settings</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Settings">
+						<Link to="/">
+							<KeyRoundIcon />
+							<span>API keys</span>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>

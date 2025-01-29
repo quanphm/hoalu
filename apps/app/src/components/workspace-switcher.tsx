@@ -81,7 +81,7 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 						<DropdownMenuSeparator />
 						<CreateWorkspaceDialog>
 							<DropdownMenuItem className="gap-2 p-2">
-								<div className="flex size-6 items-center justify-center rounded-md border bg-background">
+								<div className="flex size-4 items-center justify-center text-muted-foreground">
 									<PlusIcon className="size-4" />
 								</div>
 								<div className="font-medium text-muted-foreground">Create a workspace</div>

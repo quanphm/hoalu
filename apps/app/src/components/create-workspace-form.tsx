@@ -67,7 +67,7 @@ export function CreateWorkspaceForm() {
 					required
 					autoComplete="off"
 					placeholder="acme-inc-42"
-					description="Use only lowercase letters, numbers and hyphens."
+					description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
 				/>
 				<Button type="submit" form={id} className="ml-auto w-fit">
 					Create workspace
