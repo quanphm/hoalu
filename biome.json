@@ -27,7 +27,11 @@
 				"noNonNullAssertion": "warn"
 			},
 			"suspicious": {
-				"noExplicitAny": "warn"
+				"noExplicitAny": "warn",
+				"noArrayIndexKey": "warn"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off"
 			}
 		}
 	}

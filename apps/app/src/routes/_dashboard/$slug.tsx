@@ -1,8 +1,9 @@
+import { PageContent } from "@/components/layouts/page-content";
 import { listWorkspacesOptions } from "@/lib/query-options";
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
-	beforeLoad: async ({ context: { queryClient }, params: { slug } }) => {
+	loader: async ({ context: { queryClient }, params: { slug } }) => {
 		const workspaces = await queryClient.ensureQueryData(listWorkspacesOptions());
 		if (!workspaces || workspaces.length === 0) {
 			throw notFound();
@@ -16,5 +17,9 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 });
 
 function RouteComponent() {
-	return <Outlet />;
+	return (
+		<PageContent>
+			<Outlet />
+		</PageContent>
+	);
 }

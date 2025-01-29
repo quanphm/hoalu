@@ -1,5 +1,4 @@
 import { Calendar as UICalendar } from "@hoalu/ui/calendar";
-// import { addDays } from "date-fns";
 
 export function Calendar() {
 	return (
@@ -8,7 +7,7 @@ export function Calendar() {
 				mode="single"
 				className="pb-2"
 				classNames={{
-					today: "rounded-lg bg-zinc-600",
+					today: "*:after:bg-red-600",
 				}}
 			/>
 		</div>

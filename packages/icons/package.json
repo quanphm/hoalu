@@ -5,11 +5,12 @@
 	"main": "./src/index.tsx",
 	"exports": {
 		"./lucide": "./src/lucide/index.tsx",
-		"./pixelart": "./src/pixelart/index.tsx"
+		"./pixelart": "./src/pixelart/index.tsx",
+		"./social": "./src/social/index.tsx"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@types/react": "^19.0.7",
+		"@types/react": "^19.0.8",
 		"react": "^19.0.0"
 	},
 	"dependencies": {

@@ -12,7 +12,7 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 
 export function NavUser() {
 	const { user } = useAuth();
@@ -44,12 +44,15 @@ export function NavUser() {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-48 rounded-lg"
-						side="bottom"
 						align="center"
 					>
 						<DropdownMenuGroup>
-							<DropdownMenuItem>Account settings</DropdownMenuItem>
-							<DropdownMenuItem>Notifications</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link to="/account/preferences">Preferences</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link to="/account/tokens">Access tokens</Link>
+							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
