@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-		"hono-openapi": "^0.4.3",
+		"hono-openapi": "^0.4.4",
 		"hono-pino": "^0.7.0",
 		"pino": "^9.6.0",
 		"pino-pretty": "^13.0.0",

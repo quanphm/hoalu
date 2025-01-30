@@ -1,5 +1,6 @@
 import { logger, notFound, onError } from "@hoalu/furnace";
 import { Hono } from "hono";
+import { etag } from "hono/etag";
 import { requestId } from "hono/request-id";
 import type { AppBindings } from "../types";
 
@@ -12,6 +13,7 @@ export function createApp() {
 
 	// middlewares
 	app.use(requestId());
+	app.use(etag());
 	app.use(
 		logger({
 			pretty: process.env.NODE_ENV === "development",
