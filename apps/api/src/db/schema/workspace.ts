@@ -1,4 +1,5 @@
-import { bigint, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { generateId } from "@hoalu/common/generate-id";
+import { bigint, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const workspace = pgTable(
@@ -32,7 +33,7 @@ export const member = pgTable(
 );
 
 export const invitation = pgTable("invitation", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid("id").primaryKey(),
 	email: text("email").notNull(),
 	role: text("role"),
 	status: text("status").notNull(),

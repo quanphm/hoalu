@@ -59,7 +59,7 @@ CREATE TABLE "task" (
 );
 --> statement-breakpoint
 CREATE TABLE "invitation" (
-	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "invitation_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"id" uuid PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"role" text,
 	"status" text NOT NULL,
