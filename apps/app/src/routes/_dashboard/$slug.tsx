@@ -1,15 +1,11 @@
 import { PageContent } from "@/components/layouts/page-content";
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { getFullWorkspaceOptions } from "@/lib/query-options";
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
-		const workspaces = await queryClient.ensureQueryData(listWorkspacesOptions());
-		if (!workspaces || workspaces.length === 0) {
-			throw notFound();
-		}
-		const maybeWorkspace = workspaces.find((ws) => ws.slug === slug);
-		if (!maybeWorkspace) {
+		const workspace = await queryClient.ensureQueryData(getFullWorkspaceOptions(slug));
+		if (!workspace) {
 			throw notFound();
 		}
 	},

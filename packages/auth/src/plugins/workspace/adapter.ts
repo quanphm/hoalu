@@ -33,31 +33,25 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				],
 			});
 		},
-		findWorkspaceByPublicId: async (id: string) => {
+		findWorkspaceByPublicId: async (identifier: string) => {
 			return await adapter.findOne<Workspace>({
 				model: "workspace",
 				where: [
 					{
 						field: "public_id",
-						value: id,
+						value: identifier,
 					},
 				],
 			});
 		},
-		findFullWorkspace: async ({
-			workspaceId,
-			isSlug,
-		}: {
-			workspaceId: number | string;
-			isSlug?: boolean;
-		}) => {
+		findFullWorkspace: async (identifier: string) => {
+			const isPublicId = identifier.startsWith("ws_");
 			const workspace = await adapter.findOne<Workspace>({
 				model: "workspace",
-				where: [{ field: isSlug ? "slug" : "id", value: workspaceId }],
+				where: [{ field: isPublicId ? "publicId" : "slug", value: identifier }],
 			});
-			if (!workspace) {
-				return null;
-			}
+			if (!workspace) return null;
+
 			const [invitations, members] = await Promise.all([
 				adapter.findMany<Invitation>({
 					model: "invitation",
@@ -68,8 +62,6 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					where: [{ field: "workspaceId", value: workspace.id }],
 				}),
 			]);
-
-			if (!workspace) return null;
 
 			const userIds = members.map((member) => member.userId);
 			const users = await adapter.findMany<User>({

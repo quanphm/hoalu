@@ -18,7 +18,6 @@ import {
 	getFullWorkspace,
 	hasWorkspacePermission,
 	listWorkspaces,
-	setActiveWorkspace,
 	updateWorkspace,
 } from "./routes/crud-workspaces";
 import type { Invitation, Member, Workspace } from "./schema";
@@ -191,7 +190,6 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		createWorkspace,
 		updateWorkspace,
 		deleteWorkspace,
-		setActiveWorkspace,
 		getFullWorkspace,
 		listWorkspaces,
 		createInvitation,

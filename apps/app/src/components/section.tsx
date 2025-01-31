@@ -17,4 +17,8 @@ function SectionContent({ className, ref, ...props }: React.ComponentPropsWithRe
 	return <div ref={ref} className={cn("grid grid-cols-3 gap-6", className)} {...props} />;
 }
 
-export { Section, SectionHeader, SectionContent };
+function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"p">) {
+	return <p className={cn("font-semibold text-md tracking-tight", className)} {...props} />;
+}
+
+export { Section, SectionHeader, SectionContent, SectionTitle };

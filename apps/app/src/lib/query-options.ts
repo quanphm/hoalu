@@ -10,8 +10,23 @@ export const listWorkspacesOptions = () => {
 			if (!data) return [];
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.MINUTE,
+		staleTime: TIME_IN_MILLISECONDS.HOUR,
 		placeholderData: [],
-		retry: 2,
+	});
+};
+
+export const getFullWorkspaceOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: ["workspaces", slug],
+		queryFn: async () => {
+			const { data } = await authClient.workspace.getFullWorkspace({
+				query: {
+					idOrSlug: slug,
+				},
+			});
+			if (!data) return null;
+			return data;
+		},
+		staleTime: TIME_IN_MILLISECONDS.HOUR,
 	});
 };

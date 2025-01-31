@@ -1,4 +1,3 @@
-import { generateId } from "@hoalu/common/generate-id";
 import { bigint, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 

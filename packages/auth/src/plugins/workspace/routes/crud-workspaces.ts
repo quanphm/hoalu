@@ -334,22 +334,18 @@ export const deleteWorkspace = createAuthEndpoint(
 	},
 );
 
+/**
+ * Get full details of the workspace by `public_id` or `slug`.
+ */
 export const getFullWorkspace = createAuthEndpoint(
 	"/workspace/get-full-workspace",
 	{
 		method: "GET",
 		query: z.optional(
 			z.object({
-				workspaceId: z
-					.number({
-						description: "The workspace id to get",
-					})
-					.optional(),
-				workspaceSlug: z
-					.string({
-						description: "The workspace slug to get",
-					})
-					.optional(),
+				idOrSlug: z.string({
+					description: "The workspace public_id or slug to get",
+				}),
 			}),
 		),
 		requireHeaders: true,
@@ -376,35 +372,21 @@ export const getFullWorkspace = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const workspaceId = ctx.query?.workspaceId || session.session.activeWorkspaceId;
-		const workspaceSlug = ctx.query?.workspaceSlug;
+		const idOrSlug = ctx.query?.idOrSlug;
 
-		if (!workspaceId && !workspaceSlug) {
-			return ctx.json(null, {
-				status: 200,
+		if (!idOrSlug) {
+			throw new APIError("BAD_REQUEST", {
+				message: HTTPStatus.phrases.BAD_REQUEST,
 			});
 		}
 
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		let workspace: Awaited<ReturnType<typeof adapter.findFullWorkspace>> = null;
-
-		if (workspaceId) {
-			workspace = await adapter.findFullWorkspace({
-				workspaceId,
-			});
-		} else if (workspaceSlug) {
-			workspace = await adapter.findFullWorkspace({
-				workspaceId: workspaceSlug,
-				isSlug: true,
-			});
-		}
-
+		const workspace = await adapter.findFullWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
-
 		const isMember = workspace.members.find((member) => member.userId === session.user.id);
 		if (!isMember) {
 			throw new APIError("FORBIDDEN", {
@@ -421,19 +403,9 @@ export const setActiveWorkspace = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			workspaceId: z
-				.number({
-					description:
-						"The workspace id to set as active. It can be null to unset the active workspace",
-				})
-				.nullable()
-				.optional(),
-			workspaceSlug: z
-				.string({
-					description:
-						"The workspace slug to set as active. It can be null to unset the active workspace if workspaceId is not provided",
-				})
-				.optional(),
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to set as active",
+			}),
 		}),
 		use: [workspaceSessionMiddleware, workspaceMiddleware],
 		metadata: {
@@ -459,48 +431,29 @@ export const setActiveWorkspace = createAuthEndpoint(
 	async (ctx) => {
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const session = ctx.context.session;
-		let idOrSlug = ctx.body.workspaceSlug || ctx.body.workspaceId;
+		const idOrSlug = ctx.body.idOrSlug;
 
-		if (idOrSlug === null) {
-			const sessionOrgId = session.session.activeWorkspaceId;
-			if (!sessionOrgId) {
-				return ctx.json(null);
-			}
-			const updatedSession = await adapter.setActiveWorkspace(session.session.token, null);
-			await setSessionCookie(ctx, {
-				session: updatedSession,
-				user: session.user,
+		const workspace = await adapter.findFullWorkspace(idOrSlug);
+		if (!workspace) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
-			return ctx.json(null);
 		}
-		if (!idOrSlug) {
-			const sessionOrgId = session.session.activeWorkspaceId;
-			if (!sessionOrgId) {
-				return ctx.json(null);
-			}
-			idOrSlug = sessionOrgId;
-		}
-		const workspace = await adapter.findFullWorkspace({
-			workspaceId: idOrSlug,
-			isSlug: !!ctx.body.workspaceSlug,
-		});
-		const isMember = workspace?.members.find((member) => member.userId === session.user.id);
+
+		const isMember = workspace.members.find((member) => member.userId === session.user.id);
 		if (!isMember) {
 			await adapter.setActiveWorkspace(session.session.token, null);
 			throw new APIError("FORBIDDEN", {
 				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
-		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
-		}
+
 		const updatedSession = await adapter.setActiveWorkspace(session.session.token, workspace.id);
 		await setSessionCookie(ctx, {
 			session: updatedSession,
 			user: session.user,
 		});
+
 		return ctx.json(workspace);
 	},
 );

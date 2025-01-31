@@ -2,7 +2,7 @@ import { BasicCard, WorkspaceCard } from "@/components/cards";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 import { CreateWorkspaceForm } from "@/components/create-workspace-form";
 import { PageContent } from "@/components/layouts/page-content";
-import { Section, SectionContent, SectionHeader } from "@/components/section";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { useAuth } from "@/hooks/useAuth";
 import { listWorkspacesOptions } from "@/lib/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
@@ -46,7 +46,7 @@ function RouteComponent() {
 
 			<Section>
 				<SectionHeader>
-					<p className="font-semibold text-md tracking-tight">Getting started</p>
+					<SectionTitle>Getting started</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
 					<BasicCard
@@ -66,7 +66,7 @@ function RouteComponent() {
 
 			<Section>
 				<SectionHeader>
-					<p className="font-semibold text-md tracking-tight">Workspaces ({workspaces.length})</p>
+					<SectionTitle>Workspaces ({workspaces.length})</SectionTitle>
 					<CreateWorkspaceDialog>
 						<Button variant="outline" size="sm">
 							<PlusIcon className="mr-2 size-4" />

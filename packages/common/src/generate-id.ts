@@ -6,8 +6,8 @@ const DEFAULT_SIZE = 16;
 const nanoid = customAlphabet(DEFAULT_ALPHABET, DEFAULT_SIZE);
 
 const prefixes = {
-	user: "u",
-	workspace: "ws",
+	user: "u_",
+	workspace: "ws_",
 } as const;
 
 export function generateId(options: {
@@ -16,11 +16,13 @@ export function generateId(options: {
 }) {
 	const defaultAlgorithm = options.use || "nanoid";
 
-	if (defaultAlgorithm === "uuid") return uuidv7();
+	if (defaultAlgorithm === "uuid") {
+		return uuidv7();
+	}
 
 	if (!options.kind) {
 		throw new Error("generateId function is using `nanoid`, please select a prefix kind for it.");
 	}
 
-	return [prefixes[options.kind], nanoid()].join("_");
+	return prefixes[options.kind] + nanoid();
 }
