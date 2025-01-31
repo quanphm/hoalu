@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"nanoid": "^5.0.9",
+		"uuid": "^11.0.5",
 		"valibot": "^1.0.0-beta.14"
 	}
 }

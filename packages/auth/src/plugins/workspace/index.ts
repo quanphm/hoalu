@@ -101,7 +101,7 @@ export interface WorkspaceOptions {
 			/**
 			 * the invitation id
 			 */
-			id: number;
+			id: string;
 			/**
 			 * the role of the user
 			 */

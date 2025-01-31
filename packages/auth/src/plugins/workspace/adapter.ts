@@ -1,3 +1,4 @@
+import { generateId } from "@hoalu/common/generate-id";
 import { BetterAuthError } from "better-auth";
 import type { AuthContext, Session } from "better-auth/types";
 import { getDate } from "../../utils/date";
@@ -374,9 +375,10 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		}) => {
 			const defaultExpiration = 1000 * 60 * 60 * 24;
 			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration);
-			const invite = await adapter.create<InvitationInput, Invitation>({
+			const invite = await adapter.create<Invitation, Invitation>({
 				model: "invitation",
 				data: {
+					id: generateId({ use: "uuid" }),
 					email: invitation.email,
 					role: invitation.role,
 					workspaceId: invitation.workspaceId,
@@ -388,7 +390,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 
 			return invite;
 		},
-		findInvitationById: async (id: number) => {
+		findInvitationById: async (id: string) => {
 			const invitation = await adapter.findOne<Invitation>({
 				model: "invitation",
 				where: [
@@ -424,7 +426,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			return invitation.filter((invite) => new Date(invite.expiresAt) > new Date());
 		},
 		updateInvitation: async (data: {
-			invitationId: number;
+			invitationId: string;
 			status: "accepted" | "canceled" | "rejected";
 		}) => {
 			const invitation = await adapter.update<Invitation>({

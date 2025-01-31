@@ -188,7 +188,7 @@ export const acceptInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.number({
+			invitationId: z.string({
 				description: "The ID of the invitation to accept",
 			}),
 		}),
@@ -264,7 +264,7 @@ export const rejectInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.number({
+			invitationId: z.string({
 				description: "The ID of the invitation to reject",
 			}),
 		}),
@@ -325,7 +325,7 @@ export const cancelInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.number({
+			invitationId: z.string({
 				description: "The ID of the invitation to cancel",
 			}),
 		}),
@@ -392,7 +392,7 @@ export const getInvitation = createAuthEndpoint(
 		use: [workspaceMiddleware],
 		requireHeaders: true,
 		query: z.object({
-			id: z.number({
+			id: z.string({
 				description: "The ID of the invitation to get",
 			}),
 		}),

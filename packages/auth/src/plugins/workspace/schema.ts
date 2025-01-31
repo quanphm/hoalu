@@ -30,7 +30,7 @@ export const memberSchema = z.object({
 const memberSchemaInput = memberSchema.omit({ id: true });
 
 export const invitationSchema = z.object({
-	id: z.number(),
+	id: z.string(),
 	workspaceId: z.number(),
 	email: z.string(),
 	role,
