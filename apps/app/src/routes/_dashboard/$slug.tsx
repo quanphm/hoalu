@@ -8,6 +8,9 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 		if (!workspace) {
 			throw notFound();
 		}
+		return {
+			workspace,
+		};
 	},
 	component: RouteComponent,
 });

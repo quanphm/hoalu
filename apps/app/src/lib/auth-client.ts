@@ -5,5 +5,3 @@ export const authClient = createAuthClient({
 	baseURL: `${import.meta.env.PUBLIC_API_URL}/auth`,
 	plugins: [workspaceClient()],
 });
-
-export type AuthClient = typeof authClient;

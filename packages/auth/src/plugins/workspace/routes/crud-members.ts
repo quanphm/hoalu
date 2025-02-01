@@ -15,7 +15,7 @@ export const addMember = createAuthEndpoint(
 		body: z.object({
 			userId: z.number(),
 			role: z.string(),
-			workspaceId: z.number().optional(),
+			workspaceId: z.number(),
 		}),
 		use: [workspaceMiddleware],
 		metadata: {
@@ -23,20 +23,12 @@ export const addMember = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const session = ctx.body.userId
-			? await getSessionFromCtx<
-					User,
-					{
-						activeWorkspaceId?: number;
-					}
-				>(ctx).catch((_e) => null)
-			: null;
-		const orgId = ctx.body.workspaceId || session?.session.activeWorkspaceId;
+		const orgId = ctx.body.workspaceId;
 		if (!orgId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
-					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
+					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 				},
 			});
 		}
@@ -78,12 +70,9 @@ export const removeMember = createAuthEndpoint(
 			memberId: z.number({
 				description: "The user ID the member to remove",
 			}),
-			workspaceId: z
-				.number({
-					description:
-						"The ID of the workspace to remove the member from. If not provided, the active workspace will be used",
-				})
-				.optional(),
+			workspaceId: z.number({
+				description: "The ID of the workspace to remove the member from.",
+			}),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
@@ -127,7 +116,7 @@ export const removeMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const workspaceId = ctx.body.workspaceId || session.session.activeWorkspaceId;
+		const workspaceId = ctx.body.workspaceId;
 		if (!workspaceId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -177,7 +166,7 @@ export const removeMember = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 			});
 		}
-		await adapter.deleteMember(existing.id);
+		await adapter.deleteMember(existing.userId, existing.workspaceId);
 
 		return ctx.json({
 			member: existing,
@@ -191,8 +180,8 @@ export const updateMemberRole = createAuthEndpoint(
 		method: "POST",
 		body: z.object({
 			role: z.string(),
-			memberId: z.number(),
-			workspaceId: z.number().optional(),
+			userId: z.number(),
+			workspaceId: z.number(),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
@@ -216,7 +205,7 @@ export const updateMemberRole = createAuthEndpoint(
 													type: "number",
 												},
 												workspaceId: {
-													type: "string",
+													type: "number",
 												},
 												role: {
 													type: "string",
@@ -236,7 +225,7 @@ export const updateMemberRole = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const workspaceId = ctx.body.workspaceId || session.session.activeWorkspaceId;
+		const workspaceId = ctx.body.workspaceId;
 		if (!workspaceId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -285,7 +274,7 @@ export const updateMemberRole = createAuthEndpoint(
 			});
 		}
 
-		const updatedMember = await adapter.updateMember(ctx.body.memberId, ctx.body.role as string);
+		const updatedMember = await adapter.updateMember(ctx.body.userId, workspaceId, ctx.body.role);
 		if (!updatedMember) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
@@ -302,6 +291,13 @@ export const getActiveMember = createAuthEndpoint(
 	"/workspace/get-active-member",
 	{
 		method: "GET",
+		query: z.optional(
+			z.object({
+				idOrSlug: z.string({
+					description: "The workspace public_id or slug to get",
+				}),
+			}),
+		),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {
@@ -321,7 +317,7 @@ export const getActiveMember = createAuthEndpoint(
 											type: "string",
 										},
 										workspaceId: {
-											type: "string",
+											type: "number",
 										},
 										role: {
 											type: "string",
@@ -338,8 +334,8 @@ export const getActiveMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const workspaceId = session.session.activeWorkspaceId;
-		if (!workspaceId) {
+		const idOrSlug = ctx.query?.idOrSlug;
+		if (!idOrSlug) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
@@ -348,9 +344,15 @@ export const getActiveMember = createAuthEndpoint(
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const workspace = await adapter.findWorkspace(idOrSlug);
+		if (!workspace) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			});
+		}
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			workspaceId,
+			workspaceId: workspace.id,
 		});
 		if (!member) {
 			return ctx.json(null, {
@@ -360,6 +362,7 @@ export const getActiveMember = createAuthEndpoint(
 				},
 			});
 		}
+
 		return ctx.json(member);
 	},
 );

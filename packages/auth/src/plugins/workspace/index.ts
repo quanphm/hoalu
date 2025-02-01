@@ -1,6 +1,6 @@
 import { getSessionFromCtx } from "better-auth/api";
 import { type AccessControl, type Role, defaultRoles } from "better-auth/plugins/access";
-import type { AuthContext, BetterAuthPlugin, Prettify } from "better-auth/types";
+import type { AuthContext, BetterAuthPlugin } from "better-auth/types";
 import { shimContext } from "../../utils/shim";
 import type { User } from "../../utils/types";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
@@ -217,14 +217,6 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		id: "workspace",
 		endpoints: api,
 		schema: {
-			session: {
-				fields: {
-					activeWorkspaceId: {
-						type: "number",
-						required: false,
-					},
-				},
-			},
 			workspace: {
 				fields: {
 					name: {
@@ -326,22 +318,6 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 			Workspace: {} as Workspace,
 			Invitation: {} as Invitation,
 			Member: {} as Member,
-			ActiveWorkspace: {} as Prettify<
-				Workspace & {
-					members: Prettify<
-						Member & {
-							user: {
-								id: string;
-								name: string;
-								email: string;
-								publicId: string;
-								image?: string | null;
-							};
-						}
-					>[];
-					invitations: Invitation[];
-				}
-			>,
 		},
 		$ERROR_CODES: WORKSPACE_ERROR_CODES,
 	} satisfies BetterAuthPlugin;

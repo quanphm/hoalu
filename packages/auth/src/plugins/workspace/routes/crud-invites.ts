@@ -92,7 +92,7 @@ export const createInvitation = createAuthEndpoint(
 		const workspacePublicId = ctx.body.workspacePublicId;
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 
-		const workspace = await adapter.findWorkspaceByPublicId(workspacePublicId);
+		const workspace = await adapter.findWorkspace(workspacePublicId);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -476,7 +476,7 @@ export const getInvitation = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
-		const workspace = await adapter.findWorkspaceById(invitation.workspaceId);
+		const workspace = await adapter.findWorkspace(invitation.workspaceId);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -484,7 +484,7 @@ export const getInvitation = createAuthEndpoint(
 		}
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: invitation.inviterId,
-			workspaceId: invitation.workspaceId as any,
+			workspaceId: invitation.workspaceId,
 		});
 		if (!member) {
 			throw new APIError("BAD_REQUEST", {

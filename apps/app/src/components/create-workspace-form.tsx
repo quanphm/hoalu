@@ -1,6 +1,6 @@
 import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
-import { CreateWorkspaceFormSchema, type WorkspaceInputSchema } from "@/lib/schema";
+import { CreateWorkspaceFormSchema, type CreateWorkspaceInputSchema } from "@/lib/schema";
 import { slugify } from "@hoalu/common/slugify";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
@@ -15,7 +15,7 @@ export function CreateWorkspaceForm() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
-	const form = useForm<WorkspaceInputSchema>({
+	const form = useForm<CreateWorkspaceInputSchema>({
 		resolver: valibotResolver(CreateWorkspaceFormSchema),
 		values: {
 			name: "",
@@ -25,7 +25,7 @@ export function CreateWorkspaceForm() {
 	const { watch, setValue } = form;
 	const watchName = watch("name");
 
-	async function onSubmit(values: WorkspaceInputSchema) {
+	async function onSubmit(values: CreateWorkspaceInputSchema) {
 		await authClient.workspace.create(values, {
 			onSuccess: (ctx) => {
 				toast.success("🎉 Workspace created.");

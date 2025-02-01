@@ -40,7 +40,7 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+			<ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
 				{children}
 				<Toaster />
 			</ThemeProvider>
