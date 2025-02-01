@@ -18,10 +18,12 @@ import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as DashboardSlugIndexImport } from './routes/_dashboard/$slug/index'
+import { Route as InviteIdAcceptImport } from './routes/invite.$id.accept'
 import { Route as DashboardAccountTokensImport } from './routes/_dashboard/account/tokens'
 import { Route as DashboardAccountPreferencesImport } from './routes/_dashboard/account/preferences'
 import { Route as DashboardSlugTasksImport } from './routes/_dashboard/$slug/tasks'
 import { Route as DashboardSlugSettingsImport } from './routes/_dashboard/$slug/settings'
+import { Route as DashboardSlugMembersImport } from './routes/_dashboard/$slug/members'
 import { Route as DashboardSlugFinanceImport } from './routes/_dashboard/$slug/finance'
 
 // Create/Update Routes
@@ -66,6 +68,12 @@ const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
   getParentRoute: () => DashboardSlugRoute,
 } as any)
 
+const InviteIdAcceptRoute = InviteIdAcceptImport.update({
+  id: '/invite/$id/accept',
+  path: '/invite/$id/accept',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const DashboardAccountTokensRoute = DashboardAccountTokensImport.update({
   id: '/account/tokens',
   path: '/account/tokens',
@@ -88,6 +96,12 @@ const DashboardSlugTasksRoute = DashboardSlugTasksImport.update({
 const DashboardSlugSettingsRoute = DashboardSlugSettingsImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => DashboardSlugRoute,
+} as any)
+
+const DashboardSlugMembersRoute = DashboardSlugMembersImport.update({
+  id: '/members',
+  path: '/members',
   getParentRoute: () => DashboardSlugRoute,
 } as any)
 
@@ -150,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugFinanceImport
       parentRoute: typeof DashboardSlugImport
     }
+    '/_dashboard/$slug/members': {
+      id: '/_dashboard/$slug/members'
+      path: '/members'
+      fullPath: '/$slug/members'
+      preLoaderRoute: typeof DashboardSlugMembersImport
+      parentRoute: typeof DashboardSlugImport
+    }
     '/_dashboard/$slug/settings': {
       id: '/_dashboard/$slug/settings'
       path: '/settings'
@@ -178,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountTokensImport
       parentRoute: typeof DashboardImport
     }
+    '/invite/$id/accept': {
+      id: '/invite/$id/accept'
+      path: '/invite/$id/accept'
+      fullPath: '/invite/$id/accept'
+      preLoaderRoute: typeof InviteIdAcceptImport
+      parentRoute: typeof rootRoute
+    }
     '/_dashboard/$slug/': {
       id: '/_dashboard/$slug/'
       path: '/'
@@ -204,6 +232,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardSlugRouteChildren {
   DashboardSlugFinanceRoute: typeof DashboardSlugFinanceRoute
+  DashboardSlugMembersRoute: typeof DashboardSlugMembersRoute
   DashboardSlugSettingsRoute: typeof DashboardSlugSettingsRoute
   DashboardSlugTasksRoute: typeof DashboardSlugTasksRoute
   DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
@@ -211,6 +240,7 @@ interface DashboardSlugRouteChildren {
 
 const DashboardSlugRouteChildren: DashboardSlugRouteChildren = {
   DashboardSlugFinanceRoute: DashboardSlugFinanceRoute,
+  DashboardSlugMembersRoute: DashboardSlugMembersRoute,
   DashboardSlugSettingsRoute: DashboardSlugSettingsRoute,
   DashboardSlugTasksRoute: DashboardSlugTasksRoute,
   DashboardSlugIndexRoute: DashboardSlugIndexRoute,
@@ -245,10 +275,12 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof DashboardSlugRouteWithChildren
   '/': typeof DashboardIndexRoute
   '/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/$slug/members': typeof DashboardSlugMembersRoute
   '/$slug/settings': typeof DashboardSlugSettingsRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug/': typeof DashboardSlugIndexRoute
 }
 
@@ -258,10 +290,12 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
   '/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/$slug/members': typeof DashboardSlugMembersRoute
   '/$slug/settings': typeof DashboardSlugSettingsRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug': typeof DashboardSlugIndexRoute
 }
 
@@ -274,10 +308,12 @@ export interface FileRoutesById {
   '/_dashboard/$slug': typeof DashboardSlugRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/$slug/finance': typeof DashboardSlugFinanceRoute
+  '/_dashboard/$slug/members': typeof DashboardSlugMembersRoute
   '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRoute
   '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
 }
 
@@ -290,10 +326,12 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/'
     | '/$slug/finance'
+    | '/$slug/members'
     | '/$slug/settings'
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
+    | '/invite/$id/accept'
     | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -302,10 +340,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/$slug/finance'
+    | '/$slug/members'
     | '/$slug/settings'
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
+    | '/invite/$id/accept'
     | '/$slug'
   id:
     | '__root__'
@@ -316,10 +356,12 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug'
     | '/_dashboard/'
     | '/_dashboard/$slug/finance'
+    | '/_dashboard/$slug/members'
     | '/_dashboard/$slug/settings'
     | '/_dashboard/$slug/tasks'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
+    | '/invite/$id/accept'
     | '/_dashboard/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -327,11 +369,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
+  InviteIdAcceptRoute: typeof InviteIdAcceptRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  InviteIdAcceptRoute: InviteIdAcceptRoute,
 }
 
 export const routeTree = rootRoute
@@ -345,7 +389,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_dashboard"
+        "/_dashboard",
+        "/invite/$id/accept"
       ]
     },
     "/_auth": {
@@ -377,6 +422,7 @@ export const routeTree = rootRoute
       "parent": "/_dashboard",
       "children": [
         "/_dashboard/$slug/finance",
+        "/_dashboard/$slug/members",
         "/_dashboard/$slug/settings",
         "/_dashboard/$slug/tasks",
         "/_dashboard/$slug/"
@@ -388,6 +434,10 @@ export const routeTree = rootRoute
     },
     "/_dashboard/$slug/finance": {
       "filePath": "_dashboard/$slug/finance.tsx",
+      "parent": "/_dashboard/$slug"
+    },
+    "/_dashboard/$slug/members": {
+      "filePath": "_dashboard/$slug/members.tsx",
       "parent": "/_dashboard/$slug"
     },
     "/_dashboard/$slug/settings": {
@@ -405,6 +455,9 @@ export const routeTree = rootRoute
     "/_dashboard/account/tokens": {
       "filePath": "_dashboard/account/tokens.tsx",
       "parent": "/_dashboard"
+    },
+    "/invite/$id/accept": {
+      "filePath": "invite.$id.accept.tsx"
     },
     "/_dashboard/$slug/": {
       "filePath": "_dashboard/$slug/index.tsx",

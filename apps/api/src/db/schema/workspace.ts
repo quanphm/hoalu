@@ -1,4 +1,4 @@
-import { bigint, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { bigint, index, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const workspace = pgTable(
@@ -18,7 +18,6 @@ export const workspace = pgTable(
 export const member = pgTable(
 	"member",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
 		workspaceId: bigint("workspace_id", { mode: "number" })
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
@@ -28,11 +27,11 @@ export const member = pgTable(
 		role: text("role").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 	},
-	// (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
+	(table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
 );
 
 export const invitation = pgTable("invitation", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid("id").primaryKey(),
 	email: text("email").notNull(),
 	role: text("role"),
 	status: text("status").notNull(),

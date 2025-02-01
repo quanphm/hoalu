@@ -8,7 +8,6 @@ import {
 	memberAc,
 	ownerAc,
 } from "better-auth/plugins/access";
-import type { Prettify } from "better-auth/types";
 import type { BetterAuthClientPlugin } from "better-auth/types";
 import { atom } from "nanostores";
 import type { workspace } from "./index";
@@ -23,8 +22,6 @@ interface WorkspaceClientOptions {
 
 export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) => {
 	const $listWorkspace = atom<boolean>(false);
-	const $activeWorkspaceSignal = atom<boolean>(false);
-	const $activeMemberSignal = atom<boolean>(false);
 
 	type DefaultStatements = typeof defaultStatements;
 	type Statements = O["ac"] extends AccessControl<infer S>
@@ -34,9 +31,9 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 		: DefaultStatements;
 
 	const roles = {
+		owner: ownerAc,
 		admin: adminAc,
 		member: memberAc,
-		owner: ownerAc,
 		...options?.roles,
 	};
 
@@ -56,22 +53,6 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 		>,
 		getActions: ($fetch) => ({
 			$Infer: {
-				ActiveWorkspace: {} as Prettify<
-					Workspace & {
-						members: Prettify<
-							Member & {
-								user: {
-									id: string;
-									name: string;
-									email: string;
-									publicId: string;
-									image?: string | null;
-								};
-							}
-						>[];
-						invitations: Invitation[];
-					}
-				>,
 				Workspace: {} as Workspace,
 				Invitation: {} as Invitation,
 				Member: {} as Member,
@@ -103,44 +84,10 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 				method: "GET",
 			});
 
-			const activeWorkspace = useAuthQuery<
-				Prettify<
-					Workspace & {
-						members: (Member & {
-							user: {
-								id: string;
-								name: string;
-								email: string;
-								image: string | undefined;
-							};
-						})[];
-						invitations: Invitation[];
-					}
-				>
-			>([$activeWorkspaceSignal], "/workspace/get-full-workspace", $fetch, () => ({
-				method: "GET",
-			}));
-
-			const activeMember = useAuthQuery<Member>(
-				[$activeMemberSignal],
-				"/workspace/get-active-member",
-				$fetch,
-				{
-					method: "GET",
-				},
-			);
-
 			return {
 				$listWorkspace,
-				$activeWorkspaceSignal,
-				$activeMemberSignal,
 				listWorkspaces,
-				activeWorkspace,
-				activeMember,
 			};
-		},
-		pathMethods: {
-			"/workspace/get-full-workspace": "GET",
 		},
 		atomListeners: [
 			{
@@ -152,18 +99,6 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 					);
 				},
 				signal: "$listOrg",
-			},
-			{
-				matcher(path) {
-					return path.startsWith("/workspace");
-				},
-				signal: "$activeOrgSignal",
-			},
-			{
-				matcher(path) {
-					return path.includes("/workspace/update-member-role");
-				},
-				signal: "$activeMemberSignal",
 			},
 		],
 	} satisfies BetterAuthClientPlugin;

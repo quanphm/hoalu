@@ -20,7 +20,6 @@ CREATE TABLE "session" (
 	"user_id" bigint NOT NULL,
 	"ip_address" text,
 	"user_agent" text,
-	"active_workspace_id" bigint,
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,
@@ -59,7 +58,7 @@ CREATE TABLE "task" (
 );
 --> statement-breakpoint
 CREATE TABLE "invitation" (
-	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "invitation_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"id" uuid PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"role" text,
 	"status" text NOT NULL,
@@ -69,11 +68,11 @@ CREATE TABLE "invitation" (
 );
 --> statement-breakpoint
 CREATE TABLE "member" (
-	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "member_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
 	"workspace_id" bigint NOT NULL,
 	"user_id" bigint NOT NULL,
 	"role" text NOT NULL,
-	"created_at" timestamp NOT NULL
+	"created_at" timestamp NOT NULL,
+	CONSTRAINT "member_workspace_id_user_id_pk" PRIMARY KEY("workspace_id","user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "workspace" (

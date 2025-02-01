@@ -1,6 +1,6 @@
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { listWorkspacesOptions } from "@/services/query-options";
 import { ChevronsUpDownIcon, ExternalLinkIcon, HomeIcon, PlusIcon } from "@hoalu/icons/lucide";
 import {
 	DropdownMenu,

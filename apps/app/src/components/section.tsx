@@ -13,8 +13,30 @@ function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {
 	);
 }
 
-function SectionContent({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
-	return <div ref={ref} className={cn("grid grid-cols-3 gap-6", className)} {...props} />;
+function SectionContent({
+	className,
+	ref,
+	columns = 1,
+	...props
+}: React.ComponentPropsWithRef<"div"> & {
+	columns?: number;
+}) {
+	return (
+		<div
+			ref={ref}
+			style={
+				{
+					"--grid-cols": `repeat(${columns}, minmax(0, 1fr))`,
+				} as React.CSSProperties
+			}
+			className={cn("grid grid-cols-(--grid-cols) gap-6", className)}
+			{...props}
+		/>
+	);
 }
 
-export { Section, SectionHeader, SectionContent };
+function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"p">) {
+	return <p className={cn("font-semibold text-md tracking-tight", className)} {...props} />;
+}
+
+export { Section, SectionHeader, SectionContent, SectionTitle };

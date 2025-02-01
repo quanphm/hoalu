@@ -5,7 +5,8 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"./verification-email": "./emails/verification-email.tsx"
+		"./verify-email": "./emails/verify-email.tsx",
+		"./join-workspace": "./emails/join-workspace.tsx"
 	},
 	"scripts": {
 		"lint": "biome check ./emails",

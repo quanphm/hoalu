@@ -1,5 +1,5 @@
 {
-  "id": "a8f655c0-2cdc-48b1-8da8-14ff78df6e44",
+  "id": "fcfb6b1d-bb68-45e4-af00-4f3889837263",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -162,12 +162,6 @@
         "user_agent": {
           "name": "user_agent",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "active_workspace_id": {
-          "name": "active_workspace_id",
-          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },
@@ -482,20 +476,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "invitation_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "9223372036854775807",
-            "cache": "1",
-            "cycle": false
-          }
+          "notNull": true
         },
         "email": {
           "name": "email",
@@ -573,23 +556,6 @@
       "name": "member",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "member_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "9223372036854775807",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "workspace_id": {
           "name": "workspace_id",
           "type": "bigint",
@@ -644,7 +610,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "member_workspace_id_user_id_pk": {
+          "name": "member_workspace_id_user_id_pk",
+          "columns": [
+            "workspace_id",
+            "user_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

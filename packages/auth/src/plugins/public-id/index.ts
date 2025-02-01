@@ -26,7 +26,7 @@ export const userPublicId = () => {
 									return {
 										data: {
 											...user,
-											publicId: generateId("user"),
+											publicId: generateId({ kind: "user" }),
 										},
 									};
 								},

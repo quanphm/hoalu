@@ -16,14 +16,11 @@ interface Props {
 	name: string;
 }
 
-export default function VerificationEmail({ url, name }: Props) {
+export default function VerifyEmail({ url, name }: Props) {
 	return (
 		<Html>
 			<Head />
-			<Preview>
-				Hello {name}, please help us verify your Hoalu account email address by clicking the button
-				bellow.
-			</Preview>
+			<Preview>Verify your new email address with Hoalu. Clicking the link bellow.</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
 					<Container className="mx-auto my-10 max-w-[465px] rounded-md border border-[#eaeaea] border-solid px-5 py-3">
@@ -31,9 +28,9 @@ export default function VerificationEmail({ url, name }: Props) {
 							Verify your email address
 						</Heading>
 						<Text>
-							Hello {name}!<br />
-							Please verify your email address by clicking the button below.
+							Hello <strong>{name}</strong>,
 						</Text>
+						<Text>Please verify your email address by clicking the button below.</Text>
 						<Button
 							className="block rounded-md bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
 							href={url}
@@ -60,7 +57,7 @@ export default function VerificationEmail({ url, name }: Props) {
 	);
 }
 
-VerificationEmail.PreviewProps = {
+VerifyEmail.PreviewProps = {
 	url: "http://localhost:3000/auth/verify-email?token=1234567890&callbackURL=/",
 	name: "John Doe",
 } as Props;

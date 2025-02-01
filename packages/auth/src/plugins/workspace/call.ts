@@ -12,9 +12,7 @@ export const workspaceMiddleware = createAuthMiddleware(async (ctx) => {
 			[key: string]: Role<{}>;
 		};
 		getSession: (context: Context<any, any>) => Promise<{
-			session: Session & {
-				activeWorkspaceId?: number;
-			};
+			session: Session;
 			user: User;
 		}>;
 	};
@@ -26,9 +24,7 @@ export const workspaceSessionMiddleware = createAuthMiddleware(
 	},
 	async (ctx) => {
 		const session = ctx.context.session as unknown as {
-			session: Session & {
-				activeWorkspaceId?: number;
-			};
+			session: Session;
 			user: User;
 		};
 		return {

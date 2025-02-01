@@ -1,5 +1,6 @@
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
-import VerificationEmail from "@hoalu/email/verification-email";
+import JoinWorkspace from "@hoalu/email/join-workspace";
+import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
@@ -56,9 +57,32 @@ export const auth = betterAuth({
 			sendEmail({
 				to: user.email,
 				subject: "[Hoalu] Please verify your email address",
-				react: VerificationEmail({ url: url.href, name: user.name }),
+				react: VerifyEmail({ url: url.href, name: user.name }),
 			});
 		},
 	},
-	plugins: [userPublicId(), workspace(), openAPI()],
+	plugins: [
+		userPublicId(),
+		workspace({
+			sendInvitationEmail: async (data) => {
+				const inviteLink = `${process.env.PUBLIC_APP_BASE_URL}/invite/${data.id}/accept`;
+
+				if (process.env.NODE_ENV === "development") {
+					console.log("Inviation Link:", inviteLink);
+					return;
+				}
+
+				sendEmail({
+					to: data.email,
+					subject: `[Hoalu] ${data.inviter.user.name} invited you to ${data.workspace.name}`,
+					react: JoinWorkspace({
+						inviteLink,
+						inviterName: data.inviter.user.name,
+						workspaceName: data.workspace.name,
+					}),
+				});
+			},
+		}),
+		openAPI(),
+	],
 });

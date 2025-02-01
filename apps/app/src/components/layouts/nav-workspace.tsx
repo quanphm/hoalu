@@ -1,4 +1,10 @@
-import { GalleryVerticalIcon, LandmarkIcon, ListTodoIcon, SettingsIcon } from "@hoalu/icons/lucide";
+import {
+	GalleryVerticalIcon,
+	LandmarkIcon,
+	ListTodoIcon,
+	SettingsIcon,
+	UsersIcon,
+} from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -17,7 +23,7 @@ export function NavWorkspace() {
 					<SidebarMenuButton asChild tooltip="Overview">
 						<Link from="/$slug/" to=".">
 							<GalleryVerticalIcon />
-							<span>Overview</span>
+							<span>Dashboard</span>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
@@ -36,6 +42,15 @@ export function NavWorkspace() {
 						<Link from="/$slug/" to="./tasks">
 							<ListTodoIcon />
 							<span>Tasks</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild tooltip="Settings">
+						<Link from="/$slug/" to="./members">
+							<UsersIcon />
+							<span>Members</span>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
