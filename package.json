@@ -3,8 +3,8 @@
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
 	"dependencies": {
-		"@biomejs/biome": "^1.9.3",
-		"typescript": "^5.7.2"
+		"@biomejs/biome": "^1.9.4",
+		"typescript": "^5.7.3"
 	},
 	"packageManager": "bun@1.2.0"
 }

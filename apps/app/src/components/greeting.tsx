@@ -9,7 +9,7 @@ export function Greeting() {
 	const message = currentHour < 12 ? "morning" : currentHour < 17 ? "afternoon" : "evening";
 
 	return (
-		<p className="font-semibold text-2xl leading-none tracking-tight">
+		<p className="font-semibold text-2xl leading-none">
 			{icon} Good {message}, {user?.name}
 		</p>
 	);
