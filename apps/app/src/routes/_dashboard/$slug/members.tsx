@@ -1,11 +1,14 @@
 import { InviteDialog } from "@/components/invite-dialog";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, redirect, useLoaderData } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/members")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
@@ -20,6 +23,7 @@ export const Route = createFileRoute("/_dashboard/$slug/members")({
 });
 
 function RouteComponent() {
+	const { workspace } = useLoaderData({ from: "/_dashboard/$slug" });
 	const member = Route.useLoaderData();
 	const canInvite = authClient.workspace.checkRolePermission({
 		role: member.role || "member",
@@ -41,7 +45,20 @@ function RouteComponent() {
 					</InviteDialog>
 				)}
 			</SectionHeader>
-			<SectionContent>Content</SectionContent>
+			<SectionContent>
+				{workspace.members.map((member) => (
+					<div key={member.user.publicId} className="flex items-center gap-2">
+						<Avatar className="h-8 w-8">
+							<AvatarImage src={member.user.image || ""} alt={member.user.name} />
+							<AvatarFallback>{extractLetterFromName(member.user.name)}</AvatarFallback>
+						</Avatar>
+						<div className="grid flex-1 text-left text-sm leading-tight">
+							<span className="truncate font-semibold">{member.user.name}</span>
+							<span className="truncate text-xs">{member.user.email}</span>
+						</div>
+					</div>
+				))}
+			</SectionContent>
 		</Section>
 	);
 }

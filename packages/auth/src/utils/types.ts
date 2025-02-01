@@ -2,6 +2,7 @@ import type { Session as BetterAuthSession, User as BetterAuthUser } from "bette
 
 export type User = Omit<BetterAuthUser, "id"> & {
 	id: number;
+	publicId: string;
 };
 
 export type Session = Omit<BetterAuthSession, "id" | "userId"> & {

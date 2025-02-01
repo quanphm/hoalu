@@ -251,8 +251,19 @@ export const acceptInvitation = createAuthEndpoint(
 			});
 		}
 
+		const workspace = await adapter.findWorkspace(invitation.workspaceId);
+		if (!workspace) {
+			return ctx.json(null, {
+				status: HTTPStatus.codes.BAD_REQUEST,
+				body: {
+					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+				},
+			});
+		}
+
 		return ctx.json({
 			invitation: acceptedId,
+			workspace,
 			member,
 		});
 	},
@@ -458,22 +469,11 @@ export const getInvitation = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const session = await getSessionFromCtx(ctx);
-		if (!session) {
-			throw new APIError("UNAUTHORIZED", {
-				message: "Not authenticated",
-			});
-		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 		const invitation = await adapter.findInvitationById(ctx.query.id);
 		if (!invitation || invitation.status !== "pending" || invitation.expiresAt < new Date()) {
 			throw new APIError("BAD_REQUEST", {
 				message: "Invitation not found!",
-			});
-		}
-		if (invitation.email !== session.user.email) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
 			});
 		}
 		const workspace = await adapter.findWorkspace(invitation.workspaceId);
@@ -493,11 +493,14 @@ export const getInvitation = createAuthEndpoint(
 		}
 
 		return ctx.json({
-			...invitation,
-			workspaceName: workspace.name,
-			workspaceSlug: workspace.slug,
+			id: invitation.id,
+			recipient: invitation.email,
+			status: invitation.status,
 			inviterEmail: member.user.email,
 			inviterName: member.user.name,
+			workspaceName: workspace.name,
+			workspaceLogo: workspace.logo,
+			expiresAt: invitation.expiresAt,
 		});
 	},
 );

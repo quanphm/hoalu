@@ -54,10 +54,11 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>Invite to your workspace</DialogTitle>
+					<DialogDescription>Invite your friends to collaborate.</DialogDescription>
 				</DialogHeader>
 				<HookForm id={id} form={form} onSubmit={onSubmit}>
 					<div className="grid gap-6">
-						<HookFormInput label="Email" name="email" autoFocus required autoComplete="off" />
+						<HookFormInput label="Email" name="email" autoFocus required />
 					</div>
 				</HookForm>
 				<DialogFooter>

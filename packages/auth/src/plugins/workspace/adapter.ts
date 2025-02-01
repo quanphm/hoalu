@@ -53,12 +53,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				}
 				return {
 					...member,
-					user: {
-						id: user.id,
-						name: user.name,
-						email: user.email,
-						image: user.image,
-					},
+					user,
 				};
 			});
 
