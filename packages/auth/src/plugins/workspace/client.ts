@@ -22,7 +22,6 @@ interface WorkspaceClientOptions {
 
 export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) => {
 	const $listWorkspace = atom<boolean>(false);
-	const $activeMemberSignal = atom<boolean>(false);
 
 	type DefaultStatements = typeof defaultStatements;
 	type Statements = O["ac"] extends AccessControl<infer S>
@@ -85,20 +84,9 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 				method: "GET",
 			});
 
-			const activeMember = useAuthQuery<Member>(
-				[$activeMemberSignal],
-				"/workspace/get-active-member",
-				$fetch,
-				{
-					method: "GET",
-				},
-			);
-
 			return {
 				$listWorkspace,
-				$activeMemberSignal,
 				listWorkspaces,
-				activeMember,
 			};
 		},
 		atomListeners: [
@@ -111,12 +99,6 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 					);
 				},
 				signal: "$listOrg",
-			},
-			{
-				matcher(path) {
-					return path.includes("/workspace/update-member-role");
-				},
-				signal: "$activeMemberSignal",
 			},
 		],
 	} satisfies BetterAuthClientPlugin;
