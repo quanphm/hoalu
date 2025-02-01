@@ -1,9 +1,9 @@
 import { BasicCard, WorkspaceCard } from "@/components/cards";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 import { CreateWorkspaceForm } from "@/components/create-workspace-form";
+import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { useAuth } from "@/hooks/useAuth";
 import { listWorkspacesOptions } from "@/lib/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -15,14 +15,12 @@ export const Route = createFileRoute("/_dashboard/")({
 });
 
 function RouteComponent() {
-	const { user } = useAuth();
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 
 	if (workspaces.length === 0) {
 		return (
 			<PageContent className="gap-12">
-				<p className="font-semibold text-2xl tracking-tight">Good afternoon, {user?.name}</p>
-
+				<Greeting />
 				<Section>
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
@@ -42,13 +40,12 @@ function RouteComponent() {
 
 	return (
 		<PageContent className="gap-10">
-			<p className="font-semibold text-2xl tracking-tight">Good afternoon, {user?.name}</p>
-
+			<Greeting />
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Getting started</SectionTitle>
 				</SectionHeader>
-				<SectionContent>
+				<SectionContent columns={3}>
 					<BasicCard
 						title="Create workspace"
 						content="Experience the power of AI in generating unique content."
@@ -74,7 +71,7 @@ function RouteComponent() {
 						</Button>
 					</CreateWorkspaceDialog>
 				</SectionHeader>
-				<SectionContent>
+				<SectionContent columns={3}>
 					{workspaces.map((ws) => (
 						<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }}>
 							<WorkspaceCard {...ws} />

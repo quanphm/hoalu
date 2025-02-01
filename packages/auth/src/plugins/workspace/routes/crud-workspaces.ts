@@ -113,9 +113,6 @@ export const createWorkspace = createAuthEndpoint(
 			},
 			user: user,
 		});
-		if (ctx.context.session) {
-			await adapter.setActiveWorkspace(ctx.context.session.session.token, workspace.id);
-		}
 		return ctx.json(workspace);
 	},
 );
@@ -303,12 +300,6 @@ export const deleteWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_WORKSPACE,
 			});
 		}
-		if (session.session.activeWorkspaceId && workspaceId === session.session.activeWorkspaceId) {
-			/**
-			 * If the workspace is deleted, we set the active workspace to null
-			 */
-			await adapter.setActiveWorkspace(session.session.token, null);
-		}
 		const option = ctx.context.orgOptions.workspaceDeletion;
 		if (option?.disabled) {
 			throw new APIError("FORBIDDEN");
@@ -393,66 +384,6 @@ export const getFullWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
-
-		return ctx.json(workspace);
-	},
-);
-
-export const setActiveWorkspace = createAuthEndpoint(
-	"/workspace/set-active",
-	{
-		method: "POST",
-		body: z.object({
-			idOrSlug: z.string({
-				description: "The workspace public_id or slug to set as active",
-			}),
-		}),
-		use: [workspaceSessionMiddleware, workspaceMiddleware],
-		metadata: {
-			openapi: {
-				description: "Set the active workspace",
-				responses: {
-					[HTTPStatus.codes.OK]: {
-						description: "Success",
-						content: {
-							"application/json": {
-								schema: {
-									type: "object",
-									description: "The workspace",
-									$ref: "#/components/schemas/Workspace",
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	},
-	async (ctx) => {
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const session = ctx.context.session;
-		const idOrSlug = ctx.body.idOrSlug;
-
-		const workspace = await adapter.findFullWorkspace(idOrSlug);
-		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
-		}
-
-		const isMember = workspace.members.find((member) => member.userId === session.user.id);
-		if (!isMember) {
-			await adapter.setActiveWorkspace(session.session.token, null);
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
-			});
-		}
-
-		const updatedSession = await adapter.setActiveWorkspace(session.session.token, workspace.id);
-		await setSessionCookie(ctx, {
-			session: updatedSession,
-			user: session.user,
-		});
 
 		return ctx.json(workspace);
 	},

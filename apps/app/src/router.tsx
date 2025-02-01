@@ -14,6 +14,7 @@ export function createRouter() {
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: NotFound,
 		defaultErrorComponent: DefaultCatchBoundary,
+		scrollRestoration: true,
 	});
 
 	return router;

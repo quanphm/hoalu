@@ -340,6 +340,9 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return workspaceId;
 		},
+		/**
+		 * @deprecated This function Will be deleted soon
+		 */
 		setActiveWorkspace: async (sessionToken: string, workspaceId: number | null) => {
 			const session = await context.internalAdapter.updateSession(sessionToken, {
 				activeWorkspaceId: workspaceId,

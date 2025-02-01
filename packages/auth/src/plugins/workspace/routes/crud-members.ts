@@ -178,12 +178,7 @@ export const removeMember = createAuthEndpoint(
 			});
 		}
 		await adapter.deleteMember(existing.id);
-		if (
-			session.user.id === existing.userId &&
-			session.session.activeWorkspaceId === existing.workspaceId
-		) {
-			await adapter.setActiveWorkspace(session.session.token, null);
-		}
+
 		return ctx.json({
 			member: existing,
 		});
