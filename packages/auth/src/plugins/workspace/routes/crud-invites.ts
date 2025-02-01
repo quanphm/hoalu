@@ -19,8 +19,8 @@ export const createInvitation = createAuthEndpoint(
 			role: z.string({
 				description: "The role to assign to the user",
 			}),
-			workspacePublicId: z.string({
-				description: "The workspace Public ID to invite the user to",
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to invite the user to",
 			}),
 			resend: z
 				.boolean({
@@ -89,10 +89,10 @@ export const createInvitation = createAuthEndpoint(
 		}
 
 		const session = ctx.context.session;
-		const workspacePublicId = ctx.body.workspacePublicId;
+		const idOrSlug = ctx.body.idOrSlug;
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
 
-		const workspace = await adapter.findWorkspace(workspacePublicId);
+		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
@@ -497,6 +497,7 @@ export const getInvitation = createAuthEndpoint(
 			workspaceName: workspace.name,
 			workspaceSlug: workspace.slug,
 			inviterEmail: member.user.email,
+			inviterName: member.user.name,
 		});
 	},
 );

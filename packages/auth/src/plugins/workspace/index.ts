@@ -278,6 +278,10 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 			},
 			invitation: {
 				fields: {
+					id: {
+						type: "string",
+						required: true,
+					},
 					workspaceId: {
 						type: "number",
 						required: true,

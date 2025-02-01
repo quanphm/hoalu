@@ -4,7 +4,7 @@ import { CreateWorkspaceForm } from "@/components/create-workspace-form";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { listWorkspacesOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";

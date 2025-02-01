@@ -1,4 +1,4 @@
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { listWorkspacesOptions } from "@/services/query-options";
 import { HashIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,

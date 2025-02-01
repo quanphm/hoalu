@@ -35,12 +35,8 @@ export const invitationSchema = z.object({
 	email: z.string(),
 	role,
 	status: invitationStatus,
-	/**
-	 * The id of the user who invited the user.
-	 */
 	inviterId: z.number(),
 	expiresAt: z.date(),
 });
 const invitationSchemaInput = invitationSchema.omit({ id: true });
 export type Invitation = z.infer<typeof invitationSchema>;
-export type InvitationInput = z.infer<typeof invitationSchemaInput>;

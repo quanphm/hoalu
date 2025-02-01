@@ -18,6 +18,7 @@ import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as DashboardSlugIndexImport } from './routes/_dashboard/$slug/index'
+import { Route as InviteIdAcceptImport } from './routes/invite.$id.accept'
 import { Route as DashboardAccountTokensImport } from './routes/_dashboard/account/tokens'
 import { Route as DashboardAccountPreferencesImport } from './routes/_dashboard/account/preferences'
 import { Route as DashboardSlugTasksImport } from './routes/_dashboard/$slug/tasks'
@@ -65,6 +66,12 @@ const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardSlugRoute,
+} as any)
+
+const InviteIdAcceptRoute = InviteIdAcceptImport.update({
+  id: '/invite/$id/accept',
+  path: '/invite/$id/accept',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const DashboardAccountTokensRoute = DashboardAccountTokensImport.update({
@@ -192,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountTokensImport
       parentRoute: typeof DashboardImport
     }
+    '/invite/$id/accept': {
+      id: '/invite/$id/accept'
+      path: '/invite/$id/accept'
+      fullPath: '/invite/$id/accept'
+      preLoaderRoute: typeof InviteIdAcceptImport
+      parentRoute: typeof rootRoute
+    }
     '/_dashboard/$slug/': {
       id: '/_dashboard/$slug/'
       path: '/'
@@ -266,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug/': typeof DashboardSlugIndexRoute
 }
 
@@ -280,6 +295,7 @@ export interface FileRoutesByTo {
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug': typeof DashboardSlugIndexRoute
 }
 
@@ -297,6 +313,7 @@ export interface FileRoutesById {
   '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
+  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
 }
 
@@ -314,6 +331,7 @@ export interface FileRouteTypes {
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
+    | '/invite/$id/accept'
     | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -327,6 +345,7 @@ export interface FileRouteTypes {
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
+    | '/invite/$id/accept'
     | '/$slug'
   id:
     | '__root__'
@@ -342,6 +361,7 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug/tasks'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
+    | '/invite/$id/accept'
     | '/_dashboard/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -349,11 +369,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
+  InviteIdAcceptRoute: typeof InviteIdAcceptRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  InviteIdAcceptRoute: InviteIdAcceptRoute,
 }
 
 export const routeTree = rootRoute
@@ -367,7 +389,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_dashboard"
+        "/_dashboard",
+        "/invite/$id/accept"
       ]
     },
     "/_auth": {
@@ -432,6 +455,9 @@ export const routeTree = rootRoute
     "/_dashboard/account/tokens": {
       "filePath": "_dashboard/account/tokens.tsx",
       "parent": "/_dashboard"
+    },
+    "/invite/$id/accept": {
+      "filePath": "invite.$id.accept.tsx"
     },
     "/_dashboard/$slug/": {
       "filePath": "_dashboard/$slug/index.tsx",

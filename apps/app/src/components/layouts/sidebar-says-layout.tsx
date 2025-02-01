@@ -3,7 +3,7 @@ import { AppLogo } from "@/components/layouts/app-logo";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/workspace-switcher";
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { listWorkspacesOptions } from "@/services/query-options";
 import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SidebarFooter, SidebarInset, SidebarMenu, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";

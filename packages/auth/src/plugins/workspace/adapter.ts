@@ -333,7 +333,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		}) {
 			const defaultExpiration = 1000 * 60 * 60 * 24;
 			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration);
-			const invite = await adapter.create<Invitation, Invitation>({
+			const invite = await adapter.create({
 				model: "invitation",
 				data: {
 					id: generateId({ use: "uuid" }),
@@ -345,7 +345,6 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					inviterId: user.id,
 				},
 			});
-
 			return invite;
 		},
 		async findInvitationById(id: string) {

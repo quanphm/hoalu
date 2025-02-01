@@ -67,7 +67,7 @@ export const removeMember = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			memberId: z.number({
+			userId: z.number({
 				description: "The user ID the member to remove",
 			}),
 			workspaceId: z.number({
@@ -141,7 +141,7 @@ export const removeMember = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
 			});
 		}
-		const isLeaving = (member.userId as unknown as number) === ctx.body.memberId;
+		const isLeaving = member.userId === ctx.body.userId;
 		const isOwnerLeaving =
 			isLeaving && member.role === (ctx.context.orgOptions?.creatorRole || "owner");
 		if (isOwnerLeaving) {
@@ -160,7 +160,7 @@ export const removeMember = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_MEMBER,
 			});
 		}
-		const existing = await adapter.findMemberByUserId(ctx.body.memberId);
+		const existing = await adapter.findMemberByUserId(ctx.body.userId);
 		if (existing?.workspaceId !== workspaceId) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
@@ -291,13 +291,11 @@ export const getActiveMember = createAuthEndpoint(
 	"/workspace/get-active-member",
 	{
 		method: "GET",
-		query: z.optional(
-			z.object({
-				idOrSlug: z.string({
-					description: "The workspace public_id or slug to get",
-				}),
+		query: z.object({
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to get",
 			}),
-		),
+		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {
 			openapi: {

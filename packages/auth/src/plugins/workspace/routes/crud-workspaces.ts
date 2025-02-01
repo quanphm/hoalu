@@ -343,20 +343,15 @@ export const deleteWorkspace = createAuthEndpoint(
 	},
 );
 
-/**
- * Get full details of the workspace by `public_id` or `slug`.
- */
 export const getFullWorkspace = createAuthEndpoint(
 	"/workspace/get-full-workspace",
 	{
 		method: "GET",
-		query: z.optional(
-			z.object({
-				idOrSlug: z.string({
-					description: "The workspace public_id or slug to get",
-				}),
+		query: z.object({
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to get",
 			}),
-		),
+		}),
 		requireHeaders: true,
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {

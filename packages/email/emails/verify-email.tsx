@@ -20,10 +20,7 @@ export default function VerifyEmail({ url, name }: Props) {
 	return (
 		<Html>
 			<Head />
-			<Preview>
-				Hello {name}, please help us verify your Hoalu account email address by clicking the button
-				bellow
-			</Preview>
+			<Preview>Verify your new email address with Hoalu. Clicking the link bellow.</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
 					<Container className="mx-auto my-10 max-w-[465px] rounded-md border border-[#eaeaea] border-solid px-5 py-3">

@@ -1,5 +1,5 @@
 import { SidebarSaysLayout } from "@/components/layouts/sidebar-says-layout";
-import { listWorkspacesOptions } from "@/lib/query-options";
+import { listWorkspacesOptions } from "@/services/query-options";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard")({
