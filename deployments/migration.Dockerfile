@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.1-alpine
+FROM oven/bun:1.2.2-alpine
 WORKDIR /migrations
 
 RUN bun install drizzle-orm drizzle-kit postgres
