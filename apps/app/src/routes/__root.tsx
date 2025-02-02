@@ -1,5 +1,5 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
-import { ThemeProvider } from "@/components/theme-prodiver";
+import { Providers } from "@/components/providers";
 import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@hoalu/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
@@ -40,10 +40,10 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+			<Providers>
 				{children}
 				<Toaster />
-			</ThemeProvider>
+			</Providers>
 			<QueryDevtools buttonPosition="bottom-right" />
 			<RouterDevtools position="bottom-right" />
 		</>
