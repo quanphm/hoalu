@@ -6,9 +6,9 @@ import { type VariantProps, cva } from "class-variance-authority";
 const workspaceAvatarVariants = cva("rounded-lg", {
 	variants: {
 		size: {
-			default: "h-8 w-8",
-			lg: "h-14 w-14",
-			sm: "h-6 w-6 rounded-sm",
+			default: "size-8",
+			lg: "size-14",
+			sm: "size-6 rounded-sm",
 		},
 	},
 	defaultVariants: {
@@ -28,11 +28,16 @@ export function WorkspaceAvatar({
 	size,
 	className,
 }: Props & VariantProps<typeof workspaceAvatarVariants>) {
+	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage src={logo || undefined} alt={name} />
+			<AvatarImage
+				src={logo || `https://avatar.vercel.sh/${name}.png`}
+				alt={name}
+				className={cn(!logo && "grayscale")}
+			/>
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
-				{extractLetterFromName(name)}
+				{workspaceShortName}
 			</AvatarFallback>
 		</Avatar>
 	);

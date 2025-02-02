@@ -1,8 +1,7 @@
-import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
+import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
 import { ChevronsUpDownIcon, LogOutIcon } from "@hoalu/icons/lucide";
-import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -31,10 +30,7 @@ export function NavUser() {
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<Avatar className="h-8 w-8">
-								<AvatarImage src={user.image || ""} alt={user.name} />
-								<AvatarFallback>{extractLetterFromName(user.name)}</AvatarFallback>
-							</Avatar>
+							<UserAvatar name={user.name} image={user.image} />
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">{user.name}</span>
 								<span className="truncate text-xs">{user.email}</span>

@@ -1,6 +1,6 @@
 import { BasicCard, WorkspaceCard } from "@/components/cards";
-import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
-import { CreateWorkspaceForm } from "@/components/create-workspace-form";
+import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/create-workspace";
+import { CreateWorkspaceForm } from "@/components/create-workspace";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -25,7 +25,7 @@ function RouteComponent() {
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
 					</SectionHeader>
-					<SectionContent>
+					<SectionContent columns={3}>
 						<div className="col-span-2">
 							<p className="mb-6 text-muted-foreground text-sm">
 								Workspaces are shared environments where members can interact with content together.
@@ -65,10 +65,12 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Workspaces ({workspaces.length})</SectionTitle>
 					<CreateWorkspaceDialog>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create
-						</Button>
+						<CreateWorkspaceDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create
+							</Button>
+						</CreateWorkspaceDialogTrigger>
 					</CreateWorkspaceDialog>
 				</SectionHeader>
 				<SectionContent columns={3}>

@@ -18,7 +18,10 @@ const DialogOverlay = ({
 }: React.ComponentPropsWithRef<typeof DialogPrimitive.Overlay>) => (
 	<DialogPrimitive.Overlay
 		ref={ref}
-		className={cn("fixed inset-0 z-50 bg-black/80 backdrop-blur-sm", className)}
+		className={cn(
+			"fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/70 backdrop-blur-sm",
+			className,
+		)}
 		{...props}
 	/>
 );
@@ -31,21 +34,22 @@ const DialogContent = ({
 	...props
 }: React.ComponentPropsWithRef<typeof DialogPrimitive.Content>) => (
 	<DialogPortal>
-		<DialogOverlay />
-		<DialogPrimitive.Content
-			ref={ref}
-			className={cn(
-				"fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg",
-				className,
-			)}
-			{...props}
-		>
-			{children}
-			<DialogPrimitive.Close className="absolute top-4 right-4 cursor-pointer rounded-sm opacity-60 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-				<XIcon className="h-4 w-4" />
-				<span className="sr-only">Close</span>
-			</DialogPrimitive.Close>
-		</DialogPrimitive.Content>
+		<DialogOverlay>
+			<DialogPrimitive.Content
+				ref={ref}
+				className={cn(
+					"fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg",
+					className,
+				)}
+				{...props}
+			>
+				{children}
+				<DialogPrimitive.Close className="absolute top-4 right-4 cursor-pointer rounded-sm opacity-60 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+					<XIcon className="h-4 w-4" />
+					<span className="sr-only">Close</span>
+				</DialogPrimitive.Close>
+			</DialogPrimitive.Content>
+		</DialogOverlay>
 	</DialogPortal>
 );
 DialogContent.displayName = DialogPrimitive.Content.displayName;
