@@ -3,17 +3,66 @@ import { authClient } from "@/lib/auth-client";
 import { CreateWorkspaceFormSchema, type CreateWorkspaceInputSchema } from "@/lib/schema";
 import { slugify } from "@hoalu/common/slugify";
 import { Button } from "@hoalu/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useId } from "react";
+import { createContext, use, useEffect, useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function CreateWorkspaceForm() {
+type Context = {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+};
+
+const Context = createContext<Context | null>(null);
+
+function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const contextValue = useMemo<Context>(
+		() => ({
+			open,
+			setOpen,
+		}),
+		[open],
+	);
+
+	return (
+		<Context value={contextValue}>
+			<Dialog open={open} onOpenChange={setOpen}>
+				{children}
+
+				<DialogContent className="sm:max-w-[540px]">
+					<DialogHeader>
+						<DialogTitle>Create a new workspace</DialogTitle>
+						<DialogDescription>
+							Workspaces are shared environments where members can interact with content together.
+						</DialogDescription>
+					</DialogHeader>
+					<CreateWorkspaceForm />
+				</DialogContent>
+			</Dialog>
+		</Context>
+	);
+}
+
+function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
+	return <DialogTrigger asChild>{children}</DialogTrigger>;
+}
+
+function CreateWorkspaceForm() {
 	const id = useId();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const context = use(Context);
 
 	const form = useForm<CreateWorkspaceInputSchema>({
 		resolver: valibotResolver(CreateWorkspaceFormSchema),
@@ -32,6 +81,9 @@ export function CreateWorkspaceForm() {
 				queryClient.invalidateQueries({
 					queryKey: ["workspaces"],
 				});
+				if (context) {
+					context.setOpen(false);
+				}
 				navigate({
 					to: "/$slug",
 					params: {
@@ -76,3 +128,5 @@ export function CreateWorkspaceForm() {
 		</HookForm>
 	);
 }
+
+export { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger, CreateWorkspaceForm };

@@ -8,6 +8,7 @@
 		"./utils": "./src/utils/index.ts",
 		"./hooks": "./src/hooks/index.ts",
 		"./avatar": "./src/components/avatar.tsx",
+		"./badge": "./src/components/badge.tsx",
 		"./breadcrumb": "./src/components/breadcrumb.tsx",
 		"./button": "./src/components/button.tsx",
 		"./calendar": "./src/components/calendar.tsx",

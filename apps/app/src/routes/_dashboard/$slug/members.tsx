@@ -1,13 +1,12 @@
-import { InviteDialog } from "@/components/invite-dialog";
+import { InviteDialog } from "@/components/invite";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
+import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import { getActiveMemberOptions } from "@/services/query-options";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
-import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
+import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect, useLoaderData } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/members")({
@@ -45,17 +44,20 @@ function RouteComponent() {
 					</InviteDialog>
 				)}
 			</SectionHeader>
-			<SectionContent>
+			<SectionContent columns={3} className="gap-6">
 				{workspace.members.map((member) => (
-					<div key={member.user.publicId} className="flex items-center gap-2">
-						<Avatar className="h-8 w-8">
-							<AvatarImage src={member.user.image || ""} alt={member.user.name} />
-							<AvatarFallback>{extractLetterFromName(member.user.name)}</AvatarFallback>
-						</Avatar>
-						<div className="grid flex-1 text-left text-sm leading-tight">
-							<span className="truncate font-semibold">{member.user.name}</span>
-							<span className="truncate text-xs">{member.user.email}</span>
+					<div
+						key={member.user.publicId}
+						className="flex items-center gap-6 rounded-md border border-border bg-muted/50 p-3"
+					>
+						<div className="flex flex-1 items-center justify-between gap-2">
+							<UserAvatar name={member.user.name} image={member.user.image} />
+							<div className="grid flex-1 text-left text-sm">
+								<span className="truncate font-semibold">{member.user.name}</span>
+								<span className="truncate text-muted-foreground text-xs">{member.user.email}</span>
+							</div>
 						</div>
+						{member.role === "owner" && <Badge variant="success">Owner</Badge>}
 					</div>
 				))}
 			</SectionContent>

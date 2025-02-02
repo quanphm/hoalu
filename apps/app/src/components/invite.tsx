@@ -2,14 +2,7 @@ import { HookForm, HookFormInput } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
 import { InviteFormSchema, type InviteInputSchema } from "@/lib/schema";
 import { Button } from "@hoalu/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { valibotResolver } from "@hookform/resolvers/valibot";
@@ -54,7 +47,6 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>Invite to your workspace</DialogTitle>
-					<DialogDescription>Invite your friends to collaborate.</DialogDescription>
 				</DialogHeader>
 				<HookForm id={id} form={form} onSubmit={onSubmit}>
 					<div className="grid gap-6">
