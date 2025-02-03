@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../utils";
 
 const labelVariants = cva(
-	"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+	"text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 );
 
 const Label = ({ className, ...props }: React.ComponentPropsWithRef<"label">) => (

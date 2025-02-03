@@ -70,7 +70,7 @@ const FormItem = ({ className, ...props }: React.ComponentPropsWithRef<"div">) =
 
 	return (
 		<FormItemContext.Provider value={{ id }}>
-			<div className={cn("flex flex-col gap-2", className)} {...props} />
+			<div className={cn("flex flex-col gap-1.5", className)} {...props} />
 		</FormItemContext.Provider>
 	);
 };
@@ -130,7 +130,7 @@ const FormMessage = ({ className, children, ...props }: React.ComponentPropsWith
 			id={formMessageId}
 			role="alert"
 			aria-live="polite"
-			className={cn("font-medium text-[0.8rem] text-destructive", className)}
+			className={cn("text-destructive text-sm", className)}
 			{...props}
 		>
 			{body}

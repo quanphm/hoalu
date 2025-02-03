@@ -6,6 +6,11 @@ export const CreateWorkspaceFormSchema = v.object({
 });
 export type CreateWorkspaceInputSchema = v.InferInput<typeof CreateWorkspaceFormSchema>;
 
+export const DeleteWorkspaceFormSchema = v.object({
+	confirm: v.pipe(v.string(), v.nonEmpty()),
+});
+export type DeleteWorkspaceInputSchema = v.InferInput<typeof DeleteWorkspaceFormSchema>;
+
 export const InviteFormSchema = v.object({
 	email: v.pipe(v.string(), v.email(), v.nonEmpty()),
 });

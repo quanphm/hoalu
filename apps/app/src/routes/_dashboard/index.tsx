@@ -1,4 +1,4 @@
-import { BasicCard, WorkspaceCard } from "@/components/cards";
+import { ContentCard, WorkspaceCard } from "@/components/cards";
 import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/create-workspace";
 import { CreateWorkspaceForm } from "@/components/create-workspace";
 import { Greeting } from "@/components/greeting";
@@ -46,21 +46,20 @@ function RouteComponent() {
 					<SectionTitle>Getting started</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={3}>
-					<BasicCard
+					<ContentCard
 						title="Create workspace"
 						content="Experience the power of AI in generating unique content."
 					/>
-					<BasicCard
+					<ContentCard
 						title="Finance tracking"
 						content="Experience the power of AI in generating unique content."
 					/>
-					<BasicCard
+					<ContentCard
 						title="Group tasks"
 						content="Let AI handle the proofreading of your documents."
 					/>
 				</SectionContent>
 			</Section>
-
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Workspaces ({workspaces.length})</SectionTitle>
