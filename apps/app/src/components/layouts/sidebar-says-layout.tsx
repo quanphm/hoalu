@@ -75,7 +75,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 								<TwitterXIcon className="size-4" />
 							</a>
 						</div>
-						<p className="text-muted-foreground text-xs tracking-tight">Version 0.3.0</p>
+						<p className="text-muted-foreground text-xs tracking-tight">Version 0.4.0</p>
 					</div>
 				</SidebarFooter>
 			</Sidebar>
