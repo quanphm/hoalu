@@ -1,7 +1,8 @@
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { type VariantProps, cva } from "class-variance-authority";
 import { intlFormatDistance } from "date-fns";
 import { StarIcon } from "lucide-react";
 
@@ -10,7 +11,7 @@ interface BasicCardProps extends React.ComponentPropsWithRef<"div"> {
 	content: string;
 }
 
-export function BasicCard({ className, title, content, ...props }: BasicCardProps) {
+export function ContentCard({ className, title, content, ...props }: BasicCardProps) {
 	return (
 		<Card className={cn("hover:border-foreground/20", className)} {...props}>
 			<CardHeader className="flex flex-row items-start justify-between p-4">
@@ -53,6 +54,54 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 					Created {intlFormatDistance(props.createdAt, new Date())}
 				</p>
 			</CardContent>
+		</Card>
+	);
+}
+
+const settingCardVariants = cva("flex", {
+	variants: {
+		variant: {
+			default: "border border-border",
+			destructive: "border border-destructive",
+		},
+		layout: {
+			default: "flex-col",
+			horizontal: "flex-row justify-between items-center",
+		},
+	},
+	defaultVariants: {
+		variant: "default",
+		layout: "default",
+	},
+});
+
+export interface SettingCardProps
+	extends React.HTMLAttributes<HTMLDivElement>,
+		VariantProps<typeof settingCardVariants> {
+	title: string;
+	description?: string;
+}
+
+export function SettingCard({
+	variant,
+	layout,
+	className,
+	title,
+	description,
+	children,
+	...props
+}: SettingCardProps) {
+	return (
+		<Card
+			className={cn(settingCardVariants({ variant, layout }), "group", className)}
+			data-layout={layout}
+			{...props}
+		>
+			<CardHeader className="p-4">
+				<CardTitle className="text-base">{title}</CardTitle>
+				{description && <CardDescription>{description}</CardDescription>}
+			</CardHeader>
+			<CardContent className="p-4 group-not-data-[layout=horizontal]:pt-0">{children}</CardContent>
 		</Card>
 	);
 }

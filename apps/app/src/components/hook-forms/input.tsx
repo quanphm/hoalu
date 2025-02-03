@@ -10,7 +10,7 @@ import {
 
 interface HookFormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name: string;
-	label?: string;
+	label?: React.ReactNode;
 	description?: string;
 }
 
