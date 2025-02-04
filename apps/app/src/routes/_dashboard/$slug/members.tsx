@@ -2,36 +2,28 @@ import { InviteDialog } from "@/components/invite";
 import { MembersTable } from "@/components/members-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
-import { createFileRoute, redirect, useLoaderData } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/members")({
-	loader: async ({ context: { queryClient }, params: { slug } }) => {
-		const result = await queryClient.ensureQueryData(getActiveMemberOptions(slug));
-		if (!result) {
-			toast.error("Member not found");
-			throw redirect({ to: "/" });
-		}
-		return result;
-	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { workspace } = useLoaderData({ from: "/_dashboard/$slug" });
-	const member = Route.useLoaderData();
+	const { slug } = Route.useParams();
+	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canInvite = authClient.workspace.checkRolePermission({
 		role: member.role || "member",
 		permission: {
 			invitation: ["create"],
 		},
 	});
-
 	const membersTableData = workspace.members.map((member) => ({
-		id: member.user.publicId,
+		id: member.user.id,
 		name: member.user.name,
 		email: member.user.email,
 		image: member.user.image,
@@ -52,7 +44,7 @@ function RouteComponent() {
 				)}
 			</SectionHeader>
 
-			<SectionContent columns={1}>
+			<SectionContent>
 				<MembersTable data={membersTableData} />
 			</SectionContent>
 		</Section>

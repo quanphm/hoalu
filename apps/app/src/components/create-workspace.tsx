@@ -39,7 +39,6 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 		<Context value={contextValue}>
 			<Dialog open={open} onOpenChange={setOpen}>
 				{children}
-
 				<DialogContent className="sm:max-w-[540px]">
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>

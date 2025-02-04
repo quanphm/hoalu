@@ -21,12 +21,12 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: workspaceKeys.withSlug(slug),
 		queryFn: async () => {
-			const { data } = await authClient.workspace.getFullWorkspace({
+			const { data, error } = await authClient.workspace.getFullWorkspace({
 				query: {
 					idOrSlug: slug,
 				},
 			});
-			if (!data) return null;
+			if (error) throw error;
 			return data;
 		},
 		staleTime: TIME_IN_MILLISECONDS.HOUR,
@@ -37,12 +37,12 @@ export const getActiveMemberOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: memberKeys.activeWithSlug(slug),
 		queryFn: async () => {
-			const { data } = await authClient.workspace.getActiveMember({
+			const { data, error } = await authClient.workspace.getActiveMember({
 				query: {
 					idOrSlug: slug,
 				},
 			});
-			if (!data) return null;
+			if (error) throw error;
 			return data;
 		},
 	});

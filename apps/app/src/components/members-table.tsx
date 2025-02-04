@@ -1,6 +1,17 @@
+import { useRemoveMember } from "@/services/mutations";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@hoalu/ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,6 +19,7 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
+import { useParams } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	type Row,
@@ -16,10 +28,11 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import { useState } from "react";
 import { UserAvatar } from "./user-avatar";
 
 type Item = {
-	id: string;
+	id: number;
 	name: string;
 	email: string;
 	image: string | null | undefined;
@@ -135,20 +148,48 @@ export function MembersTable({ data }: { data: Item[] }) {
 }
 
 function RowActions({ row }: { row: Row<Item> }) {
+	const [open, setOpen] = useState(false);
+	const params = useParams({ from: "/_dashboard/$slug/members" });
+	const mutation = useRemoveMember(params.slug);
+
+	const onDelete = async () => {
+		await mutation.mutateAsync(row.original.id);
+		setOpen(false);
+	};
+
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" className="h-8 w-8 p-0">
-					<span className="sr-only">Open menu</span>
-					<MoreHorizontalIcon className="h-4 w-4" />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
-				<DropdownMenuItem>
-					<span className="text-destructive">Remove</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem>View payment details</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant="ghost" className="h-8 w-8 p-0">
+						<span className="sr-only">Open menu</span>
+						<MoreHorizontalIcon className="h-4 w-4" />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DialogTrigger asChild>
+						<DropdownMenuItem>
+							<span className="text-destructive">Remove</span>
+						</DropdownMenuItem>
+					</DialogTrigger>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			<DialogContent className="sm:max-w-[480px]">
+				<DialogHeader>
+					<DialogTitle>Remove {row.original.name}?</DialogTitle>
+					<DialogDescription>They won't be able to access this workspace.</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button type="button" variant="secondary">
+							Cancel
+						</Button>
+					</DialogClose>
+					<Button variant="destructive" onClick={() => onDelete()}>
+						Confirn
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }

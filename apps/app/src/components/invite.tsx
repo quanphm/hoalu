@@ -31,7 +31,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			},
 			{
 				onSuccess: () => {
-					toast.success("🎉 Invite sent.");
+					toast.success("Invite sent.");
 					setOpen(false);
 				},
 				onError: (ctx) => {
@@ -44,7 +44,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="sm:max-w-[480px]">
+			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
 				<DialogHeader>
 					<DialogTitle>Invite to your workspace</DialogTitle>
 				</DialogHeader>
