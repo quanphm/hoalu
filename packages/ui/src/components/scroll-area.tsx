@@ -7,7 +7,7 @@ const ScrollArea = ({
 	ref,
 	children,
 	...props
-}: React.ComponentPropsWithRef<typeof ScrollAreaPrimitive.Root>) => (
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) => (
 	<ScrollAreaPrimitive.Root
 		ref={ref}
 		className={cn("relative overflow-hidden", className)}
@@ -27,7 +27,7 @@ const ScrollBar = ({
 	ref,
 	orientation = "vertical",
 	...props
-}: React.ComponentPropsWithRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) => (
+}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) => (
 	<ScrollAreaPrimitive.ScrollAreaScrollbar
 		ref={ref}
 		orientation={orientation}

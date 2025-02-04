@@ -6,7 +6,7 @@ const Separator = ({
 	orientation = "horizontal",
 	decorative = true,
 	...props
-}: React.ComponentPropsWithRef<typeof SeparatorPrimitive.Root>) => (
+}: React.ComponentProps<typeof SeparatorPrimitive.Root>) => (
 	<SeparatorPrimitive.Root
 		decorative={decorative}
 		orientation={orientation}

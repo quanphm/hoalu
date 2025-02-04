@@ -35,7 +35,7 @@ function RouteComponent() {
 						variant="destructive"
 						layout="horizontal"
 						title="Delete workspace"
-						description="Permanently delete workspace. This action cannot be undone."
+						description="Permanently delete workspace. This action cannot be undone, so please be certain."
 					>
 						<DeleteWorkspaceDialog>
 							<DeleteWorkspaceTrigger>
