@@ -1,3 +1,4 @@
+import { cn } from "@hoalu/ui/utils";
 import type { ComponentProps } from "react";
 import type { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { Form } from "./components";
@@ -23,7 +24,7 @@ export const HookForm = <T extends FieldValues>({
 	return (
 		<Form {...form}>
 			<form id={id} onSubmit={form.handleSubmit(onSubmit)}>
-				<fieldset disabled={isSubmitting || disabled} className={className}>
+				<fieldset disabled={isSubmitting || disabled} className={cn("grid gap-4", className)}>
 					{children}
 				</fieldset>
 			</form>

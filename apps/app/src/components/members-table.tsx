@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import { useRemoveMember } from "@/services/mutations";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
@@ -149,6 +150,7 @@ export function MembersTable({ data }: { data: Item[] }) {
 
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
+	const { user } = useAuth();
 	const params = useParams({ from: "/_dashboard/$slug/members" });
 	const mutation = useRemoveMember(params.slug);
 
@@ -156,6 +158,8 @@ function RowActions({ row }: { row: Row<Item> }) {
 		await mutation.mutateAsync(row.original.id);
 		setOpen(false);
 	};
+
+	const isLeaving = (user?.id as unknown as number) === row.original.id;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -169,7 +173,7 @@ function RowActions({ row }: { row: Row<Item> }) {
 				<DropdownMenuContent align="end">
 					<DialogTrigger asChild>
 						<DropdownMenuItem>
-							<span className="text-destructive">Remove</span>
+							<span className="text-destructive">{isLeaving ? "Leave" : "Remove"}</span>
 						</DropdownMenuItem>
 					</DialogTrigger>
 				</DropdownMenuContent>

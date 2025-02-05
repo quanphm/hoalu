@@ -1,4 +1,4 @@
-import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/create-workspace";
+import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
 import { listWorkspacesOptions } from "@/services/query-options";
 import {

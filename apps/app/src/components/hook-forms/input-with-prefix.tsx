@@ -24,7 +24,7 @@ export const HookFormInputWithPrefix = (props: HookFormInputWithPrefixProps) => 
 						{props.label && <FormLabel>{props.label}</FormLabel>}
 						<div className="flex rounded-lg">
 							<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
-								hoalu.app/
+								{import.meta.env.PUBLIC_APP_BASE_URL}/
 							</span>
 							<FormControl>
 								<Input {...props} {...field} className="-ms-px rounded-s-none" />
