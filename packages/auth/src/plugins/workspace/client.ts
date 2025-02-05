@@ -1,4 +1,3 @@
-import { BetterAuthError } from "better-auth";
 import { useAuthQuery } from "better-auth/client";
 import {
 	type AccessControl,
@@ -68,7 +67,7 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 					};
 				}) => {
 					if (Object.keys(data.permission).length > 1) {
-						throw new BetterAuthError("you can only check one resource permission at a time.");
+						throw new Error("you can only check one resource permission at a time.");
 					}
 					const role = roles[data.role as unknown as "admin"];
 					if (!role) {
