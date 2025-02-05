@@ -165,7 +165,7 @@ function UpdateWorkspaceForm() {
 					}
 				},
 				onError: (ctx) => {
-					toast.error(ctx.error.message);
+					form.setError("slug", { type: "custom", message: ctx.error.message });
 				},
 			},
 		);
