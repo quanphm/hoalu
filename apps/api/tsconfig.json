@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"strict": true,
 		"types": ["bun-types"],
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"jsxImportSource": "react"
 	},
 	"include": ["src"]
 }

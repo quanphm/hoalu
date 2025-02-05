@@ -31,7 +31,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			},
 			{
 				onSuccess: () => {
-					toast.success("🎉 Invite sent.");
+					toast.success("Invite sent");
 					setOpen(false);
 				},
 				onError: (ctx) => {
@@ -44,14 +44,12 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="sm:max-w-[480px]">
+			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
 				<DialogHeader>
 					<DialogTitle>Invite to your workspace</DialogTitle>
 				</DialogHeader>
 				<HookForm id={id} form={form} onSubmit={onSubmit}>
-					<div className="grid gap-6">
-						<HookFormInput label="Email" name="email" autoFocus required />
-					</div>
+					<HookFormInput label="Email" name="email" autoFocus required />
 				</HookForm>
 				<DialogFooter>
 					<Button type="submit" form={id} className="ml-auto w-fit">

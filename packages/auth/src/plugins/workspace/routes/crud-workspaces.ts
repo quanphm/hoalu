@@ -154,7 +154,7 @@ export const updateWorkspace = createAuthEndpoint(
 				})
 				.partial(),
 			idOrSlug: z.string({
-				description: "The workspace public_id or slug to delete",
+				description: "The workspace public_id or slug to update",
 			}),
 		}),
 		requireHeaders: true,
@@ -233,6 +233,14 @@ export const updateWorkspace = createAuthEndpoint(
 				},
 				status: 403,
 			});
+		}
+		if (ctx.body.data.slug) {
+			const existingSlug = await adapter.findWorkspace(ctx.body.data.slug);
+			if (existingSlug) {
+				throw new APIError("BAD_REQUEST", {
+					message: WORKSPACE_ERROR_CODES.WORKSPACE_SLUG_ALREADY_EXISTS,
+				});
+			}
 		}
 		const updatedOrg = await adapter.updateWorkspace(workspace.id, ctx.body.data);
 		return ctx.json(updatedOrg);

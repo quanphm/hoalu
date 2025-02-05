@@ -11,7 +11,7 @@ interface BasicCardProps extends React.ComponentPropsWithRef<"div"> {
 	content: string;
 }
 
-export function ContentCard({ className, title, content, ...props }: BasicCardProps) {
+function ContentCard({ className, title, content, ...props }: BasicCardProps) {
 	return (
 		<Card className={cn("hover:border-foreground/20", className)} {...props}>
 			<CardHeader className="flex flex-row items-start justify-between p-4">
@@ -33,7 +33,7 @@ interface WorkspaceCardProps {
 	logo?: string | null | undefined;
 }
 
-export function WorkspaceCard(props: WorkspaceCardProps) {
+function WorkspaceCard(props: WorkspaceCardProps) {
 	return (
 		<Card className="hover:border-foreground/20">
 			<CardHeader className="flex flex-row items-start justify-between p-4">
@@ -75,14 +75,14 @@ const settingCardVariants = cva("flex", {
 	},
 });
 
-export interface SettingCardProps
+interface SettingCardProps
 	extends React.HTMLAttributes<HTMLDivElement>,
 		VariantProps<typeof settingCardVariants> {
 	title: string;
 	description?: string;
 }
 
-export function SettingCard({
+function SettingCard({
 	variant,
 	layout,
 	className,
@@ -105,3 +105,5 @@ export function SettingCard({
 		</Card>
 	);
 }
+
+export { ContentCard, WorkspaceCard, SettingCard };

@@ -34,11 +34,7 @@ export function NavDocumentation() {
 				</SidebarMenuItem>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Settings">
-						<a
-							href={`${import.meta.env.PUBLIC_API_URL}/changelog`}
-							target="_blank"
-							rel="noreferrer"
-						>
+						<a href={"https://github.com/quanphm/hoalu/releases"} target="_blank" rel="noreferrer">
 							<ExternalLinkIcon />
 							<span>Changelog</span>
 						</a>

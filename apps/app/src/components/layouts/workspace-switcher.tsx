@@ -1,4 +1,4 @@
-import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/create-workspace";
+import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
 import { listWorkspacesOptions } from "@/services/query-options";
 import {
@@ -52,7 +52,6 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 								<ChevronsUpDownIcon className="ml-auto" />
 							</SidebarMenuButton>
 						</DropdownMenuTrigger>
-
 						<DropdownMenuContent
 							className="w-(--radix-dropdown-menu-trigger-width) rounded-lg"
 							align="start"
@@ -65,7 +64,6 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 									<span>Home</span>
 								</Link>
 							</DropdownMenuItem>
-
 							<DropdownMenuItem className="gap-2 p-2" asChild>
 								<a href="https://hoalu.app" target="_blank" rel="noreferrer">
 									<ExternalLinkIcon />
@@ -74,13 +72,10 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 									</span>
 								</a>
 							</DropdownMenuItem>
-
 							<DropdownMenuSeparator />
-
 							<DropdownMenuLabel className="text-muted-foreground/60 text-xs">
 								Workspaces
 							</DropdownMenuLabel>
-
 							<ScrollArea className="max-h-72">
 								{workspaces.map((ws) => (
 									<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
@@ -97,9 +92,7 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 									</DropdownMenuItem>
 								))}
 							</ScrollArea>
-
 							<DropdownMenuSeparator />
-
 							<CreateWorkspaceDialogTrigger>
 								<DropdownMenuItem className="gap-2 p-2">
 									<div className="flex size-4 items-center justify-center text-muted-foreground">

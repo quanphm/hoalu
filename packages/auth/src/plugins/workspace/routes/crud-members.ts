@@ -70,8 +70,8 @@ export const removeMember = createAuthEndpoint(
 			userId: z.number({
 				description: "The user ID the member to remove",
 			}),
-			workspaceId: z.number({
-				description: "The ID of the workspace to remove the member from.",
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to remove the member from.",
 			}),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
@@ -116,34 +116,41 @@ export const removeMember = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const workspaceId = ctx.body.workspaceId;
-		if (!workspaceId) {
+		const idOrSlug = ctx.body.idOrSlug;
+		if (!idOrSlug) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
-					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
+					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 				},
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
-		const member = await adapter.findMemberByWorkspaceId({
+		const workspace = await adapter.findWorkspace(idOrSlug);
+		if (!workspace) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			});
+		}
+		const currentMemberBySession = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
-			workspaceId,
+			workspaceId: workspace.id,
 		});
-		if (!member) {
+		if (!currentMemberBySession) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 			});
 		}
-		const role = ctx.context.roles[member.role];
+		const role = ctx.context.roles[currentMemberBySession.role];
 		if (!role) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
 			});
 		}
-		const isLeaving = member.userId === ctx.body.userId;
+		const isLeaving = currentMemberBySession.userId === ctx.body.userId;
+
 		const isOwnerLeaving =
-			isLeaving && member.role === (ctx.context.orgOptions?.creatorRole || "owner");
+			isLeaving && currentMemberBySession.role === (ctx.context.orgOptions?.creatorRole || "owner");
 		if (isOwnerLeaving) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.YOU_CANNOT_LEAVE_THE_WORKSPACE_AS_THE_ONLY_OWNER,
@@ -160,12 +167,17 @@ export const removeMember = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_MEMBER,
 			});
 		}
-		const existing = await adapter.findMemberByUserId(ctx.body.userId);
-		if (existing?.workspaceId !== workspaceId) {
+
+		const existing = await adapter.findMemberByWorkspaceId({
+			userId: ctx.body.userId,
+			workspaceId: workspace.id,
+		});
+		if (!existing) {
 			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 			});
 		}
+
 		await adapter.deleteMember(existing.userId, existing.workspaceId);
 
 		return ctx.json({

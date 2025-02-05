@@ -6,12 +6,12 @@ import { cn } from "../utils";
 const Breadcrumb = ({
 	ref,
 	...props
-}: React.ComponentPropsWithRef<"nav"> & {
+}: React.ComponentProps<"nav"> & {
 	separator?: React.ReactNode;
 }) => <nav ref={ref} aria-label="breadcrumb" {...props} />;
 Breadcrumb.displayName = "Breadcrumb";
 
-const BreadcrumbList = ({ className, ref, ...props }: React.ComponentPropsWithRef<"ol">) => (
+const BreadcrumbList = ({ className, ref, ...props }: React.ComponentProps<"ol">) => (
 	<ol
 		ref={ref}
 		className={cn(
@@ -23,7 +23,7 @@ const BreadcrumbList = ({ className, ref, ...props }: React.ComponentPropsWithRe
 );
 BreadcrumbList.displayName = "BreadcrumbList";
 
-const BreadcrumbItem = ({ className, ref, ...props }: React.ComponentPropsWithRef<"li">) => (
+const BreadcrumbItem = ({ className, ref, ...props }: React.ComponentProps<"li">) => (
 	<li ref={ref} className={cn("inline-flex items-center gap-1.5", className)} {...props} />
 );
 BreadcrumbItem.displayName = "BreadcrumbItem";
@@ -33,7 +33,7 @@ const BreadcrumbLink = ({
 	className,
 	ref,
 	...props
-}: React.ComponentPropsWithRef<"a"> & {
+}: React.ComponentProps<"a"> & {
 	asChild?: boolean;
 }) => {
 	const Comp = asChild ? Slot : "a";
@@ -48,7 +48,7 @@ const BreadcrumbLink = ({
 };
 BreadcrumbLink.displayName = "BreadcrumbLink";
 
-const BreadcrumbPage = ({ className, ref, ...props }: React.ComponentPropsWithRef<"span">) => (
+const BreadcrumbPage = ({ className, ref, ...props }: React.ComponentProps<"span">) => (
 	// biome-ignore lint/a11y/useFocusableInteractive: bypass
 	<span
 		ref={ref}

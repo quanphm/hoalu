@@ -1,16 +1,23 @@
 import { PageContent } from "@/components/layouts/page-content";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
-import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
+import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import { toast } from "@hoalu/ui/sonner";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
-		const workspace = await queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug));
-		if (!workspace) {
-			throw notFound();
-		}
+		const result = await Promise.all([
+			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
+			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
+		]);
+
 		return {
-			workspace,
+			workspace: result[0],
+			activeMember: result[1],
 		};
+	},
+	onError: (error) => {
+		toast.error(error.message);
+		throw redirect({ to: "/" });
 	},
 	component: RouteComponent,
 });

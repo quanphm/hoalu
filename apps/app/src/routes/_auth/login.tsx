@@ -89,7 +89,7 @@ function RouteComponent() {
 						</div>
 						<div className="text-center text-sm">
 							Don&apos;t have an account?{" "}
-							<Link to="/signup" className="underline underline-offset-4">
+							<Link to="/signup" search={search} className="underline underline-offset-4">
 								Sign up
 							</Link>
 						</div>

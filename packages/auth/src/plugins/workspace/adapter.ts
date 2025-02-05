@@ -205,6 +205,9 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				},
 			};
 		},
+		/**
+		 * @deprecated This function is no longer used.
+		 */
 		async findMemberByUserId(id: number) {
 			const member = await adapter.findOne<Member>({
 				model: "member",

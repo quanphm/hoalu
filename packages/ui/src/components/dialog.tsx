@@ -15,7 +15,7 @@ const DialogOverlay = ({
 	className,
 	ref,
 	...props
-}: React.ComponentPropsWithRef<typeof DialogPrimitive.Overlay>) => (
+}: React.ComponentProps<typeof DialogPrimitive.Overlay>) => (
 	<DialogPrimitive.Overlay
 		ref={ref}
 		className={cn(
@@ -32,7 +32,7 @@ const DialogContent = ({
 	children,
 	ref,
 	...props
-}: React.ComponentPropsWithRef<typeof DialogPrimitive.Content>) => (
+}: React.ComponentProps<typeof DialogPrimitive.Content>) => (
 	<DialogPortal>
 		<DialogOverlay>
 			<DialogPrimitive.Content
@@ -61,7 +61,7 @@ DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
 	<div
-		className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+		className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-4", className)}
 		{...props}
 	/>
 );
@@ -71,7 +71,7 @@ const DialogTitle = ({
 	className,
 	ref,
 	...props
-}: React.ComponentPropsWithRef<typeof DialogPrimitive.Title>) => (
+}: React.ComponentProps<typeof DialogPrimitive.Title>) => (
 	<DialogPrimitive.Title
 		ref={ref}
 		className={cn("font-semibold text-lg leading-none tracking-tight", className)}
@@ -84,7 +84,7 @@ const DialogDescription = ({
 	className,
 	ref,
 	...props
-}: React.ComponentPropsWithRef<typeof DialogPrimitive.Description>) => (
+}: React.ComponentProps<typeof DialogPrimitive.Description>) => (
 	<DialogPrimitive.Description
 		ref={ref}
 		className={cn("text-muted-foreground text-sm", className)}

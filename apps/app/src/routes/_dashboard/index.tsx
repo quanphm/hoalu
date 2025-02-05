@@ -1,9 +1,9 @@
 import { ContentCard, WorkspaceCard } from "@/components/cards";
-import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/create-workspace";
-import { CreateWorkspaceForm } from "@/components/create-workspace";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
+import { CreateWorkspaceForm } from "@/components/workspace";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -21,7 +21,7 @@ function RouteComponent() {
 		return (
 			<PageContent className="gap-12">
 				<Greeting />
-				<Section>
+				<Section className="gap-2">
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
 					</SectionHeader>

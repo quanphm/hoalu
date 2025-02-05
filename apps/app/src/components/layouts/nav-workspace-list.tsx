@@ -1,5 +1,5 @@
 import { listWorkspacesOptions } from "@/services/query-options";
-import { HashIcon } from "@hoalu/icons/lucide";
+import { FolderClosedIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -25,9 +25,7 @@ export function NavWorkspaceList() {
 					<SidebarMenuItem key={ws.publicId}>
 						<SidebarMenuButton asChild tooltip={ws.name}>
 							<Link to="/$slug" params={{ slug: ws.slug }}>
-								<div className="flex size-6 items-center justify-center rounded-[6px] border bg-background">
-									<HashIcon className="size-4" />
-								</div>
+								<FolderClosedIcon />
 								<span>{ws.name}</span>
 							</Link>
 						</SidebarMenuButton>
