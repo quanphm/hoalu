@@ -34,13 +34,16 @@
 		"hono-openapi": "^0.4.4",
 		"minio": "^8.0.4",
 		"nanoid": "^5.0.9",
+		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
 		"react": "^19.0.0",
+		"resend": "^4.1.2",
 		"valibot": "^1.0.0-beta.14"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "latest",
+		"@types/nodemailer": "^6.4.17",
 		"drizzle-kit": "^0.30.4",
 		"rimraf": "^6.0.1"
 	}

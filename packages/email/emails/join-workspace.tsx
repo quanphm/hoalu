@@ -23,7 +23,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 		<Html>
 			<Head />
 			<Preview>
-				{inviterName} just you an invitation to join {workspaceName} on Hoalu.
+				{inviterName} just send you an invitation to join {workspaceName} on Hoalu.
 			</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
