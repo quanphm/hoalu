@@ -1,3 +1,4 @@
+import { PageContent } from "@/components/layouts/page-content";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/account/tokens")({
@@ -5,5 +6,5 @@ export const Route = createFileRoute("/_dashboard/account/tokens")({
 });
 
 function RouteComponent() {
-	return <div>Hello "/_dashboard/settings/api-keys"!</div>;
+	return <PageContent>Hello "/_dashboard/settings/api-keys"!</PageContent>;
 }

@@ -1,3 +1,4 @@
+import { PageContent } from "@/components/layouts/page-content";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/account/preferences")({
@@ -5,5 +6,5 @@ export const Route = createFileRoute("/_dashboard/account/preferences")({
 });
 
 function RouteComponent() {
-	return <div>Hello "/_dashboard/account/preferences"!</div>;
+	return <PageContent>Hello "/_dashboard/account/preferences"!</PageContent>;
 }
