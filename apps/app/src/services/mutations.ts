@@ -6,6 +6,7 @@ import { invitationKeys, memberKeys, workspaceKeys } from "./query-key-factory";
 
 export function useRemoveMember(slug: string) {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const mutation = useMutation({
 		mutationFn: async (id: number) => {
 			const { data, error } = await authClient.workspace.removeMember({
@@ -19,8 +20,9 @@ export function useRemoveMember(slug: string) {
 		},
 		onSuccess: (data) => {
 			toast.success(`Removed ${data.member.user.name}`);
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
-			queryClient.invalidateQueries({ queryKey: memberKeys.activeWithSlug(slug) });
+			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+			queryClient.invalidateQueries({ queryKey: memberKeys.all });
+			navigate({ to: "/" });
 		},
 		onError: (error) => {
 			toast.error(error.message);

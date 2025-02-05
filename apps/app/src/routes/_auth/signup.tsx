@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_auth/signup")({
 
 function RouteComponent() {
 	const router = useRouter();
+	const search = Route.useSearch();
 
 	async function formAction(formData: FormData) {
 		const name = formData.get("name");
@@ -35,7 +36,6 @@ function RouteComponent() {
 				},
 			},
 		);
-
 		router.invalidate();
 	}
 
@@ -77,7 +77,7 @@ function RouteComponent() {
 						</div>
 						<div className="text-center text-sm">
 							Already have an account?{" "}
-							<Link to="/login" className="underline underline-offset-4">
+							<Link to="/login" search={search} className="underline underline-offset-4">
 								Log in
 							</Link>
 						</div>

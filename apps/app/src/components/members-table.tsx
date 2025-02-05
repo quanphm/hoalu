@@ -1,5 +1,6 @@
-import { useAuth } from "@/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
 import { useRemoveMember } from "@/services/mutations";
+import { getActiveMemberOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -20,6 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import {
 	type ColumnDef,
@@ -150,16 +152,21 @@ export function MembersTable({ data }: { data: Item[] }) {
 
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
-	const { user } = useAuth();
 	const params = useParams({ from: "/_dashboard/$slug/members" });
+	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
+	const canDelete = authClient.workspace.checkRolePermission({
+		role: member.role,
+		permission: {
+			member: ["delete"],
+		},
+	});
+	const isLeaving = member.userId === row.original.id;
 	const mutation = useRemoveMember(params.slug);
 
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);
 		setOpen(false);
 	};
-
-	const isLeaving = (user?.id as unknown as number) === row.original.id;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -171,17 +178,33 @@ function RowActions({ row }: { row: Row<Item> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild>
-						<DropdownMenuItem>
-							<span className="text-destructive">{isLeaving ? "Leave" : "Remove"}</span>
-						</DropdownMenuItem>
-					</DialogTrigger>
+					{isLeaving && (
+						<DialogTrigger asChild>
+							<DropdownMenuItem>
+								<span className="text-destructive">Leave</span>
+							</DropdownMenuItem>
+						</DialogTrigger>
+					)}
+					{!isLeaving && canDelete && (
+						<DialogTrigger asChild>
+							<DropdownMenuItem>
+								<span className="text-destructive">Remove</span>
+							</DropdownMenuItem>
+						</DialogTrigger>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
+
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
-					<DialogTitle>Remove {row.original.name}?</DialogTitle>
-					<DialogDescription>They won't be able to access this workspace.</DialogDescription>
+					<DialogTitle>
+						{isLeaving ? "Leave this workspace?" : `Remove ${row.original.name}?`}
+					</DialogTitle>
+					<DialogDescription>
+						{isLeaving
+							? "You won't be able to access this workspace."
+							: "They won't be able to access this workspace."}
+					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
