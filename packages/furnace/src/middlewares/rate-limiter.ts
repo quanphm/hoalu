@@ -1,12 +1,19 @@
-import { type RedisClient, RedisStore } from "@hono-rate-limiter/redis";
-import { rateLimiter as honoRateLimiter } from "hono-rate-limiter";
+import { type Store, rateLimiter as honoRateLimiter } from "hono-rate-limiter";
+import { createMiddleware } from "hono/factory";
+import { RedisStore } from "rate-limit-redis";
 
-export const rateLimiter = (client: RedisClient) => {
-	return honoRateLimiter({
-		windowMs: 10 * 60 * 1000,
-		limit: 100,
-		standardHeaders: "draft-6",
-		keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
-		store: new RedisStore({ client }),
+export const rateLimiter = <T>(client: T) => {
+	return createMiddleware(async (c, next) => {
+		return honoRateLimiter({
+			windowMs: 1 * 60 * 1000,
+			limit: 5,
+			standardHeaders: "draft-6",
+			keyGenerator: (c) => c.req.header("X-Forwared-For") ?? "",
+			// @see https://www.npmjs.com/package/rate-limit-redis
+			store: new RedisStore({
+				// @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
+				sendCommand: (...args: string[]) => client.call(...args),
+			}) as unknown as Store,
+		})(c, next);
 	});
 };

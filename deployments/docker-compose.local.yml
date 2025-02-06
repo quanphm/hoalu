@@ -20,6 +20,7 @@ services:
   electric:
     container_name: hoalu-electric
     image: electricsql/electric:latest
+    restart: always
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
@@ -27,6 +28,15 @@ services:
       - 4000:4000
     depends_on:
       - database
+
+  redis:
+    container_name: hoalu-redis
+    image: redis:7.4.2-alpine
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
 
   migration:
     container_name: hoalu-migration

@@ -2,10 +2,9 @@ import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { sValidator } from "@hono/standard-validator";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { cors } from "hono/cors";
+import { validator as aValidator } from "hono-openapi/arktype";
 import { db } from "../db";
 import { task } from "../db/schema/task";
 import { createHonoInstance } from "../lib/create-app";
@@ -43,7 +42,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		sValidator("query", querySchema, (result, c) => {
+		aValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
@@ -98,7 +97,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		sValidator("query", querySchema, (result, c) => {
+		aValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
@@ -106,7 +105,7 @@ export const tasksRoute = app
 				);
 			}
 		}),
-		sValidator("json", insertTaskSchema, (result, c) => {
+		aValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: createStandardIssues(result.errors.issues) },

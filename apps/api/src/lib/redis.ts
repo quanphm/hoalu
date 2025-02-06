@@ -1,6 +1,3 @@
-import { Redis } from "@upstash/redis";
+import RedisClient from "ioredis";
 
-export const redis = new Redis({
-	url: process.env.UPSTASH_REDIS_URL,
-	token: process.env.UPSTASH_REDIS_TOKEN,
-});
+export const redis = new RedisClient(process.env.REDIS_URL);

@@ -10,7 +10,6 @@ export function configureApi(app: HonoApp) {
 		.use(authGuard())
 		.use(cors())
 		.route("/tasks", tasksRoute);
-
 	return routes;
 }
 
