@@ -2,16 +2,15 @@ import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
+import { sValidator } from "@hono/standard-validator";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
 import { cors } from "hono/cors";
 import { db } from "../db";
 import { task } from "../db/schema/task";
 import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();
-app.use(cors());
 
 const taskSchema = type({
 	id: "number",
@@ -28,7 +27,7 @@ const insertTaskSchema = type({
 	done: "boolean = false",
 });
 const querySchema = type({
-	workspaceIdSlug: "string",
+	workspaceIdOrSlug: "string",
 });
 
 export const tasksRoute = app
@@ -44,7 +43,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("query", querySchema, (result, c) => {
+		sValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
@@ -53,7 +52,7 @@ export const tasksRoute = app
 			}
 		}),
 		async (c) => {
-			const { workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug: workspaceIdSlug } = c.req.valid("query");
 			const workspaceResult = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
 					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
@@ -99,7 +98,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		aValidator("query", querySchema, (result, c) => {
+		sValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
@@ -107,7 +106,7 @@ export const tasksRoute = app
 				);
 			}
 		}),
-		aValidator("json", insertTaskSchema, (result, c) => {
+		sValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ error: createStandardIssues(result.errors.issues) },
@@ -117,7 +116,7 @@ export const tasksRoute = app
 		}),
 		async (c) => {
 			const user = c.get("user")!;
-			const { workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug: workspaceIdSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
 
 			const workspaceResult = await db.query.workspace.findFirst({

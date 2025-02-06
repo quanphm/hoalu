@@ -9,6 +9,7 @@ export const envSchema = type({
 	DB_USER: "string > 0",
 	DB_PASSWORD: "string > 0",
 	DOMAIN: "string > 0",
+	NODE_ENV: "string = 'development'",
 	PUBLIC_API_URL: "string.url",
 	PUBLIC_APP_BASE_URL: "string.url",
 	RESEND_SECRET_KEY: "string > 0",
@@ -17,7 +18,8 @@ export const envSchema = type({
 	S3_BUCKET: "string > 0",
 	S3_ENDPOINT: "string > 0",
 	SYNC_URL: "string.url",
-	NODE_ENV: "string = 'development'",
+	UPSTASH_REDIS_TOKEN: "string > 0",
+	UPSTASH_REDIS_URL: "string.url",
 });
 
 export type EnvSchema = typeof envSchema.infer;
