@@ -51,10 +51,10 @@ export const tasksRoute = app
 			}
 		}),
 		async (c) => {
-			const { workspaceIdOrSlug: workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug } = c.req.valid("query");
 			const workspaceResult = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
-					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
+					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
 			});
 			if (!workspaceResult) {
 				return c.json(
@@ -115,12 +115,12 @@ export const tasksRoute = app
 		}),
 		async (c) => {
 			const user = c.get("user")!;
-			const { workspaceIdOrSlug: workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
 
 			const workspaceResult = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
-					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
+					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
 			});
 			if (!workspaceResult) {
 				return c.json(
