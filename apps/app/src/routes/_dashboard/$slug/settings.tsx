@@ -26,7 +26,13 @@ function RouteComponent() {
 					<SettingCard
 						layout="horizontal"
 						title="Logo"
-						description="Recommended size is 256 x 256 (pixels)"
+						description={
+							<p className="max-w-sm">
+								Square image recommended.
+								<br />
+								Accepted file types: .png, .jpg. Max file size: 2MB.
+							</p>
+						}
 						className="col-span-2"
 					>
 						<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />

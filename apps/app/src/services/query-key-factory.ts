@@ -3,6 +3,10 @@
  * @see - https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
  */
 
+export const authKeys = {
+	session: ["session"] as const,
+};
+
 export const taskKeys = {
 	all: ["tasks"] as const,
 };
@@ -10,13 +14,12 @@ export const taskKeys = {
 export const workspaceKeys = {
 	all: ["workspaces"] as const,
 	withSlug: (slug: string) => [...workspaceKeys.all, slug] as const,
-	activeMember: (slug: string) => [...workspaceKeys.all, "active-member", slug] as const,
 };
 
 export const memberKeys = {
 	all: ["members"] as const,
-	active: () => [...memberKeys.all, "active"] as const,
-	activeWithSlug: (slug: string) => [...memberKeys.active(), slug] as const,
+	activeWithSlug: (slug: string) => [...memberKeys["~active"](), slug] as const,
+	"~active": () => [...memberKeys.all, "active"] as const,
 };
 
 export const invitationKeys = {

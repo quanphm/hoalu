@@ -62,6 +62,7 @@ function RouteComponent() {
 									type="email"
 									required
 									placeholder="your.email@hoalu.app"
+									autoComplete="off"
 								/>
 							</div>
 							<div className="grid gap-2">
@@ -72,6 +73,7 @@ function RouteComponent() {
 									type="password"
 									required
 									placeholder="•••••••••••••"
+									autoComplete="off"
 								/>
 								<div>
 									<Link

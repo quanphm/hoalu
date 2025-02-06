@@ -6,7 +6,6 @@ import { invitationKeys, memberKeys, workspaceKeys } from "./query-key-factory";
 
 export function useRemoveMember(slug: string) {
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 	const mutation = useMutation({
 		mutationFn: async (id: number) => {
 			const { data, error } = await authClient.workspace.removeMember({
@@ -18,11 +17,11 @@ export function useRemoveMember(slug: string) {
 			}
 			return data;
 		},
-		onSuccess: (data) => {
+		onSuccess: async (data) => {
 			toast.success(`Removed ${data.member.user.name}`);
+			queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(slug) });
+			queryClient.removeQueries({ queryKey: memberKeys.activeWithSlug(slug) });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-			queryClient.invalidateQueries({ queryKey: memberKeys.all });
-			navigate({ to: "/" });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -45,11 +44,10 @@ export function useAcceptInvitation() {
 			return data;
 		},
 		onSuccess: (data) => {
-			toast.success("Invite accepted", {
-				description: `Welcome to ${data.workspace.name}!`,
-			});
-			queryClient.invalidateQueries({ queryKey: memberKeys.all });
-			queryClient.invalidateQueries({ queryKey: invitationKeys.all });
+			toast.success(`Welcome to ${data.workspace.name}!`);
+			queryClient.removeQueries({ queryKey: invitationKeys.withId(data.invitation.id) });
+			queryClient.invalidateQueries({ queryKey: memberKeys.activeWithSlug(data.workspace.slug) });
+
 			navigate({
 				to: "/$slug",
 				params: {

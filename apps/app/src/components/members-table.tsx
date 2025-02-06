@@ -22,7 +22,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	type Row,
@@ -150,9 +150,12 @@ export function MembersTable({ data }: { data: Item[] }) {
 	);
 }
 
+const routeApi = getRouteApi("/_dashboard/$slug/members");
+
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
-	const params = useParams({ from: "/_dashboard/$slug/members" });
+	const navigate = routeApi.useNavigate();
+	const params = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
 	const canDelete = authClient.workspace.checkRolePermission({
 		role: member.role,
@@ -166,6 +169,9 @@ function RowActions({ row }: { row: Row<Item> }) {
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);
 		setOpen(false);
+		if (isLeaving) {
+			navigate({ to: "/" });
+		}
 	};
 
 	return (

@@ -1,10 +1,11 @@
-import { authClient } from "@/lib/auth-client";
+import { sessionOptions } from "@/services/query-options";
+import { useQuery } from "@tanstack/react-query";
 
 export function useAuth() {
-	const { data: session } = authClient.useSession();
-
+	const { data, ...rest } = useQuery(sessionOptions());
 	return {
-		user: session?.user,
-		session: session?.session,
+		...rest,
+		user: data?.user,
+		session: data?.session,
 	};
 }

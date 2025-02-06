@@ -1,8 +1,46 @@
 import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
-import { authClient } from "@/lib/auth-client";
+import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
 import * as api from "@/services/api";
-import { invitationKeys, memberKeys, taskKeys, workspaceKeys } from "@/services/query-key-factory";
+import {
+	authKeys,
+	invitationKeys,
+	memberKeys,
+	taskKeys,
+	workspaceKeys,
+} from "@/services/query-key-factory";
 import { queryOptions } from "@tanstack/react-query";
+
+export const sessionOptions = () => {
+	return queryOptions({
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: true,
+		staleTime: 0,
+		queryKey: authKeys.session,
+		queryFn: async () => {
+			const { data } = await authClient.getSession();
+			return data;
+		},
+		select: (data) => {
+			if (!data) return null;
+
+			const isSessionExpired = () => {
+				const expiresAt = new Date(data.session.expiresAt).getTime();
+				const now = Date.now();
+				return expiresAt < now;
+			};
+
+			const sessionData: SessionData | undefined = isSessionExpired() ? undefined : data;
+			const session = sessionData?.session as Session | undefined;
+			const user = sessionData?.user as User | undefined;
+
+			return {
+				sessionData,
+				user,
+				session,
+			};
+		},
+	});
+};
 
 export const listWorkspacesOptions = () => {
 	return queryOptions({

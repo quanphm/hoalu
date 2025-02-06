@@ -6,14 +6,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useLoaderData } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
+
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 export function InviteDialog({ children }: { children: React.ReactNode }) {
 	const id = useId();
 	const [open, setOpen] = useState(false);
-	const { workspace } = useLoaderData({ from: "/_dashboard/$slug" });
+	const { workspace } = routeApi.useLoaderData();
 
 	const form = useForm<InviteInputSchema>({
 		resolver: valibotResolver(InviteFormSchema),
