@@ -1,17 +1,14 @@
-import * as v from "valibot";
+import { type } from "arktype";
 
-export const CreateWorkspaceFormSchema = v.object({
-	name: v.pipe(v.string(), v.nonEmpty()),
-	slug: v.pipe(v.string(), v.nonEmpty()),
+export const workspaceSchema = type({
+	name: "string > 0",
+	slug: "string > 0",
 });
-export type CreateWorkspaceInputSchema = v.InferInput<typeof CreateWorkspaceFormSchema>;
 
-export const DeleteWorkspaceFormSchema = v.object({
-	confirm: v.pipe(v.string(), v.nonEmpty()),
+export const deleteWorkspaceSchema = type({
+	confirm: "string > 0",
 });
-export type DeleteWorkspaceInputSchema = v.InferInput<typeof DeleteWorkspaceFormSchema>;
 
-export const InviteFormSchema = v.object({
-	email: v.pipe(v.string(), v.email(), v.nonEmpty()),
+export const inviteSchema = type({
+	email: "string.email",
 });
-export type InviteInputSchema = v.InferInput<typeof InviteFormSchema>;

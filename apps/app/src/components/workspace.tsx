@@ -1,7 +1,6 @@
 import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
-import { DeleteWorkspaceFormSchema, type DeleteWorkspaceInputSchema } from "@/lib/schema";
-import { CreateWorkspaceFormSchema, type CreateWorkspaceInputSchema } from "@/lib/schema";
+import { deleteWorkspaceSchema, workspaceSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
@@ -16,7 +15,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
-import { valibotResolver } from "@hookform/resolvers/valibot";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, use, useEffect, useId, useMemo, useState } from "react";
@@ -65,9 +64,8 @@ function CreateWorkspaceForm() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const context = use(CreateContext);
-
-	const form = useForm<CreateWorkspaceInputSchema>({
-		resolver: valibotResolver(CreateWorkspaceFormSchema),
+	const form = useForm<typeof workspaceSchema.infer>({
+		resolver: arktypeResolver(workspaceSchema),
 		values: {
 			name: "",
 			slug: "",
@@ -76,7 +74,7 @@ function CreateWorkspaceForm() {
 	const { watch, setValue } = form;
 	const watchName = watch("name");
 
-	async function onSubmit(values: CreateWorkspaceInputSchema) {
+	async function onSubmit(values: typeof workspaceSchema.infer) {
 		await authClient.workspace.create(values, {
 			onSuccess: (ctx) => {
 				toast.success("Workspace created");
@@ -134,15 +132,15 @@ function UpdateWorkspaceForm() {
 	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 
-	const form = useForm<CreateWorkspaceInputSchema>({
-		resolver: valibotResolver(CreateWorkspaceFormSchema),
+	const form = useForm<typeof workspaceSchema.infer>({
+		resolver: arktypeResolver(workspaceSchema),
 		values: {
 			name: workspace.name,
 			slug: workspace.slug,
 		},
 	});
 
-	async function onSubmit(values: CreateWorkspaceInputSchema) {
+	async function onSubmit(values: typeof workspaceSchema.infer) {
 		await authClient.workspace.update(
 			{
 				data: {
@@ -248,13 +246,13 @@ function DeleteWorkspaceForm() {
 	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const context = use(DeleteContext);
 
-	const form = useForm<DeleteWorkspaceInputSchema>({
-		resolver: valibotResolver(DeleteWorkspaceFormSchema),
+	const form = useForm<typeof deleteWorkspaceSchema.infer>({
+		resolver: arktypeResolver(deleteWorkspaceSchema),
 		values: { confirm: "" },
 		reValidateMode: "onSubmit",
 	});
 
-	async function onSubmit(values: DeleteWorkspaceInputSchema) {
+	async function onSubmit(values: typeof deleteWorkspaceSchema.infer) {
 		if (values.confirm !== slug) {
 			form.setError("confirm", { type: "required", message: "Incorrect value" });
 			return;

@@ -21,6 +21,7 @@
 		"@tanstack/react-router": "^1.99.0",
 		"@tanstack/react-table": "^8.20.6",
 		"@tanstack/router-devtools": "^1.99.0",
+		"arktype": "^2.0.4",
 		"better-auth": "1.1.16-beta.9",
 		"date-fns": "^4.1.0",
 		"geist": "^1.3.1",
@@ -30,8 +31,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-hook-form": "^7.54.2",
-		"recharts": "^2.15.1",
-		"valibot": "^1.0.0-beta.14"
+		"recharts": "^2.15.1"
 	},
 	"devDependencies": {
 		"@tailwindcss/vite": "^4.0.3",

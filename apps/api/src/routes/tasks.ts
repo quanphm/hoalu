@@ -1,27 +1,35 @@
+import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { reduceValibotIssues } from "@hoalu/common/validate-env";
+import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
+import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as vValidator } from "hono-openapi/valibot";
+import { validator as aValidator } from "hono-openapi/arktype";
 import { cors } from "hono/cors";
-import * as v from "valibot";
 import { db } from "../db";
 import { task } from "../db/schema/task";
 import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();
-
 app.use(cors());
 
-const selectSchema = v.omit(createSelectSchema(task), ["userId"]);
-const insertSchema = v.omit(
-	createInsertSchema(task, {
-		name: (schema) => v.pipe(schema, v.nonEmpty()),
-		done: (schema) => v.optional(schema, false),
-	}),
-	["userId", "createdAt", "updatedAt"],
-);
+const taskSchema = type({
+	id: "number",
+	name: "string",
+	done: "boolean",
+	creatorId: "number",
+	workspaceId: "number",
+	createdAt: "string",
+	updatedAt: "string",
+});
+const tasksSchema = taskSchema.array();
+const insertTaskSchema = type({
+	name: "string > 0",
+	done: "boolean = false",
+});
+const querySchema = type({
+	workspaceIdSlug: "string",
+});
 
 export const tasksRoute = app
 	.get(
@@ -33,29 +41,46 @@ export const tasksRoute = app
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(v.object({ data: v.array(selectSchema) }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		aValidator("query", querySchema, (result, c) => {
+			if (!result.success) {
+				return c.json(
+					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
+		}),
 		async (c) => {
-			const user = c.get("user")!;
-			const tasks = await db.query.task.findMany({
-				where: (task, { eq }) => eq(task.userId, user.id),
+			const { workspaceIdSlug } = c.req.valid("query");
+			const workspaceResult = await db.query.workspace.findFirst({
+				where: (workspace, { eq, or }) =>
+					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
 			});
+			if (!workspaceResult) {
+				return c.json(
+					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
 
-			const parsed = v.safeParse(v.array(selectSchema), tasks);
+			const tasks = await db.query.task.findMany({
+				where: (task, { eq }) => eq(task.workspaceId, workspaceResult.id),
+			});
+			const parsed = tasksSchema(tasks);
 
-			if (!parsed.success) {
+			if (parsed instanceof type.errors) {
 				return c.json(
 					{
-						error: reduceValibotIssues(parsed.issues),
+						error: createStandardIssues(parsed.issues),
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
-
 			return c.json(
 				{
-					data: parsed.output,
+					data: parsed,
 				},
 				HTTPStatus.codes.OK,
 			);
@@ -71,46 +96,64 @@ export const tasksRoute = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(v.object({ data: insertSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		vValidator("json", insertSchema, (result, c) => {
+		aValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{
-						error: reduceValibotIssues(result.issues),
-					},
+					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
+		}),
+		aValidator("json", insertTaskSchema, (result, c) => {
+			if (!result.success) {
+				return c.json(
+					{ error: createStandardIssues(result.errors.issues) },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 		}),
 		async (c) => {
 			const user = c.get("user")!;
+			const { workspaceIdSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
 
-			const [result] = await db
+			const workspaceResult = await db.query.workspace.findFirst({
+				where: (workspace, { eq, or }) =>
+					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
+			});
+			if (!workspaceResult) {
+				return c.json(
+					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
+
+			const [taskResult] = await db
 				.insert(task)
 				.values({
 					name,
 					done,
-					userId: user.id,
+					creatorId: user.id,
+					workspaceId: workspaceResult.id,
 				})
 				.returning();
 
-			const parsed = v.safeParse(selectSchema, result);
+			const parsed = taskSchema(taskResult);
 
-			if (!parsed.success) {
+			if (parsed instanceof type.errors) {
 				return c.json(
 					{
-						error: reduceValibotIssues(parsed.issues),
+						error: createStandardIssues(parsed.issues),
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
-
 			return c.json(
 				{
-					data: parsed.output,
+					data: parsed,
 				},
 				HTTPStatus.codes.CREATED,
 			);

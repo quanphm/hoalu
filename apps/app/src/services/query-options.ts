@@ -34,7 +34,6 @@ export const sessionOptions = () => {
 			const user = sessionData?.user as User | undefined;
 
 			return {
-				sessionData,
 				user,
 				session,
 			};

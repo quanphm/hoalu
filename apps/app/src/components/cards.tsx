@@ -58,7 +58,7 @@ function WorkspaceCard(props: WorkspaceCardProps) {
 	);
 }
 
-const settingCardVariants = cva("flex", {
+const settingCardVariants = cva("flex pb-1.5", {
 	variants: {
 		variant: {
 			default: "border border-border",

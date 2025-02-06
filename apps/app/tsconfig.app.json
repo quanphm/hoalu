@@ -2,6 +2,7 @@
 	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"strict": true,
+		"exactOptionalPropertyTypes": true,
 		"jsx": "react-jsx",
 		"allowJs": true,
 		"baseUrl": ".",

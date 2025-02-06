@@ -1,8 +1,7 @@
 import { HTTPStatus } from "@hoalu/common/http-status";
+import { type Type, type } from "arktype";
 import type { ResolverResult } from "hono-openapi";
-import { resolver } from "hono-openapi/valibot";
-import type { BaseIssue, BaseSchema } from "valibot";
-import * as v from "valibot";
+import { resolver } from "hono-openapi/arktype";
 
 interface Response {
 	description: string;
@@ -16,7 +15,7 @@ interface Response {
 /**
  * General response. Mostly use for `200`, `201` & `204` response.
  */
-function response<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
+function response<T extends Type>(
 	schema: T,
 	status: number,
 	description?: string,
@@ -39,8 +38,8 @@ function unauthorized(): Record<401, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						v.object({
-							message: v.literal(HTTPStatus.phrases.UNAUTHORIZED),
+						type({
+							message: `'${HTTPStatus.phrases.UNAUTHORIZED}'`,
 						}),
 					),
 				},
@@ -59,13 +58,10 @@ function bad_request(description?: string): Record<400, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						v.object({
-							error: v.array(
-								v.object({
-									attribute: v.undefinedable(v.string()),
-									message: v.optional(v.string(), HTTPStatus.phrases.BAD_REQUEST),
-								}),
-							),
+						type({
+							error: type({
+								message: `'string = ${HTTPStatus.phrases.BAD_REQUEST}'`,
+							}).array(),
 						}),
 					),
 				},
@@ -75,22 +71,16 @@ function bad_request(description?: string): Record<400, Response> {
 	};
 }
 
-/**
- * For some reasons, valibot couldn't parse the database result correctly.
- */
 function server_parse_error(description?: string): Record<422, Response> {
 	return {
 		[HTTPStatus.codes.UNPROCESSABLE_ENTITY]: {
 			content: {
 				"application/json": {
 					schema: resolver(
-						v.object({
-							error: v.array(
-								v.object({
-									attribute: v.undefinedable(v.string()),
-									message: v.optional(v.string(), HTTPStatus.phrases.UNPROCESSABLE_ENTITY),
-								}),
-							),
+						type({
+							error: type({
+								message: `'string = ${HTTPStatus.phrases.UNPROCESSABLE_ENTITY}'`,
+							}).array(),
 						}),
 					),
 				},

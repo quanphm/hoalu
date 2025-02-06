@@ -12,4 +12,4 @@ type User = AuthClientInfer["Session"]["user"] & { publicId: string };
 type Session = AuthClientInfer["Session"]["session"];
 
 export { authClient };
-export type { AuthClientInfer, User, Session, SessionData };
+export type { User, Session, SessionData };
