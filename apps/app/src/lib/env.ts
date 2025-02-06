@@ -1,13 +1,13 @@
-import { validateEnv } from "@hoalu/common/validate-env";
-import * as v from "valibot";
+import { standardValidate } from "@hoalu/common/standard-validate";
+import { type } from "arktype";
 
-const PublicEnvSchema = v.object({
-	PUBLIC_API_URL: v.pipe(v.string(), v.url()),
-	PUBLIC_APP_BASE_URL: v.pipe(v.string(), v.url()),
+const envSchema = type({
+	PUBLIC_API_URL: "string.url",
+	PUBLIC_APP_BASE_URL: "string.url",
 });
 
-export function verifyEnv() {
-	validateEnv(PublicEnvSchema, import.meta.env);
+function verifyEnv() {
+	standardValidate(envSchema, import.meta.env);
 }
 
 interface ViteBuiltInEnv {
@@ -17,10 +17,13 @@ interface ViteBuiltInEnv {
 	DEV: boolean;
 	PROD: boolean;
 }
+type EnvSchema = typeof envSchema.infer;
 
 declare global {
-	interface ImportMetaEnv extends v.InferInput<typeof PublicEnvSchema>, ViteBuiltInEnv {}
+	interface ImportMetaEnv extends EnvSchema, ViteBuiltInEnv {}
 	interface ImportMeta {
 		readonly env: ImportMetaEnv;
 	}
 }
+
+export { verifyEnv };

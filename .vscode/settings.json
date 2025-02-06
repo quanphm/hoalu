@@ -5,9 +5,12 @@
 	"editor.wordWrap": "on",
 	"editor.suggestSelection": "first",
 	"editor.codeActionsOnSave": {
-    "quickfix.biome": "explicit",
+		"quickfix.biome": "explicit",
 		"source.organizeImports.biome": "explicit"
-  },
+	},
+	"editor.quickSuggestions": {
+		"strings": "on"
+	},
 	"[javascript]": {
 		"editor.formatOnSave": true,
 		"editor.defaultFormatter": "biomejs.biome"
@@ -32,6 +35,7 @@
 		"editor.formatOnSave": true,
 		"editor.defaultFormatter": "biomejs.biome"
 	},
+	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
 	"typescript.implementationsCodeLens.enabled": false,
 	"typescript.referencesCodeLens.enabled": false,
 	"typescript.suggest.autoImports": true,

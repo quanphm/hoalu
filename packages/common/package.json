@@ -6,15 +6,16 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		"./validate-env": "./src/validate-env.ts",
 		"./generate-id": "./src/generate-id.ts",
 		"./http-status": "./src/http-status/index.ts",
+		"./standard-validate": "./src/standard-validate.ts",
 		"./slugify": "./src/slugify.ts"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
 	},
 	"dependencies": {
+		"@standard-schema/spec": "^1.0.0",
 		"nanoid": "^5.0.9",
 		"uuid": "^11.0.5",
 		"valibot": "^1.0.0-beta.14"

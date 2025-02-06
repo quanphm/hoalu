@@ -1,5 +1,5 @@
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { reduceValibotIssues } from "@hoalu/common/validate-env";
+import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import { describeRoute } from "hono-openapi";
@@ -14,14 +14,11 @@ const app = createHonoInstance();
 
 app.use(cors());
 
-const selectSchema = v.omit(createSelectSchema(task), ["userId"]);
-const insertSchema = v.omit(
-	createInsertSchema(task, {
-		name: (schema) => v.pipe(schema, v.nonEmpty()),
-		done: (schema) => v.optional(schema, false),
-	}),
-	["userId", "createdAt", "updatedAt"],
-);
+const selectSchema = createSelectSchema(task);
+const insertSchema = createInsertSchema(task, {
+	name: (schema) => v.pipe(schema, v.nonEmpty()),
+	done: (schema) => v.optional(schema, false),
+});
 
 export const tasksRoute = app
 	.get(
@@ -39,7 +36,7 @@ export const tasksRoute = app
 		async (c) => {
 			const user = c.get("user")!;
 			const tasks = await db.query.task.findMany({
-				where: (task, { eq }) => eq(task.userId, user.id),
+				where: (task, { eq }) => eq(task.creatorId, user.id),
 			});
 
 			const parsed = v.safeParse(v.array(selectSchema), tasks);
@@ -47,7 +44,7 @@ export const tasksRoute = app
 			if (!parsed.success) {
 				return c.json(
 					{
-						error: reduceValibotIssues(parsed.issues),
+						error: createStandardIssues(parsed.issues),
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
@@ -78,7 +75,7 @@ export const tasksRoute = app
 			if (!result.success) {
 				return c.json(
 					{
-						error: reduceValibotIssues(result.issues),
+						error: createStandardIssues(result.issues),
 					},
 					HTTPStatus.codes.BAD_REQUEST,
 				);
@@ -93,7 +90,7 @@ export const tasksRoute = app
 				.values({
 					name,
 					done,
-					userId: user.id,
+					creatorId: user.id,
 				})
 				.returning();
 
@@ -102,7 +99,7 @@ export const tasksRoute = app
 			if (!parsed.success) {
 				return c.json(
 					{
-						error: reduceValibotIssues(parsed.issues),
+						error: createStandardIssues(parsed.issues),
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
