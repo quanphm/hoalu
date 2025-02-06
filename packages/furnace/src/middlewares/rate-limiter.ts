@@ -5,8 +5,8 @@ import { RedisStore } from "rate-limit-redis";
 export const rateLimiter = <T>(client: T) => {
 	return createMiddleware(async (c, next) => {
 		return honoRateLimiter({
-			windowMs: 1 * 60 * 1000,
-			limit: 5,
+			windowMs: 10 * 60 * 1000,
+			limit: 1000,
 			standardHeaders: "draft-6",
 			keyGenerator: (c) => c.req.header("X-Forwared-For") ?? "",
 			// @see https://www.npmjs.com/package/rate-limit-redis
