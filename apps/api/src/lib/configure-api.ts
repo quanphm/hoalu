@@ -4,7 +4,7 @@ import { tasksRoute } from "../routes/tasks";
 import type { HonoApp } from "../types";
 import { redis } from "./redis";
 
-export function configureApi(app: HonoApp) {
+export function configureAPI(app: HonoApp) {
 	const routes = app
 		.use(rateLimiter(redis))
 		.use(authGuard())
@@ -13,4 +13,4 @@ export function configureApi(app: HonoApp) {
 	return routes;
 }
 
-export type ApiRoutes = ReturnType<typeof configureApi>;
+export type ApiRoutes = ReturnType<typeof configureAPI>;
