@@ -1,11 +1,19 @@
 @import "tailwindcss";
 @import "@hoalu/ui/theme.css";
 
-@plugin "tailwind-scrollbar";
+@theme {
+	--font-sans: var(--geist-sans);
+	--font-mono: var(--geist-mono);
+}
 
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
+	:root {
+		--geist-sans: "Geist", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
+		--geist-mono: "GeistMono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
+	}
+
 	* {
 		@apply box-border border-border;
 	}
@@ -25,3 +33,21 @@
 		min-height: 100vh;
 	}
 }
+
+@font-face {
+	font-family: Geist;
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: GeistMono;
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
+}
+
+@plugin "tailwind-scrollbar";

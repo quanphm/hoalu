@@ -25,7 +25,7 @@ export const session = pgTable(
 		createdAt: timestamp("created_at").notNull(),
 		updatedAt: timestamp("updated_at").notNull(),
 	},
-	(table) => [index("idx_session_user_id").on(table.userId)],
+	(table) => [index("session_user_id_idx").on(table.userId)],
 );
 
 export const account = pgTable("account", {

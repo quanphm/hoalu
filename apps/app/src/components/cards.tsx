@@ -79,7 +79,7 @@ interface SettingCardProps
 	extends React.HTMLAttributes<HTMLDivElement>,
 		VariantProps<typeof settingCardVariants> {
 	title: string;
-	description?: string;
+	description?: React.ReactNode;
 }
 
 function SettingCard({

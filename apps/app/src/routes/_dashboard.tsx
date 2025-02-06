@@ -1,10 +1,12 @@
 import { SidebarSaysLayout } from "@/components/layouts/sidebar-says-layout";
-import { listWorkspacesOptions } from "@/services/query-options";
+import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard")({
-	beforeLoad: async ({ context: { user } }) => {
-		if (!user) {
+	beforeLoad: async ({ context: { queryClient } }) => {
+		const auth = await queryClient.ensureQueryData(sessionOptions());
+		console.log(auth);
+		if (!auth || !auth.user) {
 			throw redirect({
 				to: "/login",
 				search: {

@@ -6,7 +6,8 @@ export function Greeting() {
 	// 0 -> 23
 	const currentHour = new Date().getHours();
 	const icon = currentHour < 12 ? "☀" : currentHour < 17 ? "⛅" : "🌙";
-	const message = currentHour < 12 ? "Morning" : currentHour < 17 ? "Afternoon" : "Evening";
+	const message =
+		currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
 
 	return (
 		<p className="font-semibold text-2xl leading-none">

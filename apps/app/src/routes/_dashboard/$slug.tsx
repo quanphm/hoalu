@@ -9,7 +9,6 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
 		]);
-
 		return {
 			workspace: result[0],
 			activeMember: result[1],

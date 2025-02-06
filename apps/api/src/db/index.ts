@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as authSchema from "./schema/auth";
+import * as financeSchema from "./schema/finance";
+import * as fxRateSchema from "./schema/fx-rate";
 import * as taskSchema from "./schema/task";
 import * as workspaceSchema from "./schema/workspace";
 
@@ -19,6 +21,8 @@ const client = postgres({
 const schema = {
 	...authSchema,
 	...workspaceSchema,
+	...fxRateSchema,
+	...financeSchema,
 	...taskSchema,
 };
 
