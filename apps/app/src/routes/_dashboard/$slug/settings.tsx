@@ -1,4 +1,5 @@
 import { SettingCard } from "@/components/cards";
+import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { DeleteWorkspaceDialog, DeleteWorkspaceTrigger } from "@/components/workspace";
 import { UpdateWorkspaceForm } from "@/components/workspace";
@@ -41,6 +42,11 @@ function RouteComponent() {
 				<SectionContent columns={3}>
 					<SettingCard title="Profile" className="col-span-2">
 						<UpdateWorkspaceForm />
+					</SettingCard>
+				</SectionContent>
+				<SectionContent columns={3}>
+					<SettingCard title="Workspace ID" className="col-span-2">
+						<InputWithCopy value={workspace.publicId} />
 					</SettingCard>
 				</SectionContent>
 			</Section>

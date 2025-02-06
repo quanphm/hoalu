@@ -61,7 +61,6 @@ function bad_request(description?: string): Record<400, Response> {
 						type({
 							error: type({
 								message: `'string = ${HTTPStatus.phrases.BAD_REQUEST}'`,
-								"input?": "string",
 							}).array(),
 						}),
 					),
@@ -81,7 +80,6 @@ function server_parse_error(description?: string): Record<422, Response> {
 						type({
 							error: type({
 								message: `'string = ${HTTPStatus.phrases.UNPROCESSABLE_ENTITY}'`,
-								"input?": "string",
 							}).array(),
 						}),
 					),

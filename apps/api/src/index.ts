@@ -2,7 +2,7 @@ import type { Serve } from "bun";
 import { app } from "./app";
 import { verifyEnv } from "./lib/env";
 
-await verifyEnv();
+verifyEnv();
 
 export default {
 	port: 3000,

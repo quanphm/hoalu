@@ -1,21 +1,20 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-export function createStandardIssues(issues) {
+export function createStandardIssues(issues: readonly { message: string }[]) {
 	return issues.map((issue) => {
 		return {
-			input: issue.input,
 			message: issue.message,
 		};
 	});
 }
 
-export async function standardValidate<T extends StandardSchemaV1>(
+export function standardValidate<T extends StandardSchemaV1>(
 	schema: T,
 	input: StandardSchemaV1.InferInput<T>,
 ) {
-	let parsed = schema["~standard"].validate(input);
+	const parsed = schema["~standard"].validate(input);
 	if (parsed instanceof Promise) {
-		parsed = await parsed;
+		throw new TypeError("Schema validation must be synchronous");
 	}
 	if (parsed.issues) {
 		const reducedIssues = createStandardIssues(parsed.issues);

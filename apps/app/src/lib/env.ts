@@ -5,6 +5,7 @@ const envSchema = type({
 	PUBLIC_API_URL: "string.url",
 	PUBLIC_APP_BASE_URL: "string.url",
 });
+type EnvSchema = typeof envSchema.infer;
 
 function verifyEnv() {
 	standardValidate(envSchema, import.meta.env);
@@ -17,7 +18,6 @@ interface ViteBuiltInEnv {
 	DEV: boolean;
 	PROD: boolean;
 }
-type EnvSchema = typeof envSchema.infer;
 
 declare global {
 	interface ImportMetaEnv extends EnvSchema, ViteBuiltInEnv {}
