@@ -8,7 +8,6 @@ import { validator as aValidator } from "hono-openapi/arktype";
 import { cors } from "hono/cors";
 import { db } from "../db";
 import { task } from "../db/schema/task";
-import { workspace } from "../db/schema/workspace";
 import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();

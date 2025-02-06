@@ -46,7 +46,7 @@ export default function VerifyEmail({ url, name }: Props) {
 						</Text>
 						<Text>If you didn&apos;t request for this, you can safely ignore this email.</Text>
 						<Text>
-							Thank you,
+							Cheers,
 							<br />
 							Quan from Hoalu
 						</Text>

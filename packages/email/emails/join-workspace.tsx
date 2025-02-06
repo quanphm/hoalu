@@ -50,7 +50,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 							</Link>
 						</Text>
 						<Text>
-							Enjoy,
+							Cheers,
 							<br />
 							Quan from Hoalu
 						</Text>
