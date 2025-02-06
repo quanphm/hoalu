@@ -5,13 +5,11 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { cors } from "hono/cors";
 import { db } from "../db";
 import { task } from "../db/schema/task";
 import { createHonoInstance } from "../lib/create-app";
 
 const app = createHonoInstance();
-app.use(cors());
 
 const taskSchema = type({
 	id: "number",
@@ -28,7 +26,7 @@ const insertTaskSchema = type({
 	done: "boolean = false",
 });
 const querySchema = type({
-	workspaceIdSlug: "string",
+	workspaceIdOrSlug: "string",
 });
 
 export const tasksRoute = app
@@ -53,10 +51,10 @@ export const tasksRoute = app
 			}
 		}),
 		async (c) => {
-			const { workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug } = c.req.valid("query");
 			const workspaceResult = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
-					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
+					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
 			});
 			if (!workspaceResult) {
 				return c.json(
@@ -117,12 +115,12 @@ export const tasksRoute = app
 		}),
 		async (c) => {
 			const user = c.get("user")!;
-			const { workspaceIdSlug } = c.req.valid("query");
+			const { workspaceIdOrSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
 
 			const workspaceResult = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
-					or(eq(workspace.slug, workspaceIdSlug), eq(workspace.publicId, workspaceIdSlug)),
+					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
 			});
 			if (!workspaceResult) {
 				return c.json(

@@ -30,6 +30,7 @@
 		"drizzle-orm": "^0.39.1",
 		"hono": "^4.6.20",
 		"hono-openapi": "^0.4.4",
+		"ioredis": "^5.4.2",
 		"minio": "^8.0.4",
 		"nanoid": "^5.0.9",
 		"nodemailer": "^6.10.0",

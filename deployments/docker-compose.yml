@@ -42,6 +42,20 @@ services:
           cpus: "1.0"
           memory: 1G
 
+  redis:
+    container_name: hoalu-redis
+    image: redis:7.4.2-alpine
+    restart: always
+    networks:
+      - hoalu_network
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
   api:
     container_name: hoalu-api
     build:
@@ -55,6 +69,7 @@ services:
       - traefik_network
     depends_on:
       - database
+      - redis
     deploy:
       resources:
         limits:
