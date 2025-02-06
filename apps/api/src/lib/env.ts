@@ -18,7 +18,6 @@ export const envSchema = type({
 	S3_ENDPOINT: "string > 0",
 	SYNC_URL: "string.url",
 	NODE_ENV: "string = 'development'",
-	EST: "string = 'development'",
 });
 
 export type EnvSchema = typeof envSchema.infer;

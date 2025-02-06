@@ -64,7 +64,6 @@ function CreateWorkspaceForm() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const context = use(CreateContext);
-
 	const form = useForm<typeof workspaceSchema.infer>({
 		resolver: arktypeResolver(workspaceSchema),
 		values: {

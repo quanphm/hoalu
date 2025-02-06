@@ -180,7 +180,7 @@ export interface WorkspaceOptions {
  * });
  * ```
  */
-export const workspace = <O extends WorkspaceOptions>(options?: O) => {
+const workspace = <O extends WorkspaceOptions>(options?: O) => {
 	const roles = {
 		...defaultRoles,
 		...options?.roles,
@@ -326,3 +326,5 @@ export const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		$ERROR_CODES: WORKSPACE_ERROR_CODES,
 	} satisfies BetterAuthPlugin;
 };
+
+export { workspace, WORKSPACE_ERROR_CODES };

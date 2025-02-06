@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { bigint, boolean, foreignKey, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { member, workspace } from "./workspace";
+import { member } from "./workspace";
 
 export const task = pgTable(
 	"task",
