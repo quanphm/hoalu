@@ -66,7 +66,6 @@ function RouteComponent() {
 					</SettingCard>
 				</SectionContent>
 			</Section>
-
 			{canDeleteWorkspace && (
 				<Section>
 					<SectionHeader>
@@ -88,7 +87,7 @@ function RouteComponent() {
 						</SettingCard>
 					</SectionContent>
 				</Section>
-			)}
+			)}{" "}
 		</>
 	);
 }
