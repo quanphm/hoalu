@@ -29,9 +29,9 @@ function RouteComponent() {
 						title="Logo"
 						description={
 							<p className="max-w-sm">
-								Square image recommended.
+								Recommended size 256x256px.
 								<br />
-								Accepted file types: .png, .jpg. Max file size: 2MB.
+								Accepted file types: .png, .jpg. Max file size: 5MB.
 							</p>
 						}
 						className="col-span-2"
@@ -60,7 +60,7 @@ function RouteComponent() {
 						variant="destructive"
 						layout="horizontal"
 						title="Delete workspace"
-						description="Permanently delete workspace. This action cannot be undone, so please be certain."
+						description="Permanently delete workspace. This action can't be undone, so please be certain."
 						className="col-span-2"
 					>
 						<DeleteWorkspaceDialog>

@@ -98,7 +98,7 @@ export function MembersTable({ data }: { data: Item[] }) {
 
 	return (
 		<div className="space-y-4">
-			<div className="overflow-hidden rounded-lg border bg-background">
+			<div className="overflow-hidden rounded-sm bg-background">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -108,7 +108,7 @@ export function MembersTable({ data }: { data: Item[] }) {
 										<TableHead
 											key={header.id}
 											style={{ width: `${header.getSize()}px` }}
-											className="relative h-11"
+											className="relative h-10"
 										>
 											{header.isPlaceholder
 												? null
