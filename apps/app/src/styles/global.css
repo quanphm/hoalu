@@ -41,7 +41,7 @@
 	}
 	body,
 	html {
-		@apply w-full min-h-screen
+		@apply w-full min-h-screen;
 	}
 }
 
