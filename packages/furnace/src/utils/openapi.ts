@@ -59,9 +59,7 @@ function bad_request(description?: string): Record<400, Response> {
 				"application/json": {
 					schema: resolver(
 						type({
-							error: type({
-								message: `'string = ${HTTPStatus.phrases.BAD_REQUEST}'`,
-							}).array(),
+							message: `'string = ${HTTPStatus.phrases.BAD_REQUEST}'`,
 						}),
 					),
 				},
@@ -80,9 +78,7 @@ function server_parse_error(description?: string): Record<422, Response> {
 				"application/json": {
 					schema: resolver(
 						type({
-							error: type({
-								message: `'string = ${HTTPStatus.phrases.UNPROCESSABLE_ENTITY}'`,
-							}).array(),
+							message: `'string = ${HTTPStatus.phrases.UNPROCESSABLE_ENTITY}'`,
 						}),
 					),
 				},

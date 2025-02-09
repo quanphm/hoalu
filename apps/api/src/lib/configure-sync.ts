@@ -1,13 +1,30 @@
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { authGuard } from "@hoalu/furnace";
 import { cors } from "hono/cors";
-import type { HonoApp } from "../types";
+import { createHonoInstance } from "./create-app";
 
-export function configureElectricSync(app: HonoApp) {
-	app
-		.use("/sync/*", cors())
+export function configureElectricSync() {
+	const sync = createHonoInstance().basePath("/sync");
+
+	sync
+		.use(
+			cors({
+				origin: [process.env.PUBLIC_APP_BASE_URL],
+				allowMethods: ["POST", "GET", "HEAD", "DELETE", "OPTIONS"],
+				exposeHeaders: [
+					"electric-handle",
+					"electric-offset",
+					"electric-schema",
+					"electric-cursor",
+					"electric-up-to-date",
+					"content-length",
+					"content-encoding",
+				],
+				credentials: true,
+			}),
+		)
 		.use(authGuard())
-		.get("/sync", async (c) => {
+		.get("/", async (c) => {
 			const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
 
 			const searchParams = new URL(c.req.url).searchParams;
@@ -52,4 +69,6 @@ export function configureElectricSync(app: HonoApp) {
 				...Object.fromEntries(electricHeaders),
 			});
 		});
+
+	return sync;
 }

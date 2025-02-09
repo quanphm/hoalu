@@ -1,11 +1,16 @@
-import { Calendar } from "@/components/calendar";
 import { AppLogo } from "@/components/layouts/app-logo";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
-import { SidebarFooter, SidebarInset, SidebarMenu, SidebarProvider } from "@hoalu/ui/sidebar";
+import {
+	SidebarFooter,
+	SidebarInset,
+	SidebarMenu,
+	SidebarProvider,
+	SidebarTrigger,
+} from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -30,7 +35,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<Sidebar variant="inset">
+			<Sidebar>
 				<SidebarHeader>
 					{hasSlug && currentWorkspace ? (
 						<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
@@ -47,38 +52,36 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					<SidebarMenu>
 						<NavUser />
 					</SidebarMenu>
+					{/* <div className="flex justify-center gap-4">
+						<a
+							href="https://github.com/quanphm/hoalu"
+							target="_blank"
+							rel="noreferrer"
+							className="rounded-full border p-2 hover:bg-muted"
+						>
+							<GithubIcon className="size-4" />
+						</a>
+						<a
+							href="https://github.com/quanphm/hoalu"
+							target="_blank"
+							rel="noreferrer"
+							className="rounded-full border p-2 hover:bg-muted"
+						>
+							<DiscordIcon className="size-4" />
+						</a>
+						<a
+							href="https://x.com/quan_phmn"
+							target="_blank"
+							rel="noreferrer"
+							className="rounded-full border p-2 hover:bg-muted"
+						>
+							<TwitterXIcon className="size-4" />
+						</a>
+					</div> */}
 				</SidebarFooter>
 			</Sidebar>
 
-			<SidebarInset className="flex-1 overflow-y-auto overflow-x-hidden border md:peer-data-[variant=inset]:mr-0 md:peer-data-[variant=inset]:shadow-none">
-				{children}
-			</SidebarInset>
-
-			<Sidebar
-				variant="inset"
-				collapsible="none"
-				className="flex h-svh w-(--sidebar-width) gap-2 p-2"
-			>
-				<SidebarContent className="p-2">
-					<Calendar />
-				</SidebarContent>
-				<SidebarFooter>
-					<div className="flex flex-col items-center justify-between gap-3">
-						<div className="flex items-center justify-center gap-4">
-							<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
-								<GithubIcon className="size-4" />
-							</a>
-							<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
-								<DiscordIcon className="size-4" />
-							</a>
-							<a href="https://x.com/quan_phmn" target="_blank" rel="noreferrer">
-								<TwitterXIcon className="size-4" />
-							</a>
-						</div>
-						<p className="text-muted-foreground text-xs tracking-tight">Version 0.4.0</p>
-					</div>
-				</SidebarFooter>
-			</Sidebar>
+			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>
 	);
 }

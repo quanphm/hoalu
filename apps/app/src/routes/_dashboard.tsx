@@ -5,7 +5,6 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/_dashboard")({
 	beforeLoad: async ({ context: { queryClient } }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());
-		console.log(auth);
 		if (!auth?.user) {
 			throw redirect({
 				to: "/login",

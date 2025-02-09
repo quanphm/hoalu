@@ -2,9 +2,7 @@ import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 export function createStandardIssues(issues: readonly { message: string }[]) {
 	return issues.map((issue) => {
-		return {
-			message: issue.message,
-		};
+		return issue.message;
 	});
 }
 

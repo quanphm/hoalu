@@ -249,7 +249,7 @@ const SidebarTrigger = ({
 			}}
 			{...props}
 		>
-			<LayoutSidebarLeftIcon />
+			<LayoutSidebarLeftIcon className="size-6" />
 			<span className="sr-only">Toggle Sidebar</span>
 		</Button>
 	);

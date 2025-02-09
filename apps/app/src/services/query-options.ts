@@ -98,9 +98,9 @@ export const invitationDetailsOptions = (id: string) => {
 	});
 };
 
-export const tasksQueryOptions = () => {
+export const tasksQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: taskKeys.all,
-		queryFn: () => api.fetchTasks(),
+		queryFn: () => api.fetchTasks(slug),
 	});
 };
