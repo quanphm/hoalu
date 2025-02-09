@@ -45,7 +45,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Getting started</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={3}>
+				<SectionContent columns={4}>
 					<ContentCard
 						title="Create workspace"
 						content="Experience the power of AI in generating unique content."
@@ -72,7 +72,7 @@ function RouteComponent() {
 						</CreateWorkspaceDialogTrigger>
 					</CreateWorkspaceDialog>
 				</SectionHeader>
-				<SectionContent columns={3}>
+				<SectionContent columns={4}>
 					{workspaces.map((ws) => (
 						<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }}>
 							<WorkspaceCard {...ws} />

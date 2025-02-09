@@ -12,7 +12,7 @@ function RouteComponent() {
 	return (
 		<>
 			<Section>
-				<SectionContent columns={4}>
+				<SectionContent columns={6}>
 					<Button variant="outline">
 						<SendIcon className="mr-2 size-4" />
 						Create expense

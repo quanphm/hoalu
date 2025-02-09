@@ -12,7 +12,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={3}>
+				<SectionContent columns={4}>
 					<div className="aspect-video rounded-xl bg-muted/50" />
 					<div className="aspect-video rounded-xl bg-muted/50" />
 					<div className="aspect-video rounded-xl bg-muted/50" />

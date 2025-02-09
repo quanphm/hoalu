@@ -1,4 +1,7 @@
+import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { getWorkspaceDetailsOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/finance/expenses")({
@@ -6,13 +9,23 @@ export const Route = createFileRoute("/_dashboard/$slug/finance/expenses")({
 });
 
 function RouteComponent() {
+	const { slug } = Route.useParams();
+	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const membersTableData = workspace.members.map((member) => ({
+		id: member.user.id,
+		name: member.user.name,
+		email: member.user.email,
+		image: member.user.image,
+		role: member.role,
+	}));
+
 	return (
 		<Section>
 			<SectionHeader>
-				<SectionTitle>Expense entries</SectionTitle>
+				<SectionTitle>Entries</SectionTitle>
 			</SectionHeader>
 			<SectionContent>
-				<div className="aspect-video rounded-xl bg-muted/50" />
+				<ExpensesTable data={membersTableData} />
 			</SectionContent>
 		</Section>
 	);

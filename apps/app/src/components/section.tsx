@@ -36,7 +36,7 @@ function SectionContent({
 }
 
 function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"p">) {
-	return <p className={cn("font-medium text-md", className)} {...props} />;
+	return <p className={cn("font-medium text-md leading-8", className)} {...props} />;
 }
 
 export { Section, SectionHeader, SectionContent, SectionTitle };

@@ -46,7 +46,7 @@ export const tasksRoute = app
 		aValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -59,7 +59,7 @@ export const tasksRoute = app
 			});
 			if (!workspaceResult) {
 				return c.json(
-					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -72,7 +72,7 @@ export const tasksRoute = app
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{
-						error: createStandardIssues(parsed.issues),
+						message: createStandardIssues(parsed.issues)[0],
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
@@ -101,7 +101,9 @@ export const tasksRoute = app
 		aValidator("query", querySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					{
+						message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+					},
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -109,7 +111,7 @@ export const tasksRoute = app
 		aValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{ error: createStandardIssues(result.errors.issues) },
+					{ message: createStandardIssues(result.errors.issues)[0] },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -125,7 +127,7 @@ export const tasksRoute = app
 			});
 			if (!workspaceResult) {
 				return c.json(
-					{ error: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -146,7 +148,7 @@ export const tasksRoute = app
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{
-						error: createStandardIssues(parsed.issues),
+						message: createStandardIssues(parsed.issues)[0],
 					},
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);

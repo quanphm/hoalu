@@ -1,26 +1,30 @@
-import { authGuard } from "@hoalu/furnace";
-import { cors } from "hono/cors";
+import { auth } from "./lib/auth";
 import { configureAPI } from "./lib/configure-api";
 import { configureAuth } from "./lib/configure-auth";
-import { configureElectricSync } from "./lib/configure-electric-sync";
 import { configureOpenAPI } from "./lib/configure-openapi";
+import { configureElectricSync } from "./lib/configure-sync";
 import { createApp } from "./lib/create-app";
+import type { Session, User } from "./types";
 
 export const app = createApp();
 
 configureOpenAPI(app);
-configureAuth(app);
 
-app
-	.use(
-		cors({
-			origin: process.env.PUBLIC_APP_BASE_URL,
-			allowMethods: ["POST", "GET", "OPTIONS"],
-			maxAge: 600,
-			credentials: true,
-		}),
-	)
-	.use(authGuard());
+const authRoute = configureAuth();
+app.route("/", authRoute);
 
-configureAPI(app);
-configureElectricSync(app);
+app.use(async (c, next) => {
+	const session = await auth.api.getSession({
+		// @ts-ignore
+		headers: c.req.raw.headers,
+	});
+	c.set("user", (session?.user as unknown as User) || null);
+	c.set("session", (session?.session as unknown as Session) || null);
+	await next();
+});
+
+const apiRoute = configureAPI();
+app.route("/", apiRoute);
+
+const syncRoute = configureElectricSync();
+app.route("/", syncRoute);

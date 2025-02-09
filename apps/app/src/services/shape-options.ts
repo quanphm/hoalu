@@ -11,4 +11,10 @@ export const tasksShapeOptions = ({
 		where: `workspace_id = \'${workspaceId}\'`,
 		columns: ["id", "name", "done", "creator_id", "created_at"],
 	},
+	fetchClient: async (req, init) => {
+		return fetch(req, {
+			...init,
+			credentials: "include",
+		});
+	},
 });
