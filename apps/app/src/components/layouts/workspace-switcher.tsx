@@ -23,13 +23,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 
 interface Props {
-	currentWorkspace: {
+	selectedWorkspace: {
 		name: string;
-		logo?: string | null;
+		logo?: string | null | undefined;
 	};
 }
 
-export function WorkspaceSwitcher({ currentWorkspace }: Props) {
+export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const params = useParams({ from: "/_dashboard/$slug" });
 
@@ -44,10 +44,10 @@ export function WorkspaceSwitcher({ currentWorkspace }: Props) {
 								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
 								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-									<WorkspaceAvatar logo={currentWorkspace?.logo} name={currentWorkspace.name} />
+									<WorkspaceAvatar logo={selectedWorkspace?.logo} name={selectedWorkspace.name} />
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">{currentWorkspace.name}</span>
+									<span className="truncate font-semibold">{selectedWorkspace.name}</span>
 								</div>
 								<ChevronsUpDownIcon className="ml-auto" />
 							</SidebarMenuButton>

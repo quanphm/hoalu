@@ -1,7 +1,10 @@
 import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 
-export function UserAvatar({ image = null, name }: { image?: string | null; name: string }) {
+export function UserAvatar({
+	image = null,
+	name,
+}: { image?: string | null | undefined; name: string }) {
 	const userShortName = extractLetterFromName(name);
 	return (
 		<Avatar className="size-8">

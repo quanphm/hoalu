@@ -3,13 +3,8 @@ import type { Hono } from "hono";
 import type { auth } from "./lib/auth";
 import type { EnvSchema } from "./lib/env";
 
-export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
-	id: number;
-};
-export type Session = Omit<typeof auth.$Infer.Session.session, "id" | "userId"> & {
-	id: number;
-	userId: number;
-};
+export type User = typeof auth.$Infer.Session.user;
+export type Session = typeof auth.$Infer.Session.session;
 
 export interface AppBindings {
 	Variables: {

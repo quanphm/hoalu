@@ -33,7 +33,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 			<Sidebar variant="inset">
 				<SidebarHeader>
 					{hasSlug && currentWorkspace ? (
-						<WorkspaceSwitcher currentWorkspace={currentWorkspace} />
+						<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
 					) : (
 						<AppLogo />
 					)}
@@ -50,14 +50,14 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 				</SidebarFooter>
 			</Sidebar>
 
-			<SidebarInset className="max-w-[calc(100%-30rem)] flex-1 overflow-y-auto overflow-x-hidden border md:peer-data-[variant=inset]:shadow-none">
+			<SidebarInset className="flex-1 overflow-y-auto overflow-x-hidden border md:peer-data-[variant=inset]:mr-0 md:peer-data-[variant=inset]:shadow-none">
 				{children}
 			</SidebarInset>
 
 			<Sidebar
 				variant="inset"
 				collapsible="none"
-				className="fixed inset-y-0 right-0 flex h-svh w-[16rem] gap-2 p-2"
+				className="flex h-svh w-(--sidebar-width) gap-2 p-2"
 			>
 				<SidebarContent className="p-2">
 					<Calendar />

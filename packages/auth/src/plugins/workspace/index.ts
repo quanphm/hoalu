@@ -250,7 +250,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 			member: {
 				fields: {
 					workspaceId: {
-						type: "number",
+						type: "string",
 						required: true,
 						references: {
 							model: "workspace",
@@ -258,7 +258,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						},
 					},
 					userId: {
-						type: "number",
+						type: "string",
 						required: true,
 						references: {
 							model: "user",
@@ -283,7 +283,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						required: true,
 					},
 					workspaceId: {
-						type: "number",
+						type: "string",
 						required: true,
 						references: {
 							model: "workspace",
@@ -308,7 +308,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 						required: true,
 					},
 					inviterId: {
-						type: "number",
+						type: "string",
 						references: {
 							model: "user",
 							field: "id",

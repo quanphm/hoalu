@@ -1,4 +1,5 @@
 import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
+import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
@@ -12,11 +13,11 @@ import { createHonoInstance } from "../lib/create-app";
 const app = createHonoInstance();
 
 const taskSchema = type({
-	id: "number",
+	id: "string",
 	name: "string",
 	done: "boolean",
-	creatorId: "number",
-	workspaceId: "number",
+	creatorId: "string",
+	workspaceId: "string",
 	createdAt: "string",
 	updatedAt: "string",
 });
@@ -132,6 +133,7 @@ export const tasksRoute = app
 			const [taskResult] = await db
 				.insert(task)
 				.values({
+					id: generateId({ use: "uuid" }),
 					name,
 					done,
 					creatorId: user.id,

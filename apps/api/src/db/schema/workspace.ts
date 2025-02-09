@@ -1,10 +1,10 @@
-import { bigint, index, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const workspace = pgTable(
 	"workspace",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+		id: uuid("id").primaryKey(),
 		slug: text("slug").notNull().unique(),
 		publicId: text("public_id").notNull().unique(),
 		name: text("name").notNull(),
@@ -18,16 +18,17 @@ export const workspace = pgTable(
 export const member = pgTable(
 	"member",
 	{
-		workspaceId: bigint("workspace_id", { mode: "number" })
+		id: uuid("id").primaryKey(),
+		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
-		userId: bigint("user_id", { mode: "number" })
+		userId: uuid("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 		role: text("role").notNull(),
 		createdAt: timestamp("created_at").notNull(),
 	},
-	(table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
+	(table) => [unique("member_on_workspace_id_user_id_unique").on(table.workspaceId, table.userId)],
 );
 
 export const invitation = pgTable("invitation", {
@@ -35,11 +36,11 @@ export const invitation = pgTable("invitation", {
 	email: text("email").notNull(),
 	role: text("role"),
 	status: text("status").notNull(),
-	workspaceId: bigint("workspace_id", { mode: "number" })
+	workspaceId: uuid("workspace_id")
 		.notNull()
 		.references(() => workspace.id, { onDelete: "cascade" }),
-	inviterId: bigint("inviter_id", { mode: "number" })
+	inviterId: uuid("inviter_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: "cascade" }),
 	expiresAt: timestamp("expires_at").notNull(),
 });

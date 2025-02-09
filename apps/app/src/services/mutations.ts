@@ -7,7 +7,7 @@ import { invitationKeys, memberKeys, workspaceKeys } from "./query-key-factory";
 export function useRemoveMember(slug: string) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation({
-		mutationFn: async (id: number) => {
+		mutationFn: async (id: string) => {
 			const { data, error } = await authClient.workspace.removeMember({
 				userId: id,
 				idOrSlug: slug,

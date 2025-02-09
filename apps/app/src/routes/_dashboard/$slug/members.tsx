@@ -17,7 +17,7 @@ function RouteComponent() {
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canInvite = authClient.workspace.checkRolePermission({
-		role: member.role || "member",
+		role: member.role,
 		permission: {
 			invitation: ["create"],
 		},

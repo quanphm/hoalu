@@ -13,9 +13,9 @@ export const addMember = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			userId: z.number(),
+			userId: z.string(),
 			role: z.string(),
-			workspaceId: z.number(),
+			workspaceId: z.string(),
 		}),
 		use: [workspaceMiddleware],
 		metadata: {
@@ -23,8 +23,8 @@ export const addMember = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const orgId = ctx.body.workspaceId;
-		if (!orgId) {
+		const workspaceId = ctx.body.workspaceId;
+		if (!workspaceId) {
 			return ctx.json(null, {
 				status: HTTPStatus.codes.BAD_REQUEST,
 				body: {
@@ -43,7 +43,7 @@ export const addMember = createAuthEndpoint(
 
 		const alreadyMember = await adapter.findMemberByEmail({
 			email: user.email,
-			workspaceId: orgId,
+			workspaceId,
 		});
 		if (alreadyMember) {
 			throw new APIError("BAD_REQUEST", {
@@ -52,8 +52,8 @@ export const addMember = createAuthEndpoint(
 		}
 
 		const createdMember = await adapter.createMember({
-			workspaceId: orgId,
-			userId: user.id as unknown as number,
+			workspaceId,
+			userId: user.id,
 			role: ctx.body.role as string,
 			createdAt: new Date(),
 		});
@@ -67,7 +67,7 @@ export const removeMember = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			userId: z.number({
+			userId: z.string({
 				description: "The user ID the member to remove",
 			}),
 			idOrSlug: z.string({
@@ -192,8 +192,8 @@ export const updateMemberRole = createAuthEndpoint(
 		method: "POST",
 		body: z.object({
 			role: z.string(),
-			userId: z.number(),
-			workspaceId: z.number(),
+			userId: z.string(),
+			workspaceId: z.string(),
 		}),
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		metadata: {

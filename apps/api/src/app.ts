@@ -1,4 +1,4 @@
-import { type ApiRoutes, configureAPI } from "./lib/configure-api";
+import { configureAPI } from "./lib/configure-api";
 import { configureAuth } from "./lib/configure-auth";
 import { configureElectricSync } from "./lib/configure-electric-sync";
 import { configureOpenAPI } from "./lib/configure-openapi";
@@ -10,5 +10,3 @@ configureAuth(app);
 configureElectricSync(app);
 configureAPI(app);
 configureOpenAPI(app);
-
-export type { ApiRoutes };

@@ -6,7 +6,7 @@ export const invitationStatus = z
 	.default("pending");
 
 export const workspaceSchema = z.object({
-	id: z.number(),
+	id: z.string(),
 	name: z.string(),
 	slug: z.string(),
 	publicId: z.string(),
@@ -17,26 +17,27 @@ export const workspaceSchema = z.object({
 		.nullish(),
 	createdAt: z.date(),
 });
-const workspaceSchemaInput = workspaceSchema.omit({ id: true });
 export type Workspace = z.infer<typeof workspaceSchema>;
-export type WorkspaceInput = z.infer<typeof workspaceSchemaInput>;
+export type WorkspaceInput = Omit<z.infer<typeof workspaceSchema>, "id">;
 
 export const memberSchema = z.object({
-	workspaceId: z.number(),
-	userId: z.number(),
+	id: z.string(),
+	workspaceId: z.string(),
+	userId: z.string(),
 	role,
 	createdAt: z.date(),
 });
 export type Member = z.infer<typeof memberSchema>;
+export type MemberInput = Omit<z.infer<typeof memberSchema>, "id">;
 
 export const invitationSchema = z.object({
 	id: z.string(),
-	workspaceId: z.number(),
+	workspaceId: z.string(),
 	email: z.string(),
 	role,
 	status: invitationStatus,
-	inviterId: z.number(),
+	inviterId: z.string(),
 	expiresAt: z.date(),
 });
-const invitationSchemaInput = invitationSchema.omit({ id: true });
 export type Invitation = z.infer<typeof invitationSchema>;
+export type InvitationInput = Omit<z.infer<typeof invitationSchema>, "id">;

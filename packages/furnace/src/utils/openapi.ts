@@ -66,7 +66,9 @@ function bad_request(description?: string): Record<400, Response> {
 					),
 				},
 			},
-			description: description || "Invalid request body",
+			description:
+				description ||
+				"The request is malformed, either missing required fields, using wrong datatypes, or being syntactically incorrect.",
 		},
 	};
 }
@@ -85,7 +87,9 @@ function server_parse_error(description?: string): Record<422, Response> {
 					),
 				},
 			},
-			description: description || "Server validation/parse errors",
+			description:
+				description ||
+				"The server was unable to process the request because it contains invalid data.",
 		},
 	};
 }

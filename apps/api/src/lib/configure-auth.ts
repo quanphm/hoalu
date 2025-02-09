@@ -6,7 +6,6 @@ import { redis } from "./redis";
 
 export function configureAuth(app: HonoApp) {
 	app
-		.use(rateLimiter(redis))
 		.use(
 			"/auth/*",
 			cors({
@@ -18,6 +17,7 @@ export function configureAuth(app: HonoApp) {
 				credentials: true,
 			}),
 		)
+		.use(rateLimiter(redis))
 		.use("*", async (c, next) => {
 			// @ts-ignore
 			const session = await auth.api.getSession({ headers: c.req.raw.headers });
