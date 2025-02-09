@@ -1,4 +1,5 @@
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
+import { generateId } from "@hoalu/common/generate-id";
 import JoinWorkspace from "@hoalu/email/join-workspace";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
@@ -16,7 +17,9 @@ export const auth = betterAuth({
 		provider: "pg",
 	}),
 	advanced: {
-		generateId: false,
+		generateId: () => {
+			return generateId({ use: "uuid" });
+		},
 	},
 	session: {
 		cookieCache: {

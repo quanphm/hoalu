@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-	bigint,
 	foreignKey,
 	index,
 	numeric,
@@ -9,6 +8,7 @@ import {
 	text,
 	timestamp,
 	unique,
+	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
 import { member, workspace } from "./workspace";
@@ -22,13 +22,13 @@ export const walletTypeEnum = pgEnum("wallet_type_enum", [
 ]);
 
 export const wallet = pgTable("wallet", {
-	id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid("id").primaryKey(),
 	publicId: text("public_id").notNull().unique(),
 	name: text("name").notNull(),
 	description: text("description"),
 	currency: varchar({ length: 3 }).notNull(),
 	type: walletTypeEnum().default("cash").notNull(),
-	workspaceId: bigint("workspace_id", { mode: "number" })
+	workspaceId: uuid("workspace_id")
 		.notNull()
 		.references(() => workspace.id, { onDelete: "cascade" }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -38,11 +38,11 @@ export const wallet = pgTable("wallet", {
 export const category = pgTable(
 	"category",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+		id: uuid("id").primaryKey(),
 		name: text("name").notNull(),
 		description: text("description"),
 		color: text("color"),
-		workspaceId: bigint("workspace_id", { mode: "number" })
+		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -54,18 +54,18 @@ export const category = pgTable(
 export const expense = pgTable(
 	"expense",
 	{
-		id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+		id: uuid("id").primaryKey(),
 		title: text("title").notNull(),
 		description: text("description"),
 		date: timestamp("date", { withTimezone: true }).default(sql`now()`).notNull(),
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
-		creatorId: bigint("creator_id", { mode: "number" }).notNull(),
-		workspaceId: bigint("workspace_id", { mode: "number" }).notNull(),
-		walletId: bigint("wallet_id", { mode: "number" })
+		creatorId: uuid("creator_id").notNull(),
+		workspaceId: uuid("workspace_id").notNull(),
+		walletId: uuid("wallet_id")
 			.notNull()
 			.references(() => wallet.id, { onDelete: "cascade" }),
-		categoryId: bigint("category_id", { mode: "number" })
+		categoryId: uuid("category_id")
 			.notNull()
 			.references(() => category.id),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -73,10 +73,10 @@ export const expense = pgTable(
 	},
 	(table) => [
 		foreignKey({
+			name: "expense_member_fk",
 			columns: [table.workspaceId, table.creatorId],
 			foreignColumns: [member.workspaceId, member.userId],
-			name: "expense_member_fk",
-		}),
+		}).onDelete("cascade"),
 		index("expense_title_idx").using("gin", sql`to_tsvector('english', ${table.title})`),
 	],
 );

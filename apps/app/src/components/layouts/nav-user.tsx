@@ -1,7 +1,5 @@
 import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/hooks/useAuth";
-import { authClient } from "@/lib/auth-client";
-import { authKeys } from "@/services/query-key-factory";
 import { ChevronsUpDownIcon, LogOutIcon } from "@hoalu/icons/lucide";
 import {
 	DropdownMenu,
@@ -12,18 +10,12 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export function NavUser() {
-	const { user } = useAuth();
-	const router = useRouter();
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
+	const { user, signOut } = useAuth();
 
-	if (!user) {
-		return null;
-	}
+	if (!user) return null;
 
 	return (
 		<SidebarMenu>
@@ -56,25 +48,7 @@ export function NavUser() {
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem
-							onClick={() =>
-								authClient.signOut({
-									fetchOptions: {
-										onSuccess: async () => {
-											await queryClient.invalidateQueries({ queryKey: authKeys.session });
-											router.invalidate().finally(() => {
-												navigate({
-													to: "/login",
-													search: {
-														redirect: location.href,
-													},
-												});
-											});
-										},
-									},
-								})
-							}
-						>
+						<DropdownMenuItem onClick={() => signOut()}>
 							<LogOutIcon />
 							Log out
 						</DropdownMenuItem>

@@ -35,7 +35,7 @@ import { useState } from "react";
 import { UserAvatar } from "./user-avatar";
 
 type Item = {
-	id: number;
+	id: string;
 	name: string;
 	email: string;
 	image: string | null | undefined;

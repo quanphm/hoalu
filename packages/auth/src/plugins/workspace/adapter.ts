@@ -1,27 +1,41 @@
-import { generateId } from "@hoalu/common/generate-id";
 import { BetterAuthError } from "better-auth";
 import type { AuthContext } from "better-auth/types";
+import { z } from "zod";
 import { getDate } from "../../utils/date";
 import { parseJSON } from "../../utils/parser";
 import type { User } from "../../utils/types";
 import type { WorkspaceOptions } from "./index";
-import type { Invitation, Member, Workspace, WorkspaceInput } from "./schema";
+import type {
+	Invitation,
+	InvitationInput,
+	Member,
+	MemberInput,
+	Workspace,
+	WorkspaceInput,
+} from "./schema";
 
 export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) => {
 	const adapter = context.adapter;
 
 	return {
-		async findWorkspace(identifier: number | string) {
-			if (typeof identifier === "number") {
+		async findWorkspace(identifier: string) {
+			const isPublicId = identifier.startsWith("ws_");
+			if (isPublicId) {
+				return await adapter.findOne<Workspace>({
+					model: "workspace",
+					where: [{ field: "publicId", value: identifier }],
+				});
+			}
+			const isUUID = z.string().uuid().safeParse(identifier);
+			if (isUUID.success) {
 				return await adapter.findOne<Workspace>({
 					model: "workspace",
 					where: [{ field: "id", value: identifier }],
 				});
 			}
-			const isPublicId = identifier.startsWith("ws_");
 			return await adapter.findOne<Workspace>({
 				model: "workspace",
-				where: [{ field: isPublicId ? "publicId" : "slug", value: identifier }],
+				where: [{ field: "slug", value: identifier }],
 			});
 		},
 		async findFullWorkspace(identifier: string) {
@@ -97,7 +111,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					metadata: data.workspace.metadata ? JSON.stringify(data.workspace.metadata) : undefined,
 				},
 			});
-			const member = await adapter.create<Member>({
+			const member = await adapter.create<MemberInput, Member>({
 				model: "member",
 				data: {
 					workspaceId: workspace.id,
@@ -122,9 +136,44 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				],
 			};
 		},
+		findMemberById: async (identifier: string) => {
+			const member = await adapter.findOne<Member>({
+				model: "member",
+				where: [
+					{
+						field: "id",
+						value: identifier,
+					},
+				],
+			});
+			if (!member) {
+				return null;
+			}
+			const user = await adapter.findOne<User>({
+				model: "user",
+				where: [
+					{
+						field: "id",
+						value: member.userId,
+					},
+				],
+			});
+			if (!user) {
+				return null;
+			}
+			return {
+				...member,
+				user: {
+					id: user.id,
+					name: user.name,
+					email: user.email,
+					image: user.image,
+				},
+			};
+		},
 		async findMemberByEmail(data: {
 			email: string;
-			workspaceId: number;
+			workspaceId: string;
 		}) {
 			const user = await adapter.findOne<User>({
 				model: "user",
@@ -165,8 +214,8 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			};
 		},
 		async findMemberByWorkspaceId(data: {
-			userId: number;
-			workspaceId: number;
+			userId: string;
+			workspaceId: string;
 		}) {
 			const [member, user] = await Promise.all([
 				await adapter.findOne<Member>({
@@ -205,47 +254,14 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				},
 			};
 		},
-		/**
-		 * @deprecated This function is no longer used.
-		 */
-		async findMemberByUserId(id: number) {
-			const member = await adapter.findOne<Member>({
-				model: "member",
-				where: [
-					{
-						field: "userId",
-						value: id,
-					},
-				],
-			});
-			if (!member) {
-				return null;
-			}
-			const user = await adapter.findOne<User>({
-				model: "user",
-				where: [
-					{
-						field: "id",
-						value: member.userId,
-					},
-				],
-			});
-			if (!user) {
-				return null;
-			}
-			return {
-				...member,
-				user,
-			};
-		},
-		async createMember(data: Member) {
-			const member = await adapter.create<Member>({
+		async createMember(data: MemberInput) {
+			const member = await adapter.create<MemberInput, Member>({
 				model: "member",
 				data: data,
 			});
 			return member;
 		},
-		async updateMember(userId: number, workspaceId: number, role: string) {
+		async updateMember(userId: string, workspaceId: string, role: string) {
 			const member = await adapter.update<Member>({
 				model: "member",
 				where: [
@@ -264,7 +280,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return member;
 		},
-		async deleteMember(userId: number, workspaceId: number) {
+		async deleteMember(userId: string, workspaceId: string) {
 			await adapter.delete<Member>({
 				model: "member",
 				where: [
@@ -280,7 +296,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return userId;
 		},
-		async updateWorkspace(workspaceId: number, data: Partial<Workspace>) {
+		async updateWorkspace(workspaceId: string, data: Partial<Workspace>) {
 			const workspace = await adapter.update<Workspace>({
 				model: "workspace",
 				where: [
@@ -295,9 +311,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 						typeof data.metadata === "object" ? JSON.stringify(data.metadata) : data.metadata,
 				},
 			});
-			if (!workspace) {
-				return null;
-			}
+			if (!workspace) return null;
 			return {
 				...workspace,
 				metadata: workspace.metadata
@@ -305,7 +319,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					: undefined,
 			};
 		},
-		async deleteWorkspace(workspaceId: number) {
+		async deleteWorkspace(workspaceId: string) {
 			await adapter.delete<Workspace>({
 				model: "workspace",
 				where: [
@@ -317,7 +331,6 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			});
 			return workspaceId;
 		},
-
 		async createInvitation({
 			invitation,
 			user,
@@ -325,16 +338,15 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 			invitation: {
 				email: string;
 				role: string;
-				workspaceId: number;
+				workspaceId: string;
 			};
 			user: User;
 		}) {
 			const defaultExpiration = 1000 * 60 * 60 * 24;
 			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration);
-			const invite = await adapter.create({
+			const invite = await adapter.create<InvitationInput, Invitation>({
 				model: "invitation",
 				data: {
-					id: generateId({ use: "uuid" }),
 					email: invitation.email,
 					role: invitation.role,
 					workspaceId: invitation.workspaceId,
@@ -359,7 +371,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 		},
 		async findPendingInvitation(data: {
 			email: string;
-			workspaceId: number;
+			workspaceId: string;
 		}) {
 			const invitation = await adapter.findMany<Invitation>({
 				model: "invitation",

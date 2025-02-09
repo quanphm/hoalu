@@ -49,7 +49,7 @@ export const createInvitation = createAuthEndpoint(
 											type: "string",
 										},
 										workspaceId: {
-											type: "number",
+											type: "string",
 										},
 										inviterId: {
 											type: "string",

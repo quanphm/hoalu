@@ -11,7 +11,7 @@ const prefixes = {
 } as const;
 
 export function generateId(options: {
-	use?: "uuid" | "nanoid";
+	use: "uuid" | "nanoid";
 	kind?: keyof typeof prefixes;
 }) {
 	const defaultAlgorithm = options.use || "nanoid";

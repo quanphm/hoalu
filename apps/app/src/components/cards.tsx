@@ -25,7 +25,7 @@ function ContentCard({ className, title, content, ...props }: BasicCardProps) {
 }
 
 interface WorkspaceCardProps {
-	id: number;
+	id: string;
 	name: string;
 	slug: string;
 	createdAt: Date;

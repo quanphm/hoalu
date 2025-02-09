@@ -113,7 +113,7 @@ export const createWorkspace = createAuthEndpoint(
 			workspace: {
 				slug: ctx.body.slug,
 				name: ctx.body.name,
-				publicId: generateId({ kind: "workspace" }),
+				publicId: generateId({ use: "nanoid", kind: "workspace" }),
 				logo: ctx.body.logo,
 				createdAt: new Date(),
 				metadata: ctx.body.metadata,

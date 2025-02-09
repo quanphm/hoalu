@@ -6,9 +6,9 @@ import { redis } from "./redis";
 
 export function configureAPI(app: HonoApp) {
 	const routes = app
-		.use(rateLimiter(redis))
-		.use(authGuard())
 		.use(cors())
+		.use(authGuard())
+		.use(rateLimiter(redis))
 		.route("/tasks", tasksRoute);
 	return routes;
 }

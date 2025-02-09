@@ -1,9 +1,11 @@
 import { authClient } from "@/lib/auth-client";
+import { authKeys } from "@/services/query-key-factory";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { toast } from "@hoalu/ui/sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/_auth/signup")({
 function RouteComponent() {
 	const router = useRouter();
 	const search = Route.useSearch();
+	const navigate = Route.useNavigate();
+	const queryClient = useQueryClient();
 
 	async function formAction(formData: FormData) {
 		const name = formData.get("name");
@@ -34,9 +38,14 @@ function RouteComponent() {
 				onError: (ctx) => {
 					toast.error(ctx.error.message);
 				},
+				onSuccess: async () => {
+					await queryClient.refetchQueries({ queryKey: authKeys.session });
+					router.invalidate().finally(() => {
+						navigate({ to: "/" });
+					});
+				},
 			},
 		);
-		router.invalidate();
 	}
 
 	return (
@@ -59,17 +68,29 @@ function RouteComponent() {
 						<div className="grid gap-4">
 							<div className="grid gap-2">
 								<Label htmlFor="name">Full name</Label>
-								<Input id="name" name="name" required />
+								<Input id="name" name="name" placeholder="John Doe" required />
 							</div>
 							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
-								<Input id="email" name="email" type="email" required />
+								<Input
+									id="email"
+									name="email"
+									type="email"
+									placeholder="your.email@hoalu.app"
+									required
+								/>
 							</div>
 							<div className="grid gap-2">
 								<div className="flex items-center">
 									<Label htmlFor="password">Password</Label>
 								</div>
-								<Input id="password" name="password" type="password" required />
+								<Input
+									id="password"
+									name="password"
+									type="password"
+									placeholder="•••••••••••••"
+									required
+								/>
 							</div>
 							<Button type="submit" className="w-full">
 								Sign up

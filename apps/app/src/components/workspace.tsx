@@ -125,7 +125,7 @@ function CreateWorkspaceForm() {
 	);
 }
 
-function UpdateWorkspaceForm() {
+function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
 	const id = useId();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
@@ -141,6 +141,8 @@ function UpdateWorkspaceForm() {
 	});
 
 	async function onSubmit(values: typeof workspaceSchema.infer) {
+		if (!canUpdateWorkspace) return;
+
 		await authClient.workspace.update(
 			{
 				data: {
@@ -177,6 +179,7 @@ function UpdateWorkspaceForm() {
 				required
 				autoComplete="off"
 				placeholder="Acme Inc."
+				disabled={!canUpdateWorkspace}
 			/>
 			<HookFormInputWithPrefix
 				label="Workspace URL"
@@ -185,11 +188,18 @@ function UpdateWorkspaceForm() {
 				required
 				autoComplete="off"
 				placeholder="acme-inc-42"
-				description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
+				description={
+					canUpdateWorkspace
+						? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
+						: ""
+				}
+				disabled={!canUpdateWorkspace}
 			/>
-			<Button type="submit" form={id} className="ml-auto w-fit">
-				Update profile
-			</Button>
+			{canUpdateWorkspace && (
+				<Button type="submit" form={id} className="ml-auto w-fit">
+					Update profile
+				</Button>
+			)}
 		</HookForm>
 	);
 }
