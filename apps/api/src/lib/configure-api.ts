@@ -1,15 +1,10 @@
-import { authGuard, rateLimiter } from "@hoalu/furnace";
-import { cors } from "hono/cors";
+import { rateLimiter } from "@hoalu/furnace";
 import { tasksRoute } from "../routes/tasks";
 import type { HonoApp } from "../types";
 import { redis } from "./redis";
 
 export function configureAPI(app: HonoApp) {
-	const routes = app
-		.use(cors())
-		.use(authGuard())
-		.use(rateLimiter(redis))
-		.route("/tasks", tasksRoute);
+	const routes = app.use(rateLimiter(redis)).route("/tasks", tasksRoute);
 	return routes;
 }
 

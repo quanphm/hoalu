@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/api-client";
 
-export const fetchTasks = async () => {
+export const fetchTasks = async (workspaceIdOrSlug: string) => {
 	const response = await apiClient.tasks.$get({
 		query: {
-			workspaceIdOrSlug: "ws",
+			workspaceIdOrSlug,
 		},
 	});
 	const { data } = await response.json();
