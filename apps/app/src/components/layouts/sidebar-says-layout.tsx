@@ -48,40 +48,50 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{!hasSlug && <NavWorkspaceList />}
 					<NavDocumentation />
 				</SidebarContent>
-				<SidebarFooter>
-					<SidebarMenu>
-						<NavUser />
-					</SidebarMenu>
-					{/* <div className="flex justify-center gap-4">
-						<a
-							href="https://github.com/quanphm/hoalu"
-							target="_blank"
-							rel="noreferrer"
-							className="rounded-full border p-2 hover:bg-muted"
-						>
-							<GithubIcon className="size-4" />
-						</a>
-						<a
-							href="https://github.com/quanphm/hoalu"
-							target="_blank"
-							rel="noreferrer"
-							className="rounded-full border p-2 hover:bg-muted"
-						>
-							<DiscordIcon className="size-4" />
-						</a>
-						<a
-							href="https://x.com/quan_phmn"
-							target="_blank"
-							rel="noreferrer"
-							className="rounded-full border p-2 hover:bg-muted"
-						>
-							<TwitterXIcon className="size-4" />
-						</a>
-					</div> */}
+				<SidebarFooter className="border-t py-4">
+					<div className="space-y-4">
+						<div className="flex justify-center gap-4">
+							<a
+								href="https://github.com/quanphm/hoalu"
+								target="_blank"
+								rel="noreferrer"
+								className="rounded-md border p-2 hover:bg-muted"
+							>
+								<GithubIcon className="size-4" />
+							</a>
+							<a
+								href="https://github.com/quanphm/hoalu"
+								target="_blank"
+								rel="noreferrer"
+								className="rounded-md border p-2 hover:bg-muted"
+							>
+								<DiscordIcon className="size-4" />
+							</a>
+							<a
+								href="https://x.com/quan_phmn"
+								target="_blank"
+								rel="noreferrer"
+								className="rounded-md border p-2 hover:bg-muted"
+							>
+								<TwitterXIcon className="size-4" />
+							</a>
+						</div>
+					</div>
 				</SidebarFooter>
 			</Sidebar>
 
-			<SidebarInset>{children}</SidebarInset>
+			<SidebarInset>
+				<header className="flex h-16 shrink-0 items-center gap-2 border-b">
+					<div className="flex w-full items-center justify-between gap-2 px-6">
+						<SidebarTrigger />
+						<div className="min-w-auto">
+							<NavUser />
+						</div>
+					</div>
+				</header>
+
+				{children}
+			</SidebarInset>
 		</SidebarProvider>
 	);
 }

@@ -43,7 +43,7 @@ function RouteComponent() {
 			<Greeting />
 			<Section>
 				<SectionHeader>
-					<SectionTitle>Getting started</SectionTitle>
+					<SectionTitle>Explore</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={4}>
 					<ContentCard

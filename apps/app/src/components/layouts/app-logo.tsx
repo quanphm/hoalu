@@ -6,11 +6,7 @@ export function AppLogo() {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<SidebarMenuButton
-					size="lg"
-					className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-					asChild
-				>
+				<SidebarMenuButton size="lg" className="data-[status=active]:bg-transparent" asChild>
 					<Link to="/">
 						<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-amber-500 text-sidebar-primary-foreground">
 							<BotIcon className="size-4" />

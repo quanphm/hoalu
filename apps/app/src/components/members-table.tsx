@@ -98,7 +98,7 @@ export function MembersTable({ data }: { data: Item[] }) {
 
 	return (
 		<div className="space-y-4">
-			<div className="overflow-hidden rounded-sm bg-background">
+			<div className="overflow-hidden rounded-md border border-border bg-background">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
