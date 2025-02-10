@@ -4,13 +4,7 @@ import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
-import {
-	SidebarFooter,
-	SidebarInset,
-	SidebarMenu,
-	SidebarProvider,
-	SidebarTrigger,
-} from "@hoalu/ui/sidebar";
+import { SidebarFooter, SidebarInset, SidebarProvider, SidebarTrigger } from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";

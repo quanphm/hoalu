@@ -50,9 +50,7 @@ const columns: ColumnDef<Item>[] = [
 			return (
 				<div className="flex items-center gap-3">
 					<UserAvatar name={row.original.name} image={row.original.image} />
-					<div>
-						<div className="font-medium">{row.original.name}</div>
-					</div>
+					<p>{row.original.name}</p>
 				</div>
 			);
 		},

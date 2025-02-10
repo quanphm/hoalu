@@ -29,9 +29,6 @@ const columns: ColumnDef<Item>[] = [
 	{
 		accessorKey: "name",
 		header: "Name",
-		cell: ({ row }) => {
-			return <p className="font-medium">{row.getValue("name")}</p>;
-		},
 	},
 	{
 		accessorKey: "done",
@@ -39,11 +36,9 @@ const columns: ColumnDef<Item>[] = [
 		cell: ({ row }) => {
 			const done = row.getValue("done");
 			return done ? (
-				<Badge variant="success" className="w-[80px] justify-center">
-					Completed
-				</Badge>
+				<Badge variant="success">Completed</Badge>
 			) : (
-				<Badge className="w-[80px] justify-center">Pending</Badge>
+				<Badge variant="outline">Pending</Badge>
 			);
 		},
 		size: 200,
