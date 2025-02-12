@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
 
 export function Greeting() {
@@ -6,7 +6,7 @@ export function Greeting() {
 
 	// 0 -> 23
 	const currentHour = new Date().getHours();
-	const icon = currentHour < 12 ? "🌤️" : currentHour < 17 ? "⛅" : "🌙";
+	const icon = currentHour < 12 ? "🌤" : currentHour < 17 ? "⛅" : "🌙";
 	const message =
 		currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
 

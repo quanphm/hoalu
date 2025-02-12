@@ -5,9 +5,9 @@ import { createHonoInstance } from "./create-app";
 import { redis } from "./redis";
 
 export function configureAPI() {
-	const api = createHonoInstance().basePath("/app");
+	const app = createHonoInstance().basePath("/api");
 
-	api
+	app
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
@@ -18,7 +18,7 @@ export function configureAPI() {
 		.use(authGuard())
 		.use(rateLimiter(redis));
 
-	const routes = api.route("/tasks", tasksRoute);
+	const routes = app.route("/tasks", tasksRoute);
 	return routes;
 }
 

@@ -1,6 +1,4 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
-import { UiProviders } from "@/components/ui-providers";
-import { Toaster } from "@hoalu/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet } from "@tanstack/react-router";
@@ -32,10 +30,7 @@ function ErrorComponent(props: ErrorComponentProps) {
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<UiProviders>
-				{children}
-				<Toaster />
-			</UiProviders>
+			{children}
 			<QueryDevtools buttonPosition="bottom-right" />
 			<RouterDevtools position="bottom-right" />
 		</>
