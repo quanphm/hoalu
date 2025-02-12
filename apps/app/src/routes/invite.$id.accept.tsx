@@ -1,6 +1,6 @@
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import { useAcceptInvitation } from "@/services/mutations";
 import { invitationDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";

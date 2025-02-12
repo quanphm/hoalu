@@ -14,13 +14,23 @@ export default defineConfig({
 		VitePWA({
 			registerType: "autoUpdate",
 			workbox: {
+				maximumFileSizeToCacheInBytes: 10_000_000,
 				globPatterns: ["**/*.{js,css,html,svg,data,wasm}"],
 			},
 		}),
 	],
+	optimizeDeps: {
+		exclude: ["@electric-sql/pglite"],
+	},
+	worker: {
+		format: "es",
+	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
 		},
+	},
+	preview: {
+		port: 5173,
 	},
 });

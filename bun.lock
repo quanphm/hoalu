@@ -43,6 +43,10 @@
       "name": "@hoalu/app",
       "version": "0.4.0",
       "dependencies": {
+        "@electric-sql/client": "^1.0.0-beta.3",
+        "@electric-sql/pglite": "^0.2.16",
+        "@electric-sql/pglite-react": "^0.2.16",
+        "@electric-sql/pglite-sync": "^0.2.18",
         "@electric-sql/react": "1.0.0-beta.2",
         "@hoalu/auth": "workspace:*",
         "@hoalu/common": "workspace:*",
@@ -419,7 +423,13 @@
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
-    "@electric-sql/client": ["@electric-sql/client@1.0.0-beta.2", "", { "optionalDependencies": { "@rollup/rollup-darwin-arm64": "^4.18.1" } }, "sha512-JbDOI9KhH+JuVOp1j4WbgkUtHeH7DUiPTWCxD1BLepbzA+xU1DU0BCQwh0xxBQXrIgddddzot5bumHqSj1yMhA=="],
+    "@electric-sql/client": ["@electric-sql/client@1.0.0-beta.3", "", { "optionalDependencies": { "@rollup/rollup-darwin-arm64": "^4.18.1" } }, "sha512-x3bzYlX+IRwBAILPxzu3ARkXzmrAQtVOuJCKCxlSqENuJa4zvLPF4f8vC6HMOiiJiHPAntJjfI3Hb0lrt2PTxA=="],
+
+    "@electric-sql/pglite": ["@electric-sql/pglite@0.2.16", "", {}, "sha512-dCSHpoOKuTxecaYhWDRp2yFTN3XWcMPMrBVl5yOR8VZEUprz4+R3iuU7BipmlsqBnBDO/6l9H/C2ZwJdunkWyw=="],
+
+    "@electric-sql/pglite-react": ["@electric-sql/pglite-react@0.2.16", "", { "peerDependencies": { "@electric-sql/pglite": "^0.2.16", "react": "^18.0.0 || ^19.0.0 || ^19.0.0-rc" } }, "sha512-PQ2HIcb4SnYNR9ErytROmQPIibFErG8I29HSL5eTsw+fFG/hS+xlLj+cLnKAz4qZYIYQC7Czd55oe4ESih6ptQ=="],
+
+    "@electric-sql/pglite-sync": ["@electric-sql/pglite-sync@0.2.18", "", { "dependencies": { "@electric-sql/client": "~0.9.0" }, "peerDependencies": { "@electric-sql/pglite": "^0.2.16" } }, "sha512-kQTJ6lNVPnNhIdR3eYU43Eh9znmi9CallRigFZ3JaPE3KopCkauwRba7MctF9LW9JCJXmpFwEjibkG+gD2goZQ=="],
 
     "@electric-sql/react": ["@electric-sql/react@1.0.0-beta.2", "", { "dependencies": { "@electric-sql/client": "1.0.0-beta.2", "use-sync-external-store": "^1.2.2" }, "peerDependencies": { "react": "^18.3.1" }, "optionalPeers": ["react"] }, "sha512-iqheKhqpQqcm6mlgmdL4n1pqNS2c9ZlRaU4dJnXO4SXpPx37YNyXwzrh6Rtfi5LYzm8Jd0/Oizy8YuGnWTHUkA=="],
 
@@ -2082,6 +2092,10 @@
     "@babel/template/@babel/parser": ["@babel/parser@7.26.7", "", { "dependencies": { "@babel/types": "^7.26.7" }, "bin": "./bin/babel-parser.js" }, "sha512-kEvgGGgEjRUutvdVvZhbn/BxVt+5VSpwXz1j3WYXQbXDo8KzFOPNG2GQbdAiNq8g6wn1yKk7C/qrke03a84V+w=="],
 
     "@babel/traverse/@babel/parser": ["@babel/parser@7.26.7", "", { "dependencies": { "@babel/types": "^7.26.7" }, "bin": "./bin/babel-parser.js" }, "sha512-kEvgGGgEjRUutvdVvZhbn/BxVt+5VSpwXz1j3WYXQbXDo8KzFOPNG2GQbdAiNq8g6wn1yKk7C/qrke03a84V+w=="],
+
+    "@electric-sql/pglite-sync/@electric-sql/client": ["@electric-sql/client@0.9.1", "", { "optionalDependencies": { "@rollup/rollup-darwin-arm64": "^4.18.1" } }, "sha512-Lpo+GjnXW7i0uyITlkSTDGPH/fVYYln1/HQkgZAf89F3i/QeAVKT7UlWa7la1G0dGNSQaZuOypFvqENnHHJUKg=="],
+
+    "@electric-sql/react/@electric-sql/client": ["@electric-sql/client@1.0.0-beta.2", "", { "optionalDependencies": { "@rollup/rollup-darwin-arm64": "^4.18.1" } }, "sha512-JbDOI9KhH+JuVOp1j4WbgkUtHeH7DUiPTWCxD1BLepbzA+xU1DU0BCQwh0xxBQXrIgddddzot5bumHqSj1yMhA=="],
 
     "@esbuild-kit/core-utils/esbuild": ["esbuild@0.18.20", "", { "optionalDependencies": { "@esbuild/android-arm": "0.18.20", "@esbuild/android-arm64": "0.18.20", "@esbuild/android-x64": "0.18.20", "@esbuild/darwin-arm64": "0.18.20", "@esbuild/darwin-x64": "0.18.20", "@esbuild/freebsd-arm64": "0.18.20", "@esbuild/freebsd-x64": "0.18.20", "@esbuild/linux-arm": "0.18.20", "@esbuild/linux-arm64": "0.18.20", "@esbuild/linux-ia32": "0.18.20", "@esbuild/linux-loong64": "0.18.20", "@esbuild/linux-mips64el": "0.18.20", "@esbuild/linux-ppc64": "0.18.20", "@esbuild/linux-riscv64": "0.18.20", "@esbuild/linux-s390x": "0.18.20", "@esbuild/linux-x64": "0.18.20", "@esbuild/netbsd-x64": "0.18.20", "@esbuild/openbsd-x64": "0.18.20", "@esbuild/sunos-x64": "0.18.20", "@esbuild/win32-arm64": "0.18.20", "@esbuild/win32-ia32": "0.18.20", "@esbuild/win32-x64": "0.18.20" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA=="],
 

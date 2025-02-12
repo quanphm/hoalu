@@ -14,7 +14,6 @@ import {
 	type Row,
 	flexRender,
 	getCoreRowModel,
-	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
@@ -56,7 +55,6 @@ export function TasksTable({ data }: { data: Item[] }) {
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
 	});
 
 	return (

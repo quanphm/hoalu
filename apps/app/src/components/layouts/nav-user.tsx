@@ -1,5 +1,5 @@
 import { UserAvatar } from "@/components/user-avatar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import {
 	ChevronsUpDownIcon,
 	KeyRoundIcon,
@@ -7,7 +7,6 @@ import {
 	LogOutIcon,
 	Monitor,
 	MoonIcon,
-	PaletteIcon,
 	SettingsIcon,
 	SunIcon,
 } from "@hoalu/icons/lucide";

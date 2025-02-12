@@ -10,6 +10,10 @@
 		"format": "biome check --write ."
 	},
 	"dependencies": {
+		"@electric-sql/client": "^1.0.0-beta.3",
+		"@electric-sql/pglite": "^0.2.16",
+		"@electric-sql/pglite-react": "^0.2.16",
+		"@electric-sql/pglite-sync": "^0.2.18",
 		"@electric-sql/react": "1.0.0-beta.2",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
