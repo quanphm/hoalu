@@ -4,9 +4,9 @@ import { cors } from "hono/cors";
 import { createHonoInstance } from "./create-app";
 
 export function configureElectricSync() {
-	const sync = createHonoInstance().basePath("/sync");
+	const app = createHonoInstance().basePath("/sync");
 
-	sync
+	app
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
@@ -70,5 +70,5 @@ export function configureElectricSync() {
 			});
 		});
 
-	return sync;
+	return app;
 }

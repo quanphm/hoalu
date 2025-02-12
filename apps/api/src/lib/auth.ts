@@ -4,7 +4,7 @@ import JoinWorkspace from "@hoalu/email/join-workspace";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { openAPI } from "better-auth/plugins";
+import { jwt, openAPI } from "better-auth/plugins";
 import { db } from "../db";
 import { sendEmail } from "./email";
 
@@ -83,6 +83,20 @@ export const auth = betterAuth({
 						workspaceName: data.workspace.name,
 					}),
 				});
+			},
+		}),
+		jwt({
+			jwt: {
+				definePayload: ({ user }) => {
+					return {
+						id: user.id,
+						name: user.name,
+						email: user.email,
+					};
+				},
+				issuer: process.env.AUTH_URL,
+				audience: process.env.PUBLIC_APP_BASE_URL,
+				expirationTime: "30d",
 			},
 		}),
 		openAPI(),
