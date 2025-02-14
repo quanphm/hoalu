@@ -5,7 +5,6 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
 import { CreateWorkspaceForm } from "@/components/workspace";
 import { listWorkspacesOptions } from "@/services/query-options";
-import { usePGlite } from "@electric-sql/pglite-react";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -17,16 +16,7 @@ export const Route = createFileRoute("/_dashboard/")({
 });
 
 function RouteComponent() {
-	const pg = usePGlite();
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
-
-	useEffect(() => {
-		async function query() {
-			const { rows } = await pg.query("SELECT * from todo");
-			console.log(rows);
-		}
-		query();
-	}, [pg]);
 
 	if (workspaces.length === 0) {
 		return (

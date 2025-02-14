@@ -12,7 +12,7 @@ type Task = {
 export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 	loader: async () => {
 		await preloadSyncShape<Task>(
-			tasksShapeOptions<Task>({ workspaceId: "0194e972-3dd1-772c-aec2-4f95939cdd4d" }),
+			tasksShapeOptions<Task>({ workspaceId: "019503c5-7a93-7551-819b-bf6af7e4b688" }),
 		);
 	},
 	component: RouteComponent,
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 
 function RouteComponent() {
 	const { data } = useSyncShape<Task>(
-		tasksShapeOptions({ workspaceId: "0194e972-3dd1-772c-aec2-4f95939cdd4d" }),
+		tasksShapeOptions({ workspaceId: "019503c5-7a93-7551-819b-bf6af7e4b688" }),
 	);
 	console.log(data);
 
