@@ -8,7 +8,7 @@
 		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"hono": "^4.7.0"
+		"hono": "^4.7.1"
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
