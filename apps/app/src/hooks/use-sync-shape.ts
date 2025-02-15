@@ -1,20 +1,19 @@
 import type { GetExtensions, Row, ShapeStreamOptions } from "@electric-sql/client";
 import { type UseShapeResult, preloadShape, useShape } from "@electric-sql/react";
-import { useEffect } from "react";
 
 const SYNC_URL = `${import.meta.env.PUBLIC_API_URL}/sync`;
 
-export interface UseShapeOptions<SourceData extends Row<unknown>, Selection>
+interface UseShapeOptions<SourceData extends Row<unknown>, Selection>
 	extends ShapeStreamOptions<GetExtensions<SourceData>> {
 	selector?: (value: UseShapeResult<SourceData>) => Selection;
 }
 
-export interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
+interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
 	extends Omit<UseShapeOptions<T, S>, "url"> {
 	url?: string;
 }
 
-export function useSyncShape<
+function useSyncShape<
 	SourceData extends Row<unknown> = Row,
 	Selection = UseShapeResult<SourceData>,
 >(options: AppShapeOptions<SourceData, Selection>) {
@@ -42,9 +41,14 @@ export function useSyncShape<
 	return shapeData;
 }
 
-export async function preloadSyncShape<T extends Row<unknown> = Row>(options: AppShapeOptions<T>) {
+async function preloadSyncShape<T extends Row<unknown> = Row>(options: AppShapeOptions<T>) {
 	// @ts-ignore: `exactOptionalPropertyTypes`
-	// The rules above used for ArkType validation within the application.
-	// Skip the rule on library codes.
-	return preloadShape(options);
+	return preloadShape({
+		...options,
+		url: options.url || SYNC_URL,
+		fetchClient: (req, init) => fetch(req, { ...init, credentials: "include" }),
+	});
 }
+
+export type { Row, AppShapeOptions, UseShapeResult };
+export { useSyncShape, preloadSyncShape };

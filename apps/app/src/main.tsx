@@ -33,6 +33,15 @@ declare module "@tanstack/react-router" {
 	}
 }
 
+if (typeof window !== "undefined") {
+	window.getRouter = () => router;
+}
+declare global {
+	interface Window {
+		getRouter: () => typeof router;
+	}
+}
+
 const container = document.getElementById("root");
 const root = createRoot(container as HTMLElement);
 
