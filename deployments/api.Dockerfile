@@ -12,6 +12,7 @@ COPY packages/common/package.json ./packages/common/
 COPY packages/email/package.json ./packages/email/
 COPY packages/furnace/package.json ./packages/furnace/
 COPY packages/icons/package.json ./packages/icons/
+COPY packages/react-eqsync/package.json ./packages/react-eqsync/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/ui/package.json ./packages/ui/
 
