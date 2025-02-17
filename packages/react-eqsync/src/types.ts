@@ -13,15 +13,15 @@ interface UseShapeResult<T extends Row<unknown> = Row> {
 	/** The array of rows that make up the Shape */
 	data: T[];
 	/** The Shape instance used by this useShape */
-	shape: Shape<T>;
+	shape?: Shape<T>;
 	/** The ShapeStream instance used by this Shape */
-	stream: ShapeStream<T>;
+	stream?: ShapeStream<T>;
 	/** True during initial fetch. False afterwise */
 	isLoading: boolean;
+	error?: Shape<T>[`error`];
+	isError: boolean;
 	/** Unix time at which we last synced. Undefined when `isLoading` is true */
 	lastSyncedAt?: number;
-	error: Shape<T>[`error`];
-	isError: boolean;
 }
 
 interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
@@ -30,4 +30,12 @@ interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
 	selector?: (value: UseShapeResult<T>) => Selection;
 }
 
-export type { Row, AppShapeOptions, UseShapeResult };
+export type {
+	// custom export
+	AppShapeOptions,
+	UseShapeResult,
+	// re-export
+	GetExtensions,
+	Row,
+	ShapeStreamOptions,
+};

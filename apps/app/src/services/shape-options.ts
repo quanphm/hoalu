@@ -1,10 +1,10 @@
 import { queryClient } from "@/lib/query-client";
-import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/eqsync";
+import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/react-eqsync";
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 import { getWorkspaceDetailsOptions } from "./query-options";
 
-export const withWorkspaceId = async <T extends Row<unknown>, S = UseShapeResult<T>>(
+export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T>>(
 	handler: (...params: any) => AppShapeOptions<T, S>,
 ) => {
 	const { state } = window.getRouter();
@@ -15,7 +15,6 @@ export const withWorkspaceId = async <T extends Row<unknown>, S = UseShapeResult
 
 	const { params } = match;
 	const workspace = await queryClient.ensureQueryData(getWorkspaceDetailsOptions(params.slug));
-	console.log(workspace);
 	if (!workspace) throw notFound();
 
 	const workspaceSchema = type({

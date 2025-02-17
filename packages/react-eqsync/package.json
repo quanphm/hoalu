@@ -1,5 +1,6 @@
 {
-	"name": "@hoalu/eqsync",
+	"name": "@hoalu/react-eqsync",
+	"description": "React hook for dealing with asynchronous stream options in Electric SQL",
 	"version": "0.4.0",
 	"type": "module",
 	"private": true,

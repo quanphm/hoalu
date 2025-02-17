@@ -48,8 +48,8 @@
         "@electric-sql/pglite-sync": "^0.2.20",
         "@hoalu/auth": "workspace:*",
         "@hoalu/common": "workspace:*",
-        "@hoalu/eqsync": "workspace:*",
         "@hoalu/icons": "workspace:*",
+        "@hoalu/react-eqsync": "workspace:*",
         "@hoalu/ui": "workspace:*",
         "@hookform/resolvers": "^3.10.0",
         "@tanstack/react-query": "^5.66.0",
@@ -129,24 +129,6 @@
         "react": "^19.0.0",
       },
     },
-    "packages/eqsync": {
-      "name": "@hoalu/eqsync",
-      "version": "0.4.0",
-      "dependencies": {
-        "@electric-sql/client": "^1.0.0-beta.3",
-        "@tanstack/react-query": "^5.66.0",
-      },
-      "devDependencies": {
-        "@hoalu/tsconfig": "workspace:*",
-        "@types/react": "^19.0.8",
-      },
-      "peerDependencies": {
-        "react": "^19.0.0",
-      },
-      "optionalPeers": [
-        "react",
-      ],
-    },
     "packages/furnace": {
       "name": "@hoalu/furnace",
       "version": "0.4.0",
@@ -179,6 +161,24 @@
         "@types/react": "^19.0.8",
         "react": "^19.0.0",
       },
+    },
+    "packages/react-eqsync": {
+      "name": "@hoalu/react-eqsync",
+      "version": "0.4.0",
+      "dependencies": {
+        "@electric-sql/client": "^1.0.0-beta.3",
+        "@tanstack/react-query": "^5.66.0",
+      },
+      "devDependencies": {
+        "@hoalu/tsconfig": "workspace:*",
+        "@types/react": "^19.0.8",
+      },
+      "peerDependencies": {
+        "react": "^19.0.0",
+      },
+      "optionalPeers": [
+        "react",
+      ],
     },
     "packages/tsconfig": {
       "name": "@hoalu/tsconfig",
@@ -523,11 +523,11 @@
 
     "@hoalu/email": ["@hoalu/email@workspace:packages/email"],
 
-    "@hoalu/eqsync": ["@hoalu/eqsync@workspace:packages/eqsync"],
-
     "@hoalu/furnace": ["@hoalu/furnace@workspace:packages/furnace"],
 
     "@hoalu/icons": ["@hoalu/icons@workspace:packages/icons"],
+
+    "@hoalu/react-eqsync": ["@hoalu/react-eqsync@workspace:packages/react-eqsync"],
 
     "@hoalu/tsconfig": ["@hoalu/tsconfig@workspace:packages/tsconfig"],
 
