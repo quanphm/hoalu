@@ -1,8 +1,9 @@
 import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
+import { LocalPostgresProvider } from "@/components/local-postgres-provider";
 import { NotFound } from "@/components/not-found";
 import { UiProviders } from "@/components/ui-providers";
 import { verifyEnv } from "@/lib/env";
-import { QueryClient } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { RouterProvider } from "@tanstack/react-router";
@@ -10,11 +11,8 @@ import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
 
 import "@/styles/global.css";
-import { LocalPostgresProvider } from "./components/local-postgres-provider";
 
 verifyEnv();
-
-const queryClient = new QueryClient();
 
 const router = createTanStackRouter({
 	routeTree,
