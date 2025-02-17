@@ -17,6 +17,7 @@ export const auth = betterAuth({
 		provider: "pg",
 	}),
 	advanced: {
+		cookiePrefix: "hoalu",
 		generateId: () => {
 			return generateId({ use: "uuid" });
 		},

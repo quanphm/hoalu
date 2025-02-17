@@ -1,0 +1,31 @@
+{
+	"name": "@hoalu/react-eqsync",
+	"description": "React hook for dealing with asynchronous stream options in Electric SQL",
+	"version": "0.4.0",
+	"type": "module",
+	"private": true,
+	"sideEffects": false,
+	"scripts": {
+		"lint": "biome lint",
+		"format": "biome check --write ."
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@electric-sql/client": "^1.0.0-beta.3",
+		"@tanstack/react-query": "^5.66.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.8",
+		"@hoalu/tsconfig": "workspace:*"
+	},
+	"peerDependencies": {
+		"react": "^19.0.0"
+	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		}
+	}
+}

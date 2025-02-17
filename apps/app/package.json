@@ -10,15 +10,14 @@
 		"format": "biome check --write ."
 	},
 	"dependencies": {
-		"@electric-sql/client": "^1.0.0-beta.3",
 		"@electric-sql/pglite": "^0.2.17",
 		"@electric-sql/pglite-react": "^0.2.17",
 		"@electric-sql/pglite-sync": "^0.2.20",
-		"@electric-sql/react": "1.0.0-beta.2",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
 		"@hoalu/icons": "workspace:*",
 		"@hoalu/ui": "workspace:*",
+		"@hoalu/react-eqsync": "workspace:*",
 		"@hookform/resolvers": "^3.10.0",
 		"@tanstack/react-query": "^5.66.0",
 		"@tanstack/react-query-devtools": "^5.66.0",

@@ -35,7 +35,7 @@ export function configureElectricSync() {
 			const electricResponse = await fetch(shapeUrl.toString());
 
 			if (electricResponse.status > 204) {
-				console.error("Error: ", electricResponse.status);
+				//console.error("Error: ", electricResponse.status);
 				return c.json(
 					{
 						ok: false,

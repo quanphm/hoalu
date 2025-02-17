@@ -12,3 +12,9 @@ export const deleteWorkspaceSchema = type({
 export const inviteSchema = type({
 	email: "string.email",
 });
+
+export const taskSchema = type({
+	id: "string",
+	name: "string > 0",
+	done: "boolean",
+});

@@ -1,28 +1,25 @@
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { TasksTable } from "@/components/tasks-table";
-import { preloadSyncShape, useSyncShape } from "@/hooks/use-sync-shape";
-import { tasksShapeOptions } from "@/services/shape-options";
+import type { taskSchema } from "@/lib/schema";
+import { tasksQueryOptions } from "@/services/query-options";
+import { tasksShapeOptions, withWorkspace } from "@/services/shape-options";
+import { useEqSyncShape } from "@hoalu/react-eqsync";
 import { createFileRoute } from "@tanstack/react-router";
 
-type Task = {
-	id: string;
-	done: boolean;
-	name: string;
-};
+type Task = typeof taskSchema.infer;
+
 export const Route = createFileRoute("/_dashboard/$slug/tasks")({
-	loader: async () => {
-		await preloadSyncShape<Task>(
-			tasksShapeOptions<Task>({ workspaceId: "0194e972-3dd1-772c-aec2-4f95939cdd4d" }),
-		);
+	loader: async ({ context: { queryClient }, params }) => {
+		await queryClient.ensureQueryData(tasksQueryOptions(params.slug));
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { data } = useSyncShape<Task>(
-		tasksShapeOptions({ workspaceId: "0194e972-3dd1-772c-aec2-4f95939cdd4d" }),
-	);
-	console.log(data);
+	const { data } = useEqSyncShape<Task>({
+		syncKey: ["tasks", "all"],
+		optionsFn: () => withWorkspace<Task>(tasksShapeOptions),
+	});
 
 	return (
 		<Section>
