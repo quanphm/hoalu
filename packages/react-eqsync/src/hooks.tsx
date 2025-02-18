@@ -21,6 +21,7 @@ function getShapeStream<T extends Row<unknown>>(
 	options: ShapeStreamOptions<GetExtensions<T>>,
 ): ShapeStream<T> {
 	const shapeHash = sortedOptionsHash(options);
+	console.log(shapeHash);
 
 	// If the stream is already cached, return it if valid
 	if (streamCache.has(shapeHash)) {
@@ -36,6 +37,9 @@ function getShapeStream<T extends Row<unknown>>(
 	const newShapeStream = new ShapeStream<T>(options);
 	streamCache.set(shapeHash, newShapeStream);
 
+	console.log(streamCache);
+	console.log(shapeCache);
+
 	return newShapeStream;
 }
 
@@ -45,7 +49,6 @@ function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): Shape<T>
 		if (!shapeStream.options.signal?.aborted) {
 			return shapeCache.get(shapeStream)! as Shape<T>;
 		}
-
 		// if stream is aborted, remove it and related shapes
 		streamCache.delete(sortedOptionsHash(shapeStream.options));
 		shapeCache.delete(shapeStream);
