@@ -11,19 +11,4 @@ function verifyEnv() {
 	standardValidate(envSchema, import.meta.env);
 }
 
-interface ViteBuiltInEnv {
-	MODE: "development" | "production";
-	BASE_URL: string;
-	SSR: boolean;
-	DEV: boolean;
-	PROD: boolean;
-}
-
-declare global {
-	interface ImportMetaEnv extends EnvSchema, ViteBuiltInEnv {}
-	interface ImportMeta {
-		readonly env: ImportMetaEnv;
-	}
-}
-
-export { verifyEnv };
+export { verifyEnv, type EnvSchema };

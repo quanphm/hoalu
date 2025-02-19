@@ -1,5 +1,5 @@
 import { authClient } from "@/lib/auth-client";
-import { useCancelInvitation, useRemoveMember } from "@/services/mutations";
+import { useCancelInvitation } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import { getActiveMemberOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
@@ -43,7 +43,11 @@ const columns: ColumnDef<Item>[] = [
 	{
 		accessorKey: "email",
 		header: "Email",
-		size: 200,
+		meta: {
+			headerClassName:
+				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
+			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
+		},
 	},
 	{
 		accessorKey: "status",
@@ -51,13 +55,16 @@ const columns: ColumnDef<Item>[] = [
 		cell: ({ row }) => {
 			return <p className="text-muted-foreground capitalize">{row.getValue("status")}</p>;
 		},
-		size: 200,
 	},
 	{
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
 		cell: ({ row }) => <RowActions row={row} />,
-		size: 32,
+		meta: {
+			headerClassName:
+				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
+			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+		},
 	},
 ];
 
@@ -75,13 +82,12 @@ export function InvitationsTable({ data }: { data: Item[] }) {
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50">
+							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
 											key={header.id}
-											style={{ width: `${header.getSize()}px` }}
-											className="relative h-10"
+											className={header.column.columnDef.meta?.headerClassName}
 										>
 											{header.isPlaceholder
 												? null
@@ -97,13 +103,7 @@ export function InvitationsTable({ data }: { data: Item[] }) {
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell
-											key={cell.id}
-											style={{
-												width: cell.column.getSize(),
-											}}
-											className="py-3 last:py-0"
-										>
+										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
 									))}
