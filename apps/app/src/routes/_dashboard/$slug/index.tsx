@@ -30,7 +30,7 @@ function RouteComponent() {
 
 			<Section>
 				<SectionHeader>
-					<SectionTitle>Overview</SectionTitle>
+					<SectionTitle>Statistics</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<Stats />

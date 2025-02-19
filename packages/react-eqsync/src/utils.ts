@@ -4,19 +4,14 @@ import type { Row, ShapeStreamOptions, UseShapeResult } from "./types";
 function sortObjectKeys(obj: any): any {
 	if (typeof obj !== "object" || obj === null) return obj;
 
-	if (Array.isArray(obj)) {
-		return obj.map(sortObjectKeys);
-	}
+	if (Array.isArray(obj)) return obj.map(sortObjectKeys);
 
-	return (
-		Object.keys(obj)
-			.sort()
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			.reduce<Record<string, any>>((sorted, key) => {
-				sorted[key] = sortObjectKeys(obj[key]);
-				return sorted;
-			}, {})
-	);
+	return Object.keys(obj)
+		.sort()
+		.reduce<Record<string, any>>((sorted, key) => {
+			sorted[key] = sortObjectKeys(obj[key]);
+			return sorted;
+		}, {});
 }
 
 function sortedOptionsHash<T>(options: ShapeStreamOptions<T>) {

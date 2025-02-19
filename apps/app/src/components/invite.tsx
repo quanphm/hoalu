@@ -1,11 +1,13 @@
 import { HookForm, HookFormInput } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
 import { inviteSchema } from "@/lib/schema";
+import { workspaceKeys } from "@/services/query-key-factory";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { arktypeResolver } from "@hookform/resolvers/arktype";
+import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,6 +18,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 	const id = useId();
 	const [open, setOpen] = useState(false);
 	const { workspace } = routeApi.useLoaderData();
+	const queryClient = useQueryClient();
 
 	const form = useForm<typeof inviteSchema.infer>({
 		resolver: arktypeResolver(inviteSchema),
@@ -33,7 +36,8 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			},
 			{
 				onSuccess: () => {
-					toast.success("Invite sent");
+					toast.success("Invitation sent");
+					queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(workspace.slug) });
 					setOpen(false);
 				},
 				onError: (ctx) => {

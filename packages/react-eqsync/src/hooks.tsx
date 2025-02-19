@@ -45,7 +45,6 @@ function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): Shape<T>
 		if (!shapeStream.options.signal?.aborted) {
 			return shapeCache.get(shapeStream)! as Shape<T>;
 		}
-
 		// if stream is aborted, remove it and related shapes
 		streamCache.delete(sortedOptionsHash(shapeStream.options));
 		shapeCache.delete(shapeStream);
