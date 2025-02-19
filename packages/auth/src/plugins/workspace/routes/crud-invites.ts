@@ -364,6 +364,7 @@ export const cancelInvitation = createAuthEndpoint(
 	async (ctx) => {
 		const session = ctx.context.session;
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		console.log("test");
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation) {
 			throw new APIError("BAD_REQUEST", {

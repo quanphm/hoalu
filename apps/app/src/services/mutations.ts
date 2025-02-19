@@ -61,3 +61,19 @@ export function useAcceptInvitation() {
 	});
 	return mutation;
 }
+
+export function useCancelInvitation() {
+	const mutation = useMutation({
+		mutationFn: async (id: string) => {
+			const { data, error } = await authClient.workspace.cancelInvitation({ invitationId: id });
+			if (error) {
+				throw error;
+			}
+			return data;
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}

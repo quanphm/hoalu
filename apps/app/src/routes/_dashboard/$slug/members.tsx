@@ -1,3 +1,4 @@
+import { InvitationsTable } from "@/components/invitations-table";
 import { InviteDialog } from "@/components/invite";
 import { MembersTable } from "@/components/members-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -29,6 +30,14 @@ function RouteComponent() {
 		image: member.user.image,
 		role: member.role,
 	}));
+	const invitationTableData = workspace.invitations
+		//.filter((invite) => invite.status !== "accepted")
+		.filter((invite) => invite.status === "pending")
+		.map((invite) => ({
+			id: invite.id,
+			email: invite.email,
+			status: invite.status,
+		}));
 
 	return (
 		<Section>
@@ -55,7 +64,7 @@ function RouteComponent() {
 						<SectionTitle>Invitations</SectionTitle>
 					</SectionHeader>
 					<SectionContent>
-						<MembersTable data={membersTableData} />
+						<InvitationsTable data={invitationTableData} />
 					</SectionContent>
 				</Section>
 			</SectionContent>

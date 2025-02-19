@@ -1,8 +1,8 @@
 import { authClient } from "@/lib/auth-client";
-import { useRemoveMember } from "@/services/mutations";
+import { useCancelInvitation, useRemoveMember } from "@/services/mutations";
+import { workspaceKeys } from "@/services/query-key-factory";
 import { getActiveMemberOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
-import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -21,7 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
 	type ColumnDef,
@@ -32,51 +32,26 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { UserAvatar } from "./user-avatar";
 
 type Item = {
 	id: string;
-	name: string;
 	email: string;
-	image: string | null | undefined;
-	role: string;
+	status: "pending" | "canceled" | "rejected" | "accepted";
 };
 
 const columns: ColumnDef<Item>[] = [
 	{
-		id: "name",
-		header: "Name",
-		cell: ({ row }) => {
-			return (
-				<div className="flex items-center gap-3">
-					<UserAvatar name={row.original.name} image={row.original.image} />
-					<p>{row.original.name}</p>
-				</div>
-			);
-		},
-	},
-	{
 		accessorKey: "email",
 		header: "Email",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("email")}</p>;
-		},
 		size: 200,
 	},
 	{
-		accessorKey: "role",
-		header: "Role",
+		accessorKey: "status",
+		header: "Status",
 		cell: ({ row }) => {
-			const { role } = row.original;
-			return (
-				<Badge
-					variant={role === "owner" ? "success" : "outline"}
-					className="px-1.5 font-normal text-xs capitalize"
-				>
-					{role}
-				</Badge>
-			);
+			return <p className="text-muted-foreground capitalize">{row.getValue("status")}</p>;
 		},
+		size: 200,
 	},
 	{
 		id: "actions",
@@ -86,7 +61,7 @@ const columns: ColumnDef<Item>[] = [
 	},
 ];
 
-export function MembersTable({ data }: { data: Item[] }) {
+export function InvitationsTable({ data }: { data: Item[] }) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -127,7 +102,7 @@ export function MembersTable({ data }: { data: Item[] }) {
 											style={{
 												width: cell.column.getSize(),
 											}}
-											className="last:py-0"
+											className="py-3 last:py-0"
 										>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
@@ -152,25 +127,26 @@ const routeApi = getRouteApi("/_dashboard/$slug/members");
 
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
-	const navigate = routeApi.useNavigate();
 	const params = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
-	const canDelete = authClient.workspace.checkRolePermission({
+	const canUpdate = authClient.workspace.checkRolePermission({
 		role: member.role,
 		permission: {
-			member: ["delete"],
+			member: ["update"],
 		},
 	});
-	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember(params.slug);
+	const queryClient = useQueryClient();
+	const mutation = useCancelInvitation();
 
-	const onDelete = async () => {
+	const onCancel = async () => {
 		await mutation.mutateAsync(row.original.id);
+		queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(params.slug) });
 		setOpen(false);
-		if (isLeaving) {
-			navigate({ to: "/" });
-		}
 	};
+
+	if (!canUpdate) {
+		return null;
+	}
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -182,42 +158,30 @@ function RowActions({ row }: { row: Row<Item> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					{isLeaving && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Leave</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
-					{!isLeaving && canDelete && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Remove</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
+					<DialogTrigger asChild>
+						<DropdownMenuItem>
+							<span className="text-destructive">Cancel</span>
+						</DropdownMenuItem>
+					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
-					<DialogTitle>
-						{isLeaving ? "Leave this workspace?" : `Remove ${row.original.name}?`}
-					</DialogTitle>
+					<DialogTitle>Cancel this invitation?</DialogTitle>
 					<DialogDescription>
-						{isLeaving
-							? "You won't be able to access this workspace."
-							: "They won't be able to access this workspace."}
+						This will delete invitation you have sent to this account. You can always re-invite this
+						account again.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
 						<Button type="button" variant="secondary">
-							Cancel
+							No
 						</Button>
 					</DialogClose>
-					<Button variant="destructive" onClick={() => onDelete()}>
-						Confirm
+					<Button variant="destructive" onClick={() => onCancel()}>
+						Yes
 					</Button>
 				</DialogFooter>
 			</DialogContent>
