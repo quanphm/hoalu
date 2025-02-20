@@ -11,7 +11,7 @@ export function configureAPI() {
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
-				exposeHeaders: ["content-length", "content-encoding"],
+				exposeHeaders: ["Content-Length", "Content-Encoding"],
 				credentials: true,
 			}),
 		)

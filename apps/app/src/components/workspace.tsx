@@ -157,7 +157,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 					queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 					if (workspace.slug !== values.slug) {
 						navigate({
-							to: "/$slug",
+							to: "/$slug/settings",
 							params: {
 								slug: values.slug,
 							},

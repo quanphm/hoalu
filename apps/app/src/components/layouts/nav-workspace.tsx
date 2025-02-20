@@ -61,13 +61,6 @@ export function NavWorkspace() {
 								</SidebarMenuSubItem>
 								<SidebarMenuSubItem>
 									<SidebarMenuSubButton asChild>
-										<Link from="/$slug/" to="./finance/wallets">
-											<span>Wallets</span>
-										</Link>
-									</SidebarMenuSubButton>
-								</SidebarMenuSubItem>
-								<SidebarMenuSubItem>
-									<SidebarMenuSubButton asChild>
 										<Link from="/$slug/" to="./finance/categories">
 											<span>Categories</span>
 										</Link>

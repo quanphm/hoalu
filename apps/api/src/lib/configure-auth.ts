@@ -13,7 +13,7 @@ export function configureAuth() {
 				origin: [process.env.PUBLIC_APP_BASE_URL],
 				allowHeaders: ["Content-Type", "Authorization"],
 				allowMethods: ["POST", "GET", "OPTIONS"],
-				exposeHeaders: ["content-length"],
+				exposeHeaders: ["Content-Length"],
 				maxAge: 600,
 				credentials: true,
 			}),

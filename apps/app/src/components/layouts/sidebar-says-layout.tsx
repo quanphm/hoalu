@@ -2,6 +2,7 @@ import { AppLogo } from "@/components/layouts/app-logo";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
+import { SearchInput } from "@/components/search-input";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SidebarFooter, SidebarInset, SidebarProvider, SidebarTrigger } from "@hoalu/ui/sidebar";
@@ -75,9 +76,9 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 			</Sidebar>
 
 			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2 border-b">
-					<div className="flex w-full items-center justify-between gap-2 px-6">
-						<SidebarTrigger />
+				<header className="flex h-16 shrink-0 items-center gap-2">
+					<div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 px-6">
+						<SearchInput />
 						<div className="min-w-auto">
 							<NavUser />
 						</div>
