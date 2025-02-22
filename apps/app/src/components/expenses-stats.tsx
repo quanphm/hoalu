@@ -25,10 +25,10 @@ const barChartData = [
 const chartConfig = {
 	desktop: {
 		label: "Desktop",
-		color: "hsl(var(--chart-1))",
+		color: "var(--chart-1)",
 	},
 	spending: {
-		color: "hsl(var(--primary))",
+		color: "var(--primary)",
 	},
 } satisfies ChartConfig;
 

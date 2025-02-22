@@ -40,11 +40,11 @@ function WorkspaceCard(props: WorkspaceCardProps) {
 				<CardTitle className="text-base">{props.name}</CardTitle>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="link" size="icon" className="h-4 w-4">
+						<Button variant="link" size="icon" className="size-4">
 							<StarIcon className="size-4" />
 						</Button>
 					</TooltipTrigger>
-					<TooltipContent showArrow>
+					<TooltipContent>
 						<p>Favourite</p>
 					</TooltipContent>
 				</Tooltip>

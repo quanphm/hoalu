@@ -3,8 +3,8 @@ import { TasksTable } from "@/components/tasks-table";
 import type { taskSchema } from "@/lib/schema";
 import { tasksQueryOptions } from "@/services/query-options";
 import { tasksShapeOptions, withWorkspace } from "@/services/shape-options";
+import { useEqSyncShape } from "@hoalu/doki";
 import { PlusIcon } from "@hoalu/icons/lucide";
-import { useEqSyncShape } from "@hoalu/react-eqsync";
 import { Button } from "@hoalu/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 

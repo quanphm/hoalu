@@ -1,5 +1,5 @@
 {
-	"name": "@hoalu/react-eqsync",
+	"name": "@hoalu/doki",
 	"description": "React hook for dealing with asynchronous stream options in Electric SQL",
 	"version": "0.4.0",
 	"type": "module",
@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@electric-sql/client": "^1.0.0-beta.3",
-		"@tanstack/react-query": "^5.66.8"
+		"@tanstack/react-query": "^5.66.9"
 	},
 	"devDependencies": {
 		"@types/react": "^19.0.10",

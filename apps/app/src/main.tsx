@@ -10,7 +10,7 @@ import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
 
 import "@/styles/global.css";
-import { EqSyncClientProvider } from "@hoalu/react-eqsync";
+import { EqSyncClientProvider } from "@hoalu/doki";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 verifyEnv();
