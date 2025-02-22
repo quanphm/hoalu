@@ -4,14 +4,12 @@ import { NotFound } from "@/components/not-found";
 import { UiProviders } from "@/components/ui-providers";
 import { verifyEnv } from "@/lib/env";
 import { queryClient } from "@/lib/query-client";
+import { DokiClientProvider } from "@hoalu/doki";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { RouterProvider } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
-
-import "@/styles/global.css";
-import { EqSyncClientProvider } from "@hoalu/react-eqsync";
-import { QueryClientProvider } from "@tanstack/react-query";
 
 verifyEnv();
 
@@ -49,9 +47,9 @@ function App() {
 		<UiProviders>
 			<LocalPostgresProvider>
 				<QueryClientProvider client={queryClient}>
-					<EqSyncClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
+					<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
 						<RouterProvider router={router} />
-					</EqSyncClientProvider>
+					</DokiClientProvider>
 				</QueryClientProvider>
 			</LocalPostgresProvider>
 		</UiProviders>

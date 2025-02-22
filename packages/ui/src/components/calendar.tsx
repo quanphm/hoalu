@@ -4,15 +4,13 @@ import { DayPicker } from "react-day-picker";
 import { cn } from "../utils";
 import { buttonVariants } from "./button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
 function Calendar({
 	className,
 	classNames,
 	showOutsideDays = true,
 	components: userComponents,
 	...props
-}: CalendarProps) {
+}: React.ComponentProps<typeof DayPicker>) {
 	const defaultClassNames = {
 		months: "relative flex flex-col sm:flex-row gap-4",
 		month: "w-full",
@@ -82,6 +80,5 @@ function Calendar({
 		/>
 	);
 }
-Calendar.displayName = "Calendar";
 
 export { Calendar };

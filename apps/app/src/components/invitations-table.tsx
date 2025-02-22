@@ -154,7 +154,7 @@ function RowActions({ row }: { row: Row<Item> }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="h-4 w-4" />
+						<MoreHorizontalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

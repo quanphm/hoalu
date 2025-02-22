@@ -1,0 +1,7 @@
+@theme inline {
+	/** table */
+	--header-name-size: 200px;
+	--col-name-size: 200px;
+	--header-action-size: 48px;
+	--col-action-size: 48px;
+}

@@ -1,5 +1,5 @@
 import { queryClient } from "@/lib/query-client";
-import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/react-eqsync";
+import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 import { getWorkspaceDetailsOptions } from "./query-options";

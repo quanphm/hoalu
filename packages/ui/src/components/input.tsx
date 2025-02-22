@@ -1,9 +1,10 @@
 import { cn } from "../utils";
 
-const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => {
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 	return (
 		<input
 			type={type}
+			data-slot="input"
 			className={cn(
 				"flex h-9 w-full rounded-lg border border-input bg-background px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50",
 				type === "search" &&
@@ -15,7 +16,6 @@ const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => 
 			{...props}
 		/>
 	);
-};
-Input.displayName = "Input";
+}
 
 export { Input };
