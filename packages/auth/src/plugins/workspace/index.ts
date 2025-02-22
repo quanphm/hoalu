@@ -126,6 +126,39 @@ export interface WorkspaceOptions {
 		request?: Request,
 	) => Promise<void>;
 	/**
+	 * Configure how workspace creation is handled
+	 */
+	workspaceCreation?: {
+		disabled?: boolean;
+		/**
+		 * A callback that runs before the workspace is created
+		 *
+		 * @param data - workspace and user object
+		 * @param request - the request object
+		 * @returns
+		 */
+		beforeCreate?: (
+			data: {
+				user: User;
+			},
+			request?: Request,
+		) => Promise<void>;
+		/**
+		 * A callback that runs after the workspace is created
+		 *
+		 * @param data - workspace and user object
+		 * @param request - the request object
+		 * @returns
+		 */
+		afterCreate?: (
+			data: {
+				workspace: Workspace;
+				user: User;
+			},
+			request?: Request,
+		) => Promise<void>;
+	};
+	/**
 	 * Configure how workspace deletion is handled
 	 */
 	workspaceDeletion?: {

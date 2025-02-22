@@ -40,13 +40,16 @@ const columns: ColumnDef<Item>[] = [
 				<Badge variant="outline">Pending</Badge>
 			);
 		},
-		size: 200,
 	},
 	{
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
 		cell: ({ row }) => <RowActions row={row} />,
-		size: 32,
+		meta: {
+			headerClassName:
+				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
+			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+		},
 	},
 ];
 
@@ -68,8 +71,7 @@ export function TasksTable({ data }: { data: Item[] }) {
 									return (
 										<TableHead
 											key={header.id}
-											style={{ width: `${header.getSize()}px` }}
-											className="relative h-10"
+											className={header.column.columnDef.meta?.headerClassName}
 										>
 											{header.isPlaceholder
 												? null
@@ -85,13 +87,7 @@ export function TasksTable({ data }: { data: Item[] }) {
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell
-											key={cell.id}
-											style={{
-												width: cell.column.getSize(),
-											}}
-											className="last:py-0"
-										>
+										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
 									))}
