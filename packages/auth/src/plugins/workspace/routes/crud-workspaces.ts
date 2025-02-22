@@ -1,7 +1,6 @@
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
-import { setSessionCookie } from "better-auth/cookies";
+import { createAuthEndpoint } from "better-auth/api";
 import {
 	type AccessControl,
 	type Role,
@@ -9,14 +8,7 @@ import {
 	type defaultStatements,
 } from "better-auth/plugins/access";
 import { APIError } from "better-call";
-import {
-	type ZodArray,
-	type ZodNumber,
-	type ZodObject,
-	type ZodOptional,
-	type ZodString,
-	z,
-} from "zod";
+import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import type { Session, User } from "../../../utils/types";
 import { getOrgAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
@@ -66,7 +58,7 @@ export const createWorkspace = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const session = await getSessionFromCtx<User, Session>(ctx);
+		const session = await ctx.context.getSession(ctx);
 		if (!session && (ctx.request || ctx.headers)) {
 			throw new APIError("UNAUTHORIZED");
 		}
@@ -74,6 +66,7 @@ export const createWorkspace = createAuthEndpoint(
 		if (!user) {
 			throw new APIError("UNAUTHORIZED");
 		}
+
 		const options = ctx.context.orgOptions;
 		const canCreateWorkspace =
 			typeof options?.allowUserToCreateWorkspace === "function"
@@ -109,6 +102,16 @@ export const createWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_ALREADY_EXISTS,
 			});
 		}
+
+		const option = ctx.context.orgOptions.workspaceCreation;
+		if (option?.disabled) {
+			throw new APIError("FORBIDDEN");
+		}
+
+		if (option?.beforeCreate) {
+			await option.beforeCreate({ user: session.user });
+		}
+
 		const workspace = await adapter.createWorkspace({
 			workspace: {
 				slug: ctx.body.slug,
@@ -120,6 +123,11 @@ export const createWorkspace = createAuthEndpoint(
 			},
 			user: user,
 		});
+
+		if (option?.afterCreate) {
+			await option.afterCreate({ workspace, user: session.user });
+		}
+
 		return ctx.json(workspace);
 	},
 );

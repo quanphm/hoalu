@@ -26,11 +26,13 @@ export const auth = betterAuth({
 		cookieCache: {
 			enabled: true,
 		},
+		expiresIn: 60 * 60 * 24 * 7, // 7 days
+		updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
 	},
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
-		minPasswordLength: 6,
+		minPasswordLength: 5,
 		password: {
 			hash: async (password) => {
 				return await Bun.password.hash(password, {
@@ -84,6 +86,13 @@ export const auth = betterAuth({
 						workspaceName: data.workspace.name,
 					}),
 				});
+			},
+			workspaceCreation: {
+				afterCreate: async (data) => {
+					console.log(data.workspace);
+					// create default wallet
+					// create default categories
+				},
 			},
 		}),
 		jwt({

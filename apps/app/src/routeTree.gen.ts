@@ -26,7 +26,6 @@ import { Route as DashboardSlugSettingsImport } from './routes/_dashboard/$slug/
 import { Route as DashboardSlugMembersImport } from './routes/_dashboard/$slug/members'
 import { Route as DashboardSlugFinanceImport } from './routes/_dashboard/$slug/finance'
 import { Route as DashboardSlugFinanceIndexImport } from './routes/_dashboard/$slug/finance/index'
-import { Route as DashboardSlugFinanceWalletsImport } from './routes/_dashboard/$slug/finance/wallets'
 import { Route as DashboardSlugFinanceExpensesImport } from './routes/_dashboard/$slug/finance/expenses'
 import { Route as DashboardSlugFinanceCategoriesImport } from './routes/_dashboard/$slug/finance/categories'
 
@@ -120,13 +119,6 @@ const DashboardSlugFinanceIndexRoute = DashboardSlugFinanceIndexImport.update({
   path: '/',
   getParentRoute: () => DashboardSlugFinanceRoute,
 } as any)
-
-const DashboardSlugFinanceWalletsRoute =
-  DashboardSlugFinanceWalletsImport.update({
-    id: '/wallets',
-    path: '/wallets',
-    getParentRoute: () => DashboardSlugFinanceRoute,
-  } as any)
 
 const DashboardSlugFinanceExpensesRoute =
   DashboardSlugFinanceExpensesImport.update({
@@ -258,13 +250,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugFinanceExpensesImport
       parentRoute: typeof DashboardSlugFinanceImport
     }
-    '/_dashboard/$slug/finance/wallets': {
-      id: '/_dashboard/$slug/finance/wallets'
-      path: '/wallets'
-      fullPath: '/$slug/finance/wallets'
-      preLoaderRoute: typeof DashboardSlugFinanceWalletsImport
-      parentRoute: typeof DashboardSlugFinanceImport
-    }
     '/_dashboard/$slug/finance/': {
       id: '/_dashboard/$slug/finance/'
       path: '/'
@@ -292,14 +277,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 interface DashboardSlugFinanceRouteChildren {
   DashboardSlugFinanceCategoriesRoute: typeof DashboardSlugFinanceCategoriesRoute
   DashboardSlugFinanceExpensesRoute: typeof DashboardSlugFinanceExpensesRoute
-  DashboardSlugFinanceWalletsRoute: typeof DashboardSlugFinanceWalletsRoute
   DashboardSlugFinanceIndexRoute: typeof DashboardSlugFinanceIndexRoute
 }
 
 const DashboardSlugFinanceRouteChildren: DashboardSlugFinanceRouteChildren = {
   DashboardSlugFinanceCategoriesRoute: DashboardSlugFinanceCategoriesRoute,
   DashboardSlugFinanceExpensesRoute: DashboardSlugFinanceExpensesRoute,
-  DashboardSlugFinanceWalletsRoute: DashboardSlugFinanceWalletsRoute,
   DashboardSlugFinanceIndexRoute: DashboardSlugFinanceIndexRoute,
 }
 
@@ -360,7 +343,6 @@ export interface FileRoutesByFullPath {
   '/$slug/': typeof DashboardSlugIndexRoute
   '/$slug/finance/categories': typeof DashboardSlugFinanceCategoriesRoute
   '/$slug/finance/expenses': typeof DashboardSlugFinanceExpensesRoute
-  '/$slug/finance/wallets': typeof DashboardSlugFinanceWalletsRoute
   '/$slug/finance/': typeof DashboardSlugFinanceIndexRoute
 }
 
@@ -378,7 +360,6 @@ export interface FileRoutesByTo {
   '/$slug': typeof DashboardSlugIndexRoute
   '/$slug/finance/categories': typeof DashboardSlugFinanceCategoriesRoute
   '/$slug/finance/expenses': typeof DashboardSlugFinanceExpensesRoute
-  '/$slug/finance/wallets': typeof DashboardSlugFinanceWalletsRoute
   '/$slug/finance': typeof DashboardSlugFinanceIndexRoute
 }
 
@@ -400,7 +381,6 @@ export interface FileRoutesById {
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
   '/_dashboard/$slug/finance/categories': typeof DashboardSlugFinanceCategoriesRoute
   '/_dashboard/$slug/finance/expenses': typeof DashboardSlugFinanceExpensesRoute
-  '/_dashboard/$slug/finance/wallets': typeof DashboardSlugFinanceWalletsRoute
   '/_dashboard/$slug/finance/': typeof DashboardSlugFinanceIndexRoute
 }
 
@@ -422,7 +402,6 @@ export interface FileRouteTypes {
     | '/$slug/'
     | '/$slug/finance/categories'
     | '/$slug/finance/expenses'
-    | '/$slug/finance/wallets'
     | '/$slug/finance/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -439,7 +418,6 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/$slug/finance/categories'
     | '/$slug/finance/expenses'
-    | '/$slug/finance/wallets'
     | '/$slug/finance'
   id:
     | '__root__'
@@ -459,7 +437,6 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug/'
     | '/_dashboard/$slug/finance/categories'
     | '/_dashboard/$slug/finance/expenses'
-    | '/_dashboard/$slug/finance/wallets'
     | '/_dashboard/$slug/finance/'
   fileRoutesById: FileRoutesById
 }
@@ -536,7 +513,6 @@ export const routeTree = rootRoute
       "children": [
         "/_dashboard/$slug/finance/categories",
         "/_dashboard/$slug/finance/expenses",
-        "/_dashboard/$slug/finance/wallets",
         "/_dashboard/$slug/finance/"
       ]
     },
@@ -573,10 +549,6 @@ export const routeTree = rootRoute
     },
     "/_dashboard/$slug/finance/expenses": {
       "filePath": "_dashboard/$slug/finance/expenses.tsx",
-      "parent": "/_dashboard/$slug/finance"
-    },
-    "/_dashboard/$slug/finance/wallets": {
-      "filePath": "_dashboard/$slug/finance/wallets.tsx",
       "parent": "/_dashboard/$slug/finance"
     },
     "/_dashboard/$slug/finance/": {

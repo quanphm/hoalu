@@ -11,6 +11,7 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth";
 import { member, workspace } from "./workspace";
 
 export const walletTypeEnum = pgEnum("wallet_type_enum", [
@@ -23,11 +24,13 @@ export const walletTypeEnum = pgEnum("wallet_type_enum", [
 
 export const wallet = pgTable("wallet", {
 	id: uuid("id").primaryKey(),
-	publicId: text("public_id").notNull().unique(),
 	name: text("name").notNull(),
 	description: text("description"),
 	currency: varchar({ length: 3 }).notNull(),
 	type: walletTypeEnum().default("cash").notNull(),
+	ownerId: uuid("owner_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
 	workspaceId: uuid("workspace_id")
 		.notNull()
 		.references(() => workspace.id, { onDelete: "cascade" }),

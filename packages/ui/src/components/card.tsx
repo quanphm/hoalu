@@ -17,7 +17,7 @@ CardHeader.displayName = "CardHeader";
 const CardTitle = ({ ref, className, ...props }: React.ComponentProps<"div">) => (
 	<div
 		ref={ref}
-		className={cn("font-semibold text-2xl leading-none tracking-tight", className)}
+		className={cn("font-semibold text-xl leading-none tracking-tight", className)}
 		{...props}
 	/>
 );

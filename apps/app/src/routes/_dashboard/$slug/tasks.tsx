@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 function RouteComponent() {
 	const { data } = useEqSyncShape<Task>({
 		syncKey: ["tasks", "all"],
-		optionsFn: () => withWorkspace<Task>(tasksShapeOptions),
+		optionsFn: () => withWorkspace(tasksShapeOptions),
 	});
 
 	return (

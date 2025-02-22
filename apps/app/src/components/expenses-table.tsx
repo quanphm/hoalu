@@ -150,13 +150,13 @@ export function ExpensesTable({ data }: { data: Item[] }) {
 	);
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug/finance/expenses");
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
 	const navigate = routeApi.useNavigate();
-	const params = routeApi.useParams();
-	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
+	const { slug } = routeApi.useParams();
+	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canDelete = authClient.workspace.checkRolePermission({
 		role: member.role,
 		permission: {
@@ -164,7 +164,7 @@ function RowActions({ row }: { row: Row<Item> }) {
 		},
 	});
 	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember(params.slug);
+	const mutation = useRemoveMember(slug);
 
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);

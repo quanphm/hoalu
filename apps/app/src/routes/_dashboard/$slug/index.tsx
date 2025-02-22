@@ -12,6 +12,9 @@ function RouteComponent() {
 	return (
 		<>
 			<Section>
+				<SectionHeader>
+					<SectionTitle>Shortcuts</SectionTitle>
+				</SectionHeader>
 				<SectionContent columns={6}>
 					<Button variant="outline">
 						<SendIcon className="mr-2 size-4" />
@@ -34,15 +37,6 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<Stats />
-				</SectionContent>
-			</Section>
-
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Recent entries</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={12}>
-					<p>Hello</p>
 				</SectionContent>
 			</Section>
 		</>

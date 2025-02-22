@@ -4,14 +4,13 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { createStandardIssues } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
 import { db } from "../db";
 import { task } from "../db/schema/task";
+import { workspaceQueryValidator } from "../helpers/validators";
 import { createHonoInstance } from "../lib/create-app";
-
-const app = createHonoInstance();
 
 const taskSchema = type({
 	id: "string",
@@ -28,13 +27,12 @@ const insertTaskSchema = type({
 	done: "boolean = false",
 });
 const updateTaskSchema = type({
-	id: "string",
 	"name?": "string > 0",
 	"done?": "boolean",
 });
-const querySchema = type({
-	workspaceIdOrSlug: "string",
-});
+const taskIdSchema = type({ id: "string.uuid" });
+
+const app = createHonoInstance();
 
 export const tasksRoute = app
 	.get(
@@ -49,14 +47,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("query", querySchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		workspaceQueryValidator,
 		async (c) => {
 			const { workspaceIdOrSlug } = c.req.valid("query");
 			const workspaceResult = await db.query.workspace.findFirst({
@@ -99,16 +90,7 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		aValidator("query", querySchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{
-						message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-					},
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		workspaceQueryValidator,
 		aValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -158,11 +140,11 @@ export const tasksRoute = app
 		},
 	)
 	.patch(
-		"/",
+		"/:id",
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Update a task",
-			description: "Update content & status of a task related to the user",
+			description: "Update content & status of a task within a workspace",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
@@ -170,16 +152,12 @@ export const tasksRoute = app
 				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("query", querySchema, (result, c) => {
+		aValidator("param", taskIdSchema, (result, c) => {
 			if (!result.success) {
-				return c.json(
-					{
-						message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-					},
-					HTTPStatus.codes.BAD_REQUEST,
-				);
+				return c.json({ message: "Invalid task id" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 		}),
+		workspaceQueryValidator,
 		aValidator("json", updateTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -189,8 +167,9 @@ export const tasksRoute = app
 			}
 		}),
 		async (c) => {
+			const { id } = c.req.valid("param");
 			const { workspaceIdOrSlug } = c.req.valid("query");
-			const { id, name, done } = c.req.valid("json");
+			const { name, done } = c.req.valid("json");
 
 			const currentWorkspace = await db.query.workspace.findFirst({
 				where: (workspace, { eq, or }) =>
@@ -228,6 +207,54 @@ export const tasksRoute = app
 					{
 						message: createStandardIssues(parsed.issues)[0],
 					},
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
+				);
+			}
+			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+		},
+	)
+	.delete(
+		"/:id",
+		describeRoute({
+			tags: ["Tasks"],
+			summary: "Delete a task",
+			description: "Detele a task within a workspace",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		workspaceQueryValidator,
+		async (c) => {
+			const { id } = c.req.param();
+			const { workspaceIdOrSlug } = c.req.valid("query");
+
+			const currentWorkspace = await db.query.workspace.findFirst({
+				where: (workspace, { eq, or }) =>
+					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
+			});
+			if (!currentWorkspace) {
+				return c.json(
+					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
+
+			// [TODO] check whether user belongs to workspace and has the right to delete a task
+			//
+
+			const [deletedTask] = await db
+				.delete(task)
+				.where(and(eq(task.id, id), eq(task.workspaceId, currentWorkspace.id)))
+				.returning();
+
+			const parsed = taskSchema(deletedTask);
+
+			if (parsed instanceof type.errors) {
+				return c.json(
+					{ message: createStandardIssues(parsed.issues)[0] },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}

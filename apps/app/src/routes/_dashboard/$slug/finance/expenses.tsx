@@ -1,7 +1,6 @@
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/finance/expenses")({
@@ -9,8 +8,7 @@ export const Route = createFileRoute("/_dashboard/$slug/finance/expenses")({
 });
 
 function RouteComponent() {
-	const { slug } = Route.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
 	const membersTableData = workspace.members.map((member) => ({
 		id: member.user.id,
 		name: member.user.name,

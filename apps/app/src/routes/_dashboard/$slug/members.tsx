@@ -40,34 +40,32 @@ function RouteComponent() {
 		}));
 
 	return (
-		<Section>
-			<SectionContent columns={2}>
-				<Section>
-					<SectionHeader>
-						<SectionTitle>Members</SectionTitle>
-						{canInvite && (
-							<InviteDialog>
-								<Button variant="outline" size="sm">
-									<MailPlusIcon className="mr-2 size-4" />
-									Invite
-								</Button>
-							</InviteDialog>
-						)}
-					</SectionHeader>
-					<SectionContent>
-						<MembersTable data={membersTableData} />
-					</SectionContent>
-				</Section>
+		<>
+			<Section>
+				<SectionHeader>
+					<SectionTitle>Members</SectionTitle>
+					{canInvite && (
+						<InviteDialog>
+							<Button variant="outline" size="sm">
+								<MailPlusIcon className="mr-2 size-4" />
+								Invite
+							</Button>
+						</InviteDialog>
+					)}
+				</SectionHeader>
+				<SectionContent>
+					<MembersTable data={membersTableData} />
+				</SectionContent>
+			</Section>
 
-				<Section>
-					<SectionHeader>
-						<SectionTitle>Invitations</SectionTitle>
-					</SectionHeader>
-					<SectionContent>
-						<InvitationsTable data={invitationTableData} />
-					</SectionContent>
-				</Section>
-			</SectionContent>
-		</Section>
+			<Section>
+				<SectionHeader>
+					<SectionTitle>Invitations</SectionTitle>
+				</SectionHeader>
+				<SectionContent>
+					<InvitationsTable data={invitationTableData} />
+				</SectionContent>
+			</Section>
+		</>
 	);
 }
