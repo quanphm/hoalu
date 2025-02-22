@@ -1,7 +1,7 @@
 import * as React from "react";
 
-export interface EqSyncClient {
+export interface DokiClient {
 	baseUrl: string;
 }
 
-export const EqSyncClientContext = React.createContext<EqSyncClient | undefined>(undefined);
+export const DokiClientContext = React.createContext<DokiClient | undefined>(undefined);

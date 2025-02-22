@@ -1,7 +1,7 @@
 import { Shape, ShapeStream } from "@electric-sql/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
-import { EqSyncClientContext } from "./context";
+import { DokiClientContext } from "./context";
 import type {
 	AppShapeOptions,
 	GetExtensions,
@@ -57,14 +57,14 @@ function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): Shape<T>
 	return newShape;
 }
 
-function useEqSyncShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
+function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 	syncKey,
 	optionsFn,
 }: {
 	syncKey: string[];
 	optionsFn: () => Promise<AppShapeOptions<T, S>>;
 }) {
-	const eqSyncClient = useEqSync();
+	const eqSyncClient = useDoki();
 	const queryClient = useQueryClient();
 	const [controller, _] = React.useState(new AbortController());
 
@@ -112,12 +112,12 @@ function useEqSyncShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 	return data;
 }
 
-function useEqSync() {
-	const context = React.useContext(EqSyncClientContext);
+function useDoki() {
+	const context = React.useContext(DokiClientContext);
 	if (!context) {
-		throw new Error("useEqSync must be use inside <EqSyncClientProvider> component.");
+		throw new Error("useDoki must be use inside <EqSyncClientProvider> component.");
 	}
 	return context;
 }
 
-export { useEqSyncShape, useEqSync };
+export { useDokiShape, useDoki };

@@ -3,7 +3,7 @@ import { TasksTable } from "@/components/tasks-table";
 import type { taskSchema } from "@/lib/schema";
 import { tasksQueryOptions } from "@/services/query-options";
 import { tasksShapeOptions, withWorkspace } from "@/services/shape-options";
-import { useEqSyncShape } from "@hoalu/doki";
+import { useDokiShape } from "@hoalu/doki";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 });
 
 function RouteComponent() {
-	const { data } = useEqSyncShape<Task>({
+	const { data } = useDokiShape<Task>({
 		syncKey: ["tasks", "all"],
 		optionsFn: () => withWorkspace(tasksShapeOptions),
 	});

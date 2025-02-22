@@ -1,39 +1,13 @@
 @import "tailwindcss";
 
+@source "../../../../packages/ui/**/*.{ts,tsx}";
+
 @import "@hoalu/ui/theme.css";
+@import "./fonts.css";
+@import "./typography.css";
+@import "./table.css";
 
-:root {
-	--geist-sans: "Geist", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
-	--geist-mono: "GeistMono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
-}
-
-@theme inline {
-	--font-sans: var(--geist-sans);
-	--font-mono: var(--geist-mono);
-
-	--text-xs: 0.675rem;
-	--text-xs--line-height: calc(1 / 0.675);
-	--text-sm: 0.7875rem;
-	--text-sm--line-height: calc(1.25 / 0.7875);
-	--text-base: 0.9rem;
-	--text-base--line-height: calc(1.5 / 0.9);
-	--text-lg: 1.0125rem;
-	--text-lg--line-height: calc(1.75 / 1.0125);
-	--text-xl: 1.125rem;
-	--text-xl--line-height: calc(1.75 / 1.125);
-	--text-2xl: 1.35rem;
-	--text-2xl--line-height: calc(2 / 1.35);
-	--text-3xl: 1.6875rem;
-	--text-3xl--line-height: calc(2.25 / 1.6875);
-
-	--spacing: 0.225rem;
-
-	/** table */
-	--header-name-size: 200px;
-	--col-name-size: 200px;
-	--header-action-size: 48px;
-	--col-action-size: 48px;
-}
+@plugin "tailwind-scrollbar";
 
 @layer base {
 	* {
@@ -53,21 +27,3 @@
 		@apply w-full min-h-screen;
 	}
 }
-
-@font-face {
-	font-family: Geist;
-	font-style: normal;
-	font-weight: 100 900;
-	font-display: swap;
-	src: url("/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
-}
-
-@font-face {
-	font-family: GeistMono;
-	font-style: normal;
-	font-weight: 100 900;
-	font-display: swap;
-	src: url("/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
-}
-
-@plugin "tailwind-scrollbar";
