@@ -11,20 +11,19 @@ export const app = createApp();
 configureOpenAPI(app);
 
 const authRoute = configureAuth();
-app.route("/", authRoute);
-
-app.use(async (c, next) => {
-	const session = await auth.api.getSession({
-		// @ts-ignore
-		headers: c.req.raw.headers,
-	});
-	c.set("user", (session?.user as unknown as User) || null);
-	c.set("session", (session?.session as unknown as Session) || null);
-	await next();
-});
-
 const apiRoute = configureAPI();
-app.route("/", apiRoute);
-
 const syncRoute = configureElectricSync();
-app.route("/", syncRoute);
+
+app
+	.route("/", authRoute)
+	.use(async (c, next) => {
+		const session = await auth.api.getSession({
+			// @ts-ignore
+			headers: c.req.raw.headers,
+		});
+		c.set("user", (session?.user as unknown as User) || null);
+		c.set("session", (session?.session as unknown as Session) || null);
+		await next();
+	})
+	.route("/", apiRoute)
+	.route("/", syncRoute);
