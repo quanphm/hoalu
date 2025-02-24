@@ -34,8 +34,8 @@ export const wallet = pgTable("wallet", {
 	workspaceId: uuid("workspace_id")
 		.notNull()
 		.references(() => workspace.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const category = pgTable(
@@ -48,8 +48,8 @@ export const category = pgTable(
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [unique("category_workspace_id_name_unique").on(table.workspaceId, table.name)],
 );
@@ -71,8 +71,8 @@ export const expense = pgTable(
 		categoryId: uuid("category_id")
 			.notNull()
 			.references(() => category.id),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
 		foreignKey({

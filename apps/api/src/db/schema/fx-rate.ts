@@ -7,8 +7,8 @@ export const fxRate = pgTable(
 		toCurrency: varchar("to_currency", { length: 3 }).notNull(),
 		exchangeRate: numeric("exchange_rate", { precision: 18, scale: 6 }).notNull(),
 		inverseRate: numeric("inverse_rate", { precision: 18, scale: 6 }).notNull(),
-		validFrom: date("valid_from").defaultNow().notNull(),
-		validTo: date("valid_to").defaultNow().notNull(),
+		validFrom: date("valid_from", { mode: "string" }).defaultNow().notNull(),
+		validTo: date("valid_to", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
 		primaryKey({

@@ -1,13 +1,13 @@
 import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { createStandardIssues } from "@hoalu/common/standard-validate";
+import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
-import { db } from "../db";
-import { workspaceQueryValidator } from "../helpers/validators";
-import { createHonoInstance } from "../lib/create-app";
+import { db } from "../../db";
+import { createHonoInstance } from "../../lib/create-app";
+import { workspaceMember } from "../../middlewares/workspace-member";
+import { workspaceQueryValidator } from "../../validators/workspace-query";
 
 const walletSchema = type({
 	id: "string",
@@ -37,42 +37,19 @@ const route = app.get(
 		},
 	}),
 	workspaceQueryValidator,
+	workspaceMember,
 	async (c) => {
 		const user = c.get("user")!;
-		const { workspaceIdOrSlug } = c.req.valid("query");
-
-		const currentWorkspace = await db.query.workspace.findFirst({
-			where: (table, { eq, or }) =>
-				or(eq(table.slug, workspaceIdOrSlug), eq(table.publicId, workspaceIdOrSlug)),
-		});
-		if (!currentWorkspace) {
-			return c.json(
-				{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-				HTTPStatus.codes.BAD_REQUEST,
-			);
-		}
-
-		const member = await db.query.member.findFirst({
-			where: (table, { eq, and }) =>
-				and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
-		});
-		if (!member) {
-			return c.json(
-				{ message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND },
-				HTTPStatus.codes.BAD_REQUEST,
-			);
-		}
+		const workspace = c.get("workspace");
 
 		const wallets = await db.query.wallet.findMany({
-			where: (table, { eq }) => eq(table.workspaceId, currentWorkspace.id),
+			where: (table, { eq }) => eq(table.workspaceId, workspace.id),
 		});
 
 		const parsed = walletsSchema(wallets);
 		if (parsed instanceof type.errors) {
 			return c.json(
-				{
-					message: createStandardIssues(parsed.issues)[0],
-				},
+				{ message: createIssueMsg(parsed.issues) },
 				HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 			);
 		}

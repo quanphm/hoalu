@@ -1,36 +1,24 @@
 import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { createStandardIssues } from "@hoalu/common/standard-validate";
+import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { db } from "../db";
-import { task } from "../db/schema/task";
-import { workspaceQueryValidator } from "../helpers/validators";
-import { createHonoInstance } from "../lib/create-app";
-
-const taskSchema = type({
-	id: "string",
-	name: "string",
-	done: "boolean",
-	creatorId: "string",
-	workspaceId: "string",
-	createdAt: "string",
-	updatedAt: "string",
-});
-const tasksSchema = taskSchema.array();
-const insertTaskSchema = type({
-	name: "string > 0",
-	done: "boolean = false",
-});
-const updateTaskSchema = type({
-	"name?": "string > 0",
-	"done?": "boolean",
-});
-const taskIdSchema = type({ id: "string.uuid" });
+import { db } from "../../db";
+import { task } from "../../db/schema/task";
+import { createHonoInstance } from "../../lib/create-app";
+import { workspaceMember } from "../../middlewares/workspace-member";
+import { workspaceQueryValidator } from "../../validators/workspace-query";
+import {
+	insertTaskSchema,
+	taskIdSchema,
+	taskSchema,
+	tasksSchema,
+	updateTaskSchema,
+} from "./schema";
 
 const app = createHonoInstance();
 
@@ -48,41 +36,17 @@ const route = app
 			},
 		}),
 		workspaceQueryValidator,
+		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
-			const { workspaceIdOrSlug } = c.req.valid("query");
-
-			const currentWorkspace = await db.query.workspace.findFirst({
-				where: (workspace, { eq, or }) =>
-					or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
-			});
-			if (!currentWorkspace) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
-			const member = await db.query.member.findFirst({
-				where: (table, { eq, and }) =>
-					and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
-			});
-			if (!member) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
+			const workspace = c.get("workspace");
 			const tasks = await db.query.task.findMany({
-				where: (table, { eq }) => eq(table.workspaceId, currentWorkspace.id),
+				where: (table, { eq }) => eq(table.workspaceId, workspace.id),
 			});
+
 			const parsed = tasksSchema(tasks);
 			if (parsed instanceof type.errors) {
 				return c.json(
-					{
-						message: createStandardIssues(parsed.issues)[0],
-					},
+					{ message: createIssueMsg(parsed.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -103,41 +67,20 @@ const route = app
 				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		workspaceQueryValidator,
 		aValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{ message: createStandardIssues(result.errors.issues)[0] },
+					{ message: createIssueMsg(result.errors.issues) },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
-			const { workspaceIdOrSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
-
-			const currentWorkspace = await db.query.workspace.findFirst({
-				where: (table, { eq, or }) =>
-					or(eq(table.slug, workspaceIdOrSlug), eq(table.publicId, workspaceIdOrSlug)),
-			});
-			if (!currentWorkspace) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
-			const memberResult = await db.query.member.findFirst({
-				where: (table, { eq, and }) =>
-					and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
-			});
-			if (!memberResult) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
+			const user = c.get("user")!;
+			const workspace = c.get("workspace");
 
 			const [taskResult] = await db
 				.insert(task)
@@ -146,16 +89,14 @@ const route = app
 					name,
 					done,
 					creatorId: user.id,
-					workspaceId: currentWorkspace.id,
+					workspaceId: workspace.id,
 				})
 				.returning();
 
 			const parsed = taskSchema(taskResult);
 			if (parsed instanceof type.errors) {
 				return c.json(
-					{
-						message: createStandardIssues(parsed.issues)[0],
-					},
+					{ message: createIssueMsg(parsed.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -181,42 +122,20 @@ const route = app
 				return c.json({ message: "Invalid task id" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 		}),
-		workspaceQueryValidator,
 		aValidator("json", updateTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
-					{ message: createStandardIssues(result.errors.issues)[0] },
+					{ message: createIssueMsg(result.errors.issues) },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
 			const { id } = c.req.valid("param");
-			const { workspaceIdOrSlug } = c.req.valid("query");
 			const { name, done } = c.req.valid("json");
-
-			const currentWorkspace = await db.query.workspace.findFirst({
-				where: (table, { eq, or }) =>
-					or(eq(table.slug, workspaceIdOrSlug), eq(table.publicId, workspaceIdOrSlug)),
-			});
-			if (!currentWorkspace) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
-			const member = await db.query.member.findFirst({
-				where: (table, { eq, and }) =>
-					and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
-			});
-			if (!member) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
+			const workspace = c.get("workspace");
 
 			const [taskResult] = await db
 				.update(task)
@@ -225,7 +144,7 @@ const route = app
 					done,
 					updatedAt: sql`now()`,
 				})
-				.where(and(eq(task.id, id), eq(task.workspaceId, currentWorkspace.id)))
+				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
 				.returning();
 
 			if (!taskResult) {
@@ -235,9 +154,7 @@ const route = app
 			const parsed = taskSchema(taskResult);
 			if (parsed instanceof type.errors) {
 				return c.json(
-					{
-						message: createStandardIssues(parsed.issues)[0],
-					},
+					{ message: createIssueMsg(parsed.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -298,7 +215,7 @@ const route = app
 			const parsed = taskSchema(deletedTask);
 			if (parsed instanceof type.errors) {
 				return c.json(
-					{ message: createStandardIssues(parsed.issues)[0] },
+					{ message: createIssueMsg(parsed.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}

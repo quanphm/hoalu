@@ -9,8 +9,8 @@ export const workspace = pgTable(
 		publicId: text("public_id").notNull().unique(),
 		name: text("name").notNull(),
 		logo: text("logo"),
-		createdAt: timestamp("created_at").notNull(),
 		metadata: text("metadata"),
+		createdAt: timestamp("created_at", { mode: "string" }).notNull(),
 	},
 	(table) => [index("idx_workspace_on_name").on(table.name)],
 );
@@ -26,7 +26,7 @@ export const member = pgTable(
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 		role: text("role").notNull(),
-		createdAt: timestamp("created_at").notNull(),
+		createdAt: timestamp("created_at", { mode: "string" }).notNull(),
 	},
 	(table) => [unique("member_on_workspace_id_user_id_unique").on(table.workspaceId, table.userId)],
 );
@@ -42,5 +42,5 @@ export const invitation = pgTable("invitation", {
 	inviterId: uuid("inviter_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	expiresAt: timestamp("expires_at").notNull(),
+	expiresAt: timestamp("expires_at", { mode: "string" }).notNull(),
 });
