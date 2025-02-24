@@ -1,7 +1,7 @@
 import type { Serve } from "bun";
 import { app } from "./app";
-import type { ApiRoutes } from "./lib/configure-api";
 import { verifyEnv } from "./lib/env";
+import type { ApiRoutes } from "./modules/api";
 
 verifyEnv();
 
