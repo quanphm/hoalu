@@ -9,7 +9,7 @@ import {
 
 export function NavDocumentation() {
 	return (
-		<SidebarGroup id="nav-documentation" className="mt-auto">
+		<SidebarGroup id="nav-documentation" className="mt-auto mb-2">
 			<SidebarGroupLabel>Documentation</SidebarGroupLabel>
 			<SidebarMenu>
 				<SidebarMenuItem>

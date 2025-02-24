@@ -69,6 +69,7 @@ export function NavUser() {
 										<DropdownMenuItem onClick={() => setTheme("dark")}>
 											<MoonIcon />
 											<span>Dark</span>
+											<MoonIcon />
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("system")}>
 											<Monitor />

@@ -9,8 +9,8 @@ export const workspace = pgTable(
 		publicId: text("public_id").notNull().unique(),
 		name: text("name").notNull(),
 		logo: text("logo"),
-		createdAt: timestamp("created_at").notNull(),
 		metadata: text("metadata"),
+		createdAt: timestamp("created_at").notNull(),
 	},
 	(table) => [index("idx_workspace_on_name").on(table.name)],
 );

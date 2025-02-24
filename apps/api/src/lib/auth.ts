@@ -5,7 +5,9 @@ import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, openAPI } from "better-auth/plugins";
+import { DEFAULT_CATEGORIES } from "../constants";
 import { db } from "../db";
+import { category, wallet } from "../db/schema/finance";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
@@ -89,9 +91,28 @@ export const auth = betterAuth({
 			},
 			workspaceCreation: {
 				afterCreate: async (data) => {
-					console.log(data.workspace);
-					// create default wallet
-					// create default categories
+					const { workspace, user } = data;
+
+					await db.transaction(async (tx) => {
+						// default wallet
+						await tx.insert(wallet).values({
+							id: generateId({ use: "uuid" }),
+							name: "Cash wallet",
+							workspaceId: workspace.id,
+							ownerId: user.id,
+							type: "cash",
+							currency: "USD",
+						});
+						// default categories
+						await tx.insert(category).values(
+							DEFAULT_CATEGORIES.map((c) => ({
+								id: generateId({ use: "uuid" }),
+								name: c.name,
+								color: c.color,
+								workspaceId: workspace.id,
+							})),
+						);
+					});
 				},
 			},
 		}),

@@ -1,9 +1,9 @@
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { authGuard } from "@hoalu/furnace";
 import { cors } from "hono/cors";
-import { createHonoInstance } from "./create-app";
+import { createHonoInstance } from "../lib/create-app";
 
-export function configureElectricSync() {
+export function syncModule() {
 	const app = createHonoInstance().basePath("/sync");
 
 	app

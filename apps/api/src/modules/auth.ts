@@ -1,10 +1,10 @@
 import { rateLimiter } from "@hoalu/furnace";
 import { cors } from "hono/cors";
-import { auth } from "./auth";
-import { createHonoInstance } from "./create-app";
-import { redis } from "./redis";
+import { auth } from "../lib/auth";
+import { createHonoInstance } from "../lib/create-app";
+import { redis } from "../lib/redis";
 
-export function configureAuth() {
+export function authModule() {
 	const app = createHonoInstance().basePath("/auth");
 
 	app

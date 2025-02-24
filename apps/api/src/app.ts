@@ -1,30 +1,16 @@
-import { auth } from "./lib/auth";
-import { configureAPI } from "./lib/configure-api";
-import { configureAuth } from "./lib/configure-auth";
-import { configureOpenAPI } from "./lib/configure-openapi";
-import { configureElectricSync } from "./lib/configure-sync";
 import { createApp } from "./lib/create-app";
-import type { Session, User } from "./types";
+import { userSession } from "./middlewares/user-session";
+import { apiModule } from "./modules/api";
+import { authModule } from "./modules/auth";
+import { openAPIModule } from "./modules/openapi";
+import { syncModule } from "./modules/sync";
 
 export const app = createApp();
 
-configureOpenAPI(app);
+const authRoute = authModule();
+const apiRoute = apiModule();
+const syncRoute = syncModule();
 
-const authRoute = configureAuth();
-app.route("/", authRoute);
+openAPIModule(app);
 
-app.use(async (c, next) => {
-	const session = await auth.api.getSession({
-		// @ts-ignore
-		headers: c.req.raw.headers,
-	});
-	c.set("user", (session?.user as unknown as User) || null);
-	c.set("session", (session?.session as unknown as Session) || null);
-	await next();
-});
-
-const apiRoute = configureAPI();
-app.route("/", apiRoute);
-
-const syncRoute = configureElectricSync();
-app.route("/", syncRoute);
+app.use(userSession).route("/", authRoute).route("/", apiRoute).route("/", syncRoute);

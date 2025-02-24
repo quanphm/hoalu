@@ -24,5 +24,8 @@ export const envSchema = type({
 export type EnvSchema = typeof envSchema.infer;
 
 export function verifyEnv() {
-	standardValidate(envSchema, process.env);
+	standardValidate(envSchema, {
+		// ArkType will throw error if NOT use spread operator here.
+		...process.env,
+	});
 }
