@@ -2,8 +2,10 @@ import { PGliteProvider } from "@electric-sql/pglite-react";
 import { electricSync } from "@electric-sql/pglite-sync";
 import { type PGliteWithLive, live } from "@electric-sql/pglite/live";
 import { PGliteWorker } from "@electric-sql/pglite/worker";
+import { tryCatch } from "@hoalu/common/try-catch";
 import { LoaderCircleIcon } from "@hoalu/icons/lucide";
 import { useEffect, useState } from "react";
+import PGWorker from "../lib/pglite-worker?worker";
 
 let syncStarted = false;
 
@@ -12,24 +14,19 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		(async function create() {
-			const pg = await PGliteWorker.create(
-				new Worker(new URL("../lib/pglite-worker.ts", import.meta.url), {
-					type: "module",
-				}),
-				{
-					dataDir: "idb://hoalu",
-					relaxedDurability: true,
+			const { data: pg } = await tryCatch.async(
+				PGliteWorker.create(new PGWorker(), {
 					/**
 					 * @see https://pglite.dev/docs/multi-tab-worker#extension-support
 					 */
 					extensions: {
 						live,
-						electric: electricSync({
-							debug: true,
-						}),
+						electric: electricSync(),
 					},
-				},
+				}),
 			);
+
+			if (!pg) return;
 
 			console.log("PGlite worker started");
 			pg.onLeaderChange(() => {

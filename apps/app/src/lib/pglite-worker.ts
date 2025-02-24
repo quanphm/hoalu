@@ -5,7 +5,8 @@ import { worker } from "@electric-sql/pglite/worker";
 worker({
 	async init(options) {
 		const pg = await PGlite.create({
-			...options,
+			dataDir: "idb://hoalu",
+			relaxedDurability: true,
 			/**
 			 * @see https://pglite.dev/docs/multi-tab-worker#extension-support
 			 */

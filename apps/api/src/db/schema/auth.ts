@@ -7,8 +7,8 @@ export const user = pgTable("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
 	image: text("image"),
-	createdAt: timestamp("created_at", { mode: "string" }).notNull(),
-	updatedAt: timestamp("updated_at", { mode: "string" }).notNull(),
+	createdAt: timestamp("created_at").notNull(),
+	updatedAt: timestamp("updated_at").notNull(),
 });
 
 export const session = pgTable(
@@ -21,9 +21,9 @@ export const session = pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		ipAddress: text("ip_address"),
 		userAgent: text("user_agent"),
-		expiresAt: timestamp("expires_at", { mode: "string" }).notNull(),
-		createdAt: timestamp("created_at", { mode: "string" }).notNull(),
-		updatedAt: timestamp("updated_at", { mode: "string" }).notNull(),
+		expiresAt: timestamp("expires_at").notNull(),
+		createdAt: timestamp("created_at").notNull(),
+		updatedAt: timestamp("updated_at").notNull(),
 	},
 	(table) => [index("session_user_id_idx").on(table.userId)],
 );
@@ -42,8 +42,8 @@ export const account = pgTable("account", {
 	refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
 	scope: text("scope"),
 	password: text("password"),
-	createdAt: timestamp("created_at", { mode: "string" }).notNull(),
-	updatedAt: timestamp("updated_at", { mode: "string" }).notNull(),
+	createdAt: timestamp("created_at").notNull(),
+	updatedAt: timestamp("updated_at").notNull(),
 });
 
 export const verification = pgTable("verification", {
@@ -51,13 +51,13 @@ export const verification = pgTable("verification", {
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),
-	createdAt: timestamp("created_at", { mode: "string" }),
-	updatedAt: timestamp("updated_at", { mode: "string" }),
+	createdAt: timestamp("created_at"),
+	updatedAt: timestamp("updated_at"),
 });
 
 export const jwks = pgTable("jwks", {
 	id: text("id").primaryKey(),
 	publicKey: text("public_key").notNull(),
 	privateKey: text("private_key").notNull(),
-	createdAt: timestamp("created_at", { mode: "string" }).notNull(),
+	createdAt: timestamp("created_at").notNull(),
 });
