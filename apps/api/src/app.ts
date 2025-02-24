@@ -1,18 +1,18 @@
 import { auth } from "./lib/auth";
-import { configureAPI } from "./lib/configure-api";
-import { configureAuth } from "./lib/configure-auth";
-import { configureOpenAPI } from "./lib/configure-openapi";
-import { configureElectricSync } from "./lib/configure-sync";
 import { createApp } from "./lib/create-app";
+import { apiModule } from "./modules/api";
+import { authModule } from "./modules/auth";
+import { openAPIModule } from "./modules/openapi";
+import { syncModule } from "./modules/sync";
 import type { Session, User } from "./types";
 
 export const app = createApp();
 
-configureOpenAPI(app);
+const authRoute = authModule();
+const apiRoute = apiModule();
+const syncRoute = syncModule();
 
-const authRoute = configureAuth();
-const apiRoute = configureAPI();
-const syncRoute = configureElectricSync();
+openAPIModule(app);
 
 app
 	.route("/", authRoute)
