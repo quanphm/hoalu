@@ -1,6 +1,7 @@
 import { type } from "arktype";
 
 export const taskSchema = type({
+	"+": "delete",
 	id: "string",
 	name: "string",
 	done: "boolean",
@@ -10,7 +11,7 @@ export const taskSchema = type({
 	updatedAt: "string",
 });
 
-export const tasksSchema = taskSchema.array();
+export const tasksSchema = taskSchema.array().onUndeclaredKey("delete");
 
 export const insertTaskSchema = type({
 	name: "string > 0",

@@ -3,7 +3,14 @@ import { createMiddleware } from "hono/factory";
 import pino from "pino";
 import pinoPretty from "pino-pretty";
 
-export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) => {
+export const logger = ({
+	enabled = true,
+	...options
+}: {
+	enabled?: boolean;
+	pretty?: boolean;
+	excludePaths?: string[];
+}) => {
 	const shouldExcludePath = (path: string) => {
 		if (!options?.excludePaths) {
 			return false;
@@ -15,6 +22,10 @@ export const logger = (options?: { pretty?: boolean; excludePaths?: string[] }) 
 	};
 
 	return createMiddleware(async (c, next) => {
+		if (!enabled) {
+			return next();
+		}
+
 		if (shouldExcludePath(c.req.path)) {
 			return next();
 		}
