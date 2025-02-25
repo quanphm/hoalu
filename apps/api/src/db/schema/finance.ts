@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+	boolean,
 	foreignKey,
 	index,
 	numeric,
@@ -12,15 +13,8 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
+import { colorTypeEnum, walletTypeEnum } from "./enums";
 import { member, workspace } from "./workspace";
-
-export const walletTypeEnum = pgEnum("wallet_type_enum", [
-	"cash",
-	"bank-account",
-	"credit-card",
-	"debit-card",
-	"digital-account",
-]);
 
 export const wallet = pgTable("wallet", {
 	id: uuid("id").primaryKey(),
@@ -34,6 +28,7 @@ export const wallet = pgTable("wallet", {
 	workspaceId: uuid("workspace_id")
 		.notNull()
 		.references(() => workspace.id, { onDelete: "cascade" }),
+	isActive: boolean("is_active").default(true).notNull(),
 	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 });
@@ -44,7 +39,7 @@ export const category = pgTable(
 		id: uuid("id").primaryKey(),
 		name: text("name").notNull(),
 		description: text("description"),
-		color: text("color"),
+		color: colorTypeEnum().default("red").notNull(),
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
@@ -67,7 +62,7 @@ export const expense = pgTable(
 		workspaceId: uuid("workspace_id").notNull(),
 		walletId: uuid("wallet_id")
 			.notNull()
-			.references(() => wallet.id, { onDelete: "cascade" }),
+			.references(() => wallet.id),
 		categoryId: uuid("category_id")
 			.notNull()
 			.references(() => category.id),

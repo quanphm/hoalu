@@ -1,6 +1,6 @@
 {
-  "id": "023465d9-e313-4b60-b0c3-020ff0a7e431",
-  "prevId": "744636ec-faa0-4214-a69b-f2b0c3179280",
+  "id": "7142eadc-2ff6-4a1f-a744-3da682f450ad",
+  "prevId": "c5ce2676-2922-4b89-a7cd-a6e0feac0fbe",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -395,9 +395,11 @@
         },
         "color": {
           "name": "color",
-          "type": "text",
+          "type": "color_enum",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'red'"
         },
         "workspace_id": {
           "name": "workspace_id",
@@ -560,7 +562,7 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "no action"
         },
         "expense_category_id_category_id_fk": {
           "name": "expense_category_id_category_id_fk",
@@ -644,6 +646,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
         },
         "created_at": {
           "name": "created_at",
@@ -778,6 +787,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "priority": {
+          "name": "priority",
+          "type": "level_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'none'"
+        },
         "creator_id": {
           "name": "creator_id",
           "type": "uuid",
@@ -789,6 +806,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now() + INTERVAL '1 day'"
         },
         "created_at": {
           "name": "created_at",
@@ -1040,17 +1064,17 @@
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
         "metadata": {
           "name": "metadata",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -1094,6 +1118,30 @@
     }
   },
   "enums": {
+    "public.color_enum": {
+      "name": "color_enum",
+      "schema": "public",
+      "values": [
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "purple",
+        "pink",
+        "brown"
+      ]
+    },
+    "public.level_enum": {
+      "name": "level_enum",
+      "schema": "public",
+      "values": [
+        "urgent",
+        "high",
+        "medium",
+        "low",
+        "none"
+      ]
+    },
     "public.wallet_type_enum": {
       "name": "wallet_type_enum",
       "schema": "public",

@@ -1,5 +1,9 @@
 import { type } from "arktype";
 
+export const typeSchema = type(
+	"'cash' | 'bank-account' | 'credit-card' |'debit-card' | 'digital-account'",
+);
+
 export const walletSchema = type({
 	"+": "delete",
 	id: "string",
@@ -10,6 +14,7 @@ export const walletSchema = type({
 	createdAt: "string",
 	owner: {
 		"+": "delete",
+		id: "string.uuid",
 		publicId: "string",
 		name: "string",
 		email: "string.email",
@@ -17,6 +22,7 @@ export const walletSchema = type({
 	},
 	workspace: {
 		"+": "delete",
+		id: "string.uuid",
 		publicId: "string",
 		slug: "string",
 		name: "string",
@@ -25,3 +31,13 @@ export const walletSchema = type({
 });
 
 export const walletsSchema = walletSchema.array().onUndeclaredKey("delete");
+
+export const insertWalletSchema = type({
+	name: "string > 0",
+	"description?": "string | undefined",
+	currency: "string",
+	type: typeSchema,
+	isActive: "boolean = true",
+});
+
+export const updateTaskSchema = insertWalletSchema.partial();

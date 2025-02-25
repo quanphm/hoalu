@@ -11,8 +11,8 @@ import { createFileRoute } from "@tanstack/react-router";
 type Task = typeof taskSchema.infer;
 
 export const Route = createFileRoute("/_dashboard/$slug/tasks")({
-	loader: async ({ context: { queryClient }, params }) => {
-		await queryClient.ensureQueryData(tasksQueryOptions(params.slug));
+	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		await queryClient.ensureQueryData(tasksQueryOptions(slug));
 	},
 	component: RouteComponent,
 });

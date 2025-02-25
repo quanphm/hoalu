@@ -105,7 +105,7 @@ export const tasksQueryOptions = (slug: string) => {
 	});
 };
 
-export const walltersQueryOptions = (slug: string) => {
+export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: taskKeys.all,
 		queryFn: () => api.fetchWallets(slug),

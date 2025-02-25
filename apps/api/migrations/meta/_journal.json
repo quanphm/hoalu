@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1740306238982,
-      "tag": "0000_panoramic_black_knight",
+      "when": 1740472474098,
+      "tag": "0000_little_shaman",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1740306264480,
+      "when": 1740472479787,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }
