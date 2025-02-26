@@ -48,15 +48,15 @@ function RouteComponent() {
 				<SectionContent columns={4}>
 					<ContentCard
 						title="Create workspace"
-						content="Experience the power of AI in generating unique content."
+						description="Experience the power of AI in generating unique content."
 					/>
 					<ContentCard
 						title="Finance tracking"
-						content="Experience the power of AI in generating unique content."
+						description="Experience the power of AI in generating unique content."
 					/>
 					<ContentCard
 						title="Group tasks"
-						content="Let AI handle the proofreading of your documents."
+						description="Let AI handle the proofreading of your documents."
 					/>
 				</SectionContent>
 			</Section>

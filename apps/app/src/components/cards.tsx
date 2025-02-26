@@ -9,7 +9,7 @@ import { StarIcon } from "lucide-react";
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "content"> {
 	title: string;
 	description?: string | null;
-	content: React.ReactNode;
+	content?: React.ReactNode;
 }
 
 function ContentCard({ className, title, description, content, ...props }: BasicCardProps) {
@@ -19,7 +19,7 @@ function ContentCard({ className, title, description, content, ...props }: Basic
 				<CardTitle className="text-base">{title}</CardTitle>
 				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
-			<CardContent className="p-4 pt-0">{content}</CardContent>
+			{content && <CardContent className="p-4 pt-0">{content}</CardContent>}
 		</Card>
 	);
 }

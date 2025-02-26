@@ -9,7 +9,7 @@ import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/members")({
+export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 	component: RouteComponent,
 });
 
