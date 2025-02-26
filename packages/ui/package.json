@@ -40,7 +40,7 @@
 	"devDependencies": {
 		"@types/react": "^19.0.10",
 		"@hoalu/tsconfig": "workspace:*",
-		"tailwindcss": "^4.0.8"
+		"tailwindcss": "^4.0.9"
 	},
 	"dependencies": {
 		"@hoalu/icons": "workspace:*",
