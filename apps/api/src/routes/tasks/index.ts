@@ -6,8 +6,7 @@ import { type } from "arktype";
 import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { db } from "../../db";
-import { task } from "../../db/schema/task";
+import { db, schema } from "../../db";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
@@ -22,9 +21,9 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Get all tasks",
-			description: "Get all workspaces's tasks",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
@@ -55,9 +54,10 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Get a single task",
-			description: "Get a single workspaces's task",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
 			},
@@ -67,14 +67,14 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
+			const param = c.req.valid("param");
 
 			const task = await db.query.task.findFirst({
-				where: (table, { and, eq }) => and(eq(table.workspaceId, workspace.id), eq(table.id, id)),
+				where: (table, { and, eq }) =>
+					and(eq(table.workspaceId, workspace.id), eq(table.id, param.id)),
 			});
-
 			if (!task) {
-				return c.json({ message: "Task not found" }, HTTPStatus.codes.NOT_FOUND);
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
 			const parsed = taskSchema(task);
@@ -93,10 +93,10 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Create a new task",
-			description: "Create a new task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
 			},
@@ -117,7 +117,7 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const [taskResult] = await db
-				.insert(task)
+				.insert(schema.task)
 				.values({
 					id: generateId({ use: "uuid" }),
 					creatorId: user.id,
@@ -142,12 +142,12 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Update a task",
-			description: "Update content & status of a task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		aValidator("json", updateTaskSchema, (result, c) => {
@@ -163,26 +163,23 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
-			const { name, done, priority, dueDate } = c.req.valid("json");
+			const param = c.req.valid("param");
+			const payload = c.req.valid("json");
 
-			const [taskResult] = await db
-				.update(task)
+			const [queryData] = await db
+				.update(schema.task)
 				.set({
-					name,
-					done,
-					priority,
-					dueDate,
 					updatedAt: sql`now()`,
+					...payload,
 				})
-				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
+				.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, workspace.id)))
 				.returning();
 
-			if (!taskResult) {
-				return c.json({ message: "Task not found" }, HTTPStatus.codes.NOT_FOUND);
+			if (!queryData) {
+				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = taskSchema(taskResult);
+			const parsed = taskSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -198,32 +195,30 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Delete a task",
-			description: "Detele a task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
+			const param = c.req.valid("param");
 
-			const [deletedTask] = await db
-				.delete(task)
-				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
+			const [queryData] = await db
+				.delete(schema.task)
+				.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, workspace.id)))
 				.returning();
 
-			if (!deletedTask) {
+			if (!queryData) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
 
-			const parsed = taskSchema(deletedTask);
+			const parsed = taskSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

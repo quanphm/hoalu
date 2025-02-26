@@ -1,22 +1,19 @@
-import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
-import { and, desc, eq } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
 import { db } from "../../db";
-import { user } from "../../db/schema/auth";
-import { wallet } from "../../db/schema/finance";
-import { workspace } from "../../db/schema/workspace";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { insertWalletSchema, walletSchema, walletsSchema } from "./schema";
+import { WalletRepository } from "./repository";
+import { insertWalletSchema, updateWalletSchema, walletSchema, walletsSchema } from "./schema";
 
 const app = createHonoInstance();
+const walletRepository = new WalletRepository();
 
 const route = app
 	.get(
@@ -24,9 +21,9 @@ const route = app
 		describeRoute({
 			tags: ["Wallets"],
 			summary: "Get all wallets",
-			description: "Get all workspace's wallets",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: walletsSchema }), HTTPStatus.codes.OK),
 			},
@@ -34,21 +31,10 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const currentWorkspace = c.get("workspace");
-
-			const queryResult = await db
-				.select()
-				.from(wallet)
-				.innerJoin(user, eq(wallet.ownerId, user.id))
-				.innerJoin(workspace, eq(wallet.workspaceId, workspace.id))
-				.where(eq(wallet.workspaceId, currentWorkspace.id))
-				.orderBy(desc(wallet.createdAt));
-
-			const wallets = queryResult.map((item) => ({
-				...item.wallet,
-				owner: item.user,
-				workspace: item.workspace,
-			}));
+			const workspace = c.get("workspace");
+			const wallets = await walletRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
 
 			const parsed = walletsSchema(wallets);
 			if (parsed instanceof type.errors) {
@@ -66,9 +52,10 @@ const route = app
 		describeRoute({
 			tags: ["Wallets"],
 			summary: "Get a single wallet",
-			description: "Get a single workspaces's wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
 			},
@@ -78,14 +65,14 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
+			const param = c.req.valid("param");
 
-			const wallet = await db.query.wallet.findFirst({
-				where: (table, { and, eq }) => and(eq(table.workspaceId, workspace.id), eq(table.id, id)),
+			const wallet = await walletRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
 			});
-
 			if (!wallet) {
-				return c.json({ message: "Wallet not found" }, HTTPStatus.codes.NOT_FOUND);
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
 			const parsed = walletSchema(wallet);
@@ -104,7 +91,6 @@ const route = app
 		describeRoute({
 			tags: ["Wallets"],
 			summary: "Create a new wallet",
-			description: "Create a new wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
@@ -127,17 +113,13 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const [result] = await db
-				.insert(wallet)
-				.values({
-					id: generateId({ use: "uuid" }),
-					ownerId: user.id,
-					workspaceId: workspace.id,
-					...payload,
-				})
-				.returning();
+			const wallet = await walletRepository.insert({
+				ownerId: user.id,
+				workspaceId: workspace.id,
+				...payload,
+			});
 
-			const parsed = walletSchema(result);
+			const parsed = walletSchema(wallet);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -151,17 +133,17 @@ const route = app
 	.patch(
 		"/:id",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Update a task",
-			description: "Update content & status of a task",
+			tags: ["Wallets"],
+			summary: "Update a wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("json", updateTaskSchema, (result, c) => {
+		aValidator("json", updateWalletSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ message: createIssueMsg(result.errors.issues) },
@@ -173,27 +155,35 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
+			const user = c.get("user")!;
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
-			const { name, done, priority, dueDate } = c.req.valid("json");
+			const param = c.req.valid("param");
+			const payload = c.req.valid("json");
 
-			const [taskResult] = await db
-				.update(task)
-				.set({
-					name,
-					done,
-					priority,
-					dueDate,
-					updatedAt: sql`now()`,
-				})
-				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
-				.returning();
-
-			if (!taskResult) {
-				return c.json({ message: "Task not found" }, HTTPStatus.codes.NOT_FOUND);
+			const wallet = await walletRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
+			});
+			if (!wallet) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
+			if (wallet.owner.id !== user.id) {
+				return c.json(
+					{ message: "You are not the owner of this wallet" },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
 			}
 
-			const parsed = taskSchema(taskResult);
+			const queryData = await walletRepository.update({
+				id: wallet.id,
+				workspaceId: workspace.id,
+				payload,
+			});
+			if (!queryData) {
+				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = walletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -207,14 +197,13 @@ const route = app
 	.delete(
 		"/:id",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Delete a task",
-			description: "Detele a task",
+			tags: ["Wallets"],
+			summary: "Delete a wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -223,18 +212,31 @@ const route = app
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
-			const { id } = c.req.valid("param");
+			const param = c.req.valid("param");
 
-			const [deletedTask] = await db
-				.delete(task)
-				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
-				.returning();
+			const wallet = await db.query.wallet.findFirst({
+				where: (table, { and, eq }) =>
+					and(eq(table.id, param.id), eq(table.workspaceId, workspace.id)),
+			});
+			if (!wallet) {
+				return c.json({ data: null }, HTTPStatus.codes.OK);
+			}
+			if (wallet.ownerId !== user.id) {
+				return c.json(
+					{ message: "You are not the owner of this wallet" },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
 
-			if (!deletedTask) {
+			const queryData = await walletRepository.delete({
+				id: wallet.id,
+				workspaceId: workspace.id,
+			});
+			if (!queryData) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
 
-			const parsed = taskSchema(deletedTask);
+			const parsed = walletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

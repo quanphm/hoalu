@@ -12,6 +12,7 @@ export const walletSchema = type({
 	currency: "string",
 	type: "string",
 	createdAt: "string",
+	isActive: "boolean",
 	owner: {
 		"+": "delete",
 		id: "string.uuid",
@@ -34,10 +35,19 @@ export const walletsSchema = walletSchema.array().onUndeclaredKey("delete");
 
 export const insertWalletSchema = type({
 	name: "string > 0",
-	"description?": "string | undefined",
+	"description?": "string",
 	currency: "string",
 	type: typeSchema,
 	isActive: "boolean = true",
 });
 
-export const updateTaskSchema = insertWalletSchema.partial();
+export const updateWalletSchema = insertWalletSchema.partial();
+export const updateWalletResponseSchema = type({
+	id: "string",
+	name: "string",
+	description: "string | null",
+	currency: "string",
+	type: "string",
+	createdAt: "string",
+	isActive: "boolean",
+});

@@ -44,7 +44,7 @@ function unauthorized(): Record<401, Response> {
 					),
 				},
 			},
-			description: HTTPStatus.phrases.UNAUTHORIZED,
+			description: "The client must authenticate itself to get the requested response.",
 		},
 	};
 }
@@ -71,6 +71,26 @@ function bad_request(description?: string): Record<400, Response> {
 	};
 }
 
+/**
+ * Resource not found.
+ */
+function not_found(description?: string): Record<404, Response> {
+	return {
+		[HTTPStatus.codes.NOT_FOUND]: {
+			content: {
+				"application/json": {
+					schema: resolver(
+						type({
+							message: `'string = ${HTTPStatus.phrases.NOT_FOUND}'`,
+						}),
+					),
+				},
+			},
+			description: description || "The server cannot find the requested resource.",
+		},
+	};
+}
+
 function server_parse_error(description?: string): Record<422, Response> {
 	return {
 		[HTTPStatus.codes.UNPROCESSABLE_ENTITY]: {
@@ -93,6 +113,7 @@ function server_parse_error(description?: string): Record<422, Response> {
 export const OpenAPI = {
 	unauthorized,
 	bad_request,
+	not_found,
 	server_parse_error,
 	response,
 };

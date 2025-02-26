@@ -3,7 +3,7 @@ import { type } from "arktype";
 import { validator as aValidator } from "hono-openapi/arktype";
 
 const idSchema = type({
-	id: "string.uuid",
+	id: "string.uuid.v7",
 });
 
 export const idParamValidator = aValidator("param", idSchema, (result, c) => {
