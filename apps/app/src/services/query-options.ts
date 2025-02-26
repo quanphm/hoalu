@@ -3,9 +3,11 @@ import { type Session, type SessionData, type User, authClient } from "@/lib/aut
 import * as api from "@/services/api";
 import {
 	authKeys,
+	categoryKeys,
 	invitationKeys,
 	memberKeys,
 	taskKeys,
+	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
 import { queryOptions } from "@tanstack/react-query";
@@ -107,7 +109,14 @@ export const tasksQueryOptions = (slug: string) => {
 
 export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: taskKeys.all,
+		queryKey: walletKeys.all,
 		queryFn: () => api.fetchWallets(slug),
+	});
+};
+
+export const categoriesQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: categoryKeys.all,
+		queryFn: () => api.fetchCategories(slug),
 	});
 };

@@ -123,7 +123,7 @@ export function InvitationsTable({ data }: { data: Item[] }) {
 	);
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug/members");
+const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
 
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);

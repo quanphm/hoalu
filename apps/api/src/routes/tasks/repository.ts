@@ -79,6 +79,8 @@ export class TaskRepository {
 			.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, param.workspaceId)))
 			.returning();
 
+		if (!task) return null;
+
 		return task;
 	}
 }

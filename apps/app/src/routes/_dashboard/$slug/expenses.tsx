@@ -3,7 +3,7 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { useWorkspace } from "@/hooks/use-workspace";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/finance/expenses")({
+export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	component: RouteComponent,
 });
 

@@ -4,6 +4,7 @@ import { createHonoInstance } from "../lib/create-app";
 import { redis } from "../lib/redis";
 
 // routes
+import categoriesRoute from "../routes/categories";
 import tasksRoute from "../routes/tasks";
 import walletsRoute from "../routes/wallets";
 
@@ -19,6 +20,7 @@ export function apiModule() {
 		)
 		.use(authGuard())
 		.use(rateLimiter(redis))
+		.route("/categories", categoriesRoute)
 		.route("/tasks", tasksRoute)
 		.route("/wallets", walletsRoute);
 

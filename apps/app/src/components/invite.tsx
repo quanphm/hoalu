@@ -2,12 +2,13 @@ import { HookForm, HookFormInput } from "@/components/hook-forms";
 import { authClient } from "@/lib/auth-client";
 import { inviteSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
+import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { arktypeResolver } from "@hookform/resolvers/arktype";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,8 @@ const routeApi = getRouteApi("/_dashboard/$slug");
 export function InviteDialog({ children }: { children: React.ReactNode }) {
 	const id = useId();
 	const [open, setOpen] = useState(false);
-	const { workspace } = routeApi.useLoaderData();
+	const { slug } = routeApi.useParams();
+	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const queryClient = useQueryClient();
 
 	const form = useForm<typeof inviteSchema.infer>({
@@ -31,7 +33,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 		await authClient.workspace.inviteMember(
 			{
 				email: values.email,
-				idOrSlug: workspace.publicId,
+				idOrSlug: workspace.slug,
 				role: "member",
 			},
 			{

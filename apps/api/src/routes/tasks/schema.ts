@@ -1,6 +1,5 @@
 import { type } from "arktype";
-
-export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
+import { prioritySchema } from "../../common";
 
 export const taskSchema = type({
 	"+": "delete",
@@ -28,4 +27,4 @@ export const updateTaskSchema = insertTaskSchema.partial();
 export const deleteTaskSchema = type({
 	"+": "delete",
 	id: "string",
-});
+}).or("null");

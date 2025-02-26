@@ -1,6 +1,3 @@
-import { authClient } from "@/lib/auth-client";
-import { useRemoveMember } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -8,7 +5,6 @@ import {
 	Dialog,
 	DialogClose,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -21,8 +17,6 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	type Row,
@@ -37,54 +31,39 @@ import { UserAvatar } from "./user-avatar";
 type Item = {
 	id: string;
 	name: string;
-	email: string;
-	image: string | null | undefined;
-	role: string;
+	description: string | null;
+	color: "red" | "green" | "blue" | "yellow" | "purple" | "pink" | "brown";
 };
 
 const columns: ColumnDef<Item>[] = [
 	{
 		id: "name",
-		header: "Name",
+		header: "Category",
 		cell: ({ row }) => {
-			return (
-				<div className="flex items-center gap-3">
-					<UserAvatar name={row.original.name} image={row.original.image} />
-					<div>
-						<div className="font-medium">{row.original.name}</div>
-					</div>
-				</div>
-			);
+			return <p className="font-medium">{row.original.name}</p>;
+		},
+		meta: {
+			headerClassName:
+				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
+			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
 		},
 	},
 	{
-		accessorKey: "email",
-		header: "Email",
+		accessorKey: "description",
+		header: "Description",
 		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("email")}</p>;
-		},
-		size: 200,
-	},
-	{
-		accessorKey: "role",
-		header: "Role",
-		cell: ({ row }) => {
-			const { role } = row.original;
-			return (
-				<Badge
-					variant={role === "owner" ? "success" : "outline"}
-					className="px-1.5 font-normal text-xs capitalize"
-				>
-					{role}
-				</Badge>
-			);
+			return <p className="text-muted-foreground">{row.getValue("description")}</p>;
 		},
 	},
 	{
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
 		cell: ({ row }) => <RowActions row={row} />,
-		size: 32,
+		meta: {
+			headerClassName:
+				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
+			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+		},
 	},
 ];
 
@@ -107,8 +86,7 @@ export function CategoriesTable({ data }: { data: Item[] }) {
 									return (
 										<TableHead
 											key={header.id}
-											style={{ width: `${header.getSize()}px` }}
-											className="relative h-10"
+											className={header.column.columnDef.meta?.headerClassName}
 										>
 											{header.isPlaceholder
 												? null
@@ -124,13 +102,7 @@ export function CategoriesTable({ data }: { data: Item[] }) {
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell
-											key={cell.id}
-											style={{
-												width: cell.column.getSize(),
-											}}
-											className="last:py-0"
-										>
+										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
 									))}
@@ -150,28 +122,10 @@ export function CategoriesTable({ data }: { data: Item[] }) {
 	);
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug/finance/categories");
-
 function RowActions({ row }: { row: Row<Item> }) {
 	const [open, setOpen] = useState(false);
-	const navigate = routeApi.useNavigate();
-	const params = routeApi.useParams();
-	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
-	const canDelete = authClient.workspace.checkRolePermission({
-		role: member.role,
-		permission: {
-			member: ["delete"],
-		},
-	});
-	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember(params.slug);
-
 	const onDelete = async () => {
-		await mutation.mutateAsync(row.original.id);
 		setOpen(false);
-		if (isLeaving) {
-			navigate({ to: "/" });
-		}
 	};
 
 	return (
@@ -184,33 +138,20 @@ function RowActions({ row }: { row: Row<Item> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					{isLeaving && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Leave</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
-					{!isLeaving && canDelete && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Remove</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
+					<DialogTrigger asChild>
+						<DropdownMenuItem>
+							<span>Edit</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<span className="text-destructive">Delete</span>
+						</DropdownMenuItem>
+					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
-					<DialogTitle>
-						{isLeaving ? "Leave this workspace?" : `Remove ${row.original.name}?`}
-					</DialogTitle>
-					<DialogDescription>
-						{isLeaving
-							? "You won't be able to access this workspace."
-							: "They won't be able to access this workspace."}
-					</DialogDescription>
+					<DialogTitle>Delete this category</DialogTitle>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>

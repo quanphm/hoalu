@@ -79,6 +79,8 @@ export class WalletRepository {
 			.where(eq(schema.wallet.id, param.id))
 			.returning();
 
+		if (!wallet) return null;
+
 		return wallet;
 	}
 }

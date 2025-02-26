@@ -5,13 +5,14 @@ import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { SearchInput } from "@/components/search-input";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
-import { SidebarFooter, SidebarInset, SidebarProvider, SidebarTrigger } from "@hoalu/ui/sidebar";
+import { SidebarFooter, SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 import { NavDocumentation } from "./nav-documentation";
+import { NavSettings } from "./nav-settings";
 import { NavWorkspaceList } from "./nav-workspace-list";
 
 /**
@@ -38,8 +39,13 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 						<AppLogo />
 					)}
 				</SidebarHeader>
-				<SidebarContent>
-					{hasSlug && <NavWorkspace />}
+				<SidebarContent className="gap-1">
+					{hasSlug && (
+						<>
+							<NavWorkspace />
+							<NavSettings />
+						</>
+					)}
 					{!hasSlug && <NavWorkspaceList />}
 					<NavDocumentation />
 				</SidebarContent>
@@ -84,7 +90,6 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 						</div>
 					</div>
 				</header>
-
 				{children}
 			</SidebarInset>
 		</SidebarProvider>
