@@ -18,7 +18,7 @@ const client = postgres({
 	connect_timeout: 10,
 });
 
-const schema = {
+export const schema = {
 	...authSchema,
 	...workspaceSchema,
 	...fxRateSchema,

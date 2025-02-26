@@ -4,9 +4,8 @@ import { cors } from "hono/cors";
 import { createHonoInstance } from "../lib/create-app";
 
 export function syncModule() {
-	const app = createHonoInstance().basePath("/sync");
-
-	app
+	const app = createHonoInstance()
+		.basePath("/sync")
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],

@@ -1,42 +1,40 @@
-export const DEFAULT_CATEGORIES = [
+type Color = "red" | "green" | "blue" | "yellow" | "brown" | "pink" | "purple";
+
+export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 	{
-		name: "Education",
-		color: "#65a30d",
+		name: "📖 Education",
+		color: "red",
 	},
 	{
-		name: "Entertainment",
-		color: "#059669",
+		name: "🎮 Entertainment",
+		color: "green",
 	},
 	{
-		name: "Food & Drink",
-		color: "#0891b2",
+		name: "🍲 Food & Drink",
+		color: "blue",
 	},
 	{
-		name: "Healthcare",
-		color: "#f43f5e",
+		name: "💊 Healthcare",
+		color: "yellow",
 	},
 	{
-		name: "Housing",
-		color: "#ca8a04",
+		name: "🏠 Housing",
+		color: "purple",
 	},
 	{
-		name: "Shopping",
-		color: "#9333ea",
+		name: "🛒 Shopping",
+		color: "pink",
 	},
 	{
-		name: "Transporation",
-		color: "#4f46e5",
+		name: "🚗 Transporation",
+		color: "brown",
 	},
 	{
-		name: "Utilities",
-		color: "#7c3aed",
+		name: "🎁 Gifts & Donations",
+		color: "red",
 	},
 	{
-		name: "Gifts & Donations",
-		color: "#db2777",
-	},
-	{
-		name: "Uncategorized",
-		color: "#475569",
+		name: "❔ Uncategorized",
+		color: "yellow",
 	},
 ];

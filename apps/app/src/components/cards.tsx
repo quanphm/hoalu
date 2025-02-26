@@ -6,20 +6,20 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { intlFormatDistance } from "date-fns";
 import { StarIcon } from "lucide-react";
 
-interface BasicCardProps extends React.ComponentPropsWithRef<"div"> {
+interface BasicCardProps extends Omit<React.ComponentProps<"div">, "content"> {
 	title: string;
-	content: string;
+	description?: string | null;
+	content: React.ReactNode;
 }
 
-function ContentCard({ className, title, content, ...props }: BasicCardProps) {
+function ContentCard({ className, title, description, content, ...props }: BasicCardProps) {
 	return (
 		<Card className={cn("hover:border-foreground/20", className)} {...props}>
-			<CardHeader className="flex flex-row items-start justify-between p-4">
+			<CardHeader className="p-4">
 				<CardTitle className="text-base">{title}</CardTitle>
+				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
-			<CardContent className="p-4 pt-0">
-				<p className="text-muted-foreground text-xs">{content}</p>
-			</CardContent>
+			<CardContent className="p-4 pt-0">{content}</CardContent>
 		</Card>
 	);
 }

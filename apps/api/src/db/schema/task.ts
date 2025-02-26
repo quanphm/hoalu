@@ -1,5 +1,15 @@
 import { sql } from "drizzle-orm";
-import { boolean, foreignKey, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	date,
+	foreignKey,
+	index,
+	pgTable,
+	text,
+	timestamp,
+	uuid,
+} from "drizzle-orm/pg-core";
+import { levelEnum } from "./enums";
 import { member } from "./workspace";
 
 export const task = pgTable(
@@ -8,8 +18,10 @@ export const task = pgTable(
 		id: uuid("id").primaryKey(),
 		name: text("name").notNull(),
 		done: boolean("done").notNull(),
+		priority: levelEnum().default("none").notNull(),
 		creatorId: uuid("creator_id").notNull(),
 		workspaceId: uuid("workspace_id").notNull(),
+		dueDate: date("due_date", { mode: "string" }).default(sql`now() + INTERVAL '1 day'`).notNull(),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},

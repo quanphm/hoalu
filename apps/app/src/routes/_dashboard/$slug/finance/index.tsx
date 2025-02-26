@@ -2,9 +2,12 @@ import { ContentCard } from "@/components/cards";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { UserAvatar } from "@/components/user-avatar";
 import { useWorkspace } from "@/hooks/use-workspace";
+import { walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/finance/")({
@@ -12,7 +15,9 @@ export const Route = createFileRoute("/_dashboard/$slug/finance/")({
 });
 
 function RouteComponent() {
+	const params = Route.useParams();
 	const workspace = useWorkspace();
+	const wallets = useSuspenseQuery(walletsQueryOptions(params.slug));
 	const membersTableData = workspace.members.map((member) => ({
 		id: member.user.id,
 		name: member.user.name,
@@ -33,32 +38,32 @@ function RouteComponent() {
 							<ExpensesStats />
 						</SectionContent>
 					</Section>
-
 					<Section>
 						<SectionHeader>
-							<SectionTitle>Wallets (4)</SectionTitle>
+							<SectionTitle>Wallets ({wallets.data.length})</SectionTitle>
 							<Button variant="outline" size="sm">
 								<PlusIcon className="mr-2 size-4" />
 								Add
 							</Button>
 						</SectionHeader>
-						<SectionContent columns={2} className="gap-2">
-							<ContentCard
-								title="Cash wallet"
-								content="Experience the power of AI in generating unique content."
-							/>
-							<ContentCard
-								title="Mikun VCB"
-								content="Experience the power of AI in generating unique content."
-							/>
-							<ContentCard
-								title="Anna VCB"
-								content="Let AI handle the proofreading of your documents."
-							/>
-							<ContentCard
-								title="VCB Visa"
-								content="Let AI handle the proofreading of your documents."
-							/>
+						<SectionContent columns={2} className="gap-4">
+							{wallets.data.map((wallet) => (
+								<ContentCard
+									key={wallet.id}
+									title={wallet.name}
+									description={wallet.description}
+									content={
+										<div className="flex items-center gap-1.5">
+											<UserAvatar
+												className="size-4"
+												name={wallet.owner.name}
+												image={wallet.owner.image}
+											/>
+											<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
+										</div>
+									}
+								/>
+							))}
 						</SectionContent>
 					</Section>
 				</SectionContent>

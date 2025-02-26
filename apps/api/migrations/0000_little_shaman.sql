@@ -1,3 +1,5 @@
+CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'blue', 'yellow', 'purple', 'pink', 'brown');--> statement-breakpoint
+CREATE TYPE "public"."level_enum" AS ENUM('urgent', 'high', 'medium', 'low', 'none');--> statement-breakpoint
 CREATE TYPE "public"."wallet_type_enum" AS ENUM('cash', 'bank-account', 'credit-card', 'debit-card', 'digital-account');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" uuid PRIMARY KEY NOT NULL,
@@ -60,7 +62,7 @@ CREATE TABLE "category" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"description" text,
-	"color" text,
+	"color" "color_enum" DEFAULT 'red' NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -90,6 +92,7 @@ CREATE TABLE "wallet" (
 	"type" "wallet_type_enum" DEFAULT 'cash' NOT NULL,
 	"owner_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -108,8 +111,10 @@ CREATE TABLE "task" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"done" boolean NOT NULL,
+	"priority" "level_enum" DEFAULT 'none' NOT NULL,
 	"creator_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
+	"due_date" date DEFAULT now() + INTERVAL '1 day' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -139,8 +144,8 @@ CREATE TABLE "workspace" (
 	"public_id" text NOT NULL,
 	"name" text NOT NULL,
 	"logo" text,
-	"created_at" timestamp NOT NULL,
 	"metadata" text,
+	"created_at" timestamp NOT NULL,
 	CONSTRAINT "workspace_slug_unique" UNIQUE("slug"),
 	CONSTRAINT "workspace_public_id_unique" UNIQUE("public_id")
 );
@@ -148,7 +153,7 @@ CREATE TABLE "workspace" (
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category" ADD CONSTRAINT "category_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "expense" ADD CONSTRAINT "expense_wallet_id_wallet_id_fk" FOREIGN KEY ("wallet_id") REFERENCES "public"."wallet"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "expense" ADD CONSTRAINT "expense_wallet_id_wallet_id_fk" FOREIGN KEY ("wallet_id") REFERENCES "public"."wallet"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_member_fk" FOREIGN KEY ("workspace_id","creator_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "wallet" ADD CONSTRAINT "wallet_owner_id_user_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

@@ -1,12 +1,14 @@
 import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/hooks/use-auth";
 import {
+	CheckIcon,
 	ChevronsUpDownIcon,
 	KeyRoundIcon,
 	LanguagesIcon,
 	LogOutIcon,
 	Monitor,
 	MoonIcon,
+	PaletteIcon,
 	SettingsIcon,
 	SunIcon,
 } from "@hoalu/icons/lucide";
@@ -57,7 +59,7 @@ export function NavUser() {
 						<DropdownMenuGroup>
 							<DropdownMenuSub>
 								<DropdownMenuSubTrigger>
-									{theme === "dark" ? <MoonIcon /> : theme === "light" ? <SunIcon /> : <MoonIcon />}
+									<PaletteIcon />
 									<span>Themes</span>
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
@@ -65,15 +67,17 @@ export function NavUser() {
 										<DropdownMenuItem onClick={() => setTheme("light")}>
 											<SunIcon />
 											<span>Light</span>
+											{theme === "light" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("dark")}>
 											<MoonIcon />
 											<span>Dark</span>
-											<MoonIcon />
+											{theme === "dark" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("system")}>
 											<Monitor />
 											<span>System</span>
+											{theme === "system" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 									</DropdownMenuSubContent>
 								</DropdownMenuPortal>

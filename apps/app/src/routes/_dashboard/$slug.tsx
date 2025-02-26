@@ -1,5 +1,10 @@
 import { PageContent } from "@/components/layouts/page-content";
-import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import {
+	getActiveMemberOptions,
+	getWorkspaceDetailsOptions,
+	tasksQueryOptions,
+	walletsQueryOptions,
+} from "@/services/query-options";
 import { toast } from "@hoalu/ui/sonner";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
@@ -8,10 +13,11 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 		const result = await Promise.all([
 			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
+			queryClient.ensureQueryData(walletsQueryOptions(slug)),
+			queryClient.ensureQueryData(tasksQueryOptions(slug)),
 		]);
 		return {
 			workspace: result[0],
-			activeMember: result[1],
 		};
 	},
 	onError: (error) => {

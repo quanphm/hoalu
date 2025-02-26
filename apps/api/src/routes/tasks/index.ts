@@ -1,26 +1,24 @@
-import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
-import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
-import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { db } from "../../db";
-import { task } from "../../db/schema/task";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
+import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
+import { TaskRepository } from "./repository";
 import {
+	deleteTaskSchema,
 	insertTaskSchema,
-	taskIdSchema,
 	taskSchema,
 	tasksSchema,
 	updateTaskSchema,
 } from "./schema";
 
 const app = createHonoInstance();
+const taskRepository = new TaskRepository();
 
 const route = app
 	.get(
@@ -28,9 +26,9 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Get all tasks",
-			description: "Get all workspaces's tasks",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
 			},
@@ -39,11 +37,51 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const tasks = await db.query.task.findMany({
-				where: (table, { eq }) => eq(table.workspaceId, workspace.id),
+
+			const tasks = await taskRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
 			});
 
 			const parsed = tasksSchema(tasks);
+			if (parsed instanceof type.errors) {
+				return c.json(
+					{ message: createIssueMsg(parsed.issues) },
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
+				);
+			}
+
+			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+		},
+	)
+	.get(
+		"/:id",
+		describeRoute({
+			tags: ["Tasks"],
+			summary: "Get a single task",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
+
+			const task = await taskRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
+			});
+			if (!task) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
+
+			const parsed = taskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -58,13 +96,13 @@ const route = app
 		"/",
 		describeRoute({
 			tags: ["Tasks"],
-			summary: "Create a task",
-			description: "Create a new task",
+			summary: "Create a new task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		aValidator("json", insertTaskSchema, (result, c) => {
@@ -78,22 +116,17 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const { name, done } = c.req.valid("json");
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
+			const payload = c.req.valid("json");
 
-			const [taskResult] = await db
-				.insert(task)
-				.values({
-					id: generateId({ use: "uuid" }),
-					name,
-					done,
-					creatorId: user.id,
-					workspaceId: workspace.id,
-				})
-				.returning();
+			const task = await taskRepository.insert({
+				creatorId: user.id,
+				workspaceId: workspace.id,
+				...payload,
+			});
 
-			const parsed = taskSchema(taskResult);
+			const parsed = taskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -109,18 +142,13 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Update a task",
-			description: "Update content & status of a task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
+				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
 			},
-		}),
-		aValidator("param", taskIdSchema, (result, c) => {
-			if (!result.success) {
-				return c.json({ message: "Invalid task id" }, HTTPStatus.codes.BAD_REQUEST);
-			}
 		}),
 		aValidator("json", updateTaskSchema, (result, c) => {
 			if (!result.success) {
@@ -130,28 +158,32 @@ const route = app
 				);
 			}
 		}),
+		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const { id } = c.req.valid("param");
-			const { name, done } = c.req.valid("json");
 			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
+			const payload = c.req.valid("json");
 
-			const [taskResult] = await db
-				.update(task)
-				.set({
-					name,
-					done,
-					updatedAt: sql`now()`,
-				})
-				.where(and(eq(task.id, id), eq(task.workspaceId, workspace.id)))
-				.returning();
-
-			if (!taskResult) {
-				return c.json({ message: "Task not found" }, HTTPStatus.codes.BAD_REQUEST);
+			const task = await taskRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
+			});
+			if (!task) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = taskSchema(taskResult);
+			const queryData = await taskRepository.update({
+				id: param.id,
+				workspaceId: workspace.id,
+				payload,
+			});
+			if (!queryData) {
+				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = taskSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -167,52 +199,29 @@ const route = app
 		describeRoute({
 			tags: ["Tasks"],
 			summary: "Delete a task",
-			description: "Detele a task",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: insertTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: deleteTaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		idParamValidator,
 		workspaceQueryValidator,
+		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
-			const { id } = c.req.param();
-			const { workspaceIdOrSlug } = c.req.valid("query");
+			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
 
-			const currentWorkspace = await db.query.workspace.findFirst({
-				where: (table, { eq, or }) =>
-					or(eq(table.slug, workspaceIdOrSlug), eq(table.publicId, workspaceIdOrSlug)),
+			const task = await taskRepository.delete({
+				id: param.id,
+				workspaceId: workspace.id,
 			});
-			if (!currentWorkspace) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
-			const memberResult = await db.query.member.findFirst({
-				where: (table, { eq, and }) =>
-					and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
-			});
-			if (!memberResult) {
-				return c.json(
-					{ message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-
-			const [deletedTask] = await db
-				.delete(task)
-				.where(and(eq(task.id, id), eq(task.workspaceId, currentWorkspace.id)))
-				.returning();
-
-			if (!deletedTask) {
+			if (!task) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
 
-			const parsed = taskSchema(deletedTask);
+			const parsed = deleteTaskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

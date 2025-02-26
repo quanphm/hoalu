@@ -104,3 +104,10 @@ export const tasksQueryOptions = (slug: string) => {
 		queryFn: () => api.fetchTasks(slug),
 	});
 };
+
+export const walletsQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: taskKeys.all,
+		queryFn: () => api.fetchWallets(slug),
+	});
+};

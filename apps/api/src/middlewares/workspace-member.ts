@@ -35,8 +35,8 @@ export const workspaceMember = createMiddleware<
 	const { workspaceIdOrSlug } = c.req.query();
 
 	const currentWorkspace = await db.query.workspace.findFirst({
-		where: (workspace, { eq, or }) =>
-			or(eq(workspace.slug, workspaceIdOrSlug), eq(workspace.publicId, workspaceIdOrSlug)),
+		where: (table, { eq, or }) =>
+			or(eq(table.slug, workspaceIdOrSlug), eq(table.publicId, workspaceIdOrSlug)),
 	});
 	if (!currentWorkspace) {
 		throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {

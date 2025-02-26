@@ -8,9 +8,8 @@ import tasksRoute from "../routes/tasks";
 import walletsRoute from "../routes/wallets";
 
 export function apiModule() {
-	const app = createHonoInstance().basePath("/api");
-
-	app
+	const app = createHonoInstance()
+		.basePath("/api")
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],

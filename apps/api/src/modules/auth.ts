@@ -5,9 +5,8 @@ import { createHonoInstance } from "../lib/create-app";
 import { redis } from "../lib/redis";
 
 export function authModule() {
-	const app = createHonoInstance().basePath("/auth");
-
-	app
+	const app = createHonoInstance()
+		.basePath("/auth")
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
