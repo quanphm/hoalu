@@ -1,4 +1,9 @@
-type Color = "red" | "green" | "blue" | "yellow" | "brown" | "pink" | "purple";
+import { type } from "arktype";
+
+export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
+
+export const colorSchema = type("'red' |'green' | 'blue' |'yellow' |'purple' |'pink' | 'brown'");
+type Color = typeof colorSchema.inferOut;
 
 export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 	{

@@ -8,29 +8,29 @@ import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { TaskRepository } from "./repository";
+import { CategoryRepository } from "./repositiory";
 import {
-	deleteTaskSchema,
-	insertTaskSchema,
-	taskSchema,
-	tasksSchema,
-	updateTaskSchema,
+	categoriesSchema,
+	categorySchema,
+	deleteCategorySchema,
+	insertCategorySchema,
+	updateCategorySchema,
 } from "./schema";
 
 const app = createHonoInstance();
-const taskRepository = new TaskRepository();
+const catgegoryRepository = new CategoryRepository();
 
 const route = app
 	.get(
 		"/",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Get all tasks",
+			tags: ["Categories"],
+			summary: "Get all categories",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: categoriesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -38,11 +38,11 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 
-			const tasks = await taskRepository.findAllByWorkspaceId({
+			const categories = await catgegoryRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
 
-			const parsed = tasksSchema(tasks);
+			const parsed = categoriesSchema(categories);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -56,14 +56,14 @@ const route = app
 	.get(
 		"/:id",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Get a single task",
+			tags: ["Categories"],
+			summary: "Get a single category",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -73,15 +73,15 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const task = await taskRepository.findOne({
+			const category = await catgegoryRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!task) {
+			if (!category) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = taskSchema(task);
+			const parsed = categorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -95,17 +95,17 @@ const route = app
 	.post(
 		"/",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Create a new task",
+			tags: ["Categories"],
+			summary: "Create a new category",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		aValidator("json", insertTaskSchema, (result, c) => {
+		aValidator("json", insertCategorySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ message: createIssueMsg(result.errors.issues) },
@@ -116,17 +116,15 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const task = await taskRepository.insert({
-				creatorId: user.id,
+			const category = await catgegoryRepository.insert({
 				workspaceId: workspace.id,
 				...payload,
 			});
 
-			const parsed = taskSchema(task);
+			const parsed = categorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -140,17 +138,17 @@ const route = app
 	.patch(
 		"/:id",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Update a task",
+			tags: ["Categories"],
+			summary: "Update a category",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("json", updateTaskSchema, (result, c) => {
+		aValidator("json", updateCategorySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ message: createIssueMsg(result.errors.issues) },
@@ -166,15 +164,15 @@ const route = app
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
-			const task = await taskRepository.findOne({
+			const category = await catgegoryRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!task) {
+			if (!category) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const queryData = await taskRepository.update({
+			const queryData = await catgegoryRepository.update({
 				id: param.id,
 				workspaceId: workspace.id,
 				payload,
@@ -183,7 +181,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = taskSchema(queryData);
+			const parsed = categorySchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -197,13 +195,13 @@ const route = app
 	.delete(
 		"/:id",
 		describeRoute({
-			tags: ["Tasks"],
-			summary: "Delete a task",
+			tags: ["Categories"],
+			summary: "Delete a category",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deleteTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: deleteCategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -213,12 +211,12 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const task = await taskRepository.delete({
+			const category = await catgegoryRepository.delete({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deleteTaskSchema(task);
+			const parsed = deleteCategorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

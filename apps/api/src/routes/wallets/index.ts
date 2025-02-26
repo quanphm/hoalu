@@ -240,9 +240,6 @@ const route = app
 				id: wallet.id,
 				workspaceId: workspace.id,
 			});
-			if (!queryData) {
-				return c.json({ data: null }, HTTPStatus.codes.OK);
-			}
 
 			const parsed = deletetWalletSchema(queryData);
 			if (parsed instanceof type.errors) {

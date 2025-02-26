@@ -1,5 +1,6 @@
 import { PageContent } from "@/components/layouts/page-content";
 import {
+	categoriesQueryOptions,
 	getActiveMemberOptions,
 	getWorkspaceDetailsOptions,
 	tasksQueryOptions,
@@ -10,15 +11,13 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
-		const result = await Promise.all([
+		await Promise.all([
 			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
 			queryClient.ensureQueryData(walletsQueryOptions(slug)),
 			queryClient.ensureQueryData(tasksQueryOptions(slug)),
+			queryClient.ensureQueryData(categoriesQueryOptions(slug)),
 		]);
-		return {
-			workspace: result[0],
-		};
 	},
 	onError: (error) => {
 		toast.error(error.message);

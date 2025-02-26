@@ -5,7 +5,7 @@ import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, openAPI } from "better-auth/plugins";
-import { DEFAULT_CATEGORIES } from "../constants";
+import { DEFAULT_CATEGORIES } from "../common";
 import { db } from "../db";
 import { category, wallet } from "../db/schema/finance";
 import { sendEmail } from "./email";

@@ -7,10 +7,6 @@ export const authKeys = {
 	session: ["session"] as const,
 };
 
-export const taskKeys = {
-	all: ["tasks"] as const,
-};
-
 export const workspaceKeys = {
 	all: ["workspaces"] as const,
 	withSlug: (slug: string) => [...workspaceKeys.all, slug] as const,
@@ -25,4 +21,16 @@ export const memberKeys = {
 export const invitationKeys = {
 	all: ["invitations"] as const,
 	withId: (id: string) => [...invitationKeys.all, id] as const,
+};
+
+export const taskKeys = {
+	all: ["tasks"] as const,
+};
+
+export const walletKeys = {
+	all: ["wallets"] as const,
+};
+
+export const categoryKeys = {
+	all: ["categories"] as const,
 };

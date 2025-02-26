@@ -46,4 +46,4 @@ export const updateWalletSchema = insertWalletSchema.partial();
 export const deletetWalletSchema = type({
 	"+": "delete",
 	id: "string",
-});
+}).or("null");
