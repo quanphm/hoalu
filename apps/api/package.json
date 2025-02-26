@@ -26,10 +26,10 @@
 		"@react-email/render": "^1.0.5",
 		"@scalar/hono-api-reference": "^0.5.175",
 		"arktype": "^2.1.0",
-		"better-auth": "^1.1.19",
+		"better-auth": "^1.1.21",
 		"drizzle-orm": "^0.39.3",
 		"hono": "^4.7.2",
-		"hono-openapi": "^0.4.4",
+		"hono-openapi": "^0.4.5",
 		"ioredis": "^5.5.0",
 		"minio": "^8.0.4",
 		"nodemailer": "^6.10.0",
@@ -41,7 +41,7 @@
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
-		"drizzle-kit": "^0.30.4",
+		"drizzle-kit": "^0.30.5",
 		"rimraf": "^6.0.1"
 	}
 }
