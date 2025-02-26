@@ -4,13 +4,18 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { db } from "../../db";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { WalletRepository } from "./repository";
-import { insertWalletSchema, updateWalletSchema, walletSchema, walletsSchema } from "./schema";
+import {
+	deletetWalletSchema,
+	insertWalletSchema,
+	updateWalletSchema,
+	walletSchema,
+	walletsSchema,
+} from "./schema";
 
 const app = createHonoInstance();
 const walletRepository = new WalletRepository();
@@ -203,7 +208,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: deletetWalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -214,9 +219,9 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const wallet = await db.query.wallet.findFirst({
-				where: (table, { and, eq }) =>
-					and(eq(table.id, param.id), eq(table.workspaceId, workspace.id)),
+			const wallet = await walletRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
 			});
 			if (!wallet) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
@@ -236,7 +241,7 @@ const route = app
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
 
-			const parsed = walletSchema(queryData);
+			const parsed = deletetWalletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

@@ -1,6 +1,6 @@
 import { type } from "arktype";
 
-export const typeSchema = type(
+const typeSchema = type(
 	"'cash' | 'bank-account' | 'credit-card' |'debit-card' | 'digital-account'",
 );
 
@@ -42,12 +42,8 @@ export const insertWalletSchema = type({
 });
 
 export const updateWalletSchema = insertWalletSchema.partial();
-export const updateWalletResponseSchema = type({
+
+export const deletetWalletSchema = type({
+	"+": "delete",
 	id: "string",
-	name: "string",
-	description: "string | null",
-	currency: "string",
-	type: "string",
-	createdAt: "string",
-	isActive: "boolean",
 });

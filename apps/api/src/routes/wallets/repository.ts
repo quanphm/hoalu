@@ -53,7 +53,7 @@ export class WalletRepository {
 			})
 			.returning();
 
-		const result = this.findOne({ id: wallet.id, workspaceId: param.workspaceId });
+		const result = await this.findOne({ id: wallet.id, workspaceId: param.workspaceId });
 		return result;
 	}
 
@@ -69,7 +69,7 @@ export class WalletRepository {
 
 		if (!wallet) return null;
 
-		const result = this.findOne({ id: param.id, workspaceId: param.workspaceId });
+		const result = await this.findOne({ id: param.id, workspaceId: param.workspaceId });
 		return result;
 	}
 
@@ -79,9 +79,6 @@ export class WalletRepository {
 			.where(eq(schema.wallet.id, param.id))
 			.returning();
 
-		if (!wallet) return null;
-
-		const result = this.findOne({ id: wallet.id, workspaceId: param.workspaceId });
-		return result;
+		return wallet;
 	}
 }
