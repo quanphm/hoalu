@@ -24,3 +24,8 @@ export const insertTaskSchema = type({
 });
 
 export const updateTaskSchema = insertTaskSchema.partial();
+
+export const deleteTaskSchema = type({
+	"+": "delete",
+	id: "string",
+});

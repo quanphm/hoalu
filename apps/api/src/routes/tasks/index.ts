@@ -1,19 +1,24 @@
-import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
-import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { db, schema } from "../../db";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { insertTaskSchema, taskSchema, tasksSchema, updateTaskSchema } from "./schema";
+import { TaskRepository } from "./repository";
+import {
+	deleteTaskSchema,
+	insertTaskSchema,
+	taskSchema,
+	tasksSchema,
+	updateTaskSchema,
+} from "./schema";
 
 const app = createHonoInstance();
+const taskRepository = new TaskRepository();
 
 const route = app
 	.get(
@@ -33,9 +38,8 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 
-			const tasks = await db.query.task.findMany({
-				where: (table, { eq }) => eq(table.workspaceId, workspace.id),
-				orderBy: (table, { desc }) => desc(table.createdAt),
+			const tasks = await taskRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
 			});
 
 			const parsed = tasksSchema(tasks);
@@ -69,9 +73,9 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const task = await db.query.task.findFirst({
-				where: (table, { and, eq }) =>
-					and(eq(table.workspaceId, workspace.id), eq(table.id, param.id)),
+			const task = await taskRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
 			});
 			if (!task) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
@@ -116,17 +120,13 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const [taskResult] = await db
-				.insert(schema.task)
-				.values({
-					id: generateId({ use: "uuid" }),
-					creatorId: user.id,
-					workspaceId: workspace.id,
-					...payload,
-				})
-				.returning();
+			const task = await taskRepository.insert({
+				creatorId: user.id,
+				workspaceId: workspace.id,
+				...payload,
+			});
 
-			const parsed = taskSchema(taskResult);
+			const parsed = taskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -166,15 +166,19 @@ const route = app
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
-			const [queryData] = await db
-				.update(schema.task)
-				.set({
-					updatedAt: sql`now()`,
-					...payload,
-				})
-				.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, workspace.id)))
-				.returning();
+			const task = await taskRepository.findOne({
+				id: param.id,
+				workspaceId: workspace.id,
+			});
+			if (!task) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
 
+			const queryData = await taskRepository.update({
+				id: param.id,
+				workspaceId: workspace.id,
+				payload,
+			});
 			if (!queryData) {
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
@@ -199,7 +203,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: deleteTaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -209,16 +213,15 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const [queryData] = await db
-				.delete(schema.task)
-				.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, workspace.id)))
-				.returning();
-
-			if (!queryData) {
+			const task = await taskRepository.delete({
+				id: param.id,
+				workspaceId: workspace.id,
+			});
+			if (!task) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
 
-			const parsed = taskSchema(queryData);
+			const parsed = deleteTaskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

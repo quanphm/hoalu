@@ -37,6 +37,7 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
+
 			const wallets = await walletRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
@@ -165,6 +166,7 @@ const route = app
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
+			// only owner can update their wallet
 			const wallet = await walletRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
@@ -219,6 +221,7 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
+			// only owner can delete their wallet
 			const wallet = await walletRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,

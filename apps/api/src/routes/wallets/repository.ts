@@ -44,7 +44,7 @@ export class WalletRepository {
 		return result;
 	}
 
-	async insert<T>(param: Omit<NewWallet, "id">) {
+	async insert(param: Omit<NewWallet, "id">) {
 		const [wallet] = await db
 			.insert(schema.wallet)
 			.values({
@@ -53,7 +53,7 @@ export class WalletRepository {
 			})
 			.returning();
 
-		const result = await this.findOne({ id: wallet.id, workspaceId: param.workspaceId });
+		const result = await this.findOne({ id: wallet.id, workspaceId: wallet.workspaceId });
 		return result;
 	}
 
@@ -69,7 +69,7 @@ export class WalletRepository {
 
 		if (!wallet) return null;
 
-		const result = await this.findOne({ id: param.id, workspaceId: param.workspaceId });
+		const result = await this.findOne({ id: wallet.id, workspaceId: wallet.workspaceId });
 		return result;
 	}
 
