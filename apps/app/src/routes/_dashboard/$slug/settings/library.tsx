@@ -23,8 +23,8 @@ function RouteComponent() {
 					Add
 				</Button>
 			</SectionHeader>
-			<SectionContent columns={12}>
-				<div className="col-span-8">
+			<SectionContent columns={3}>
+				<div className="col-span-2">
 					<CategoriesTable data={categories} />
 				</div>
 			</SectionContent>

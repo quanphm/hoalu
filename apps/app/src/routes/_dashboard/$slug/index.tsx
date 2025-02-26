@@ -34,15 +34,11 @@ function RouteComponent() {
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6}>
-					<Button variant="outline">
+					<Button>
 						<SendIcon className="mr-2 size-4" />
 						Create expense
 					</Button>
-					<Button variant="outline">
-						<WalletCardsIcon className="mr-2 size-4" />
-						Create wallet
-					</Button>
-					<Button variant="outline">
+					<Button>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task
 					</Button>
