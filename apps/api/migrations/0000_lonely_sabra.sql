@@ -113,9 +113,20 @@ CREATE TABLE "image" (
 	"s3_url" text NOT NULL,
 	"description" text,
 	"tags" text[] DEFAULT ARRAY[]::text[],
-	"user_id" uuid,
 	"workspace_id" uuid,
 	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "image_expense" (
+	"expense_id" uuid,
+	"image_id" uuid,
+	CONSTRAINT "image_expense_expense_id_image_id_pk" PRIMARY KEY("expense_id","image_id")
+);
+--> statement-breakpoint
+CREATE TABLE "image_task" (
+	"task_id" uuid,
+	"image_id" uuid,
+	CONSTRAINT "image_task_task_id_image_id_pk" PRIMARY KEY("task_id","image_id")
 );
 --> statement-breakpoint
 CREATE TABLE "task" (
@@ -169,7 +180,11 @@ ALTER TABLE "expense" ADD CONSTRAINT "expense_category_id_category_id_fk" FOREIG
 ALTER TABLE "expense" ADD CONSTRAINT "expense_member_fk" FOREIGN KEY ("workspace_id","creator_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "wallet" ADD CONSTRAINT "wallet_owner_id_user_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "wallet" ADD CONSTRAINT "wallet_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image" ADD CONSTRAINT "image_member_fk" FOREIGN KEY ("workspace_id","user_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image" ADD CONSTRAINT "image_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_expense_id_expense_id_fk" FOREIGN KEY ("expense_id") REFERENCES "public"."expense"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_task" ADD CONSTRAINT "image_task_task_id_task_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."task"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_task" ADD CONSTRAINT "image_task_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "task" ADD CONSTRAINT "task_member_fk" FOREIGN KEY ("workspace_id","creator_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

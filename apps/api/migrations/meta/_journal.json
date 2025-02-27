@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1740633588704,
-      "tag": "0000_lonely_captain_stacy",
+      "when": 1740655593989,
+      "tag": "0000_lonely_sabra",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1740633595005,
+      "when": 1740655599386,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }
