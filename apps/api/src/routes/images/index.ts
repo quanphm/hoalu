@@ -7,7 +7,7 @@ import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
 import { MAX_FILE_SIZE } from "../../common";
 import { createHonoInstance } from "../../lib/create-app";
-import { bunS3Client, minioS3Client } from "../../lib/s3";
+import { bunS3Client } from "../../lib/s3";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { ImageRepository } from "./repository";
@@ -77,7 +77,6 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
 			const workspace = c.get("workspace");
 			const param = c.req.valid("json");
 
