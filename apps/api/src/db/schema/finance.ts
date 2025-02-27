@@ -4,7 +4,6 @@ import {
 	foreignKey,
 	index,
 	numeric,
-	pgEnum,
 	pgTable,
 	text,
 	timestamp,

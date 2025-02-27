@@ -1,6 +1,6 @@
 {
-  "id": "7142eadc-2ff6-4a1f-a744-3da682f450ad",
-  "prevId": "c5ce2676-2922-4b89-a7cd-a6e0feac0fbe",
+  "id": "0fb0253e-cca9-4243-90ba-007fd22ebf9f",
+  "prevId": "4b17c70f-faca-4081-9cab-9593a1c7b0dc",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -760,6 +760,85 @@
           ]
         }
       },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.image": {
+      "name": "image",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "s3_url": {
+          "name": "s3_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "ARRAY[]::text[]"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_member_fk": {
+          "name": "image_member_fk",
+          "tableFrom": "image",
+          "columnsFrom": [
+            "workspace_id",
+            "user_id"
+          ],
+          "tableTo": "member",
+          "columnsTo": [
+            "workspace_id",
+            "user_id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "set null"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
