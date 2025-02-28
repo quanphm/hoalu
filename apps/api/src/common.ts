@@ -1,7 +1,7 @@
 import { type } from "arktype";
 
+export const taskStatusSchema = type("'todo' | 'in-progress' | 'done' | 'canceled' | 'blocked'");
 export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
-
 export const colorSchema = type(
 	"'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'brown'",
 );

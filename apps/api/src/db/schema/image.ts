@@ -1,18 +1,21 @@
 import { sql } from "drizzle-orm";
-import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { expense } from "./finance";
-import { task } from "./task";
-import { workspace } from "./workspace";
+import { index, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { workspace } from "./auth";
+import { expense, task } from "./core";
 
-export const image = pgTable("image", {
-	id: uuid("id").primaryKey(),
-	fileName: text("file_name").notNull(),
-	s3Url: text("s3_url").notNull(),
-	description: text("description"),
-	tags: text("tags").array().default(sql`ARRAY[]::text[]`),
-	workspaceId: uuid("workspace_id").references(() => workspace.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-});
+export const image = pgTable(
+	"image",
+	{
+		id: uuid("id").primaryKey(),
+		fileName: text("file_name").notNull(),
+		s3Url: text("s3_url").notNull(),
+		description: text("description"),
+		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+		workspaceId: uuid("workspace_id").references(() => workspace.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [index("image_workspace_id_idx").on(table.workspaceId)],
+);
 
 export const imageExpense = pgTable(
 	"image_expense",

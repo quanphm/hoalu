@@ -7,7 +7,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, openAPI } from "better-auth/plugins";
 import { DEFAULT_CATEGORIES } from "../common";
 import { db } from "../db";
-import { category, wallet } from "../db/schema/finance";
+import { category, wallet } from "../db/schema/core";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
