@@ -2,7 +2,9 @@ import { type } from "arktype";
 
 export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
 
-export const colorSchema = type("'red' |'green' | 'blue' |'yellow' |'purple' |'pink' | 'brown'");
+export const colorSchema = type(
+	"'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'brown'",
+);
 type Color = typeof colorSchema.inferOut;
 
 export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
@@ -43,3 +45,5 @@ export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 		color: "yellow",
 	},
 ];
+
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MiB

@@ -8,6 +8,7 @@ const nanoid = customAlphabet(DEFAULT_ALPHABET, DEFAULT_SIZE);
 const prefixes = {
 	user: "u_",
 	workspace: "ws_",
+	image: "img_",
 } as const;
 
 export function generateId(options: {

@@ -31,7 +31,6 @@
 		"hono": "^4.7.2",
 		"hono-openapi": "^0.4.5",
 		"ioredis": "^5.5.0",
-		"minio": "^8.0.4",
 		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
 		"react": "^19.0.0",

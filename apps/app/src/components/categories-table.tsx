@@ -1,5 +1,4 @@
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
-import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -26,7 +25,6 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { UserAvatar } from "./user-avatar";
 
 type Item = {
 	id: string;

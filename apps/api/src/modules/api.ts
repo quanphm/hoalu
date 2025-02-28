@@ -5,6 +5,7 @@ import { redis } from "../lib/redis";
 
 // routes
 import categoriesRoute from "../routes/categories";
+import imagesRoute from "../routes/images";
 import tasksRoute from "../routes/tasks";
 import walletsRoute from "../routes/wallets";
 
@@ -21,6 +22,7 @@ export function apiModule() {
 		.use(authGuard())
 		.use(rateLimiter(redis))
 		.route("/categories", categoriesRoute)
+		.route("/images", imagesRoute)
 		.route("/tasks", tasksRoute)
 		.route("/wallets", walletsRoute);
 

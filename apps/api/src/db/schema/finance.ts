@@ -4,7 +4,6 @@ import {
 	foreignKey,
 	index,
 	numeric,
-	pgEnum,
 	pgTable,
 	text,
 	timestamp,
@@ -12,26 +11,8 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { user } from "./auth";
 import { colorTypeEnum, walletTypeEnum } from "./enums";
 import { member, workspace } from "./workspace";
-
-export const wallet = pgTable("wallet", {
-	id: uuid("id").primaryKey(),
-	name: text("name").notNull(),
-	description: text("description"),
-	currency: varchar({ length: 3 }).notNull(),
-	type: walletTypeEnum().default("cash").notNull(),
-	ownerId: uuid("owner_id")
-		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
-	workspaceId: uuid("workspace_id")
-		.notNull()
-		.references(() => workspace.id, { onDelete: "cascade" }),
-	isActive: boolean("is_active").default(true).notNull(),
-	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
-});
 
 export const category = pgTable(
 	"category",
@@ -47,6 +28,29 @@ export const category = pgTable(
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [unique("category_workspace_id_name_unique").on(table.workspaceId, table.name)],
+);
+
+export const wallet = pgTable(
+	"wallet",
+	{
+		id: uuid("id").primaryKey(),
+		name: text("name").notNull(),
+		description: text("description"),
+		currency: varchar({ length: 3 }).notNull(),
+		type: walletTypeEnum().default("cash").notNull(),
+		ownerId: uuid("owner_id").notNull(),
+		workspaceId: uuid("workspace_id").notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [
+		foreignKey({
+			name: "expense_member_fk",
+			columns: [table.workspaceId, table.ownerId],
+			foreignColumns: [member.workspaceId, member.userId],
+		}).onDelete("cascade"),
+	],
 );
 
 export const expense = pgTable(

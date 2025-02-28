@@ -107,6 +107,28 @@ CREATE TABLE "fx_rate" (
 	CONSTRAINT "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk" PRIMARY KEY("from_currency","to_currency","exchange_rate","valid_from")
 );
 --> statement-breakpoint
+CREATE TABLE "image" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"file_name" text NOT NULL,
+	"s3_url" text NOT NULL,
+	"description" text,
+	"tags" text[] DEFAULT ARRAY[]::text[],
+	"workspace_id" uuid,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "image_expense" (
+	"expense_id" uuid,
+	"image_id" uuid,
+	CONSTRAINT "image_expense_expense_id_image_id_pk" PRIMARY KEY("expense_id","image_id")
+);
+--> statement-breakpoint
+CREATE TABLE "image_task" (
+	"task_id" uuid,
+	"image_id" uuid,
+	CONSTRAINT "image_task_task_id_image_id_pk" PRIMARY KEY("task_id","image_id")
+);
+--> statement-breakpoint
 CREATE TABLE "task" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -156,8 +178,12 @@ ALTER TABLE "category" ADD CONSTRAINT "category_workspace_id_workspace_id_fk" FO
 ALTER TABLE "expense" ADD CONSTRAINT "expense_wallet_id_wallet_id_fk" FOREIGN KEY ("wallet_id") REFERENCES "public"."wallet"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_member_fk" FOREIGN KEY ("workspace_id","creator_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wallet" ADD CONSTRAINT "wallet_owner_id_user_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wallet" ADD CONSTRAINT "wallet_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "wallet" ADD CONSTRAINT "expense_member_fk" FOREIGN KEY ("workspace_id","owner_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image" ADD CONSTRAINT "image_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_expense_id_expense_id_fk" FOREIGN KEY ("expense_id") REFERENCES "public"."expense"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_task" ADD CONSTRAINT "image_task_task_id_task_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."task"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "image_task" ADD CONSTRAINT "image_task_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "task" ADD CONSTRAINT "task_member_fk" FOREIGN KEY ("workspace_id","creator_id") REFERENCES "public"."member"("workspace_id","user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

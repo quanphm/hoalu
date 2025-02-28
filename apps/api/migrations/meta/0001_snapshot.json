@@ -1,6 +1,6 @@
 {
-  "id": "7142eadc-2ff6-4a1f-a744-3da682f450ad",
-  "prevId": "c5ce2676-2922-4b89-a7cd-a6e0feac0fbe",
+  "id": "dec6c031-1890-4e48-88c0-5b61f0c7602f",
+  "prevId": "fe60b9e1-5caf-490b-b75e-5c1de7402b11",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -671,28 +671,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallet_owner_id_user_id_fk": {
-          "name": "wallet_owner_id_user_id_fk",
+        "expense_member_fk": {
+          "name": "expense_member_fk",
           "tableFrom": "wallet",
           "columnsFrom": [
+            "workspace_id",
             "owner_id"
           ],
-          "tableTo": "user",
+          "tableTo": "member",
           "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "wallet_workspace_id_workspace_id_fk": {
-          "name": "wallet_workspace_id_workspace_id_fk",
-          "tableFrom": "wallet",
-          "columnsFrom": [
-            "workspace_id"
-          ],
-          "tableTo": "workspace",
-          "columnsTo": [
-            "id"
+            "workspace_id",
+            "user_id"
           ],
           "onUpdate": "no action",
           "onDelete": "cascade"
@@ -757,6 +746,197 @@
             "to_currency",
             "exchange_rate",
             "valid_from"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.image": {
+      "name": "image",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "s3_url": {
+          "name": "s3_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "ARRAY[]::text[]"
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_workspace_id_workspace_id_fk": {
+          "name": "image_workspace_id_workspace_id_fk",
+          "tableFrom": "image",
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "tableTo": "workspace",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.image_expense": {
+      "name": "image_expense",
+      "schema": "",
+      "columns": {
+        "expense_id": {
+          "name": "expense_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_expense_expense_id_expense_id_fk": {
+          "name": "image_expense_expense_id_expense_id_fk",
+          "tableFrom": "image_expense",
+          "columnsFrom": [
+            "expense_id"
+          ],
+          "tableTo": "expense",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "image_expense_image_id_image_id_fk": {
+          "name": "image_expense_image_id_image_id_fk",
+          "tableFrom": "image_expense",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "tableTo": "image",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "image_expense_expense_id_image_id_pk": {
+          "name": "image_expense_expense_id_image_id_pk",
+          "columns": [
+            "expense_id",
+            "image_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.image_task": {
+      "name": "image_task",
+      "schema": "",
+      "columns": {
+        "task_id": {
+          "name": "task_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_task_task_id_task_id_fk": {
+          "name": "image_task_task_id_task_id_fk",
+          "tableFrom": "image_task",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "tableTo": "task",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "image_task_image_id_image_id_fk": {
+          "name": "image_task_image_id_image_id_fk",
+          "tableFrom": "image_task",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "tableTo": "image",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "image_task_task_id_image_id_pk": {
+          "name": "image_task_task_id_image_id_pk",
+          "columns": [
+            "task_id",
+            "image_id"
           ]
         }
       },
