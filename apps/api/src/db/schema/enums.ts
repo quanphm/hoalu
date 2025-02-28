@@ -19,3 +19,11 @@ export const walletTypeEnum = pgEnum("wallet_type_enum", [
 ]);
 
 export const levelEnum = pgEnum("level_enum", ["urgent", "high", "medium", "low", "none"]);
+
+export const taskStatusEnum = pgEnum("task_status", [
+	"todo",
+	"in-progress",
+	"done",
+	"blocked",
+	"canceled",
+]);

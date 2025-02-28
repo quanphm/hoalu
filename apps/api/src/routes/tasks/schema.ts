@@ -1,14 +1,15 @@
 import { type } from "arktype";
-import { prioritySchema } from "../../common";
+import { prioritySchema, taskStatusSchema } from "../../common";
 
 export const taskSchema = type({
 	"+": "delete",
-	id: "string",
-	name: "string",
-	done: "boolean",
+	id: "string.uuid.v7",
+	title: "string",
+	description: "string | null",
+	status: taskStatusSchema,
 	priority: prioritySchema,
-	creatorId: "string",
-	workspaceId: "string",
+	creatorId: "string.uuid.v7",
+	workspaceId: "string.uuid.v7",
 	createdAt: "string",
 	dueDate: "string",
 });
@@ -16,8 +17,9 @@ export const taskSchema = type({
 export const tasksSchema = taskSchema.array().onUndeclaredKey("delete");
 
 export const insertTaskSchema = type({
-	name: "string > 0",
-	done: "boolean = false",
+	title: "string > 0",
+	"description?": "string",
+	status: taskStatusSchema.default("todo"),
 	"priority?": prioritySchema,
 	"dueDate?": "string",
 });
@@ -26,5 +28,5 @@ export const updateTaskSchema = insertTaskSchema.partial();
 
 export const deleteTaskSchema = type({
 	"+": "delete",
-	id: "string",
+	id: "string.uuid.v7",
 }).or("null");

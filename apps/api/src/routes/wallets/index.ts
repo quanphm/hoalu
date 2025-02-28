@@ -19,12 +19,13 @@ import {
 
 const app = createHonoInstance();
 const walletRepository = new WalletRepository();
+const TAGS = ["Wallets"];
 
 const route = app
 	.get(
 		"/",
 		describeRoute({
-			tags: ["Wallets"],
+			tags: TAGS,
 			summary: "Get all wallets",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -56,7 +57,7 @@ const route = app
 	.get(
 		"/:id",
 		describeRoute({
-			tags: ["Wallets"],
+			tags: TAGS,
 			summary: "Get a single wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -95,7 +96,7 @@ const route = app
 	.post(
 		"/",
 		describeRoute({
-			tags: ["Wallets"],
+			tags: TAGS,
 			summary: "Create a new wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -139,7 +140,7 @@ const route = app
 	.patch(
 		"/:id",
 		describeRoute({
-			tags: ["Wallets"],
+			tags: TAGS,
 			summary: "Update a wallet",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -204,7 +205,7 @@ const route = app
 	.delete(
 		"/:id",
 		describeRoute({
-			tags: ["Wallets"],
+			tags: TAGS,
 			summary: "Delete a wallet",
 			responses: {
 				...OpenAPI.unauthorized(),

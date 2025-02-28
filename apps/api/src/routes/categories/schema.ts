@@ -3,7 +3,7 @@ import { colorSchema } from "../../common";
 
 export const categorySchema = type({
 	"+": "delete",
-	id: "string",
+	id: "string.uuid.v7",
 	name: "string",
 	description: "string | null",
 	color: colorSchema,
@@ -21,5 +21,5 @@ export const updateCategorySchema = insertCategorySchema.partial();
 
 export const deleteCategorySchema = type({
 	"+": "delete",
-	id: "string",
+	id: "string.uuid.v7",
 }).or("null");

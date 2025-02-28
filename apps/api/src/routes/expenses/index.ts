@@ -8,30 +8,30 @@ import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { TaskRepository } from "./repository";
+import { ExpenseRepository } from "./repository";
 import {
-	deleteTaskSchema,
-	insertTaskSchema,
-	taskSchema,
-	tasksSchema,
-	updateTaskSchema,
+	deleteExpenseSchema,
+	expenseSchema,
+	expensesSchema,
+	insertExpenseSchema,
+	updateExpenseSchema,
 } from "./schema";
 
 const app = createHonoInstance();
-const taskRepository = new TaskRepository();
-const TAGS = ["Tasks"];
+const expenseRepository = new ExpenseRepository();
+const TAGS = ["Expenses"];
 
 const route = app
 	.get(
 		"/",
 		describeRoute({
 			tags: TAGS,
-			summary: "Get all tasks",
+			summary: "Get all expenses",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: expensesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -39,11 +39,16 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 
-			const tasks = await taskRepository.findAllByWorkspaceId({
+			const expenses = await expenseRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
 
-			const parsed = tasksSchema(tasks);
+			const parsed = expensesSchema.pipe((exp) =>
+				exp.map((e) => ({
+					...e,
+					amount: Number(e.amount),
+				})),
+			)(expenses);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -58,13 +63,13 @@ const route = app
 		"/:id",
 		describeRoute({
 			tags: TAGS,
-			summary: "Get a single task",
+			summary: "Get a single expense",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -74,15 +79,18 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const task = await taskRepository.findOne({
+			const expense = await expenseRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!task) {
+			if (!expense) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = taskSchema(task);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: Number(e.amount),
+			}))(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -97,16 +105,16 @@ const route = app
 		"/",
 		describeRoute({
 			tags: TAGS,
-			summary: "Create a new task",
+			summary: "Create a new expense",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
-		aValidator("json", insertTaskSchema, (result, c) => {
+		aValidator("json", insertExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ message: createIssueMsg(result.errors.issues) },
@@ -121,13 +129,16 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const task = await taskRepository.insert({
+			const expense = await expenseRepository.insert({
 				creatorId: user.id,
 				workspaceId: workspace.id,
 				...payload,
 			});
 
-			const parsed = taskSchema(task);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: Number(e.amount),
+			}))(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -142,16 +153,16 @@ const route = app
 		"/:id",
 		describeRoute({
 			tags: TAGS,
-			summary: "Update a task",
+			summary: "Update a expense",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
-		aValidator("json", updateTaskSchema, (result, c) => {
+		aValidator("json", updateExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
 					{ message: createIssueMsg(result.errors.issues) },
@@ -167,15 +178,15 @@ const route = app
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
-			const task = await taskRepository.findOne({
+			const expense = await expenseRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!task) {
+			if (!expense) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const queryData = await taskRepository.update({
+			const queryData = await expenseRepository.update({
 				id: param.id,
 				workspaceId: workspace.id,
 				payload,
@@ -184,7 +195,10 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = taskSchema(queryData);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: Number(e.amount),
+			}))(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -199,12 +213,12 @@ const route = app
 		"/:id",
 		describeRoute({
 			tags: TAGS,
-			summary: "Delete a task",
+			summary: "Delete a expense",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deleteTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: deleteExpenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -214,12 +228,12 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const task = await taskRepository.delete({
+			const expense = await expenseRepository.delete({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deleteTaskSchema(task);
+			const parsed = deleteExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

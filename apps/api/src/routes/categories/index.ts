@@ -19,12 +19,13 @@ import {
 
 const app = createHonoInstance();
 const catgegoryRepository = new CategoryRepository();
+const TAGS = ["Categories"];
 
 const route = app
 	.get(
 		"/",
 		describeRoute({
-			tags: ["Categories"],
+			tags: TAGS,
 			summary: "Get all categories",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -56,7 +57,7 @@ const route = app
 	.get(
 		"/:id",
 		describeRoute({
-			tags: ["Categories"],
+			tags: TAGS,
 			summary: "Get a single category",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -95,7 +96,7 @@ const route = app
 	.post(
 		"/",
 		describeRoute({
-			tags: ["Categories"],
+			tags: TAGS,
 			summary: "Create a new category",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -138,7 +139,7 @@ const route = app
 	.patch(
 		"/:id",
 		describeRoute({
-			tags: ["Categories"],
+			tags: TAGS,
 			summary: "Update a category",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -195,7 +196,7 @@ const route = app
 	.delete(
 		"/:id",
 		describeRoute({
-			tags: ["Categories"],
+			tags: TAGS,
 			summary: "Delete a category",
 			responses: {
 				...OpenAPI.unauthorized(),

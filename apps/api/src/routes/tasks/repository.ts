@@ -16,8 +16,6 @@ export class TaskRepository {
 
 		const result = queryData.map((data) => ({
 			...data.task,
-			// owner: data.user,
-			// workspace: data.workspace,
 		}));
 
 		return result;
@@ -37,8 +35,6 @@ export class TaskRepository {
 
 		const result = {
 			...queryData[0].task,
-			// owner: queryData[0].user,
-			// workspace: queryData[0].workspace,
 		};
 
 		return result;
