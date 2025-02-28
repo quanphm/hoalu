@@ -1,5 +1,5 @@
 {
-  "id": "db6d3f63-4b76-4422-937b-c30a95f4177c",
+  "id": "fe60b9e1-5caf-490b-b75e-5c1de7402b11",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -671,28 +671,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallet_owner_id_user_id_fk": {
-          "name": "wallet_owner_id_user_id_fk",
+        "expense_member_fk": {
+          "name": "expense_member_fk",
           "tableFrom": "wallet",
-          "tableTo": "user",
+          "tableTo": "member",
           "columnsFrom": [
+            "workspace_id",
             "owner_id"
           ],
           "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "wallet_workspace_id_workspace_id_fk": {
-          "name": "wallet_workspace_id_workspace_id_fk",
-          "tableFrom": "wallet",
-          "tableTo": "workspace",
-          "columnsFrom": [
-            "workspace_id"
-          ],
-          "columnsTo": [
-            "id"
+            "workspace_id",
+            "user_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
