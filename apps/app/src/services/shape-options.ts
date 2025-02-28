@@ -37,6 +37,15 @@ export const tasksShapeOptions = <T extends Row<unknown>, S = UseShapeResult<T>>
 	params: {
 		table: "task",
 		where: `workspace_id = \'${id}\'`,
-		columns: ["id", "name", "done", "creator_id", "created_at"],
+		columns: [
+			"id",
+			"title",
+			"description",
+			"status",
+			"priority",
+			"due_date",
+			"creator_id",
+			"created_at",
+		],
 	},
 });

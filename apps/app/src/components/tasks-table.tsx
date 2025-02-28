@@ -20,24 +20,24 @@ import { useState } from "react";
 
 type Item = {
 	id: string;
-	name: string;
-	done: boolean;
+	title: string;
+	status: boolean;
 };
 
 const columns: ColumnDef<Item>[] = [
 	{
-		accessorKey: "name",
-		header: "Name",
+		accessorKey: "title",
+		header: "Task",
 	},
 	{
-		accessorKey: "done",
+		accessorKey: "status",
 		header: "Status",
 		cell: ({ row }) => {
-			const done = row.getValue("done");
-			return done ? (
+			const value = row.getValue("status");
+			return value === "done" ? (
 				<Badge variant="success">Completed</Badge>
 			) : (
-				<Badge variant="outline">Pending</Badge>
+				<Badge variant="outline">{value}</Badge>
 			);
 		},
 	},
