@@ -61,7 +61,7 @@ export const expense = pgTable(
 		id: uuid("id").primaryKey(),
 		title: text("title").notNull(),
 		description: text("description"),
-		date: timestamp("date", { withTimezone: true }).default(sql`now()`).notNull(),
+		date: timestamp("date", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
 		creatorId: uuid("creator_id")

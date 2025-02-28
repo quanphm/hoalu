@@ -5,7 +5,11 @@ export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none
 export const colorSchema = type(
 	"'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'brown'",
 );
-type Color = typeof colorSchema.inferOut;
+export type Color = typeof colorSchema.inferOut;
+export const walletTypeSchema = type(
+	"'cash' | 'bank-account' | 'credit-card' |'debit-card' | 'digital-account'",
+);
+export type WalletType = typeof walletTypeSchema.inferOut;
 
 export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 	{

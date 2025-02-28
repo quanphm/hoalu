@@ -15,12 +15,13 @@ import { fileMetaSchema, imagesSchema, uploadUrlSchema } from "./schema";
 
 const app = createHonoInstance();
 const imageRepository = new ImageRepository();
+const TAGS = ["Images"];
 
 const route = app
 	.get(
 		"/",
 		describeRoute({
-			tags: ["Images"],
+			tags: TAGS,
 			summary: "Get all images",
 			responses: {
 				...OpenAPI.unauthorized(),
@@ -57,7 +58,7 @@ const route = app
 	.post(
 		"/generate-upload-url",
 		describeRoute({
-			tags: ["Images"],
+			tags: TAGS,
 			summary: "Generate upload URL",
 			responses: {
 				...OpenAPI.unauthorized(),

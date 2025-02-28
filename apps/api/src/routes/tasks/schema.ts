@@ -3,13 +3,13 @@ import { prioritySchema, taskStatusSchema } from "../../common";
 
 export const taskSchema = type({
 	"+": "delete",
-	id: "string",
+	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
 	status: taskStatusSchema,
 	priority: prioritySchema,
-	creatorId: "string",
-	workspaceId: "string",
+	creatorId: "string.uuid.v7",
+	workspaceId: "string.uuid.v7",
 	createdAt: "string",
 	dueDate: "string",
 });
@@ -28,5 +28,5 @@ export const updateTaskSchema = insertTaskSchema.partial();
 
 export const deleteTaskSchema = type({
 	"+": "delete",
-	id: "string",
+	id: "string.uuid.v7",
 }).or("null");
