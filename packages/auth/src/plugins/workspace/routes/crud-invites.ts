@@ -231,6 +231,16 @@ export const acceptInvitation = createAuthEndpoint(
 			});
 		}
 
+		const membershipLimit = ctx.context.orgOptions?.membershipLimit || 100;
+		const members = await adapter.listMembers({
+			workspaceId: invitation.workspaceId,
+		});
+		if (members.length >= membershipLimit) {
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED,
+			});
+		}
+
 		const acceptedId = await adapter.updateInvitation({
 			invitationId: ctx.body.invitationId,
 			status: "accepted",

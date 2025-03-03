@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { workspace } from "./auth";
-import { colorTypeEnum, levelEnum, taskStatusEnum, walletTypeEnum } from "./enums";
+import { colorTypeEnum, levelEnum, repeatEnum, taskStatusEnum, walletTypeEnum } from "./enums";
 
 export const category = pgTable(
 	"category",
@@ -64,6 +64,7 @@ export const expense = pgTable(
 		date: timestamp("date", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
+		repeat: repeatEnum().default("one-time").notNull(),
 		creatorId: uuid("creator_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "set null" }),

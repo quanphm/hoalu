@@ -136,7 +136,7 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 				],
 			};
 		},
-		findMemberById: async (identifier: string) => {
+		async findMemberById(identifier: string) {
 			const member = await adapter.findOne<Member>({
 				model: "member",
 				where: [
@@ -212,6 +212,19 @@ export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) 
 					image: user.image,
 				},
 			};
+		},
+		async listMembers(data: { workspaceId: string }) {
+			const members = await adapter.findMany<Member>({
+				model: "member",
+				where: [
+					{
+						field: "workspaceId",
+						value: data.workspaceId,
+					},
+				],
+				limit: options?.membershipLimit || 100,
+			});
+			return members;
 		},
 		async findMemberByWorkspaceId(data: {
 			userId: string;

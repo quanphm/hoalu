@@ -1,15 +1,11 @@
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint } from "better-auth/api";
-import {
-	type AccessControl,
-	type Role,
-	defaultRoles,
-	type defaultStatements,
-} from "better-auth/plugins/access";
+import type { AccessControl, Role } from "better-auth/plugins/access";
 import { APIError } from "better-call";
 import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import type { Session, User } from "../../../utils/types";
+import { defaultRoles, type defaultStatements } from "../access";
 import { getOrgAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
@@ -241,14 +237,6 @@ export const updateWorkspace = createAuthEndpoint(
 				},
 				status: 403,
 			});
-		}
-		if (ctx.body.data.slug) {
-			const existingSlug = await adapter.findWorkspace(ctx.body.data.slug);
-			if (existingSlug) {
-				throw new APIError("BAD_REQUEST", {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_SLUG_ALREADY_EXISTS,
-				});
-			}
 		}
 		const updatedOrg = await adapter.updateWorkspace(workspace.id, ctx.body.data);
 		return ctx.json(updatedOrg);
