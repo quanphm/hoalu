@@ -109,7 +109,7 @@ CREATE TABLE "expense" (
 	"date" timestamp with time zone DEFAULT now() NOT NULL,
 	"currency" varchar(3) NOT NULL,
 	"amount" numeric(20, 6) NOT NULL,
-	"reapet" "repeat_enum" DEFAULT 'one-time' NOT NULL,
+	"repeat" "repeat_enum" DEFAULT 'one-time' NOT NULL,
 	"creator_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"wallet_id" uuid NOT NULL,

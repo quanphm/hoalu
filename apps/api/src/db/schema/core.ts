@@ -64,7 +64,7 @@ export const expense = pgTable(
 		date: timestamp("date", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
-		reapet: repeatEnum().default("one-time").notNull(),
+		repeat: repeatEnum().default("one-time").notNull(),
 		creatorId: uuid("creator_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "set null" }),

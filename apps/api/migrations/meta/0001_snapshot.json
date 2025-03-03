@@ -1,6 +1,6 @@
 {
-  "id": "66b2a5c1-692f-42a0-9a02-14d59c451d11",
-  "prevId": "da3fa71b-a2e4-415a-bf32-b8da190fc256",
+  "id": "73292e87-f54d-46e4-8b89-2478ec64a72e",
+  "prevId": "88fc9ea8-9641-4e40-bbcf-93c3eeb2db19",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -757,8 +757,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "reapet": {
-          "name": "reapet",
+        "repeat": {
+          "name": "repeat",
           "type": "repeat_enum",
           "typeSchema": "public",
           "primaryKey": false,
