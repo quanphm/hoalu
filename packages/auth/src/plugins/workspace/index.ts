@@ -1,8 +1,9 @@
 import { getSessionFromCtx } from "better-auth/api";
-import { type AccessControl, type Role, defaultRoles } from "better-auth/plugins/access";
+import type { AccessControl, Role } from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin } from "better-auth/types";
 import { shimContext } from "../../utils/shim";
 import type { User } from "../../utils/types";
+import { defaultRoles, defaultStatements } from "./access";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
 	acceptInvitation,
@@ -52,7 +53,7 @@ export interface WorkspaceOptions {
 	/**
 	 * The number of memberships a user can have in an workspace.
 	 *
-	 * @default "unlimited"
+	 * @default 100
 	 */
 	membershipLimit?: number;
 	/**

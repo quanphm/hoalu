@@ -1,20 +1,14 @@
 import { useAuthQuery } from "better-auth/client";
-import {
-	type AccessControl,
-	type Role,
-	adminAc,
-	type defaultStatements,
-	memberAc,
-	ownerAc,
-} from "better-auth/plugins/access";
+import type { AccessControl, Role } from "better-auth/plugins/access";
 import type { BetterAuthClientPlugin } from "better-auth/types";
 import { atom } from "nanostores";
+import { adminAc, type defaultStatements, memberAc, ownerAc } from "./access";
 import type { workspace } from "./index";
 import type { Invitation, Member, Workspace } from "./schema";
 
 interface WorkspaceClientOptions {
 	ac: AccessControl;
-	roles: {
+	roles?: {
 		[key in string]: Role;
 	};
 }
@@ -24,15 +18,13 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 
 	type DefaultStatements = typeof defaultStatements;
 	type Statements = O["ac"] extends AccessControl<infer S>
-		? S extends Record<string, Array<any>>
-			? S & DefaultStatements
-			: DefaultStatements
+		? S & DefaultStatements
 		: DefaultStatements;
 
 	const roles = {
-		owner: ownerAc,
 		admin: adminAc,
 		member: memberAc,
+		owner: ownerAc,
 		...options?.roles,
 	};
 

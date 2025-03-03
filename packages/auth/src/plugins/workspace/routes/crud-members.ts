@@ -51,6 +51,14 @@ export const addMember = createAuthEndpoint(
 			});
 		}
 
+		const membershipLimit = ctx.context.orgOptions?.membershipLimit || 100;
+		const members = await adapter.listMembers({ workspaceId });
+		if (members.length >= membershipLimit) {
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED,
+			});
+		}
+
 		const createdMember = await adapter.createMember({
 			workspaceId,
 			userId: user.id,

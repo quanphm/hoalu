@@ -21,4 +21,5 @@ export const WORKSPACE_ERROR_CODES = {
 	YOU_ARE_NOT_ALLOWED_TO_CANCEL_THIS_INVITATION: "You are not allowed to cancel this invitation",
 	INVITER_IS_NO_LONGER_A_MEMBER_OF_THE_WORKSPACE: "Inviter is no longer a member of the workspace",
 	YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE: "You are not allowed to invite user with this role",
+	ORGANIZATION_MEMBERSHIP_LIMIT_REACHED: "Workspace membership limit reached",
 } as const;
