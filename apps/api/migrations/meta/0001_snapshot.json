@@ -1,6 +1,6 @@
 {
-  "id": "d8af7f1c-0405-4c43-b27f-78b351da9f10",
-  "prevId": "6afbd60f-e9eb-49b2-b6f8-32d437429e6b",
+  "id": "66b2a5c1-692f-42a0-9a02-14d59c451d11",
+  "prevId": "da3fa71b-a2e4-415a-bf32-b8da190fc256",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -757,6 +757,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "reapet": {
+          "name": "reapet",
+          "type": "repeat_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'one-time'"
+        },
         "creator_id": {
           "name": "creator_id",
           "type": "uuid",
@@ -942,7 +950,7 @@
         },
         "status": {
           "name": "status",
-          "type": "task_status",
+          "type": "task_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -1454,10 +1462,15 @@
         "red",
         "green",
         "blue",
+        "cyan",
         "yellow",
+        "orange",
         "purple",
+        "fuchsia",
         "pink",
-        "brown"
+        "rose",
+        "gray",
+        "stone"
       ]
     },
     "public.level_enum": {
@@ -1471,8 +1484,19 @@
         "none"
       ]
     },
-    "public.task_status": {
-      "name": "task_status",
+    "public.repeat_enum": {
+      "name": "repeat_enum",
+      "schema": "public",
+      "values": [
+        "one-time",
+        "weekly",
+        "monthly",
+        "yearly",
+        "custom"
+      ]
+    },
+    "public.task_status_enum": {
+      "name": "task_status_enum",
       "schema": "public",
       "values": [
         "todo",
