@@ -34,11 +34,12 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 					});
 					if (match) {
 						const hookRes = await hook.handler(context);
-						if (hookRes && "context" in hookRes) {
-							// @ts-ignorets
+						if (hookRes && typeof hookRes === "object" && "context" in hookRes) {
+							// https://github.com/better-auth/better-auth/blob/38384feebfd1df554b475da6506779f77a0911bd/packages/better-auth/src/utils/shim.ts#L42
+							// biome-ignore lint/style/noParameterAssign: better-auth orginal codes
 							context = {
 								...context,
-								...hookRes.context,
+								...(hookRes.context as any),
 								...value,
 							};
 						}
@@ -46,7 +47,7 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 				}
 			}
 		}
-		// @ts-ignorets
+		//@ts-ignore
 		const endpointRes = value({
 			...context,
 			context: {
@@ -64,7 +65,7 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 							returned: endpointRes,
 						});
 						const hookRes = await hook.handler(obj);
-						if (hookRes && "response" in hookRes) {
+						if (hookRes && typeof hookRes === "object" && "response" in hookRes) {
 							response = hookRes.response as any;
 						}
 					}
