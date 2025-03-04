@@ -1,7 +1,7 @@
 import { Label } from "@hoalu/ui/label";
+import { Slot } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import type * as LabelPrimitive from "@radix-ui/react-label";
-import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import {
 	Controller,
