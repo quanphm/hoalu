@@ -4,7 +4,7 @@ import JoinWorkspace from "@hoalu/email/join-workspace";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { jwt, openAPI } from "better-auth/plugins";
+import { apiKey, jwt, openAPI } from "better-auth/plugins";
 import { DEFAULT_CATEGORIES } from "../common";
 import { db } from "../db";
 import { category, wallet } from "../db/schema/core";
@@ -130,6 +130,7 @@ export const auth = betterAuth({
 				expirationTime: "30d",
 			},
 		}),
+		apiKey(),
 		openAPI(),
 	],
 });
