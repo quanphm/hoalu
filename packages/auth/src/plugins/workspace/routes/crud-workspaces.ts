@@ -186,17 +186,12 @@ export const updateWorkspace = createAuthEndpoint(
 	async (ctx) => {
 		const session = await ctx.context.getSession(ctx);
 		if (!session) {
-			throw new APIError("UNAUTHORIZED", {
-				message: "User not found",
-			});
+			throw new APIError("UNAUTHORIZED");
 		}
 		const idOrSlug = ctx.body.idOrSlug;
 		if (!idOrSlug) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
@@ -211,11 +206,8 @@ export const updateWorkspace = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
 		const role = ctx.context.roles[member.role];
@@ -231,11 +223,8 @@ export const updateWorkspace = createAuthEndpoint(
 			organization: ["update"],
 		});
 		if (canUpdateOrg.error) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.FORBIDDEN,
-				body: {
-					message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_UPDATE_THIS_WORKSPACE,
-				},
+			throw new APIError("FORBIDDEN", {
+				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_UPDATE_THIS_WORKSPACE,
 			});
 		}
 		if (ctx.body.data.slug) {
@@ -285,9 +274,7 @@ export const deleteWorkspace = createAuthEndpoint(
 	async (ctx) => {
 		const session = await ctx.context.getSession(ctx);
 		if (!session) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.UNAUTHORIZED,
-			});
+			throw new APIError("UNAUTHORIZED");
 		}
 		const idOrSlug = ctx.body.idOrSlug;
 		if (!idOrSlug) {

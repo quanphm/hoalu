@@ -1,7 +1,6 @@
 import { createAuthMiddleware, sessionMiddleware } from "better-auth/api";
 import type { Role } from "better-auth/plugins/access";
-import type { Context } from "better-call";
-import type { Session, User } from "../../utils/types";
+import type { GenericEndpointContext, Session, User } from "../../utils/types";
 import type { defaultRoles } from "./access/statement";
 import type { WorkspaceOptions } from "./index";
 
@@ -9,10 +8,9 @@ export const workspaceMiddleware = createAuthMiddleware(async (ctx) => {
 	return {} as {
 		orgOptions: WorkspaceOptions;
 		roles: typeof defaultRoles & {
-			// biome-ignore lint/complexity/noBannedTypes: bypass this
-			[key: string]: Role<{}>;
+			[key: string]: Role<Record<string, any>>;
 		};
-		getSession: (context: Context<any, any>) => Promise<{
+		getSession: (context: GenericEndpointContext) => Promise<{
 			session: Session;
 			user: User;
 		}>;
