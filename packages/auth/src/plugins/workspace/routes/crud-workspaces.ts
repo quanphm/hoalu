@@ -232,11 +232,19 @@ export const updateWorkspace = createAuthEndpoint(
 		});
 		if (canUpdateOrg.error) {
 			return ctx.json(null, {
+				status: HTTPStatus.codes.FORBIDDEN,
 				body: {
 					message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_UPDATE_THIS_WORKSPACE,
 				},
-				status: 403,
 			});
+		}
+		if (ctx.body.data.slug) {
+			const existingSlug = await adapter.findWorkspace(ctx.body.data.slug);
+			if (existingSlug) {
+				throw new APIError("BAD_REQUEST", {
+					message: WORKSPACE_ERROR_CODES.WORKSPACE_SLUG_ALREADY_EXISTS,
+				});
+			}
 		}
 		const updatedOrg = await adapter.updateWorkspace(workspace.id, ctx.body.data);
 		return ctx.json(updatedOrg);

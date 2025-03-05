@@ -1,4 +1,4 @@
-import { Form, useAppForm } from "@/components/forms";
+import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
@@ -51,32 +51,34 @@ function RouteComponent() {
 						<span className="relative z-10 bg-background px-2 text-muted-foreground">or</span>
 					</div>
 
-					<Form form={form}>
-						<form.AppField name="email">
-							{(field) => (
-								<field.InputField
-									label="Email"
-									type="email"
-									placeholder="your.email@hoalu.app"
-									required
-									autoComplete="off"
-								/>
-							)}
-						</form.AppField>
-						<form.AppField name="password">
-							{(field) => (
-								<field.InputField
-									label="Password"
-									type="password"
-									placeholder="•••••••••••••"
-									required
-								/>
-							)}
-						</form.AppField>
-						<Button type="submit" className="w-full">
-							Log in
-						</Button>
-					</Form>
+					<form.AppForm>
+						<form.FieldSet>
+							<form.AppField name="email">
+								{(field) => (
+									<field.InputField
+										label="Email"
+										type="email"
+										placeholder="your.email@hoalu.app"
+										required
+										autoComplete="off"
+									/>
+								)}
+							</form.AppField>
+							<form.AppField name="password">
+								{(field) => (
+									<field.InputField
+										label="Password"
+										type="password"
+										placeholder="•••••••••••••"
+										required
+									/>
+								)}
+							</form.AppField>
+							<Button type="submit" className="w-full">
+								Log in
+							</Button>
+						</form.FieldSet>
+					</form.AppForm>
 
 					<div className="text-center text-sm">
 						Don&apos;t have an account?{" "}
