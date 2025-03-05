@@ -21,6 +21,7 @@ function RouteComponent() {
 		return (
 			<PageContent className="gap-12">
 				<Greeting />
+
 				<Section className="gap-2">
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
@@ -41,6 +42,7 @@ function RouteComponent() {
 	return (
 		<PageContent>
 			<Greeting />
+
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Explore</SectionTitle>
@@ -60,6 +62,7 @@ function RouteComponent() {
 					/>
 				</SectionContent>
 			</Section>
+
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Workspaces ({workspaces.length})</SectionTitle>

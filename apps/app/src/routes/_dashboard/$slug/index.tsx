@@ -6,7 +6,7 @@ import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { walletsQueryOptions } from "@/services/query-options";
-import { PlusIcon, SendIcon, SquarePenIcon, WalletCardsIcon } from "@hoalu/icons/lucide";
+import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
