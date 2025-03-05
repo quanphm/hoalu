@@ -11,8 +11,8 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DashboardImport } from './routes/_dashboard'
-import { Route as AuthImport } from './routes/_auth'
+import { Route as DashboardRouteImport } from './routes/_dashboard/route'
+import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as DashboardIndexImport } from './routes/_dashboard/index'
 import { Route as DashboardSlugImport } from './routes/_dashboard/$slug'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
@@ -30,12 +30,12 @@ import { Route as DashboardSlugSettingsLibraryImport } from './routes/_dashboard
 
 // Create/Update Routes
 
-const DashboardRoute = DashboardImport.update({
+const DashboardRouteRoute = DashboardRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRoute = AuthImport.update({
+const AuthRouteRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
@@ -43,25 +43,25 @@ const AuthRoute = AuthImport.update({
 const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 const DashboardSlugRoute = DashboardSlugImport.update({
   id: '/$slug',
   path: '/$slug',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 const AuthSignupRoute = AuthSignupImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const DashboardSlugIndexRoute = DashboardSlugIndexImport.update({
@@ -79,14 +79,14 @@ const InviteIdAcceptRoute = InviteIdAcceptImport.update({
 const DashboardAccountTokensRoute = DashboardAccountTokensImport.update({
   id: '/account/tokens',
   path: '/account/tokens',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 const DashboardAccountPreferencesRoute =
   DashboardAccountPreferencesImport.update({
     id: '/account/preferences',
     path: '/account/preferences',
-    getParentRoute: () => DashboardRoute,
+    getParentRoute: () => DashboardRouteRoute,
   } as any)
 
 const DashboardSlugTasksRoute = DashboardSlugTasksImport.update({
@@ -136,14 +136,14 @@ declare module '@tanstack/react-router' {
       id: '/_auth'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof DashboardImport
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login': {
@@ -151,28 +151,28 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginImport
-      parentRoute: typeof AuthImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof AuthSignupImport
-      parentRoute: typeof AuthImport
+      parentRoute: typeof AuthRouteImport
     }
     '/_dashboard/$slug': {
       id: '/_dashboard/$slug'
       path: '/$slug'
       fullPath: '/$slug'
       preLoaderRoute: typeof DashboardSlugImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
     '/_dashboard/': {
       id: '/_dashboard/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
     '/_dashboard/$slug/expenses': {
       id: '/_dashboard/$slug/expenses'
@@ -200,14 +200,14 @@ declare module '@tanstack/react-router' {
       path: '/account/preferences'
       fullPath: '/account/preferences'
       preLoaderRoute: typeof DashboardAccountPreferencesImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
     '/_dashboard/account/tokens': {
       id: '/_dashboard/account/tokens'
       path: '/account/tokens'
       fullPath: '/account/tokens'
       preLoaderRoute: typeof DashboardAccountTokensImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
     '/invite/$id/accept': {
       id: '/invite/$id/accept'
@@ -249,17 +249,19 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-interface AuthRouteChildren {
+interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
 
 interface DashboardSlugSettingsRouteChildren {
   DashboardSlugSettingsLibraryRoute: typeof DashboardSlugSettingsLibraryRoute
@@ -296,26 +298,26 @@ const DashboardSlugRouteWithChildren = DashboardSlugRoute._addFileChildren(
   DashboardSlugRouteChildren,
 )
 
-interface DashboardRouteChildren {
+interface DashboardRouteRouteChildren {
   DashboardSlugRoute: typeof DashboardSlugRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAccountPreferencesRoute: typeof DashboardAccountPreferencesRoute
   DashboardAccountTokensRoute: typeof DashboardAccountTokensRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSlugRoute: DashboardSlugRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAccountPreferencesRoute: DashboardAccountPreferencesRoute,
   DashboardAccountTokensRoute: DashboardAccountTokensRoute,
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
-  '': typeof DashboardRouteWithChildren
+  '': typeof DashboardRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/$slug': typeof DashboardSlugRouteWithChildren
@@ -333,7 +335,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '': typeof AuthRouteWithChildren
+  '': typeof AuthRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
@@ -351,8 +353,8 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_auth': typeof AuthRouteWithChildren
-  '/_dashboard': typeof DashboardRouteWithChildren
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_dashboard': typeof DashboardRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/$slug': typeof DashboardSlugRouteWithChildren
@@ -425,14 +427,14 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  DashboardRoute: typeof DashboardRouteWithChildren
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   InviteIdAcceptRoute: typeof InviteIdAcceptRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthRoute: AuthRouteWithChildren,
-  DashboardRoute: DashboardRouteWithChildren,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
   InviteIdAcceptRoute: InviteIdAcceptRoute,
 }
 
@@ -452,14 +454,14 @@ export const routeTree = rootRoute
       ]
     },
     "/_auth": {
-      "filePath": "_auth.tsx",
+      "filePath": "_auth/route.tsx",
       "children": [
         "/_auth/login",
         "/_auth/signup"
       ]
     },
     "/_dashboard": {
-      "filePath": "_dashboard.tsx",
+      "filePath": "_dashboard/route.tsx",
       "children": [
         "/_dashboard/$slug",
         "/_dashboard/",

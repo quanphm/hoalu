@@ -52,7 +52,7 @@ function RouteComponent() {
 					</div>
 
 					<form.AppForm>
-						<form.FieldSet>
+						<form.Form>
 							<form.AppField name="email">
 								{(field) => (
 									<field.InputField
@@ -77,7 +77,7 @@ function RouteComponent() {
 							<Button type="submit" className="w-full">
 								Log in
 							</Button>
-						</form.FieldSet>
+						</form.Form>
 					</form.AppForm>
 
 					<div className="text-center text-sm">

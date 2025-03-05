@@ -91,7 +91,7 @@ function CreateWorkspaceForm() {
 
 	return (
 		<form.AppForm>
-			<form.FieldSet>
+			<form.Form>
 				<form.AppField
 					name="name"
 					listeners={{
@@ -115,7 +115,7 @@ function CreateWorkspaceForm() {
 						<field.InputWithPrefixField
 							label="Workspace URL"
 							placeholder="acme-inc-42"
-							description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
+							description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
 							pattern="[a-z0-9\-]+$"
 							required
 							autoComplete="off"
@@ -125,7 +125,7 @@ function CreateWorkspaceForm() {
 				<Button type="submit" className="ml-auto w-fit">
 					Create workspace
 				</Button>
-			</form.FieldSet>
+			</form.Form>
 		</form.AppForm>
 	);
 }
@@ -151,8 +151,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 				{
 					data: {
 						name: value.name,
-						// slug: value.slug !== slug ? value.slug : undefined,
-						slug: value.slug,
+						slug: value.slug !== slug ? value.slug : undefined,
 					},
 					idOrSlug: workspace.slug,
 				},
@@ -162,7 +161,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 						queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 						if (workspace.slug !== value.slug) {
 							navigate({
-								to: "/$slug/settings",
+								to: "/$slug/settings/workspace",
 								params: {
 									slug: value.slug,
 								},
@@ -170,7 +169,14 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 						}
 					},
 					onError: (ctx) => {
-						// form.setError("slug", { type: "custom", message: ctx.error.message });
+						form.setFieldMeta("slug", (state) => {
+							return {
+								...state,
+								errorMap: {
+									onSubmit: ctx.error.message,
+								},
+							};
+						});
 					},
 				},
 			);
@@ -179,7 +185,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 
 	return (
 		<form.AppForm>
-			<form.FieldSet>
+			<form.Form>
 				<form.AppField
 					name="name"
 					listeners={{
@@ -205,7 +211,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 							placeholder="acme-inc-42"
 							description={
 								canUpdateWorkspace
-									? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
+									? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
 									: ""
 							}
 							pattern="[a-z0-9\-]+$"
@@ -220,7 +226,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 						Update profile
 					</Button>
 				)}
-			</form.FieldSet>
+			</form.Form>
 		</form.AppForm>
 	);
 }
@@ -249,14 +255,14 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader className="space-y-3">
 						<DialogTitle>Confirm delete workspace</DialogTitle>
 						<DialogDescription>
-							<p className="text-amber-600 text-sm">
+							<span className="text-amber-600 text-sm">
 								<TriangleAlertIcon
 									className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
 									strokeWidth={2}
 									aria-hidden="true"
 								/>
 								This action can't be undone.
-							</p>
+							</span>
 						</DialogDescription>
 					</DialogHeader>
 					<DeleteWorkspaceForm />
@@ -307,11 +313,11 @@ function DeleteWorkspaceForm() {
 
 	return (
 		<form.AppForm>
-			<form.FieldSet>
+			<form.Form>
 				<form.AppField
 					name="confirm"
 					validators={{
-						onBlur: ({ value }) => {
+						onSubmit: ({ value }) => {
 							return value !== slug ? "Incorrect value" : undefined;
 						},
 					}}
@@ -332,7 +338,7 @@ function DeleteWorkspaceForm() {
 				<Button variant="destructive" type="submit">
 					I understand, delete this workspace
 				</Button>
-			</form.FieldSet>
+			</form.Form>
 		</form.AppForm>
 	);
 }
