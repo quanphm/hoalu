@@ -1,9 +1,10 @@
 import { workspaceClient } from "@hoalu/auth/client/plugins";
+import { apiKeyClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 const authClient = createAuthClient({
 	baseURL: `${import.meta.env.PUBLIC_API_URL}/auth`,
-	plugins: [workspaceClient()],
+	plugins: [workspaceClient(), apiKeyClient()],
 });
 
 type AuthClientInfer = typeof authClient.$Infer;

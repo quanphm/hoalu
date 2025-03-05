@@ -28,6 +28,7 @@
 		"./sheet": "./src/components/sheet.tsx",
 		"./sidebar": "./src/components/sidebar.tsx",
 		"./skeleton": "./src/components/skeleton.tsx",
+		"./slot": "./src/components/slot.tsx",
 		"./sonner": "./src/components/sonner.tsx",
 		"./table": "./src/components/table.tsx",
 		"./textarea": "./src/components/textarea.tsx",

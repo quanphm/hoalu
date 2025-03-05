@@ -1,14 +1,25 @@
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
 
 export function Greeting() {
 	const { user } = useAuth();
+	const [currentTime, setCurrentTime] = useState(new Date());
+
+	useEffect(() => {
+		const id = setInterval(() => {
+			setCurrentTime(new Date());
+		}, 1000);
+		return () => {
+			clearInterval(id);
+		};
+	}, []);
 
 	// 0 -> 23
-	const currentHour = new Date().getHours();
-	const icon = currentHour < 12 ? "🌤" : currentHour < 17 ? "⛅" : "🌙";
+	const currentHours = currentTime.getHours();
+	const icon = currentHours < 12 ? "🌤" : currentHours < 17 ? "⛅" : "🌙";
 	const message =
-		currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
+		currentHours < 12 ? "Good morning" : currentHours < 17 ? "Good afternoon" : "Good evening";
 
 	const today = Date.now();
 

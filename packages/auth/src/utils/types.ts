@@ -1,4 +1,10 @@
-import type { Session as BetterAuthSession, User as BetterAuthUser } from "better-auth/types";
+import type {
+	Session as BetterAuthSession,
+	User as BetterAuthUser,
+	GenericEndpointContext,
+} from "better-auth/types";
 
-export type User = BetterAuthUser & { publicId: string };
-export type Session = BetterAuthSession;
+type User = BetterAuthUser & { publicId: string };
+type Session = BetterAuthSession;
+
+export type { GenericEndpointContext, User, Session };

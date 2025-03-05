@@ -1,4 +1,4 @@
-import { HookForm, HookFormInput, HookFormInputWithPrefix } from "@/components/hook-forms";
+import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import { deleteWorkspaceSchema, workspaceSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
@@ -15,11 +15,9 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
-import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { createContext, use, useEffect, useId, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { createContext, use, useMemo, useState } from "react";
 
 type CreateContext = {
 	open: boolean;
@@ -60,147 +58,176 @@ function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode 
 }
 
 function CreateWorkspaceForm() {
-	const id = useId();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const context = use(CreateContext);
-	const form = useForm<typeof workspaceSchema.infer>({
-		resolver: arktypeResolver(workspaceSchema),
-		values: {
+
+	const form = useAppForm({
+		defaultValues: {
 			name: "",
 			slug: "",
 		},
+		onSubmit: async ({ value }) => {
+			await authClient.workspace.create(value, {
+				onSuccess: (ctx) => {
+					toast.success("Workspace created");
+					queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+					if (context) {
+						context.setOpen(false);
+					}
+					navigate({
+						to: "/$slug",
+						params: {
+							slug: ctx.data.slug,
+						},
+					});
+				},
+				onError: (ctx) => {
+					toast.error(ctx.error.message);
+				},
+			});
+		},
 	});
-	const { watch, setValue } = form;
-	const watchName = watch("name");
-
-	async function onSubmit(values: typeof workspaceSchema.infer) {
-		await authClient.workspace.create(values, {
-			onSuccess: (ctx) => {
-				toast.success("Workspace created");
-				queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-				if (context) {
-					context.setOpen(false);
-				}
-				navigate({
-					to: "/$slug",
-					params: {
-						slug: ctx.data.slug,
-					},
-				});
-			},
-			onError: (ctx) => {
-				toast.error(ctx.error.message);
-			},
-		});
-	}
-
-	useEffect(() => {
-		setValue("slug", slugify(watchName));
-	}, [watchName, setValue]);
 
 	return (
-		<HookForm id={id} form={form} onSubmit={onSubmit}>
-			<HookFormInput
-				label="Workspace name"
-				name="name"
-				autoFocus
-				required
-				autoComplete="off"
-				placeholder="Acme Inc."
-			/>
-			<HookFormInputWithPrefix
-				label="Workspace URL"
-				name="slug"
-				pattern="[a-z0-9\-]+$"
-				required
-				autoComplete="off"
-				placeholder="acme-inc-42"
-				description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
-			/>
-			<Button type="submit" form={id} className="ml-auto w-fit">
-				Create workspace
-			</Button>
-		</HookForm>
+		<form.AppForm>
+			<form.Form>
+				<form.AppField
+					name="name"
+					listeners={{
+						onChange: ({ value }) => {
+							form.setFieldValue("slug", slugify(value));
+						},
+					}}
+				>
+					{(field) => (
+						<field.InputField
+							label="Workspace name"
+							autoFocus
+							required
+							autoComplete="off"
+							placeholder="Acme Inc."
+						/>
+					)}
+				</form.AppField>
+				<form.AppField name="slug">
+					{(field) => (
+						<field.InputWithPrefixField
+							label="Workspace URL"
+							placeholder="acme-inc-42"
+							description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
+							pattern="[a-z0-9\-]+$"
+							required
+							autoComplete="off"
+						/>
+					)}
+				</form.AppField>
+				<Button type="submit" className="ml-auto w-fit">
+					Create workspace
+				</Button>
+			</form.Form>
+		</form.AppForm>
 	);
 }
 
 function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
-	const id = useId();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 
-	const form = useForm<typeof workspaceSchema.infer>({
-		resolver: arktypeResolver(workspaceSchema),
-		values: {
+	const form = useAppForm({
+		defaultValues: {
 			name: workspace.name,
 			slug: workspace.slug,
 		},
+		validators: {
+			onSubmit: workspaceSchema,
+		},
+		onSubmit: async ({ value }) => {
+			if (!canUpdateWorkspace) return;
+
+			await authClient.workspace.update(
+				{
+					data: {
+						name: value.name,
+						slug: value.slug !== slug ? value.slug : undefined,
+					},
+					idOrSlug: workspace.slug,
+				},
+				{
+					onSuccess: () => {
+						toast.success("Workspace updated");
+						queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+						if (workspace.slug !== value.slug) {
+							navigate({
+								to: "/$slug/settings/workspace",
+								params: {
+									slug: value.slug,
+								},
+							});
+						}
+					},
+					onError: (ctx) => {
+						form.setFieldMeta("slug", (state) => {
+							return {
+								...state,
+								errorMap: {
+									onSubmit: ctx.error.message,
+								},
+							};
+						});
+					},
+				},
+			);
+		},
 	});
 
-	async function onSubmit(values: typeof workspaceSchema.infer) {
-		if (!canUpdateWorkspace) return;
-
-		await authClient.workspace.update(
-			{
-				data: {
-					name: values.name,
-					slug: values.slug,
-				},
-				idOrSlug: workspace.slug,
-			},
-			{
-				onSuccess: () => {
-					toast.success("Workspace updated");
-					queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-					if (workspace.slug !== values.slug) {
-						navigate({
-							to: "/$slug/settings",
-							params: {
-								slug: values.slug,
-							},
-						});
-					}
-				},
-				onError: (ctx) => {
-					form.setError("slug", { type: "custom", message: ctx.error.message });
-				},
-			},
-		);
-	}
-
 	return (
-		<HookForm id={id} form={form} onSubmit={onSubmit}>
-			<HookFormInput
-				label="Workspace name"
-				name="name"
-				required
-				autoComplete="off"
-				placeholder="Acme Inc."
-				disabled={!canUpdateWorkspace}
-			/>
-			<HookFormInputWithPrefix
-				label="Workspace URL"
-				name="slug"
-				pattern="[a-z0-9\-]+$"
-				required
-				autoComplete="off"
-				placeholder="acme-inc-42"
-				description={
-					canUpdateWorkspace
-						? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)."
-						: ""
-				}
-				disabled={!canUpdateWorkspace}
-			/>
-			{canUpdateWorkspace && (
-				<Button type="submit" form={id} className="ml-auto w-fit">
-					Update profile
-				</Button>
-			)}
-		</HookForm>
+		<form.AppForm>
+			<form.Form>
+				<form.AppField
+					name="name"
+					listeners={{
+						onChange: ({ value }) => {
+							form.setFieldValue("slug", slugify(value));
+						},
+					}}
+				>
+					{(field) => (
+						<field.InputField
+							label="Workspace name"
+							required
+							autoComplete="off"
+							placeholder="Acme Inc."
+							disabled={!canUpdateWorkspace}
+						/>
+					)}
+				</form.AppField>
+				<form.AppField name="slug">
+					{(field) => (
+						<field.InputWithPrefixField
+							label="Workspace URL"
+							placeholder="acme-inc-42"
+							description={
+								canUpdateWorkspace
+									? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
+									: ""
+							}
+							pattern="[a-z0-9\-]+$"
+							required
+							autoComplete="off"
+							disabled={!canUpdateWorkspace}
+						/>
+					)}
+				</form.AppField>
+				{canUpdateWorkspace && (
+					<Button type="submit" className="ml-auto w-fit">
+						Update profile
+					</Button>
+				)}
+			</form.Form>
+		</form.AppForm>
 	);
 }
 
@@ -228,14 +255,14 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader className="space-y-3">
 						<DialogTitle>Confirm delete workspace</DialogTitle>
 						<DialogDescription>
-							<p className="text-amber-600 text-sm">
+							<span className="text-amber-600 text-sm">
 								<TriangleAlertIcon
 									className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
 									strokeWidth={2}
 									aria-hidden="true"
 								/>
 								This action can't be undone.
-							</p>
+							</span>
 						</DialogDescription>
 					</DialogHeader>
 					<DeleteWorkspaceForm />
@@ -250,60 +277,69 @@ function DeleteWorkspaceTrigger({ children }: { children: React.ReactNode }) {
 }
 
 function DeleteWorkspaceForm() {
-	const id = useId();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const context = use(DeleteContext);
 
-	const form = useForm<typeof deleteWorkspaceSchema.infer>({
-		resolver: arktypeResolver(deleteWorkspaceSchema),
-		values: { confirm: "" },
-		reValidateMode: "onSubmit",
+	const form = useAppForm({
+		defaultValues: {
+			confirm: "",
+		},
+		validators: {
+			onSubmit: deleteWorkspaceSchema,
+		},
+		onSubmit: async ({ value }) => {
+			await authClient.workspace.delete(
+				{ idOrSlug: value.confirm },
+				{
+					onSuccess: () => {
+						toast.success("Workspace deleted");
+						queryClient.invalidateQueries({
+							queryKey: workspaceKeys.all,
+						});
+						if (context) {
+							context.setOpen(false);
+						}
+						navigate({ to: "/" });
+					},
+					onError: (ctx) => {
+						toast.error(ctx.error.message);
+					},
+				},
+			);
+		},
 	});
 
-	async function onSubmit(values: typeof deleteWorkspaceSchema.infer) {
-		if (values.confirm !== slug) {
-			form.setError("confirm", { type: "required", message: "Incorrect value" });
-			return;
-		}
-
-		await authClient.workspace.delete(
-			{ idOrSlug: values.confirm },
-			{
-				onSuccess: () => {
-					toast.success("Workspace deleted");
-					queryClient.invalidateQueries({
-						queryKey: workspaceKeys.all,
-					});
-					if (context) {
-						context.setOpen(false);
-					}
-					navigate({ to: "/" });
-				},
-				onError: (ctx) => {
-					toast.error(ctx.error.message);
-				},
-			},
-		);
-	}
-
 	return (
-		<HookForm id={id} form={form} onSubmit={onSubmit}>
-			<HookFormInput
-				label={
-					<span className="text-muted-foreground">
-						Type in <strong className="text-foreground">{slug}</strong> to confirm.
-					</span>
-				}
-				name="confirm"
-				required
-				autoComplete="off"
-			/>
-			<Button variant="destructive" type="submit" form={id}>
-				I understand, delete this workspace
-			</Button>
-		</HookForm>
+		<form.AppForm>
+			<form.Form>
+				<form.AppField
+					name="confirm"
+					validators={{
+						onSubmit: ({ value }) => {
+							return value !== slug ? "Incorrect value" : undefined;
+						},
+					}}
+				>
+					{(field) => (
+						<field.InputField
+							name="confirm"
+							label={
+								<span className="text-muted-foreground">
+									Type in <strong className="text-foreground">{slug}</strong> to confirm.
+								</span>
+							}
+							required
+							autoComplete="off"
+						/>
+					)}
+				</form.AppField>
+				<Button variant="destructive" type="submit">
+					I understand, delete this workspace
+				</Button>
+			</form.Form>
+		</form.AppForm>
 	);
 }
 
