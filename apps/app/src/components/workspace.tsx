@@ -72,9 +72,7 @@ function CreateWorkspaceForm() {
 				onSuccess: (ctx) => {
 					toast.success("Workspace created");
 					queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-					if (context) {
-						context.setOpen(false);
-					}
+					context?.setOpen(false);
 					navigate({
 						to: "/$slug",
 						params: {
@@ -298,9 +296,7 @@ function DeleteWorkspaceForm() {
 						queryClient.invalidateQueries({
 							queryKey: workspaceKeys.all,
 						});
-						if (context) {
-							context.setOpen(false);
-						}
+						context?.setOpen(false);
 						navigate({ to: "/" });
 					},
 					onError: (ctx) => {

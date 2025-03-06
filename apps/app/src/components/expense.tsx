@@ -2,7 +2,11 @@ import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import { deleteWorkspaceSchema, workspaceSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
+import {
+	categoriesQueryOptions,
+	getWorkspaceDetailsOptions,
+	walletsQueryOptions,
+} from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -16,8 +20,10 @@ import {
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
 import { createContext, use, useMemo, useState } from "react";
+
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 type CreateContext = {
 	open: boolean;
@@ -49,8 +55,9 @@ function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
 					}}
 				>
 					<DialogHeader>
-						<DialogTitle>New expense</DialogTitle>
+						<DialogTitle>Create new expense</DialogTitle>
 					</DialogHeader>
+					<DialogDescription />
 					<CreateExpenseForm />
 				</DialogContent>
 			</Dialog>
@@ -65,38 +72,56 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 function CreateExpenseForm() {
 	const queryClient = useQueryClient();
 	const context = use(CreateContext);
+	const { slug } = routeApi.useParams();
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
 	const form = useAppForm({
 		defaultValues: {
 			title: "",
 			description: "",
 			date: new Date(),
-			amount: 0,
+			transaction: {
+				value: 0,
+				currency: "VND",
+			},
 			repeat: "one-time",
 			walletId: "",
 			categoryId: "",
 		},
 		onSubmit: async ({ value }) => {
 			console.log(value);
+			context?.setOpen(false);
 		},
 	});
+
+	const walletOptions = wallets.map((w) => ({ label: w.name, value: w.id }));
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="grid grid-cols-2 gap-4">
-					<div>
+				<div className="grid grid-cols-12 gap-4">
+					<div className="col-span-7 flex flex-col gap-4">
 						<form.AppField name="title">
-							{(field) => <field.InputField label="Title" autoFocus required />}
+							{(field) => <field.InputField label="Description" autoFocus required />}
 						</form.AppField>
-						<form.AppField name="amount">
+						<form.AppField name="transaction">
 							{(field) => <field.TransactionAmountField label="Amount" />}
 						</form.AppField>
+						<div className="grid grid-cols-2 gap-4">
+							<form.AppField name="walletId">
+								{(field) => <field.SelectField label="Wallet" options={walletOptions} />}
+							</form.AppField>
+							<form.AppField name="categoryId">
+								{(field) => <field.SelectField label="Category" options={categoryOptions} />}
+							</form.AppField>
+						</div>
 						<form.AppField name="description">
-							{(field) => <field.InputField label="Description" />}
+							{(field) => <field.InputField label="Extra note" />}
 						</form.AppField>
 					</div>
-					<div>
+					<div className="col-span-5">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerField label="Date" />}
 						</form.AppField>
@@ -327,8 +352,8 @@ export {
 	CreateExpenseDialog,
 	CreateExpenseDialogTrigger,
 	CreateExpenseForm,
-	// UpdateExpenseForm,
-	// DeleteExpenseDialog,
-	// DeleteExpenseTrigger,
-	// DeleteExpenseForm,
+	UpdateExpenseForm,
+	DeleteExpenseDialog,
+	DeleteExpenseTrigger,
+	DeleteExpenseForm,
 };

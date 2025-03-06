@@ -65,7 +65,7 @@ function RouteComponent() {
 							<SectionTitle>Wallets ({wallets.data.length})</SectionTitle>
 							<Button variant="outline" size="sm">
 								<PlusIcon className="mr-2 size-4" />
-								Add
+								Create wallet
 							</Button>
 						</SectionHeader>
 						<SectionContent columns={2} className="gap-4">

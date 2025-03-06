@@ -20,6 +20,7 @@ function RouteComponent() {
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			organization: ["delete"],
@@ -27,6 +28,7 @@ function RouteComponent() {
 	});
 
 	const canUpdateWorkspace = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			organization: ["update"],

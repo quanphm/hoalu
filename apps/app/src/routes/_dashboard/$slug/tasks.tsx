@@ -29,7 +29,7 @@ function RouteComponent() {
 				<SectionTitle>Tasks</SectionTitle>
 				<Button variant="outline" size="sm">
 					<PlusIcon className="mr-2 size-4" />
-					Add
+					Create task
 				</Button>
 			</SectionHeader>
 			<SectionContent>

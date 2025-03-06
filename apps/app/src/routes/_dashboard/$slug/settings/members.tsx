@@ -18,6 +18,7 @@ function RouteComponent() {
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canInvite = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			invitation: ["create"],
@@ -48,7 +49,7 @@ function RouteComponent() {
 						<InviteDialog>
 							<Button variant="outline" size="sm">
 								<MailPlusIcon className="mr-2 size-4" />
-								Invite
+								Invite people
 							</Button>
 						</InviteDialog>
 					)}

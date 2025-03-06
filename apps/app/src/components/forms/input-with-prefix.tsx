@@ -19,7 +19,6 @@ export function InputWithPrefixField(props: InputFieldProps) {
 				</span>
 				<FormControl>
 					<Input
-						id={field.name}
 						name={field.name}
 						value={field.state.value}
 						onBlur={field.handleBlur}

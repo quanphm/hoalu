@@ -38,6 +38,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 					onSuccess: () => {
 						toast.success("Invitation sent");
 						queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(workspace.slug) });
+						form.reset();
 						setOpen(false);
 					},
 					onError: (ctx) => {

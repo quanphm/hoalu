@@ -15,7 +15,6 @@ export function InputField(props: InputFieldProps) {
 			{props.label && <FormLabel>{props.label}</FormLabel>}
 			<FormControl>
 				<Input
-					id={field.name}
 					name={field.name}
 					value={field.state.value}
 					onBlur={field.handleBlur}

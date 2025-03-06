@@ -157,6 +157,7 @@ function RowActions({ row }: { row: Row<Item> }) {
 	const params = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
 	const canDelete = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			member: ["delete"],

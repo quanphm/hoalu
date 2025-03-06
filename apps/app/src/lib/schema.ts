@@ -15,6 +15,9 @@ export const inviteSchema = type({
 
 export const taskSchema = type({
 	id: "string",
-	name: "string > 0",
-	done: "boolean",
+	title: "string > 0",
+	description: "string | null",
+	status: "'todo' | 'in-progress' | 'done' | 'blocked' | 'canceled'",
+	priority: "'urgent' | 'high' | 'medium' | 'low' | 'none'",
+	dueDate: "string",
 });

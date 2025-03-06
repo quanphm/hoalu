@@ -23,6 +23,7 @@
 		"./label": "./src/components/label.tsx",
 		"./pagination": "./src/components/pagination.tsx",
 		"./scroll-area": "./src/components/scroll-area.tsx",
+		"./select-native": "./src/components/select-native.tsx",
 		"./select": "./src/components/select.tsx",
 		"./separator": "./src/components/separator.tsx",
 		"./sheet": "./src/components/sheet.tsx",

@@ -4,14 +4,16 @@ import { DatepickerField } from "./datepicker";
 import { Form } from "./form";
 import { InputField } from "./input";
 import { InputWithPrefixField } from "./input-with-prefix";
+import { SelectField } from "./select";
 import { TransactionAmountField } from "./transaction-amount";
 
 const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
 		InputField,
 		InputWithPrefixField,
-		TransactionAmountField,
+		SelectField,
 		DatepickerField,
+		TransactionAmountField,
 	},
 	formComponents: {
 		FieldSet: Form,

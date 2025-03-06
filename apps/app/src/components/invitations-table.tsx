@@ -33,13 +33,13 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-type Item = {
+type Member = {
 	id: string;
 	email: string;
-	status: "pending" | "canceled" | "rejected" | "accepted";
+	status: "canceled" | "accepted" | "rejected" | "pending";
 };
 
-const columns: ColumnDef<Item>[] = [
+const columns: ColumnDef<Member>[] = [
 	{
 		accessorKey: "email",
 		header: "Email",
@@ -68,7 +68,7 @@ const columns: ColumnDef<Item>[] = [
 	},
 ];
 
-export function InvitationsTable({ data }: { data: Item[] }) {
+export function InvitationsTable({ data }: { data: Member[] }) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -125,11 +125,12 @@ export function InvitationsTable({ data }: { data: Item[] }) {
 
 const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<Member> }) {
 	const [open, setOpen] = useState(false);
 	const params = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
 	const canUpdate = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			member: ["update"],

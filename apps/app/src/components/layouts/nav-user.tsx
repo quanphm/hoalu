@@ -4,7 +4,6 @@ import {
 	CheckIcon,
 	ChevronsUpDownIcon,
 	KeyRoundIcon,
-	LanguagesIcon,
 	LogOutIcon,
 	Monitor,
 	MoonIcon,
@@ -78,22 +77,6 @@ export function NavUser() {
 											<Monitor />
 											<span>System</span>
 											{theme === "system" && <CheckIcon className="ml-auto" />}
-										</DropdownMenuItem>
-									</DropdownMenuSubContent>
-								</DropdownMenuPortal>
-							</DropdownMenuSub>
-							<DropdownMenuSub>
-								<DropdownMenuSubTrigger>
-									<LanguagesIcon />
-									<span>Languages</span>
-								</DropdownMenuSubTrigger>
-								<DropdownMenuPortal>
-									<DropdownMenuSubContent>
-										<DropdownMenuItem>
-											<span>English (US)</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<span>Vietnamese</span>
 										</DropdownMenuItem>
 									</DropdownMenuSubContent>
 								</DropdownMenuPortal>

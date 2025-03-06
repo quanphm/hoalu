@@ -4,6 +4,7 @@ import { type } from "arktype";
 const envSchema = type({
 	PUBLIC_API_URL: "string.url",
 	PUBLIC_APP_BASE_URL: "string.url",
+	PUBLIC_APP_VERSION: "string",
 });
 type EnvSchema = typeof envSchema.infer;
 
