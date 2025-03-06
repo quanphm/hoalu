@@ -18,7 +18,7 @@ export function Form({ id, className, ...props }: React.ComponentProps<"fieldset
 				{(isSubmitting) => (
 					<fieldset
 						disabled={isSubmitting}
-						className={cn("flex flex-col gap-4 [&:disabled_*]:opacity-100", className)}
+						className={cn("grid grid-cols-1 gap-4 [&:disabled_*]:opacity-100", className)}
 						{...props}
 					/>
 				)}
