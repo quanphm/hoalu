@@ -24,6 +24,38 @@ export const taskSchema = type({
 });
 export type TaskSchema = typeof taskSchema.infer;
 
+export const expenseSchema = type({
+	id: "string.uuid.v7",
+	title: "string",
+	description: "string | null",
+	amount: "number",
+	currency: "string",
+	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
+	date: "string",
+	creator: {
+		id: "string.uuid.v7",
+		publicId: "string",
+		name: "string",
+		email: "string.email",
+		image: "string | null",
+	},
+	wallet: {
+		id: "string.uuid.v7",
+		name: "string",
+		description: "string | null",
+		currency: "string",
+		isActive: "boolean",
+	},
+	category: {
+		id: "string.uuid.v7",
+		name: "string",
+		description: "string | null",
+		color: "string",
+	},
+	createdAt: "string",
+});
+export type ExpenseSchema = typeof expenseSchema.infer;
+
 export const createExpenseFormSchema = type({
 	title: "string > 0",
 	"description?": "string",
@@ -37,6 +69,7 @@ export const createExpenseFormSchema = type({
 	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
 });
 export type ExpenseFormSchema = typeof createExpenseFormSchema.infer;
+
 export const createExpensePayloadSchema = type({
 	title: "string > 0",
 	"description?": "string",

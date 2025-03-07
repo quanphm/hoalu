@@ -1,6 +1,7 @@
 import { PageContent } from "@/components/layouts/page-content";
 import {
 	categoriesQueryOptions,
+	expensesQueryOptions,
 	getActiveMemberOptions,
 	getWorkspaceDetailsOptions,
 	tasksQueryOptions,
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 			queryClient.ensureQueryData(walletsQueryOptions(slug)),
 			queryClient.ensureQueryData(tasksQueryOptions(slug)),
 			queryClient.ensureQueryData(categoriesQueryOptions(slug)),
+			queryClient.ensureQueryData(expensesQueryOptions(slug)),
 		]);
 	},
 	onError: (error) => {

@@ -5,8 +5,7 @@ import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { walletsQueryOptions } from "@/services/query-options";
+import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -18,15 +17,8 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 
 function RouteComponent() {
 	const params = Route.useParams();
-	const workspace = useWorkspace();
 	const wallets = useSuspenseQuery(walletsQueryOptions(params.slug));
-	const membersTableData = workspace.members.map((member) => ({
-		id: member.user.id,
-		name: member.user.name,
-		email: member.user.email,
-		image: member.user.image,
-		role: member.role,
-	}));
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(params.slug));
 
 	return (
 		<>
@@ -90,12 +82,13 @@ function RouteComponent() {
 					</Section>
 				</SectionContent>
 			</Section>
+
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Recent entries</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
-					<ExpensesTable data={membersTableData} />
+					<ExpensesTable data={expenses} actionable={false} />
 				</SectionContent>
 			</Section>
 

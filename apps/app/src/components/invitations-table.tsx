@@ -1,3 +1,4 @@
+import { DataTable } from "@/components/data-table";
 import { authClient } from "@/lib/auth-client";
 import { useCancelInvitation } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
@@ -20,17 +21,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import {
-	type ColumnDef,
-	type Row,
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import { useState } from "react";
 
 type Member = {
@@ -69,58 +62,7 @@ const columns: ColumnDef<Member>[] = [
 ];
 
 export function InvitationsTable({ data }: { data: Member[] }) {
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-	});
-
-	return (
-		<div className="space-y-4">
-			<div className="overflow-hidden rounded-md border border-border bg-background">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead
-											key={header.id}
-											className={header.column.columnDef.meta?.headerClassName}
-										>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-		</div>
-	);
+	return <DataTable data={data} columns={columns} />;
 }
 
 const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
