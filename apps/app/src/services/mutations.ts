@@ -45,7 +45,7 @@ export function useUpdateWorkspace() {
 			const { data, error } = await authClient.workspace.update({
 				data: {
 					name: value.name,
-					slug: value.slug !== slug ? value.slug : undefined,
+					slug: value.slug,
 				},
 				idOrSlug: slug,
 			});

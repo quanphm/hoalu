@@ -14,6 +14,7 @@ import {
 } from "./routes/crud-invites";
 import { addMember, getActiveMember, removeMember, updateMemberRole } from "./routes/crud-members";
 import {
+	checkWorkspaceSlug,
 	createWorkspace,
 	deleteWorkspace,
 	getFullWorkspace,
@@ -221,6 +222,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 	};
 
 	const endpoints = {
+		checkWorkspaceSlug,
 		createWorkspace,
 		updateWorkspace,
 		deleteWorkspace,

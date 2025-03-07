@@ -1,4 +1,5 @@
 import { useAppForm } from "@/components/forms";
+import { authClient } from "@/lib/auth-client";
 import { deleteWorkspaceFormSchema, workspaceFormSchema } from "@/lib/schema";
 import { useCreateWorkspace, useDeleteWorkspace, useUpdateWorkspace } from "@/services/mutations";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
@@ -127,6 +128,15 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 		},
 		validators: {
 			onSubmit: workspaceFormSchema,
+			onSubmitAsync: async ({ value }) => {
+				const { error } = await authClient.workspace.checkSlug({ slug: value.slug });
+				if (error) {
+					return {
+						fields: { slug: error.message },
+					};
+				}
+				return undefined;
+			},
 		},
 		onSubmit: async ({ value }) => {
 			if (!canUpdateWorkspace) return;

@@ -3,7 +3,7 @@ import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
 import type { User } from "../../../utils/types";
-import { getOrgAdapter } from "../adapter";
+import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
@@ -33,7 +33,7 @@ export const addMember = createAuthEndpoint(
 			});
 		}
 
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const user = await ctx.context.internalAdapter.findUserById(ctx.body.userId as any);
 		if (!user) {
 			throw new APIError("BAD_REQUEST", {
@@ -133,7 +133,7 @@ export const removeMember = createAuthEndpoint(
 				},
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
@@ -254,7 +254,7 @@ export const updateMemberRole = createAuthEndpoint(
 				},
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
 			workspaceId,
@@ -361,7 +361,7 @@ export const getActiveMember = createAuthEndpoint(
 				},
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
