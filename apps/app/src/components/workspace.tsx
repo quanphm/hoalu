@@ -1,9 +1,9 @@
 import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
-import { deleteWorkspaceSchema, workspaceSchema } from "@/lib/schema";
-import { workspaceKeys } from "@/services/query-key-factory";
+import { deleteWorkspaceFormSchema, workspaceFormSchema } from "@/lib/schema";
+import { useCreateWorkspace, useDeleteWorkspace, useUpdateWorkspace } from "@/services/mutations";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
+import { tryCatch } from "@hoalu/common/try-catch";
 import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -14,9 +14,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import { toast } from "@hoalu/ui/sonner";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { createContext, use, useMemo, useState } from "react";
 
 type CreateContext = {
@@ -58,32 +57,20 @@ function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode 
 }
 
 function CreateWorkspaceForm() {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 	const context = use(CreateContext);
+	const mutation = useCreateWorkspace();
 
 	const form = useAppForm({
 		defaultValues: {
 			name: "",
 			slug: "",
 		},
+		validators: {
+			onSubmit: workspaceFormSchema,
+		},
 		onSubmit: async ({ value }) => {
-			await authClient.workspace.create(value, {
-				onSuccess: (ctx) => {
-					toast.success("Workspace created");
-					queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-					context?.setOpen(false);
-					navigate({
-						to: "/$slug",
-						params: {
-							slug: ctx.data.slug,
-						},
-					});
-				},
-				onError: (ctx) => {
-					toast.error(ctx.error.message);
-				},
-			});
+			await mutation.mutateAsync(value);
+			context?.setOpen(false);
 		},
 	});
 
@@ -129,10 +116,9 @@ function CreateWorkspaceForm() {
 }
 
 function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const mutation = useUpdateWorkspace();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -140,44 +126,21 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: workspaceSchema,
+			onSubmit: workspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			if (!canUpdateWorkspace) return;
-
-			await authClient.workspace.update(
-				{
-					data: {
-						name: value.name,
-						slug: value.slug !== slug ? value.slug : undefined,
-					},
-					idOrSlug: workspace.slug,
-				},
-				{
-					onSuccess: () => {
-						toast.success("Workspace updated");
-						queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-						if (workspace.slug !== value.slug) {
-							navigate({
-								to: "/$slug/settings/workspace",
-								params: {
-									slug: value.slug,
-								},
-							});
-						}
-					},
-					onError: (ctx) => {
-						form.setFieldMeta("slug", (state) => {
-							return {
-								...state,
-								errorMap: {
-									onSubmit: ctx.error.message,
-								},
-							};
-						});
-					},
-				},
-			);
+			const { error } = await tryCatch.async(mutation.mutateAsync(value));
+			if (error) {
+				form.setFieldMeta("slug", (state) => {
+					return {
+						...state,
+						errorMap: {
+							onSubmit: error.message,
+						},
+					};
+				});
+			}
 		},
 	});
 
@@ -195,7 +158,6 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 					{(field) => (
 						<field.InputField
 							label="Workspace name"
-							required
 							autoComplete="off"
 							placeholder="Acme Inc."
 							disabled={!canUpdateWorkspace}
@@ -220,9 +182,18 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 					)}
 				</form.AppField>
 				{canUpdateWorkspace && (
-					<Button type="submit" className="ml-auto w-fit">
-						Update profile
-					</Button>
+					<div className="ml-auto flex gap-2">
+						<Button variant="ghost" type="button" onClick={() => form.reset()}>
+							Reset
+						</Button>
+						<form.Subscribe selector={(state) => state.isPristine}>
+							{(isPristine) => (
+								<Button type="submit" disabled={isPristine}>
+									Update
+								</Button>
+							)}
+						</form.Subscribe>
+					</div>
 				)}
 			</form.Form>
 		</form.AppForm>
@@ -275,35 +246,20 @@ function DeleteWorkspaceTrigger({ children }: { children: React.ReactNode }) {
 }
 
 function DeleteWorkspaceForm() {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const context = use(DeleteContext);
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const mutation = useDeleteWorkspace();
 
 	const form = useAppForm({
 		defaultValues: {
 			confirm: "",
 		},
 		validators: {
-			onSubmit: deleteWorkspaceSchema,
+			onSubmit: deleteWorkspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await authClient.workspace.delete(
-				{ idOrSlug: value.confirm },
-				{
-					onSuccess: () => {
-						toast.success("Workspace deleted");
-						queryClient.invalidateQueries({
-							queryKey: workspaceKeys.all,
-						});
-						context?.setOpen(false);
-						navigate({ to: "/" });
-					},
-					onError: (ctx) => {
-						toast.error(ctx.error.message);
-					},
-				},
-			);
+			await mutation.mutateAsync(value);
+			context?.setOpen(false);
 		},
 	});
 

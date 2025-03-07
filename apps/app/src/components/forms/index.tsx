@@ -16,7 +16,6 @@ const { useAppForm, withForm } = createFormHook({
 		TransactionAmountField,
 	},
 	formComponents: {
-		FieldSet: Form,
 		Form,
 	},
 	fieldContext,

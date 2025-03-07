@@ -1,6 +1,12 @@
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
-import { deleteWorkspaceSchema, workspaceSchema } from "@/lib/schema";
+import {
+	type ExpenseFormSchema,
+	createExpenseFormSchema,
+	deleteWorkspaceFormSchema,
+	workspaceFormSchema,
+} from "@/lib/schema";
+import { useCreateExpense } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import {
 	categoriesQueryOptions,
@@ -70,11 +76,16 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 }
 
 function CreateExpenseForm() {
-	const queryClient = useQueryClient();
 	const context = use(CreateContext);
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+
+	const mutation = useCreateExpense();
+	const defaultWallet = wallets[0];
+
+	const walletOptions = wallets.map((w) => ({ label: w.name, value: w.id }));
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 
 	const form = useAppForm({
 		defaultValues: {
@@ -83,20 +94,30 @@ function CreateExpenseForm() {
 			date: new Date(),
 			transaction: {
 				value: 0,
-				currency: "VND",
+				currency: defaultWallet.currency,
 			},
-			repeat: "one-time",
-			walletId: "",
+			walletId: defaultWallet.id,
 			categoryId: "",
+			repeat: "one-time",
+		} as ExpenseFormSchema,
+		validators: {
+			onSubmit: createExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			console.log(value);
+			const payload = {
+				title: value.title,
+				description: value.description,
+				amount: value.transaction.value,
+				currency: value.transaction.currency,
+				date: value.date.toISOString(),
+				walletId: value.walletId,
+				categoryId: value.categoryId,
+				repeat: value.repeat,
+			};
+			await mutation.mutateAsync(payload);
 			context?.setOpen(false);
 		},
 	});
-
-	const walletOptions = wallets.map((w) => ({ label: w.name, value: w.id }));
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<form.AppForm>
@@ -138,7 +159,7 @@ function CreateExpenseForm() {
 function UpdateExpenseForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
+	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 
 	const form = useAppForm({
@@ -147,7 +168,7 @@ function UpdateExpenseForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: workspaceSchema,
+			onSubmit: workspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			if (!canUpdateWorkspace) return;
@@ -292,7 +313,7 @@ function DeleteExpenseForm() {
 			confirm: "",
 		},
 		validators: {
-			onSubmit: deleteWorkspaceSchema,
+			onSubmit: deleteWorkspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await authClient.workspace.delete(

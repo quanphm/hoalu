@@ -34,3 +34,7 @@ export const walletKeys = {
 export const categoryKeys = {
 	all: ["categories"] as const,
 };
+
+export const expenseKeys = {
+	all: ["expenses"] as const,
+};

@@ -165,7 +165,7 @@ function RowActions({ row }: { row: Row<Item> }) {
 		},
 	});
 	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember(slug);
+	const mutation = useRemoveMember();
 
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);

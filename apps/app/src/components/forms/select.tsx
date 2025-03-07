@@ -20,7 +20,7 @@ export function SelectField(props: SelectFieldProps) {
 						<SelectValue placeholder="Select" />
 					</SelectTrigger>
 				</FormControl>
-				<SelectContent>
+				<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
 					{props.options.map((opt) => (
 						<SelectItem key={opt.value} value={opt.value}>
 							{opt.label}

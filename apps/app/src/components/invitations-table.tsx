@@ -127,8 +127,8 @@ const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
 
 function RowActions({ row }: { row: Row<Member> }) {
 	const [open, setOpen] = useState(false);
-	const params = routeApi.useParams();
-	const { data: member } = useSuspenseQuery(getActiveMemberOptions(params.slug));
+	const { slug } = routeApi.useParams();
+	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canUpdate = authClient.workspace.checkRolePermission({
 		// @ts-expect-error: [todo] fix role type
 		role: member.role,
@@ -141,7 +141,7 @@ function RowActions({ row }: { row: Row<Member> }) {
 
 	const onCancel = async () => {
 		await mutation.mutateAsync(row.original.id);
-		queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(params.slug) });
+		queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		setOpen(false);
 	};
 

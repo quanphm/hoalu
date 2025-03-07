@@ -1,6 +1,6 @@
 import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
+import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
-import * as api from "@/services/api";
 import {
 	authKeys,
 	categoryKeys,
@@ -103,20 +103,20 @@ export const invitationDetailsOptions = (id: string) => {
 export const tasksQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: taskKeys.all,
-		queryFn: () => api.fetchTasks(slug),
+		queryFn: () => apiClient.tasks.list(slug),
 	});
 };
 
 export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: walletKeys.all,
-		queryFn: () => api.fetchWallets(slug),
+		queryFn: () => apiClient.wallets.list(slug),
 	});
 };
 
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: categoryKeys.all,
-		queryFn: () => api.fetchCategories(slug),
+		queryFn: () => apiClient.categories.list(slug),
 	});
 };
