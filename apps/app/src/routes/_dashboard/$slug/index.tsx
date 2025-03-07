@@ -1,4 +1,5 @@
 import { ContentCard } from "@/components/cards";
+import { CreateExpenseDialog, CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -34,10 +35,14 @@ function RouteComponent() {
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6}>
-					<Button>
-						<SendIcon className="mr-2 size-4" />
-						Create expense
-					</Button>
+					<CreateExpenseDialog>
+						<CreateExpenseDialogTrigger>
+							<Button>
+								<SendIcon className="mr-2 size-4" />
+								Create expense
+							</Button>
+						</CreateExpenseDialogTrigger>
+					</CreateExpenseDialog>
 					<Button>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task
@@ -60,7 +65,7 @@ function RouteComponent() {
 							<SectionTitle>Wallets ({wallets.data.length})</SectionTitle>
 							<Button variant="outline" size="sm">
 								<PlusIcon className="mr-2 size-4" />
-								Add
+								Create wallet
 							</Button>
 						</SectionHeader>
 						<SectionContent columns={2} className="gap-4">

@@ -1,12 +1,12 @@
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, requestOnlySessionMiddleware } from "better-auth/api";
 import type { AccessControl, Role } from "better-auth/plugins/access";
 import { APIError } from "better-call";
 import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 import type { Session, User } from "../../../utils/types";
 import { defaultRoles, type defaultStatements } from "../access";
-import { getOrgAdapter } from "../adapter";
+import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 
@@ -76,7 +76,7 @@ export const createWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_WORKSPACE,
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, options);
+		const adapter = getAdapter(ctx.context, options);
 
 		const userWorkspaces = await adapter.listWorkspaces(user.id);
 		const hasReachedWorkspaceLimit =
@@ -125,6 +125,29 @@ export const createWorkspace = createAuthEndpoint(
 		}
 
 		return ctx.json(workspace);
+	},
+);
+
+export const checkWorkspaceSlug = createAuthEndpoint(
+	"/workspace/check-slug",
+	{
+		method: "POST",
+		body: z.object({
+			slug: z.string(),
+		}),
+		use: [requestOnlySessionMiddleware, workspaceMiddleware],
+	},
+	async (ctx) => {
+		const adapter = getAdapter(ctx.context);
+		const workspace = await adapter.findWorkspace(ctx.body.slug);
+		if (!workspace) {
+			return ctx.json({
+				status: true,
+			});
+		}
+		throw new APIError("BAD_REQUEST", {
+			message: WORKSPACE_ERROR_CODES.WORKSPACE_SLUG_ALREADY_EXISTS,
+		});
 	},
 );
 
@@ -194,7 +217,7 @@ export const updateWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
@@ -285,7 +308,7 @@ export const deleteWorkspace = createAuthEndpoint(
 				},
 			});
 		}
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
@@ -382,7 +405,7 @@ export const getFullWorkspace = createAuthEndpoint(
 			});
 		}
 
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findFullWorkspace(idOrSlug);
 		if (!workspace) {
 			throw new APIError("BAD_REQUEST", {
@@ -427,7 +450,7 @@ export const listWorkspaces = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspaces = await adapter.listWorkspaces(ctx.context.session.user.id);
 		return ctx.json(workspaces);
 	},
@@ -518,7 +541,7 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 				});
 			}
-			const adapter = getOrgAdapter(ctx.context);
+			const adapter = getAdapter(ctx.context);
 			const workspace = await adapter.findWorkspace(idOrSlug);
 			if (!workspace) {
 				throw new APIError("BAD_REQUEST", {

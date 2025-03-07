@@ -1,6 +1,6 @@
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
-import { inviteSchema } from "@/lib/schema";
+import { inviteFormSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
@@ -25,7 +25,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			email: "",
 		},
 		validators: {
-			onSubmit: inviteSchema,
+			onSubmit: inviteFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await authClient.workspace.inviteMember(
@@ -38,6 +38,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 					onSuccess: () => {
 						toast.success("Invitation sent");
 						queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(workspace.slug) });
+						form.reset();
 						setOpen(false);
 					},
 					onError: (ctx) => {

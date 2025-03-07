@@ -158,13 +158,14 @@ function RowActions({ row }: { row: Row<Item> }) {
 	const { slug } = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canDelete = authClient.workspace.checkRolePermission({
+		// @ts-expect-error: [todo] fix role type
 		role: member.role,
 		permission: {
 			member: ["delete"],
 		},
 	});
 	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember(slug);
+	const mutation = useRemoveMember();
 
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);

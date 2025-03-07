@@ -14,7 +14,7 @@ import type {
 	WorkspaceInput,
 } from "./schema";
 
-export const getOrgAdapter = (context: AuthContext, options?: WorkspaceOptions) => {
+export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => {
 	const adapter = context.adapter;
 
 	return {

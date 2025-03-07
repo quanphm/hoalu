@@ -2,7 +2,7 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
-import { getOrgAdapter } from "../adapter";
+import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
 import type { WorkspaceOptions } from "../index";
@@ -90,7 +90,7 @@ export const createInvitation = createAuthEndpoint(
 
 		const session = ctx.context.session;
 		const idOrSlug = ctx.body.idOrSlug;
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
@@ -217,7 +217,7 @@ export const acceptInvitation = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation || invitation.expiresAt < new Date() || invitation.status !== "pending") {
@@ -317,7 +317,7 @@ export const rejectInvitation = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation || invitation.expiresAt < new Date() || invitation.status !== "pending") {
 			throw new APIError("BAD_REQUEST", {
@@ -373,7 +373,7 @@ export const cancelInvitation = createAuthEndpoint(
 	},
 	async (ctx) => {
 		const session = ctx.context.session;
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation) {
 			throw new APIError("BAD_REQUEST", {
@@ -479,7 +479,7 @@ export const getInvitation = createAuthEndpoint(
 		},
 	},
 	async (ctx) => {
-		const adapter = getOrgAdapter(ctx.context, ctx.context.orgOptions);
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const invitation = await adapter.findInvitationById(ctx.query.id);
 		if (!invitation || invitation.status !== "pending" || invitation.expiresAt < new Date()) {
 			throw new APIError("BAD_REQUEST", {

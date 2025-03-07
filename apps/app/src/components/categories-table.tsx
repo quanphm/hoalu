@@ -30,7 +30,19 @@ type Item = {
 	id: string;
 	name: string;
 	description: string | null;
-	color: "red" | "green" | "blue" | "yellow" | "purple" | "pink" | "brown";
+	color:
+		| "red"
+		| "green"
+		| "blue"
+		| "cyan"
+		| "yellow"
+		| "orange"
+		| "purple"
+		| "fuchsia"
+		| "pink"
+		| "rose"
+		| "gray"
+		| "stone";
 };
 
 const columns: ColumnDef<Item>[] = [

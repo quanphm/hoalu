@@ -1,3 +1,4 @@
+import type { TaskSchema } from "@/lib/schema";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -18,13 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-type Item = {
-	id: string;
-	title: string;
-	status: boolean;
-};
-
-const columns: ColumnDef<Item>[] = [
+const columns: ColumnDef<TaskSchema>[] = [
 	{
 		accessorKey: "title",
 		header: "Task",
@@ -33,7 +28,7 @@ const columns: ColumnDef<Item>[] = [
 		accessorKey: "status",
 		header: "Status",
 		cell: ({ row }) => {
-			const value = row.getValue("status");
+			const value: TaskSchema["status"] = row.getValue("status");
 			return value === "done" ? (
 				<Badge variant="success">Completed</Badge>
 			) : (
@@ -53,7 +48,7 @@ const columns: ColumnDef<Item>[] = [
 	},
 ];
 
-export function TasksTable({ data }: { data: Item[] }) {
+export function TasksTable({ data }: { data: TaskSchema[] }) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -107,7 +102,7 @@ export function TasksTable({ data }: { data: Item[] }) {
 	);
 }
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<TaskSchema> }) {
 	const [open, setOpen] = useState(false);
 
 	return (

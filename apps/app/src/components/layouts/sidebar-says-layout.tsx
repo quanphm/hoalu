@@ -4,7 +4,7 @@ import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { SearchInput } from "@/components/search-input";
 import { listWorkspacesOptions } from "@/services/query-options";
-import { DiscordIcon, GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
+import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SidebarFooter, SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
 import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
@@ -49,30 +49,25 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{!hasSlug && <NavWorkspaceList />}
 					<NavDocumentation />
 				</SidebarContent>
-				<SidebarFooter className="border-t py-4">
-					<div className="space-y-4">
-						<div className="flex justify-center gap-4">
+				<SidebarFooter className="border-t px-4 py-4">
+					<div className="flex items-center justify-between">
+						<p className="text-muted-foreground text-sm leading-none">
+							v{import.meta.env.PUBLIC_APP_VERSION}
+						</p>
+						<div className="flex gap-1.5">
 							<a
 								href="https://github.com/quanphm/hoalu"
 								target="_blank"
 								rel="noreferrer"
-								className="rounded-md border p-2 hover:bg-muted"
+								className="rounded-md p-2 hover:bg-muted"
 							>
 								<GithubIcon className="size-4" />
-							</a>
-							<a
-								href="https://github.com/quanphm/hoalu"
-								target="_blank"
-								rel="noreferrer"
-								className="rounded-md border p-2 hover:bg-muted"
-							>
-								<DiscordIcon className="size-4" />
 							</a>
 							<a
 								href="https://x.com/quan_phmn"
 								target="_blank"
 								rel="noreferrer"
-								className="rounded-md border p-2 hover:bg-muted"
+								className="rounded-md p-2 hover:bg-muted"
 							>
 								<TwitterXIcon className="size-4" />
 							</a>

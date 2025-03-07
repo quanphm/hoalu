@@ -19,6 +19,9 @@ export default defineConfig({
 			},
 		}),
 	],
+	define: {
+		"import.meta.env.PUBLIC_APP_VERSION": JSON.stringify(process.env.npm_package_version),
+	},
 	optimizeDeps: {
 		exclude: ["@electric-sql/pglite"],
 	},

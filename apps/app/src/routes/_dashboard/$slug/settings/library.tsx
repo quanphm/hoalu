@@ -20,7 +20,7 @@ function RouteComponent() {
 				<SectionTitle>Categories</SectionTitle>
 				<Button variant="outline" size="sm">
 					<PlusIcon className="mr-2 size-4" />
-					Add
+					Create category
 				</Button>
 			</SectionHeader>
 			<SectionContent columns={3}>
