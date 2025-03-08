@@ -12,7 +12,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	useHotkeys(
-		"shift+e",
+		"mod+e",
 		() => {
 			setExpenseOpen(true);
 		},
@@ -28,7 +28,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug", params: { slug } });
 		},
 		{
-			description: "go to Dashboard",
+			description: "Go to Dashboard",
 		},
 		[slug, navigate],
 	);
@@ -39,7 +39,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
 		{
-			description: "go to Expenses",
+			description: "Go to Expenses",
 		},
 		[slug, navigate],
 	);
@@ -50,7 +50,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
 		{
-			description: "go to Tasks",
+			description: "Go to Tasks",
 		},
 		[slug, navigate],
 	);
@@ -61,7 +61,18 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
 		{
-			description: "go to Settings / Workspace",
+			description: "Go to Settings / Workspace",
+		},
+		[slug, navigate],
+	);
+
+	useHotkeys(
+		"m",
+		() => {
+			navigate({ to: "/$slug/settings/members", params: { slug } });
+		},
+		{
+			description: "Go to Settings / Members",
 		},
 		[slug, navigate],
 	);
@@ -72,7 +83,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/settings/library", params: { slug } });
 		},
 		{
-			description: "go to Settings / Library",
+			description: "Go to Settings / Library",
 		},
 		[slug, navigate],
 	);

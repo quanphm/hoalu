@@ -28,7 +28,7 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent columns={6}>
 					<CreateExpenseDialogTrigger>
-						<Button>
+						<Button className="bg-indigo-700 text-white/98">
 							<SendIcon className="mr-2 size-4" />
 							Create expense
 						</Button>

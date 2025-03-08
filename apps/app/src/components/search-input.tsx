@@ -1,6 +1,7 @@
 import { SearchIcon } from "@hoalu/icons/lucide";
 import { Input } from "@hoalu/ui/input";
 import { useId } from "react";
+import { HotKey } from "./hotkey";
 
 export function SearchInput() {
 	const id = useId();
@@ -19,9 +20,7 @@ export function SearchInput() {
 					<SearchIcon size={16} strokeWidth={2} aria-hidden="true" />
 				</div>
 				<div className="absolute inset-y-0 end-0 flex items-center justify-center pe-2 text-muted-foreground">
-					<kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium text-[10px] sm:flex">
-						/
-					</kbd>
+					<HotKey>/</HotKey>
 				</div>
 			</div>
 		</div>

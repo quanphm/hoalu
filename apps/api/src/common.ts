@@ -53,7 +53,7 @@ export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 		color: "red",
 	},
 	{
-		name: "❔ Uncategorized",
+		name: "❓ Uncategorized",
 		color: "stone",
 	},
 ];

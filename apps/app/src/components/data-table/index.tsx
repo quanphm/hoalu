@@ -7,7 +7,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 
-export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<T>[] }) {
+export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<T, any>[] }) {
 	const table = useReactTable({
 		data,
 		columns,

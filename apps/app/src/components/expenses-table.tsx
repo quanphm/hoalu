@@ -20,16 +20,17 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useState } from "react";
 
-const columns: ColumnDef<ExpenseSchema>[] = [
-	{
-		accessorKey: "date",
+const columnHelper = createColumnHelper<ExpenseSchema>();
+
+const columns = [
+	columnHelper.accessor("date", {
 		header: "Date",
-		cell: ({ row }) => {
-			const value = row.getValue("date");
+		cell: (info) => {
+			const value = info.getValue();
 			return <p className="text-muted-foreground">{format(value, "d MMM yyyy")}</p>;
 		},
 		meta: {
@@ -37,47 +38,25 @@ const columns: ColumnDef<ExpenseSchema>[] = [
 				"w-(--header-date-size) min-w-(--header-date-size) max-w-(--header-date-size)",
 			cellClassName: "w-(--col-date-size) min-w-(--col-date-size) max-w-(--col-date-size)",
 		},
-	},
-	{
-		accessorKey: "title",
+	}),
+	columnHelper.accessor("title", {
 		header: "Transaction",
-		cell: ({ row }) => {
-			const value = row.getValue("title");
-			return <p>{value}</p>;
-		},
-	},
-	{
-		id: "category",
+		cell: (info) => info.getValue(),
+	}),
+	columnHelper.accessor("category.name", {
 		header: "Category",
-		cell: ({ row }) => {
-			const value = row.original.category.name;
-			return <p>{value}</p>;
-		},
+		cell: (info) => info.getValue(),
 		meta: {
 			headerClassName:
 				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
 			cellClassName:
 				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
 		},
-	},
-	{
-		id: "wallet",
-		header: "Wallet",
-		cell: ({ row }) => {
-			const value = row.original.wallet.name;
-			return <p>{value}</p>;
-		},
-		meta: {
-			headerClassName:
-				"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
-			cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
-		},
-	},
-	{
-		id: "amount",
+	}),
+	columnHelper.accessor("amount", {
 		header: "Amount",
-		cell: ({ row }) => {
-			const value = formatCurrency(row.original.amount, row.original.currency);
+		cell: (info) => {
+			const value = formatCurrency(info.getValue(), info.row.original.currency);
 			return <p>{value}</p>;
 		},
 		meta: {
@@ -86,17 +65,26 @@ const columns: ColumnDef<ExpenseSchema>[] = [
 			cellClassName:
 				"w-(--col-amount-size) min-w-(--col-amount-size) max-w-(--col-amount-size) text-right",
 		},
-	},
-	{
+	}),
+	columnHelper.accessor("wallet.name", {
+		header: "Wallet",
+		cell: (info) => info.getValue(),
+		meta: {
+			headerClassName:
+				"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
+			cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
+		},
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
 export function ExpensesTable({
