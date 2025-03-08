@@ -51,8 +51,8 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 				</SidebarContent>
 				<SidebarFooter className="border-t px-4 py-4">
 					<div className="flex items-center justify-between">
-						<p className="text-muted-foreground text-sm leading-none">
-							v{import.meta.env.PUBLIC_APP_VERSION}
+						<p className="text-muted-foreground text-sm leading-none tracking-wider">
+							{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
 						<div className="flex gap-1.5">
 							<a

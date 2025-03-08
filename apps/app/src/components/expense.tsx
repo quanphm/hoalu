@@ -1,3 +1,4 @@
+import { createExpenseDialogOpenAtom, deleteExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -26,48 +27,30 @@ import {
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
-import { createContext, use, useMemo, useState } from "react";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useAtom, useSetAtom } from "jotai";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-type CreateContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const CreateContext = createContext<CreateContext | null>(null);
-
 function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const [open, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent
-					className="sm:max-w-[720px]"
-					onEscapeKeyDown={(event) => {
-						event.preventDefault();
-					}}
-					onPointerDownOutside={(event) => {
-						event.preventDefault();
-					}}
-				>
-					<DialogHeader>
-						<DialogTitle>Create new expense</DialogTitle>
-					</DialogHeader>
-					<DialogDescription />
-					<CreateExpenseForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<Dialog open={open} onOpenChange={setOpen}>
+			{children}
+			<DialogContent
+				className="sm:max-w-[720px]"
+				onPointerDownOutside={(event) => {
+					event.preventDefault();
+				}}
+			>
+				<DialogHeader>
+					<DialogTitle>Create new expense</DialogTitle>
+				</DialogHeader>
+				<DialogDescription />
+				<CreateExpenseForm />
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -76,7 +59,7 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 }
 
 function CreateExpenseForm() {
-	const context = use(CreateContext);
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
@@ -115,7 +98,7 @@ function CreateExpenseForm() {
 				repeat: value.repeat,
 			};
 			await mutation.mutateAsync(payload);
-			context?.setOpen(false);
+			setOpen(false);
 		},
 	});
 
@@ -257,44 +240,29 @@ function UpdateExpenseForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean
 	);
 }
 
-type DeleteContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const DeleteContext = createContext<CreateContext | null>(null);
-
 function DeleteExpenseDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<DeleteContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const [open, setOpen] = useAtom(deleteExpenseDialogOpenAtom);
 
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent className="sm:max-w-[400px]">
-					<DialogHeader className="space-y-3">
-						<DialogTitle>Confirm delete workspace</DialogTitle>
-						<DialogDescription>
-							<span className="text-amber-600 text-sm">
-								<TriangleAlertIcon
-									className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
-									strokeWidth={2}
-									aria-hidden="true"
-								/>
-								This action can't be undone.
-							</span>
-						</DialogDescription>
-					</DialogHeader>
-					<DeleteExpenseForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<Dialog open={open} onOpenChange={setOpen}>
+			{children}
+			<DialogContent className="sm:max-w-[400px]">
+				<DialogHeader className="space-y-3">
+					<DialogTitle>Confirm delete workspace</DialogTitle>
+					<DialogDescription>
+						<span className="text-amber-600 text-sm">
+							<TriangleAlertIcon
+								className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
+								strokeWidth={2}
+								aria-hidden="true"
+							/>
+							This action can't be undone.
+						</span>
+					</DialogDescription>
+				</DialogHeader>
+				<DeleteExpenseForm />
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -304,9 +272,7 @@ function DeleteExpenseTrigger({ children }: { children: React.ReactNode }) {
 
 function DeleteExpenseForm() {
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
-	const context = use(DeleteContext);
+	const { slug } = routeApi.useParams();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -320,14 +286,10 @@ function DeleteExpenseForm() {
 				{ idOrSlug: value.confirm },
 				{
 					onSuccess: () => {
-						toast.success("Workspace deleted");
+						toast.success("Expense deleted");
 						queryClient.invalidateQueries({
 							queryKey: workspaceKeys.all,
 						});
-						if (context) {
-							context.setOpen(false);
-						}
-						navigate({ to: "/" });
 					},
 					onError: (ctx) => {
 						toast.error(ctx.error.message);

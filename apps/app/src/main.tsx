@@ -1,7 +1,7 @@
-import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
-import { LocalPostgresProvider } from "@/components/local-postgres-provider";
+import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
-import { UiProviders } from "@/components/ui-providers";
+import { LocalPostgresProvider } from "@/components/providers/local-postgres-provider";
+import { UiProvider } from "@/components/providers/ui-provider";
 import { verifyEnv } from "@/lib/env";
 import { queryClient } from "@/lib/query-client";
 import { DokiClientProvider } from "@hoalu/doki";
@@ -44,7 +44,7 @@ const root = createRoot(container as HTMLElement);
 
 function App() {
 	return (
-		<UiProviders>
+		<UiProvider>
 			<LocalPostgresProvider>
 				<QueryClientProvider client={queryClient}>
 					<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
@@ -52,7 +52,7 @@ function App() {
 					</DokiClientProvider>
 				</QueryClientProvider>
 			</LocalPostgresProvider>
-		</UiProviders>
+		</UiProvider>
 	);
 }
 

@@ -1,4 +1,4 @@
-import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
+import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import type { QueryClient } from "@tanstack/react-query";
 import { type ErrorComponentProps, createRootRouteWithContext } from "@tanstack/react-router";
 import { Outlet } from "@tanstack/react-router";

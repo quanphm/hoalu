@@ -1,5 +1,5 @@
 import { ContentCard } from "@/components/cards";
-import { CreateExpenseDialog, CreateExpenseDialogTrigger } from "@/components/expense";
+import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -27,14 +27,12 @@ function RouteComponent() {
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6}>
-					<CreateExpenseDialog>
-						<CreateExpenseDialogTrigger>
-							<Button>
-								<SendIcon className="mr-2 size-4" />
-								Create expense
-							</Button>
-						</CreateExpenseDialogTrigger>
-					</CreateExpenseDialog>
+					<CreateExpenseDialogTrigger>
+						<Button>
+							<SendIcon className="mr-2 size-4" />
+							Create expense
+						</Button>
+					</CreateExpenseDialogTrigger>
 					<Button>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task

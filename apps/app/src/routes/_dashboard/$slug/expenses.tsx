@@ -1,4 +1,4 @@
-import { CreateExpenseDialog, CreateExpenseDialogTrigger } from "@/components/expense";
+import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { expensesQueryOptions } from "@/services/query-options";
@@ -19,14 +19,12 @@ function RouteComponent() {
 		<Section>
 			<SectionHeader>
 				<SectionTitle>Expense entries</SectionTitle>
-				<CreateExpenseDialog>
-					<CreateExpenseDialogTrigger>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create expense
-						</Button>
-					</CreateExpenseDialogTrigger>
-				</CreateExpenseDialog>
+				<CreateExpenseDialogTrigger>
+					<Button variant="outline" size="sm">
+						<PlusIcon className="mr-2 size-4" />
+						Create expense
+					</Button>
+				</CreateExpenseDialogTrigger>
 			</SectionHeader>
 			<SectionContent>
 				<ExpensesTable data={expenses} />
