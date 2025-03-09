@@ -2,12 +2,14 @@ import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
+import { HotKey } from "@/components/hotkey";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -27,12 +29,21 @@ function RouteComponent() {
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6}>
-					<CreateExpenseDialogTrigger>
-						<Button className="bg-indigo-700 text-white/98">
-							<SendIcon className="mr-2 size-4" />
-							Create expense
-						</Button>
-					</CreateExpenseDialogTrigger>
+					<Tooltip>
+						<TooltipTrigger>
+							<CreateExpenseDialogTrigger>
+								<Button className="bg-indigo-700 text-white/98 hover:bg-indigo-600/75">
+									<SendIcon className="mr-2 size-4" />
+									Create expense
+								</Button>
+							</CreateExpenseDialogTrigger>
+						</TooltipTrigger>
+						<TooltipContent side="right">
+							<HotKey>
+								<span className="text-sm leading-none">⌘</span>E
+							</HotKey>
+						</TooltipContent>
+					</Tooltip>
 					<Button>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task

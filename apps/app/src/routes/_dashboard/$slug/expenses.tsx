@@ -1,9 +1,11 @@
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
+import { HotKey } from "@/components/hotkey";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { expensesQueryOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -19,12 +21,21 @@ function RouteComponent() {
 		<Section>
 			<SectionHeader>
 				<SectionTitle>Expense entries</SectionTitle>
-				<CreateExpenseDialogTrigger>
-					<Button variant="outline" size="sm">
-						<PlusIcon className="mr-2 size-4" />
-						Create expense
-					</Button>
-				</CreateExpenseDialogTrigger>
+				<Tooltip>
+					<TooltipTrigger>
+						<CreateExpenseDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create expense
+							</Button>
+						</CreateExpenseDialogTrigger>
+					</TooltipTrigger>
+					<TooltipContent side="right">
+						<HotKey>
+							<span className="text-sm leading-none">⌘</span>E
+						</HotKey>
+					</TooltipContent>
+				</Tooltip>
 			</SectionHeader>
 			<SectionContent>
 				<ExpensesTable data={expenses} />

@@ -1,5 +1,5 @@
 import { Input } from "@hoalu/ui/input";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "./components";
+import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,9 +11,9 @@ export function InputField(props: InputFieldProps) {
 	const field = useFieldContext<string>();
 
 	return (
-		<FormItem>
-			{props.label && <FormLabel>{props.label}</FormLabel>}
-			<FormControl>
+		<Field>
+			{props.label && <FieldLabel>{props.label}</FieldLabel>}
+			<FieldControl>
 				<Input
 					name={field.name}
 					value={field.state.value}
@@ -21,9 +21,9 @@ export function InputField(props: InputFieldProps) {
 					onChange={(e) => field.handleChange(e.target.value)}
 					{...props}
 				/>
-			</FormControl>
-			{props.description && <FormDescription>{props.description}</FormDescription>}
-			<FormMessage />
-		</FormItem>
+			</FieldControl>
+			{props.description && <FieldDescription>{props.description}</FieldDescription>}
+			<FieldMessage />
+		</Field>
 	);
 }

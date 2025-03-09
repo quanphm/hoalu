@@ -1,15 +1,38 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
+import { CreateExpenseDialog } from "@/components/expense";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
-import { CreateExpenseDialog } from "../expense";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
+
+	const { setTheme } = useTheme();
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
+
+	useHotkeys(
+		"shift+l",
+		() => {
+			setTheme("light");
+		},
+		{
+			description: "Theme: Light mode",
+		},
+	);
+
+	useHotkeys(
+		"shift+d",
+		() => {
+			setTheme("dark");
+		},
+		{
+			description: "Theme: Dark mode",
+		},
+	);
 
 	useHotkeys(
 		"mod+e",
@@ -18,7 +41,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		},
 		{
 			preventDefault: true,
-			description: "open expense dialog",
+			description: "Dialog: Create new expense",
 		},
 	);
 
@@ -28,7 +51,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug", params: { slug } });
 		},
 		{
-			description: "Go to Dashboard",
+			description: "Navigate: Dashboard",
 		},
 		[slug, navigate],
 	);
@@ -39,7 +62,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
 		{
-			description: "Go to Expenses",
+			description: "Navigate: Expenses",
 		},
 		[slug, navigate],
 	);
@@ -50,7 +73,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
 		{
-			description: "Go to Tasks",
+			description: "Navigate: Tasks",
 		},
 		[slug, navigate],
 	);
@@ -61,7 +84,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
 		{
-			description: "Go to Settings / Workspace",
+			description: "Navigate: Settings / Workspace",
 		},
 		[slug, navigate],
 	);
@@ -72,7 +95,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/settings/members", params: { slug } });
 		},
 		{
-			description: "Go to Settings / Members",
+			description: "Navigate: Settings / Members",
 		},
 		[slug, navigate],
 	);
@@ -83,7 +106,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			navigate({ to: "/$slug/settings/library", params: { slug } });
 		},
 		{
-			description: "Go to Settings / Library",
+			description: "Navigate: Settings / Library",
 		},
 		[slug, navigate],
 	);

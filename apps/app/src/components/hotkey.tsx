@@ -4,7 +4,7 @@ export function HotKey({ className, children, ...props }: React.ComponentProps<"
 	return (
 		<span
 			className={cn(
-				"pointer-events-none hidden h-5 min-w-6 select-none items-center justify-center rounded border bg-muted px-1.5 text-center text-[10px] text-muted-foreground leading-none sm:flex",
+				"pointer-events-none hidden h-5 min-w-6 select-none items-center justify-center gap-1 rounded border bg-muted px-1.5 text-center text-muted-foreground text-xs leading-none sm:flex",
 				className,
 			)}
 			{...props}

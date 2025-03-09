@@ -1,6 +1,6 @@
 import { Calendar } from "@hoalu/ui/calendar";
 import { useState } from "react";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "./components";
+import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
 interface DatepickerFieldProps {
@@ -23,10 +23,10 @@ export function DatepickerField(props: DatepickerFieldProps) {
 	};
 
 	return (
-		<FormItem>
-			{props.label && <FormLabel>{props.label}</FormLabel>}
+		<Field>
+			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="rounded-md border">
-				<FormControl>
+				<FieldControl>
 					<Calendar
 						mode="single"
 						className="min-h-[300px] w-full p-2"
@@ -35,10 +35,10 @@ export function DatepickerField(props: DatepickerFieldProps) {
 						month={month}
 						onMonthChange={setMonth}
 					/>
-				</FormControl>
+				</FieldControl>
 			</div>
-			{props.description && <FormDescription>{props.description}</FormDescription>}
-			<FormMessage />
-		</FormItem>
+			{props.description && <FieldDescription>{props.description}</FieldDescription>}
+			<FieldMessage />
+		</Field>
 	);
 }

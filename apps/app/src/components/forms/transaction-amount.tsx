@@ -1,7 +1,7 @@
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
 import { Group, Input, NumberField } from "react-aria-components";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "./components";
+import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
 interface TransactionAmountValue {
@@ -32,10 +32,10 @@ export function TransactionAmountField(props: TransactionAmountFieldProps) {
 	};
 
 	return (
-		<FormItem>
-			{props.label && <FormLabel>{props.label}</FormLabel>}
+		<Field>
+			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="isolate flex rounded-md">
-				<FormControl>
+				<FieldControl>
 					<NumberField
 						value={field.state.value.value}
 						formatOptions={{
@@ -58,7 +58,7 @@ export function TransactionAmountField(props: TransactionAmountFieldProps) {
 							<Input className="flex-1 bg-background px-3 py-2 text-foreground tabular-nums outline-none" />
 						</Group>
 					</NumberField>
-				</FormControl>
+				</FieldControl>
 				<SelectNative
 					className="w-[80px] rounded-s-none bg-muted"
 					value={field.state.value.currency}
@@ -69,8 +69,8 @@ export function TransactionAmountField(props: TransactionAmountFieldProps) {
 					<option>USD</option>
 				</SelectNative>
 			</div>
-			{props.description && <FormDescription>{props.description}</FormDescription>}
-			<FormMessage />
-		</FormItem>
+			{props.description && <FieldDescription>{props.description}</FieldDescription>}
+			<FieldMessage />
+		</Field>
 	);
 }
