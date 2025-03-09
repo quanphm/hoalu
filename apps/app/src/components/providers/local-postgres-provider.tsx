@@ -1,3 +1,4 @@
+import PGWorker from "@/lib/pglite-worker?worker";
 import { PGliteProvider } from "@electric-sql/pglite-react";
 import { electricSync } from "@electric-sql/pglite-sync";
 import { type PGliteWithLive, live } from "@electric-sql/pglite/live";
@@ -5,7 +6,6 @@ import { PGliteWorker } from "@electric-sql/pglite/worker";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { LoaderCircleIcon } from "@hoalu/icons/lucide";
 import { useEffect, useState } from "react";
-import PGWorker from "../lib/pglite-worker?worker";
 
 let syncStarted = false;
 

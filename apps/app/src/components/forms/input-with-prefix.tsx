@@ -1,5 +1,5 @@
 import { Input } from "@hoalu/ui/input";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "./components";
+import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,13 +11,13 @@ export function InputWithPrefixField(props: InputFieldProps) {
 	const field = useFieldContext<string>();
 
 	return (
-		<FormItem>
-			{props.label && <FormLabel>{props.label}</FormLabel>}
+		<Field>
+			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="flex rounded-lg">
 				<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
 					{import.meta.env.PUBLIC_APP_BASE_URL}/
 				</span>
-				<FormControl>
+				<FieldControl>
 					<Input
 						name={field.name}
 						value={field.state.value}
@@ -26,10 +26,10 @@ export function InputWithPrefixField(props: InputFieldProps) {
 						className="-ms-px rounded-s-none"
 						{...props}
 					/>
-				</FormControl>
+				</FieldControl>
 			</div>
-			{props.description && <FormDescription>{props.description}</FormDescription>}
-			<FormMessage />
-		</FormItem>
+			{props.description && <FieldDescription>{props.description}</FieldDescription>}
+			<FieldMessage />
+		</Field>
 	);
 }

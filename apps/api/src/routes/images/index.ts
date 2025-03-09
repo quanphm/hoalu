@@ -5,7 +5,7 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { MAX_FILE_SIZE } from "../../common";
+import { MAX_UPLOAD_FILE_SIZE } from "../../common/io";
 import { createHonoInstance } from "../../lib/create-app";
 import { bunS3Client } from "../../lib/s3";
 import { workspaceMember } from "../../middlewares/workspace-member";
@@ -81,7 +81,7 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("json");
 
-			if (param.size > MAX_FILE_SIZE) {
+			if (param.size > MAX_UPLOAD_FILE_SIZE) {
 				return c.json({ message: "Maximum file size reached" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 

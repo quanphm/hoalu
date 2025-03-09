@@ -4,6 +4,7 @@ import { type Session, type SessionData, type User, authClient } from "@/lib/aut
 import {
 	authKeys,
 	categoryKeys,
+	expenseKeys,
 	invitationKeys,
 	memberKeys,
 	taskKeys,
@@ -74,7 +75,7 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 
 export const getActiveMemberOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: memberKeys.activeWithSlug(slug),
+		queryKey: memberKeys.withWorkspace(slug),
 		queryFn: async () => {
 			const { data, error } = await authClient.workspace.getActiveMember({
 				query: {
@@ -102,21 +103,28 @@ export const invitationDetailsOptions = (id: string) => {
 
 export const tasksQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: taskKeys.all,
+		queryKey: taskKeys.withWorkspace(slug),
 		queryFn: () => apiClient.tasks.list(slug),
 	});
 };
 
 export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: walletKeys.all,
+		queryKey: walletKeys.withWorkspace(slug),
 		queryFn: () => apiClient.wallets.list(slug),
 	});
 };
 
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: categoryKeys.all,
+		queryKey: categoryKeys.withWorkspace(slug),
 		queryFn: () => apiClient.categories.list(slug),
+	});
+};
+
+export const expensesQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: expenseKeys.withWorkspace(slug),
+		queryFn: () => apiClient.expenses.list(slug),
 	});
 };

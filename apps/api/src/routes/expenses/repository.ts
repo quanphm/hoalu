@@ -14,7 +14,7 @@ export class ExpenseRepository {
 			.innerJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.innerJoin(schema.wallet, eq(schema.expense.walletId, schema.wallet.id))
 			.where(eq(schema.expense.workspaceId, param.workspaceId))
-			.orderBy(desc(schema.expense.createdAt));
+			.orderBy(desc(schema.expense.date));
 
 		const result = queryData.map((data) => ({
 			...data.expense,
@@ -37,7 +37,7 @@ export class ExpenseRepository {
 			.where(
 				and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, param.workspaceId)),
 			)
-			.orderBy(desc(schema.expense.createdAt))
+			.orderBy(desc(schema.expense.date))
 			.limit(1);
 
 		if (!queryData[0]) return null;

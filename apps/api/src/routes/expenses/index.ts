@@ -43,12 +43,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = expensesSchema.pipe((exp) =>
-				exp.map((e) => ({
-					...e,
-					amount: Number(e.amount),
-				})),
-			)(expenses);
+			const parsed = expensesSchema(expenses);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -87,10 +82,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: Number(e.amount),
-			}))(expense);
+			const parsed = expenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -135,10 +127,7 @@ const route = app
 				...payload,
 			});
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: Number(e.amount),
-			}))(expense);
+			const parsed = expenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -195,10 +184,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: Number(e.amount),
-			}))(queryData);
+			const parsed = expenseSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

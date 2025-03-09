@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { prioritySchema, taskStatusSchema } from "../../common";
+import { prioritySchema, taskStatusSchema } from "../../common/schema";
 
 export const taskSchema = type({
 	"+": "delete",

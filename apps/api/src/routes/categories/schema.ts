@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { colorSchema } from "../../common";
+import { colorSchema } from "../../common/schema";
 
 export const categorySchema = type({
 	"+": "delete",

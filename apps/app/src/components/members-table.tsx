@@ -1,3 +1,5 @@
+import { DataTable } from "@/components/data-table";
+import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 import { useRemoveMember } from "@/services/mutations";
 import { getActiveMemberOptions } from "@/services/query-options";
@@ -20,21 +22,12 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import {
-	type ColumnDef,
-	type Row,
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
-import { UserAvatar } from "./user-avatar";
 
-type Item = {
+type MemberSchema = {
 	id: string;
 	name: string;
 	email: string;
@@ -42,15 +35,17 @@ type Item = {
 	role: string;
 };
 
-const columns: ColumnDef<Item>[] = [
-	{
+const columnHelper = createColumnHelper<MemberSchema>();
+
+const columns = [
+	columnHelper.display({
 		id: "name",
 		header: "Name",
-		cell: ({ row }) => {
+		cell: (info) => {
 			return (
 				<div className="flex items-center gap-3">
-					<UserAvatar name={row.original.name} image={row.original.image} />
-					<p>{row.original.name}</p>
+					<UserAvatar name={info.row.original.name} image={info.row.original.image} />
+					<p>{info.row.original.name}</p>
 				</div>
 			);
 		},
@@ -59,99 +54,44 @@ const columns: ColumnDef<Item>[] = [
 				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
 			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
 		},
-	},
-	{
-		accessorKey: "email",
+	}),
+	columnHelper.accessor("email", {
 		header: "Email",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("email")}</p>;
-		},
-	},
-	{
-		accessorKey: "role",
+		cell: (info) => info.getValue(),
+	}),
+	columnHelper.accessor("role", {
 		header: "Role",
-		cell: ({ row }) => {
-			const { role } = row.original;
+		cell: (info) => {
+			const value = info.getValue();
 			return (
 				<Badge
-					variant={role === "owner" ? "success" : "outline"}
+					variant={value === "owner" ? "success" : "outline"}
 					className="px-1.5 font-normal text-xs capitalize"
 				>
-					{role}
+					{value}
 				</Badge>
 			);
 		},
-	},
-	{
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
-export function MembersTable({ data }: { data: Item[] }) {
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-	});
-
-	return (
-		<div className="space-y-4">
-			<div className="overflow-hidden rounded-md border border-border bg-background">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead
-											key={header.id}
-											className={header.column.columnDef.meta?.headerClassName}
-										>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-		</div>
-	);
+export function MembersTable({ data }: { data: MemberSchema[] }) {
+	return <DataTable data={data} columns={columns} />;
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
+const routeApi = getRouteApi("/_dashboard/$slug");
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<MemberSchema> }) {
 	const [open, setOpen] = useState(false);
 	const navigate = routeApi.useNavigate();
 	const { slug } = routeApi.useParams();
@@ -215,11 +155,11 @@ function RowActions({ row }: { row: Row<Item> }) {
 				<DialogFooter>
 					<DialogClose asChild>
 						<Button type="button" variant="secondary">
-							Cancel
+							No
 						</Button>
 					</DialogClose>
 					<Button variant="destructive" onClick={() => onDelete()}>
-						Confirm
+						Yes
 					</Button>
 				</DialogFooter>
 			</DialogContent>

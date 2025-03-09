@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { walletTypeSchema } from "../../common";
+import { walletTypeSchema } from "../../common/schema";
 
 export const walletSchema = type({
 	"+": "delete",

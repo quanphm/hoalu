@@ -16,8 +16,10 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { createContext, use, useMemo, useState } from "react";
+
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 type CreateContext = {
 	open: boolean;
@@ -117,7 +119,7 @@ function CreateWorkspaceForm() {
 }
 
 function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
-	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const mutation = useUpdateWorkspace();
 
@@ -240,7 +242,7 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 									strokeWidth={2}
 									aria-hidden="true"
 								/>
-								This action can't be undone.
+								This action cannot be undone.
 							</span>
 						</DialogDescription>
 					</DialogHeader>
@@ -257,7 +259,7 @@ function DeleteWorkspaceTrigger({ children }: { children: React.ReactNode }) {
 
 function DeleteWorkspaceForm() {
 	const context = use(DeleteContext);
-	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const { slug } = routeApi.useParams();
 	const mutation = useDeleteWorkspace();
 
 	const form = useAppForm({

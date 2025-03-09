@@ -1,6 +1,6 @@
+import type { ExpensePayloadSchema } from "@/lib/schema";
 import type { ApiRoutes } from "@hoalu/api/types";
 import { hc } from "hono/client";
-import type { ExpensePayloadSchema } from "./schema";
 
 const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 	init: {
@@ -66,6 +66,18 @@ const expenses = {
 		const response = await honoClient.api.expenses.$post({
 			query: { workspaceIdOrSlug: slug },
 			json,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	delete: async (slug: string, id: string) => {
+		const response = await honoClient.api.expenses[":id"].$delete({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
 		});
 		if (!response.ok) {
 			const { message } = await response.json();

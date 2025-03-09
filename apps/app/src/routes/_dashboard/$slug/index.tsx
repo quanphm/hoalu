@@ -1,12 +1,11 @@
 import { ContentCard } from "@/components/cards";
-import { CreateExpenseDialog, CreateExpenseDialogTrigger } from "@/components/expense";
+import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { walletsQueryOptions } from "@/services/query-options";
+import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -18,15 +17,8 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 
 function RouteComponent() {
 	const params = Route.useParams();
-	const workspace = useWorkspace();
 	const wallets = useSuspenseQuery(walletsQueryOptions(params.slug));
-	const membersTableData = workspace.members.map((member) => ({
-		id: member.user.id,
-		name: member.user.name,
-		email: member.user.email,
-		image: member.user.image,
-		role: member.role,
-	}));
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(params.slug));
 
 	return (
 		<>
@@ -35,14 +27,12 @@ function RouteComponent() {
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6}>
-					<CreateExpenseDialog>
-						<CreateExpenseDialogTrigger>
-							<Button>
-								<SendIcon className="mr-2 size-4" />
-								Create expense
-							</Button>
-						</CreateExpenseDialogTrigger>
-					</CreateExpenseDialog>
+					<CreateExpenseDialogTrigger>
+						<Button className="bg-indigo-700 text-white/98 hover:bg-indigo-600/75">
+							<SendIcon className="mr-2 size-4" />
+							Create expense
+						</Button>
+					</CreateExpenseDialogTrigger>
 					<Button>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task
@@ -90,12 +80,13 @@ function RouteComponent() {
 					</Section>
 				</SectionContent>
 			</Section>
+
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Recent entries</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
-					<ExpensesTable data={membersTableData} />
+					<ExpensesTable data={expenses} actionable={false} />
 				</SectionContent>
 			</Section>
 

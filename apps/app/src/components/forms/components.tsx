@@ -5,15 +5,15 @@ import { useStore } from "@tanstack/react-form";
 import { createContext, useContext, useId } from "react";
 import { useFieldContext } from "./context";
 
-interface FormItemContextValue {
+interface FieldContextValue {
 	id: string;
 	formItemId: string;
 	formDescriptionId: string;
 	formMessageId: string;
 }
-const FormItemContext = createContext<FormItemContextValue>({} as FormItemContextValue);
+const FieldContext = createContext<FieldContextValue>({} as FieldContextValue);
 
-function FormItem({ className, ...props }: React.ComponentProps<"div">) {
+function Field({ className, ...props }: React.ComponentProps<"div">) {
 	const id = useId();
 	const value = {
 		id,
@@ -23,14 +23,14 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 	};
 
 	return (
-		<FormItemContext.Provider value={value}>
+		<FieldContext.Provider value={value}>
 			<div className={cn("flex flex-col gap-1.5", className)} {...props} />
-		</FormItemContext.Provider>
+		</FieldContext.Provider>
 	);
 }
 
-function FormControl(props: React.ComponentProps<typeof Slot>) {
-	const { formItemId, formDescriptionId, formMessageId } = useContext(FormItemContext);
+function FieldControl(props: React.ComponentProps<typeof Slot>) {
+	const { formItemId, formDescriptionId, formMessageId } = useContext(FieldContext);
 	const field = useFieldContext();
 	const error = field.state.meta.errors.length > 0;
 
@@ -45,8 +45,8 @@ function FormControl(props: React.ComponentProps<typeof Slot>) {
 	);
 }
 
-function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-	const { formItemId } = useContext(FormItemContext);
+function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+	const { formItemId } = useContext(FieldContext);
 	const field = useFieldContext();
 	const error = field.state.meta.errors.length > 0;
 
@@ -55,8 +55,8 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPri
 	);
 }
 
-function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
-	const { formDescriptionId } = useContext(FormItemContext);
+function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
+	const { formDescriptionId } = useContext(FieldContext);
 
 	return (
 		<p
@@ -69,12 +69,27 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 	);
 }
 
-function FormMessage({ className, children, ...props }: React.ComponentProps<"p">) {
-	const { formMessageId } = useContext(FormItemContext);
+function FieldMessage({ className, children, ...props }: React.ComponentProps<"p">) {
+	const { formMessageId } = useContext(FieldContext);
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 
-	if (!field.state.meta.isTouched || errors.length === 0) {
+	const isTouched = field.state.meta.isTouched;
+	const hasErrors = errors.length > 0;
+
+	const formatErrorMessage = (error: unknown) => {
+		if (typeof error === "string") return error;
+		if (error instanceof Error) return error.message;
+		if (typeof error === "object" && error !== null && "message" in error) {
+			return String(error.message);
+		}
+		return String(`Unhandled error format: ${JSON.stringify(error)}`);
+	};
+
+	const formattedErrorMessages = errors.map(formatErrorMessage).join(", ");
+	const body = isTouched && hasErrors ? formattedErrorMessages : children;
+
+	if (!body) {
 		return null;
 	}
 
@@ -91,4 +106,4 @@ function FormMessage({ className, children, ...props }: React.ComponentProps<"p"
 	);
 }
 
-export { FormItem, FormControl, FormLabel, FormDescription, FormMessage };
+export { Field, FieldControl, FieldLabel, FieldDescription, FieldMessage };

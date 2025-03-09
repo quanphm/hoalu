@@ -84,7 +84,7 @@ export function useDeleteWorkspace() {
 		onSuccess: async (data) => {
 			toast.success("Workspace deleted");
 			queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(data.slug) });
-			queryClient.removeQueries({ queryKey: memberKeys.activeWithSlug(data.slug) });
+			queryClient.removeQueries({ queryKey: memberKeys.withWorkspace(data.slug) });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			navigate({ to: "/" });
 		},
@@ -112,7 +112,7 @@ export function useRemoveMember() {
 		onSuccess: async (data) => {
 			toast.success(`Removed ${data.member.user.name}`);
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
-			queryClient.invalidateQueries({ queryKey: memberKeys.activeWithSlug(slug) });
+			queryClient.invalidateQueries({ queryKey: memberKeys.withWorkspace(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -181,7 +181,27 @@ export function useCreateExpense() {
 			return result;
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: expenseKeys.all });
+			toast.success("Expense created");
+			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteExpense() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async (id: string) => {
+			const result = await apiClient.expenses.delete(slug, id);
+			return result;
+		},
+		onSuccess: async () => {
+			toast.success("Removed expense");
+			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);

@@ -1,8 +1,10 @@
+import { HotKey } from "@/components/hotkey";
 import { ArrowRightLeftIcon, GalleryVerticalIcon, ListTodoIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
+	SidebarMenuBadge,
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
@@ -18,6 +20,9 @@ export function NavWorkspace() {
 						<Link from="/$slug/" to="." activeOptions={{ exact: true }}>
 							<GalleryVerticalIcon />
 							<span>Dashboard</span>
+							<SidebarMenuBadge>
+								<HotKey>D</HotKey>
+							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
@@ -27,6 +32,9 @@ export function NavWorkspace() {
 						<Link from="/$slug/" to="./expenses">
 							<ArrowRightLeftIcon />
 							<span>Expenses</span>
+							<SidebarMenuBadge>
+								<HotKey>E</HotKey>
+							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
@@ -36,6 +44,9 @@ export function NavWorkspace() {
 						<Link from="/$slug/" to="./tasks">
 							<ListTodoIcon />
 							<span>Tasks</span>
+							<SidebarMenuBadge>
+								<HotKey>T</HotKey>
+							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>

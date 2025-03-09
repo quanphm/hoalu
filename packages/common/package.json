@@ -6,6 +6,7 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
+		"./enums": "./src/enums.ts",
 		"./generate-id": "./src/generate-id.ts",
 		"./http-status": "./src/http-status/index.ts",
 		"./standard-validate": "./src/standard-validate.ts",

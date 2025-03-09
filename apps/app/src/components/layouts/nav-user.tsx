@@ -18,6 +18,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
@@ -26,6 +27,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
+import { HotKey } from "../hotkey";
 
 export function NavUser() {
 	const { user, signOut } = useAuth();
@@ -66,11 +68,13 @@ export function NavUser() {
 										<DropdownMenuItem onClick={() => setTheme("light")}>
 											<SunIcon />
 											<span>Light</span>
+											<HotKey>Shift L</HotKey>
 											{theme === "light" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("dark")}>
 											<MoonIcon />
 											<span>Dark</span>
+											<HotKey>Shift D</HotKey>
 											{theme === "dark" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("system")}>

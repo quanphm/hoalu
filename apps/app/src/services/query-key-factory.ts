@@ -14,7 +14,7 @@ export const workspaceKeys = {
 
 export const memberKeys = {
 	all: ["members"] as const,
-	activeWithSlug: (slug: string) => [...memberKeys["~active"](), slug] as const,
+	withWorkspace: (slug: string) => [...memberKeys["~active"](), slug] as const,
 	"~active": () => [...memberKeys.all, "active"] as const,
 };
 
@@ -23,18 +23,22 @@ export const invitationKeys = {
 	withId: (id: string) => [...invitationKeys.all, id] as const,
 };
 
-export const taskKeys = {
-	all: ["tasks"] as const,
-};
-
 export const walletKeys = {
 	all: ["wallets"] as const,
+	withWorkspace: (slug: string) => [...walletKeys.all, slug] as const,
 };
 
 export const categoryKeys = {
 	all: ["categories"] as const,
+	withWorkspace: (slug: string) => [...categoryKeys.all, slug] as const,
 };
 
 export const expenseKeys = {
 	all: ["expenses"] as const,
+	withWorkspace: (slug: string) => [...expenseKeys.all, slug] as const,
+};
+
+export const taskKeys = {
+	all: ["tasks"] as const,
+	withWorkspace: (slug: string) => [...taskKeys.all, slug] as const,
 };

@@ -1,11 +1,8 @@
+import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { useAppForm } from "@/components/forms";
+import { HotKey } from "@/components/hotkey";
 import { authClient } from "@/lib/auth-client";
-import {
-	type ExpenseFormSchema,
-	createExpenseFormSchema,
-	deleteWorkspaceFormSchema,
-	workspaceFormSchema,
-} from "@/lib/schema";
+import { type ExpenseFormSchema, expenseFormSchema, workspaceFormSchema } from "@/lib/schema";
 import { useCreateExpense } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import {
@@ -14,69 +11,65 @@ import {
 	walletsQueryOptions,
 } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
-import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
-import { createContext, use, useMemo, useState } from "react";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useAtom, useSetAtom } from "jotai";
+import { useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-type CreateContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const CreateContext = createContext<CreateContext | null>(null);
-
 function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const [open, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent
-					className="sm:max-w-[720px]"
-					onEscapeKeyDown={(event) => {
-						event.preventDefault();
-					}}
-					onPointerDownOutside={(event) => {
-						event.preventDefault();
-					}}
-				>
-					<DialogHeader>
-						<DialogTitle>Create new expense</DialogTitle>
-					</DialogHeader>
-					<DialogDescription />
-					<CreateExpenseForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<Dialog open={open} onOpenChange={setOpen}>
+			{children}
+			<DialogContent
+				className="sm:max-w-[720px]"
+				onPointerDownOutside={(event) => {
+					event.preventDefault();
+				}}
+			>
+				<DialogHeader>
+					<DialogTitle>Create new expense</DialogTitle>
+				</DialogHeader>
+				<DialogDescription />
+				<CreateExpenseForm />
+			</DialogContent>
+		</Dialog>
 	);
 }
 
 function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
+	return (
+		<Tooltip>
+			<DialogTrigger asChild>
+				<TooltipTrigger asChild>{children}</TooltipTrigger>
+			</DialogTrigger>
+			<TooltipContent side="bottom">
+				<HotKey>
+					<span className="text-sm leading-none">⌘</span>E
+				</HotKey>
+			</TooltipContent>
+		</Tooltip>
+	);
 }
 
 function CreateExpenseForm() {
-	const context = use(CreateContext);
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
@@ -101,7 +94,7 @@ function CreateExpenseForm() {
 			repeat: "one-time",
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: createExpenseFormSchema,
+			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			const payload = {
@@ -115,7 +108,7 @@ function CreateExpenseForm() {
 				repeat: value.repeat,
 			};
 			await mutation.mutateAsync(payload);
-			context?.setOpen(false);
+			setOpen(false);
 		},
 	});
 
@@ -257,116 +250,44 @@ function UpdateExpenseForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean
 	);
 }
 
-type DeleteContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const DeleteContext = createContext<CreateContext | null>(null);
-
-function DeleteExpenseDialog({ children }: { children: React.ReactNode }) {
+function DeleteExpenseDialog({
+	children,
+	onDelete,
+}: { children: React.ReactNode; onDelete(): Promise<void> }) {
 	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<DeleteContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const handleDelete = async () => {
+		await onDelete();
+		setOpen(false);
+	};
 
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent className="sm:max-w-[400px]">
-					<DialogHeader className="space-y-3">
-						<DialogTitle>Confirm delete workspace</DialogTitle>
-						<DialogDescription>
-							<span className="text-amber-600 text-sm">
-								<TriangleAlertIcon
-									className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
-									strokeWidth={2}
-									aria-hidden="true"
-								/>
-								This action can't be undone.
-							</span>
-						</DialogDescription>
-					</DialogHeader>
-					<DeleteExpenseForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<Dialog open={open} onOpenChange={setOpen}>
+			{children}
+			<DialogContent className="sm:max-w-[480px]">
+				<DialogHeader>
+					<DialogTitle>Delete expense?</DialogTitle>
+					<DialogDescription>
+						The expense will be deleted and removed from your spending history. This action cannot
+						be undone.
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button type="button" variant="secondary">
+							Cancel
+						</Button>
+					</DialogClose>
+					<Button variant="destructive" onClick={() => handleDelete()}>
+						Delete
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
 function DeleteExpenseTrigger({ children }: { children: React.ReactNode }) {
 	return <DialogTrigger asChild>{children}</DialogTrigger>;
-}
-
-function DeleteExpenseForm() {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
-	const context = use(DeleteContext);
-
-	const form = useAppForm({
-		defaultValues: {
-			confirm: "",
-		},
-		validators: {
-			onSubmit: deleteWorkspaceFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			await authClient.workspace.delete(
-				{ idOrSlug: value.confirm },
-				{
-					onSuccess: () => {
-						toast.success("Workspace deleted");
-						queryClient.invalidateQueries({
-							queryKey: workspaceKeys.all,
-						});
-						if (context) {
-							context.setOpen(false);
-						}
-						navigate({ to: "/" });
-					},
-					onError: (ctx) => {
-						toast.error(ctx.error.message);
-					},
-				},
-			);
-		},
-	});
-
-	return (
-		<form.AppForm>
-			<form.Form>
-				<form.AppField
-					name="confirm"
-					validators={{
-						onSubmit: ({ value }) => {
-							return value !== slug ? "Incorrect value" : undefined;
-						},
-					}}
-				>
-					{(field) => (
-						<field.InputField
-							name="confirm"
-							label={
-								<span className="text-muted-foreground">
-									Type in <strong className="text-foreground">{slug}</strong> to confirm.
-								</span>
-							}
-							required
-							autoComplete="off"
-						/>
-					)}
-				</form.AppField>
-				<Button variant="destructive" type="submit">
-					I understand, delete this workspace
-				</Button>
-			</form.Form>
-		</form.AppForm>
-	);
 }
 
 export {
@@ -376,5 +297,4 @@ export {
 	UpdateExpenseForm,
 	DeleteExpenseDialog,
 	DeleteExpenseTrigger,
-	DeleteExpenseForm,
 };

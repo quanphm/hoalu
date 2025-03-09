@@ -1,4 +1,8 @@
+import { DataTable } from "@/components/data-table";
+import { createCategoryTheme } from "@/helpers/colors";
+import type { CategorySchema } from "@/lib/schema";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -15,124 +19,55 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
-import {
-	type ColumnDef,
-	type Row,
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
 
-type Item = {
-	id: string;
-	name: string;
-	description: string | null;
-	color:
-		| "red"
-		| "green"
-		| "blue"
-		| "cyan"
-		| "yellow"
-		| "orange"
-		| "purple"
-		| "fuchsia"
-		| "pink"
-		| "rose"
-		| "gray"
-		| "stone";
-};
+const columnHelper = createColumnHelper<CategorySchema>();
 
-const columns: ColumnDef<Item>[] = [
-	{
-		id: "name",
+const columns = [
+	columnHelper.accessor("name", {
 		header: "Category",
-		cell: ({ row }) => {
-			return <p className="font-medium">{row.original.name}</p>;
+		cell: (info) => {
+			const value = info.getValue();
+			const className = createCategoryTheme(info.row.original.color);
+			return <Badge className={className}>{value}</Badge>;
 		},
 		meta: {
 			headerClassName:
-				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
-			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
+				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+			cellClassName:
+				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
 		},
-	},
-	{
-		accessorKey: "description",
+	}),
+	columnHelper.accessor("description", {
 		header: "Description",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("description")}</p>;
+		cell: (info) => {
+			return <p className="text-muted-foreground">{info.getValue()}</p>;
 		},
-	},
-	{
+		meta: {
+			headerClassName:
+				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+			cellClassName:
+				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
+		},
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
-export function CategoriesTable({ data }: { data: Item[] }) {
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-	});
-
-	return (
-		<div className="space-y-4">
-			<div className="overflow-hidden rounded-md border border-border bg-background">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50">
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead
-											key={header.id}
-											className={header.column.columnDef.meta?.headerClassName}
-										>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-		</div>
-	);
+export function CategoriesTable({ data }: { data: CategorySchema[] }) {
+	return <DataTable data={data} columns={columns} />;
 }
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<CategorySchema> }) {
 	const [open, setOpen] = useState(false);
 	const onDelete = async () => {
 		setOpen(false);
@@ -150,9 +85,6 @@ function RowActions({ row }: { row: Row<Item> }) {
 				<DropdownMenuContent align="end">
 					<DialogTrigger asChild>
 						<DropdownMenuItem>
-							<span>Edit</span>
-						</DropdownMenuItem>
-						<DropdownMenuItem>
 							<span className="text-destructive">Delete</span>
 						</DropdownMenuItem>
 					</DialogTrigger>
@@ -161,16 +93,16 @@ function RowActions({ row }: { row: Row<Item> }) {
 
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
-					<DialogTitle>Delete this category</DialogTitle>
+					<DialogTitle>Delete this category?</DialogTitle>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
 						<Button type="button" variant="secondary">
-							Cancel
+							No
 						</Button>
 					</DialogClose>
 					<Button variant="destructive" onClick={() => onDelete()}>
-						Confirn
+						Yes
 					</Button>
 				</DialogFooter>
 			</DialogContent>

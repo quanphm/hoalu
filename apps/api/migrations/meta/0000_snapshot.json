@@ -1,5 +1,5 @@
 {
-  "id": "1b3f31a0-f619-4585-a15e-4ac181562ead",
+  "id": "beca92c2-d1bc-4a8b-af72-74fa25cce930",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1111,7 +1111,7 @@
         },
         "priority": {
           "name": "priority",
-          "type": "level_enum",
+          "type": "priority_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -1614,20 +1614,18 @@
       "values": [
         "red",
         "green",
+        "teal",
         "blue",
-        "cyan",
         "yellow",
         "orange",
         "purple",
-        "fuchsia",
         "pink",
-        "rose",
         "gray",
         "stone"
       ]
     },
-    "public.level_enum": {
-      "name": "level_enum",
+    "public.priority_enum": {
+      "name": "priority_enum",
       "schema": "public",
       "values": [
         "urgent",

@@ -1,5 +1,5 @@
-CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'blue', 'cyan', 'yellow', 'orange', 'purple', 'fuchsia', 'pink', 'rose', 'gray', 'stone');--> statement-breakpoint
-CREATE TYPE "public"."level_enum" AS ENUM('urgent', 'high', 'medium', 'low', 'none');--> statement-breakpoint
+CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'teal', 'blue', 'yellow', 'orange', 'purple', 'pink', 'gray', 'stone');--> statement-breakpoint
+CREATE TYPE "public"."priority_enum" AS ENUM('urgent', 'high', 'medium', 'low', 'none');--> statement-breakpoint
 CREATE TYPE "public"."repeat_enum" AS ENUM('one-time', 'weekly', 'monthly', 'yearly', 'custom');--> statement-breakpoint
 CREATE TYPE "public"."task_status_enum" AS ENUM('todo', 'in-progress', 'done', 'blocked', 'canceled');--> statement-breakpoint
 CREATE TYPE "public"."wallet_type_enum" AS ENUM('cash', 'bank-account', 'credit-card', 'debit-card', 'digital-account');--> statement-breakpoint
@@ -147,7 +147,7 @@ CREATE TABLE "task" (
 	"title" text NOT NULL,
 	"description" text,
 	"status" "task_status_enum" DEFAULT 'todo' NOT NULL,
-	"priority" "level_enum" DEFAULT 'none' NOT NULL,
+	"priority" "priority_enum" DEFAULT 'none' NOT NULL,
 	"creator_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"due_date" date DEFAULT now() + INTERVAL '1 day' NOT NULL,

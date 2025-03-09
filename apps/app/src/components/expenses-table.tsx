@@ -1,182 +1,104 @@
-import { authClient } from "@/lib/auth-client";
-import { useRemoveMember } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { DataTable } from "@/components/data-table";
+import { createCategoryTheme } from "@/helpers/colors";
+import { formatCurrency } from "@/helpers/currency";
+import type { ExpenseSchema } from "@/lib/schema";
+import { useDeleteExpense } from "@/services/mutations";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import {
-	type ColumnDef,
-	type Row,
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-import { useState } from "react";
-import { UserAvatar } from "./user-avatar";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { DeleteExpenseDialog, DeleteExpenseTrigger } from "./expense";
 
-type Item = {
-	id: string;
-	name: string;
-	email: string;
-	image: string | null | undefined;
-	role: string;
-};
+const columnHelper = createColumnHelper<ExpenseSchema>();
 
-const columns: ColumnDef<Item>[] = [
-	{
-		id: "name",
-		header: "Name",
-		cell: ({ row }) => {
-			return (
-				<div className="flex items-center gap-3">
-					<UserAvatar name={row.original.name} image={row.original.image} />
-					<div>
-						<div className="font-medium">{row.original.name}</div>
-					</div>
-				</div>
-			);
+const columns = [
+	columnHelper.accessor("date", {
+		header: "Date",
+		cell: (info) => {
+			const value = info.getValue();
+			return <p className="text-muted-foreground">{format(value, "d MMM yyyy")}</p>;
 		},
-	},
-	{
-		accessorKey: "email",
-		header: "Email",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("email")}</p>;
+		meta: {
+			headerClassName:
+				"w-(--header-date-size) min-w-(--header-date-size) max-w-(--header-date-size)",
+			cellClassName: "w-(--col-date-size) min-w-(--col-date-size) max-w-(--col-date-size)",
 		},
-		size: 200,
-	},
-	{
-		accessorKey: "role",
-		header: "Role",
-		cell: ({ row }) => {
-			const { role } = row.original;
-			return (
-				<Badge
-					variant={role === "owner" ? "success" : "outline"}
-					className="px-1.5 font-normal text-xs capitalize"
-				>
-					{role}
-				</Badge>
-			);
+	}),
+	columnHelper.accessor("title", {
+		header: "Transaction",
+		cell: (info) => info.getValue(),
+	}),
+	columnHelper.accessor("category.name", {
+		header: "Category",
+		cell: (info) => {
+			const value = info.getValue();
+			const className = createCategoryTheme(info.row.original.category.color);
+			return <Badge className={className}>{value}</Badge>;
 		},
-	},
-	{
+		meta: {
+			headerClassName:
+				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+			cellClassName:
+				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
+		},
+	}),
+	columnHelper.accessor("amount", {
+		header: "Amount",
+		cell: (info) => {
+			const value = formatCurrency(info.getValue(), info.row.original.currency);
+			return value;
+		},
+		meta: {
+			headerClassName:
+				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
+			cellClassName:
+				"w-(--col-amount-size) min-w-(--col-amount-size) max-w-(--col-amount-size) text-right",
+		},
+	}),
+	columnHelper.accessor("wallet.name", {
+		header: "Wallet",
+		cell: (info) => info.getValue(),
+		meta: {
+			headerClassName:
+				"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
+			cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
+		},
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
-		size: 32,
-	},
+		cell: (info) => <RowActions row={info.row} />,
+		meta: {
+			headerClassName:
+				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
+			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+		},
+	}),
 ];
 
-export function ExpensesTable({ data }: { data: Item[] }) {
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-	});
-
-	return (
-		<div className="space-y-4">
-			<div className="overflow-hidden rounded-md border border-border bg-background">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50">
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead
-											key={header.id}
-											style={{ width: `${header.getSize()}px` }}
-											className="relative h-10"
-										>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell
-											key={cell.id}
-											style={{
-												width: cell.column.getSize(),
-											}}
-											className="last:py-0"
-										>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-		</div>
-	);
+export function ExpensesTable({
+	data,
+	actionable = true,
+}: { data: ExpenseSchema[]; actionable?: boolean }) {
+	const tableColumns = actionable ? columns : columns.filter((c) => c.id !== "actions");
+	return <DataTable data={data} columns={tableColumns} />;
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug");
-
-function RowActions({ row }: { row: Row<Item> }) {
-	const [open, setOpen] = useState(false);
-	const navigate = routeApi.useNavigate();
-	const { slug } = routeApi.useParams();
-	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
-	const canDelete = authClient.workspace.checkRolePermission({
-		// @ts-expect-error: [todo] fix role type
-		role: member.role,
-		permission: {
-			member: ["delete"],
-		},
-	});
-	const isLeaving = member.userId === row.original.id;
-	const mutation = useRemoveMember();
-
+function RowActions({ row }: { row: Row<ExpenseSchema> }) {
+	const mutation = useDeleteExpense();
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);
-		setOpen(false);
-		if (isLeaving) {
-			navigate({ to: "/" });
-		}
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<DeleteExpenseDialog onDelete={onDelete}>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
@@ -185,45 +107,13 @@ function RowActions({ row }: { row: Row<Item> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					{isLeaving && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Leave</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
-					{!isLeaving && canDelete && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Remove</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
-					)}
+					<DeleteExpenseTrigger>
+						<DropdownMenuItem>
+							<span className="text-destructive">Delete</span>
+						</DropdownMenuItem>
+					</DeleteExpenseTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
-
-			<DialogContent className="sm:max-w-[480px]">
-				<DialogHeader>
-					<DialogTitle>
-						{isLeaving ? "Leave this workspace?" : `Remove ${row.original.name}?`}
-					</DialogTitle>
-					<DialogDescription>
-						{isLeaving
-							? "You won't be able to access this workspace."
-							: "They won't be able to access this workspace."}
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
-					<Button variant="destructive" onClick={() => onDelete()}>
-						Confirn
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+		</DeleteExpenseDialog>
 	);
 }
