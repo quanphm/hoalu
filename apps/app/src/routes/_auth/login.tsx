@@ -60,7 +60,6 @@ function RouteComponent() {
 										type="email"
 										placeholder="your.email@hoalu.app"
 										required
-										autoComplete="off"
 									/>
 								)}
 							</form.AppField>
@@ -69,6 +68,7 @@ function RouteComponent() {
 									<field.InputField
 										label="Password"
 										type="password"
+										autoComplete="current-password"
 										placeholder="•••••••••••••"
 										required
 									/>

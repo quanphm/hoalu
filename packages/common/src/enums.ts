@@ -1,22 +1,15 @@
-import type { ColorTuple } from "./schema";
-
 export const PG_ENUM_COLOR = [
 	"red",
 	"green",
+	"teal",
 	"blue",
-	"cyan",
 	"yellow",
-	"amber",
 	"orange",
 	"purple",
-	"fuchsia",
 	"pink",
-	"rose",
 	"gray",
 	"stone",
-	"slate",
-	"sky",
-] satisfies ColorTuple;
+] as const;
 
 export const PG_ENUM_WALLET_TYPE = [
 	"cash",

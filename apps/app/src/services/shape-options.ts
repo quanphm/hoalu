@@ -1,8 +1,8 @@
 import { queryClient } from "@/lib/query-client";
+import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
-import { getWorkspaceDetailsOptions } from "./query-options";
 
 export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T>>(
 	handler: (...params: any) => AppShapeOptions<T, S>,

@@ -1,23 +1,19 @@
+import {
+	PG_ENUM_COLOR,
+	PG_ENUM_PRIORITY,
+	PG_ENUM_REPEAT,
+	PG_ENUM_TASK_STATUS,
+	PG_ENUM_WALLET_TYPE,
+} from "@hoalu/common/enums";
 import { type } from "arktype";
 
-export const taskStatusSchema = type("'todo' | 'in-progress' | 'done' | 'canceled' | 'blocked'");
-export type TaskType = typeof taskStatusSchema.inferOut;
+export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
+export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
+export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
+export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
 
-export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
-export type PriorityType = typeof prioritySchema.inferOut;
-
-export const repeatSchema = type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'");
-export type RepeatType = typeof repeatSchema.inferOut;
-
-export const colorSchema = type(
-	"'red' | 'green' | 'blue' | 'cyan' | 'yellow' | 'amber' | 'orange' | 'purple' | 'fuchsia' | 'pink' | 'rose' | 'gray' | 'stone' | 'slate' | 'sky'",
-);
+export const colorSchema = type("===", ...PG_ENUM_COLOR);
 export type Color = typeof colorSchema.inferOut;
-
-export const walletTypeSchema = type(
-	"'cash' | 'bank-account' | 'credit-card' |'debit-card' | 'digital-account'",
-);
-export type WalletType = typeof walletTypeSchema.inferOut;
 
 export const workspaceFormSchema = type({
 	name: "string > 0",
@@ -75,7 +71,7 @@ export const expenseSchema = type({
 });
 export type ExpenseSchema = typeof expenseSchema.infer;
 
-export const createExpenseFormSchema = type({
+export const expenseFormSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	transaction: {
@@ -87,7 +83,7 @@ export const createExpenseFormSchema = type({
 	categoryId: "string.uuid.v7",
 	repeat: repeatSchema,
 });
-export type ExpenseFormSchema = typeof createExpenseFormSchema.infer;
+export type ExpenseFormSchema = typeof expenseFormSchema.infer;
 
 export const createExpensePayloadSchema = type({
 	title: "string > 0",

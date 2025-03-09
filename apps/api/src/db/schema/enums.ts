@@ -1,11 +1,11 @@
-import { pgEnum } from "drizzle-orm/pg-core";
 import {
 	PG_ENUM_COLOR,
 	PG_ENUM_PRIORITY,
 	PG_ENUM_REPEAT,
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
-} from "../../common/enums";
+} from "@hoalu/common/enums";
+import { pgEnum } from "drizzle-orm/pg-core";
 
 export const colorTypeEnum = pgEnum("color_enum", PG_ENUM_COLOR);
 export const walletTypeEnum = pgEnum("wallet_type_enum", PG_ENUM_WALLET_TYPE);

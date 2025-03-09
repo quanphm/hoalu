@@ -1,17 +1,21 @@
-import type { ColorTuple } from "./schema";
+import type { Color } from "./schema";
 
-export const DEFAULT_CATEGORIES: { name: string; color: ColorTuple[number] }[] = [
+export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
+	{
+		name: "🍲 Food & Drink",
+		color: "yellow",
+	},
 	{
 		name: "📖 Education",
 		color: "blue",
 	},
 	{
-		name: "🎮 Entertainment",
-		color: "purple",
+		name: "🛒 Shopping",
+		color: "green",
 	},
 	{
-		name: "🍲 Food & Drink",
-		color: "orange",
+		name: "🎮 Entertainment",
+		color: "purple",
 	},
 	{
 		name: "💊 Healthcare",
@@ -19,19 +23,15 @@ export const DEFAULT_CATEGORIES: { name: string; color: ColorTuple[number] }[] =
 	},
 	{
 		name: "🏠 Housing",
-		color: "slate",
-	},
-	{
-		name: "🛒 Shopping",
-		color: "green",
+		color: "teal",
 	},
 	{
 		name: "🚗 Transporation",
-		color: "sky",
+		color: "stone",
 	},
 	{
 		name: "🎁 Gifts & Donations",
-		color: "yellow",
+		color: "orange",
 	},
 	{
 		name: "❓ Uncategorized",

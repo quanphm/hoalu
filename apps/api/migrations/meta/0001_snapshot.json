@@ -1,6 +1,6 @@
 {
-  "id": "b9b28faa-2384-4885-b050-e1f669fc2cc2",
-  "prevId": "82f61df8-42d9-4c83-ab5b-595187cbe10b",
+  "id": "3beabd8e-69af-427d-a748-0014d78f1c76",
+  "prevId": "beca92c2-d1bc-4a8b-af72-74fa25cce930",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1614,19 +1614,14 @@
       "values": [
         "red",
         "green",
+        "teal",
         "blue",
-        "cyan",
         "yellow",
-        "amber",
         "orange",
         "purple",
-        "fuchsia",
         "pink",
-        "rose",
         "gray",
-        "stone",
-        "slate",
-        "sky"
+        "stone"
       ]
     },
     "public.priority_enum": {

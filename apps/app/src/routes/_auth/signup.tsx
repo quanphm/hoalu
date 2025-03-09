@@ -83,6 +83,7 @@ function RouteComponent() {
 									<field.InputField
 										label="Password"
 										type="password"
+										autoComplete="new-password"
 										placeholder="•••••••••••••"
 										required
 									/>

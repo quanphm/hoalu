@@ -1,6 +1,6 @@
+import type { ExpensePayloadSchema } from "@/lib/schema";
 import type { ApiRoutes } from "@hoalu/api/types";
 import { hc } from "hono/client";
-import type { ExpensePayloadSchema } from "./schema";
 
 const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 	init: {

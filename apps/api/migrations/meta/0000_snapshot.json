@@ -1,5 +1,5 @@
 {
-  "id": "82f61df8-42d9-4c83-ab5b-595187cbe10b",
+  "id": "beca92c2-d1bc-4a8b-af72-74fa25cce930",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1614,19 +1614,14 @@
       "values": [
         "red",
         "green",
+        "teal",
         "blue",
-        "cyan",
         "yellow",
-        "amber",
         "orange",
         "purple",
-        "fuchsia",
         "pink",
-        "rose",
         "gray",
-        "stone",
-        "slate",
-        "sky"
+        "stone"
       ]
     },
     "public.priority_enum": {

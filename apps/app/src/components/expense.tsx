@@ -2,7 +2,7 @@ import { createExpenseDialogOpenAtom, deleteExpenseDialogOpenAtom } from "@/atom
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { authClient } from "@/lib/auth-client";
-import { type ExpenseFormSchema, createExpenseFormSchema, workspaceFormSchema } from "@/lib/schema";
+import { type ExpenseFormSchema, expenseFormSchema, workspaceFormSchema } from "@/lib/schema";
 import { useCreateExpense } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import {
@@ -93,7 +93,7 @@ function CreateExpenseForm() {
 			repeat: "one-time",
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: createExpenseFormSchema,
+			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			const payload = {
