@@ -242,7 +242,7 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 									strokeWidth={2}
 									aria-hidden="true"
 								/>
-								This action can't be undone.
+								This action cannot be undone.
 							</span>
 						</DialogDescription>
 					</DialogHeader>

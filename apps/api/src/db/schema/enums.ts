@@ -6,6 +6,7 @@ export const colorTypeEnum = pgEnum("color_enum", [
 	"blue",
 	"cyan",
 	"yellow",
+	"amber",
 	"orange",
 	"purple",
 	"fuchsia",
@@ -13,6 +14,8 @@ export const colorTypeEnum = pgEnum("color_enum", [
 	"rose",
 	"gray",
 	"stone",
+	"slate",
+	"sky",
 ]);
 
 export const walletTypeEnum = pgEnum("wallet_type_enum", [

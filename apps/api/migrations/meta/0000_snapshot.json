@@ -1,5 +1,5 @@
 {
-  "id": "1b3f31a0-f619-4585-a15e-4ac181562ead",
+  "id": "2ff91c2e-cbb0-4b6f-be18-43575f47f0b3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1617,13 +1617,16 @@
         "blue",
         "cyan",
         "yellow",
+        "amber",
         "orange",
         "purple",
         "fuchsia",
         "pink",
         "rose",
         "gray",
-        "stone"
+        "stone",
+        "slate",
+        "sky"
       ]
     },
     "public.level_enum": {

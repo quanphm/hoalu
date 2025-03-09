@@ -1,8 +1,10 @@
 import { DataTable } from "@/components/data-table";
+import { createCategoryTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import type { ExpenseSchema } from "@/lib/schema";
 import { useDeleteExpense } from "@/services/mutations";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -20,9 +22,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { cn } from "@hoalu/ui/utils";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useState } from "react";
+import { DeleteExpenseDialog, DeleteExpenseTrigger } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseSchema>();
 
@@ -45,7 +49,11 @@ const columns = [
 	}),
 	columnHelper.accessor("category.name", {
 		header: "Category",
-		cell: (info) => info.getValue(),
+		cell: (info) => {
+			const value = info.getValue();
+			const className = createCategoryTheme(info.row.original.category.color);
+			return <Badge className={className}>{value}</Badge>;
+		},
 		meta: {
 			headerClassName:
 				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
@@ -57,7 +65,7 @@ const columns = [
 		header: "Amount",
 		cell: (info) => {
 			const value = formatCurrency(info.getValue(), info.row.original.currency);
-			return <p>{value}</p>;
+			return value;
 		},
 		meta: {
 			headerClassName:
@@ -96,16 +104,13 @@ export function ExpensesTable({
 }
 
 function RowActions({ row }: { row: Row<ExpenseSchema> }) {
-	const [open, setOpen] = useState(false);
 	const mutation = useDeleteExpense();
-
 	const onDelete = async () => {
 		await mutation.mutateAsync(row.original.id);
-		setOpen(false);
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<DeleteExpenseDialog onDelete={onDelete}>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
@@ -114,34 +119,13 @@ function RowActions({ row }: { row: Row<ExpenseSchema> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild>
+					<DeleteExpenseTrigger>
 						<DropdownMenuItem>
 							<span className="text-destructive">Delete</span>
 						</DropdownMenuItem>
-					</DialogTrigger>
+					</DeleteExpenseTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
-
-			<DialogContent className="sm:max-w-[480px]">
-				<DialogHeader>
-					<DialogTitle>Delete this expense?</DialogTitle>
-					<DialogDescription>
-						<span className="text-amber-600 text-sm">
-							This action can't be undone. It will affect your spending history.
-						</span>
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							No
-						</Button>
-					</DialogClose>
-					<Button variant="destructive" onClick={() => onDelete()}>
-						Yes
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+		</DeleteExpenseDialog>
 	);
 }

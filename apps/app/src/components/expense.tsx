@@ -7,7 +7,7 @@ import {
 	deleteWorkspaceFormSchema,
 	workspaceFormSchema,
 } from "@/lib/schema";
-import { useCreateExpense } from "@/services/mutations";
+import { useCreateExpense, useDeleteExpense } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import {
 	categoriesQueryOptions,
@@ -19,8 +19,10 @@ import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -240,27 +242,37 @@ function UpdateExpenseForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean
 	);
 }
 
-function DeleteExpenseDialog({ children }: { children: React.ReactNode }) {
+function DeleteExpenseDialog({
+	children,
+	onDelete,
+}: { children: React.ReactNode; onDelete(): Promise<void> }) {
 	const [open, setOpen] = useAtom(deleteExpenseDialogOpenAtom);
+	const handleDelete = async () => {
+		await onDelete();
+		setOpen(false);
+	};
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			{children}
-			<DialogContent className="sm:max-w-[400px]">
-				<DialogHeader className="space-y-3">
-					<DialogTitle>Confirm delete workspace</DialogTitle>
+			<DialogContent className="sm:max-w-[480px]">
+				<DialogHeader>
+					<DialogTitle>Delete expense?</DialogTitle>
 					<DialogDescription>
-						<span className="text-amber-600 text-sm">
-							<TriangleAlertIcon
-								className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
-								strokeWidth={2}
-								aria-hidden="true"
-							/>
-							This action can't be undone.
-						</span>
+						The expense will be deleted and removed from your spending history. This action cannot
+						be undone.
 					</DialogDescription>
 				</DialogHeader>
-				<DeleteExpenseForm />
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button type="button" variant="secondary">
+							Cancel
+						</Button>
+					</DialogClose>
+					<Button variant="destructive" onClick={() => handleDelete()}>
+						Delete
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);
@@ -270,67 +282,6 @@ function DeleteExpenseTrigger({ children }: { children: React.ReactNode }) {
 	return <DialogTrigger asChild>{children}</DialogTrigger>;
 }
 
-function DeleteExpenseForm() {
-	const queryClient = useQueryClient();
-	const { slug } = routeApi.useParams();
-
-	const form = useAppForm({
-		defaultValues: {
-			confirm: "",
-		},
-		validators: {
-			onSubmit: deleteWorkspaceFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			await authClient.workspace.delete(
-				{ idOrSlug: value.confirm },
-				{
-					onSuccess: () => {
-						toast.success("Expense deleted");
-						queryClient.invalidateQueries({
-							queryKey: workspaceKeys.all,
-						});
-					},
-					onError: (ctx) => {
-						toast.error(ctx.error.message);
-					},
-				},
-			);
-		},
-	});
-
-	return (
-		<form.AppForm>
-			<form.Form>
-				<form.AppField
-					name="confirm"
-					validators={{
-						onSubmit: ({ value }) => {
-							return value !== slug ? "Incorrect value" : undefined;
-						},
-					}}
-				>
-					{(field) => (
-						<field.InputField
-							name="confirm"
-							label={
-								<span className="text-muted-foreground">
-									Type in <strong className="text-foreground">{slug}</strong> to confirm.
-								</span>
-							}
-							required
-							autoComplete="off"
-						/>
-					)}
-				</form.AppField>
-				<Button variant="destructive" type="submit">
-					I understand, delete this workspace
-				</Button>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
 export {
 	CreateExpenseDialog,
 	CreateExpenseDialogTrigger,
@@ -338,5 +289,4 @@ export {
 	UpdateExpenseForm,
 	DeleteExpenseDialog,
 	DeleteExpenseTrigger,
-	DeleteExpenseForm,
 };

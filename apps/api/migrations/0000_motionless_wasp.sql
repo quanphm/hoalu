@@ -1,4 +1,4 @@
-CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'blue', 'cyan', 'yellow', 'orange', 'purple', 'fuchsia', 'pink', 'rose', 'gray', 'stone');--> statement-breakpoint
+CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'blue', 'cyan', 'yellow', 'amber', 'orange', 'purple', 'fuchsia', 'pink', 'rose', 'gray', 'stone', 'slate', 'sky');--> statement-breakpoint
 CREATE TYPE "public"."level_enum" AS ENUM('urgent', 'high', 'medium', 'low', 'none');--> statement-breakpoint
 CREATE TYPE "public"."repeat_enum" AS ENUM('one-time', 'weekly', 'monthly', 'yearly', 'custom');--> statement-breakpoint
 CREATE TYPE "public"."task_status_enum" AS ENUM('todo', 'in-progress', 'done', 'blocked', 'canceled');--> statement-breakpoint

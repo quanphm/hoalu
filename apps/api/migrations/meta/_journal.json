@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741157943752,
-      "tag": "0000_lush_storm",
+      "when": 1741498281648,
+      "tag": "0000_motionless_wasp",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1741157947571,
+      "when": 1741498285088,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }

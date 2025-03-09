@@ -10,7 +10,7 @@ export const repeatSchema = type("'one-time' | 'weekly' | 'monthly' | 'yearly' |
 export type RepeatType = typeof repeatSchema.inferOut;
 
 export const colorSchema = type(
-	"'red' | 'green' | 'blue' | 'cyan' | 'yellow' | 'orange' | 'purple' | 'fuchsia' | 'pink' | 'rose' | 'gray' | 'stone'",
+	"'red' | 'green' | 'blue' | 'cyan' | 'yellow' | 'amber' | 'orange' | 'purple' | 'fuchsia' | 'pink' | 'rose' | 'gray' | 'stone' | 'slate' | 'sky'",
 );
 export type Color = typeof colorSchema.inferOut;
 
@@ -26,35 +26,35 @@ export const DEFAULT_CATEGORIES: { name: string; color: Color }[] = [
 	},
 	{
 		name: "🎮 Entertainment",
-		color: "fuchsia",
-	},
-	{
-		name: "🍽️ Food & Drink",
-		color: "yellow",
-	},
-	{
-		name: "💊 Healthcare",
-		color: "green",
-	},
-	{
-		name: "🏠 Housing",
 		color: "purple",
 	},
 	{
-		name: "🛒 Shopping",
-		color: "pink",
+		name: "🍲 Food & Drink",
+		color: "orange",
 	},
 	{
-		name: "🚗 Transporation",
-		color: "cyan",
-	},
-	{
-		name: "🎁 Gifts & Donations",
+		name: "💊 Healthcare",
 		color: "red",
 	},
 	{
+		name: "🏠 Housing",
+		color: "slate",
+	},
+	{
+		name: "🛒 Shopping",
+		color: "green",
+	},
+	{
+		name: "🚗 Transporation",
+		color: "sky",
+	},
+	{
+		name: "🎁 Gifts & Donations",
+		color: "yellow",
+	},
+	{
 		name: "❓ Uncategorized",
-		color: "stone",
+		color: "gray",
 	},
 ];
 
