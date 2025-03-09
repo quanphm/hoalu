@@ -1,4 +1,4 @@
-import { createExpenseDialogOpenAtom, deleteExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
+import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { authClient } from "@/lib/auth-client";
@@ -27,6 +27,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
+import { useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -253,7 +254,7 @@ function DeleteExpenseDialog({
 	children,
 	onDelete,
 }: { children: React.ReactNode; onDelete(): Promise<void> }) {
-	const [open, setOpen] = useAtom(deleteExpenseDialogOpenAtom);
+	const [open, setOpen] = useState(false);
 	const handleDelete = async () => {
 		await onDelete();
 		setOpen(false);

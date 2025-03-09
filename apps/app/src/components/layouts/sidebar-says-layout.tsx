@@ -11,6 +11,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
+import { useHotkeys } from "react-hotkeys-hook";
 import { NavDocumentation } from "./nav-documentation";
 import { NavSettings } from "./nav-settings";
 import { NavWorkspaceList } from "./nav-workspace-list";
@@ -21,13 +22,17 @@ import { NavWorkspaceList } from "./nav-workspace-list";
  * @see https://web.dev/patterns/layout/sidebar-says
  */
 export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
-	const { theme } = useTheme();
+	const { theme, setTheme } = useTheme();
 
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
+
+	useHotkeys("shift+d", () => setTheme((theme) => (theme === "light" ? "dark" : "light")), {
+		description: "Theme: Toggle Light/Dark mode",
+	});
 
 	return (
 		<SidebarProvider className={cn(theme)}>

@@ -24,10 +24,10 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
 
-type Item = {
+type MemberSchema = {
 	id: string;
 	name: string;
 	email: string;
@@ -35,15 +35,17 @@ type Item = {
 	role: string;
 };
 
-const columns: ColumnDef<Item>[] = [
-	{
+const columnHelper = createColumnHelper<MemberSchema>();
+
+const columns = [
+	columnHelper.display({
 		id: "name",
 		header: "Name",
-		cell: ({ row }) => {
+		cell: (info) => {
 			return (
 				<div className="flex items-center gap-3">
-					<UserAvatar name={row.original.name} image={row.original.image} />
-					<p>{row.original.name}</p>
+					<UserAvatar name={info.row.original.name} image={info.row.original.image} />
+					<p>{info.row.original.name}</p>
 				</div>
 			);
 		},
@@ -52,48 +54,44 @@ const columns: ColumnDef<Item>[] = [
 				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
 			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
 		},
-	},
-	{
-		accessorKey: "email",
+	}),
+	columnHelper.accessor("email", {
 		header: "Email",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("email")}</p>;
-		},
-	},
-	{
-		accessorKey: "role",
+		cell: (info) => info.getValue(),
+	}),
+	columnHelper.accessor("role", {
 		header: "Role",
-		cell: ({ row }) => {
-			const { role } = row.original;
+		cell: (info) => {
+			const value = info.getValue();
 			return (
 				<Badge
-					variant={role === "owner" ? "success" : "outline"}
+					variant={value === "owner" ? "success" : "outline"}
 					className="px-1.5 font-normal text-xs capitalize"
 				>
-					{role}
+					{value}
 				</Badge>
 			);
 		},
-	},
-	{
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
-export function MembersTable({ data }: { data: Item[] }) {
+export function MembersTable({ data }: { data: MemberSchema[] }) {
 	return <DataTable data={data} columns={columns} />;
 }
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<MemberSchema> }) {
 	const [open, setOpen] = useState(false);
 	const navigate = routeApi.useNavigate();
 	const { slug } = routeApi.useParams();

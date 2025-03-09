@@ -2,7 +2,6 @@ import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { CreateExpenseDialog } from "@/components/expense";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
-import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
@@ -11,28 +10,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
 
-	const { setTheme } = useTheme();
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
-
-	useHotkeys(
-		"shift+l",
-		() => {
-			setTheme("light");
-		},
-		{
-			description: "Theme: Light mode",
-		},
-	);
-
-	useHotkeys(
-		"shift+d",
-		() => {
-			setTheme("dark");
-		},
-		{
-			description: "Theme: Dark mode",
-		},
-	);
 
 	useHotkeys(
 		"mod+e",

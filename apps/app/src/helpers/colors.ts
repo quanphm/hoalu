@@ -16,8 +16,8 @@ export function createCategoryTheme(color: Color) {
 			"dark:bg-teal-950 dark:text-teal-200 dark:border-teal-700",
 		),
 		blue: cn(
-			"bg-blue-100 text-blue-800 border-blue-200",
-			"dark:bg-blue-950 dark:text-blue-200 dark:border-blue-700",
+			"bg-indigo-100 text-indigo-800 border-indigo-200",
+			"dark:bg-indigo-950 dark:text-indigo-200 dark:border-indigo-700",
 		),
 		yellow: cn(
 			"bg-yellow-100 text-yellow-800 border-yellow-200",

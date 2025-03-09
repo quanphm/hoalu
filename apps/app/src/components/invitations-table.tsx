@@ -23,7 +23,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
 
 type Member = {
@@ -32,33 +32,33 @@ type Member = {
 	status: "canceled" | "accepted" | "rejected" | "pending";
 };
 
-const columns: ColumnDef<Member>[] = [
-	{
-		accessorKey: "email",
+const columnHelper = createColumnHelper<Member>();
+
+const columns = [
+	columnHelper.accessor("email", {
 		header: "Email",
 		meta: {
 			headerClassName:
 				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
 			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
 		},
-	},
-	{
-		accessorKey: "status",
+	}),
+	columnHelper.accessor("status", {
 		header: "Status",
 		cell: ({ row }) => {
 			return <p className="text-muted-foreground capitalize">{row.getValue("status")}</p>;
 		},
-	},
-	{
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
 export function InvitationsTable({ data }: { data: Member[] }) {
