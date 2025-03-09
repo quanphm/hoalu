@@ -13,7 +13,7 @@
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
 		"@hono/arktype-validator": "^2.0.0",
-		"arktype": "^2.1.4",
+		"arktype": "^2.1.9",
 		"hono-openapi": "^0.4.6",
 		"hono-pino": "^0.7.2",
 		"hono-rate-limiter": "^0.4.2",
@@ -22,6 +22,6 @@
 		"rate-limit-redis": "^4.2.0"
 	},
 	"devDependencies": {
-		"vitest": "^3.0.7"
+		"vitest": "^3.0.8"
 	}
 }
