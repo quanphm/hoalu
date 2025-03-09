@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { workspace } from "./auth";
-import { colorTypeEnum, levelEnum, repeatEnum, taskStatusEnum, walletTypeEnum } from "./enums";
+import { colorTypeEnum, priorityEnum, repeatEnum, taskStatusEnum, walletTypeEnum } from "./enums";
 
 export const category = pgTable(
 	"category",
@@ -98,7 +98,7 @@ export const task = pgTable(
 		title: text("title").notNull(),
 		description: text("description"),
 		status: taskStatusEnum().default("todo").notNull(),
-		priority: levelEnum().default("none").notNull(),
+		priority: priorityEnum().default("none").notNull(),
 		creatorId: uuid("creator_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "set null" }),

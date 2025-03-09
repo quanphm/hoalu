@@ -1,13 +1,9 @@
 import { createExpenseDialogOpenAtom, deleteExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { useAppForm } from "@/components/forms";
+import { HotKey } from "@/components/hotkey";
 import { authClient } from "@/lib/auth-client";
-import {
-	type ExpenseFormSchema,
-	createExpenseFormSchema,
-	deleteWorkspaceFormSchema,
-	workspaceFormSchema,
-} from "@/lib/schema";
-import { useCreateExpense, useDeleteExpense } from "@/services/mutations";
+import { type ExpenseFormSchema, createExpenseFormSchema, workspaceFormSchema } from "@/lib/schema";
+import { useCreateExpense } from "@/services/mutations";
 import { workspaceKeys } from "@/services/query-key-factory";
 import {
 	categoriesQueryOptions,
@@ -15,7 +11,6 @@ import {
 	walletsQueryOptions,
 } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
-import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -28,6 +23,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
@@ -57,7 +53,18 @@ function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
 }
 
 function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
+	return (
+		<Tooltip>
+			<DialogTrigger asChild>
+				<TooltipTrigger asChild>{children}</TooltipTrigger>
+			</DialogTrigger>
+			<TooltipContent side="bottom">
+				<HotKey>
+					<span className="text-sm leading-none">⌘</span>E
+				</HotKey>
+			</TooltipContent>
+		</Tooltip>
+	);
 }
 
 function CreateExpenseForm() {

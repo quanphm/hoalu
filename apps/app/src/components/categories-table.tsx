@@ -1,5 +1,8 @@
 import { DataTable } from "@/components/data-table";
+import { createCategoryTheme } from "@/helpers/colors";
+import type { CategorySchema } from "@/lib/schema";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -16,65 +19,55 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
 
-type Item = {
-	id: string;
-	name: string;
-	description: string | null;
-	color:
-		| "red"
-		| "green"
-		| "blue"
-		| "cyan"
-		| "yellow"
-		| "orange"
-		| "purple"
-		| "fuchsia"
-		| "pink"
-		| "rose"
-		| "gray"
-		| "stone";
-};
+const columnHelper = createColumnHelper<CategorySchema>();
 
-const columns: ColumnDef<Item>[] = [
-	{
-		id: "name",
+const columns = [
+	columnHelper.accessor("name", {
 		header: "Category",
-		cell: ({ row }) => {
-			return <p className="font-medium">{row.original.name}</p>;
+		cell: (info) => {
+			const value = info.getValue();
+			const className = createCategoryTheme(info.row.original.color);
+			return <Badge className={className}>{value}</Badge>;
 		},
 		meta: {
 			headerClassName:
-				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
-			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
+				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+			cellClassName:
+				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
 		},
-	},
-	{
-		accessorKey: "description",
+	}),
+	columnHelper.accessor("description", {
 		header: "Description",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground">{row.getValue("description")}</p>;
+		cell: (info) => {
+			return <p className="text-muted-foreground">{info.getValue()}</p>;
 		},
-	},
-	{
+		meta: {
+			headerClassName:
+				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+			cellClassName:
+				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
+		},
+	}),
+	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: ({ row }) => <RowActions row={row} />,
+		cell: (info) => <RowActions row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
 			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
 		},
-	},
+	}),
 ];
 
-export function CategoriesTable({ data }: { data: Item[] }) {
+export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 	return <DataTable data={data} columns={columns} />;
 }
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({ row }: { row: Row<CategorySchema> }) {
 	const [open, setOpen] = useState(false);
 	const onDelete = async () => {
 		setOpen(false);

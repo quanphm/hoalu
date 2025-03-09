@@ -1,45 +1,14 @@
 import { pgEnum } from "drizzle-orm/pg-core";
+import {
+	PG_ENUM_COLOR,
+	PG_ENUM_PRIORITY,
+	PG_ENUM_REPEAT,
+	PG_ENUM_TASK_STATUS,
+	PG_ENUM_WALLET_TYPE,
+} from "../../common/enums";
 
-export const colorTypeEnum = pgEnum("color_enum", [
-	"red",
-	"green",
-	"blue",
-	"cyan",
-	"yellow",
-	"amber",
-	"orange",
-	"purple",
-	"fuchsia",
-	"pink",
-	"rose",
-	"gray",
-	"stone",
-	"slate",
-	"sky",
-]);
-
-export const walletTypeEnum = pgEnum("wallet_type_enum", [
-	"cash",
-	"bank-account",
-	"credit-card",
-	"debit-card",
-	"digital-account",
-]);
-
-export const levelEnum = pgEnum("level_enum", ["urgent", "high", "medium", "low", "none"]);
-
-export const taskStatusEnum = pgEnum("task_status_enum", [
-	"todo",
-	"in-progress",
-	"done",
-	"blocked",
-	"canceled",
-]);
-
-export const repeatEnum = pgEnum("repeat_enum", [
-	"one-time",
-	"weekly",
-	"monthly",
-	"yearly",
-	"custom",
-]);
+export const colorTypeEnum = pgEnum("color_enum", PG_ENUM_COLOR);
+export const walletTypeEnum = pgEnum("wallet_type_enum", PG_ENUM_WALLET_TYPE);
+export const priorityEnum = pgEnum("priority_enum", PG_ENUM_PRIORITY);
+export const taskStatusEnum = pgEnum("task_status_enum", PG_ENUM_TASK_STATUS);
+export const repeatEnum = pgEnum("repeat_enum", PG_ENUM_REPEAT);

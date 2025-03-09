@@ -1,6 +1,6 @@
 {
-  "id": "3370a61d-3d2d-4f25-b96d-373fd35e909d",
-  "prevId": "2ff91c2e-cbb0-4b6f-be18-43575f47f0b3",
+  "id": "b9b28faa-2384-4885-b050-e1f669fc2cc2",
+  "prevId": "82f61df8-42d9-4c83-ab5b-595187cbe10b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1111,7 +1111,7 @@
         },
         "priority": {
           "name": "priority",
-          "type": "level_enum",
+          "type": "priority_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -1629,8 +1629,8 @@
         "sky"
       ]
     },
-    "public.level_enum": {
-      "name": "level_enum",
+    "public.priority_enum": {
+      "name": "priority_enum",
       "schema": "public",
       "values": [
         "urgent",

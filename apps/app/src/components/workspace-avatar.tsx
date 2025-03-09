@@ -31,11 +31,7 @@ export function WorkspaceAvatar({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage
-				src={logo || `https://avatar.vercel.sh/${name}.png`}
-				alt={name}
-				className={cn(!logo && "grayscale")}
-			/>
+			<AvatarImage src={logo || ""} alt={name} className={cn(!logo && "grayscale")} />
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>

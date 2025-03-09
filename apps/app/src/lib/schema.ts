@@ -1,5 +1,24 @@
 import { type } from "arktype";
 
+export const taskStatusSchema = type("'todo' | 'in-progress' | 'done' | 'canceled' | 'blocked'");
+export type TaskType = typeof taskStatusSchema.inferOut;
+
+export const prioritySchema = type("'urgent' | 'high' | 'medium' | 'low' | 'none'");
+export type PriorityType = typeof prioritySchema.inferOut;
+
+export const repeatSchema = type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'");
+export type RepeatType = typeof repeatSchema.inferOut;
+
+export const colorSchema = type(
+	"'red' | 'green' | 'blue' | 'cyan' | 'yellow' | 'amber' | 'orange' | 'purple' | 'fuchsia' | 'pink' | 'rose' | 'gray' | 'stone' | 'slate' | 'sky'",
+);
+export type Color = typeof colorSchema.inferOut;
+
+export const walletTypeSchema = type(
+	"'cash' | 'bank-account' | 'credit-card' |'debit-card' | 'digital-account'",
+);
+export type WalletType = typeof walletTypeSchema.inferOut;
+
 export const workspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
@@ -50,7 +69,7 @@ export const expenseSchema = type({
 		id: "string.uuid.v7",
 		name: "string",
 		description: "string | null",
-		color: "string",
+		color: colorSchema,
 	},
 	createdAt: "string",
 });
@@ -66,7 +85,7 @@ export const createExpenseFormSchema = type({
 	date: "Date",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
-	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
+	repeat: repeatSchema,
 });
 export type ExpenseFormSchema = typeof createExpenseFormSchema.infer;
 
@@ -78,6 +97,14 @@ export const createExpensePayloadSchema = type({
 	date: "string",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
-	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
+	repeat: repeatSchema,
 });
 export type ExpensePayloadSchema = typeof createExpensePayloadSchema.infer;
+
+export const categorySchema = type({
+	id: "string.uuid.v7",
+	name: "string",
+	description: "string | null",
+	color: colorSchema,
+});
+export type CategorySchema = typeof categorySchema.infer;

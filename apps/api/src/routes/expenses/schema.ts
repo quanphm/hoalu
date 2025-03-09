@@ -1,12 +1,12 @@
 import { type } from "arktype";
-import { repeatSchema, walletTypeSchema } from "../../common";
+import { repeatSchema, walletTypeSchema } from "../../common/schema";
 
 export const expenseSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
-	amount: "string",
+	amount: "string.numeric.parse",
 	currency: "string",
 	repeat: repeatSchema,
 	date: "string",

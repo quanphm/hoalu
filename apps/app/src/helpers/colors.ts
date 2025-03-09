@@ -1,10 +1,5 @@
+import type { Color } from "@/lib/schema";
 import { cn } from "@hoalu/ui/utils";
-import { type } from "arktype";
-
-const colorSchema = type(
-	"'red' | 'green' | 'blue' | 'cyan' | 'yellow' | 'amber' | 'orange' | 'purple' | 'fuchsia' | 'pink' | 'rose' | 'gray' | 'stone' | 'slate' | 'sky'",
-);
-type Color = typeof colorSchema.inferOut;
 
 export function createCategoryTheme(color: Color) {
 	const variants = {
@@ -37,8 +32,8 @@ export function createCategoryTheme(color: Color) {
 			"dark:bg-amber-950 dark:text-amber-200 dark:border-amber-900 dark:hover:bg-amber-900",
 		),
 		orange: cn(
-			"bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200",
-			"dark:bg-orange-950 dark:text-orange-200 dark:border-orange-900 dark:hover:bg-orange-900",
+			"bg-lime-100 text-lime-800 border-lime-200 hover:bg-lime-200",
+			"dark:bg-lime-950 dark:text-lime-200 dark:border-lime-900 dark:hover:bg-lime-900",
 		),
 		purple: cn(
 			"bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200",
