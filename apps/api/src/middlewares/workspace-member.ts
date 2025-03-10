@@ -12,7 +12,7 @@ interface Workspace {
 	createdAt: Date;
 	slug: string;
 	logo: string | null;
-	metadata: string | null;
+	metadata: Record<string, any>;
 }
 
 interface Member {

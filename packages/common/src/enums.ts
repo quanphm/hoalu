@@ -23,4 +23,11 @@ export const PG_ENUM_PRIORITY = ["urgent", "high", "medium", "low", "none"] as c
 
 export const PG_ENUM_TASK_STATUS = ["todo", "in-progress", "done", "blocked", "canceled"] as const;
 
-export const PG_ENUM_REPEAT = ["one-time", "weekly", "monthly", "yearly", "custom"] as const;
+export const PG_ENUM_REPEAT = [
+	"one-time",
+	"daily",
+	"weekly",
+	"monthly",
+	"yearly",
+	"custom",
+] as const;

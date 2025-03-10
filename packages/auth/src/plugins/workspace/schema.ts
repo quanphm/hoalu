@@ -12,9 +12,9 @@ export const workspaceSchema = z.object({
 	publicId: z.string(),
 	logo: z.string().nullish(),
 	metadata: z
-		.record(z.string())
-		.or(z.string().transform((v) => JSON.parse(v)))
-		.nullish(),
+		.record(z.string(), z.any())
+		.nullish()
+		.transform((v) => v ?? {}),
 	createdAt: z.date(),
 });
 export type Workspace = z.infer<typeof workspaceSchema>;

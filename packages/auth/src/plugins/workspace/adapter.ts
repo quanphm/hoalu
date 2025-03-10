@@ -106,10 +106,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 		}) {
 			const workspace = await adapter.create<WorkspaceInput, Workspace>({
 				model: "workspace",
-				data: {
-					...data.workspace,
-					metadata: data.workspace.metadata ? JSON.stringify(data.workspace.metadata) : undefined,
-				},
+				data: data.workspace,
 			});
 			const member = await adapter.create<MemberInput, Member>({
 				model: "member",
@@ -122,7 +119,6 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 			});
 			return {
 				...workspace,
-				metadata: workspace.metadata ? JSON.parse(workspace.metadata) : undefined,
 				members: [
 					{
 						...member,
@@ -318,19 +314,9 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 						value: workspaceId,
 					},
 				],
-				update: {
-					...data,
-					metadata:
-						typeof data.metadata === "object" ? JSON.stringify(data.metadata) : data.metadata,
-				},
+				update: data,
 			});
-			if (!workspace) return null;
-			return {
-				...workspace,
-				metadata: workspace.metadata
-					? parseJSON<Record<string, any>>(workspace.metadata)
-					: undefined,
-			};
+			return workspace ?? null;
 		},
 		async deleteWorkspace(workspaceId: string) {
 			await adapter.delete<Workspace>({

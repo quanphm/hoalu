@@ -92,6 +92,7 @@ export const auth = betterAuth({
 			workspaceCreation: {
 				afterCreate: async (data) => {
 					const { workspace, user } = data;
+					const workspaceDefaultCurrency = workspace.metadata.currency;
 
 					await db.transaction(async (tx) => {
 						// default wallet
@@ -101,7 +102,7 @@ export const auth = betterAuth({
 							workspaceId: workspace.id,
 							ownerId: user.id,
 							type: "cash",
-							currency: "USD",
+							currency: workspaceDefaultCurrency ?? "USD",
 						});
 						// default categories
 						await tx.insert(category).values(

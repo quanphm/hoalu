@@ -3,7 +3,7 @@
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
 	"scripts": {
-		"docker:up": "cd deployments && docker compose -f docker-compose.local.yaml up -d",
+		"docker:up": "cd deployments && docker compose -f docker-compose.local.yml up -d",
 		"docker:down": "cd deployments && docker compose down"
 	},
 	"dependencies": {

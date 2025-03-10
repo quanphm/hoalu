@@ -32,7 +32,8 @@
 				"noArrayIndexKey": "warn"
 			},
 			"a11y": {
-				"noSvgWithoutTitle": "off"
+				"noSvgWithoutTitle": "off",
+				"useSemanticElements": "off"
 			}
 		}
 	}

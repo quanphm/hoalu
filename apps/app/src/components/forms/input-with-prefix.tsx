@@ -2,12 +2,12 @@ import { Input } from "@hoalu/ui/input";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
-interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 	label?: React.ReactNode;
 	description?: string;
 }
 
-export function InputWithPrefixField(props: InputFieldProps) {
+export function InputWithPrefixField(props: Props) {
 	const field = useFieldContext<string>();
 
 	return (

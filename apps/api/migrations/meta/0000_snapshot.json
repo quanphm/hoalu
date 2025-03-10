@@ -1,5 +1,5 @@
 {
-  "id": "beca92c2-d1bc-4a8b-af72-74fa25cce930",
+  "id": "86acce4c-3db7-4823-9ce8-b88386c2c6c6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -721,9 +721,10 @@
         },
         "metadata": {
           "name": "metadata",
-          "type": "text",
+          "type": "jsonb",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'{}'::jsonb"
         },
         "created_at": {
           "name": "created_at",
@@ -1640,6 +1641,7 @@
       "schema": "public",
       "values": [
         "one-time",
+        "daily",
         "weekly",
         "monthly",
         "yearly",

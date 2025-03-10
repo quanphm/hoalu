@@ -1,6 +1,6 @@
 CREATE TYPE "public"."color_enum" AS ENUM('red', 'green', 'teal', 'blue', 'yellow', 'orange', 'purple', 'pink', 'gray', 'stone');--> statement-breakpoint
 CREATE TYPE "public"."priority_enum" AS ENUM('urgent', 'high', 'medium', 'low', 'none');--> statement-breakpoint
-CREATE TYPE "public"."repeat_enum" AS ENUM('one-time', 'weekly', 'monthly', 'yearly', 'custom');--> statement-breakpoint
+CREATE TYPE "public"."repeat_enum" AS ENUM('one-time', 'daily', 'weekly', 'monthly', 'yearly', 'custom');--> statement-breakpoint
 CREATE TYPE "public"."task_status_enum" AS ENUM('todo', 'in-progress', 'done', 'blocked', 'canceled');--> statement-breakpoint
 CREATE TYPE "public"."wallet_type_enum" AS ENUM('cash', 'bank-account', 'credit-card', 'debit-card', 'digital-account');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -109,7 +109,7 @@ CREATE TABLE "workspace" (
 	"public_id" text NOT NULL,
 	"name" text NOT NULL,
 	"logo" text,
-	"metadata" text,
+	"metadata" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"created_at" timestamp NOT NULL,
 	CONSTRAINT "workspace_slug_unique" UNIQUE("slug"),
 	CONSTRAINT "workspace_public_id_unique" UNIQUE("public_id")

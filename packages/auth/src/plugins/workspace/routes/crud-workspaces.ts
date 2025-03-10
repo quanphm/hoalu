@@ -115,7 +115,9 @@ export const createWorkspace = createAuthEndpoint(
 				publicId: generateId({ use: "nanoid", kind: "workspace" }),
 				logo: ctx.body.logo,
 				createdAt: new Date(),
-				metadata: ctx.body.metadata,
+				metadata: ctx.body.metadata
+					? { currency: "USD", ...ctx.body.metadata }
+					: { currency: "USD" },
 			},
 			user: user,
 		});
