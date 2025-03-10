@@ -14,6 +14,7 @@
       "dependencies": {
         "@hoalu/auth": "workspace:*",
         "@hoalu/common": "workspace:*",
+        "@hoalu/countries": "workspace:*",
         "@hoalu/email": "workspace:*",
         "@hoalu/furnace": "workspace:*",
         "@react-email/render": "^1.0.5",
@@ -46,6 +47,7 @@
         "@electric-sql/pglite-sync": "^0.2.20",
         "@hoalu/auth": "workspace:*",
         "@hoalu/common": "workspace:*",
+        "@hoalu/countries": "workspace:*",
         "@hoalu/doki": "workspace:*",
         "@hoalu/icons": "workspace:*",
         "@hoalu/ui": "workspace:*",
@@ -105,6 +107,13 @@
         "nanoid": "^5.1.3",
         "uuid": "^11.1.0",
       },
+      "devDependencies": {
+        "@hoalu/tsconfig": "workspace:*",
+      },
+    },
+    "packages/countries": {
+      "name": "@hoalu/countries",
+      "version": "0.4.0",
       "devDependencies": {
         "@hoalu/tsconfig": "workspace:*",
       },
@@ -526,6 +535,8 @@
     "@hoalu/auth": ["@hoalu/auth@workspace:packages/auth"],
 
     "@hoalu/common": ["@hoalu/common@workspace:packages/common"],
+
+    "@hoalu/countries": ["@hoalu/countries@workspace:packages/countries"],
 
     "@hoalu/doki": ["@hoalu/doki@workspace:packages/doki"],
 
