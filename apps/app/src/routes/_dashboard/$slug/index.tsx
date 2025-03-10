@@ -5,6 +5,7 @@ import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
+import { WalletIcon } from "@/components/wallet-icon";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -41,8 +42,8 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
-				<SectionContent columns={2}>
-					<Section>
+				<SectionContent columns={12}>
+					<Section className="col-span-8">
 						<SectionHeader>
 							<SectionTitle>Overview</SectionTitle>
 						</SectionHeader>
@@ -50,7 +51,7 @@ function RouteComponent() {
 							<ExpensesStats />
 						</SectionContent>
 					</Section>
-					<Section>
+					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets ({wallets.data.length})</SectionTitle>
 							<Button variant="outline" size="sm">
@@ -58,11 +59,16 @@ function RouteComponent() {
 								Create wallet
 							</Button>
 						</SectionHeader>
-						<SectionContent columns={2} className="gap-4">
+						<SectionContent className="gap-4">
 							{wallets.data.map((wallet) => (
 								<ContentCard
 									key={wallet.id}
-									title={wallet.name}
+									title={
+										<p className="flex items-center gap-1.5">
+											<WalletIcon type={wallet.type} />
+											{wallet.name}
+										</p>
+									}
 									description={wallet.description}
 									content={
 										<div className="flex items-center gap-1.5">

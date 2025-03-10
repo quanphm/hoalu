@@ -128,7 +128,9 @@ function CreateExpenseForm() {
 								{(field) => <field.SelectField label="Wallet" options={walletOptions} />}
 							</form.AppField>
 							<form.AppField name="categoryId">
-								{(field) => <field.SelectField label="Category" options={categoryOptions} />}
+								{(field) => (
+									<field.SelectWithSearchField label="Category" options={categoryOptions} />
+								)}
 							</form.AppField>
 						</div>
 						<form.AppField name="description">

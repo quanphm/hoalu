@@ -2,13 +2,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
-interface SelectFieldProps {
+interface Props {
 	options: { value: string; label: string }[];
 	label?: React.ReactNode;
 	description?: React.ReactNode;
 }
 
-export function SelectField(props: SelectFieldProps) {
+export function SelectField(props: Props) {
 	const field = useFieldContext<string>();
 
 	return (
@@ -16,7 +16,7 @@ export function SelectField(props: SelectFieldProps) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Select onValueChange={(value) => field.handleChange(value)} value={field.state.value}>
 				<FieldControl>
-					<SelectTrigger>
+					<SelectTrigger className="focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue placeholder="Select" />
 					</SelectTrigger>
 				</FieldControl>

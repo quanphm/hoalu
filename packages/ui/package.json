@@ -16,12 +16,14 @@
 		"./card": "./src/components/card.tsx",
 		"./chart": "./src/components/chart.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
+		"./command": "./src/components/command.tsx",
 		"./dialog": "./src/components/dialog.tsx",
 		"./drawe": "./src/components/drawer.tsx",
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",
 		"./pagination": "./src/components/pagination.tsx",
+		"./popover": "./src/components/popover.tsx",
 		"./scroll-area": "./src/components/scroll-area.tsx",
 		"./select-native": "./src/components/select-native.tsx",
 		"./select": "./src/components/select.tsx",
@@ -42,7 +44,7 @@
 	"devDependencies": {
 		"@types/react": "^19.0.10",
 		"@hoalu/tsconfig": "workspace:*",
-		"tailwindcss": "^4.0.9"
+		"tailwindcss": "^4.0.12"
 	},
 	"dependencies": {
 		"@hoalu/icons": "workspace:*",
@@ -63,7 +65,7 @@
 		"cmdk": "^1.0.4",
 		"date-fns": "^4.1.0",
 		"next-themes": "^0.4.4",
-		"react-day-picker": "^9.5.1",
+		"react-day-picker": "^9.6.1",
 		"recharts": "^2.15.1",
 		"sonner": "^1.7.4",
 		"tailwind-merge": "^2.6.0",

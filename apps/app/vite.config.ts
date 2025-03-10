@@ -7,12 +7,25 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
 	envPrefix: "PUBLIC_",
+	build: {
+		rollupOptions: {
+			output: {
+				experimentalMinChunkSize: 10_000,
+			},
+		},
+	},
 	plugins: [
 		tailwindcss(),
 		TanStackRouterVite(),
 		react(),
 		VitePWA({
 			registerType: "autoUpdate",
+			includeAssets: ["favicon.ico"],
+			manifest: {
+				name: "Hoalu",
+				short_name: "Hoalu",
+				theme_color: "#030712",
+			},
 			workbox: {
 				maximumFileSizeToCacheInBytes: 10_000_000,
 				globPatterns: ["**/*.{js,css,html,svg,data,wasm}"],

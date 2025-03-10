@@ -9,12 +9,12 @@ interface TransactionAmountValue {
 	currency: string;
 }
 
-interface TransactionAmountFieldProps {
+interface Props {
 	label?: React.ReactNode;
 	description?: string;
 }
 
-export function TransactionAmountField(props: TransactionAmountFieldProps) {
+export function TransactionAmountField(props: Props) {
 	const field = useFieldContext<TransactionAmountValue>();
 
 	const handleValueChange = (value: number) => {

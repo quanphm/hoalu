@@ -6,8 +6,8 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { intlFormatDistance } from "date-fns";
 import { StarIcon } from "lucide-react";
 
-interface BasicCardProps extends Omit<React.ComponentProps<"div">, "content"> {
-	title: string;
+interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
+	title: React.ReactNode;
 	description?: string | null;
 	content?: React.ReactNode;
 }
