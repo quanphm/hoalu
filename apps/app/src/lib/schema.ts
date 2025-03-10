@@ -21,6 +21,11 @@ export const workspaceFormSchema = type({
 });
 export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
 
+export const workspaceMetadataFormSchema = type({
+	currency: "string > 0",
+});
+export type WorkspaceMetadataFormSchema = typeof workspaceMetadataFormSchema.infer;
+
 export const deleteWorkspaceFormSchema = type({
 	confirm: "string > 0",
 });

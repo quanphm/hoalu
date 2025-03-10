@@ -1,6 +1,10 @@
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
-import type { ExpensePayloadSchema, WorkspaceFormSchema } from "@/lib/schema";
+import type {
+	ExpensePayloadSchema,
+	WorkspaceFormSchema,
+	WorkspaceMetadataFormSchema,
+} from "@/lib/schema";
 import { toast } from "@hoalu/ui/sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
@@ -65,6 +69,30 @@ export function useUpdateWorkspace() {
 					},
 				});
 			}
+		},
+	});
+	return mutation;
+}
+
+export function useUpdateWorkspaceMetadata() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async (value: WorkspaceMetadataFormSchema) => {
+			const { data, error } = await authClient.workspace.update({
+				data: {
+					metadata: value,
+				},
+				idOrSlug: slug,
+			});
+			if (error) {
+				throw error;
+			}
+			return data;
+		},
+		onSuccess: () => {
+			toast.success("Workspace updated");
+			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 	});
 	return mutation;

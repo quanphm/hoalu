@@ -1,10 +1,20 @@
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
-import { deleteWorkspaceFormSchema, workspaceFormSchema } from "@/lib/schema";
-import { useCreateWorkspace, useDeleteWorkspace, useUpdateWorkspace } from "@/services/mutations";
+import {
+	deleteWorkspaceFormSchema,
+	workspaceFormSchema,
+	workspaceMetadataFormSchema,
+} from "@/lib/schema";
+import {
+	useCreateWorkspace,
+	useDeleteWorkspace,
+	useUpdateWorkspace,
+	useUpdateWorkspaceMetadata,
+} from "@/services/mutations";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
+import { getCurrencyList } from "@hoalu/countries";
 import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -216,6 +226,62 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 	);
 }
 
+const currencyOptions = getCurrencyList().map((c) => ({
+	label: c,
+	value: c,
+}));
+console.log(currencyOptions);
+
+function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
+	const { slug } = routeApi.useParams();
+	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const mutation = useUpdateWorkspaceMetadata();
+
+	const form = useAppForm({
+		defaultValues: {
+			currency: workspace.metadata.currency as string,
+		},
+		validators: {
+			onSubmit: workspaceMetadataFormSchema,
+		},
+		onSubmit: async ({ value }) => {
+			if (!canUpdateWorkspace) return;
+			await tryCatch.async(mutation.mutateAsync(value));
+			form.reset();
+		},
+	});
+
+	return (
+		<form.AppForm>
+			<form.Form>
+				<form.AppField name="currency">
+					{(field) => (
+						<field.SelectWithSearchField
+							label="Default currency"
+							description="This will determine how monetary values appear in your dashboard."
+							options={currencyOptions}
+						/>
+					)}
+				</form.AppField>
+				{canUpdateWorkspace && (
+					<div className="ml-auto flex gap-2">
+						<Button variant="ghost" type="button" onClick={() => form.reset()}>
+							Reset
+						</Button>
+						<form.Subscribe selector={(state) => state.isPristine}>
+							{(isPristine) => (
+								<Button type="submit" disabled={isPristine}>
+									Update
+								</Button>
+							)}
+						</form.Subscribe>
+					</div>
+				)}
+			</form.Form>
+		</form.AppForm>
+	);
+}
+
 type DeleteContext = {
 	open: boolean;
 	setOpen: (open: boolean) => void;
@@ -319,4 +385,5 @@ export {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
 	DeleteWorkspaceForm,
+	UpdateWorkspaceMetadataForm,
 };

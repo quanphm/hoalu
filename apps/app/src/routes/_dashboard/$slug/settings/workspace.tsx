@@ -1,8 +1,12 @@
 import { SettingCard } from "@/components/cards";
 import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { DeleteWorkspaceDialog, DeleteWorkspaceTrigger } from "@/components/workspace";
-import { UpdateWorkspaceForm } from "@/components/workspace";
+import {
+	DeleteWorkspaceDialog,
+	DeleteWorkspaceTrigger,
+	UpdateWorkspaceForm,
+	UpdateWorkspaceMetadataForm,
+} from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
 import { authClient } from "@/lib/auth-client";
 import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
@@ -41,31 +45,36 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>General</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={3}>
-					<SettingCard
-						layout="horizontal"
-						title="Logo"
-						description={
-							<p className="max-w-sm">
-								Recommended size 256x256px.
-								<br />
-								Accepted file types: .png, .jpg. Max file size: 5MB.
-							</p>
-						}
-						className="col-span-2"
-					>
-						<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
-					</SettingCard>
-				</SectionContent>
-				<SectionContent columns={3}>
-					<SettingCard title="Profile" className="col-span-2">
-						<UpdateWorkspaceForm canUpdateWorkspace={canUpdateWorkspace} />
-					</SettingCard>
-				</SectionContent>
-				<SectionContent columns={3}>
-					<SettingCard title="Workspace ID" className="col-span-2">
-						<InputWithCopy value={workspace.publicId} />
-					</SettingCard>
+				<SectionContent columns={12}>
+					<div className="col-span-8">
+						<SectionContent>
+							<SettingCard
+								layout="horizontal"
+								title="Logo"
+								description={
+									<p className="max-w-sm">
+										Recommended size 256x256px.
+										<br />
+										Accepted file types: .png, .jpg. Max file size: 5MB.
+									</p>
+								}
+							>
+								<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
+							</SettingCard>
+							<SettingCard title="Profile">
+								<UpdateWorkspaceForm canUpdateWorkspace={canUpdateWorkspace} />
+							</SettingCard>
+							<SettingCard title="Workspace ID">
+								<InputWithCopy value={workspace.publicId} />
+							</SettingCard>
+						</SectionContent>
+					</div>
+
+					<div className="col-span-4">
+						<SettingCard title="Preferences">
+							<UpdateWorkspaceMetadataForm canUpdateWorkspace={canUpdateWorkspace} />
+						</SettingCard>
+					</div>
 				</SectionContent>
 			</Section>
 
@@ -74,13 +83,13 @@ function RouteComponent() {
 					<SectionHeader>
 						<SectionTitle className="text-destructive">Danger zone</SectionTitle>
 					</SectionHeader>
-					<SectionContent columns={3}>
+					<SectionContent columns={12}>
 						<SettingCard
 							variant="destructive"
 							layout="horizontal"
 							title="Delete workspace"
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
-							className="col-span-2"
+							className="col-span-8"
 						>
 							<DeleteWorkspaceDialog>
 								<DeleteWorkspaceTrigger>

@@ -9,3 +9,4 @@ export { languages } from "./data/languages";
 
 export { getCountryData, getCountryDataList } from "./getCountryData";
 export { getEmojiFlag } from "./getEmojiFlag";
+export { getCurrencyList } from "./getCurrency";
