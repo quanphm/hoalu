@@ -12,7 +12,6 @@ export const getCurrencyList = (): string[] => {
 	const currencies = (Object.keys(countries) as TCountryCode[]).map(
 		(iso2) => new Set(getCurrency(iso2)),
 	);
-	console.log(currencies);
 
 	let uniqueSet = new Set<string>();
 	for (const dataSet of currencies) {

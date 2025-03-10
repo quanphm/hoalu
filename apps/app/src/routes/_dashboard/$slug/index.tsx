@@ -64,12 +64,17 @@ function RouteComponent() {
 								<ContentCard
 									key={wallet.id}
 									title={
-										<p className="flex items-center gap-1.5">
+										<div className="flex items-start gap-2">
 											<WalletIcon type={wallet.type} />
-											{wallet.name}
-										</p>
+											<p className="leading-5">
+												{wallet.name}
+												<br />
+												<span className="font-normal text-muted-foreground text-xs">
+													{wallet.description}
+												</span>
+											</p>
+										</div>
 									}
-									description={wallet.description}
 									content={
 										<div className="flex items-center gap-1.5">
 											<UserAvatar

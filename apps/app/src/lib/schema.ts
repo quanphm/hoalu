@@ -39,8 +39,8 @@ export const taskSchema = type({
 	id: "string",
 	title: "string > 0",
 	description: "string | null",
-	status: "'todo' | 'in-progress' | 'done' | 'blocked' | 'canceled'",
-	priority: "'urgent' | 'high' | 'medium' | 'low' | 'none'",
+	status: taskStatusSchema,
+	priority: prioritySchema,
 	dueDate: "string",
 });
 export type TaskSchema = typeof taskSchema.infer;
@@ -51,7 +51,7 @@ export const expenseSchema = type({
 	description: "string | null",
 	amount: "number",
 	currency: "string",
-	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
+	repeat: repeatSchema,
 	date: "string",
 	creator: {
 		id: "string.uuid.v7",
