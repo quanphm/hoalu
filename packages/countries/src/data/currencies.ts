@@ -63,6 +63,8 @@ export const currencies = {
 	BN: "BND",
 	// Bolivia
 	BO: "BOB",
+	// Bonaire
+	BQ: "USD",
 	// Brazil
 	BR: "BRL",
 	// Bahamas

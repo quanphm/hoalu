@@ -2,10 +2,12 @@ import { currencies } from "./data/currencies";
 import type { TCountryCode } from "./types";
 
 export const getCurrency = (iso2: TCountryCode): string => {
-	if (!currencies[iso2]) {
+	// @ts-ignore
+	const currency = currencies[iso2];
+	if (!currency) {
 		throw new Error("Currency not found");
 	}
-	return currencies[iso2];
+	return currency;
 };
 
 export const getCurrencyList = (): string[] => {
