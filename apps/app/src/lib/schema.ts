@@ -18,6 +18,7 @@ export type Color = typeof colorSchema.inferOut;
 export const workspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
+	currency: "string > 0",
 });
 export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
 

@@ -17,7 +17,13 @@ export function useCreateWorkspace() {
 	const navigate = useNavigate();
 	const mutation = useMutation({
 		mutationFn: async (value: WorkspaceFormSchema) => {
-			const { data, error } = await authClient.workspace.create(value);
+			const { data, error } = await authClient.workspace.create({
+				name: value.name,
+				slug: value.slug,
+				metadata: {
+					currency: value.currency,
+				},
+			});
 			if (error) {
 				throw error;
 			}

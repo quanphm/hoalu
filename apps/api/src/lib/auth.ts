@@ -5,6 +5,7 @@ import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, jwt, openAPI } from "better-auth/plugins";
+import { describeRoute } from "hono-openapi";
 import { DEFAULT_CATEGORIES } from "../common/categories";
 import { db } from "../db";
 import { category, wallet } from "../db/schema/core";
@@ -99,6 +100,7 @@ export const auth = betterAuth({
 						await tx.insert(wallet).values({
 							id: generateId({ use: "uuid" }),
 							name: "Cash wallet",
+							description: "Physical cash",
 							workspaceId: workspace.id,
 							ownerId: user.id,
 							type: "cash",
@@ -109,6 +111,7 @@ export const auth = betterAuth({
 							DEFAULT_CATEGORIES.map((c) => ({
 								id: generateId({ use: "uuid" }),
 								name: c.name,
+								description: c.description,
 								color: c.color,
 								workspaceId: workspace.id,
 							})),

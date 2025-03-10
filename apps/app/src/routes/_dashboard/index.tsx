@@ -26,8 +26,8 @@ function RouteComponent() {
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
 					</SectionHeader>
-					<SectionContent columns={3}>
-						<div className="col-span-2">
+					<SectionContent columns={12}>
+						<div className="col-span-6">
 							<p className="mb-6 text-muted-foreground text-sm">
 								Workspaces are shared environments where members can interact with content together.
 							</p>

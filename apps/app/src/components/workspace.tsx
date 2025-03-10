@@ -51,7 +51,7 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 		<CreateContext value={contextValue}>
 			<Dialog open={open} onOpenChange={setOpen}>
 				{children}
-				<DialogContent className="sm:max-w-[540px]">
+				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>
 						<DialogDescription>
@@ -77,6 +77,7 @@ function CreateWorkspaceForm() {
 		defaultValues: {
 			name: "",
 			slug: "",
+			currency: "USD",
 		},
 		validators: {
 			onSubmit: workspaceFormSchema,
@@ -117,6 +118,15 @@ function CreateWorkspaceForm() {
 							pattern="[a-z0-9\-]+$"
 							required
 							autoComplete="off"
+						/>
+					)}
+				</form.AppField>
+				<form.AppField name="currency">
+					{(field) => (
+						<field.SelectWithSearchField
+							label="Workspace currency"
+							description="This will determine how monetary values appear in your dashboard."
+							options={currencyOptions}
 						/>
 					)}
 				</form.AppField>
@@ -230,7 +240,6 @@ const currencyOptions = getCurrencyList().map((c) => ({
 	label: c,
 	value: c,
 }));
-console.log(currencyOptions);
 
 function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
 	const { slug } = routeApi.useParams();
