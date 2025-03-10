@@ -45,7 +45,7 @@ export function useUpdateWorkspace() {
 			const { data, error } = await authClient.workspace.update({
 				data: {
 					name: value.name,
-					slug: value.slug,
+					slug: value.slug === slug ? undefined : value.slug,
 				},
 				idOrSlug: slug,
 			});
@@ -56,7 +56,7 @@ export function useUpdateWorkspace() {
 		},
 		onSuccess: (data) => {
 			toast.success("Workspace updated");
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(data.slug) });
+			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			if (slug !== data.slug) {
 				navigate({
 					to: "/$slug/settings/workspace",

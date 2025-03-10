@@ -2,6 +2,10 @@
 	"name": "hoalu",
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
+	"scripts": {
+		"docker:up": "cd deployments && docker compose -f docker-compose.local.yaml up -d",
+		"docker:down": "cd deployments && docker compose down"
+	},
 	"dependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"typescript": "^5.8.2"

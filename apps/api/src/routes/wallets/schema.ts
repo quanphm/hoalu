@@ -7,7 +7,7 @@ export const walletSchema = type({
 	name: "string",
 	description: "string | null",
 	currency: "string",
-	type: "string",
+	type: walletTypeSchema,
 	createdAt: "string",
 	isActive: "boolean",
 	owner: {

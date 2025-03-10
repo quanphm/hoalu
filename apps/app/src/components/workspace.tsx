@@ -131,6 +131,9 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 		validators: {
 			onSubmit: workspaceFormSchema,
 			onSubmitAsync: async ({ value }) => {
+				if (value.slug === slug) {
+					return undefined;
+				}
 				const { error } = await authClient.workspace.checkSlug({ slug: value.slug });
 				if (error) {
 					return {
@@ -153,6 +156,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 					};
 				});
 			}
+			form.reset();
 		},
 	});
 

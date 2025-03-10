@@ -18,7 +18,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
@@ -62,19 +61,18 @@ export function NavUser() {
 								<DropdownMenuSubTrigger>
 									<PaletteIcon />
 									<span>Themes</span>
+									<HotKey>Shift D</HotKey>
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuSubContent>
 										<DropdownMenuItem onClick={() => setTheme("light")}>
 											<SunIcon />
 											<span>Light</span>
-											<HotKey>Shift L</HotKey>
 											{theme === "light" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("dark")}>
 											<MoonIcon />
 											<span>Dark</span>
-											<HotKey>Shift D</HotKey>
 											{theme === "dark" && <CheckIcon className="ml-auto" />}
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => setTheme("system")}>
