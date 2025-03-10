@@ -6,7 +6,7 @@ export const expenseSchema = type({
 	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
-	amount: "string.numeric.parse",
+	amount: "string.numeric",
 	currency: "string",
 	repeat: repeatSchema,
 	date: "string",
@@ -36,7 +36,6 @@ export const expenseSchema = type({
 	},
 	createdAt: "string",
 });
-
 export const expensesSchema = expenseSchema.array().onUndeclaredKey("delete");
 
 export const insertExpenseSchema = type({

@@ -4,6 +4,7 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
+import { monetary } from "../../common/monetary";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
@@ -43,7 +44,12 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = expensesSchema(expenses);
+			const parsed = expensesSchema.pipe((e) => {
+				return e.map((i) => ({
+					...i,
+					amount: monetary.fromRealAmount(i.amount, i.currency),
+				}));
+			})(expenses);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -82,7 +88,10 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = expenseSchema(expense);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: monetary.fromRealAmount(e.amount, e.currency),
+			}))(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -121,13 +130,20 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
+			const { amount, currency } = payload;
+			const realAmount = monetary.toRealAmount(amount, currency);
+
 			const expense = await expenseRepository.insert({
 				creatorId: user.id,
 				workspaceId: workspace.id,
 				...payload,
+				amount: realAmount,
 			});
 
-			const parsed = expenseSchema(expense);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: monetary.fromRealAmount(e.amount, e.currency),
+			}))(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -184,7 +200,10 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = expenseSchema(queryData);
+			const parsed = expenseSchema.pipe((e) => ({
+				...e,
+				amount: monetary.fromRealAmount(e.amount, e.currency),
+			}))(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

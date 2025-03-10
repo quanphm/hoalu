@@ -49,7 +49,7 @@ export const expenseSchema = type({
 	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
-	amount: "number",
+	amount: "string",
 	currency: "string",
 	repeat: repeatSchema,
 	date: "string",

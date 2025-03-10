@@ -52,7 +52,7 @@ const columns = [
 	columnHelper.accessor("amount", {
 		header: "Amount",
 		cell: (info) => {
-			const value = formatCurrency(info.getValue(), info.row.original.currency);
+			const value = formatCurrency(Number.parseFloat(info.getValue()), info.row.original.currency);
 			return value;
 		},
 		meta: {

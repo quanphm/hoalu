@@ -1,22 +1,14 @@
-import { countries } from "./data/countries";
-import type { ICountryData, TCountryCode } from "./types";
+import { currencies } from "./data/currencies";
+import type { TCountryCode } from "./types";
 
-export const getCurrency = (iso2: TCountryCode): string[] => {
-	if (!countries[iso2]) {
-		throw new Error("Country not found");
+export const getCurrency = (iso2: TCountryCode): string => {
+	if (!currencies[iso2]) {
+		throw new Error("Currency not found");
 	}
-	return countries[iso2].currency;
+	return currencies[iso2];
 };
 
 export const getCurrencyList = (): string[] => {
-	const currencies = (Object.keys(countries) as TCountryCode[]).map(
-		(iso2) => new Set(getCurrency(iso2)),
-	);
-
-	let uniqueSet = new Set<string>();
-	for (const dataSet of currencies) {
-		uniqueSet = uniqueSet.union(dataSet);
-	}
-
-	return Array.from(uniqueSet);
+	const uniqueSet = new Set(Object.values(currencies));
+	return [...uniqueSet];
 };
