@@ -21,6 +21,7 @@
 	"dependencies": {
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
+		"@hoalu/countries": "workspace:*",
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@react-email/render": "^1.0.5",

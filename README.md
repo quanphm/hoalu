@@ -4,7 +4,7 @@
 
 ## Tech Stack
 
-- **Frontend**: React, Tanstack (Router, Query, Form), TailwindCSS, Shadcn UI
+- **Frontend**: React, Tanstack (Router, Query, Form), TailwindCSS, shadcn/ui
 - **Backend**: Hono, Drizzle ORM
 - **Database**: PostgreSQL
 - **Authentication**: Better Auth
@@ -16,23 +16,24 @@
 
 ### Apps
 
-| Repo                                 | Description                                       |
-| ------------------------------------ | ------------------------------------------------- |
-| [@hoalu/api](apps/api)               | Backend API                                       |
-| [@hoalu/app](apps/app)               | Dashboard web application                         |
+| Repo                   | Description               |
+| ---------------------- | ------------------------- |
+| [@hoalu/api](apps/api) | Backend API               |
+| [@hoalu/app](apps/app) | Dashboard web application |
 
 ### Packages
 
-| Repo                                 | Description                                       |
-| ------------------------------------ | ------------------------------------------------- |
-| [@hoalu/common](packages/common)     | Reusable functions & constants accross workspaces |
-| [@hoalu/auth](packages/auth)         | Better Auth plugins & utils                       |
-| [@hoalu/doki](packages/doki)         | Tanstack Query + Electric SQL hooks               |
-| [@hoalu/furnace](packages/furnace)   | Hono handlers & utils for `@hoalu/api`            |
-| [@hoalu/email](packages/email)       | Email templates                                   |
-| [@hoalu/icons](packages/icons)       | Icon library                                      |
-| [@hoalu/ui](packages/ui)             | Shadcn UI + OriginUI                              |
-| [@hoalu/tsconfig](packages/tsconfig) | Typescript configurations                         |
+| Repo                                   | Description                                                                                          |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [@hoalu/common](packages/common)       | Reusable functions & constants accross workspaces                                                    |
+| [@hoalu/countries](packages/countries) | Countries, Languages & Continents data - [annexare/Countries](https://github.com/annexare/Countries) |
+| [@hoalu/auth](packages/auth)           | Better Auth plugins & utils                                                                          |
+| [@hoalu/doki](packages/doki)           | Tanstack Query + Electric SQL hooks                                                                  |
+| [@hoalu/furnace](packages/furnace)     | Hono handlers & utils for `@hoalu/api`                                                               |
+| [@hoalu/email](packages/email)         | Email templates                                                                                      |
+| [@hoalu/icons](packages/icons)         | Icon library                                                                                         |
+| [@hoalu/ui](packages/ui)               | [Shadcn UI](https://ui.shadcn.com/) + [Origin UI](https://originui.com/)                             |
+| [@hoalu/tsconfig](packages/tsconfig)   | Typescript configurations                                                                            |
 
 ## Getting Started
 

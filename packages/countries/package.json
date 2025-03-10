@@ -1,0 +1,16 @@
+{
+	"name": "@hoalu/countries",
+	"version": "0.4.0",
+	"private": true,
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"lint": "biome check .",
+		"format": "biome format --write ."
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
+	}
+}

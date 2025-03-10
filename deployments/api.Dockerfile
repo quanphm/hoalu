@@ -9,6 +9,7 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/app/package.json ./apps/app/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/common/package.json ./packages/common/
+COPY packages/countries/package.json ./packages/countries/
 COPY packages/email/package.json ./packages/email/
 COPY packages/furnace/package.json ./packages/furnace/
 COPY packages/icons/package.json ./packages/icons/
@@ -24,6 +25,7 @@ RUN bun install --production
 COPY apps/api ./apps/api
 COPY packages/auth ./packages/auth
 COPY packages/common ./packages/common
+COPY packages/countries ./packages/countries
 COPY packages/email ./packages/email
 COPY packages/furnace ./packages/furnace
 COPY packages/tsconfig ./packages/tsconfig

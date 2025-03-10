@@ -15,6 +15,7 @@
 		"@electric-sql/pglite-sync": "^0.2.20",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
+		"@hoalu/countries": "workspace:*",
 		"@hoalu/doki": "workspace:*",
 		"@hoalu/icons": "workspace:*",
 		"@hoalu/ui": "workspace:*",
