@@ -1,4 +1,5 @@
 import { type } from "arktype";
+import { monetary } from "../../common/monetary";
 import { colorSchema, repeatSchema, walletTypeSchema } from "../../common/schema";
 
 export const expenseSchema = type({
@@ -7,6 +8,7 @@ export const expenseSchema = type({
 	title: "string",
 	description: "string | null",
 	amount: "string.numeric.parse",
+	realAmount: "string.numeric.parse",
 	currency: "string",
 	repeat: repeatSchema,
 	date: "string",
@@ -35,8 +37,10 @@ export const expenseSchema = type({
 		color: colorSchema,
 	},
 	createdAt: "string",
-});
-
+}).pipe((e) => ({
+	...e,
+	amount: monetary.fromRealAmount(e.amount, e.currency),
+}));
 export const expensesSchema = expenseSchema.array().onUndeclaredKey("delete");
 
 export const insertExpenseSchema = type({

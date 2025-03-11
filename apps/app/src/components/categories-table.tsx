@@ -41,15 +41,7 @@ const columns = [
 	}),
 	columnHelper.accessor("description", {
 		header: "Description",
-		cell: (info) => {
-			return <p className="text-muted-foreground">{info.getValue()}</p>;
-		},
-		meta: {
-			headerClassName:
-				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
-			cellClassName:
-				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
-		},
+		cell: (info) => info.getValue(),
 	}),
 	columnHelper.display({
 		id: "actions",

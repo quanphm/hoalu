@@ -18,6 +18,7 @@ export class ExpenseRepository {
 
 		const result = queryData.map((data) => ({
 			...data.expense,
+			realAmount: data.expense.amount,
 			creator: data.user,
 			wallet: data.wallet,
 			category: data.category,
@@ -44,6 +45,7 @@ export class ExpenseRepository {
 
 		const result = {
 			...queryData[0].expense,
+			realAmount: queryData[0].expense.amount,
 			creator: queryData[0].user,
 			wallet: queryData[0].wallet,
 			category: queryData[0].category,

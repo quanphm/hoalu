@@ -1,8 +1,12 @@
 import { DataTable } from "@/components/data-table";
+import { DeleteExpenseDialog, DeleteExpenseTrigger } from "@/components/expense";
 import { createCategoryTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
+import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseSchema } from "@/lib/schema";
 import { useDeleteExpense } from "@/services/mutations";
+import { exchangeRatesQueryOptions } from "@/services/query-options";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -12,9 +16,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { DeleteExpenseDialog, DeleteExpenseTrigger } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseSchema>();
 
@@ -32,7 +36,7 @@ const columns = [
 		},
 	}),
 	columnHelper.accessor("title", {
-		header: "Transaction",
+		header: "Transaction description",
 		cell: (info) => info.getValue(),
 	}),
 	columnHelper.accessor("category.name", {
@@ -49,12 +53,10 @@ const columns = [
 				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
 		},
 	}),
-	columnHelper.accessor("amount", {
+	columnHelper.display({
+		id: "amount",
 		header: "Amount",
-		cell: (info) => {
-			const value = formatCurrency(info.getValue(), info.row.original.currency);
-			return value;
-		},
+		cell: (info) => <RowAmount row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
@@ -115,5 +117,43 @@ function RowActions({ row }: { row: Row<ExpenseSchema> }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</DeleteExpenseDialog>
+	);
+}
+
+function RowAmount({ row }: { row: Row<ExpenseSchema> }) {
+	const {
+		metadata: { currency: targetCurr },
+	} = useWorkspace();
+	const { amount, realAmount, currency: sourceCurr } = row.original;
+	const { data: rate, status } = useQuery(
+		exchangeRatesQueryOptions({ from: sourceCurr, to: targetCurr }),
+	);
+	console.log(status);
+
+	if (targetCurr === sourceCurr) {
+		return <p className="font-medium">{formatCurrency(amount, targetCurr)}</p>;
+	}
+
+	if (status === "error") {
+		return <p className="text-destructive">Error</p>;
+	}
+
+	if (!rate) {
+		return <p className="text-muted-foreground">Converting...</p>;
+	}
+
+	const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurr);
+	const factor = isNoCent ? 1 : 100;
+	const convertedValue = realAmount * (rate / factor);
+
+	return (
+		<div className="leading-relaxed">
+			<p className="font-medium">{formatCurrency(convertedValue, targetCurr)}</p>
+			{targetCurr !== sourceCurr && (
+				<p className="text-muted-foreground text-xs tracking-tight">
+					Original {formatCurrency(amount, sourceCurr)}
+				</p>
+			)}
+		</div>
 	);
 }

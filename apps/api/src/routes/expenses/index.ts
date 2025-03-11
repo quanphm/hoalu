@@ -4,6 +4,7 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
+import { monetary } from "../../common/monetary";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
@@ -121,10 +122,14 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
+			const { amount, currency } = payload;
+			const realAmount = monetary.toRealAmount(amount, currency);
+
 			const expense = await expenseRepository.insert({
 				creatorId: user.id,
 				workspaceId: workspace.id,
 				...payload,
+				amount: realAmount,
 			});
 
 			const parsed = expenseSchema(expense);

@@ -1,9 +1,11 @@
 import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
+import type { ExchangeRatesPayloadSchema } from "@/lib/schema";
 import {
 	authKeys,
 	categoryKeys,
+	exchangeRateKeys,
 	expenseKeys,
 	invitationKeys,
 	memberKeys,
@@ -126,5 +128,16 @@ export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.withWorkspace(slug),
 		queryFn: () => apiClient.expenses.list(slug),
+	});
+};
+
+export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesPayloadSchema) => {
+	return queryOptions({
+		queryKey: exchangeRateKeys.pair({ from, to }),
+		queryFn: () => apiClient.exchangeRates.find({ from, to }),
+		staleTime: TIME_IN_MILLISECONDS.DAY,
+		select: (data) => data.rate,
+		enabled: from !== to,
+		retry: 1,
 	});
 };

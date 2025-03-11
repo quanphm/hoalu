@@ -1,7 +1,17 @@
 import { useAppForm } from "@/components/forms";
+import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { authClient } from "@/lib/auth-client";
-import { deleteWorkspaceFormSchema, workspaceFormSchema } from "@/lib/schema";
-import { useCreateWorkspace, useDeleteWorkspace, useUpdateWorkspace } from "@/services/mutations";
+import {
+	deleteWorkspaceFormSchema,
+	workspaceFormSchema,
+	workspaceMetadataFormSchema,
+} from "@/lib/schema";
+import {
+	useCreateWorkspace,
+	useDeleteWorkspace,
+	useUpdateWorkspace,
+	useUpdateWorkspaceMetadata,
+} from "@/services/mutations";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
@@ -41,7 +51,7 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 		<CreateContext value={contextValue}>
 			<Dialog open={open} onOpenChange={setOpen}>
 				{children}
-				<DialogContent className="sm:max-w-[540px]">
+				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>
 						<DialogDescription>
@@ -67,6 +77,7 @@ function CreateWorkspaceForm() {
 		defaultValues: {
 			name: "",
 			slug: "",
+			currency: "USD",
 		},
 		validators: {
 			onSubmit: workspaceFormSchema,
@@ -110,6 +121,15 @@ function CreateWorkspaceForm() {
 						/>
 					)}
 				</form.AppField>
+				<form.AppField name="currency">
+					{(field) => (
+						<field.SelectWithSearchField
+							label="Workspace currency"
+							description="This will determine how monetary values appear in your dashboard."
+							options={AVAILABLE_CURRENCY_OPTIONS}
+						/>
+					)}
+				</form.AppField>
 				<Button type="submit" className="ml-auto w-fit">
 					Create workspace
 				</Button>
@@ -129,7 +149,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: workspaceFormSchema,
+			onSubmit: workspaceFormSchema.omit("currency"),
 			onSubmitAsync: async ({ value }) => {
 				if (value.slug === slug) {
 					return undefined;
@@ -194,6 +214,56 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 							required
 							autoComplete="off"
 							disabled={!canUpdateWorkspace}
+						/>
+					)}
+				</form.AppField>
+				{canUpdateWorkspace && (
+					<div className="ml-auto flex gap-2">
+						<Button variant="ghost" type="button" onClick={() => form.reset()}>
+							Reset
+						</Button>
+						<form.Subscribe selector={(state) => state.isPristine}>
+							{(isPristine) => (
+								<Button type="submit" disabled={isPristine}>
+									Update
+								</Button>
+							)}
+						</form.Subscribe>
+					</div>
+				)}
+			</form.Form>
+		</form.AppForm>
+	);
+}
+
+function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
+	const { slug } = routeApi.useParams();
+	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const mutation = useUpdateWorkspaceMetadata();
+
+	const form = useAppForm({
+		defaultValues: {
+			currency: workspace.metadata.currency as string,
+		},
+		validators: {
+			onSubmit: workspaceMetadataFormSchema,
+		},
+		onSubmit: async ({ value }) => {
+			if (!canUpdateWorkspace) return;
+			await tryCatch.async(mutation.mutateAsync(value));
+			form.reset();
+		},
+	});
+
+	return (
+		<form.AppForm>
+			<form.Form>
+				<form.AppField name="currency">
+					{(field) => (
+						<field.SelectWithSearchField
+							label="Default currency"
+							description="This will determine how monetary values appear in your dashboard."
+							options={AVAILABLE_CURRENCY_OPTIONS}
 						/>
 					)}
 				</form.AppField>
@@ -319,4 +389,5 @@ export {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
 	DeleteWorkspaceForm,
+	UpdateWorkspaceMetadataForm,
 };

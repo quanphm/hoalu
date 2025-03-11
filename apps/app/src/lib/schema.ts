@@ -18,8 +18,14 @@ export type Color = typeof colorSchema.inferOut;
 export const workspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
+	currency: "string > 0",
 });
 export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
+
+export const workspaceMetadataFormSchema = type({
+	currency: "string > 0",
+});
+export type WorkspaceMetadataFormSchema = typeof workspaceMetadataFormSchema.infer;
 
 export const deleteWorkspaceFormSchema = type({
 	confirm: "string > 0",
@@ -33,8 +39,8 @@ export const taskSchema = type({
 	id: "string",
 	title: "string > 0",
 	description: "string | null",
-	status: "'todo' | 'in-progress' | 'done' | 'blocked' | 'canceled'",
-	priority: "'urgent' | 'high' | 'medium' | 'low' | 'none'",
+	status: taskStatusSchema,
+	priority: prioritySchema,
 	dueDate: "string",
 });
 export type TaskSchema = typeof taskSchema.infer;
@@ -44,9 +50,11 @@ export const expenseSchema = type({
 	title: "string",
 	description: "string | null",
 	amount: "number",
+	realAmount: "number",
 	currency: "string",
-	repeat: type("'one-time' | 'weekly' | 'monthly' | 'yearly' | 'custom'"),
+	repeat: repeatSchema,
 	date: "string",
+	createdAt: "string",
 	creator: {
 		id: "string.uuid.v7",
 		publicId: "string",
@@ -67,7 +75,6 @@ export const expenseSchema = type({
 		description: "string | null",
 		color: colorSchema,
 	},
-	createdAt: "string",
 });
 export type ExpenseSchema = typeof expenseSchema.infer;
 
@@ -104,3 +111,9 @@ export const categorySchema = type({
 	color: colorSchema,
 });
 export type CategorySchema = typeof categorySchema.infer;
+
+export const exchangeRatesPayloadSchema = type({
+	"from?": "string",
+	to: "string > 0",
+});
+export type ExchangeRatesPayloadSchema = typeof exchangeRatesPayloadSchema.infer;

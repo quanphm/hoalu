@@ -1,4 +1,4 @@
-import type { ExpensePayloadSchema } from "@/lib/schema";
+import type { ExchangeRatesPayloadSchema, ExpensePayloadSchema } from "@/lib/schema";
 import type { ApiRoutes } from "@hoalu/api/types";
 import { hc } from "hono/client";
 
@@ -88,9 +88,24 @@ const expenses = {
 	},
 };
 
+const exchangeRates = {
+	find: async ({ from = "USD", to }: ExchangeRatesPayloadSchema) => {
+		const response = await honoClient.api["exchange-rates"].$get({
+			query: { from, to },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
 	categories,
 	expenses,
+	exchangeRates,
 };

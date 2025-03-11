@@ -9,11 +9,11 @@ import {
 type WalletType = (typeof PG_ENUM_WALLET_TYPE)[number];
 
 const components: Record<WalletType, React.ReactNode> = {
-	cash: <CashIcon className="size-4 text-amber-600" />,
-	"bank-account": <BuildingIcon className="size-4 text-orange-600" />,
-	"credit-card": <CreditCardIcon className="size-4 text-blue-600" />,
-	"debit-card": <CreditCardIcon className="size-4 text-teal-600" />,
-	"digital-account": <LandmarkIcon className="size-4 text-violet-600" />,
+	cash: <CashIcon className="size-5 text-amber-600" />,
+	"bank-account": <BuildingIcon className="size-5 text-orange-600" />,
+	"credit-card": <CreditCardIcon className="size-5 text-blue-600" />,
+	"debit-card": <CreditCardIcon className="size-5 text-teal-600" />,
+	"digital-account": <LandmarkIcon className="size-5 text-violet-600" />,
 };
 
 export function WalletIcon(props: { type: WalletType }) {

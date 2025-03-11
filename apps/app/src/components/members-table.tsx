@@ -65,7 +65,7 @@ const columns = [
 			const value = info.getValue();
 			return (
 				<Badge
-					variant={value === "owner" ? "success" : "outline"}
+					variant={value === "owner" ? "emerald" : "outline"}
 					className="px-1.5 font-normal text-xs capitalize"
 				>
 					{value}
