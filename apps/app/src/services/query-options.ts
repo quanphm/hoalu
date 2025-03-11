@@ -136,12 +136,8 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesPay
 		queryKey: exchangeRateKeys.pair({ from, to }),
 		queryFn: () => apiClient.exchangeRates.find({ from, to }),
 		staleTime: TIME_IN_MILLISECONDS.DAY,
-		select: (data) => {
-			const value = data.rates.find((rate) => rate[to]);
-			if (!value) {
-				return 1;
-			}
-			return value[to];
-		},
+		select: (data) => data.rate,
+		enabled: from !== to,
+		retry: 1,
 	});
 };

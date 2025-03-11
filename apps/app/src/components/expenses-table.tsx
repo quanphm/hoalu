@@ -125,21 +125,25 @@ function RowAmount({ row }: { row: Row<ExpenseSchema> }) {
 		metadata: { currency: targetCurr },
 	} = useWorkspace();
 	const { amount, realAmount, currency: sourceCurr } = row.original;
-	const { data: rate } = useQuery({
-		...exchangeRatesQueryOptions({ from: sourceCurr, to: targetCurr }),
-		enabled: targetCurr !== sourceCurr,
-	});
+	const { data: rate, status } = useQuery(
+		exchangeRatesQueryOptions({ from: sourceCurr, to: targetCurr }),
+	);
+	console.log(status);
 
 	if (targetCurr === sourceCurr) {
 		return <p className="font-medium">{formatCurrency(amount, targetCurr)}</p>;
+	}
+
+	if (status === "error") {
+		return <p className="text-destructive">Error</p>;
 	}
 
 	if (!rate) {
 		return <p className="text-muted-foreground">Converting...</p>;
 	}
 
-	const isZeroDecimalCurrency = zeroDecimalCurrencies.find((c) => c === sourceCurr);
-	const factor = isZeroDecimalCurrency ? 1 : 100;
+	const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurr);
+	const factor = isNoCent ? 1 : 100;
 	const convertedValue = realAmount * (rate / factor);
 
 	return (

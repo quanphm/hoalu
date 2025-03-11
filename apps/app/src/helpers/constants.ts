@@ -1,3 +1,5 @@
+import { getCurrencyList } from "@hoalu/countries";
+
 export const TIME_IN_MILLISECONDS = {
 	DEFAULT: 1,
 	SECOND: 1000,
@@ -17,3 +19,13 @@ export const TIME_IN_SECONDS = {
 	WEEK: 604_800,
 	YEAR: 31_536_000,
 } as const;
+
+export const AVAILABLE_CURRENCY_OPTIONS: {
+	label: string;
+	value: string;
+}[] = getCurrencyList()
+	.map((c) => ({
+		label: c,
+		value: c,
+	}))
+	.filter((c) => c.value === "USD" || c.value === "VND" || c.value === "SGD");

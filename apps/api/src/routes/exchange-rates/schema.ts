@@ -1,11 +1,9 @@
 import { type } from "arktype";
 
-const rateSchema = type({
-	"[string]": "string.numeric.parse",
-});
-
 export const exchangeRateSchema = type({
 	date: "string",
 	from: "string > 0",
-	rates: rateSchema.array(),
+	to: "string > 0",
+	rate: "string.numeric.parse",
+	inverse_rate: "string.numeric.parse",
 });

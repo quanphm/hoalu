@@ -1,4 +1,5 @@
 import { useAppForm } from "@/components/forms";
+import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { authClient } from "@/lib/auth-client";
 import {
 	deleteWorkspaceFormSchema,
@@ -14,7 +15,6 @@ import {
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
-import { getCurrencyList } from "@hoalu/countries";
 import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -126,7 +126,7 @@ function CreateWorkspaceForm() {
 						<field.SelectWithSearchField
 							label="Workspace currency"
 							description="This will determine how monetary values appear in your dashboard."
-							options={currencyOptions}
+							options={AVAILABLE_CURRENCY_OPTIONS}
 						/>
 					)}
 				</form.AppField>
@@ -236,11 +236,6 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 	);
 }
 
-const currencyOptions = getCurrencyList().map((c) => ({
-	label: c,
-	value: c,
-}));
-
 function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
 	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
@@ -268,7 +263,7 @@ function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspac
 						<field.SelectWithSearchField
 							label="Default currency"
 							description="This will determine how monetary values appear in your dashboard."
-							options={currencyOptions}
+							options={AVAILABLE_CURRENCY_OPTIONS}
 						/>
 					)}
 				</form.AppField>
