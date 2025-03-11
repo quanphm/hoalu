@@ -43,6 +43,7 @@ export function syncModule() {
 				);
 			}
 
+			// @ts-expect-error
 			const electricHeaders = new Headers(electricResponse.headers);
 
 			if (electricResponse.status === HTTPStatus.codes.NO_CONTENT) {
