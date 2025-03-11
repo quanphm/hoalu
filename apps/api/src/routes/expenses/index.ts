@@ -44,12 +44,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = expensesSchema.pipe((e) => {
-				return e.map((i) => ({
-					...i,
-					amount: monetary.fromRealAmount(i.amount, i.currency),
-				}));
-			})(expenses);
+			const parsed = expensesSchema(expenses);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -88,10 +83,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: monetary.fromRealAmount(e.amount, e.currency),
-			}))(expense);
+			const parsed = expenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -140,10 +132,7 @@ const route = app
 				amount: realAmount,
 			});
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: monetary.fromRealAmount(e.amount, e.currency),
-			}))(expense);
+			const parsed = expenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -200,10 +189,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = expenseSchema.pipe((e) => ({
-				...e,
-				amount: monetary.fromRealAmount(e.amount, e.currency),
-			}))(queryData);
+			const parsed = expenseSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

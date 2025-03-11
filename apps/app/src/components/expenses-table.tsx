@@ -1,8 +1,10 @@
 import { DataTable } from "@/components/data-table";
 import { createCategoryTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
+import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseSchema } from "@/lib/schema";
 import { useDeleteExpense } from "@/services/mutations";
+import { exchangeRatesQueryOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -12,6 +14,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { DeleteExpenseDialog, DeleteExpenseTrigger } from "./expense";
@@ -32,7 +35,7 @@ const columns = [
 		},
 	}),
 	columnHelper.accessor("title", {
-		header: "Transaction",
+		header: "Transaction description",
 		cell: (info) => info.getValue(),
 	}),
 	columnHelper.accessor("category.name", {
@@ -49,12 +52,10 @@ const columns = [
 				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
 		},
 	}),
-	columnHelper.accessor("amount", {
+	columnHelper.display({
+		id: "amount",
 		header: "Amount",
-		cell: (info) => {
-			const value = formatCurrency(Number.parseFloat(info.getValue()), info.row.original.currency);
-			return value;
-		},
+		cell: (info) => <RowAmount row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
@@ -115,5 +116,37 @@ function RowActions({ row }: { row: Row<ExpenseSchema> }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</DeleteExpenseDialog>
+	);
+}
+
+function RowAmount({ row }: { row: Row<ExpenseSchema> }) {
+	const {
+		metadata: { currency: workspaceCurrency },
+	} = useWorkspace();
+	const { amount, realAmount, currency: rowCurrency } = row.original;
+	const { data: rate } = useQuery({
+		...exchangeRatesQueryOptions({ from: rowCurrency, to: workspaceCurrency }),
+		enabled: workspaceCurrency !== rowCurrency,
+	});
+
+	if (workspaceCurrency === rowCurrency) {
+		return <p className="font-medium">{formatCurrency(amount, rowCurrency)}</p>;
+	}
+
+	if (!rate) {
+		return <p className="text-muted-foreground">Converting...</p>;
+	}
+
+	const convertedValue = realAmount * (rate / 100);
+
+	return (
+		<div className="leading-relaxed">
+			<p className="font-medium">{formatCurrency(convertedValue, workspaceCurrency)}</p>
+			{workspaceCurrency !== rowCurrency && (
+				<p className="text-muted-foreground text-xs">
+					Original {formatCurrency(amount, rowCurrency)}
+				</p>
+			)}
+		</div>
 	);
 }

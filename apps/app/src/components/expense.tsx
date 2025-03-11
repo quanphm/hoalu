@@ -42,6 +42,9 @@ function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
 				onPointerDownOutside={(event) => {
 					event.preventDefault();
 				}}
+				onCloseAutoFocus={(event) => {
+					event.preventDefault();
+				}}
 			>
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>

@@ -9,13 +9,13 @@ function toRealAmount(amount: number, unit: string): number {
 	return amount * 100;
 }
 
-function fromRealAmount(amount: string, unit: string): string {
+function fromRealAmount(amount: number, unit: string): number {
 	const isZeroDecimal = zeroDecimalCurrencies.find((c) => c === unit);
 	if (isZeroDecimal) {
 		return amount;
 	}
 	// use minor units - mostly cent
-	return `${Number.parseFloat(amount) / 100}`;
+	return amount / 100;
 }
 
 export const monetary = {

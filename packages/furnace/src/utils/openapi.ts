@@ -24,7 +24,7 @@ function response<T extends Type>(
 		[status]: {
 			content: {
 				"application/json": {
-					schema: resolver<T>(schema),
+					schema: resolver(schema.in),
 				},
 			},
 			description: description || "Success",

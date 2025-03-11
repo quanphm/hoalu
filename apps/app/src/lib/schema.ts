@@ -49,10 +49,12 @@ export const expenseSchema = type({
 	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
-	amount: "string",
+	amount: "number",
+	realAmount: "number",
 	currency: "string",
 	repeat: repeatSchema,
 	date: "string",
+	createdAt: "string",
 	creator: {
 		id: "string.uuid.v7",
 		publicId: "string",
@@ -73,7 +75,6 @@ export const expenseSchema = type({
 		description: "string | null",
 		color: colorSchema,
 	},
-	createdAt: "string",
 });
 export type ExpenseSchema = typeof expenseSchema.infer;
 
@@ -110,3 +111,9 @@ export const categorySchema = type({
 	color: colorSchema,
 });
 export type CategorySchema = typeof categorySchema.infer;
+
+export const exchangeRatesPayloadSchema = type({
+	"from?": "string",
+	to: "string > 0",
+});
+export type ExchangeRatesPayloadSchema = typeof exchangeRatesPayloadSchema.infer;
