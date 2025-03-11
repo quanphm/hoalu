@@ -48,5 +48,5 @@ export const taskKeys = {
 export const exchangeRateKeys = {
 	all: ["exchange-rates"] as const,
 	pair: ({ from = "USD", to }: ExchangeRatesPayloadSchema) =>
-		[...expenseKeys.all, from, to] as const,
+		[...exchangeRateKeys.all, from, to] as const,
 };
