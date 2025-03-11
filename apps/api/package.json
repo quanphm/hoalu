@@ -25,7 +25,7 @@
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@react-email/render": "^1.0.5",
-		"@scalar/hono-api-reference": "^0.5.183",
+		"@scalar/hono-api-reference": "^0.5.184",
 		"arktype": "^2.1.9",
 		"better-auth": "^1.2.3",
 		"drizzle-orm": "^0.39.3",
