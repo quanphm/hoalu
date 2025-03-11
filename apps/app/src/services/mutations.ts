@@ -51,7 +51,7 @@ export function useUpdateWorkspace() {
 	const navigate = useNavigate();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (value: WorkspaceFormSchema) => {
+		mutationFn: async (value: Omit<WorkspaceFormSchema, "currency">) => {
 			const { data, error } = await authClient.workspace.update({
 				data: {
 					name: value.name,

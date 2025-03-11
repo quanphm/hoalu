@@ -25,7 +25,7 @@ const columns = [
 		cell: (info) => {
 			const value = info.getValue();
 			return value === "done" ? (
-				<Badge variant="success">Completed</Badge>
+				<Badge variant="emerald">Completed</Badge>
 			) : (
 				<Badge variant="outline">{value}</Badge>
 			);

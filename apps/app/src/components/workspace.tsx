@@ -149,7 +149,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: workspaceFormSchema,
+			onSubmit: workspaceFormSchema.omit("currency"),
 			onSubmitAsync: async ({ value }) => {
 				if (value.slug === slug) {
 					return undefined;
