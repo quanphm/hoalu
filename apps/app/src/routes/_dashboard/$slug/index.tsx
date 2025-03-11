@@ -3,7 +3,6 @@ import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { Stats } from "@/components/stats";
 import { UserAvatar } from "@/components/user-avatar";
 import { WalletIcon } from "@/components/wallet-icon";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
@@ -34,7 +33,7 @@ function RouteComponent() {
 							Create expense
 						</Button>
 					</CreateExpenseDialogTrigger>
-					<Button>
+					<Button disabled>
 						<SquarePenIcon className="mr-2 size-4" />
 						Create task
 					</Button>
@@ -96,15 +95,6 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent>
 					<ExpensesTable data={expenses} actionable={false} />
-				</SectionContent>
-			</Section>
-
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Statistics</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={12}>
-					<Stats />
 				</SectionContent>
 			</Section>
 		</>
