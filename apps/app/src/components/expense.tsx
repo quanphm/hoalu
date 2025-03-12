@@ -1,6 +1,7 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
+import { WarningMessage } from "@/components/warning-message";
 import { useAuth } from "@/hooks/use-auth";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
 import { useCreateExpense } from "@/services/mutations";
@@ -17,6 +18,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { Slot } from "@radix-ui/react-slot";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
@@ -32,9 +34,6 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 			{children}
 			<DialogContent
 				className="sm:max-w-[750px]"
-				onPointerDownOutside={(event) => {
-					event.preventDefault();
-				}}
 				onCloseAutoFocus={(event) => {
 					event.preventDefault();
 				}}
@@ -50,15 +49,15 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 }
 
 function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+
 	return (
 		<Tooltip>
-			<DialogTrigger asChild>
+			<Slot onClick={() => setOpen(true)}>
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
-			</DialogTrigger>
+			</Slot>
 			<TooltipContent side="bottom">
-				<HotKey>
-					<span className="text-sm leading-none">Shift</span>E
-				</HotKey>
+				<HotKey>Shift E</HotKey>
 			</TooltipContent>
 		</Tooltip>
 	);
@@ -288,7 +287,10 @@ function DeleteExpenseDialog({
 				<DialogHeader>
 					<DialogTitle>Delete expense?</DialogTitle>
 					<DialogDescription>
-						The expense will be deleted and removed from your history. This action cannot be undone.
+						<WarningMessage>
+							The expense will be deleted and removed from your history. This action cannot be
+							undone.
+						</WarningMessage>
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
@@ -313,8 +315,6 @@ function DeleteExpenseTrigger({ children }: { children: React.ReactNode }) {
 export {
 	CreateExpenseDialog,
 	CreateExpenseDialogTrigger,
-	CreateExpenseForm,
-	UpdateExpenseForm,
 	DeleteExpenseDialog,
 	DeleteExpenseTrigger,
 };

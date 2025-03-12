@@ -1,5 +1,5 @@
 {
-  "id": "adb33572-6419-40a1-8cf1-29cadbd4572f",
+  "id": "16b3b43a-4c06-4fd6-a5b0-ddd4b8f24bf1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1072,7 +1072,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "expense_category_id_category_id_fk": {

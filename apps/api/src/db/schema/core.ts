@@ -73,7 +73,7 @@ export const expense = pgTable(
 			.references(() => workspace.id, { onDelete: "cascade" }),
 		walletId: uuid("wallet_id")
 			.notNull()
-			.references(() => wallet.id),
+			.references(() => wallet.id, { onDelete: "cascade" }),
 		categoryId: uuid("category_id")
 			.notNull()
 			.references(() => category.id),

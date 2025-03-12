@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741685471146,
-      "tag": "0000_petite_mesmero",
+      "when": 1741772825817,
+      "tag": "0000_ancient_maestro",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1741685475877,
+      "when": 1741772830291,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }

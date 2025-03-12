@@ -2,17 +2,12 @@ import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
-import { CreateWalletDialogTrigger } from "@/components/wallet";
+import { CreateWalletDialogTrigger, WalletDropdownMenuWithModal } from "@/components/wallet";
 import { WalletIcon } from "@/components/wallet-icon";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { MoreHorizontalIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
+
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -61,20 +56,7 @@ function RouteComponent() {
 										/>
 										<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
 									</div>
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" className="h-8 w-8 p-0">
-												<span className="sr-only">Open menu</span>
-												<MoreHorizontalIcon className="size-4" />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuItem>Edit</DropdownMenuItem>
-											<DropdownMenuItem>
-												<span className="text-destructive">Delete</span>
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
+									<WalletDropdownMenuWithModal id={wallet.id} />
 								</div>
 							}
 						/>

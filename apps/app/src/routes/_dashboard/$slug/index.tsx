@@ -9,6 +9,7 @@ import { WalletIcon } from "@/components/wallet-icon";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { ArrowRight, PlusIcon, SendHorizonalIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
@@ -29,7 +30,13 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent columns={6}>
 					<CreateExpenseDialogTrigger>
-						<Button className="bg-indigo-700 text-white/98 hover:bg-indigo-600/75">
+						<Button
+							className={cn(
+								"border-indigo-800 bg-indigo-800 text-indigo-50 hover:bg-indigo-900",
+								"dark:border-transparent dark:bg-gradient-to-b dark:bg-transparent dark:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
+								"dark:from-indigo-600/45 dark:to-indigo-600/30 dark:text-indigo-100",
+							)}
+						>
 							<SendHorizonalIcon className="mr-2 size-4" />
 							Create expense
 						</Button>

@@ -1,7 +1,8 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as authSchema from "./schema/auth";
-import * as financeSchema from "./schema/core";
+import * as coreSchema from "./schema/core";
+import * as enumsSchema from "./schema/enums";
 import * as fxRateSchema from "./schema/fx-rate";
 import * as imageSchema from "./schema/image";
 
@@ -18,8 +19,9 @@ const client = postgres({
 });
 
 export const schema = {
+	...enumsSchema,
 	...authSchema,
-	...financeSchema,
+	...coreSchema,
 	...imageSchema,
 	...fxRateSchema,
 };

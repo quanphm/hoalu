@@ -283,7 +283,7 @@ export function useDeleteWallet() {
 		},
 		onSuccess: async () => {
 			toast.success("Wallet deleted");
-			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);

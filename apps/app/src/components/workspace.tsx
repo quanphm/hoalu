@@ -1,4 +1,5 @@
 import { useAppForm } from "@/components/forms";
+import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { authClient } from "@/lib/auth-client";
 import { workspaceFormSchema, workspaceMetadataFormSchema } from "@/lib/schema";
@@ -11,7 +12,6 @@ import {
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
-import { TriangleAlertIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -306,14 +306,7 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader className="space-y-3">
 						<DialogTitle>Confirm delete workspace</DialogTitle>
 						<DialogDescription>
-							<span className="text-amber-600 text-sm">
-								<TriangleAlertIcon
-									className="-mt-0.5 mr-2 inline-flex size-4 text-amber-500"
-									strokeWidth={2}
-									aria-hidden="true"
-								/>
-								This action cannot be undone.
-							</span>
+							<WarningMessage>This action cannot be undone.</WarningMessage>
 						</DialogDescription>
 					</DialogHeader>
 					<DeleteWorkspaceForm />
@@ -382,6 +375,5 @@ export {
 	UpdateWorkspaceForm,
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
-	DeleteWorkspaceForm,
 	UpdateWorkspaceMetadataForm,
 };
