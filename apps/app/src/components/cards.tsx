@@ -1,5 +1,12 @@
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@hoalu/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { type VariantProps, cva } from "class-variance-authority";
@@ -10,9 +17,10 @@ interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "co
 	title: React.ReactNode;
 	description?: string | null;
 	content?: React.ReactNode;
+	footer?: React.ReactNode;
 }
 
-function ContentCard({ className, title, description, content, ...props }: BasicCardProps) {
+function ContentCard({ className, title, description, content, footer, ...props }: BasicCardProps) {
 	return (
 		<Card className={cn("hover:border-foreground/20", className)} {...props}>
 			<CardHeader className="p-4">
@@ -20,6 +28,7 @@ function ContentCard({ className, title, description, content, ...props }: Basic
 				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
 			{content && <CardContent className="p-4 pt-0">{content}</CardContent>}
+			{footer && <CardFooter className="justify-end gap-2 p-4 pt-0">{footer}</CardFooter>}
 		</Card>
 	);
 }

@@ -1,6 +1,7 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
+import { useAuth } from "@/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
 import { type ExpenseFormSchema, expenseFormSchema, workspaceFormSchema } from "@/lib/schema";
 import { useCreateExpense } from "@/services/mutations";
@@ -38,7 +39,7 @@ function CreateExpenseDialog({ children }: { children: React.ReactNode }) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			{children}
 			<DialogContent
-				className="sm:max-w-[720px]"
+				className="sm:max-w-[750px]"
 				onPointerDownOutside={(event) => {
 					event.preventDefault();
 				}}
@@ -72,16 +73,14 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 }
 
 function CreateExpenseForm() {
+	const { user } = useAuth();
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
 	const mutation = useCreateExpense();
-	const defaultWallet = wallets[0];
-
-	const walletOptions = wallets.map((w) => ({ label: w.name, value: w.id }));
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+	const defaultWallet = wallets.find((w) => w.owner.id === user?.id) || wallets[0];
 
 	const form = useAppForm({
 		defaultValues: {
@@ -115,6 +114,31 @@ function CreateExpenseForm() {
 		},
 	});
 
+	const walletGroups = wallets.reduce(
+		(result, current) => {
+			const owner = current.owner;
+			if (!result[owner.id]) {
+				result[owner.id] = {
+					name: owner.name,
+					options: [
+						{
+							label: current.name,
+							value: current.id,
+						},
+					],
+				};
+			} else {
+				result[owner.id].options.push({
+					label: current.name,
+					value: current.id,
+				});
+			}
+			return result;
+		},
+		{} as Record<string, { name: string; options: { label: string; value: string }[] }>,
+	);
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+
 	return (
 		<form.AppForm>
 			<form.Form>
@@ -128,7 +152,7 @@ function CreateExpenseForm() {
 						</form.AppField>
 						<div className="grid grid-cols-2 gap-4">
 							<form.AppField name="walletId">
-								{(field) => <field.SelectField label="Wallet" options={walletOptions} />}
+								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
 							</form.AppField>
 							<form.AppField name="categoryId">
 								{(field) => (

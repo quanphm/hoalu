@@ -1,6 +1,6 @@
 {
-  "id": "8a4b0e35-0224-430d-a66c-e009ec0d30b8",
-  "prevId": "86acce4c-3db7-4823-9ce8-b88386c2c6c6",
+  "id": "c3fbb6eb-d4eb-443a-ab11-d1c0f34c687a",
+  "prevId": "adb33572-6419-40a1-8cf1-29cadbd4572f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -734,8 +734,8 @@
         }
       },
       "indexes": {
-        "idx_workspace_on_name": {
-          "name": "idx_workspace_on_name",
+        "workspace_name_idx": {
+          "name": "workspace_name_idx",
           "columns": [
             {
               "expression": "name",
@@ -747,6 +747,21 @@
           "isUnique": false,
           "with": {},
           "method": "btree",
+          "concurrently": false
+        },
+        "workspace_metadata_idx": {
+          "name": "workspace_metadata_idx",
+          "columns": [
+            {
+              "expression": "metadata",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "gin",
           "concurrently": false
         }
       },

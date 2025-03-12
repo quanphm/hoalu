@@ -36,8 +36,19 @@ const columns = [
 		},
 	}),
 	columnHelper.accessor("title", {
-		header: "Transaction description",
+		header: "Transaction",
 		cell: (info) => info.getValue(),
+	}),
+	columnHelper.display({
+		id: "amount",
+		header: "Amount",
+		cell: (info) => <RowAmount row={info.row} />,
+		meta: {
+			headerClassName:
+				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
+			cellClassName:
+				"w-(--col-amount-size) min-w-(--col-amount-size) max-w-(--col-amount-size) text-right",
+		},
 	}),
 	columnHelper.accessor("category.name", {
 		header: "Category",
@@ -51,17 +62,6 @@ const columns = [
 				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
 			cellClassName:
 				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
-		},
-	}),
-	columnHelper.display({
-		id: "amount",
-		header: "Amount",
-		cell: (info) => <RowAmount row={info.row} />,
-		meta: {
-			headerClassName:
-				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
-			cellClassName:
-				"w-(--col-amount-size) min-w-(--col-amount-size) max-w-(--col-amount-size) text-right",
 		},
 	}),
 	columnHelper.accessor("wallet.name", {
@@ -128,7 +128,6 @@ function RowAmount({ row }: { row: Row<ExpenseSchema> }) {
 	const { data: rate, status } = useQuery(
 		exchangeRatesQueryOptions({ from: sourceCurr, to: targetCurr }),
 	);
-	console.log(status);
 
 	if (targetCurr === sourceCurr) {
 		return <p className="font-medium">{formatCurrency(amount, targetCurr)}</p>;

@@ -28,4 +28,4 @@ export const AVAILABLE_CURRENCY_OPTIONS: {
 		label: c,
 		value: c,
 	}))
-	.filter((c) => c.value === "USD" || c.value === "VND" || c.value === "SGD");
+	.filter((c) => c.value === "USD" || c.value === "VND" || c.value === "SGD" || c.value === "EUR");

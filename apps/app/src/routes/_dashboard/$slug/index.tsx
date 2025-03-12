@@ -6,19 +6,19 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { UserAvatar } from "@/components/user-avatar";
 import { WalletIcon } from "@/components/wallet-icon";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { PlusIcon, SendIcon, SquarePenIcon } from "@hoalu/icons/lucide";
+import { ArrowRight, PlusIcon, SendHorizonalIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const wallets = useSuspenseQuery(walletsQueryOptions(params.slug));
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(params.slug));
+	const { slug } = Route.useParams();
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 
 	return (
 		<>
@@ -29,7 +29,7 @@ function RouteComponent() {
 				<SectionContent columns={6}>
 					<CreateExpenseDialogTrigger>
 						<Button className="bg-indigo-700 text-white/98 hover:bg-indigo-600/75">
-							<SendIcon className="mr-2 size-4" />
+							<SendHorizonalIcon className="mr-2 size-4" />
 							Create expense
 						</Button>
 					</CreateExpenseDialogTrigger>
@@ -52,14 +52,20 @@ function RouteComponent() {
 					</Section>
 					<Section className="col-span-4">
 						<SectionHeader>
-							<SectionTitle>Wallets ({wallets.data.length})</SectionTitle>
+							<SectionTitle>Wallets</SectionTitle>
 							<Button variant="outline" size="sm">
 								<PlusIcon className="mr-2 size-4" />
-								Create wallet
+								Create
+							</Button>
+							<Button variant="outline" size="sm" asChild>
+								<Link to="/$slug/settings/library" params={{ slug }}>
+									View all
+									<ArrowRight className="ml-2 size-4" />
+								</Link>
 							</Button>
 						</SectionHeader>
 						<SectionContent className="gap-4">
-							{wallets.data.map((wallet) => (
+							{wallets.slice(0, 4).map((wallet) => (
 								<ContentCard
 									key={wallet.id}
 									title={
@@ -67,7 +73,7 @@ function RouteComponent() {
 											<p className="flex items-center gap-1.5">
 												<WalletIcon type={wallet.type} /> {wallet.name}
 											</p>
-											<span className="ml-6.5 font-normal text-muted-foreground text-xs">
+											<span className="font-normal text-muted-foreground text-xs">
 												{wallet.description}
 											</span>
 										</div>

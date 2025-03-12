@@ -23,6 +23,8 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		},
 	);
 
+	useHotkeys("h", () => navigate({ to: "/" }), { description: "Navigate: Home" }, [navigate]);
+
 	useHotkeys(
 		"d",
 		() => {

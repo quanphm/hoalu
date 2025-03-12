@@ -83,7 +83,10 @@ export const workspace = pgTable(
 		metadata: jsonb("metadata").$type<Record<string, any>>().default({}).notNull(),
 		createdAt: timestamp("created_at").notNull(),
 	},
-	(table) => [index("idx_workspace_on_name").on(table.name)],
+	(table) => [
+		index("workspace_name_idx").on(table.name),
+		index("workspace_metadata_idx").using("gin", table.metadata),
+	],
 );
 
 export const member = pgTable(

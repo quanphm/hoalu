@@ -222,7 +222,8 @@ ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_image_id_image_id_fk" 
 ALTER TABLE "image_task" ADD CONSTRAINT "image_task_task_id_task_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."task"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "image_task" ADD CONSTRAINT "image_task_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "idx_workspace_on_name" ON "workspace" USING btree ("name");--> statement-breakpoint
+CREATE INDEX "workspace_name_idx" ON "workspace" USING btree ("name");--> statement-breakpoint
+CREATE INDEX "workspace_metadata_idx" ON "workspace" USING gin ("metadata");--> statement-breakpoint
 CREATE INDEX "category_workspace_id_idx" ON "category" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "expense_title_idx" ON "expense" USING gin (to_tsvector('english', "title"));--> statement-breakpoint
 CREATE INDEX "expense_description_idx" ON "expense" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
