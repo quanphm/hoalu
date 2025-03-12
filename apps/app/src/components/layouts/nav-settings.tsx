@@ -21,7 +21,7 @@ export function NavSettings() {
 							<BuildingIcon />
 							<span>Workspace</span>
 							<SidebarMenuBadge>
-								<HotKey>W</HotKey>
+								<HotKey>S</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>

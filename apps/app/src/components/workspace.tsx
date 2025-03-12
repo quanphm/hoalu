@@ -1,11 +1,7 @@
 import { useAppForm } from "@/components/forms";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { authClient } from "@/lib/auth-client";
-import {
-	deleteWorkspaceFormSchema,
-	workspaceFormSchema,
-	workspaceMetadataFormSchema,
-} from "@/lib/schema";
+import { workspaceFormSchema, workspaceMetadataFormSchema } from "@/lib/schema";
 import {
 	useCreateWorkspace,
 	useDeleteWorkspace,
@@ -340,9 +336,6 @@ function DeleteWorkspaceForm() {
 		defaultValues: {
 			confirm: "",
 		},
-		validators: {
-			onSubmit: deleteWorkspaceFormSchema,
-		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync(value);
 			context?.setOpen(false);
@@ -356,6 +349,7 @@ function DeleteWorkspaceForm() {
 					name="confirm"
 					validators={{
 						onSubmit: ({ value }) => {
+							if (!value) return "Required";
 							return value !== slug ? "Incorrect value" : undefined;
 						},
 					}}

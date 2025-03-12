@@ -4,6 +4,7 @@ import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
+import { CreateWalletDialogTrigger } from "@/components/wallet";
 import { WalletIcon } from "@/components/wallet-icon";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { ArrowRight, PlusIcon, SendHorizonalIcon, SquarePenIcon } from "@hoalu/icons/lucide";
@@ -53,10 +54,12 @@ function RouteComponent() {
 					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets</SectionTitle>
-							<Button variant="outline" size="sm">
-								<PlusIcon className="mr-2 size-4" />
-								Create
-							</Button>
+							<CreateWalletDialogTrigger>
+								<Button variant="outline" size="sm">
+									<PlusIcon className="mr-2 size-4" />
+									Create
+								</Button>
+							</CreateWalletDialogTrigger>
 							<Button variant="outline" size="sm" asChild>
 								<Link to="/$slug/settings/library" params={{ slug }}>
 									View all

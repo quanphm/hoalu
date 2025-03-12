@@ -1,5 +1,6 @@
-import { createExpenseDialogOpenAtom } from "@/atoms/expense-dialog";
+import { createExpenseDialogOpenAtom, createWalletDialogOpenAtom } from "@/atoms/dialogs";
 import { CreateExpenseDialog } from "@/components/expense";
+import { CreateWalletDialog } from "@/components/wallet";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -11,15 +12,27 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const navigate = useNavigate();
 
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	useHotkeys(
-		"mod+e",
+		"shift+e",
 		() => {
 			setExpenseOpen(true);
 		},
 		{
 			preventDefault: true,
 			description: "Dialog: Create new expense",
+		},
+	);
+
+	useHotkeys(
+		"shift+w",
+		() => {
+			setWalletOpen(true);
+		},
+		{
+			preventDefault: true,
+			description: "Dialog: Create new wallet",
 		},
 	);
 
@@ -59,7 +72,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	useHotkeys(
-		"w",
+		"s",
 		() => {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
@@ -91,5 +104,9 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		[slug, navigate],
 	);
 
-	return <CreateExpenseDialog>{children}</CreateExpenseDialog>;
+	return (
+		<CreateExpenseDialog>
+			<CreateWalletDialog>{children}</CreateWalletDialog>
+		</CreateExpenseDialog>
+	);
 }

@@ -29,3 +29,13 @@ export const AVAILABLE_CURRENCY_OPTIONS: {
 		value: c,
 	}))
 	.filter((c) => c.value === "USD" || c.value === "VND" || c.value === "SGD" || c.value === "EUR");
+
+export const AVAILABLE_WALLET_TYPE_OPTIONS: {
+	label: string;
+	value: string;
+}[] = [
+	{ label: "Cash", value: "cash" },
+	{ label: "Bank account", value: "bank-account" },
+	{ label: "Credit card", value: "credit-card" },
+	{ label: "Debit card", value: "debit-card" },
+];

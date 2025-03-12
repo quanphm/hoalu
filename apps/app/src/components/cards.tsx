@@ -22,7 +22,7 @@ interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "co
 
 function ContentCard({ className, title, description, content, footer, ...props }: BasicCardProps) {
 	return (
-		<Card className={cn("hover:border-foreground/20", className)} {...props}>
+		<Card className={className} {...props}>
 			<CardHeader className="p-4">
 				<CardTitle className="text-base">{title}</CardTitle>
 				{description && <CardDescription>{description}</CardDescription>}

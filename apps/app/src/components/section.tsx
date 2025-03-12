@@ -29,7 +29,7 @@ function SectionContent({
 					"--grid-cols": `repeat(${columns}, minmax(0, 1fr))`,
 				} as React.CSSProperties
 			}
-			className={cn("grid grid-cols-(--grid-cols) gap-6", className)}
+			className={cn("grid gap-6 sm:grid-cols-3 md:grid-cols-(--grid-cols)", className)}
 			{...props}
 		/>
 	);

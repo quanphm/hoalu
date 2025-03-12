@@ -2,13 +2,20 @@ import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import type {
 	ExpensePayloadSchema,
+	WalletPayloadSchema,
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
+import {
+	expenseKeys,
+	invitationKeys,
+	memberKeys,
+	walletKeys,
+	workspaceKeys,
+} from "@/services/query-key-factory";
 import { toast } from "@hoalu/ui/sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { expenseKeys, invitationKeys, memberKeys, workspaceKeys } from "./query-key-factory";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -187,6 +194,7 @@ export function useAcceptInvitation() {
 
 export function useCancelInvitation() {
 	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async (id: string) => {
 			const { data, error } = await authClient.workspace.cancelInvitation({ invitationId: id });
@@ -197,6 +205,7 @@ export function useCancelInvitation() {
 		},
 		onSuccess: (data) => {
 			queryClient.removeQueries({ queryKey: invitationKeys.withId(data.id) });
+			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -234,7 +243,46 @@ export function useDeleteExpense() {
 			return result;
 		},
 		onSuccess: async () => {
-			toast.success("Removed expense");
+			toast.success("Expense deleted");
+			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useCreateWallet() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		throwOnError: true,
+		mutationFn: async (payload: WalletPayloadSchema) => {
+			const result = await apiClient.wallets.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Wallet created");
+			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteWallet() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async (id: string) => {
+			const result = await apiClient.wallets.delete(slug, id);
+			return result;
+		},
+		onSuccess: async () => {
+			toast.success("Wallet deleted");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
 		},
 		onError: (error) => {
