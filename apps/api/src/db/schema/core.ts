@@ -1,3 +1,10 @@
+import {
+	PG_ENUM_COLOR,
+	PG_ENUM_PRIORITY,
+	PG_ENUM_REPEAT,
+	PG_ENUM_TASK_STATUS,
+	PG_ENUM_WALLET_TYPE,
+} from "@hoalu/common/enums";
 import { sql } from "drizzle-orm";
 import {
 	boolean,
@@ -5,15 +12,39 @@ import {
 	index,
 	numeric,
 	pgTable,
+	primaryKey,
 	text,
 	timestamp,
 	unique,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { pgEnum } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { workspace } from "./auth";
-import { colorTypeEnum, priorityEnum, repeatEnum, taskStatusEnum, walletTypeEnum } from "./enums";
+
+export const colorTypeEnum = pgEnum("color_enum", PG_ENUM_COLOR);
+export const walletTypeEnum = pgEnum("wallet_type_enum", PG_ENUM_WALLET_TYPE);
+export const priorityEnum = pgEnum("priority_enum", PG_ENUM_PRIORITY);
+export const taskStatusEnum = pgEnum("task_status_enum", PG_ENUM_TASK_STATUS);
+export const repeatEnum = pgEnum("repeat_enum", PG_ENUM_REPEAT);
+
+export const fxRate = pgTable(
+	"fx_rate",
+	{
+		fromCurrency: varchar("from_currency", { length: 3 }).notNull(),
+		toCurrency: varchar("to_currency", { length: 3 }).notNull(),
+		exchangeRate: numeric("exchange_rate", { precision: 18, scale: 6 }).notNull(),
+		inverseRate: numeric("inverse_rate", { precision: 18, scale: 6 }).notNull(),
+		validFrom: date("valid_from", { mode: "string" }).defaultNow().notNull(),
+		validTo: date("valid_to", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.fromCurrency, table.toCurrency, table.exchangeRate, table.validFrom],
+		}),
+	],
+);
 
 export const category = pgTable(
 	"category",

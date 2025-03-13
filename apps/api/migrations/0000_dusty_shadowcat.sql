@@ -142,6 +142,16 @@ CREATE TABLE "expense" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "fx_rate" (
+	"from_currency" varchar(3) NOT NULL,
+	"to_currency" varchar(3) NOT NULL,
+	"exchange_rate" numeric(18, 6) NOT NULL,
+	"inverse_rate" numeric(18, 6) NOT NULL,
+	"valid_from" date DEFAULT now() NOT NULL,
+	"valid_to" date DEFAULT now() NOT NULL,
+	CONSTRAINT "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk" PRIMARY KEY("from_currency","to_currency","exchange_rate","valid_from")
+);
+--> statement-breakpoint
 CREATE TABLE "task" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
@@ -166,16 +176,6 @@ CREATE TABLE "wallet" (
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "fx_rate" (
-	"from_currency" varchar(3) NOT NULL,
-	"to_currency" varchar(3) NOT NULL,
-	"exchange_rate" numeric(18, 6) NOT NULL,
-	"inverse_rate" numeric(18, 6) NOT NULL,
-	"valid_from" date DEFAULT now() NOT NULL,
-	"valid_to" date DEFAULT now() NOT NULL,
-	CONSTRAINT "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk" PRIMARY KEY("from_currency","to_currency","exchange_rate","valid_from")
 );
 --> statement-breakpoint
 CREATE TABLE "image" (

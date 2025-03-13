@@ -1,6 +1,6 @@
 {
-  "id": "c7e625db-f3c8-480a-b4e5-24050a67ae46",
-  "prevId": "16b3b43a-4c06-4fd6-a5b0-ddd4b8f24bf1",
+  "id": "d0adad96-6ffe-42ae-a7ea-01093f437b7b",
+  "prevId": "de5791b5-5181-4311-8ea0-79287de59f02",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1095,6 +1095,67 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.fx_rate": {
+      "name": "fx_rate",
+      "schema": "",
+      "columns": {
+        "from_currency": {
+          "name": "from_currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_currency": {
+          "name": "to_currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exchange_rate": {
+          "name": "exchange_rate",
+          "type": "numeric(18, 6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inverse_rate": {
+          "name": "inverse_rate",
+          "type": "numeric(18, 6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "valid_from": {
+          "name": "valid_from",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "valid_to": {
+          "name": "valid_to",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk": {
+          "name": "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk",
+          "columns": [
+            "from_currency",
+            "to_currency",
+            "exchange_rate",
+            "valid_from"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.task": {
       "name": "task",
       "schema": "",
@@ -1349,67 +1410,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.fx_rate": {
-      "name": "fx_rate",
-      "schema": "",
-      "columns": {
-        "from_currency": {
-          "name": "from_currency",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "to_currency": {
-          "name": "to_currency",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "exchange_rate": {
-          "name": "exchange_rate",
-          "type": "numeric(18, 6)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "inverse_rate": {
-          "name": "inverse_rate",
-          "type": "numeric(18, 6)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "valid_from": {
-          "name": "valid_from",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "valid_to": {
-          "name": "valid_to",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk": {
-          "name": "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk",
-          "columns": [
-            "from_currency",
-            "to_currency",
-            "exchange_rate",
-            "valid_from"
-          ]
-        }
-      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
