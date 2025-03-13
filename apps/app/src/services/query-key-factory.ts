@@ -28,6 +28,8 @@ export const invitationKeys = {
 export const walletKeys = {
 	all: ["wallets"] as const,
 	withWorkspace: (slug: string) => [...walletKeys.all, slug] as const,
+	withId: (slug: string, id: string) =>
+		[...walletKeys.all, ...walletKeys.withWorkspace(slug), "id", id] as const,
 };
 
 export const categoryKeys = {

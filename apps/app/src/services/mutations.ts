@@ -19,6 +19,10 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
+/**
+ * workspace
+ */
+
 export function useCreateWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
@@ -53,7 +57,7 @@ export function useCreateWorkspace() {
 	return mutation;
 }
 
-export function useUpdateWorkspace() {
+export function useEditWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { slug } = routeApi.useParams();
@@ -87,7 +91,7 @@ export function useUpdateWorkspace() {
 	return mutation;
 }
 
-export function useUpdateWorkspaceMetadata() {
+export function useEditWorkspaceMetadata() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
@@ -214,12 +218,16 @@ export function useCancelInvitation() {
 	return mutation;
 }
 
+/**
+ * expenses
+ */
+
 export function useCreateExpense() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		throwOnError: true,
-		mutationFn: async (payload: ExpensePayloadSchema) => {
+		mutationFn: async ({ payload }: { payload: ExpensePayloadSchema }) => {
 			const result = await apiClient.expenses.create(slug, payload);
 			return result;
 		},
@@ -238,7 +246,7 @@ export function useDeleteExpense() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const result = await apiClient.expenses.delete(slug, id);
 			return result;
 		},
@@ -253,12 +261,16 @@ export function useDeleteExpense() {
 	return mutation;
 }
 
+/**
+ * wallets
+ */
+
 export function useCreateWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		throwOnError: true,
-		mutationFn: async (payload: WalletPayloadSchema) => {
+		mutationFn: async ({ payload }: { payload: WalletPayloadSchema }) => {
 			const result = await apiClient.wallets.create(slug, payload);
 			return result;
 		},
@@ -273,11 +285,31 @@ export function useCreateWallet() {
 	return mutation;
 }
 
+export function useEditWallet() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		// throwOnError: true,
+		mutationFn: async ({ id, payload }: { id: string; payload: WalletPayloadSchema }) => {
+			const result = await apiClient.wallets.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Wallet updated");
+			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
 export function useDeleteWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const result = await apiClient.wallets.delete(slug, id);
 			return result;
 		},

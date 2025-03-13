@@ -1,5 +1,7 @@
+import { HotKey } from "@/components/hotkey";
 import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
-import { WorkspaceAvatar } from "@/components/workspace-avatar";
+import { WorkspaceAvatar } from "@/components/workspace";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 import {
 	CheckIcon,
@@ -59,7 +61,8 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 							<DropdownMenuItem className="gap-2 p-2" asChild>
 								<Link to="/">
 									<HomeIcon />
-									<span>Home</span>
+									Home
+									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_home.label}</HotKey>
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem className="gap-2 p-2" asChild>

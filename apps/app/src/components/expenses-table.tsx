@@ -96,7 +96,7 @@ export function ExpensesTable({
 function RowActions({ row }: { row: Row<ExpenseSchema> }) {
 	const mutation = useDeleteExpense();
 	const onDelete = async () => {
-		await mutation.mutateAsync(row.original.id);
+		await mutation.mutateAsync({ id: row.original.id });
 	};
 
 	return (

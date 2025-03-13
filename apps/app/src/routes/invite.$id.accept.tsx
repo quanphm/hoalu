@@ -1,5 +1,5 @@
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
-import { WorkspaceAvatar } from "@/components/workspace-avatar";
+import { WorkspaceAvatar } from "@/components/workspace";
 import { useAuth } from "@/hooks/use-auth";
 import { useAcceptInvitation } from "@/services/mutations";
 import { invitationDetailsOptions } from "@/services/query-options";

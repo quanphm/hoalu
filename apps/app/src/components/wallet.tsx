@@ -9,8 +9,16 @@ import {
 } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { type WalletFormSchema, walletFormSchema } from "@/lib/schema";
-import { useCreateWallet, useDeleteWallet } from "@/services/mutations";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
+import { walletWithIdQueryOptions } from "@/services/query-options";
+import type { PG_ENUM_WALLET_TYPE } from "@hoalu/common/enums";
+import {
+	BitcoinIcon,
+	WalletIcon as CashIcon,
+	CreditCardIcon,
+	LandmarkIcon,
+	MoreHorizontalIcon,
+} from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -28,8 +36,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
+
+type WalletType = (typeof PG_ENUM_WALLET_TYPE)[number];
 
 function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useAtom(createWalletDialogOpenAtom);
@@ -90,7 +101,7 @@ function CreateWalletForm() {
 				currency: value.currency,
 				type: value.type,
 			};
-			await mutation.mutateAsync(payload);
+			await mutation.mutateAsync({ payload });
 			setOpen(false);
 		},
 	});
@@ -104,7 +115,13 @@ function CreateWalletForm() {
 					)}
 				</form.AppField>
 				<form.AppField name="description">
-					{(field) => <field.InputField placeholder="Physical wallet" label="Short description" />}
+					{(field) => (
+						<field.InputField
+							placeholder="Physical wallet"
+							label="Short description"
+							autoComplete="off"
+						/>
+					)}
 				</form.AppField>
 				<div className="grid grid-cols-2 gap-4">
 					<form.AppField name="type">
@@ -124,19 +141,18 @@ function CreateWalletForm() {
 	);
 }
 
-function EditWalletForm() {
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
-	const setOpen = useSetAtom(createWalletDialogOpenAtom);
-	const mutation = useCreateWallet();
+function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
+	const workspace = useWorkspace();
+	const { data: wallet } = useSuspenseQuery(walletWithIdQueryOptions(workspace.slug, props.id));
+	const mutation = useEditWallet();
 
 	const form = useAppForm({
 		defaultValues: {
-			name: "",
-			description: "",
-			currency: workspaceCurrency,
-			type: "cash",
+			name: wallet.name,
+			description: wallet.description,
+			currency: wallet.currency,
+			type: wallet.type,
+			isActive: wallet.isActive,
 		} as WalletFormSchema,
 		validators: {
 			onSubmit: walletFormSchema,
@@ -147,9 +163,10 @@ function EditWalletForm() {
 				description: value.description,
 				currency: value.currency,
 				type: value.type,
+				isActive: value.isActive,
 			};
-			await mutation.mutateAsync(payload);
-			setOpen(false);
+			await mutation.mutateAsync({ id: props.id, payload });
+			if (props.onEditCallback) props.onEditCallback();
 		},
 	});
 
@@ -162,7 +179,13 @@ function EditWalletForm() {
 					)}
 				</form.AppField>
 				<form.AppField name="description">
-					{(field) => <field.InputField placeholder="Physical wallet" label="Short description" />}
+					{(field) => (
+						<field.InputField
+							placeholder="Physical wallet"
+							label="Short description"
+							autoComplete="off"
+						/>
+					)}
 				</form.AppField>
 				<div className="grid grid-cols-2 gap-4">
 					<form.AppField name="type">
@@ -174,27 +197,41 @@ function EditWalletForm() {
 						)}
 					</form.AppField>
 				</div>
+				<form.AppField name="isActive">
+					{(field) => (
+						<field.SwitchField
+							label="Activate"
+							description="You cannot create new expense with this wallet."
+						/>
+					)}
+				</form.AppField>
 				<Button type="submit" className="ml-auto w-fit">
-					Create wallet
+					Update
 				</Button>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-function EditWalletDialogContent() {
+function EditWalletDialogContent(props: { id: string; onEditCallback?(): void }) {
 	return (
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
 				<DialogDescription />
-				<EditWalletForm />
+				<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
 			</DialogHeader>
 		</DialogContent>
 	);
 }
 
-function DeleteWalletDialogContent({ onDelete }: { onDelete(): void }) {
+function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): void }) {
+	const mutation = useDeleteWallet();
+	const onDelete = async () => {
+		await mutation.mutateAsync({ id: props.id });
+		if (props.onDeleteCallback) props.onDeleteCallback();
+	};
+
 	return (
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
@@ -223,8 +260,6 @@ function DeleteWalletDialogContent({ onDelete }: { onDelete(): void }) {
 function WalletDropdownMenuWithModal({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
 	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
-	const mutation = useDeleteWallet();
-
 	const handleOpenChange = (state: boolean) => {
 		setOpen(state);
 		if (state === false) {
@@ -252,17 +287,28 @@ function WalletDropdownMenuWithModal({ id }: { id: string }) {
 					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			{content === "edit" && <EditWalletDialogContent />}
+			{content === "edit" && (
+				<EditWalletDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
+			)}
 			{content === "delete" && (
-				<DeleteWalletDialogContent
-					onDelete={async () => {
-						await mutation.mutateAsync(id);
-						handleOpenChange(false);
-					}}
-				/>
+				<DeleteWalletDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
 			)}
 		</Dialog>
 	);
 }
 
-export { CreateWalletDialog, CreateWalletDialogTrigger, WalletDropdownMenuWithModal };
+const icons: Record<WalletType, React.ReactNode> = {
+	cash: <CashIcon className="size-4 text-yellow-500" />,
+	"bank-account": <LandmarkIcon className="size-4 text-blue-500" />,
+	"credit-card": <CreditCardIcon className="size-4 bg-transparent text-indigo-500 " />,
+	"debit-card": <CreditCardIcon className="size-4 text-violet-500" />,
+	"digital-account": <BitcoinIcon className="size-4 text-orange-500" />,
+};
+function WalletIcon(props: { type: WalletType }) {
+	if (!icons[props.type]) {
+		throw new Error("unknown wallet type");
+	}
+	return icons[props.type];
+}
+
+export { CreateWalletDialog, CreateWalletDialogTrigger, WalletDropdownMenuWithModal, WalletIcon };

@@ -1,17 +1,19 @@
 import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
+import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { authClient } from "@/lib/auth-client";
 import { workspaceFormSchema, workspaceMetadataFormSchema } from "@/lib/schema";
 import {
 	useCreateWorkspace,
 	useDeleteWorkspace,
-	useUpdateWorkspace,
-	useUpdateWorkspaceMetadata,
+	useEditWorkspace,
+	useEditWorkspaceMetadata,
 } from "@/services/mutations";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -21,8 +23,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { type VariantProps, cva } from "class-variance-authority";
 import { createContext, use, useMemo, useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
@@ -137,7 +141,7 @@ function CreateWorkspaceForm() {
 function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
-	const mutation = useUpdateWorkspace();
+	const mutation = useEditWorkspace();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -219,7 +223,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 						<form.Subscribe selector={(state) => state.isPristine}>
 							{(isPristine) => (
 								<Button type="submit" disabled={isPristine}>
-									Update
+									Save
 								</Button>
 							)}
 						</form.Subscribe>
@@ -233,7 +237,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
-	const mutation = useUpdateWorkspaceMetadata();
+	const mutation = useEditWorkspaceMetadata();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -305,7 +309,10 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader className="space-y-3">
 						<DialogTitle>Confirm delete workspace</DialogTitle>
 						<DialogDescription>
-							<WarningMessage>This action cannot be undone.</WarningMessage>
+							<WarningMessage>
+								This action cannot be undone. This will permanently delete the whole workspace and
+								all of its data.
+							</WarningMessage>
 						</DialogDescription>
 					</DialogHeader>
 					<DeleteWorkspaceForm />
@@ -367,6 +374,46 @@ function DeleteWorkspaceForm() {
 	);
 }
 
+const workspaceAvatarVariants = cva("rounded-lg", {
+	variants: {
+		size: {
+			default: "size-8",
+			lg: "size-14 rounded-xl",
+			sm: "size-6",
+		},
+	},
+	defaultVariants: {
+		size: "default",
+	},
+});
+
+interface Props {
+	logo: string | null | undefined;
+	name: string | undefined;
+	className?: string;
+}
+
+function WorkspaceAvatar({
+	logo = undefined,
+	name = "Hoa Lu",
+	size,
+	className,
+}: Props & VariantProps<typeof workspaceAvatarVariants>) {
+	const workspaceShortName = extractLetterFromName(name);
+	return (
+		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
+			<AvatarImage
+				src={logo || `https://avatar.vercel.sh/${logo}.svg`}
+				alt={name}
+				className={cn(!logo && "grayscale")}
+			/>
+			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
+				{workspaceShortName}
+			</AvatarFallback>
+		</Avatar>
+	);
+}
+
 export {
 	CreateWorkspaceDialog,
 	CreateWorkspaceDialogTrigger,
@@ -375,4 +422,5 @@ export {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
 	EditWorkspaceMetadataForm,
+	WorkspaceAvatar,
 };

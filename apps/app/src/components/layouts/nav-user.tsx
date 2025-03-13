@@ -19,6 +19,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
@@ -53,8 +54,8 @@ export function NavUser() {
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="w-(--radix-dropdown-menu-trigger-width) min-w-48 rounded-lg"
-						align="center"
+						className="w-(--radix-dropdown-menu-trigger-width) min-w-52 rounded-lg"
+						align="end"
 						side="bottom"
 					>
 						<DropdownMenuGroup>
@@ -62,7 +63,7 @@ export function NavUser() {
 								<DropdownMenuSubTrigger>
 									<PaletteIcon />
 									<span>Themes</span>
-									<HotKey>{KEYBOARD_SHORTCUTS.toggle_theme.label}</HotKey>
+									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.toggle_theme.label}</HotKey>
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuSubContent>
@@ -93,12 +94,14 @@ export function NavUser() {
 								<Link to="/account/preferences">
 									<SettingsIcon />
 									Preferences
+									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_preferences.label}</HotKey>
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
 								<Link to="/account/tokens">
 									<KeyRoundIcon />
 									Access tokens
+									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_tokens.label}</HotKey>
 								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>

@@ -77,6 +77,14 @@ export const KEYBOARD_SHORTCUTS = {
 		label: "L",
 		hotkey: "l",
 	},
+	goto_preferences: {
+		label: "P",
+		hotkey: "p",
+	},
+	goto_tokens: {
+		label: "A",
+		hotkey: "a",
+	},
 	toggle_theme: {
 		label: "Shift D",
 		hotkey: "shift+d",

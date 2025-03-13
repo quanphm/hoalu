@@ -130,6 +130,7 @@ export const walletFormSchema = type({
 	"description?": "string",
 	currency: "string > 0",
 	type: walletTypeSchema,
+	"isActive?": "boolean",
 });
 export type WalletFormSchema = typeof walletFormSchema.infer;
 
@@ -138,7 +139,7 @@ export const walletPayloadSchema = type({
 	"description?": "string",
 	currency: "string = 'USD'",
 	type: walletTypeSchema,
-	"isAtive?": "boolean",
+	"isActive?": "boolean",
 });
 export type WalletPayloadSchema = typeof walletPayloadSchema.infer;
 

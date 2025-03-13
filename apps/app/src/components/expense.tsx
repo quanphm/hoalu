@@ -67,8 +67,46 @@ function CreateExpenseForm() {
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
+	const walletGroups = wallets.reduce(
+		(result, current) => {
+			const owner = current.owner;
+			if (!current.isActive) {
+				return result;
+			}
+			if (!result[owner.id]) {
+				result[owner.id] = {
+					name: owner.name,
+					options: [
+						{
+							label: current.name,
+							value: current.id,
+							currency: current.currency,
+						},
+					],
+				};
+			} else {
+				result[owner.id].options.push({
+					label: current.name,
+					value: current.id,
+					currency: current.currency,
+				});
+			}
+			return result;
+		},
+		{} as Record<
+			string,
+			{ name: string; options: { label: string; value: string; currency: string }[] }
+		>,
+	);
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+
 	const mutation = useCreateExpense();
-	const defaultWallet = wallets.find((w) => w.owner.id === user?.id) || wallets[0];
+
+	const walletsOfCurrentUser = walletGroups[user!.id]?.options || [];
+	const defaultWallet =
+		walletsOfCurrentUser.length > 0
+			? walletsOfCurrentUser[0]
+			: { label: "", value: "", currency: "" };
 
 	const form = useAppForm({
 		defaultValues: {
@@ -79,7 +117,7 @@ function CreateExpenseForm() {
 				value: 0,
 				currency: defaultWallet.currency,
 			},
-			walletId: defaultWallet.id,
+			walletId: defaultWallet.value,
 			categoryId: "",
 			repeat: "one-time",
 		} as ExpenseFormSchema,
@@ -97,35 +135,10 @@ function CreateExpenseForm() {
 				categoryId: value.categoryId,
 				repeat: value.repeat,
 			};
-			await mutation.mutateAsync(payload);
+			await mutation.mutateAsync({ payload });
 			setOpen(false);
 		},
 	});
-
-	const walletGroups = wallets.reduce(
-		(result, current) => {
-			const owner = current.owner;
-			if (!result[owner.id]) {
-				result[owner.id] = {
-					name: owner.name,
-					options: [
-						{
-							label: current.name,
-							value: current.id,
-						},
-					],
-				};
-			} else {
-				result[owner.id].options.push({
-					label: current.name,
-					value: current.id,
-				});
-			}
-			return result;
-		},
-		{} as Record<string, { name: string; options: { label: string; value: string }[] }>,
-	);
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<form.AppForm>
@@ -179,9 +192,9 @@ function EditExpenseForm() {
 			date: new Date(),
 			transaction: {
 				value: 0,
-				currency: defaultWallet.currency,
+				currency: "",
 			},
-			walletId: defaultWallet.id,
+			walletId: "",
 			categoryId: "",
 			repeat: "one-time",
 		} as ExpenseFormSchema,
@@ -199,7 +212,7 @@ function EditExpenseForm() {
 				categoryId: value.categoryId,
 				repeat: value.repeat,
 			};
-			await mutation.mutateAsync(payload);
+			await mutation.mutateAsync({ payload });
 		},
 	});
 

@@ -2,8 +2,11 @@ import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
-import { CreateWalletDialogTrigger, WalletDropdownMenuWithModal } from "@/components/wallet";
-import { WalletIcon } from "@/components/wallet-icon";
+import {
+	CreateWalletDialogTrigger,
+	WalletDropdownMenuWithModal,
+	WalletIcon,
+} from "@/components/wallet";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -72,8 +75,8 @@ function RouteComponent() {
 						Create category
 					</Button>
 				</SectionHeader>
-				<SectionContent>
-					<div className="sm:col-span-3">
+				<SectionContent columns={12}>
+					<div className="sm:col-span-8">
 						<CategoriesTable data={categories} />
 					</div>
 				</SectionContent>

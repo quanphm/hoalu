@@ -7,7 +7,7 @@ import {
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
 } from "@/components/workspace";
-import { WorkspaceAvatar } from "@/components/workspace-avatar";
+import { WorkspaceAvatar } from "@/components/workspace";
 import { authClient } from "@/lib/auth-client";
 import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
