@@ -18,6 +18,7 @@ interface Props {
 	options: { value: string; label: string }[];
 	label?: React.ReactNode;
 	description?: React.ReactNode;
+	disabled?: boolean;
 }
 
 export function SelectWithSearchField(props: Props) {
@@ -29,7 +30,7 @@ export function SelectWithSearchField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Popover open={open} onOpenChange={setOpen} modal={false}>
-				<PopoverTrigger asChild>
+				<PopoverTrigger asChild disabled={props.disabled}>
 					<FieldControl>
 						<Button
 							variant="outline"

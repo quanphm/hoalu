@@ -1,7 +1,8 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
 import { useAppForm } from "@/components/forms";
-import { HotKey } from "@/components/hotkey";
+import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
 import { useCreateExpense } from "@/services/mutations";
@@ -17,8 +18,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { Slot } from "@radix-ui/react-slot";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
@@ -52,14 +51,12 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<Tooltip>
-			<Slot onClick={() => setOpen(true)}>
-				<TooltipTrigger asChild>{children}</TooltipTrigger>
-			</Slot>
-			<TooltipContent side="bottom">
-				<HotKey>Shift E</HotKey>
-			</TooltipContent>
-		</Tooltip>
+		<HotKeyWithTooltip
+			onClick={() => setOpen(true)}
+			shortcut={KEYBOARD_SHORTCUTS.create_expense.label}
+		>
+			{children}
+		</HotKeyWithTooltip>
 	);
 }
 
@@ -169,7 +166,7 @@ function CreateExpenseForm() {
 	);
 }
 
-function UpdateExpenseForm() {
+function EditExpenseForm() {
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));

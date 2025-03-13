@@ -2,10 +2,12 @@ import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { ExpensesTable } from "@/components/expenses-table";
+import { HotKeyWithTooltip } from "@/components/hotkey";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
 import { CreateWalletDialogTrigger } from "@/components/wallet";
 import { WalletIcon } from "@/components/wallet-icon";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { ArrowRight, PlusIcon, SendHorizonalIcon, SquarePenIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -67,12 +69,14 @@ function RouteComponent() {
 									Create
 								</Button>
 							</CreateWalletDialogTrigger>
-							<Button variant="outline" size="sm" asChild>
-								<Link to="/$slug/settings/library" params={{ slug }}>
-									View all
-									<ArrowRight className="ml-2 size-4" />
-								</Link>
-							</Button>
+							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library.label}>
+								<Button variant="outline" size="sm" asChild>
+									<Link to="/$slug/settings/library" params={{ slug }}>
+										View all
+										<ArrowRight className="ml-2 size-4" />
+									</Link>
+								</Button>
+							</HotKeyWithTooltip>
 						</SectionHeader>
 						<SectionContent className="gap-4">
 							{wallets.slice(0, 4).map((wallet) => (

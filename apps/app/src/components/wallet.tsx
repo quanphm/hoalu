@@ -1,8 +1,12 @@
 import { createWalletDialogOpenAtom } from "@/atoms/dialogs";
 import { useAppForm } from "@/components/forms";
-import { HotKey } from "@/components/hotkey";
+import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
-import { AVAILABLE_CURRENCY_OPTIONS, AVAILABLE_WALLET_TYPE_OPTIONS } from "@/helpers/constants";
+import {
+	AVAILABLE_CURRENCY_OPTIONS,
+	AVAILABLE_WALLET_TYPE_OPTIONS,
+	KEYBOARD_SHORTCUTS,
+} from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { type WalletFormSchema, walletFormSchema } from "@/lib/schema";
 import { useCreateWallet, useDeleteWallet } from "@/services/mutations";
@@ -24,8 +28,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { Slot } from "@radix-ui/react-slot";
 import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
 
@@ -55,14 +57,12 @@ function CreateWalletDialogTrigger({ children }: { children: React.ReactNode }) 
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	return (
-		<Tooltip>
-			<Slot onClick={() => setOpen(true)}>
-				<TooltipTrigger asChild>{children}</TooltipTrigger>
-			</Slot>
-			<TooltipContent side="bottom">
-				<HotKey>Shift W</HotKey>
-			</TooltipContent>
-		</Tooltip>
+		<HotKeyWithTooltip
+			onClick={() => setOpen(true)}
+			shortcut={KEYBOARD_SHORTCUTS.create_wallet.label}
+		>
+			{children}
+		</HotKeyWithTooltip>
 	);
 }
 

@@ -1,4 +1,6 @@
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { Slot, type SlotProps } from "@radix-ui/react-slot";
 
 export function HotKey({ className, children, ...props }: React.ComponentProps<"span">) {
 	return (
@@ -13,5 +15,22 @@ export function HotKey({ className, children, ...props }: React.ComponentProps<"
 		>
 			{children}
 		</span>
+	);
+}
+
+export function HotKeyWithTooltip({
+	children,
+	shortcut,
+	...props
+}: SlotProps & { shortcut: string }) {
+	return (
+		<Tooltip>
+			<Slot {...props}>
+				<TooltipTrigger asChild>{children}</TooltipTrigger>
+			</Slot>
+			<TooltipContent side="bottom">
+				<HotKey>{shortcut}</HotKey>
+			</TooltipContent>
+		</Tooltip>
 	);
 }

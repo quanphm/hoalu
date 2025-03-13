@@ -4,8 +4,8 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
-	UpdateWorkspaceForm,
-	UpdateWorkspaceMetadataForm,
+	EditWorkspaceForm,
+	EditWorkspaceMetadataForm,
 } from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace-avatar";
 import { authClient } from "@/lib/auth-client";
@@ -62,7 +62,7 @@ function RouteComponent() {
 								<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
 							</SettingCard>
 							<SettingCard title="Profile">
-								<UpdateWorkspaceForm canUpdateWorkspace={canUpdateWorkspace} />
+								<EditWorkspaceForm canEdit={canUpdateWorkspace} />
 							</SettingCard>
 							<SettingCard title="Workspace ID">
 								<InputWithCopy value={workspace.publicId} />
@@ -72,7 +72,7 @@ function RouteComponent() {
 
 					<div className="col-span-4">
 						<SettingCard title="Preferences">
-							<UpdateWorkspaceMetadataForm canUpdateWorkspace={canUpdateWorkspace} />
+							<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />
 						</SettingCard>
 					</div>
 				</SectionContent>

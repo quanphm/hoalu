@@ -1,4 +1,5 @@
 import { HotKey } from "@/components/hotkey";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { ArrowRightLeftIcon, GalleryVerticalIcon, ListTodoIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
@@ -21,7 +22,7 @@ export function NavWorkspace() {
 							<GalleryVerticalIcon />
 							<span>Dashboard</span>
 							<SidebarMenuBadge>
-								<HotKey>D</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_dashboard.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -33,7 +34,7 @@ export function NavWorkspace() {
 							<ArrowRightLeftIcon />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
-								<HotKey>E</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_expenses.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -45,7 +46,7 @@ export function NavWorkspace() {
 							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
-								<HotKey>T</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_tasks.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>

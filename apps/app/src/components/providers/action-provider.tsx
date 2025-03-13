@@ -1,6 +1,7 @@
 import { createExpenseDialogOpenAtom, createWalletDialogOpenAtom } from "@/atoms/dialogs";
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -15,92 +16,81 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	useHotkeys(
-		"shift+e",
+		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
 			setExpenseOpen(true);
 		},
-		{
-			preventDefault: true,
-			description: "Dialog: Create new expense",
-		},
+		{ preventDefault: true, description: "Dialog: Create new expense" },
 	);
 
 	useHotkeys(
-		"shift+w",
+		KEYBOARD_SHORTCUTS.create_wallet.hotkey,
 		() => {
 			setWalletOpen(true);
 		},
-		{
-			preventDefault: true,
-			description: "Dialog: Create new wallet",
-		},
+		{ preventDefault: true, description: "Dialog: Create new wallet" },
 	);
 
-	useHotkeys("h", () => navigate({ to: "/" }), { description: "Navigate: Home" }, [navigate]);
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_home.hotkey,
+		() => {
+			navigate({ to: "/" });
+		},
+		{ description: "Navigate: Home" },
+		[navigate],
+	);
 
 	useHotkeys(
-		"d",
+		KEYBOARD_SHORTCUTS.goto_dashboard.hotkey,
 		() => {
 			navigate({ to: "/$slug", params: { slug } });
 		},
-		{
-			description: "Navigate: Dashboard",
-		},
+		{ description: "Navigate: Dashboard" },
 		[slug, navigate],
 	);
 
 	useHotkeys(
-		"e",
+		KEYBOARD_SHORTCUTS.goto_expenses.hotkey,
 		() => {
 			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
-		{
-			description: "Navigate: Expenses",
-		},
+		{ description: "Navigate: Expenses" },
 		[slug, navigate],
 	);
 
 	useHotkeys(
-		"t",
+		KEYBOARD_SHORTCUTS.goto_tasks.hotkey,
 		() => {
 			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
-		{
-			description: "Navigate: Tasks",
-		},
+		{ description: "Navigate: Tasks" },
 		[slug, navigate],
 	);
 
 	useHotkeys(
-		"s",
+		KEYBOARD_SHORTCUTS.goto_workspace.hotkey,
 		() => {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
-		{
-			description: "Navigate: Settings / Workspace",
-		},
+		{ description: "Navigate: Settings / Workspace" },
 		[slug, navigate],
 	);
 
 	useHotkeys(
-		"m",
+		KEYBOARD_SHORTCUTS.goto_members.hotkey,
 		() => {
 			navigate({ to: "/$slug/settings/members", params: { slug } });
 		},
-		{
-			description: "Navigate: Settings / Members",
-		},
+		{ description: "Navigate: Settings / Members" },
 		[slug, navigate],
 	);
 
 	useHotkeys(
-		"l",
+		KEYBOARD_SHORTCUTS.goto_library.hotkey,
 		() => {
 			navigate({ to: "/$slug/settings/library", params: { slug } });
 		},
-		{
-			description: "Navigate: Settings / Library",
-		},
+		{ description: "Navigate: Settings / Library" },
 		[slug, navigate],
 	);
 

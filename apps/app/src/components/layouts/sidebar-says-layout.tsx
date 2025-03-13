@@ -3,6 +3,7 @@ import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { SearchInput } from "@/components/search-input";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SidebarFooter, SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
@@ -30,9 +31,13 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
 
-	useHotkeys("shift+d", () => setTheme((theme) => (theme === "light" ? "dark" : "light")), {
-		description: "Theme: Toggle Light/Dark mode",
-	});
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
+		() => {
+			setTheme((theme) => (theme === "light" ? "dark" : "light"));
+		},
+		{ description: "Theme: Toggle Light/Dark mode" },
+	);
 
 	return (
 		<SidebarProvider className={cn(theme)}>

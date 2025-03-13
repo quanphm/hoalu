@@ -8,7 +8,7 @@ import { apiKey, jwt, openAPI } from "better-auth/plugins";
 import { describeRoute } from "hono-openapi";
 import { DEFAULT_CATEGORIES } from "../common/categories";
 import { db } from "../db";
-import { category, wallet } from "../db/schema/core";
+import { category, wallet } from "../db/schema";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({

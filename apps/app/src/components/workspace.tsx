@@ -134,7 +134,7 @@ function CreateWorkspaceForm() {
 	);
 }
 
-function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
+function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const mutation = useUpdateWorkspace();
@@ -160,7 +160,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 			},
 		},
 		onSubmit: async ({ value }) => {
-			if (!canUpdateWorkspace) return;
+			if (!canEdit) return;
 			const { error } = await tryCatch.async(mutation.mutateAsync(value));
 			if (error) {
 				form.setFieldMeta("slug", (state) => {
@@ -192,7 +192,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 							label="Workspace name"
 							autoComplete="off"
 							placeholder="Acme Inc."
-							disabled={!canUpdateWorkspace}
+							disabled={!canEdit}
 						/>
 					)}
 				</form.AppField>
@@ -202,18 +202,16 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 							label="Workspace URL"
 							placeholder="acme-inc-42"
 							description={
-								canUpdateWorkspace
-									? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
-									: ""
+								canEdit ? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)" : ""
 							}
 							pattern="[a-z0-9\-]+$"
 							required
 							autoComplete="off"
-							disabled={!canUpdateWorkspace}
+							disabled={!canEdit}
 						/>
 					)}
 				</form.AppField>
-				{canUpdateWorkspace && (
+				{canEdit && (
 					<div className="ml-auto flex gap-2">
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
@@ -232,7 +230,7 @@ function UpdateWorkspaceForm({ canUpdateWorkspace }: { canUpdateWorkspace: boole
 	);
 }
 
-function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspace: boolean }) {
+function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	const { slug } = routeApi.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const mutation = useUpdateWorkspaceMetadata();
@@ -245,7 +243,7 @@ function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspac
 			onSubmit: workspaceMetadataFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			if (!canUpdateWorkspace) return;
+			if (!canEdit) return;
 			await tryCatch.async(mutation.mutateAsync(value));
 			form.reset();
 		},
@@ -260,10 +258,11 @@ function UpdateWorkspaceMetadataForm({ canUpdateWorkspace }: { canUpdateWorkspac
 							label="Default currency"
 							description="This will determine how monetary values appear in your dashboard."
 							options={AVAILABLE_CURRENCY_OPTIONS}
+							disabled={!canEdit}
 						/>
 					)}
 				</form.AppField>
-				{canUpdateWorkspace && (
+				{canEdit && (
 					<div className="ml-auto flex gap-2">
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
@@ -372,8 +371,8 @@ export {
 	CreateWorkspaceDialog,
 	CreateWorkspaceDialogTrigger,
 	CreateWorkspaceForm,
-	UpdateWorkspaceForm,
+	EditWorkspaceForm,
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
-	UpdateWorkspaceMetadataForm,
+	EditWorkspaceMetadataForm,
 };
