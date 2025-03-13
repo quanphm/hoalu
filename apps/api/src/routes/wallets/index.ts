@@ -256,7 +256,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 			const activeWallets = wallets.filter((w) => w.isActive);
-			if (activeWallets.length === 1) {
+			if (activeWallets.length === 1 && wallet.isActive) {
 				return c.json(
 					{ message: "You cannot delete this wallet as the only available wallet" },
 					HTTPStatus.codes.BAD_REQUEST,

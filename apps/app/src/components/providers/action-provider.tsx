@@ -63,7 +63,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
-		{ description: "Navigate: Tasks" },
+		{ description: "Navigate: Tasks", enabled: false },
 		[slug, navigate],
 	);
 

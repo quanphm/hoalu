@@ -42,7 +42,7 @@ export function NavWorkspace() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Tasks">
-						<Link from="/$slug/" to="./tasks">
+						<Link from="/$slug/" to="./tasks" disabled>
 							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
