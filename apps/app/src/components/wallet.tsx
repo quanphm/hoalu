@@ -36,9 +36,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type WalletType = (typeof PG_ENUM_WALLET_TYPE)[number];
 
@@ -170,7 +170,11 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 		},
 	});
 
-	if (isLoading) return null;
+	useEffect(() => {
+		if (isLoading === false) {
+			form.reset();
+		}
+	}, [isLoading, form.reset]);
 
 	return (
 		<form.AppForm>
@@ -202,8 +206,12 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 				<form.AppField name="isActive">
 					{(field) => (
 						<field.SwitchField
-							label="Activate"
-							description="You cannot create new expense with this wallet."
+							label="In use"
+							description={
+								field.state.value === false
+									? "You won't be able to create new expense with this wallet."
+									: ""
+							}
 						/>
 					)}
 				</form.AppField>

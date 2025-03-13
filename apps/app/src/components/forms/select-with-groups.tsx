@@ -22,12 +22,7 @@ export function SelectWithGroupsField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Select
-				// very important
-				key={field.state.value}
-				value={field.state.value}
-				onValueChange={(value) => field.handleChange(value)}
-			>
+			<Select defaultValue={field.state.value} onValueChange={(value) => field.handleChange(value)}>
 				<FieldControl>
 					<SelectTrigger className="focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue placeholder="Select" />

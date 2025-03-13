@@ -164,6 +164,7 @@ const route = app
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
+			const membership = c.get("member");
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
@@ -175,22 +176,22 @@ const route = app
 			if (!wallet) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
-			if (wallet.owner.id !== user.id) {
+			if (wallet.owner.id !== user.id || membership.role !== "owner") {
 				return c.json(
-					{ message: "You are not the owner of this wallet" },
+					{ message: "You don't have permission to update this wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 
-			// workspace must has atleast 1 active wallet.
-			// Prevent deactivate the last available wallet.
+			// workspace must has atleast 1 active wallet
+			// Prevent deactivate the last available wallet
 			const wallets = await walletRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
 			const activeWallets = wallets.filter((w) => w.isActive);
 			if (activeWallets.length === 1 && payload.isActive === false) {
 				return c.json(
-					{ message: "You cannot deactivate this wallet as the only available wallet" },
+					{ message: "This wallet cannot be deactivated because it's your only available wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
@@ -233,9 +234,10 @@ const route = app
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
+			const membership = c.get("member");
 			const param = c.req.valid("param");
 
-			// only owner can delete their wallet
+			// owner or workspace owener can delete their wallet
 			const wallet = await walletRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
@@ -243,22 +245,22 @@ const route = app
 			if (!wallet) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
-			if (wallet.ownerId !== user.id) {
+			if (wallet.owner.id !== user.id || membership.role !== "owner") {
 				return c.json(
-					{ message: "You are not the owner of this wallet" },
+					{ message: "You don't have permission to delete this wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
 
-			// workspace must has atleast 1 active wallet.
-			// Prevent deactivate the last available wallet.
+			// workspace must has atleast 1 active wallet
+			// Prevent deactivate the last available wallet
 			const wallets = await walletRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
 			const activeWallets = wallets.filter((w) => w.isActive);
 			if (activeWallets.length === 1 && wallet.isActive) {
 				return c.json(
-					{ message: "You cannot delete this wallet as the only available wallet" },
+					{ message: "This wallet cannot be deleted because it's your only available wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}

@@ -9,7 +9,9 @@ import {
 } from "@/components/wallet";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -40,27 +42,45 @@ function RouteComponent() {
 						<ContentCard
 							key={wallet.id}
 							title={
-								<div className="leading-relaxed">
+								<div className="relative leading-relaxed">
 									<p className="flex items-center gap-1.5">
 										<WalletIcon type={wallet.type} /> {wallet.name}
 									</p>
-									<span className="font-normal text-muted-foreground text-xs">
+									<span className="font-normal text-muted-foreground text-sm">
 										{wallet.description}
 									</span>
 								</div>
 							}
 							content={
-								<div className="flex items-center justify-between">
-									<div className="flex items-center gap-1.5">
-										<UserAvatar
-											className="size-4"
-											name={wallet.owner.name}
-											image={wallet.owner.image}
-										/>
-										<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
+								<>
+									<div className="flex items-center justify-between">
+										<div className="flex items-center gap-1.5">
+											<UserAvatar
+												className="size-4"
+												name={wallet.owner.name}
+												image={wallet.owner.image}
+											/>
+											<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
+										</div>
+										<WalletDropdownMenuWithModal id={wallet.id} />
 									</div>
-									<WalletDropdownMenuWithModal id={wallet.id} />
-								</div>
+									<Badge
+										variant="outline"
+										className="pointer-events-none absolute top-4 right-4 select-none gap-1.5 rounded-full"
+									>
+										{wallet.isActive ? (
+											<>
+												<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
+												In use
+											</>
+										) : (
+											<>
+												<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
+												Unused
+											</>
+										)}
+									</Badge>
+								</>
 							}
 						/>
 					))}

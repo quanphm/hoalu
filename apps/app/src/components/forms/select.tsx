@@ -14,12 +14,7 @@ export function SelectField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Select
-				// very important
-				key={field.state.value}
-				value={field.state.value}
-				onValueChange={field.handleChange}
-			>
+			<Select defaultValue={field.state.value} onValueChange={field.handleChange}>
 				<FieldControl>
 					<SelectTrigger className="focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue placeholder="Select" />
