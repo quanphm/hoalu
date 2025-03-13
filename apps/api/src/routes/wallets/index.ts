@@ -250,6 +250,19 @@ const route = app
 				);
 			}
 
+			// workspace must has atleast 1 active wallet.
+			// Prevent deactivate the last available wallet.
+			const wallets = await walletRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
+			const activeWallets = wallets.filter((w) => w.isActive);
+			if (activeWallets.length === 1) {
+				return c.json(
+					{ message: "You cannot delete this wallet as the only available wallet" },
+					HTTPStatus.codes.BAD_REQUEST,
+				);
+			}
+
 			const queryData = await walletRepository.delete({
 				id: wallet.id,
 				workspaceId: workspace.id,

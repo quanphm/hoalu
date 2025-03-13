@@ -226,7 +226,6 @@ export function useCreateExpense() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		throwOnError: true,
 		mutationFn: async ({ payload }: { payload: ExpensePayloadSchema }) => {
 			const result = await apiClient.expenses.create(slug, payload);
 			return result;
@@ -269,7 +268,6 @@ export function useCreateWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		throwOnError: true,
 		mutationFn: async ({ payload }: { payload: WalletPayloadSchema }) => {
 			const result = await apiClient.wallets.create(slug, payload);
 			return result;
@@ -289,7 +287,6 @@ export function useEditWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		// throwOnError: true,
 		mutationFn: async ({ id, payload }: { id: string; payload: WalletPayloadSchema }) => {
 			const result = await apiClient.wallets.edit(slug, id, payload);
 			return result;
