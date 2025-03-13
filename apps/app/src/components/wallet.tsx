@@ -36,7 +36,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
 
@@ -143,16 +143,16 @@ function CreateWalletForm() {
 
 function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	const workspace = useWorkspace();
-	const { data: wallet } = useSuspenseQuery(walletWithIdQueryOptions(workspace.slug, props.id));
+	const { data: wallet, isLoading } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
 
 	const form = useAppForm({
 		defaultValues: {
-			name: wallet.name,
-			description: wallet.description,
-			currency: wallet.currency,
-			type: wallet.type,
-			isActive: wallet.isActive,
+			name: wallet?.name ?? "",
+			description: wallet?.description ?? "",
+			currency: wallet?.currency ?? "",
+			type: wallet?.type ?? "",
+			isActive: wallet?.isActive ?? true,
 		} as WalletFormSchema,
 		validators: {
 			onSubmit: walletFormSchema,
@@ -169,6 +169,8 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 			if (props.onEditCallback) props.onEditCallback();
 		},
 	});
+
+	if (isLoading) return null;
 
 	return (
 		<form.AppForm>
@@ -218,9 +220,9 @@ function EditWalletDialogContent(props: { id: string; onEditCallback?(): void })
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
-				<DialogDescription />
-				<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
+				<DialogDescription>Update your wallet information</DialogDescription>
 			</DialogHeader>
+			<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
 		</DialogContent>
 	);
 }

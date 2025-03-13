@@ -20,7 +20,7 @@ const router = createTanStackRouter({
 	},
 	scrollRestoration: true,
 	scrollRestorationBehavior: "instant",
-	defaultPreload: "intent",
+	defaultPreload: "render",
 	defaultPreloadStaleTime: 0,
 	defaultNotFoundComponent: NotFound,
 	defaultErrorComponent: DefaultCatchBoundary,
