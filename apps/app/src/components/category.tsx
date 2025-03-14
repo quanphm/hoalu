@@ -1,3 +1,4 @@
+import { createCategoryDialogOpenAtom } from "@/atoms/dialogs";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
@@ -26,61 +27,50 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, use, useEffect, useMemo, useState } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import { useAtom, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { useAppForm } from "./forms";
 
-type CreateContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const CreateContext = createContext<CreateContext | null>(null);
-
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
-
-	useHotkeys(KEYBOARD_SHORTCUTS.create_category.hotkey, () => setOpen(true), {
-		preventDefault: true,
-		description: "Dialog: Create new category",
-	});
+	const [open, setOpen] = useAtom(createCategoryDialogOpenAtom);
 
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent
-					className="sm:max-w-[420px]"
-					onCloseAutoFocus={(event) => {
-						event.preventDefault();
-					}}
-				>
-					<DialogHeader>
-						<DialogTitle>Create new category</DialogTitle>
-						<DialogDescription>
-							Create a new custom category to organize your expenses.
-						</DialogDescription>
-					</DialogHeader>
-					<DialogDescription />
-					<CreateCategoryForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<Dialog open={open} onOpenChange={setOpen}>
+			{children}
+			<DialogContent
+				className="sm:max-w-[420px]"
+				onCloseAutoFocus={(event) => {
+					event.preventDefault();
+				}}
+			>
+				<DialogHeader>
+					<DialogTitle>Create new category</DialogTitle>
+					<DialogDescription>
+						Create a new custom category to organize your expenses.
+					</DialogDescription>
+				</DialogHeader>
+				<DialogDescription />
+				<CreateCategoryForm />
+			</DialogContent>
+		</Dialog>
 	);
 }
 
 function CreateCategoryDialogTrigger({ children }: { children: React.ReactNode }) {
+	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+
 	return (
-		<DialogTrigger asChild>
-			<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.create_category.label}>
-				{children}
-			</HotKeyWithTooltip>
-		</DialogTrigger>
+		<HotKeyWithTooltip
+			onClick={() => setOpen(true)}
+			shortcut={KEYBOARD_SHORTCUTS.create_category.label}
+		>
+			{children}
+		</HotKeyWithTooltip>
 	);
 }
 
 function CreateCategoryForm() {
-	const context = use(CreateContext);
+	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
@@ -99,7 +89,7 @@ function CreateCategoryForm() {
 					color: value.color,
 				},
 			});
-			context?.setOpen(false);
+			setOpen(false);
 		},
 	});
 

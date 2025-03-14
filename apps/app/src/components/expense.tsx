@@ -1,4 +1,5 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
+import { draftExpenseAtom } from "@/atoms/draft-expense";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -33,6 +34,7 @@ import {
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
@@ -43,12 +45,7 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			{children}
-			<DialogContent
-				className="sm:max-w-[750px]"
-				onCloseAutoFocus={(event) => {
-					event.preventDefault();
-				}}
-			>
+			<DialogContent className="sm:max-w-[750px]">
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>
 				</DialogHeader>
@@ -74,11 +71,13 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 
 function CreateExpenseForm() {
 	const { user } = useAuth();
-	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const mutation = useCreateExpense();
+
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const [draft, setDraft] = useAtom(draftExpenseAtom);
 
 	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 	const fallbackWallet = {
@@ -121,16 +120,16 @@ function CreateExpenseForm() {
 
 	const form = useAppForm({
 		defaultValues: {
-			title: "",
-			description: "",
-			date: new Date(),
+			title: draft.title,
+			description: draft.description,
+			date: draft.date,
 			transaction: {
-				value: 0,
-				currency: defaultWallet.currency,
+				value: draft.transaction.value,
+				currency: draft.transaction.currency || defaultWallet.currency,
 			},
-			walletId: defaultWallet.value,
-			categoryId: "",
-			repeat: "one-time",
+			walletId: draft.walletId || defaultWallet.value,
+			categoryId: draft.categoryId,
+			repeat: draft.repeat,
 		} as ExpenseFormSchema,
 		validators: {
 			onSubmit: expenseFormSchema,
@@ -142,15 +141,26 @@ function CreateExpenseForm() {
 					description: value.description,
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
-					date: value.date.toISOString(),
+					date: value.date,
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
 				},
 			});
 			setOpen(false);
+			setDraft(RESET);
 		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: shut up
+	useEffect(() => {
+		return () => {
+			if (!form.state.isSubmitted) {
+				console.log("cdmkcdmcd");
+				setDraft(form.state.values);
+			}
+		};
+	}, [form.state.isSubmitted]);
 
 	return (
 		<form.AppForm>
@@ -183,9 +193,12 @@ function CreateExpenseForm() {
 						</form.AppField>
 					</div>
 				</div>
-				<Button type="submit" className="ml-auto w-fit">
-					Create expense
-				</Button>
+				<div className="ml-auto flex gap-2">
+					<Button variant="ghost" type="button" onClick={() => form.reset()}>
+						Reset
+					</Button>
+					<Button type="submit">Create expense</Button>
+				</div>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -277,7 +290,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 		defaultValues: {
 			title: expense?.title ?? "",
 			description: expense?.description ?? "",
-			date: expense ? new Date(expense.date) : new Date(),
+			date: expense?.date ?? "",
 			transaction: {
 				value: expense?.amount ?? 0,
 				currency: expense?.currency ?? workspace.metadata.currency,
@@ -297,7 +310,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 					description: value.description,
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
-					date: value.date.toISOString(),
+					date: value.date,
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
@@ -344,9 +357,12 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 						</form.AppField>
 					</div>
 				</div>
-				<Button type="submit" className="ml-auto w-fit">
-					Update
-				</Button>
+				<div className="ml-auto flex gap-2">
+					<Button variant="ghost" type="button" onClick={() => form.reset()}>
+						Reset
+					</Button>
+					<Button type="submit">Update</Button>
+				</div>
 			</form.Form>
 		</form.AppForm>
 	);

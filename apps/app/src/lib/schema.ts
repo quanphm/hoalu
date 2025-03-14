@@ -53,7 +53,7 @@ export const expenseFormSchema = type({
 		value: "number",
 		currency: "string",
 	},
-	date: "Date",
+	date: "string.date",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
 	repeat: repeatSchema,
