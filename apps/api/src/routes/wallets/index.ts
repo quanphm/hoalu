@@ -4,6 +4,7 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
+import { WORKSPACE_CREATOR_ROLE } from "../../common/constants";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
@@ -176,7 +177,7 @@ const route = app
 			if (!wallet) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
-			if (wallet.owner.id !== user.id || membership.role !== "owner") {
+			if (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE) {
 				return c.json(
 					{ message: "You don't have permission to update this wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
@@ -245,7 +246,7 @@ const route = app
 			if (!wallet) {
 				return c.json({ data: null }, HTTPStatus.codes.OK);
 			}
-			if (wallet.owner.id !== user.id || membership.role !== "owner") {
+			if (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE) {
 				return c.json(
 					{ message: "You don't have permission to delete this wallet" },
 					HTTPStatus.codes.BAD_REQUEST,

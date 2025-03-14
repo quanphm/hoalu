@@ -32,7 +32,7 @@ function RouteComponent() {
 		role: member.role,
 	}));
 	const invitationTableData = workspace.invitations
-		//.filter((invite) => invite.status !== "accepted")
+		// .filter((invite) => invite.status !== "accepted")
 		.filter((invite) => invite.status === "pending")
 		.map((invite) => ({
 			id: invite.id,

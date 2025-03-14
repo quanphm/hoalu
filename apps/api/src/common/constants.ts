@@ -47,3 +47,5 @@ export const DEFAULT_CATEGORIES: { name: string; description: string; color: Col
 		description: "Miscellaneous expenses pending classification",
 	},
 ];
+
+export const WORKSPACE_CREATOR_ROLE = "owner";

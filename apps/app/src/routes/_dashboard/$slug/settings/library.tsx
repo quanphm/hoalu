@@ -36,10 +36,11 @@ function RouteComponent() {
 						</Button>
 					</CreateWalletDialogTrigger>
 				</SectionHeader>
-				<SectionContent columns={4}>
+				<SectionContent columns={3}>
 					{wallets.map((wallet) => (
 						<ContentCard
 							key={wallet.id}
+							className="flex flex-col justify-between"
 							title={
 								<div className="relative leading-relaxed">
 									<p className="flex items-center gap-1.5">
@@ -61,24 +62,26 @@ function RouteComponent() {
 											/>
 											<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
 										</div>
+										<Badge
+											variant="outline"
+											className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
+										>
+											{wallet.isActive ? (
+												<>
+													<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
+													In use
+												</>
+											) : (
+												<>
+													<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
+													Unused
+												</>
+											)}
+										</Badge>
+									</div>
+									<div className="absolute top-3 right-4">
 										<WalletDropdownMenuWithModal id={wallet.id} />
 									</div>
-									<Badge
-										variant="outline"
-										className="pointer-events-none absolute top-4 right-4 select-none gap-1.5 rounded-full"
-									>
-										{wallet.isActive ? (
-											<>
-												<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
-												In use
-											</>
-										) : (
-											<>
-												<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
-												Unused
-											</>
-										)}
-									</Badge>
 								</>
 							}
 						/>
