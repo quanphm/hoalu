@@ -163,6 +163,24 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		[slug, navigate],
 	);
 
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_preferences.hotkey,
+		() => {
+			navigate({ to: "/account/preferences" });
+		},
+		{ description: "Navigate: Preferences" },
+		[navigate],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_tokens.hotkey,
+		() => {
+			navigate({ to: "/account/tokens" });
+		},
+		{ description: "Navigate: Tokens" },
+		[navigate],
+	);
+
 	return (
 		<CreateExpenseDialog>
 			<CreateWalletDialog>
