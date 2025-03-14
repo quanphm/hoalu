@@ -223,7 +223,7 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 				</div>
 
 				<Button type="submit" className="ml-auto w-fit">
-					Create category
+					Update
 				</Button>
 			</form.Form>
 		</form.AppForm>

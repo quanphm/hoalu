@@ -64,6 +64,9 @@ export type ExpenseSchema = InferResponseType<
 	200
 >["data"][number];
 export type ExpensePostSchema = InferRequestType<typeof honoClient.api.expenses.$post>["json"];
+export type ExpensePatchSchema = InferRequestType<
+	(typeof honoClient.api.expenses)[":id"]["$patch"]
+>["json"];
 
 /**
  * categories

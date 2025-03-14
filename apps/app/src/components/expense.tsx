@@ -4,9 +4,15 @@ import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
-import { useCreateExpense } from "@/services/mutations";
-import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
+import { useCreateExpense, useDeleteExpense, useEditExpense } from "@/services/mutations";
+import {
+	categoriesQueryOptions,
+	expenseWithIdQueryOptions,
+	walletsQueryOptions,
+} from "@/services/query-options";
+import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -18,10 +24,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@hoalu/ui/dropdown-menu";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -179,51 +191,208 @@ function CreateExpenseForm() {
 	);
 }
 
-function DeleteExpenseDialog({
-	children,
-	onDelete,
-}: { children: React.ReactNode; onDelete(): Promise<void> }) {
+function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
-	const handleDelete = async () => {
-		await onDelete();
-		setOpen(false);
+	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
+	const handleOpenChange = (state: boolean) => {
+		setOpen(state);
+		if (state === false) {
+			setContent("none");
+		}
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			{children}
-			<DialogContent className="sm:max-w-[480px]">
-				<DialogHeader>
-					<DialogTitle>Delete expense?</DialogTitle>
-					<DialogDescription>
-						<WarningMessage>
-							The expense will be deleted and removed from your history. This action cannot be
-							undone.
-						</WarningMessage>
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
-					<Button variant="destructive" onClick={() => handleDelete()}>
-						Delete
+		<Dialog open={open} onOpenChange={handleOpenChange}>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant="ghost" className="h-8 w-8 p-0">
+						<span className="sr-only">Open menu</span>
+						<MoreHorizontalIcon className="size-4" />
 					</Button>
-				</DialogFooter>
-			</DialogContent>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DialogTrigger asChild onClick={() => setContent("edit")}>
+						<DropdownMenuItem>Edit</DropdownMenuItem>
+					</DialogTrigger>
+					<DialogTrigger asChild onClick={() => setContent("delete")}>
+						<DropdownMenuItem>
+							<span className="text-destructive">Delete</span>
+						</DropdownMenuItem>
+					</DialogTrigger>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			{content === "edit" && (
+				<EditExpenseDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
+			)}
+			{content === "delete" && (
+				<DeleteExpenseDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
+			)}
 		</Dialog>
 	);
 }
 
-function DeleteExpenseTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
+function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
+	const workspace = useWorkspace();
+	const { slug } = routeApi.useParams();
+	const mutation = useEditExpense();
+
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const { data: expense, status } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
+
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+	const walletGroups = wallets.reduce(
+		(result, current) => {
+			const owner = current.owner;
+			if (!current.isActive) {
+				return result;
+			}
+			if (!result[owner.id]) {
+				result[owner.id] = {
+					name: owner.name,
+					options: [
+						{
+							label: current.name,
+							value: current.id,
+							currency: current.currency,
+						},
+					],
+				};
+			} else {
+				result[owner.id].options.push({
+					label: current.name,
+					value: current.id,
+					currency: current.currency,
+				});
+			}
+			return result;
+		},
+		{} as Record<
+			string,
+			{ name: string; options: { label: string; value: string; currency: string }[] }
+		>,
+	);
+
+	const form = useAppForm({
+		defaultValues: {
+			title: expense?.title ?? "",
+			description: expense?.description ?? "",
+			date: expense ? new Date(expense.date) : new Date(),
+			transaction: {
+				value: expense?.amount ?? 0,
+				currency: expense?.currency ?? workspace.metadata.currency,
+			},
+			walletId: expense?.wallet.id ?? "",
+			categoryId: expense?.category?.id ?? "",
+			repeat: expense?.repeat ?? "one-time",
+		} as ExpenseFormSchema,
+		validators: {
+			onSubmit: expenseFormSchema,
+		},
+		onSubmit: async ({ value }) => {
+			await mutation.mutateAsync({
+				id: props.id,
+				payload: {
+					title: value.title,
+					description: value.description,
+					amount: value.transaction.value,
+					currency: value.transaction.currency,
+					date: value.date.toISOString(),
+					walletId: value.walletId,
+					categoryId: value.categoryId,
+					repeat: value.repeat,
+				},
+			});
+			if (props.onEditCallback) props.onEditCallback();
+		},
+	});
+
+	useEffect(() => {
+		if (status === "success") {
+			form.reset();
+		}
+	}, [status, form.reset]);
+
+	return (
+		<form.AppForm>
+			<form.Form>
+				<div className="grid grid-cols-12 gap-4">
+					<div className="col-span-7 flex flex-col gap-4">
+						<form.AppField name="title">
+							{(field) => <field.InputField label="Description" autoFocus required />}
+						</form.AppField>
+						<form.AppField name="transaction">
+							{(field) => <field.TransactionAmountField label="Amount" />}
+						</form.AppField>
+						<div className="grid grid-cols-2 gap-4">
+							<form.AppField name="walletId">
+								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
+							</form.AppField>
+							<form.AppField name="categoryId">
+								{(field) => (
+									<field.SelectWithSearchField label="Category" options={categoryOptions} />
+								)}
+							</form.AppField>
+						</div>
+						<form.AppField name="description">
+							{(field) => <field.InputField label="Extra note" />}
+						</form.AppField>
+					</div>
+					<div className="col-span-5">
+						<form.AppField name="date">
+							{(field) => <field.DatepickerField label="Date" />}
+						</form.AppField>
+					</div>
+				</div>
+				<Button type="submit" className="ml-auto w-fit">
+					Update
+				</Button>
+			</form.Form>
+		</form.AppForm>
+	);
 }
 
-export {
-	CreateExpenseDialog,
-	CreateExpenseDialogTrigger,
-	DeleteExpenseDialog,
-	DeleteExpenseTrigger,
-};
+function EditExpenseDialogContent(props: { id: string; onEditCallback?(): void }) {
+	return (
+		<DialogContent className="sm:max-w-[750px]">
+			<DialogHeader>
+				<DialogTitle>Edit expense</DialogTitle>
+				<DialogDescription>Update your expense details.</DialogDescription>
+			</DialogHeader>
+			<EditExpenseForm id={props.id} onEditCallback={props.onEditCallback} />
+		</DialogContent>
+	);
+}
+
+function DeleteExpenseDialogContent(props: { id: string; onDeleteCallback?(): void }) {
+	const mutation = useDeleteExpense();
+	const onDelete = async () => {
+		await mutation.mutateAsync({ id: props.id });
+		if (props.onDeleteCallback) props.onDeleteCallback();
+	};
+
+	return (
+		<DialogContent className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Delete expense?</DialogTitle>
+				<DialogDescription>
+					<WarningMessage>
+						The expense will be deleted and removed from your history. This action cannot be undone.
+					</WarningMessage>
+				</DialogDescription>
+			</DialogHeader>
+			<DialogFooter>
+				<DialogClose asChild>
+					<Button type="button" variant="secondary">
+						Cancel
+					</Button>
+				</DialogClose>
+				<Button variant="destructive" onClick={() => onDelete()}>
+					Delete
+				</Button>
+			</DialogFooter>
+		</DialogContent>
+	);
+}
+
+export { CreateExpenseDialog, CreateExpenseDialogTrigger, ExpenseDropdownMenuWithModal };

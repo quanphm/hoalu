@@ -15,6 +15,10 @@ import {
 } from "@/services/query-key-factory";
 import { queryOptions } from "@tanstack/react-query";
 
+/**
+ * auth
+ */
+
 export const sessionOptions = () => {
 	return queryOptions({
 		refetchOnWindowFocus: false,
@@ -45,6 +49,10 @@ export const sessionOptions = () => {
 		},
 	});
 };
+
+/**
+ * workspaces
+ */
 
 export const listWorkspacesOptions = () => {
 	return queryOptions({
@@ -103,12 +111,20 @@ export const invitationDetailsOptions = (id: string) => {
 	});
 };
 
+/**
+ * tasks
+ */
+
 export const tasksQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: taskKeys.all(slug),
 		queryFn: () => apiClient.tasks.list(slug),
 	});
 };
+
+/**
+ * wallets
+ */
 
 export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
@@ -124,6 +140,10 @@ export const walletWithIdQueryOptions = (slug: string, id: string) => {
 	});
 };
 
+/**
+ * categories
+ */
+
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: categoryKeys.all(slug),
@@ -138,12 +158,27 @@ export const categoryWithIdQueryOptions = (slug: string, id: string) => {
 	});
 };
 
+/**
+ * expenses
+ */
+
 export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
 		queryFn: () => apiClient.expenses.list(slug),
 	});
 };
+
+export const expenseWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: expenseKeys.withId(slug, id),
+		queryFn: () => apiClient.expenses.get(slug, id),
+	});
+};
+
+/**
+ * exchange-rates
+ */
 
 export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
 	return queryOptions({

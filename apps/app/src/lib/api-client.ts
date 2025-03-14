@@ -2,6 +2,7 @@ import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
 	ExchangeRatesQuerySchema,
+	ExpensePatchSchema,
 	ExpensePostSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
@@ -170,6 +171,31 @@ const expenses = {
 	create: async (slug: string, payload: ExpensePostSchema) => {
 		const response = await honoClient.api.expenses.$post({
 			query: { workspaceIdOrSlug: slug },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	get: async (slug: string, id: string) => {
+		const response = await honoClient.api.expenses[":id"].$get({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: ExpensePatchSchema) => {
+		const response = await honoClient.api.expenses[":id"].$patch({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
 			json: payload,
 		});
 		if (!response.ok) {

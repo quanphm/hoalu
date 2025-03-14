@@ -3,6 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
+	ExpensePatchSchema,
 	ExpensePostSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
@@ -233,6 +234,25 @@ export function useCreateExpense() {
 		},
 		onSuccess: () => {
 			toast.success("Expense created");
+			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useEditExpense() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: ExpensePatchSchema }) => {
+			const result = await apiClient.expenses.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Expense updated");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
