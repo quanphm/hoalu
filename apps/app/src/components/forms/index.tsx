@@ -1,4 +1,5 @@
 import { createFormHook } from "@tanstack/react-form";
+import { ColorsField } from "./color";
 import { fieldContext, formContext } from "./context";
 import { DatepickerField } from "./datepicker";
 import { Form } from "./form";
@@ -20,6 +21,7 @@ const { useAppForm, withForm } = createFormHook({
 		DatepickerField,
 		TransactionAmountField,
 		SwitchField,
+		ColorsField,
 	},
 	formComponents: {
 		Form,

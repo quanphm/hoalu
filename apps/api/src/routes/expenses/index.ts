@@ -180,10 +180,19 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
+			const { amount, currency } = payload;
+			const realAmount = monetary.toRealAmount(
+				amount || Number.parseFloat(expense.amount),
+				currency || expense.currency,
+			);
+
 			const queryData = await expenseRepository.update({
 				id: param.id,
 				workspaceId: workspace.id,
-				payload,
+				payload: {
+					...payload,
+					amount: realAmount,
+				},
 			});
 			if (!queryData) {
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);

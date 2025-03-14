@@ -1,9 +1,12 @@
+import { HotKey } from "@/components/hotkey";
+import { AVAILABLE_WORKSPACE_SHORTCUT } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { FolderClosedIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
+	SidebarMenuBadge,
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
@@ -21,12 +24,17 @@ export function NavWorkspaceList() {
 		<SidebarGroup id="nav-account">
 			<SidebarGroupLabel>Workspaces</SidebarGroupLabel>
 			<SidebarMenu>
-				{workspaces.map((ws) => (
+				{workspaces.map((ws, idx) => (
 					<SidebarMenuItem key={ws.publicId}>
 						<SidebarMenuButton asChild tooltip={ws.name}>
 							<Link to="/$slug" params={{ slug: ws.slug }}>
 								<FolderClosedIcon />
 								<span>{ws.name}</span>
+								{idx + 1 <= AVAILABLE_WORKSPACE_SHORTCUT.length && (
+									<SidebarMenuBadge>
+										<HotKey>{idx + 1}</HotKey>
+									</SidebarMenuBadge>
+								)}
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>

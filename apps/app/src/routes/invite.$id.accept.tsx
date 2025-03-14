@@ -66,7 +66,7 @@ function RouteComponent() {
 						<Button
 							className="px-16"
 							onClick={() => {
-								mutation.mutateAsync(params.id);
+								mutation.mutateAsync({ id: params.id });
 							}}
 							disabled={mutation.isPending}
 						>

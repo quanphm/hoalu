@@ -107,7 +107,7 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 	const mutation = useRemoveMember();
 
 	const onDelete = async () => {
-		await mutation.mutateAsync(row.original.id);
+		await mutation.mutateAsync({ id: row.original.id });
 		setOpen(false);
 		if (isLeaving) {
 			navigate({ to: "/" });

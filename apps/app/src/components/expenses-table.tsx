@@ -1,21 +1,12 @@
 import { DataTable } from "@/components/data-table";
-import { DeleteExpenseDialog, DeleteExpenseTrigger } from "@/components/expense";
+import { ExpenseDropdownMenuWithModal } from "@/components/expense";
 import { createCategoryTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseSchema } from "@/lib/schema";
-import { useDeleteExpense } from "@/services/mutations";
 import { exchangeRatesQueryOptions } from "@/services/query-options";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -42,7 +33,7 @@ const columns = [
 	columnHelper.display({
 		id: "amount",
 		header: "Amount",
-		cell: (info) => <RowAmount row={info.row} />,
+		cell: (info) => <TransactionAmount row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-amount-size) min-w-(--header-amount-size) max-w-(--header-amount-size) text-right",
@@ -50,12 +41,16 @@ const columns = [
 				"w-(--col-amount-size) min-w-(--col-amount-size) max-w-(--col-amount-size) text-right",
 		},
 	}),
-	columnHelper.accessor("category.name", {
+	columnHelper.display({
+		id: "category",
 		header: "Category",
 		cell: (info) => {
-			const value = info.getValue();
-			const className = createCategoryTheme(info.row.original.category.color);
-			return <Badge className={className}>{value}</Badge>;
+			const value = info.row.original.category;
+			if (!value) {
+				return null;
+			}
+			const className = createCategoryTheme(value.color);
+			return <Badge className={className}>{value.name}</Badge>;
 		},
 		meta: {
 			headerClassName:
@@ -76,7 +71,7 @@ const columns = [
 	columnHelper.display({
 		id: "actions",
 		header: () => <span className="sr-only">Actions</span>,
-		cell: (info) => <RowActions row={info.row} />,
+		cell: (info) => <ExpenseDropdownMenuWithModal id={info.row.original.id} />,
 		meta: {
 			headerClassName:
 				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
@@ -93,34 +88,7 @@ export function ExpensesTable({
 	return <DataTable data={data} columns={tableColumns} />;
 }
 
-function RowActions({ row }: { row: Row<ExpenseSchema> }) {
-	const mutation = useDeleteExpense();
-	const onDelete = async () => {
-		await mutation.mutateAsync({ id: row.original.id });
-	};
-
-	return (
-		<DeleteExpenseDialog onDelete={onDelete}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DeleteExpenseTrigger>
-						<DropdownMenuItem>
-							<span className="text-destructive">Delete</span>
-						</DropdownMenuItem>
-					</DeleteExpenseTrigger>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</DeleteExpenseDialog>
-	);
-}
-
-function RowAmount({ row }: { row: Row<ExpenseSchema> }) {
+function TransactionAmount({ row }: { row: Row<ExpenseSchema> }) {
 	const {
 		metadata: { currency: targetCurr },
 	} = useWorkspace();

@@ -36,7 +36,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
@@ -57,7 +57,9 @@ function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 				<DialogHeader>
 					<DialogTitle>Create new wallet</DialogTitle>
 				</DialogHeader>
-				<DialogDescription />
+				<DialogDescription>
+					Add a new wallet to manage and track a separate set of funds or accounts.
+				</DialogDescription>
 				<CreateWalletForm />
 			</DialogContent>
 		</Dialog>
@@ -95,13 +97,14 @@ function CreateWalletForm() {
 			onSubmit: walletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const payload = {
-				name: value.name,
-				description: value.description,
-				currency: value.currency,
-				type: value.type,
-			};
-			await mutation.mutateAsync({ payload });
+			await mutation.mutateAsync({
+				payload: {
+					name: value.name,
+					description: value.description,
+					currency: value.currency,
+					type: value.type,
+				},
+			});
 			setOpen(false);
 		},
 	});
@@ -158,14 +161,16 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 			onSubmit: walletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const payload = {
-				name: value.name,
-				description: value.description,
-				currency: value.currency,
-				type: value.type,
-				isActive: value.isActive,
-			};
-			await mutation.mutateAsync({ id: props.id, payload });
+			await mutation.mutateAsync({
+				id: props.id,
+				payload: {
+					name: value.name,
+					description: value.description,
+					currency: value.currency,
+					type: value.type,
+					isActive: value.isActive,
+				},
+			});
 			if (props.onEditCallback) props.onEditCallback();
 		},
 	});
@@ -228,7 +233,7 @@ function EditWalletDialogContent(props: { id: string; onEditCallback?(): void })
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
-				<DialogDescription>Update your wallet information</DialogDescription>
+				<DialogDescription>Update your wallet details.</DialogDescription>
 			</DialogHeader>
 			<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
 		</DialogContent>

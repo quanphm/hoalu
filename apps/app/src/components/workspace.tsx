@@ -39,13 +39,7 @@ const CreateContext = createContext<CreateContext | null>(null);
 
 function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
 
 	return (
 		<CreateContext value={contextValue}>
@@ -55,7 +49,8 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>
 						<DialogDescription>
-							Workspaces are shared environments where members can interact with content together.
+							Create a new workspace to establish a shared environment where members can collaborate
+							on and manage content together.
 						</DialogDescription>
 					</DialogHeader>
 					<CreateWorkspaceForm />
@@ -83,7 +78,7 @@ function CreateWorkspaceForm() {
 			onSubmit: workspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync(value);
+			await mutation.mutateAsync({ payload: value });
 			context?.setOpen(false);
 		},
 	});
@@ -165,7 +160,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 		},
 		onSubmit: async ({ value }) => {
 			if (!canEdit) return;
-			const { error } = await tryCatch.async(mutation.mutateAsync(value));
+			const { error } = await tryCatch.async(mutation.mutateAsync({ payload: value }));
 			if (error) {
 				form.setFieldMeta("slug", (state) => {
 					return {
@@ -248,7 +243,7 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 		},
 		onSubmit: async ({ value }) => {
 			if (!canEdit) return;
-			await tryCatch.async(mutation.mutateAsync(value));
+			await tryCatch.async(mutation.mutateAsync({ payload: value }));
 			form.reset();
 		},
 	});

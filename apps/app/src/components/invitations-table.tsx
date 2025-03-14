@@ -80,7 +80,7 @@ function RowActions({ row }: { row: Row<Member> }) {
 	const mutation = useCancelInvitation();
 
 	const onCancel = async () => {
-		await mutation.mutateAsync(row.original.id);
+		await mutation.mutateAsync({ id: row.original.id });
 		setOpen(false);
 	};
 

@@ -1,5 +1,6 @@
 import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
+import { CreateCategoryDialog, CreateCategoryDialogTrigger } from "@/components/category";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
 import {
@@ -37,36 +38,29 @@ function RouteComponent() {
 					</CreateWalletDialogTrigger>
 				</SectionHeader>
 				<SectionContent columns={3}>
-					{wallets.map((wallet) => (
+					{wallets.map((w) => (
 						<ContentCard
-							key={wallet.id}
+							key={w.id}
 							className="flex flex-col justify-between"
 							title={
-								<div className="relative leading-relaxed">
-									<p className="flex items-center gap-1.5">
-										<WalletIcon type={wallet.type} /> {wallet.name}
-									</p>
-									<span className="font-normal text-muted-foreground text-sm">
-										{wallet.description}
-									</span>
-								</div>
+								<p className="flex items-center gap-1.5">
+									<WalletIcon type={w.type} />
+									{w.name}
+								</p>
 							}
+							description={w.description}
 							content={
 								<>
 									<div className="flex items-center justify-between">
 										<div className="flex items-center gap-1.5">
-											<UserAvatar
-												className="size-4"
-												name={wallet.owner.name}
-												image={wallet.owner.image}
-											/>
-											<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
+											<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
+											<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
 										</div>
 										<Badge
 											variant="outline"
 											className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
 										>
-											{wallet.isActive ? (
+											{w.isActive ? (
 												<>
 													<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
 													In use
@@ -80,7 +74,7 @@ function RouteComponent() {
 										</Badge>
 									</div>
 									<div className="absolute top-3 right-4">
-										<WalletDropdownMenuWithModal id={wallet.id} />
+										<WalletDropdownMenuWithModal id={w.id} />
 									</div>
 								</>
 							}
@@ -92,10 +86,14 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Categories</SectionTitle>
-					<Button variant="outline" size="sm">
-						<PlusIcon className="mr-2 size-4" />
-						Create category
-					</Button>
+					<CreateCategoryDialog>
+						<CreateCategoryDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create category
+							</Button>
+						</CreateCategoryDialogTrigger>
+					</CreateCategoryDialog>
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<div className="sm:col-span-8">

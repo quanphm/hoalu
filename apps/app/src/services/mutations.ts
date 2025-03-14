@@ -1,15 +1,19 @@
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import type {
-	ExpensePayloadSchema,
-	WalletPayloadSchema,
+	CategoryPatchSchema,
+	CategoryPostSchema,
+	ExpensePatchSchema,
+	ExpensePostSchema,
+	WalletPatchSchema,
+	WalletPostSchema,
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
 import {
+	categoryKeys,
 	expenseKeys,
 	invitationKeys,
-	memberKeys,
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
@@ -20,19 +24,19 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 /**
- * workspace
+ * workspaces
  */
 
 export function useCreateWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (value: WorkspaceFormSchema) => {
+		mutationFn: async ({ payload }: { payload: WorkspaceFormSchema }) => {
 			const { data, error } = await authClient.workspace.create({
-				name: value.name,
-				slug: value.slug,
+				name: payload.name,
+				slug: payload.slug,
 				metadata: {
-					currency: value.currency,
+					currency: payload.currency,
 				},
 			});
 			if (error) {
@@ -62,11 +66,11 @@ export function useEditWorkspace() {
 	const navigate = useNavigate();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (value: Omit<WorkspaceFormSchema, "currency">) => {
+		mutationFn: async ({ payload }: { payload: Omit<WorkspaceFormSchema, "currency"> }) => {
 			const { data, error } = await authClient.workspace.update({
 				data: {
-					name: value.name,
-					slug: value.slug === slug ? undefined : value.slug,
+					name: payload.name,
+					slug: payload.slug === slug ? undefined : payload.slug,
 				},
 				idOrSlug: slug,
 			});
@@ -95,10 +99,10 @@ export function useEditWorkspaceMetadata() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (value: WorkspaceMetadataFormSchema) => {
+		mutationFn: async ({ payload }: { payload: WorkspaceMetadataFormSchema }) => {
 			const { data, error } = await authClient.workspace.update({
 				data: {
-					metadata: value,
+					metadata: payload,
 				},
 				idOrSlug: slug,
 			});
@@ -119,8 +123,8 @@ export function useDeleteWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (value: { confirm: string }) => {
-			const { data, error } = await authClient.workspace.delete({ idOrSlug: value.confirm });
+		mutationFn: async ({ confirm }: { confirm: string }) => {
+			const { data, error } = await authClient.workspace.delete({ idOrSlug: confirm });
 			if (error) {
 				throw error;
 			}
@@ -129,7 +133,6 @@ export function useDeleteWorkspace() {
 		onSuccess: async (data) => {
 			toast.success("Workspace deleted");
 			queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(data.slug) });
-			queryClient.removeQueries({ queryKey: memberKeys.withWorkspace(data.slug) });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			navigate({ to: "/" });
 		},
@@ -144,7 +147,7 @@ export function useRemoveMember() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.removeMember({
 				userId: id,
 				idOrSlug: slug,
@@ -155,9 +158,8 @@ export function useRemoveMember() {
 			return data;
 		},
 		onSuccess: async (data) => {
-			toast.success(`Removed ${data.member.user.name}`);
+			toast.success(`${data.member.user.name} has been removed`);
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
-			queryClient.invalidateQueries({ queryKey: memberKeys.withWorkspace(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -170,7 +172,7 @@ export function useAcceptInvitation() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.acceptInvitation({
 				invitationId: id,
 			});
@@ -200,7 +202,7 @@ export function useCancelInvitation() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.cancelInvitation({ invitationId: id });
 			if (error) {
 				throw error;
@@ -226,13 +228,32 @@ export function useCreateExpense() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: ExpensePayloadSchema }) => {
+		mutationFn: async ({ payload }: { payload: ExpensePostSchema }) => {
 			const result = await apiClient.expenses.create(slug, payload);
 			return result;
 		},
 		onSuccess: () => {
 			toast.success("Expense created");
-			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useEditExpense() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: ExpensePatchSchema }) => {
+			const result = await apiClient.expenses.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Expense updated");
+			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -251,7 +272,7 @@ export function useDeleteExpense() {
 		},
 		onSuccess: async () => {
 			toast.success("Expense deleted");
-			queryClient.invalidateQueries({ queryKey: expenseKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -268,13 +289,13 @@ export function useCreateWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: WalletPayloadSchema }) => {
+		mutationFn: async ({ payload }: { payload: WalletPostSchema }) => {
 			const result = await apiClient.wallets.create(slug, payload);
 			return result;
 		},
 		onSuccess: () => {
 			toast.success("Wallet created");
-			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -287,13 +308,13 @@ export function useEditWallet() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: WalletPayloadSchema }) => {
+		mutationFn: async ({ id, payload }: { id: string; payload: WalletPatchSchema }) => {
 			const result = await apiClient.wallets.edit(slug, id, payload);
 			return result;
 		},
 		onSuccess: () => {
 			toast.success("Wallet updated");
-			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -312,7 +333,68 @@ export function useDeleteWallet() {
 		},
 		onSuccess: async () => {
 			toast.success("Wallet deleted");
-			queryClient.invalidateQueries({ queryKey: walletKeys.withWorkspace(slug) });
+			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+/**
+ * categories
+ */
+
+export function useCreateCategory() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: CategoryPostSchema }) => {
+			const result = await apiClient.categories.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Category created");
+			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useEditCategory() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: CategoryPatchSchema }) => {
+			const result = await apiClient.categories.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			toast.success("Category updated");
+			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteCategory() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.categories.delete(slug, id);
+			return result;
+		},
+		onSuccess: async () => {
+			toast.success("Category deleted");
+			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);

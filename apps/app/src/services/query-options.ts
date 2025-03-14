@@ -1,7 +1,7 @@
 import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
-import type { ExchangeRatesPayloadSchema } from "@/lib/schema";
+import type { ExchangeRatesQuerySchema } from "@/lib/schema";
 import {
 	authKeys,
 	categoryKeys,
@@ -14,6 +14,10 @@ import {
 	workspaceKeys,
 } from "@/services/query-key-factory";
 import { queryOptions } from "@tanstack/react-query";
+
+/**
+ * auth
+ */
 
 export const sessionOptions = () => {
 	return queryOptions({
@@ -46,6 +50,10 @@ export const sessionOptions = () => {
 	});
 };
 
+/**
+ * workspaces
+ */
+
 export const listWorkspacesOptions = () => {
 	return queryOptions({
 		queryKey: workspaceKeys.all,
@@ -77,7 +85,7 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 
 export const getActiveMemberOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: memberKeys.withWorkspace(slug),
+		queryKey: memberKeys.all(slug),
 		queryFn: async () => {
 			const { data, error } = await authClient.workspace.getActiveMember({
 				query: {
@@ -103,16 +111,24 @@ export const invitationDetailsOptions = (id: string) => {
 	});
 };
 
+/**
+ * tasks
+ */
+
 export const tasksQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: taskKeys.withWorkspace(slug),
+		queryKey: taskKeys.all(slug),
 		queryFn: () => apiClient.tasks.list(slug),
 	});
 };
 
+/**
+ * wallets
+ */
+
 export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: walletKeys.withWorkspace(slug),
+		queryKey: walletKeys.all(slug),
 		queryFn: () => apiClient.wallets.list(slug),
 	});
 };
@@ -124,21 +140,47 @@ export const walletWithIdQueryOptions = (slug: string, id: string) => {
 	});
 };
 
+/**
+ * categories
+ */
+
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: categoryKeys.withWorkspace(slug),
+		queryKey: categoryKeys.all(slug),
 		queryFn: () => apiClient.categories.list(slug),
 	});
 };
 
+export const categoryWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: categoryKeys.withId(slug, id),
+		queryFn: () => apiClient.categories.get(slug, id),
+	});
+};
+
+/**
+ * expenses
+ */
+
 export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
-		queryKey: expenseKeys.withWorkspace(slug),
+		queryKey: expenseKeys.all(slug),
 		queryFn: () => apiClient.expenses.list(slug),
 	});
 };
 
-export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesPayloadSchema) => {
+export const expenseWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: expenseKeys.withId(slug, id),
+		queryFn: () => apiClient.expenses.get(slug, id),
+	});
+};
+
+/**
+ * exchange-rates
+ */
+
+export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
 	return queryOptions({
 		queryKey: exchangeRateKeys.pair({ from, to }),
 		queryFn: () => apiClient.exchangeRates.find({ from, to }),

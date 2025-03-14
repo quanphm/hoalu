@@ -11,7 +11,7 @@ export class CategoryRepository {
 			.from(schema.category)
 			.innerJoin(schema.workspace, eq(schema.category.workspaceId, schema.workspace.id))
 			.where(eq(schema.category.workspaceId, param.workspaceId))
-			.orderBy(desc(schema.category.createdAt));
+			.orderBy(desc(schema.category.createdAt), desc(schema.category.name));
 
 		const result = queryData.map((data) => ({
 			...data.category,

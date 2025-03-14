@@ -47,7 +47,7 @@ CREATE TABLE "category" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"description" text,
-	"color" "color_enum" DEFAULT 'red' NOT NULL,
+	"color" "color_enum" DEFAULT 'gray' NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE "expense" (
 	"creator_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"wallet_id" uuid NOT NULL,
-	"category_id" uuid NOT NULL,
+	"category_id" uuid,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

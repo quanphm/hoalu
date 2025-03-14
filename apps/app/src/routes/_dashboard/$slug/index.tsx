@@ -85,15 +85,12 @@ function RouteComponent() {
 									<ContentCard
 										key={w.id}
 										title={
-											<div className="leading-relaxed">
-												<p className="flex items-center gap-1.5">
-													<WalletIcon type={w.type} /> {w.name}
-												</p>
-												<span className="font-normal text-muted-foreground text-xs">
-													{w.description}
-												</span>
-											</div>
+											<p className="flex items-center gap-1.5">
+												<WalletIcon type={w.type} />
+												{w.name}
+											</p>
 										}
+										description={w.description}
 										content={
 											<div className="flex items-center gap-1.5">
 												<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
@@ -110,6 +107,14 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Recent entries</SectionTitle>
+					<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses.label}>
+						<Button variant="outline" size="sm" asChild>
+							<Link to="/$slug/expenses" params={{ slug }}>
+								View all
+								<ArrowRight className="ml-2 size-4" />
+							</Link>
+						</Button>
+					</HotKeyWithTooltip>
 				</SectionHeader>
 				<SectionContent>
 					<ExpensesTable data={expenses} actionable={false} />
