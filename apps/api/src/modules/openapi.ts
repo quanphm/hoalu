@@ -11,7 +11,7 @@ export function openAPIModule(app: HonoApp) {
 					info: {
 						title: "Hoalu API",
 						description: "OpenAPI documentation",
-						version: "0.4.0",
+						version: "0.5.0",
 					},
 					servers: [{ url: process.env.PUBLIC_API_URL }],
 				},
