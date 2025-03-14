@@ -1,4 +1,5 @@
 import { SidebarSaysLayout } from "@/components/layouts/sidebar-says-layout";
+import { ActionProvider } from "@/components/providers/action-provider";
 import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
@@ -23,7 +24,9 @@ export const Route = createFileRoute("/_dashboard")({
 function RouteComponent() {
 	return (
 		<SidebarSaysLayout>
-			<Outlet />
+			<ActionProvider>
+				<Outlet />
+			</ActionProvider>
 		</SidebarSaysLayout>
 	);
 }

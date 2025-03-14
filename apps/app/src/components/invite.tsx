@@ -54,7 +54,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle>Invite to your workspace</DialogTitle>
+					<DialogTitle>Invite people to your workspace</DialogTitle>
 				</DialogHeader>
 
 				<form.AppForm>

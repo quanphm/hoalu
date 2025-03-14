@@ -5,10 +5,9 @@ import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, jwt, openAPI } from "better-auth/plugins";
-import { describeRoute } from "hono-openapi";
-import { DEFAULT_CATEGORIES } from "../common/categories";
+import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "../common/constants";
 import { db } from "../db";
-import { category, wallet } from "../db/schema/core";
+import { category, wallet } from "../db/schema";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
@@ -72,6 +71,7 @@ export const auth = betterAuth({
 	plugins: [
 		userPublicId(),
 		workspace({
+			creatorRole: WORKSPACE_CREATOR_ROLE,
 			sendInvitationEmail: async (data) => {
 				const inviteLink = `${process.env.PUBLIC_APP_BASE_URL}/invite/${data.id}/accept`;
 

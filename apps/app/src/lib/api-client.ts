@@ -1,4 +1,8 @@
-import type { ExchangeRatesPayloadSchema, ExpensePayloadSchema } from "@/lib/schema";
+import type {
+	ExchangeRatesPayloadSchema,
+	ExpensePayloadSchema,
+	WalletPayloadSchema,
+} from "@/lib/schema";
 import type { ApiRoutes } from "@hoalu/api/types";
 import { hc } from "hono/client";
 
@@ -26,6 +30,55 @@ const wallets = {
 	list: async (slug: string) => {
 		const response = await honoClient.api.wallets.$get({
 			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	create: async (slug: string, json: WalletPayloadSchema) => {
+		const response = await honoClient.api.wallets.$post({
+			query: { workspaceIdOrSlug: slug },
+			json,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	get: async (slug: string, id: string) => {
+		const response = await honoClient.api.wallets[":id"].$get({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: Partial<WalletPayloadSchema>) => {
+		const response = await honoClient.api.wallets[":id"].$patch({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	delete: async (slug: string, id: string) => {
+		const response = await honoClient.api.wallets[":id"].$delete({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
 		});
 		if (!response.ok) {
 			const { message } = await response.json();

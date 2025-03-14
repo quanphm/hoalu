@@ -1,9 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as authSchema from "./schema/auth";
-import * as financeSchema from "./schema/core";
-import * as fxRateSchema from "./schema/fx-rate";
-import * as imageSchema from "./schema/image";
+import * as schema from "./schema";
 
 const client = postgres({
 	user: process.env.DB_USER,
@@ -17,11 +14,5 @@ const client = postgres({
 	connect_timeout: 10,
 });
 
-export const schema = {
-	...authSchema,
-	...financeSchema,
-	...imageSchema,
-	...fxRateSchema,
-};
-
 export const db = drizzle({ client, schema });
+export { schema };

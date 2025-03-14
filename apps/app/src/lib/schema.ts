@@ -7,14 +7,19 @@ import {
 } from "@hoalu/common/enums";
 import { type } from "arktype";
 
+/**
+ * enums
+ */
 export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
 export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
 export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-
 export const colorSchema = type("===", ...PG_ENUM_COLOR);
 export type Color = typeof colorSchema.inferOut;
 
+/**
+ * workspace
+ */
 export const workspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
@@ -27,14 +32,13 @@ export const workspaceMetadataFormSchema = type({
 });
 export type WorkspaceMetadataFormSchema = typeof workspaceMetadataFormSchema.infer;
 
-export const deleteWorkspaceFormSchema = type({
-	confirm: "string > 0",
-});
-
 export const inviteFormSchema = type({
 	email: "string.email",
 });
 
+/**
+ * tasks
+ */
 export const taskSchema = type({
 	id: "string",
 	title: "string > 0",
@@ -45,6 +49,9 @@ export const taskSchema = type({
 });
 export type TaskSchema = typeof taskSchema.infer;
 
+/**
+ * expenses
+ */
 export const expenseSchema = type({
 	id: "string.uuid.v7",
 	title: "string",
@@ -92,7 +99,7 @@ export const expenseFormSchema = type({
 });
 export type ExpenseFormSchema = typeof expenseFormSchema.infer;
 
-export const createExpensePayloadSchema = type({
+export const expensePayloadSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	amount: "number",
@@ -102,8 +109,11 @@ export const createExpensePayloadSchema = type({
 	categoryId: "string.uuid.v7",
 	repeat: repeatSchema,
 });
-export type ExpensePayloadSchema = typeof createExpensePayloadSchema.infer;
+export type ExpensePayloadSchema = typeof expensePayloadSchema.infer;
 
+/**
+ * categories
+ */
 export const categorySchema = type({
 	id: "string.uuid.v7",
 	name: "string",
@@ -112,6 +122,30 @@ export const categorySchema = type({
 });
 export type CategorySchema = typeof categorySchema.infer;
 
+/**
+ * wallets
+ */
+export const walletFormSchema = type({
+	name: "string > 0",
+	"description?": "string",
+	currency: "string > 0",
+	type: walletTypeSchema,
+	"isActive?": "boolean",
+});
+export type WalletFormSchema = typeof walletFormSchema.infer;
+
+export const walletPayloadSchema = type({
+	name: "string > 0",
+	"description?": "string",
+	currency: "string = 'USD'",
+	type: walletTypeSchema,
+	"isActive?": "boolean",
+});
+export type WalletPayloadSchema = typeof walletPayloadSchema.infer;
+
+/**
+ * exchange-rates
+ */
 export const exchangeRatesPayloadSchema = type({
 	"from?": "string",
 	to: "string > 0",

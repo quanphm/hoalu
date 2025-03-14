@@ -1,7 +1,6 @@
 import { DataTable } from "@/components/data-table";
 import { authClient } from "@/lib/auth-client";
 import { useCancelInvitation } from "@/services/mutations";
-import { workspaceKeys } from "@/services/query-key-factory";
 import { getActiveMemberOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -21,7 +20,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
@@ -78,12 +77,10 @@ function RowActions({ row }: { row: Row<Member> }) {
 			member: ["update"],
 		},
 	});
-	const queryClient = useQueryClient();
 	const mutation = useCancelInvitation();
 
 	const onCancel = async () => {
 		await mutation.mutateAsync(row.original.id);
-		queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		setOpen(false);
 	};
 

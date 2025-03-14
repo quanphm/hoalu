@@ -117,6 +117,13 @@ export const walletsQueryOptions = (slug: string) => {
 	});
 };
 
+export const walletWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: walletKeys.withId(slug, id),
+		queryFn: () => apiClient.wallets.get(slug, id),
+	});
+};
+
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: categoryKeys.withWorkspace(slug),

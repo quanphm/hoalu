@@ -1,3 +1,4 @@
+import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
 import { Group, Input, NumberField } from "react-aria-components";
@@ -65,8 +66,9 @@ export function TransactionAmountField(props: Props) {
 					onBlur={field.handleBlur}
 					onChange={handleCurrencyChange}
 				>
-					<option>VND</option>
-					<option>USD</option>
+					{AVAILABLE_CURRENCY_OPTIONS.map((currency) => (
+						<option key={currency.value}>{currency.label}</option>
+					))}
 				</SelectNative>
 			</div>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}

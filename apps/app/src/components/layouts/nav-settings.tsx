@@ -1,4 +1,5 @@
 import { HotKey } from "@/components/hotkey";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { BuildingIcon, LibraryBigIcon, UsersIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
@@ -21,7 +22,7 @@ export function NavSettings() {
 							<BuildingIcon />
 							<span>Workspace</span>
 							<SidebarMenuBadge>
-								<HotKey>W</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_workspace.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -33,7 +34,7 @@ export function NavSettings() {
 							<UsersIcon />
 							<span>Members</span>
 							<SidebarMenuBadge>
-								<HotKey>M</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_members.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -45,7 +46,7 @@ export function NavSettings() {
 							<LibraryBigIcon />
 							<span>Library</span>
 							<SidebarMenuBadge>
-								<HotKey>L</HotKey>
+								<HotKey>{KEYBOARD_SHORTCUTS.goto_library.label}</HotKey>
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>

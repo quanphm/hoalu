@@ -1,5 +1,4 @@
 import { PageContent } from "@/components/layouts/page-content";
-import { ActionProvider } from "@/components/providers/action-provider";
 import {
 	categoriesQueryOptions,
 	expensesQueryOptions,
@@ -32,9 +31,7 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 function RouteComponent() {
 	return (
 		<PageContent>
-			<ActionProvider>
-				<Outlet />
-			</ActionProvider>
+			<Outlet />
 		</PageContent>
 	);
 }
