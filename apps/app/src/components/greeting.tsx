@@ -17,9 +17,15 @@ export function Greeting() {
 
 	// 0 -> 23
 	const currentHours = currentTime.getHours();
-	const icon = currentHours < 12 ? "🌤" : currentHours < 17 ? "⛅" : "🌙";
+	const icon = currentHours < 4 ? "🥱" : currentHours < 12 ? "🌤" : currentHours < 17 ? "⛅" : "🌙";
 	const message =
-		currentHours < 12 ? "Good morning" : currentHours < 17 ? "Good afternoon" : "Good evening";
+		currentHours < 4
+			? "It's time to sleep"
+			: currentHours < 12
+				? "Good morning"
+				: currentHours < 17
+					? "Good afternoon"
+					: "Good evening";
 
 	const today = Date.now();
 
