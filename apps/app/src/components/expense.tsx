@@ -40,7 +40,7 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>
 				</DialogHeader>
-				<DialogDescription />
+				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
 				<CreateExpenseForm />
 			</DialogContent>
 		</Dialog>

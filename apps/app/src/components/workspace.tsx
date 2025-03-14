@@ -39,13 +39,7 @@ const CreateContext = createContext<CreateContext | null>(null);
 
 function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
+	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
 
 	return (
 		<CreateContext value={contextValue}>
@@ -55,7 +49,8 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>
 						<DialogDescription>
-							Workspaces are shared environments where members can interact with content together.
+							Create a new workspace to establish a shared environment where members can collaborate
+							on and manage content together.
 						</DialogDescription>
 					</DialogHeader>
 					<CreateWorkspaceForm />
