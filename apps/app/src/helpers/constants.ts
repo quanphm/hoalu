@@ -94,3 +94,5 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "/",
 	},
 } as const;
+
+export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
