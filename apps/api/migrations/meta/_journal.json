@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741926827265,
-      "tag": "0000_flashy_angel",
+      "when": 1741945160293,
+      "tag": "0000_omniscient_jocasta",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1741926831254,
+      "when": 1741945163585,
       "tag": "0001_init_fx_rate_pairs",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1741932746964,
-      "tag": "0002_flawless_devos",
       "breakpoints": true
     }
   ]

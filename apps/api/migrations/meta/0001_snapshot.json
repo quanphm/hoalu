@@ -1,6 +1,6 @@
 {
-  "id": "d4d4173b-0c6c-41bf-8092-2c5f1a5d23ec",
-  "prevId": "c5657148-6167-4c4f-bb56-cea2c1cbbaab",
+  "id": "433b6d93-b175-470d-8db6-09af46646dac",
+  "prevId": "e6ae95cf-5962-4401-b162-60c655af22fb",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -431,7 +431,7 @@
           "name": "category_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

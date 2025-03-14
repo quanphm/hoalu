@@ -85,15 +85,12 @@ function RouteComponent() {
 									<ContentCard
 										key={w.id}
 										title={
-											<div className="leading-relaxed">
-												<p className="flex items-center gap-1.5">
-													<WalletIcon type={w.type} /> {w.name}
-												</p>
-												<span className="font-normal text-muted-foreground text-xs">
-													{w.description}
-												</span>
-											</div>
+											<p className="flex items-center gap-1.5">
+												<WalletIcon type={w.type} />
+												{w.name}
+											</p>
 										}
+										description={w.description}
 										content={
 											<div className="flex items-center gap-1.5">
 												<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />

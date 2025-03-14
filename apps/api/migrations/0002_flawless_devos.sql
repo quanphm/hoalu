@@ -1,1 +1,0 @@
-ALTER TABLE "expense" ALTER COLUMN "category_id" DROP NOT NULL;
