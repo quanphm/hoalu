@@ -66,7 +66,14 @@ function CreateExpenseForm() {
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const mutation = useCreateExpense();
 
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+	const fallbackWallet = {
+		label: wallets[0].name,
+		value: wallets[0].id,
+		currency: wallets[0].currency,
+	};
 	const walletGroups = wallets.reduce(
 		(result, current) => {
 			const owner = current.owner;
@@ -98,15 +105,7 @@ function CreateExpenseForm() {
 			{ name: string; options: { label: string; value: string; currency: string }[] }
 		>,
 	);
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
-
-	const mutation = useCreateExpense();
-
-	const walletsOfCurrentUser = walletGroups[user!.id]?.options || [];
-	const defaultWallet =
-		walletsOfCurrentUser.length > 0
-			? walletsOfCurrentUser[0]
-			: { label: "", value: "", currency: "" };
+	const defaultWallet = walletGroups[user!.id]?.options[0] || fallbackWallet;
 
 	const form = useAppForm({
 		defaultValues: {

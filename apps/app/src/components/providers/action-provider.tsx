@@ -2,34 +2,17 @@ import { createExpenseDialogOpenAtom, createWalletDialogOpenAtom } from "@/atoms
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 
-const routeApi = getRouteApi("/_dashboard/$slug");
-
 export function ActionProvider({ children }: { children: React.ReactNode }) {
-	const { slug } = routeApi.useParams();
+	const { slug } = useParams({ strict: false });
 	const navigate = useNavigate();
-
+	const { setTheme } = useTheme();
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
-
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.create_expense.hotkey,
-		() => {
-			setExpenseOpen(true);
-		},
-		{ preventDefault: true, description: "Dialog: Create new expense" },
-	);
-
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.create_wallet.hotkey,
-		() => {
-			setWalletOpen(true);
-		},
-		{ preventDefault: true, description: "Dialog: Create new wallet" },
-	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_home.hotkey,
@@ -41,11 +24,38 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	useHotkeys(
+		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
+		() => {
+			setTheme((theme) => (theme === "light" ? "dark" : "light"));
+		},
+		{ description: "Theme: Toggle Light/Dark mode" },
+		[slug],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_expense.hotkey,
+		() => {
+			setExpenseOpen(true);
+		},
+		{ preventDefault: true, description: "Dialog: Create new expense", enabled: !!slug },
+		[slug],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_wallet.hotkey,
+		() => {
+			setWalletOpen(true);
+		},
+		{ preventDefault: true, description: "Dialog: Create new wallet", enabled: !!slug },
+		[slug],
+	);
+
+	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_dashboard.hotkey,
 		() => {
 			navigate({ to: "/$slug", params: { slug } });
 		},
-		{ description: "Navigate: Dashboard" },
+		{ description: "Navigate: Dashboard", enabled: !!slug },
 		[slug, navigate],
 	);
 
@@ -54,7 +64,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
-		{ description: "Navigate: Expenses" },
+		{ description: "Navigate: Expenses", enabled: !!slug },
 		[slug, navigate],
 	);
 
@@ -72,7 +82,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
-		{ description: "Navigate: Settings / Workspace" },
+		{ description: "Navigate: Settings / Workspace", enabled: !!slug },
 		[slug, navigate],
 	);
 
@@ -81,7 +91,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/$slug/settings/members", params: { slug } });
 		},
-		{ description: "Navigate: Settings / Members" },
+		{ description: "Navigate: Settings / Members", enabled: !!slug },
 		[slug, navigate],
 	);
 
@@ -90,7 +100,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/$slug/settings/library", params: { slug } });
 		},
-		{ description: "Navigate: Settings / Library" },
+		{ description: "Navigate: Settings / Library", enabled: !!slug },
 		[slug, navigate],
 	);
 

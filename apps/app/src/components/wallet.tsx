@@ -118,7 +118,7 @@ function CreateWalletForm() {
 					{(field) => (
 						<field.InputField
 							placeholder="Physical wallet"
-							label="Short description"
+							label="Description"
 							autoComplete="off"
 						/>
 					)}
@@ -143,7 +143,7 @@ function CreateWalletForm() {
 
 function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	const workspace = useWorkspace();
-	const { data: wallet, isLoading } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
+	const { data: wallet, status } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
 
 	const form = useAppForm({
@@ -171,10 +171,10 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	});
 
 	useEffect(() => {
-		if (isLoading === false) {
+		if (status === "success") {
 			form.reset();
 		}
-	}, [isLoading, form.reset]);
+	}, [status, form.reset]);
 
 	return (
 		<form.AppForm>
@@ -188,7 +188,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 					{(field) => (
 						<field.InputField
 							placeholder="Physical wallet"
-							label="Short description"
+							label="Description"
 							autoComplete="off"
 						/>
 					)}

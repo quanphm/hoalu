@@ -78,31 +78,30 @@ function RouteComponent() {
 							</HotKeyWithTooltip>
 						</SectionHeader>
 						<SectionContent className="gap-4">
-							{wallets.slice(0, 4).map((wallet) => (
-								<ContentCard
-									key={wallet.id}
-									title={
-										<div className="leading-relaxed">
-											<p className="flex items-center gap-1.5">
-												<WalletIcon type={wallet.type} /> {wallet.name}
-											</p>
-											<span className="font-normal text-muted-foreground text-xs">
-												{wallet.description}
-											</span>
-										</div>
-									}
-									content={
-										<div className="flex items-center gap-1.5">
-											<UserAvatar
-												className="size-4"
-												name={wallet.owner.name}
-												image={wallet.owner.image}
-											/>
-											<p className="text-muted-foreground text-xs leading-0">{wallet.owner.name}</p>
-										</div>
-									}
-								/>
-							))}
+							{wallets
+								.filter((w) => w.isActive)
+								.slice(0, 4)
+								.map((w) => (
+									<ContentCard
+										key={w.id}
+										title={
+											<div className="leading-relaxed">
+												<p className="flex items-center gap-1.5">
+													<WalletIcon type={w.type} /> {w.name}
+												</p>
+												<span className="font-normal text-muted-foreground text-xs">
+													{w.description}
+												</span>
+											</div>
+										}
+										content={
+											<div className="flex items-center gap-1.5">
+												<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
+												<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
+											</div>
+										}
+									/>
+								))}
 						</SectionContent>
 					</Section>
 				</SectionContent>
