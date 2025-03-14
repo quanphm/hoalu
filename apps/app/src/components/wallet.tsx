@@ -97,13 +97,14 @@ function CreateWalletForm() {
 			onSubmit: walletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const payload = {
-				name: value.name,
-				description: value.description,
-				currency: value.currency,
-				type: value.type,
-			};
-			await mutation.mutateAsync({ payload });
+			await mutation.mutateAsync({
+				payload: {
+					name: value.name,
+					description: value.description,
+					currency: value.currency,
+					type: value.type,
+				},
+			});
 			setOpen(false);
 		},
 	});
@@ -160,14 +161,16 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 			onSubmit: walletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const payload = {
-				name: value.name,
-				description: value.description,
-				currency: value.currency,
-				type: value.type,
-				isActive: value.isActive,
-			};
-			await mutation.mutateAsync({ id: props.id, payload });
+			await mutation.mutateAsync({
+				id: props.id,
+				payload: {
+					name: value.name,
+					description: value.description,
+					currency: value.currency,
+					type: value.type,
+					isActive: value.isActive,
+				},
+			});
 			if (props.onEditCallback) props.onEditCallback();
 		},
 	});

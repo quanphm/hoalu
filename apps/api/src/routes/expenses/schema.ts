@@ -29,13 +29,13 @@ export const expenseSchema = type({
 		type: walletTypeSchema,
 		isActive: "boolean",
 	},
-	category: {
+	category: type({
 		"+": "delete",
 		id: "string.uuid.v7",
 		name: "string",
 		description: "string | null",
 		color: colorSchema,
-	},
+	}).or("null"),
 	createdAt: "string",
 }).pipe((e) => ({
 	...e,

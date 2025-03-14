@@ -78,7 +78,7 @@ function CreateWorkspaceForm() {
 			onSubmit: workspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync(value);
+			await mutation.mutateAsync({ payload: value });
 			context?.setOpen(false);
 		},
 	});
@@ -160,7 +160,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 		},
 		onSubmit: async ({ value }) => {
 			if (!canEdit) return;
-			const { error } = await tryCatch.async(mutation.mutateAsync(value));
+			const { error } = await tryCatch.async(mutation.mutateAsync({ payload: value }));
 			if (error) {
 				form.setFieldMeta("slug", (state) => {
 					return {
@@ -243,7 +243,7 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 		},
 		onSubmit: async ({ value }) => {
 			if (!canEdit) return;
-			await tryCatch.async(mutation.mutateAsync(value));
+			await tryCatch.async(mutation.mutateAsync({ payload: value }));
 			form.reset();
 		},
 	});

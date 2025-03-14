@@ -124,17 +124,18 @@ function CreateExpenseForm() {
 			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const payload = {
-				title: value.title,
-				description: value.description,
-				amount: value.transaction.value,
-				currency: value.transaction.currency,
-				date: value.date.toISOString(),
-				walletId: value.walletId,
-				categoryId: value.categoryId,
-				repeat: value.repeat,
-			};
-			await mutation.mutateAsync({ payload });
+			await mutation.mutateAsync({
+				payload: {
+					title: value.title,
+					description: value.description,
+					amount: value.transaction.value,
+					currency: value.transaction.currency,
+					date: value.date.toISOString(),
+					walletId: value.walletId,
+					categoryId: value.categoryId,
+					repeat: value.repeat,
+				},
+			});
 			setOpen(false);
 		},
 	});
@@ -172,107 +173,6 @@ function CreateExpenseForm() {
 				</div>
 				<Button type="submit" className="ml-auto w-fit">
 					Create expense
-				</Button>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
-function EditExpenseForm() {
-	const { slug } = routeApi.useParams();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
-	const mutation = useCreateExpense();
-
-	const form = useAppForm({
-		defaultValues: {
-			title: "",
-			description: "",
-			date: new Date(),
-			transaction: {
-				value: 0,
-				currency: "",
-			},
-			walletId: "",
-			categoryId: "",
-			repeat: "one-time",
-		} as ExpenseFormSchema,
-		validators: {
-			onSubmit: expenseFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			const payload = {
-				title: value.title,
-				description: value.description,
-				amount: value.transaction.value,
-				currency: value.transaction.currency,
-				date: value.date.toISOString(),
-				walletId: value.walletId,
-				categoryId: value.categoryId,
-				repeat: value.repeat,
-			};
-			await mutation.mutateAsync({ payload });
-		},
-	});
-
-	const walletGroups = wallets.reduce(
-		(result, current) => {
-			const owner = current.owner;
-			if (!result[owner.id]) {
-				result[owner.id] = {
-					name: owner.name,
-					options: [
-						{
-							label: current.name,
-							value: current.id,
-						},
-					],
-				};
-			} else {
-				result[owner.id].options.push({
-					label: current.name,
-					value: current.id,
-				});
-			}
-			return result;
-		},
-		{} as Record<string, { name: string; options: { label: string; value: string }[] }>,
-	);
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
-
-	return (
-		<form.AppForm>
-			<form.Form>
-				<div className="grid grid-cols-12 gap-4">
-					<div className="col-span-7 flex flex-col gap-4">
-						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" autoFocus required />}
-						</form.AppField>
-						<form.AppField name="transaction">
-							{(field) => <field.TransactionAmountField label="Amount" />}
-						</form.AppField>
-						<div className="grid grid-cols-2 gap-4">
-							<form.AppField name="walletId">
-								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
-							</form.AppField>
-							<form.AppField name="categoryId">
-								{(field) => (
-									<field.SelectWithSearchField label="Category" options={categoryOptions} />
-								)}
-							</form.AppField>
-						</div>
-						<form.AppField name="description">
-							{(field) => <field.InputField label="Extra note" />}
-						</form.AppField>
-					</div>
-					<div className="col-span-5">
-						<form.AppField name="date">
-							{(field) => <field.DatepickerField label="Date" />}
-						</form.AppField>
-					</div>
-				</div>
-				<Button type="submit" className="ml-auto w-fit">
-					Update
 				</Button>
 			</form.Form>
 		</form.AppForm>

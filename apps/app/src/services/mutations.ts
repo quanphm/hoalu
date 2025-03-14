@@ -30,12 +30,12 @@ export function useCreateWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (value: WorkspaceFormSchema) => {
+		mutationFn: async ({ payload }: { payload: WorkspaceFormSchema }) => {
 			const { data, error } = await authClient.workspace.create({
-				name: value.name,
-				slug: value.slug,
+				name: payload.name,
+				slug: payload.slug,
 				metadata: {
-					currency: value.currency,
+					currency: payload.currency,
 				},
 			});
 			if (error) {
@@ -65,11 +65,11 @@ export function useEditWorkspace() {
 	const navigate = useNavigate();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (value: Omit<WorkspaceFormSchema, "currency">) => {
+		mutationFn: async ({ payload }: { payload: Omit<WorkspaceFormSchema, "currency"> }) => {
 			const { data, error } = await authClient.workspace.update({
 				data: {
-					name: value.name,
-					slug: value.slug === slug ? undefined : value.slug,
+					name: payload.name,
+					slug: payload.slug === slug ? undefined : payload.slug,
 				},
 				idOrSlug: slug,
 			});
@@ -98,10 +98,10 @@ export function useEditWorkspaceMetadata() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (value: WorkspaceMetadataFormSchema) => {
+		mutationFn: async ({ payload }: { payload: WorkspaceMetadataFormSchema }) => {
 			const { data, error } = await authClient.workspace.update({
 				data: {
-					metadata: value,
+					metadata: payload,
 				},
 				idOrSlug: slug,
 			});
@@ -122,8 +122,8 @@ export function useDeleteWorkspace() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (value: { confirm: string }) => {
-			const { data, error } = await authClient.workspace.delete({ idOrSlug: value.confirm });
+		mutationFn: async ({ confirm }: { confirm: string }) => {
+			const { data, error } = await authClient.workspace.delete({ idOrSlug: confirm });
 			if (error) {
 				throw error;
 			}
@@ -146,7 +146,7 @@ export function useRemoveMember() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.removeMember({
 				userId: id,
 				idOrSlug: slug,
@@ -171,7 +171,7 @@ export function useAcceptInvitation() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.acceptInvitation({
 				invitationId: id,
 			});
@@ -201,7 +201,7 @@ export function useCancelInvitation() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async ({ id }: { id: string }) => {
 			const { data, error } = await authClient.workspace.cancelInvitation({ invitationId: id });
 			if (error) {
 				throw error;
@@ -355,7 +355,7 @@ export function useEditCategory() {
 		},
 		onSuccess: () => {
 			toast.success("Category updated");
-			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -374,7 +374,7 @@ export function useDeleteCategory() {
 		},
 		onSuccess: async () => {
 			toast.success("Category deleted");
-			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
 			toast.error(error.message);

@@ -15,6 +15,13 @@
       "when": 1741926831254,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741932746964,
+      "tag": "0002_flawless_devos",
+      "breakpoints": true
     }
   ]
 }

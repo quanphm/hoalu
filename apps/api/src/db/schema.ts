@@ -247,9 +247,7 @@ export const expense = pgTable(
 		walletId: uuid("wallet_id")
 			.notNull()
 			.references(() => wallet.id, { onDelete: "cascade" }),
-		categoryId: uuid("category_id")
-			.notNull()
-			.references(() => category.id, { onDelete: "set null" }),
+		categoryId: uuid("category_id").references(() => category.id, { onDelete: "set null" }),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},

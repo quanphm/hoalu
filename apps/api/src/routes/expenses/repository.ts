@@ -11,8 +11,8 @@ export class ExpenseRepository {
 			.from(schema.expense)
 			.innerJoin(schema.user, eq(schema.expense.creatorId, schema.user.id))
 			.innerJoin(schema.workspace, eq(schema.expense.workspaceId, schema.workspace.id))
-			.innerJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.innerJoin(schema.wallet, eq(schema.expense.walletId, schema.wallet.id))
+			.leftJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.where(eq(schema.expense.workspaceId, param.workspaceId))
 			.orderBy(desc(schema.expense.date));
 
