@@ -194,7 +194,7 @@ export const category = pgTable(
 		id: uuid("id").primaryKey(),
 		name: text("name").notNull(),
 		description: text("description"),
-		color: colorTypeEnum().default("red").notNull(),
+		color: colorTypeEnum().default("gray").notNull(),
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),

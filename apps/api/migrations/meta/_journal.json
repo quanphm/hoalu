@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741838203387,
-      "tag": "0000_dashing_luckman",
+      "when": 1741926827265,
+      "tag": "0000_flashy_angel",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1741838206545,
+      "when": 1741926831254,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }

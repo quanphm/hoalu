@@ -110,6 +110,14 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Recent entries</SectionTitle>
+					<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses.label}>
+						<Button variant="outline" size="sm" asChild>
+							<Link to="/$slug/expenses" params={{ slug }}>
+								View all
+								<ArrowRight className="ml-2 size-4" />
+							</Link>
+						</Button>
+					</HotKeyWithTooltip>
 				</SectionHeader>
 				<SectionContent>
 					<ExpensesTable data={expenses} actionable={false} />

@@ -49,6 +49,10 @@ export const KEYBOARD_SHORTCUTS = {
 		label: "Shift W",
 		hotkey: "shift+w",
 	},
+	create_category: {
+		label: "Shift C",
+		hotkey: "shift+c",
+	},
 	goto_home: {
 		label: "H",
 		hotkey: "h",

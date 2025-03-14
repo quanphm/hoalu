@@ -1,3 +1,4 @@
+import type { honoClient } from "@/lib/api-client";
 import {
 	PG_ENUM_COLOR,
 	PG_ENUM_PRIORITY,
@@ -6,6 +7,7 @@ import {
 	PG_ENUM_WALLET_TYPE,
 } from "@hoalu/common/enums";
 import { type } from "arktype";
+import type { InferRequestType, InferResponseType } from "hono/client";
 
 /**
  * enums
@@ -15,10 +17,11 @@ export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
 export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
 export const colorSchema = type("===", ...PG_ENUM_COLOR);
+
 export type Color = typeof colorSchema.inferOut;
 
 /**
- * workspace
+ * workspaces
  */
 export const workspaceFormSchema = type({
 	name: "string > 0",
@@ -26,7 +29,6 @@ export const workspaceFormSchema = type({
 	currency: "string > 0",
 });
 export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
-
 export const workspaceMetadataFormSchema = type({
 	currency: "string > 0",
 });
@@ -39,52 +41,11 @@ export const inviteFormSchema = type({
 /**
  * tasks
  */
-export const taskSchema = type({
-	id: "string",
-	title: "string > 0",
-	description: "string | null",
-	status: taskStatusSchema,
-	priority: prioritySchema,
-	dueDate: "string",
-});
-export type TaskSchema = typeof taskSchema.infer;
+export type TaskSchema = InferResponseType<typeof honoClient.api.tasks.$get, 200>["data"][number];
 
 /**
  * expenses
  */
-export const expenseSchema = type({
-	id: "string.uuid.v7",
-	title: "string",
-	description: "string | null",
-	amount: "number",
-	realAmount: "number",
-	currency: "string",
-	repeat: repeatSchema,
-	date: "string",
-	createdAt: "string",
-	creator: {
-		id: "string.uuid.v7",
-		publicId: "string",
-		name: "string",
-		email: "string.email",
-		image: "string | null",
-	},
-	wallet: {
-		id: "string.uuid.v7",
-		name: "string",
-		description: "string | null",
-		currency: "string",
-		isActive: "boolean",
-	},
-	category: {
-		id: "string.uuid.v7",
-		name: "string",
-		description: "string | null",
-		color: colorSchema,
-	},
-});
-export type ExpenseSchema = typeof expenseSchema.infer;
-
 export const expenseFormSchema = type({
 	title: "string > 0",
 	"description?": "string",
@@ -98,29 +59,29 @@ export const expenseFormSchema = type({
 	repeat: repeatSchema,
 });
 export type ExpenseFormSchema = typeof expenseFormSchema.infer;
-
-export const expensePayloadSchema = type({
-	title: "string > 0",
-	"description?": "string",
-	amount: "number",
-	currency: "string = 'USD'",
-	date: "string",
-	walletId: "string.uuid.v7",
-	categoryId: "string.uuid.v7",
-	repeat: repeatSchema,
-});
-export type ExpensePayloadSchema = typeof expensePayloadSchema.infer;
+export type ExpenseSchema = InferResponseType<
+	typeof honoClient.api.expenses.$get,
+	200
+>["data"][number];
+export type ExpensePostSchema = InferRequestType<typeof honoClient.api.expenses.$post>["json"];
 
 /**
  * categories
  */
-export const categorySchema = type({
-	id: "string.uuid.v7",
-	name: "string",
-	description: "string | null",
+export const categoryFormSchema = type({
+	name: "string > 0",
+	"description?": "string",
 	color: colorSchema,
 });
-export type CategorySchema = typeof categorySchema.infer;
+export type CategoryFormSchema = typeof categoryFormSchema.infer;
+export type CategorySchema = InferResponseType<
+	typeof honoClient.api.categories.$get,
+	200
+>["data"][number];
+export type CategoryPostSchema = InferRequestType<typeof honoClient.api.categories.$post>["json"];
+export type CategoryPatchSchema = InferRequestType<
+	(typeof honoClient.api.categories)[":id"]["$patch"]
+>["json"];
 
 /**
  * wallets
@@ -133,21 +94,14 @@ export const walletFormSchema = type({
 	"isActive?": "boolean",
 });
 export type WalletFormSchema = typeof walletFormSchema.infer;
-
-export const walletPayloadSchema = type({
-	name: "string > 0",
-	"description?": "string",
-	currency: "string = 'USD'",
-	type: walletTypeSchema,
-	"isActive?": "boolean",
-});
-export type WalletPayloadSchema = typeof walletPayloadSchema.infer;
+export type WalletPostSchema = InferRequestType<typeof honoClient.api.wallets.$post>["json"];
+export type WalletPatchSchema = InferRequestType<
+	(typeof honoClient.api.wallets)[":id"]["$patch"]
+>["json"];
 
 /**
  * exchange-rates
  */
-export const exchangeRatesPayloadSchema = type({
-	"from?": "string",
-	to: "string > 0",
-});
-export type ExchangeRatesPayloadSchema = typeof exchangeRatesPayloadSchema.infer;
+export type ExchangeRatesQuerySchema = InferRequestType<
+	(typeof honoClient.api)["exchange-rates"]["$get"]
+>["query"];

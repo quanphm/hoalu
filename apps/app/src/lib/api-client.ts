@@ -1,12 +1,15 @@
 import type {
-	ExchangeRatesPayloadSchema,
-	ExpensePayloadSchema,
-	WalletPayloadSchema,
+	CategoryPatchSchema,
+	CategoryPostSchema,
+	ExchangeRatesQuerySchema,
+	ExpensePostSchema,
+	WalletPatchSchema,
+	WalletPostSchema,
 } from "@/lib/schema";
 import type { ApiRoutes } from "@hoalu/api/types";
 import { hc } from "hono/client";
 
-const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
+export const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 	init: {
 		credentials: "include",
 	},
@@ -38,10 +41,10 @@ const wallets = {
 		const { data } = await response.json();
 		return data;
 	},
-	create: async (slug: string, json: WalletPayloadSchema) => {
+	create: async (slug: string, payload: WalletPostSchema) => {
 		const response = await honoClient.api.wallets.$post({
 			query: { workspaceIdOrSlug: slug },
-			json,
+			json: payload,
 		});
 		if (!response.ok) {
 			const { message } = await response.json();
@@ -62,7 +65,7 @@ const wallets = {
 		const { data } = await response.json();
 		return data;
 	},
-	edit: async (slug: string, id: string, payload: Partial<WalletPayloadSchema>) => {
+	edit: async (slug: string, id: string, payload: WalletPatchSchema) => {
 		const response = await honoClient.api.wallets[":id"].$patch({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
@@ -101,6 +104,55 @@ const categories = {
 		const { data } = await response.json();
 		return data;
 	},
+	create: async (slug: string, payload: CategoryPostSchema) => {
+		const response = await honoClient.api.categories.$post({
+			query: { workspaceIdOrSlug: slug },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	get: async (slug: string, id: string) => {
+		const response = await honoClient.api.categories[":id"].$get({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: CategoryPatchSchema) => {
+		const response = await honoClient.api.categories[":id"].$patch({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	delete: async (slug: string, id: string) => {
+		const response = await honoClient.api.categories[":id"].$delete({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 };
 
 const expenses = {
@@ -115,10 +167,10 @@ const expenses = {
 		const { data } = await response.json();
 		return data;
 	},
-	create: async (slug: string, json: ExpensePayloadSchema) => {
+	create: async (slug: string, payload: ExpensePostSchema) => {
 		const response = await honoClient.api.expenses.$post({
 			query: { workspaceIdOrSlug: slug },
-			json,
+			json: payload,
 		});
 		if (!response.ok) {
 			const { message } = await response.json();
@@ -142,7 +194,7 @@ const expenses = {
 };
 
 const exchangeRates = {
-	find: async ({ from = "USD", to }: ExchangeRatesPayloadSchema) => {
+	find: async ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
 		const response = await honoClient.api["exchange-rates"].$get({
 			query: { from, to },
 		});

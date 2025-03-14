@@ -3,7 +3,7 @@
  * @see - https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
  */
 
-import type { ExchangeRatesPayloadSchema } from "@/lib/schema";
+import type { ExchangeRatesQuerySchema } from "@/lib/schema";
 
 export const authKeys = {
 	session: ["session"] as const,
@@ -15,9 +15,9 @@ export const workspaceKeys = {
 };
 
 export const memberKeys = {
-	all: ["members"] as const,
-	withWorkspace: (slug: string) => [...memberKeys["~active"](), slug] as const,
-	"~active": () => [...memberKeys.all, "active"] as const,
+	all: (slug: string) => memberKeys["~active"](slug),
+	"~active": (slug: string) => [...memberKeys["~withWorkspace"](slug), "active"] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "members"] as const,
 };
 
 export const invitationKeys = {
@@ -26,28 +26,31 @@ export const invitationKeys = {
 };
 
 export const walletKeys = {
-	all: ["wallets"] as const,
-	withWorkspace: (slug: string) => [...walletKeys.all, slug] as const,
-	withId: (slug: string, id: string) => [...walletKeys.withWorkspace(slug), "id", id] as const,
+	all: (slug: string) => walletKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...walletKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "wallets"] as const,
 };
 
 export const categoryKeys = {
-	all: ["categories"] as const,
-	withWorkspace: (slug: string) => [...categoryKeys.all, slug] as const,
+	all: (slug: string) => categoryKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...categoryKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "categories"] as const,
 };
 
 export const expenseKeys = {
-	all: ["expenses"] as const,
-	withWorkspace: (slug: string) => [...expenseKeys.all, slug] as const,
+	all: (slug: string) => expenseKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...expenseKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "expenses"] as const,
 };
 
 export const taskKeys = {
-	all: ["tasks"] as const,
-	withWorkspace: (slug: string) => [...taskKeys.all, slug] as const,
+	all: (slug: string) => taskKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...taskKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "tasks"] as const,
 };
 
 export const exchangeRateKeys = {
 	all: ["exchange-rates"] as const,
-	pair: ({ from = "USD", to }: ExchangeRatesPayloadSchema) =>
-		[...exchangeRateKeys.all, from, to] as const,
+	pair: ({ from = "USD", to }: ExchangeRatesQuerySchema) =>
+		[...exchangeRateKeys.all, { from, to }] as const,
 };

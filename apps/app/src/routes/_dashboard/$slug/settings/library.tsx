@@ -1,5 +1,6 @@
 import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
+import { CreateCategoryDialog, CreateCategoryDialogTrigger } from "@/components/category";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
 import {
@@ -92,10 +93,14 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Categories</SectionTitle>
-					<Button variant="outline" size="sm">
-						<PlusIcon className="mr-2 size-4" />
-						Create category
-					</Button>
+					<CreateCategoryDialog>
+						<CreateCategoryDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create category
+							</Button>
+						</CreateCategoryDialogTrigger>
+					</CreateCategoryDialog>
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<div className="sm:col-span-8">
