@@ -4,6 +4,7 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
+import { currencySchema } from "../../common/schema";
 import { createHonoInstance } from "../../lib/create-app";
 import { ExchangeRateRepository } from "./repository";
 import { exchangeRateSchema } from "./schema";
@@ -26,33 +27,32 @@ const route = app.get(
 			...OpenAPI.response(type({ data: exchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	aValidator("query", type({ from: "string = 'USD'", to: "string > 0" }), (result, c) => {
+	aValidator("query", type({ from: currencySchema, to: currencySchema }), (result, c) => {
 		if (!result.success) {
 			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
 		}
 	}),
 	async (c) => {
-		const query = c.req.valid("query");
-		const from = query.from || "USD";
+		const { from, to } = c.req.valid("query");
 
-		const useInverse = from !== "USD" && query.to === "USD";
-		const isCrossRate = from !== "USD" && query.to !== "USD";
-		const isSameExchange = from === query.to;
+		const useInverse = from !== "USD" && to === "USD";
+		const isCrossRate = from !== "USD" && to !== "USD";
+		const isSameExchange = from === to;
 
 		let response = {};
 
 		if (isSameExchange) {
 			response = {
 				date: new Date().toISOString(),
-				from: from,
-				to: query.to,
+				from,
+				to,
 				rate: "1",
 				inverse_rate: "1",
 			} satisfies ExchangeRateSchema;
 		} else if (isCrossRate) {
 			// cross-rate exchange
 			// ex: VND -> SGD || SGD -> VND
-			const crossRate = await exchangeRateRepository.crossRate([from, query.to]);
+			const crossRate = await exchangeRateRepository.crossRate([from, to]);
 			if (!crossRate) {
 				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 			}
@@ -66,7 +66,7 @@ const route = app.get(
 		} else {
 			// direct exchange
 			// ex: VND -> USD || USD -> VND
-			const queryData = await exchangeRateRepository.find({ from, to: query.to });
+			const queryData = await exchangeRateRepository.find({ from, to: to });
 			if (!queryData) {
 				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 			}

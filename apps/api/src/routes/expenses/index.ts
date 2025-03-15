@@ -122,14 +122,16 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const { amount, currency } = payload;
+			const { amount, currency, date, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 
 			const expense = await expenseRepository.insert({
 				creatorId: user.id,
 				workspaceId: workspace.id,
-				...payload,
-				amount: realAmount,
+				date: date || new Date().toISOString(),
+				amount: `${realAmount}`,
+				currency,
+				...rest,
 			});
 
 			const parsed = expenseSchema(expense);

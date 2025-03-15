@@ -20,8 +20,8 @@ export const insertTaskSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	status: taskStatusSchema.default("todo"),
-	"priority?": prioritySchema,
-	"dueDate?": "string",
+	priority: prioritySchema.default("none"),
+	"dueDate?": "string.date.iso",
 });
 
 export const updateTaskSchema = insertTaskSchema.partial();

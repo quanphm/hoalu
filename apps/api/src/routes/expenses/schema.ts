@@ -48,8 +48,8 @@ export const insertExpenseSchema = type({
 	"description?": "string",
 	amount: "number",
 	currency: "string = 'USD'",
-	repeat: repeatSchema,
-	date: "string",
+	repeat: repeatSchema.default("one-time"),
+	"date?": "string.date.iso",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
 });

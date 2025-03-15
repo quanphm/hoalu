@@ -12,5 +12,7 @@ export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
 export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
 export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
+export const isoDateSchema = type("string.date.iso");
+export const currencySchema = type("string > 0").default("USD");
 
 export type Color = typeof colorSchema.inferOut;

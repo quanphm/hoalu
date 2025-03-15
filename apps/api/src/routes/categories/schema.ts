@@ -14,7 +14,7 @@ export const categoriesSchema = categorySchema.array().onUndeclaredKey("delete")
 export const insertCategorySchema = type({
 	name: "string > 0",
 	"description?": "string",
-	"color?": colorSchema,
+	color: colorSchema.default("gray"),
 });
 
 export const updateCategorySchema = insertCategorySchema.partial();

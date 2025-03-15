@@ -31,9 +31,9 @@ export const walletSchema = type({
 export const walletsSchema = walletSchema.array().onUndeclaredKey("delete");
 
 export const insertWalletSchema = type({
-	name: "string > 0",
+	name: "string",
 	"description?": "string",
-	currency: "string",
+	currency: type("string").default("USD"),
 	type: walletTypeSchema,
 	isActive: "boolean = true",
 });
