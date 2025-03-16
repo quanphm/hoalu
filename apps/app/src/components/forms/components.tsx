@@ -32,14 +32,17 @@ function Field({ className, ...props }: React.ComponentProps<"div">) {
 function FieldControl(props: React.ComponentProps<typeof Slot>) {
 	const { formItemId, formDescriptionId, formMessageId } = useContext(FieldContext);
 	const field = useFieldContext();
-	const error = field.state.meta.errors.length > 0;
+	const errors = useStore(field.store, (state) => state.meta.errors);
+	const hasErrors = errors.length > 0;
 
 	return (
 		<Slot
 			id={formItemId}
 			aria-labelledby={formItemId}
-			aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
-			aria-invalid={error}
+			aria-describedby={
+				!hasErrors ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`
+			}
+			aria-invalid={hasErrors}
 			{...props}
 		/>
 	);
@@ -48,10 +51,15 @@ function FieldControl(props: React.ComponentProps<typeof Slot>) {
 function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
 	const { formItemId } = useContext(FieldContext);
 	const field = useFieldContext();
-	const error = field.state.meta.errors.length > 0;
+	const errors = useStore(field.store, (state) => state.meta.errors);
+	const hasErrors = errors.length > 0;
 
 	return (
-		<Label className={cn(error && "text-destructive", className)} htmlFor={formItemId} {...props} />
+		<Label
+			className={cn(hasErrors && "text-destructive", className)}
+			htmlFor={formItemId}
+			{...props}
+		/>
 	);
 }
 

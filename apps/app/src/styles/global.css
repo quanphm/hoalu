@@ -3,11 +3,12 @@
 @source "../../../../packages/ui/**/*.{ts,tsx}";
 
 @import "@hoalu/ui/theme.css";
-/* @import "./fonts.css"; */
+@import "./fonts.css";
 @import "./typography.css";
 @import "./table.css";
 
 @plugin "tailwind-scrollbar";
+@plugin "@tailwindcss/typography";
 
 @layer base {
   * {

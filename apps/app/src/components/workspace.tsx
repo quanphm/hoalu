@@ -374,7 +374,7 @@ const workspaceAvatarVariants = cva("rounded-lg", {
 		size: {
 			default: "size-8",
 			lg: "size-14 rounded-xl",
-			sm: "size-6",
+			sm: "size-6 rounded-sm",
 		},
 	},
 	defaultVariants: {

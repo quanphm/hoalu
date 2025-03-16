@@ -16,6 +16,7 @@ export function createApp() {
 	app.use(etag());
 	app.use(
 		logger({
+			enabled: process.env.NODE_ENV === "production",
 			pretty: process.env.NODE_ENV === "development",
 			excludePaths: ["/docs", "/openapi"],
 		}),

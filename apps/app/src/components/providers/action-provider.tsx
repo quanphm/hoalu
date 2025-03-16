@@ -1,4 +1,9 @@
-import { createExpenseDialogOpenAtom, createWalletDialogOpenAtom } from "@/atoms/dialogs";
+import {
+	createCategoryDialogOpenAtom,
+	createExpenseDialogOpenAtom,
+	createWalletDialogOpenAtom,
+} from "@/atoms/dialogs";
+import { CreateCategoryDialog } from "@/components/category";
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
 import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
@@ -9,13 +14,18 @@ import { useSetAtom } from "jotai";
 import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 
+/**
+ * Registry keyboard shortcuts & global dialogs
+ */
 export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { slug } = useParams({ strict: false });
 	const navigate = useNavigate();
 	const { setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
+
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setCategoryOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	useHotkeys(
 		AVAILABLE_WORKSPACE_SHORTCUT,
@@ -75,6 +85,15 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 			setWalletOpen(true);
 		},
 		{ preventDefault: true, description: "Dialog: Create new wallet", enabled: !!slug },
+		[slug],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_category.hotkey,
+		() => {
+			setCategoryOpen(true);
+		},
+		{ preventDefault: true, description: "Dialog: Create new category", enabled: !!slug },
 		[slug],
 	);
 
@@ -144,9 +163,29 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		[slug, navigate],
 	);
 
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_preferences.hotkey,
+		() => {
+			navigate({ to: "/account/preferences" });
+		},
+		{ description: "Navigate: Preferences" },
+		[navigate],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_tokens.hotkey,
+		() => {
+			navigate({ to: "/account/tokens" });
+		},
+		{ description: "Navigate: Tokens" },
+		[navigate],
+	);
+
 	return (
 		<CreateExpenseDialog>
-			<CreateWalletDialog>{children}</CreateWalletDialog>
+			<CreateWalletDialog>
+				<CreateCategoryDialog>{children}</CreateCategoryDialog>
+			</CreateWalletDialog>
 		</CreateExpenseDialog>
 	);
 }

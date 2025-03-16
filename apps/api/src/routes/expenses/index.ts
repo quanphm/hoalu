@@ -107,6 +107,8 @@ const route = app
 				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", insertExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -115,21 +117,21 @@ const route = app
 				);
 			}
 		}),
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const { amount, currency } = payload;
+			const { amount, currency, date, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 
 			const expense = await expenseRepository.insert({
 				creatorId: user.id,
 				workspaceId: workspace.id,
-				...payload,
-				amount: realAmount,
+				date: date || new Date().toISOString(),
+				amount: `${realAmount}`,
+				currency,
+				...rest,
 			});
 
 			const parsed = expenseSchema(expense);
@@ -156,6 +158,9 @@ const route = app
 				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", updateExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -164,9 +169,6 @@ const route = app
 				);
 			}
 		}),
-		idParamValidator,
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");

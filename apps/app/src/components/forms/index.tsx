@@ -6,9 +6,11 @@ import { Form } from "./form";
 import { InputField } from "./input";
 import { InputWithPrefixField } from "./input-with-prefix";
 import { SelectField } from "./select";
+import { SelectCategoryField } from "./select-category";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
 import { SwitchField } from "./switch";
+import { TiptapField } from "./tiptap";
 import { TransactionAmountField } from "./transaction-amount";
 
 const { useAppForm, withForm } = createFormHook({
@@ -18,10 +20,12 @@ const { useAppForm, withForm } = createFormHook({
 		SelectField,
 		SelectWithSearchField,
 		SelectWithGroupsField,
+		SelectCategoryField,
 		DatepickerField,
 		TransactionAmountField,
 		SwitchField,
 		ColorsField,
+		TiptapField,
 	},
 	formComponents: {
 		Form,

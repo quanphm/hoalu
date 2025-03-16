@@ -54,13 +54,12 @@ export class ExpenseRepository {
 		return result;
 	}
 
-	async insert(param: Omit<NewExpense, "id" | "amount"> & { amount: number }) {
+	async insert(param: Omit<NewExpense, "id" | "amount"> & { amount: string }) {
 		const [expense] = await db
 			.insert(schema.expense)
 			.values({
 				id: generateId({ use: "uuid" }),
 				...param,
-				amount: param.amount as unknown as string,
 			})
 			.returning();
 

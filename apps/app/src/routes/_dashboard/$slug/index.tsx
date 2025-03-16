@@ -8,7 +8,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { CreateWalletDialogTrigger, WalletIcon } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { ArrowRight, PlusIcon, SendHorizonalIcon, SquarePenIcon } from "@hoalu/icons/lucide";
+import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -33,19 +33,27 @@ function RouteComponent() {
 					<CreateExpenseDialogTrigger>
 						<Button
 							className={cn(
-								"border-indigo-800 bg-indigo-800 text-indigo-50 hover:bg-indigo-900",
+								"border-blue-800 bg-blue-800 text-blue-50 hover:bg-blue-800/90",
 								"dark:border-transparent dark:bg-gradient-to-b dark:bg-transparent dark:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
-								"dark:from-indigo-600/45 dark:to-indigo-600/30 dark:text-indigo-100",
+								"dark:from-blue-600/45 dark:to-blue-600/30 dark:text-blue-100",
 							)}
 						>
 							<SendHorizonalIcon className="mr-2 size-4" />
 							Create expense
 						</Button>
 					</CreateExpenseDialogTrigger>
-					<Button disabled>
-						<SquarePenIcon className="mr-2 size-4" />
-						Create task
-					</Button>
+					<CreateWalletDialogTrigger>
+						<Button
+							className={cn(
+								"border-yellow-800 bg-yellow-800 text-yellow-50 hover:bg-yellow-800/90",
+								"dark:border-transparent dark:bg-gradient-to-b dark:bg-transparent dark:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
+								"dark:from-yellow-600/45 dark:to-yellow-600/30 dark:text-yellow-100",
+							)}
+						>
+							<WalletMinimalIcon className="mr-2 size-4" />
+							Create wallet
+						</Button>
+					</CreateWalletDialogTrigger>
 				</SectionContent>
 			</Section>
 
@@ -62,12 +70,6 @@ function RouteComponent() {
 					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets</SectionTitle>
-							<CreateWalletDialogTrigger>
-								<Button variant="outline" size="sm">
-									<PlusIcon className="mr-2 size-4" />
-									Create
-								</Button>
-							</CreateWalletDialogTrigger>
 							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library.label}>
 								<Button variant="outline" size="sm" asChild>
 									<Link to="/$slug/settings/library" params={{ slug }}>

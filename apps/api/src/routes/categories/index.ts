@@ -106,6 +106,8 @@ const route = app
 				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", insertCategorySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -114,8 +116,6 @@ const route = app
 				);
 			}
 		}),
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -149,6 +149,9 @@ const route = app
 				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", updateCategorySchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -157,9 +160,6 @@ const route = app
 				);
 			}
 		}),
-		idParamValidator,
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");

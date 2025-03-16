@@ -67,6 +67,8 @@ const route = app
 				...OpenAPI.response(type({ data: uploadUrlSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", fileMetaSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -75,8 +77,6 @@ const route = app
 				);
 			}
 		}),
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("json");

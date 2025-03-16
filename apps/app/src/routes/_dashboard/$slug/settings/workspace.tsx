@@ -48,6 +48,9 @@ function RouteComponent() {
 				<SectionContent columns={12}>
 					<div className="col-span-8">
 						<SectionContent>
+							<SettingCard title="Profile">
+								<EditWorkspaceForm canEdit={canUpdateWorkspace} />
+							</SettingCard>
 							<SettingCard
 								layout="horizontal"
 								title="Logo"
@@ -60,9 +63,6 @@ function RouteComponent() {
 								}
 							>
 								<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
-							</SettingCard>
-							<SettingCard title="Profile">
-								<EditWorkspaceForm canEdit={canUpdateWorkspace} />
 							</SettingCard>
 							<SettingCard title="Workspace ID">
 								<InputWithCopy value={workspace.publicId} />

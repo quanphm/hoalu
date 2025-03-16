@@ -4,7 +4,7 @@ import { type } from "arktype";
 import { validator as aValidator } from "hono-openapi/arktype";
 
 const workspaceIdOrSlugSchema = type({
-	workspaceIdOrSlug: "string",
+	workspaceIdOrSlug: "string > 0",
 });
 
 export const workspaceQueryValidator = aValidator("query", workspaceIdOrSlugSchema, (result, c) => {

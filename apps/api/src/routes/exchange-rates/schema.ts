@@ -1,9 +1,10 @@
 import { type } from "arktype";
+import { currencySchema, isoDateSchema } from "../../common/schema";
 
 export const exchangeRateSchema = type({
-	date: "string",
-	from: "string > 0",
-	to: "string > 0",
+	date: isoDateSchema,
+	from: currencySchema,
+	to: currencySchema,
 	rate: "string.numeric.parse",
 	inverse_rate: "string.numeric.parse",
 });

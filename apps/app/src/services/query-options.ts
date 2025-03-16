@@ -146,6 +146,7 @@ export const walletWithIdQueryOptions = (slug: string, id: string) => {
 
 export const categoriesQueryOptions = (slug: string) => {
 	return queryOptions({
+		placeholderData: [],
 		queryKey: categoryKeys.all(slug),
 		queryFn: () => apiClient.categories.list(slug),
 	});
