@@ -107,6 +107,8 @@ const route = app
 				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", insertExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -115,8 +117,6 @@ const route = app
 				);
 			}
 		}),
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -158,6 +158,9 @@ const route = app
 				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", updateExpenseSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -166,9 +169,6 @@ const route = app
 				);
 			}
 		}),
-		idParamValidator,
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");

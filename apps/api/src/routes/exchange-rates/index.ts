@@ -38,12 +38,13 @@ const route = app.get(
 		const useInverse = from !== "USD" && to === "USD";
 		const isCrossRate = from !== "USD" && to !== "USD";
 		const isSameExchange = from === to;
+		const today = new Date().toISOString();
 
 		let response = {};
 
 		if (isSameExchange) {
 			response = {
-				date: new Date().toISOString(),
+				date: today,
 				from,
 				to,
 				rate: "1",
@@ -57,9 +58,9 @@ const route = app.get(
 				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 			}
 			response = {
-				date: new Date().toISOString(),
-				from: crossRate.fromCurrency,
-				to: crossRate.toCurrency,
+				date: today,
+				from,
+				to,
 				rate: crossRate.exchangeRate,
 				inverse_rate: crossRate.inverseRate,
 			} satisfies ExchangeRateSchema;
@@ -67,13 +68,14 @@ const route = app.get(
 			// direct exchange
 			// ex: VND -> USD || USD -> VND
 			const queryData = await exchangeRateRepository.find({ from, to: to });
+			console.log(queryData);
 			if (!queryData) {
 				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 			}
 			response = {
-				date: new Date().toISOString(),
-				from: queryData.fromCurrency,
-				to: queryData.toCurrency,
+				date: today,
+				from,
+				to,
 				rate: useInverse ? queryData.inverseRate : queryData.exchangeRate,
 				inverse_rate: useInverse ? queryData.exchangeRate : queryData.inverseRate,
 			} satisfies ExchangeRateSchema;

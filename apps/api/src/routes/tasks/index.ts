@@ -106,6 +106,8 @@ const route = app
 				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", insertTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -114,8 +116,6 @@ const route = app
 				);
 			}
 		}),
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -151,6 +151,9 @@ const route = app
 				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
 		aValidator("json", updateTaskSchema, (result, c) => {
 			if (!result.success) {
 				return c.json(
@@ -159,9 +162,6 @@ const route = app
 				);
 			}
 		}),
-		idParamValidator,
-		workspaceQueryValidator,
-		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");

@@ -13,8 +13,8 @@ export const fileMetaSchema = type({
 
 export const imageSchema = type({
 	"+": "delete",
-	presignedUrl: "string",
-	fileName: "string",
+	presignedUrl: "string > 0",
+	fileName: "string > 0",
 	description: "string | null",
 	tags: "string[]",
 });

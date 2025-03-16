@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { walletTypeSchema } from "../../common/schema";
+import { currencySchema, walletTypeSchema } from "../../common/schema";
 
 export const walletSchema = type({
 	"+": "delete",
@@ -31,9 +31,9 @@ export const walletSchema = type({
 export const walletsSchema = walletSchema.array().onUndeclaredKey("delete");
 
 export const insertWalletSchema = type({
-	name: "string",
+	name: "string > 0",
 	"description?": "string",
-	currency: type("string").default("USD"),
+	currency: currencySchema,
 	type: walletTypeSchema,
 	isActive: "boolean = true",
 });
