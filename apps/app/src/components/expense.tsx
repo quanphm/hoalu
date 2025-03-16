@@ -156,7 +156,6 @@ function CreateExpenseForm() {
 	useEffect(() => {
 		return () => {
 			if (!form.state.isSubmitted) {
-				console.log("cdmkcdmcd");
 				setDraft(form.state.values);
 			}
 		};
@@ -194,7 +193,14 @@ function CreateExpenseForm() {
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">
-					<Button variant="ghost" type="button" onClick={() => form.reset()}>
+					<Button
+						variant="ghost"
+						type="button"
+						onClick={() => {
+							setDraft(RESET);
+							form.reset();
+						}}
+					>
 						Reset
 					</Button>
 					<Button type="submit">Create expense</Button>
