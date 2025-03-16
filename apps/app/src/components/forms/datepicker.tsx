@@ -14,7 +14,6 @@ export function DatepickerField(props: Props) {
 	const [month, setMonth] = useState(selected);
 
 	const handleDayPickerSelect = (date: Date | undefined) => {
-		console.log("test");
 		if (!date) {
 			field.setValue(new Date().toISOString());
 		} else {

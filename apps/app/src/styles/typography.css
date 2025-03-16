@@ -16,3 +16,18 @@
 
 	--spacing: 0.225rem;
 }
+
+.prose-base {
+  :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+	color: var(--muted-foreground);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
+}

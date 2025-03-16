@@ -183,7 +183,7 @@ function CreateExpenseForm() {
 							</form.AppField>
 						</div>
 						<form.AppField name="description">
-							{(field) => <field.TiptapField label="Extra note" />}
+							{(field) => <field.TiptapField label="Extra note" defaultValue={draft.description} />}
 						</form.AppField>
 					</div>
 					<div className="col-span-5">
@@ -354,7 +354,9 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							</form.AppField>
 						</div>
 						<form.AppField name="description">
-							{(field) => <field.TiptapField label="Extra note" />}
+							{(field) => (
+								<field.TiptapField label="Extra note" defaultValue={expense?.description ?? ""} />
+							)}
 						</form.AppField>
 					</div>
 					<div className="col-span-5">

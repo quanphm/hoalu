@@ -2,10 +2,10 @@ import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon, UndoIcon } from "@hoal
 import { Button } from "@hoalu/ui/button";
 import { Separator } from "@hoalu/ui/separator";
 import Placeholder from "@tiptap/extension-placeholder";
-import { type Editor, EditorContent, type EditorProviderProps, useEditor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
-const extensions = [
+export const extensions = [
 	StarterKit.configure({
 		heading: false,
 	}),
@@ -14,26 +14,7 @@ const extensions = [
 	}),
 ];
 
-export function Tiptap(props: EditorProviderProps) {
-	const editor = useEditor({
-		extensions,
-		editorProps: {
-			attributes: {
-				class: "",
-			},
-		},
-		...props,
-	});
-
-	return (
-		<>
-			<MenuBar editor={editor} />
-			<EditorContent editor={editor} />
-		</>
-	);
-}
-
-function MenuBar({ editor }: { editor: Editor | null }) {
+export function TiptapMenuBar({ editor }: { editor: Editor | null }) {
 	if (!editor) {
 		return null;
 	}
