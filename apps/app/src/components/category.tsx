@@ -56,12 +56,16 @@ function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function CreateCategoryDialogTrigger({ children }: { children: React.ReactNode }) {
+function CreateCategoryDialogTrigger({
+	children,
+	showTooltip = true,
+}: { children: React.ReactNode; showTooltip?: boolean }) {
 	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	return (
 		<HotKeyWithTooltip
 			onClick={() => setOpen(true)}
+			showTooltip={showTooltip}
 			shortcut={KEYBOARD_SHORTCUTS.create_category.label}
 		>
 			{children}

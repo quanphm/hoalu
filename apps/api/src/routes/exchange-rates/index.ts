@@ -68,7 +68,6 @@ const route = app.get(
 			// direct exchange
 			// ex: VND -> USD || USD -> VND
 			const queryData = await exchangeRateRepository.find({ from, to: to });
-			console.log(queryData);
 			if (!queryData) {
 				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 			}

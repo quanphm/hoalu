@@ -6,6 +6,7 @@ import { Form } from "./form";
 import { InputField } from "./input";
 import { InputWithPrefixField } from "./input-with-prefix";
 import { SelectField } from "./select";
+import { SelectCategoryField } from "./select-category";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
 import { SwitchField } from "./switch";
@@ -19,6 +20,7 @@ const { useAppForm, withForm } = createFormHook({
 		SelectField,
 		SelectWithSearchField,
 		SelectWithGroupsField,
+		SelectCategoryField,
 		DatepickerField,
 		TransactionAmountField,
 		SwitchField,

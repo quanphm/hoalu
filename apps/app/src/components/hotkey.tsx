@@ -21,8 +21,13 @@ export function HotKey({ className, children, ...props }: React.ComponentProps<"
 export function HotKeyWithTooltip({
 	children,
 	shortcut,
+	showTooltip = true,
 	...props
-}: SlotProps & { shortcut: string }) {
+}: SlotProps & { shortcut: string; showTooltip?: boolean }) {
+	if (!showTooltip) {
+		return <Slot {...props}>{children}</Slot>;
+	}
+
 	return (
 		<Tooltip>
 			<Slot {...props}>

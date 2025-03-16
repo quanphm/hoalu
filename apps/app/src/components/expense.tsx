@@ -1,5 +1,6 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
 import { draftExpenseAtom } from "@/atoms/draft-expense";
+import { CreateCategoryDialogTrigger } from "@/components/category";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -13,7 +14,7 @@ import {
 	expenseWithIdQueryOptions,
 	walletsQueryOptions,
 } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreHorizontalIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -73,13 +74,11 @@ function CreateExpenseForm() {
 	const { user } = useAuth();
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const mutation = useCreateExpense();
 
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 	const fallbackWallet = {
 		label: wallets[0].name,
 		value: wallets[0].id,
@@ -177,9 +176,7 @@ function CreateExpenseForm() {
 								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
 							</form.AppField>
 							<form.AppField name="categoryId">
-								{(field) => (
-									<field.SelectWithSearchField label="Category" options={categoryOptions} />
-								)}
+								{(field) => <field.SelectCategoryField label="Category" />}
 							</form.AppField>
 						</div>
 						<form.AppField name="description">
@@ -256,10 +253,8 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	const mutation = useEditExpense();
 
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: expense, status } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
 
-	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
 	const walletGroups = wallets.reduce(
 		(result, current) => {
 			const owner = current.owner;
@@ -348,9 +343,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
 							</form.AppField>
 							<form.AppField name="categoryId">
-								{(field) => (
-									<field.SelectWithSearchField label="Category" options={categoryOptions} />
-								)}
+								{(field) => <field.SelectCategoryField label="Category" />}
 							</form.AppField>
 						</div>
 						<form.AppField name="description">

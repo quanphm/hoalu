@@ -26,7 +26,6 @@ export function TiptapField(props: Props) {
 	});
 
 	useEffect(() => {
-		console.log("test");
 		editor?.commands.setContent(props.defaultValue || "");
 	}, [editor, props.defaultValue]);
 
