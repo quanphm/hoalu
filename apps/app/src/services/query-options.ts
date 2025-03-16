@@ -1,4 +1,3 @@
-import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
 import type { ExchangeRatesQuerySchema } from "@/lib/schema";
@@ -13,6 +12,7 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
+import { TIME_IN_MILLISECONDS } from "@hoalu/common/time";
 import { queryOptions } from "@tanstack/react-query";
 
 /**

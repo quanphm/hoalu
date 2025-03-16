@@ -1,14 +1,15 @@
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { TIME_IN_SECONDS } from "@hoalu/common/time";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
 import { MAX_UPLOAD_FILE_SIZE } from "../../common/io";
 import { createHonoInstance } from "../../lib/create-app";
 import { bunS3Client } from "../../lib/s3";
 import { workspaceMember } from "../../middlewares/workspace-member";
+import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { ImageRepository } from "./repository";
 import { fileMetaSchema, imagesSchema, uploadUrlSchema } from "./schema";
@@ -39,7 +40,7 @@ const route = app
 			const imagesWithPresignedUrl = await Promise.all(
 				images.map(async (image) => {
 					const path = `uploads/${image.fileName}`;
-					const presignedUrl = bunS3Client.presign(path, { expiresIn: 60 * 3 });
+					const presignedUrl = bunS3Client.presign(path, { expiresIn: TIME_IN_SECONDS.MINUTE * 3 });
 					return { ...image, presignedUrl };
 				}),
 			);
@@ -69,14 +70,7 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		aValidator("json", fileMetaSchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: createIssueMsg(result.errors.issues) },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		jsonBodyValidator(fileMetaSchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("json");
@@ -89,7 +83,10 @@ const route = app
 			const path = `uploads/${fileName}`;
 			const s3Url = `s3://${process.env.S3_BUCKET}/${path}`;
 
-			const uploadUrl = bunS3Client.presign(path, { expiresIn: 60, method: "PUT" });
+			const uploadUrl = bunS3Client.presign(path, {
+				expiresIn: TIME_IN_SECONDS.MINUTE,
+				method: "PUT",
+			});
 			const imageSlot = await imageRepository.insert({
 				fileName,
 				s3Url,

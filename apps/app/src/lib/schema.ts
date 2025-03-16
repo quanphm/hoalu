@@ -15,9 +15,11 @@ import type { InferRequestType, InferResponseType } from "hono/client";
 export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
 export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
-export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-export const colorSchema = type("===", ...PG_ENUM_COLOR);
 
+export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
+export type WalletType = typeof walletTypeSchema.inferOut;
+
+export const colorSchema = type("===", ...PG_ENUM_COLOR);
 export type Color = typeof colorSchema.inferOut;
 
 /**
