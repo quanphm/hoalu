@@ -3,11 +3,11 @@ import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
 import { WORKSPACE_CREATOR_ROLE } from "../../common/constants";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
+import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { WalletRepository } from "./repository";
 import {
@@ -108,14 +108,7 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		aValidator("json", insertWalletSchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: createIssueMsg(result.errors.issues) },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		jsonBodyValidator(insertWalletSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -154,14 +147,7 @@ const route = app
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		aValidator("json", updateWalletSchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: createIssueMsg(result.errors.issues) },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		jsonBodyValidator(updateWalletSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");

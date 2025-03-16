@@ -3,10 +3,10 @@ import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
 import { createHonoInstance } from "../../lib/create-app";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
+import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { CategoryRepository } from "./repositiory";
 import {
@@ -108,14 +108,7 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		aValidator("json", insertCategorySchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: createIssueMsg(result.errors.issues) },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		jsonBodyValidator(insertCategorySchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -152,14 +145,7 @@ const route = app
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		aValidator("json", updateCategorySchema, (result, c) => {
-			if (!result.success) {
-				return c.json(
-					{ message: createIssueMsg(result.errors.issues) },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
-			}
-		}),
+		jsonBodyValidator(updateCategorySchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
