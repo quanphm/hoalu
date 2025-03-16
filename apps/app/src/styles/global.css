@@ -3,11 +3,12 @@
 @source "../../../../packages/ui/**/*.{ts,tsx}";
 
 @import "@hoalu/ui/theme.css";
-/* @import "./fonts.css"; */
+@import "./fonts.css";
 @import "./typography.css";
 @import "./table.css";
 
 @plugin "tailwind-scrollbar";
+@plugin "@tailwindcss/typography";
 
 @layer base {
   * {
@@ -27,4 +28,13 @@
     @apply w-full min-h-screen;
   }
 }
+
+.tiptap p.is-editor-empty:first-child::before {
+	color: var(--muted-foreground);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
+}
+
 

@@ -1,6 +1,12 @@
 import { type } from "arktype";
 import { monetary } from "../../common/monetary";
-import { colorSchema, currencySchema, repeatSchema, walletTypeSchema } from "../../common/schema";
+import {
+	colorSchema,
+	currencySchema,
+	isoDateSchema,
+	repeatSchema,
+	walletTypeSchema,
+} from "../../common/schema";
 
 export const expenseSchema = type({
 	"+": "delete",
@@ -11,7 +17,7 @@ export const expenseSchema = type({
 	realAmount: "string.numeric.parse",
 	currency: "string",
 	repeat: repeatSchema,
-	date: "string",
+	date: isoDateSchema,
 	creator: {
 		"+": "delete",
 		id: "string.uuid.v7",
@@ -36,7 +42,7 @@ export const expenseSchema = type({
 		description: "string | null",
 		color: colorSchema,
 	}).or("null"),
-	createdAt: "string",
+	createdAt: isoDateSchema,
 }).pipe((e) => ({
 	...e,
 	amount: monetary.fromRealAmount(e.amount, e.currency),
