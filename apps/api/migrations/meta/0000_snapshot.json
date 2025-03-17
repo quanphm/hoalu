@@ -1,5 +1,5 @@
 {
-  "id": "ff813909-9804-4d03-a968-59089090133a",
+  "id": "6635cab5-af38-4450-bbdd-5a12392816d0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -666,12 +666,6 @@
           "notNull": false,
           "default": "ARRAY[]::text[]"
         },
-        "workspace_id": {
-          "name": "workspace_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -680,9 +674,48 @@
           "default": "now()"
         }
       },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "image_file_name_unique": {
+          "name": "image_file_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "file_name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.image_expense": {
+      "name": "image_expense",
+      "schema": "",
+      "columns": {
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expense_id": {
+          "name": "expense_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
       "indexes": {
-        "image_workspace_id_idx": {
-          "name": "image_workspace_id_idx",
+        "image_expense_workspace_id_idx": {
+          "name": "image_expense_workspace_id_idx",
           "columns": [
             {
               "expression": "workspace_id",
@@ -698,9 +731,9 @@
         }
       },
       "foreignKeys": {
-        "image_workspace_id_workspace_id_fk": {
-          "name": "image_workspace_id_workspace_id_fk",
-          "tableFrom": "image",
+        "image_expense_workspace_id_workspace_id_fk": {
+          "name": "image_expense_workspace_id_workspace_id_fk",
+          "tableFrom": "image_expense",
           "tableTo": "workspace",
           "columnsFrom": [
             "workspace_id"
@@ -710,33 +743,7 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.image_expense": {
-      "name": "image_expense",
-      "schema": "",
-      "columns": {
-        "expense_id": {
-          "name": "expense_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
         },
-        "image_id": {
-          "name": "image_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
         "image_expense_expense_id_expense_id_fk": {
           "name": "image_expense_expense_id_expense_id_fk",
           "tableFrom": "image_expense",
@@ -765,9 +772,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "image_expense_expense_id_image_id_pk": {
-          "name": "image_expense_expense_id_image_id_pk",
+        "image_expense_workspace_id_expense_id_image_id_pk": {
+          "name": "image_expense_workspace_id_expense_id_image_id_pk",
           "columns": [
+            "workspace_id",
             "expense_id",
             "image_id"
           ]
@@ -782,6 +790,12 @@
       "name": "image_task",
       "schema": "",
       "columns": {
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "task_id": {
           "name": "task_id",
           "type": "uuid",
@@ -795,8 +809,37 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "image_task_workspace_id_idx": {
+          "name": "image_task_workspace_id_idx",
+          "columns": [
+            {
+              "expression": "workspace_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
+        "image_task_workspace_id_workspace_id_fk": {
+          "name": "image_task_workspace_id_workspace_id_fk",
+          "tableFrom": "image_task",
+          "tableTo": "workspace",
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "image_task_task_id_task_id_fk": {
           "name": "image_task_task_id_task_id_fk",
           "tableFrom": "image_task",
@@ -825,9 +868,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "image_task_task_id_image_id_pk": {
-          "name": "image_task_task_id_image_id_pk",
+        "image_task_workspace_id_task_id_image_id_pk": {
+          "name": "image_task_workspace_id_task_id_image_id_pk",
           "columns": [
+            "workspace_id",
             "task_id",
             "image_id"
           ]

@@ -3,12 +3,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export function useImageUpload({
 	onUpload,
 }: {
-	onUpload?(url: string): void;
+	onUpload?(File: File): void;
 } = {}) {
 	const previewRef = useRef<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-	const [fileName, setFileName] = useState<string | null>(null);
+
+	const [file, setFile] = useState<File | undefined>(undefined);
 
 	const handleThumbnailClick = useCallback(() => {
 		fileInputRef.current?.click();
@@ -18,11 +19,13 @@ export function useImageUpload({
 		(event: React.ChangeEvent<HTMLInputElement>) => {
 			const file = event.target.files?.[0];
 			if (file) {
-				setFileName(file.name);
 				const url = URL.createObjectURL(file);
+				setFile(file);
 				setPreviewUrl(url);
 				previewRef.current = url;
-				onUpload?.(url);
+				if (onUpload) {
+					onUpload(file);
+				}
 			}
 		},
 		[onUpload],
@@ -49,8 +52,10 @@ export function useImageUpload({
 	}, []);
 
 	return {
-		previewUrl,
-		fileName,
+		data: {
+			file,
+			preview: previewUrl,
+		},
 		fileInputRef,
 		handleThumbnailClick,
 		handleFileChange,

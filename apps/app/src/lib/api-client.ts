@@ -233,10 +233,25 @@ const exchangeRates = {
 	},
 };
 
+const images = {
+	createPresignedUploadUrl: async (payload: { size: number }) => {
+		const response = await honoClient.api.images["generate-upload-url"].$post({
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
 	categories,
 	expenses,
 	exchangeRates,
+	images,
 };

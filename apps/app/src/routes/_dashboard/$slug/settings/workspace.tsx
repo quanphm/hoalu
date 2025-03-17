@@ -8,9 +8,12 @@ import {
 	EditWorkspaceMetadataForm,
 } from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace";
+import { useImageUpload } from "@/hooks/use-image-upload";
+import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
+import { toast } from "@hoalu/ui/sonner";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -22,6 +25,14 @@ function RouteComponent() {
 	const { slug } = Route.useParams();
 	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
+	const {
+		data: avatar,
+		fileInputRef,
+		handleThumbnailClick,
+		handleFileChange,
+	} = useImageUpload({
+		onUpload: handleUpload,
+	});
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
 		// @ts-expect-error: [todo] fix role type
@@ -38,6 +49,23 @@ function RouteComponent() {
 			organization: ["update"],
 		},
 	});
+
+	async function handleUpload(file: File) {
+		const result = await apiClient.images.createPresignedUploadUrl({ size: file.size });
+		try {
+			await fetch(result.uploadUrl, {
+				method: "PUT",
+				headers: {
+					"Content-Type": file.type,
+				},
+				body: file,
+			});
+		} catch (error: any) {
+			toast.error("Update workspace picture failed", {
+				description: error.message,
+			});
+		}
+	}
 
 	return (
 		<>
@@ -62,7 +90,26 @@ function RouteComponent() {
 									</p>
 								}
 							>
-								<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
+								<Button
+									variant="outline"
+									size="icon"
+									className="size-14"
+									onClick={handleThumbnailClick}
+								>
+									<WorkspaceAvatar
+										size="lg"
+										logo={avatar.preview ?? workspace.logo}
+										name={workspace.name}
+									/>
+								</Button>
+								<input
+									type="file"
+									ref={fileInputRef}
+									onChange={handleFileChange}
+									className="hidden"
+									accept="image/*"
+									aria-label="Upload image file"
+								/>
 							</SettingCard>
 							<SettingCard title="Workspace ID">
 								<InputWithCopy value={workspace.publicId} />
