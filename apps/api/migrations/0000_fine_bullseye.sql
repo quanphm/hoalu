@@ -86,7 +86,7 @@ CREATE TABLE "image" (
 	"s3_url" text NOT NULL,
 	"description" text,
 	"tags" text[] DEFAULT ARRAY[]::text[],
-	"workspace_id" uuid,
+	"workspace_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

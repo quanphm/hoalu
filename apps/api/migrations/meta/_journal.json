@@ -5,14 +5,14 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741945160293,
-      "tag": "0000_omniscient_jocasta",
+      "when": 1742196230848,
+      "tag": "0000_fine_bullseye",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1741945163585,
+      "when": 1742196234093,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
     }

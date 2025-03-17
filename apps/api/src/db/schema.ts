@@ -298,7 +298,9 @@ export const image = pgTable(
 		s3Url: text("s3_url").notNull(),
 		description: text("description"),
 		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
-		workspaceId: uuid("workspace_id").references(() => workspace.id, { onDelete: "cascade" }),
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [index("image_workspace_id_idx").on(table.workspaceId)],

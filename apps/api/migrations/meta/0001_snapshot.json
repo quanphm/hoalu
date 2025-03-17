@@ -1,6 +1,6 @@
 {
-  "id": "433b6d93-b175-470d-8db6-09af46646dac",
-  "prevId": "e6ae95cf-5962-4401-b162-60c655af22fb",
+  "id": "8d38da35-ef4a-4a3e-8571-ca9f0363bbd3",
+  "prevId": "ff813909-9804-4d03-a968-59089090133a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -670,7 +670,7 @@
           "name": "workspace_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

@@ -40,7 +40,7 @@ const route = app
 			const imagesWithPresignedUrl = await Promise.all(
 				images.map(async (image) => {
 					const path = `uploads/${image.fileName}`;
-					const presignedUrl = bunS3Client.presign(path, { expiresIn: TIME_IN_SECONDS.MINUTE * 3 });
+					const presignedUrl = bunS3Client.presign(path, { expiresIn: TIME_IN_SECONDS.HOUR * 12 });
 					return { ...image, presignedUrl };
 				}),
 			);
@@ -84,7 +84,7 @@ const route = app
 			const s3Url = `s3://${process.env.S3_BUCKET}/${path}`;
 
 			const uploadUrl = bunS3Client.presign(path, {
-				expiresIn: TIME_IN_SECONDS.MINUTE,
+				expiresIn: TIME_IN_SECONDS.MINUTE * 5,
 				method: "PUT",
 			});
 			const imageSlot = await imageRepository.insert({
