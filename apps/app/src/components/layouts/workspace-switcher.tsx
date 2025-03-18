@@ -2,7 +2,7 @@ import { HotKey } from "@/components/hotkey";
 import {
 	CreateWorkspaceDialog,
 	CreateWorkspaceDialogTrigger,
-	withS3WorkspaceLogo,
+	S3WorkspaceLogo,
 } from "@/components/workspace";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
@@ -38,7 +38,6 @@ interface Props {
 export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const params = useParams({ from: "/_dashboard/$slug" });
-	const WorkspaceAvatar = withS3WorkspaceLogo(selectedWorkspace.slug, selectedWorkspace.logo);
 
 	return (
 		<SidebarMenu>
@@ -50,7 +49,11 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 								size="lg"
 								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
-								<WorkspaceAvatar name={selectedWorkspace.name} />
+								<S3WorkspaceLogo
+									slug={selectedWorkspace.slug}
+									logo={selectedWorkspace.logo}
+									name={selectedWorkspace.name}
+								/>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-semibold">{selectedWorkspace.name}</span>
 								</div>
@@ -83,23 +86,20 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 								Workspaces
 							</DropdownMenuLabel>
 							<ScrollArea className="max-h-72">
-								{workspaces.map((ws) => {
-									const WorkspaceLogo = withS3WorkspaceLogo(ws.slug, ws.logo);
-									return (
-										<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
-											<Link to="/$slug" params={{ slug: ws.slug }}>
-												<WorkspaceLogo name={ws.name} size="sm" />
-												{ws.name}
-												<CheckIcon
-													className={cn(
-														"ml-auto",
-														ws.slug === params.slug ? "opacity-100" : "opacity-0",
-													)}
-												/>
-											</Link>
-										</DropdownMenuItem>
-									);
-								})}
+								{workspaces.map((ws) => (
+									<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
+										<Link to="/$slug" params={{ slug: ws.slug }}>
+											<S3WorkspaceLogo slug={ws.slug} logo={ws.logo} name={ws.name} size="sm" />
+											{ws.name}
+											<CheckIcon
+												className={cn(
+													"ml-auto",
+													ws.slug === params.slug ? "opacity-100" : "opacity-0",
+												)}
+											/>
+										</Link>
+									</DropdownMenuItem>
+								))}
 							</ScrollArea>
 							<DropdownMenuSeparator />
 							<CreateWorkspaceDialogTrigger>

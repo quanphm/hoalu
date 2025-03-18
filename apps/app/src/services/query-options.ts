@@ -62,7 +62,6 @@ export const listWorkspacesOptions = () => {
 			if (!data) return [];
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 		placeholderData: [],
 	});
 };
@@ -79,7 +78,6 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 			if (error) throw error;
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
 

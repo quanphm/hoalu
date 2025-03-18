@@ -158,9 +158,9 @@ export function useRemoveMember() {
 			}
 			return data;
 		},
-		onSuccess: async (data) => {
-			toast.success(`${data.member.user.name} has been removed`);
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
+		onSuccess: async () => {
+			queryClient.removeQueries({ queryKey: workspaceKeys.all });
+			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 		},
 		onError: (error) => {
 			toast.error(error.message);
