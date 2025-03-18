@@ -31,8 +31,11 @@ const route = app
 				...OpenAPI.response(type({ data: uploadUrlSchema }), HTTPStatus.codes.OK),
 			},
 		}),
+		workspaceQueryValidator,
+		workspaceMember,
 		jsonBodyValidator(fileMetaSchema),
 		async (c) => {
+			const workspace = c.get("workspace");
 			const param = c.req.valid("json");
 
 			if (param.size > FILE_SIZE_LIMIT) {
@@ -40,7 +43,7 @@ const route = app
 			}
 
 			const fileName = generateId({ use: "nanoid", kind: "image" });
-			const path = `uploads/${fileName}`;
+			const path = `${workspace.publicId}/${fileName}`;
 			const s3Url = `s3://${path}`;
 
 			const uploadUrl = bunS3Client.presign(path, {

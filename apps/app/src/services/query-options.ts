@@ -111,8 +111,9 @@ export const invitationDetailsOptions = (id: string) => {
 	});
 };
 
-export const getWorkspaceLogo = (slug: string) => {
+export const getWorkspaceLogo = (slug: string, logo: string | null | undefined) => {
 	return queryOptions({
+		enabled: logo?.startsWith("s3://"),
 		queryKey: workspaceKeys.logo(slug),
 		queryFn: async () => {
 			const data = await apiClient.images.workspaceLogo(slug);

@@ -6,17 +6,17 @@ import {
 	DeleteWorkspaceTrigger,
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
+	WorkspaceAvatar,
 } from "@/components/workspace";
-import { WorkspaceAvatar } from "@/components/workspace";
 import { useFilesUpload } from "@/hooks/use-files-upload";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import { useEditWorkspace } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { getActiveMemberOptions, getWorkspaceLogo } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 function RouteComponent() {
 	const { slug } = Route.useParams();
 	const workspace = useWorkspace();
+	const { data: logo } = useQuery(getWorkspaceLogo(workspace.slug, workspace.logo));
 	const mutation = useEditWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const {
@@ -55,7 +56,7 @@ function RouteComponent() {
 
 	async function handleUpload(files: File[]) {
 		try {
-			const result = await apiClient.images.uploadWithPresignedUrl(files[0]);
+			const result = await apiClient.images.uploadWithPresignedUrl(workspace.slug, files[0]);
 			await mutation.mutateAsync({
 				payload: {
 					name: workspace.name,
@@ -101,11 +102,7 @@ function RouteComponent() {
 									className="size-14"
 									onClick={handleBrowseFiles}
 								>
-									<WorkspaceAvatar
-										size="lg"
-										logo={previewUrls[0] ?? workspace.logo}
-										name={workspace.name}
-									/>
+									<WorkspaceAvatar size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
 								</Button>
 								<input
 									type="file"

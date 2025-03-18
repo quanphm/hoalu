@@ -11,6 +11,7 @@ import {
 	useEditWorkspace,
 	useEditWorkspaceMetadata,
 } from "@/services/mutations";
+import { getWorkspaceLogo } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
@@ -24,6 +25,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
+import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type VariantProps, cva } from "class-variance-authority";
 import { createContext, use, useMemo, useState } from "react";
@@ -366,11 +368,11 @@ function DeleteWorkspaceForm() {
 	);
 }
 
-const workspaceAvatarVariants = cva("rounded-lg", {
+const workspaceAvatarVariants = cva("rounded-md", {
 	variants: {
 		size: {
 			default: "size-8",
-			lg: "size-14",
+			lg: "size-14 rounded-lg",
 			sm: "size-6 rounded-sm",
 		},
 	},
@@ -402,6 +404,15 @@ function WorkspaceAvatar({
 	);
 }
 
+function withS3WorkspaceLogo(slug: string, logo: string | null | undefined) {
+	return function WorkspaceLogo(
+		props: Omit<Props, "logo"> & VariantProps<typeof workspaceAvatarVariants>,
+	) {
+		const { data } = useQuery(getWorkspaceLogo(slug, logo));
+		return <WorkspaceAvatar logo={data} {...props} />;
+	};
+}
+
 export {
 	CreateWorkspaceDialog,
 	CreateWorkspaceDialogTrigger,
@@ -411,4 +422,5 @@ export {
 	DeleteWorkspaceTrigger,
 	EditWorkspaceMetadataForm,
 	WorkspaceAvatar,
+	withS3WorkspaceLogo,
 };

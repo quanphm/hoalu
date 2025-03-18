@@ -234,8 +234,9 @@ const exchangeRates = {
 };
 
 const images = {
-	createPresignedUploadUrl: async (payload: { size: number }) => {
+	createPresignedUploadUrl: async (slug: string, payload: { size: number }) => {
 		const response = await honoClient.api.images["generate-upload-url"].$post({
+			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
 		if (!response.ok) {
@@ -245,8 +246,8 @@ const images = {
 		const { data } = await response.json();
 		return data;
 	},
-	uploadWithPresignedUrl: async (file: File) => {
-		const presignedData = await images.createPresignedUploadUrl({ size: file.size });
+	uploadWithPresignedUrl: async (slug: string, file: File) => {
+		const presignedData = await images.createPresignedUploadUrl(slug, { size: file.size });
 		await fetch(presignedData.uploadUrl, {
 			method: "PUT",
 			headers: {
