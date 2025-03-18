@@ -130,20 +130,20 @@ function CreateExpenseForm() {
 			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			// await mutation.mutateAsync({
-			// 	payload: {
-			// 		title: value.title,
-			// 		description: value.description,
-			// 		amount: value.transaction.value,
-			// 		currency: value.transaction.currency,
-			// 		date: value.date,
-			// 		walletId: value.walletId,
-			// 		categoryId: value.categoryId,
-			// 		repeat: value.repeat,
-			// 	},
-			// });
-			// setOpen(false);
-			// setDraft(RESET);
+			await mutation.mutateAsync({
+				payload: {
+					title: value.title,
+					description: value.description,
+					amount: value.transaction.value,
+					currency: value.transaction.currency,
+					date: value.date,
+					walletId: value.walletId,
+					categoryId: value.categoryId,
+					repeat: value.repeat,
+				},
+			});
+			setOpen(false);
+			setDraft(RESET);
 		},
 	});
 

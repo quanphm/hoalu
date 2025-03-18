@@ -1,5 +1,5 @@
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
-import { WorkspaceAvatar } from "@/components/workspace";
+import { WorkspaceLogo } from "@/components/workspace";
 import { useAuth } from "@/hooks/use-auth";
 import { useAcceptInvitation } from "@/services/mutations";
 import { invitationDetailsOptions } from "@/services/query-options";
@@ -45,7 +45,7 @@ function RouteComponent() {
 			<Card className="select-none text-center">
 				<CardHeader>
 					<CardTitle className="flex flex-col items-center justify-center gap-4 text-xl">
-						<WorkspaceAvatar size="lg" logo={null} name={invitation.workspaceName} />
+						<WorkspaceLogo size="lg" logo={null} name={invitation.workspaceName} />
 						{invitation.inviterName} has invited you to {invitation.workspaceName}
 					</CardTitle>
 				</CardHeader>

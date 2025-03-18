@@ -387,7 +387,7 @@ interface Props {
 	className?: string;
 }
 
-function WorkspaceAvatar({
+function WorkspaceLogo({
 	logo = undefined,
 	name = "Hoa Lu",
 	size,
@@ -404,13 +404,13 @@ function WorkspaceAvatar({
 	);
 }
 
-function withS3WorkspaceLogo(slug: string, logo: string | null | undefined) {
-	return function WorkspaceLogo(
-		props: Omit<Props, "logo"> & VariantProps<typeof workspaceAvatarVariants>,
-	) {
-		const { data } = useQuery(getWorkspaceLogo(slug, logo));
-		return <WorkspaceAvatar logo={data} {...props} />;
-	};
+function S3WorkspaceLogo({
+	slug,
+	logo,
+	...props
+}: Props & VariantProps<typeof workspaceAvatarVariants> & { slug: string }) {
+	const { data } = useQuery(getWorkspaceLogo(slug, logo));
+	return <WorkspaceLogo {...props} logo={data} />;
 }
 
 export {
@@ -421,6 +421,6 @@ export {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,
 	EditWorkspaceMetadataForm,
-	WorkspaceAvatar,
-	withS3WorkspaceLogo,
+	WorkspaceLogo,
+	S3WorkspaceLogo,
 };

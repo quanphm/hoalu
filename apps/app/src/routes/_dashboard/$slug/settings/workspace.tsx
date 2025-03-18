@@ -6,7 +6,7 @@ import {
 	DeleteWorkspaceTrigger,
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
-	WorkspaceAvatar,
+	WorkspaceLogo,
 } from "@/components/workspace";
 import { useFilesUpload } from "@/hooks/use-files-upload";
 import { useWorkspace } from "@/hooks/use-workspace";
@@ -92,7 +92,7 @@ function RouteComponent() {
 									<p className="max-w-sm">
 										Recommended size 256x256px.
 										<br />
-										Accepted file types: .png, .jpg. Max file size: 5MB.
+										You may upload PNG or JPEG file. Max file size 5MB.
 									</p>
 								}
 							>
@@ -102,16 +102,18 @@ function RouteComponent() {
 									className="size-14"
 									onClick={handleBrowseFiles}
 								>
-									<WorkspaceAvatar size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
+									<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
 								</Button>
-								<input
-									type="file"
-									ref={fileInputRef}
-									onChange={handleFileChange}
-									className="hidden"
-									accept="image/*"
-									aria-label="Upload image file"
-								/>
+								{canUpdateWorkspace && (
+									<input
+										type="file"
+										ref={fileInputRef}
+										onChange={handleFileChange}
+										className="hidden"
+										accept="image/*"
+										aria-label="Upload image file"
+									/>
+								)}
 							</SettingCard>
 							<SettingCard title="Workspace ID">
 								<InputWithCopy value={workspace.publicId} />

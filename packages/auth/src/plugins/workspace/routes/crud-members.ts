@@ -25,11 +25,8 @@ export const addMember = createAuthEndpoint(
 	async (ctx) => {
 		const workspaceId = ctx.body.workspaceId;
 		if (!workspaceId) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 
@@ -126,11 +123,8 @@ export const removeMember = createAuthEndpoint(
 		const session = ctx.context.session;
 		const idOrSlug = ctx.body.idOrSlug;
 		if (!idOrSlug) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
@@ -354,11 +348,8 @@ export const getActiveMember = createAuthEndpoint(
 		const session = ctx.context.session;
 		const idOrSlug = ctx.query?.idOrSlug;
 		if (!idOrSlug) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
 			});
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
@@ -373,11 +364,8 @@ export const getActiveMember = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 			});
 		}
 
