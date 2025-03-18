@@ -1,6 +1,5 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
 import { draftExpenseAtom } from "@/atoms/draft-expense";
-import { CreateCategoryDialogTrigger } from "@/components/category";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -9,12 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
 import { useCreateExpense, useDeleteExpense, useEditExpense } from "@/services/mutations";
-import {
-	categoriesQueryOptions,
-	expenseWithIdQueryOptions,
-	walletsQueryOptions,
-} from "@/services/query-options";
-import { MoreHorizontalIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
+import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -46,7 +41,7 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			{children}
-			<DialogContent className="sm:max-w-[750px]">
+			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>
 				</DialogHeader>
@@ -129,25 +124,26 @@ function CreateExpenseForm() {
 			walletId: draft.walletId || defaultWallet.value,
 			categoryId: draft.categoryId,
 			repeat: draft.repeat,
+			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
 			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				payload: {
-					title: value.title,
-					description: value.description,
-					amount: value.transaction.value,
-					currency: value.transaction.currency,
-					date: value.date,
-					walletId: value.walletId,
-					categoryId: value.categoryId,
-					repeat: value.repeat,
-				},
-			});
-			setOpen(false);
-			setDraft(RESET);
+			// await mutation.mutateAsync({
+			// 	payload: {
+			// 		title: value.title,
+			// 		description: value.description,
+			// 		amount: value.transaction.value,
+			// 		currency: value.transaction.currency,
+			// 		date: value.date,
+			// 		walletId: value.walletId,
+			// 		categoryId: value.categoryId,
+			// 		repeat: value.repeat,
+			// 	},
+			// });
+			// setOpen(false);
+			// setDraft(RESET);
 		},
 	});
 
@@ -180,7 +176,10 @@ function CreateExpenseForm() {
 							</form.AppField>
 						</div>
 						<form.AppField name="description">
-							{(field) => <field.TiptapField label="Extra note" defaultValue={draft.description} />}
+							{(field) => <field.TiptapField label="Note" defaultValue={draft.description} />}
+						</form.AppField>
+						<form.AppField name="attachments">
+							{(field) => <field.FilesField label="Attachments" />}
 						</form.AppField>
 					</div>
 					<div className="col-span-5">
@@ -348,7 +347,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 						</div>
 						<form.AppField name="description">
 							{(field) => (
-								<field.TiptapField label="Extra note" defaultValue={expense?.description ?? ""} />
+								<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
 							)}
 						</form.AppField>
 					</div>
@@ -371,7 +370,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 
 function EditExpenseDialogContent(props: { id: string; onEditCallback?(): void }) {
 	return (
-		<DialogContent className="sm:max-w-[750px]">
+		<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 			<DialogHeader>
 				<DialogTitle>Edit expense</DialogTitle>
 				<DialogDescription>Update your expense details.</DialogDescription>

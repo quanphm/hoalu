@@ -2,6 +2,7 @@ import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
 import { workspaceFormSchema, workspaceMetadataFormSchema } from "@/lib/schema";
 import {
@@ -10,7 +11,6 @@ import {
 	useEditWorkspace,
 	useEditWorkspaceMetadata,
 } from "@/services/mutations";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
@@ -24,7 +24,6 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type VariantProps, cva } from "class-variance-authority";
 import { createContext, use, useMemo, useState } from "react";
@@ -134,8 +133,7 @@ function CreateWorkspaceForm() {
 }
 
 function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
-	const { slug } = routeApi.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
 	const mutation = useEditWorkspace();
 
 	const form = useAppForm({
@@ -146,7 +144,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 		validators: {
 			onSubmit: workspaceFormSchema.omit("currency"),
 			onSubmitAsync: async ({ value }) => {
-				if (value.slug === slug) {
+				if (value.slug === workspace.slug) {
 					return undefined;
 				}
 				const { error } = await authClient.workspace.checkSlug({ slug: value.slug });
@@ -230,8 +228,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 }
 
 function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
-	const { slug } = routeApi.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
 	const mutation = useEditWorkspaceMetadata();
 
 	const form = useAppForm({
@@ -384,7 +381,7 @@ const workspaceAvatarVariants = cva("rounded-lg", {
 
 interface Props {
 	logo: string | null | undefined;
-	name: string | undefined;
+	name: string;
 	className?: string;
 }
 
@@ -397,11 +394,7 @@ function WorkspaceAvatar({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage
-				src={logo || `https://avatar.vercel.sh/${logo}.svg`}
-				alt={name}
-				className={cn(!logo && "grayscale")}
-			/>
+			<AvatarImage src={logo ?? undefined} alt={name} className={cn(!logo && "grayscale")} />
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>

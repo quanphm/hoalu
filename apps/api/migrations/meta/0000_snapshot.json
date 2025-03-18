@@ -1,5 +1,5 @@
 {
-  "id": "6635cab5-af38-4450-bbdd-5a12392816d0",
+  "id": "a6be9e0f-f812-420f-977e-7bc0d1d1d407",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -674,7 +674,38 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "image_s3_url_idx": {
+          "name": "image_s3_url_idx",
+          "columns": [
+            {
+              "expression": "s3_url",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "image_description_idx": {
+          "name": "image_description_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('english', \"description\")",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {

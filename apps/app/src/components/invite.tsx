@@ -1,23 +1,19 @@
 import { useAppForm } from "@/components/forms";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
 import { inviteFormSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
-
-const routeApi = getRouteApi("/_dashboard/$slug");
 
 export function InviteDialog({ children }: { children: React.ReactNode }) {
 	const id = useId();
 	const [open, setOpen] = useState(false);
-	const { slug } = routeApi.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
 	const queryClient = useQueryClient();
 
 	const form = useAppForm({

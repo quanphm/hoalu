@@ -451,9 +451,6 @@ export const getInvitation = createAuthEndpoint(
 										workspaceName: {
 											type: "string",
 										},
-										workspaceSlug: {
-											type: "string",
-										},
 										inviterEmail: {
 											type: "string",
 										},
@@ -467,7 +464,6 @@ export const getInvitation = createAuthEndpoint(
 										"status",
 										"expiresAt",
 										"workspaceName",
-										"workspaceSlug",
 										"inviterEmail",
 									],
 								},
@@ -509,7 +505,6 @@ export const getInvitation = createAuthEndpoint(
 			inviterEmail: member.user.email,
 			inviterName: member.user.name,
 			workspaceName: workspace.name,
-			workspaceLogo: workspace.logo,
 			expiresAt: invitation.expiresAt,
 		});
 	},

@@ -3,6 +3,7 @@ import { isoDateSchema } from "../../common/schema";
 
 export const uploadUrlSchema = type({
 	"+": "delete",
+	id: "string.uuid.v7",
 	fileName: "string > 0",
 	path: "string",
 	uploadUrl: "string",

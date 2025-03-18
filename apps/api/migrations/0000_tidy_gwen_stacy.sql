@@ -229,6 +229,8 @@ CREATE INDEX "expense_title_idx" ON "expense" USING gin (to_tsvector('english', 
 CREATE INDEX "expense_description_idx" ON "expense" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
 CREATE INDEX "expense_workspace_id_idx" ON "expense" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "expense_wallet_id_idx" ON "expense" USING btree ("wallet_id");--> statement-breakpoint
+CREATE INDEX "image_s3_url_idx" ON "image" USING btree ("s3_url");--> statement-breakpoint
+CREATE INDEX "image_description_idx" ON "image" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
 CREATE INDEX "image_expense_workspace_id_idx" ON "image_expense" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "image_task_workspace_id_idx" ON "image_task" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("user_id");--> statement-breakpoint

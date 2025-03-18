@@ -8,10 +8,12 @@ import {
 	EditWorkspaceMetadataForm,
 } from "@/components/workspace";
 import { WorkspaceAvatar } from "@/components/workspace";
-import { useImageUpload } from "@/hooks/use-image-upload";
+import { useFilesUpload } from "@/hooks/use-files-upload";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import { useEditWorkspace } from "@/services/mutations";
+import { getActiveMemberOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -23,14 +25,15 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 
 function RouteComponent() {
 	const { slug } = Route.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
+	const mutation = useEditWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const {
-		data: avatar,
+		data: { previewUrls },
 		fileInputRef,
-		handleThumbnailClick,
+		handleBrowseFiles,
 		handleFileChange,
-	} = useImageUpload({
+	} = useFilesUpload({
 		onUpload: handleUpload,
 	});
 
@@ -50,20 +53,22 @@ function RouteComponent() {
 		},
 	});
 
-	async function handleUpload(file: File) {
-		const result = await apiClient.images.createPresignedUploadUrl({ size: file.size });
+	async function handleUpload(files: File[]) {
 		try {
-			await fetch(result.uploadUrl, {
-				method: "PUT",
-				headers: {
-					"Content-Type": file.type,
+			const result = await apiClient.images.uploadWithPresignedUrl(files[0]);
+			await mutation.mutateAsync({
+				payload: {
+					name: workspace.name,
+					slug: workspace.slug,
+					logo: result.path,
 				},
-				body: file,
 			});
-		} catch (error: any) {
-			toast.error("Update workspace picture failed", {
-				description: error.message,
-			});
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error("Update workspace picture failed", {
+					description: error.message,
+				});
+			}
 		}
 	}
 
@@ -94,11 +99,11 @@ function RouteComponent() {
 									variant="outline"
 									size="icon"
 									className="size-14"
-									onClick={handleThumbnailClick}
+									onClick={handleBrowseFiles}
 								>
 									<WorkspaceAvatar
 										size="lg"
-										logo={avatar.preview ?? workspace.logo}
+										logo={previewUrls[0] ?? workspace.logo}
 										name={workspace.name}
 									/>
 								</Button>

@@ -62,7 +62,7 @@ export const listWorkspacesOptions = () => {
 			if (!data) return [];
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.HOUR,
+		staleTime: TIME_IN_MILLISECONDS.DAY,
 		placeholderData: [],
 	});
 };
@@ -79,7 +79,7 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 			if (error) throw error;
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.HOUR,
+		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
 
@@ -108,6 +108,18 @@ export const invitationDetailsOptions = (id: string) => {
 			if (!data) return null;
 			return data;
 		},
+	});
+};
+
+export const getWorkspaceLogo = (slug: string) => {
+	return queryOptions({
+		queryKey: workspaceKeys.logo(slug),
+		queryFn: async () => {
+			const data = await apiClient.images.workspaceLogo(slug);
+			return data;
+		},
+		staleTime: TIME_IN_MILLISECONDS.DAY,
+		retry: 2,
 	});
 };
 

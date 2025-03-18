@@ -245,6 +245,28 @@ const images = {
 		const { data } = await response.json();
 		return data;
 	},
+	uploadWithPresignedUrl: async (file: File) => {
+		const presignedData = await images.createPresignedUploadUrl({ size: file.size });
+		await fetch(presignedData.uploadUrl, {
+			method: "PUT",
+			headers: {
+				"Content-Type": file.type,
+			},
+			body: file,
+		});
+		return {
+			id: presignedData.id,
+			name: presignedData.fileName,
+			path: presignedData.path,
+		};
+	},
+	workspaceLogo: async (slug: string) => {
+		const response = await honoClient.api.images.workpsace.logo.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		const { data } = await response.json();
+		return data;
+	},
 };
 
 export const apiClient = {

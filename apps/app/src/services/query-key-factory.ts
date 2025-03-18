@@ -12,6 +12,7 @@ export const authKeys = {
 export const workspaceKeys = {
 	all: ["workspaces"] as const,
 	withSlug: (slug: string) => [...workspaceKeys.all, slug] as const,
+	logo: (slug: string) => [...workspaceKeys.withSlug(slug), "logo"] as const,
 };
 
 export const memberKeys = {

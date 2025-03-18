@@ -290,14 +290,21 @@ export const task = pgTable(
  * image
  */
 
-export const image = pgTable("image", {
-	id: uuid("id").primaryKey(),
-	fileName: text("file_name").notNull().unique(),
-	s3Url: text("s3_url").notNull(),
-	description: text("description"),
-	tags: text("tags").array().default(sql`ARRAY[]::text[]`),
-	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-});
+export const image = pgTable(
+	"image",
+	{
+		id: uuid("id").primaryKey(),
+		fileName: text("file_name").notNull().unique(),
+		s3Url: text("s3_url").notNull(),
+		description: text("description"),
+		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("image_s3_url_idx").on(table.s3Url),
+		index("image_description_idx").using("gin", sql`to_tsvector('english', ${table.description})`),
+	],
+);
 
 export const imageExpense = pgTable(
 	"image_expense",
