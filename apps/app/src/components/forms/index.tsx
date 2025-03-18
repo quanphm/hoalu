@@ -2,6 +2,7 @@ import { createFormHook } from "@tanstack/react-form";
 import { ColorsField } from "./color";
 import { fieldContext, formContext } from "./context";
 import { DatepickerField } from "./datepicker";
+import { FilesField } from "./files";
 import { Form } from "./form";
 import { InputField } from "./input";
 import { InputWithPrefixField } from "./input-with-prefix";
@@ -26,6 +27,7 @@ const { useAppForm, withForm } = createFormHook({
 		SwitchField,
 		ColorsField,
 		TiptapField,
+		FilesField,
 	},
 	formComponents: {
 		Form,

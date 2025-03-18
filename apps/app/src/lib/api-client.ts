@@ -233,10 +233,48 @@ const exchangeRates = {
 	},
 };
 
+const images = {
+	createPresignedUploadUrl: async (slug: string, payload: { size: number }) => {
+		const response = await honoClient.api.images["generate-upload-url"].$post({
+			query: { workspaceIdOrSlug: slug },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	uploadWithPresignedUrl: async (slug: string, file: File) => {
+		const presignedData = await images.createPresignedUploadUrl(slug, { size: file.size });
+		await fetch(presignedData.uploadUrl, {
+			method: "PUT",
+			headers: {
+				"Content-Type": file.type,
+			},
+			body: file,
+		});
+		return {
+			id: presignedData.id,
+			name: presignedData.fileName,
+			path: presignedData.path,
+		};
+	},
+	workspaceLogo: async (slug: string) => {
+		const response = await honoClient.api.images.workpsace.logo.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
 	categories,
 	expenses,
 	exchangeRates,
+	images,
 };

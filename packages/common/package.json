@@ -6,11 +6,13 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
+		"./http-status": "./src/http-status/index.ts",
 		"./enums": "./src/enums.ts",
 		"./generate-id": "./src/generate-id.ts",
-		"./http-status": "./src/http-status/index.ts",
-		"./standard-validate": "./src/standard-validate.ts",
+		"./io": "./src/io.ts",
 		"./slugify": "./src/slugify.ts",
+		"./standard-validate": "./src/standard-validate.ts",
+		"./time": "./src/time.ts",
 		"./try-catch": "./src/try-catch.ts"
 	},
 	"devDependencies": {

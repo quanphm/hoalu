@@ -45,11 +45,7 @@ function RouteComponent() {
 			<Card className="select-none text-center">
 				<CardHeader>
 					<CardTitle className="flex flex-col items-center justify-center gap-4 text-xl">
-						<WorkspaceAvatar
-							size="lg"
-							logo={invitation.workspaceLogo}
-							name={invitation.workspaceName}
-						/>
+						<WorkspaceAvatar size="lg" logo={null} name={invitation.workspaceName} />
 						{invitation.inviterName} has invited you to {invitation.workspaceName}
 					</CardTitle>
 				</CardHeader>

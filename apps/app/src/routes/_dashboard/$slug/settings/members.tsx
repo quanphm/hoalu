@@ -2,8 +2,9 @@ import { InvitationsTable } from "@/components/invitations-table";
 import { InviteDialog } from "@/components/invite";
 import { MembersTable } from "@/components/members-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import { getActiveMemberOptions } from "@/services/query-options";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 
 function RouteComponent() {
 	const { slug } = Route.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const canInvite = authClient.workspace.checkRolePermission({
 		// @ts-expect-error: [todo] fix role type

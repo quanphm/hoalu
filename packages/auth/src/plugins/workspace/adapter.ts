@@ -2,7 +2,6 @@ import { BetterAuthError } from "better-auth";
 import type { AuthContext } from "better-auth/types";
 import { z } from "zod";
 import { getDate } from "../../utils/date";
-import { parseJSON } from "../../utils/parser";
 import type { User } from "../../utils/types";
 import type { WorkspaceOptions } from "./index";
 import type {

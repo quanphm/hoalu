@@ -1,23 +1,36 @@
 import { generateId } from "@hoalu/common/generate-id";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { db, schema } from "../../db";
 
 type NewImage = typeof schema.image.$inferInsert;
 
 export class ImageRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
-		const queryData = await db
-			.select()
-			.from(schema.image)
-			.innerJoin(schema.workspace, eq(schema.image.workspaceId, schema.workspace.id))
-			.where(eq(schema.image.workspaceId, param.workspaceId));
+		const imageExpenseSubquery = db
+			.select({ imageId: schema.imageExpense.imageId })
+			.from(schema.imageExpense)
+			.where(eq(schema.imageExpense.workspaceId, param.workspaceId))
+			.as("image_expense_subquery");
 
-		const result = queryData.map((data) => ({
-			...data.image,
-			workspace: data.workspace,
-		}));
+		const imageTaskSubquery = db
+			.select({ imageId: schema.imageTask.imageId })
+			.from(schema.imageTask)
+			.where(eq(schema.imageTask.workspaceId, param.workspaceId))
+			.as("image_task_subquery");
 
-		return result;
+		const combinedImageIds = await db
+			.selectDistinct({ imageId: imageExpenseSubquery.imageId })
+			.from(imageExpenseSubquery)
+			.union(db.selectDistinct({ imageId: imageTaskSubquery.imageId }).from(imageTaskSubquery));
+
+		if (combinedImageIds.length === 0) {
+			return [];
+		}
+
+		const imageIds = combinedImageIds.map((item) => item.imageId);
+		const images = await db.select().from(schema.image).where(inArray(schema.image.id, imageIds));
+
+		return images;
 	}
 
 	async findOne(param: { id: string }) {
@@ -40,7 +53,6 @@ export class ImageRepository {
 			})
 			.returning();
 
-		const result = await this.findOne({ id: image.id });
-		return result;
+		return image;
 	}
 }

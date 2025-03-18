@@ -6,12 +6,17 @@ import {
 	DeleteWorkspaceTrigger,
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
+	WorkspaceAvatar,
 } from "@/components/workspace";
-import { WorkspaceAvatar } from "@/components/workspace";
+import { useFilesUpload } from "@/hooks/use-files-upload";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions, getWorkspaceDetailsOptions } from "@/services/query-options";
+import { useEditWorkspace } from "@/services/mutations";
+import { getActiveMemberOptions, getWorkspaceLogo } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { toast } from "@hoalu/ui/sonner";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
@@ -20,8 +25,18 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 
 function RouteComponent() {
 	const { slug } = Route.useParams();
-	const { data: workspace } = useSuspenseQuery(getWorkspaceDetailsOptions(slug));
+	const workspace = useWorkspace();
+	const { data: logo } = useQuery(getWorkspaceLogo(workspace.slug, workspace.logo));
+	const mutation = useEditWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
+	const {
+		data: { previewUrls },
+		fileInputRef,
+		handleBrowseFiles,
+		handleFileChange,
+	} = useFilesUpload({
+		onUpload: handleUpload,
+	});
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
 		// @ts-expect-error: [todo] fix role type
@@ -38,6 +53,25 @@ function RouteComponent() {
 			organization: ["update"],
 		},
 	});
+
+	async function handleUpload(files: File[]) {
+		try {
+			const result = await apiClient.images.uploadWithPresignedUrl(workspace.slug, files[0]);
+			await mutation.mutateAsync({
+				payload: {
+					name: workspace.name,
+					slug: workspace.slug,
+					logo: result.path,
+				},
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error("Update workspace picture failed", {
+					description: error.message,
+				});
+			}
+		}
+	}
 
 	return (
 		<>
@@ -62,7 +96,22 @@ function RouteComponent() {
 									</p>
 								}
 							>
-								<WorkspaceAvatar size="lg" logo={workspace.logo} name={workspace.name} />
+								<Button
+									variant="outline"
+									size="icon"
+									className="size-14"
+									onClick={handleBrowseFiles}
+								>
+									<WorkspaceAvatar size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
+								</Button>
+								<input
+									type="file"
+									ref={fileInputRef}
+									onChange={handleFileChange}
+									className="hidden"
+									accept="image/*"
+									aria-label="Upload image file"
+								/>
 							</SettingCard>
 							<SettingCard title="Workspace ID">
 								<InputWithCopy value={workspace.publicId} />

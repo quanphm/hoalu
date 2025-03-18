@@ -294,19 +294,24 @@ export const image = pgTable(
 	"image",
 	{
 		id: uuid("id").primaryKey(),
-		fileName: text("file_name").notNull(),
+		fileName: text("file_name").notNull().unique(),
 		s3Url: text("s3_url").notNull(),
 		description: text("description"),
 		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
-		workspaceId: uuid("workspace_id").references(() => workspace.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 	},
-	(table) => [index("image_workspace_id_idx").on(table.workspaceId)],
+	(table) => [
+		index("image_s3_url_idx").on(table.s3Url),
+		index("image_description_idx").using("gin", sql`to_tsvector('english', ${table.description})`),
+	],
 );
 
 export const imageExpense = pgTable(
 	"image_expense",
 	{
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
 		expenseId: uuid("expense_id")
 			.notNull()
 			.references(() => expense.id, { onDelete: "cascade" }),
@@ -314,12 +319,18 @@ export const imageExpense = pgTable(
 			.notNull()
 			.references(() => image.id, { onDelete: "cascade" }),
 	},
-	(table) => [primaryKey({ columns: [table.expenseId, table.imageId] })],
+	(table) => [
+		primaryKey({ columns: [table.workspaceId, table.expenseId, table.imageId] }),
+		index("image_expense_workspace_id_idx").on(table.workspaceId),
+	],
 );
 
 export const imageTask = pgTable(
 	"image_task",
 	{
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
 		taskId: uuid("task_id")
 			.notNull()
 			.references(() => task.id, { onDelete: "cascade" }),
@@ -327,5 +338,8 @@ export const imageTask = pgTable(
 			.notNull()
 			.references(() => image.id, { onDelete: "cascade" }),
 	},
-	(table) => [primaryKey({ columns: [table.taskId, table.imageId] })],
+	(table) => [
+		primaryKey({ columns: [table.workspaceId, table.taskId, table.imageId] }),
+		index("image_task_workspace_id_idx").on(table.workspaceId),
+	],
 );

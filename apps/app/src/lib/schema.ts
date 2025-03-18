@@ -9,15 +9,24 @@ import {
 import { type } from "arktype";
 import type { InferRequestType, InferResponseType } from "hono/client";
 
+export const imageFileSchema = type({
+	name: "string",
+	type: "string",
+	size: "number",
+});
+export type ImageFile = typeof imageFileSchema.inferOut;
+
 /**
  * enums
  */
 export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
 export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
-export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-export const colorSchema = type("===", ...PG_ENUM_COLOR);
 
+export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
+export type WalletType = typeof walletTypeSchema.inferOut;
+
+export const colorSchema = type("===", ...PG_ENUM_COLOR);
 export type Color = typeof colorSchema.inferOut;
 
 /**
@@ -27,6 +36,7 @@ export const workspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
 	currency: "string > 0",
+	"logo?": "string | null",
 });
 export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
 export const workspaceMetadataFormSchema = type({
@@ -57,6 +67,7 @@ export const expenseFormSchema = type({
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
 	repeat: repeatSchema,
+	attachments: imageFileSchema.array(),
 });
 export type ExpenseFormSchema = typeof expenseFormSchema.infer;
 export type ExpenseSchema = InferResponseType<

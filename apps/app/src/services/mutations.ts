@@ -71,6 +71,7 @@ export function useEditWorkspace() {
 				data: {
 					name: payload.name,
 					slug: payload.slug === slug ? undefined : payload.slug,
+					logo: payload.logo || undefined,
 				},
 				idOrSlug: slug,
 			});
@@ -402,3 +403,7 @@ export function useDeleteCategory() {
 	});
 	return mutation;
 }
+
+/**
+ * categories
+ */

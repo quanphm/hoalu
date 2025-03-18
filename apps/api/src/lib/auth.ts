@@ -1,5 +1,6 @@
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { generateId } from "@hoalu/common/generate-id";
+import { TIME_IN_SECONDS } from "@hoalu/common/time";
 import JoinWorkspace from "@hoalu/email/join-workspace";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";
@@ -28,8 +29,8 @@ export const auth = betterAuth({
 		cookieCache: {
 			enabled: true,
 		},
-		expiresIn: 60 * 60 * 24 * 7, // 7 days
-		updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
+		expiresIn: TIME_IN_SECONDS.DAY * 7, // 7 days
+		updateAge: TIME_IN_SECONDS.DAY, // 1 day (every 1 day the session expiration is updated)
 	},
 	emailAndPassword: {
 		enabled: true,

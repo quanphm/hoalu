@@ -1,6 +1,5 @@
-import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon, UndoIcon } from "@hoalu/icons/lucide";
+import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Separator } from "@hoalu/ui/separator";
 import Placeholder from "@tiptap/extension-placeholder";
 import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -14,7 +13,7 @@ export const extensions = [
 	}),
 ];
 
-export function TiptapMenuBar({ editor }: { editor: Editor | null }) {
+export function Toolbar({ editor }: { editor: Editor | null }) {
 	if (!editor) {
 		return null;
 	}
@@ -59,17 +58,6 @@ export function TiptapMenuBar({ editor }: { editor: Editor | null }) {
 				type="button"
 			>
 				<ListOrderedIcon className="h-4 w-4" />
-			</Button>
-			<Separator orientation="vertical" className="h-5" />
-			<Button
-				variant="ghost"
-				size="icon"
-				onClick={() => editor.chain().focus().undo().run()}
-				disabled={!editor.can().chain().focus().undo().run()}
-				tabIndex={-1}
-				type="button"
-			>
-				<UndoIcon className="h-4 w-4" />
 			</Button>
 		</div>
 	);

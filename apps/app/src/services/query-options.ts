@@ -1,4 +1,3 @@
-import { TIME_IN_MILLISECONDS } from "@/helpers/constants";
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
 import type { ExchangeRatesQuerySchema } from "@/lib/schema";
@@ -13,6 +12,7 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
+import { TIME_IN_MILLISECONDS } from "@hoalu/common/time";
 import { queryOptions } from "@tanstack/react-query";
 
 /**
@@ -62,7 +62,7 @@ export const listWorkspacesOptions = () => {
 			if (!data) return [];
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.HOUR,
+		staleTime: TIME_IN_MILLISECONDS.DAY,
 		placeholderData: [],
 	});
 };
@@ -79,7 +79,7 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 			if (error) throw error;
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.HOUR,
+		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
 
@@ -108,6 +108,19 @@ export const invitationDetailsOptions = (id: string) => {
 			if (!data) return null;
 			return data;
 		},
+	});
+};
+
+export const getWorkspaceLogo = (slug: string, logo: string | null | undefined) => {
+	return queryOptions({
+		enabled: logo?.startsWith("s3://"),
+		queryKey: workspaceKeys.logo(slug),
+		queryFn: async () => {
+			const data = await apiClient.images.workspaceLogo(slug);
+			return data;
+		},
+		staleTime: TIME_IN_MILLISECONDS.DAY,
+		retry: 2,
 	});
 };
 

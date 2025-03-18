@@ -237,11 +237,8 @@ export const updateWorkspace = createAuthEndpoint(
 		}
 		const role = ctx.context.roles[member.role];
 		if (!role) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: "Role not found!",
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: "Role not found!",
 			});
 		}
 		const canUpdateOrg = role.authorize({
@@ -303,11 +300,8 @@ export const deleteWorkspace = createAuthEndpoint(
 		}
 		const idOrSlug = ctx.body.idOrSlug;
 		if (!idOrSlug) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
@@ -322,20 +316,14 @@ export const deleteWorkspace = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}
 		const role = ctx.context.roles[member.role];
 		if (!role) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: "Role not found!",
-				},
+			throw new APIError("BAD_REQUEST", {
+				message: "Role not found!",
 			});
 		}
 		const canDeleteOrg = role.authorize({
