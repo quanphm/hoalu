@@ -5,7 +5,7 @@ export const uploadUrlSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	fileName: "string > 0",
-	path: "string",
+	s3Url: "string",
 	uploadUrl: "string",
 });
 

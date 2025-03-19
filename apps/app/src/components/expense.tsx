@@ -7,7 +7,12 @@ import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
-import { useCreateExpense, useDeleteExpense, useEditExpense } from "@/services/mutations";
+import {
+	useCreateExpense,
+	useDeleteExpense,
+	useEditExpense,
+	useUploadExpenseFiles,
+} from "@/services/mutations";
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -70,6 +75,7 @@ function CreateExpenseForm() {
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const mutation = useCreateExpense();
+	const expenseFilesMutation = useUploadExpenseFiles();
 
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
@@ -130,7 +136,7 @@ function CreateExpenseForm() {
 			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
+			const expense = await mutation.mutateAsync({
 				payload: {
 					title: value.title,
 					description: value.description,
@@ -142,8 +148,11 @@ function CreateExpenseForm() {
 					repeat: value.repeat,
 				},
 			});
-			setOpen(false);
 			setDraft(RESET);
+			setOpen(false);
+			if (value.attachments.length > 0) {
+				await expenseFilesMutation.mutateAsync({ id: expense.id, files: value.attachments });
+			}
 		},
 	});
 
