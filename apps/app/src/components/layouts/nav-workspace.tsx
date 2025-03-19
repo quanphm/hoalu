@@ -22,7 +22,7 @@ export function NavWorkspace() {
 							<GalleryVerticalIcon />
 							<span>Dashboard</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_dashboard.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -34,7 +34,7 @@ export function NavWorkspace() {
 							<ArrowRightLeftIcon />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_expenses.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -46,7 +46,7 @@ export function NavWorkspace() {
 							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_tasks.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>

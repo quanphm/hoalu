@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 import { useRemoveMember } from "@/services/mutations";
 import { getActiveMemberOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -120,7 +120,7 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

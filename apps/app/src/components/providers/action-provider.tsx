@@ -3,6 +3,7 @@ import {
 	createExpenseDialogOpenAtom,
 	createWalletDialogOpenAtom,
 } from "@/atoms/dialogs";
+import { draftExpenseAtom } from "@/atoms/draft-expense";
 import { CreateCategoryDialog } from "@/components/category";
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
@@ -11,7 +12,9 @@ import { listWorkspacesOptions } from "@/services/query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
 import { useTheme } from "next-themes";
+import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 /**
@@ -26,6 +29,13 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
 	const setCategoryOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const setExpenseDraft = useSetAtom(draftExpenseAtom);
+
+	useEffect(() => {
+		if (slug) {
+			setExpenseDraft(RESET);
+		}
+	}, [slug, setExpenseDraft]);
 
 	useHotkeys(
 		AVAILABLE_WORKSPACE_SHORTCUT,
@@ -115,7 +125,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				navigate({ to: "/$slug/expenses", params: { slug } });
 			}
 		},
-		{ description: "Navigate: Expenses", enabled: !!slug },
+		{
+			description: "Navigate: Expenses",
+			enabled: !!slug && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
+		},
 		[slug, navigate],
 	);
 
@@ -126,7 +139,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				navigate({ to: "/$slug/tasks", params: { slug } });
 			}
 		},
-		{ description: "Navigate: Tasks", enabled: false },
+		{
+			description: "Navigate: Tasks",
+			enabled: !!slug && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
+		},
 		[slug, navigate],
 	);
 
@@ -137,7 +153,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				navigate({ to: "/$slug/settings/workspace", params: { slug } });
 			}
 		},
-		{ description: "Navigate: Settings / Workspace", enabled: !!slug },
+		{
+			description: "Navigate: Settings / Workspace",
+			enabled: !!slug && KEYBOARD_SHORTCUTS.goto_workspace.enabled,
+		},
 		[slug, navigate],
 	);
 
@@ -148,7 +167,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				navigate({ to: "/$slug/settings/members", params: { slug } });
 			}
 		},
-		{ description: "Navigate: Settings / Members", enabled: !!slug },
+		{
+			description: "Navigate: Settings / Members",
+			enabled: !!slug && KEYBOARD_SHORTCUTS.goto_members.enabled,
+		},
 		[slug, navigate],
 	);
 
@@ -159,7 +181,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				navigate({ to: "/$slug/settings/library", params: { slug } });
 			}
 		},
-		{ description: "Navigate: Settings / Library", enabled: !!slug },
+		{
+			description: "Navigate: Settings / Library",
+			enabled: !!slug && KEYBOARD_SHORTCUTS.goto_library.enabled,
+		},
 		[slug, navigate],
 	);
 
@@ -168,7 +193,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/account/preferences" });
 		},
-		{ description: "Navigate: Preferences" },
+		{
+			description: "Navigate: Preferences",
+			enabled: KEYBOARD_SHORTCUTS.goto_preferences.enabled,
+		},
 		[navigate],
 	);
 
@@ -177,7 +205,10 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		() => {
 			navigate({ to: "/account/tokens" });
 		},
-		{ description: "Navigate: Tokens" },
+		{
+			description: "Navigate: Tokens",
+			enabled: KEYBOARD_SHORTCUTS.goto_tokens.enabled,
+		},
 		[navigate],
 	);
 

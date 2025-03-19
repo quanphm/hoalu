@@ -14,7 +14,7 @@ import {
 	useUploadExpenseFiles,
 } from "@/services/mutations";
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -61,10 +61,7 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<HotKeyWithTooltip
-			onClick={() => setOpen(true)}
-			shortcut={KEYBOARD_SHORTCUTS.create_expense.label}
-		>
+		<HotKeyWithTooltip onClick={() => setOpen(true)} shortcut={KEYBOARD_SHORTCUTS.create_expense}>
 			{children}
 		</HotKeyWithTooltip>
 	);
@@ -231,7 +228,7 @@ function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

@@ -6,7 +6,7 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import { type CategoryFormSchema, categoryFormSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -66,7 +66,7 @@ function CreateCategoryDialogTrigger({
 		<HotKeyWithTooltip
 			onClick={() => setOpen(true)}
 			showTooltip={showTooltip}
-			shortcut={KEYBOARD_SHORTCUTS.create_category.label}
+			shortcut={KEYBOARD_SHORTCUTS.create_category}
 		>
 			{children}
 		</HotKeyWithTooltip>
@@ -140,7 +140,7 @@ function CategoryDropdownMenuWithModal({ id }: { id: string }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

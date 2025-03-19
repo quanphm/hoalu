@@ -2,7 +2,7 @@ import { DataTable } from "@/components/data-table";
 import { authClient } from "@/lib/auth-client";
 import { useCancelInvitation } from "@/services/mutations";
 import { getActiveMemberOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -94,7 +94,7 @@ function RowActions({ row }: { row: Row<Member> }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

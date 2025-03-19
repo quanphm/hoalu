@@ -62,7 +62,7 @@ export function NavUser() {
 								<DropdownMenuSubTrigger>
 									<PaletteIcon />
 									<span>Themes</span>
-									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.toggle_theme.label}</HotKey>
+									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.toggle_theme} />
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuSubContent>
@@ -93,14 +93,14 @@ export function NavUser() {
 								<Link to="/account/preferences">
 									<SettingsIcon />
 									Preferences
-									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_preferences.label}</HotKey>
+									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_preferences} />
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
 								<Link to="/account/tokens">
 									<KeyRoundIcon />
 									Access tokens
-									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_tokens.label}</HotKey>
+									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_tokens} />
 								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>

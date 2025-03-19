@@ -1,6 +1,11 @@
 import type { WalletType } from "@/lib/schema";
 import { getCurrencyList } from "@hoalu/countries";
 
+export const kbdSymbols = {
+	SHIFT: "⇧",
+	META: "⌘",
+};
+
 export const AVAILABLE_CURRENCY_OPTIONS: {
 	label: string;
 	value: string;
@@ -23,60 +28,74 @@ export const AVAILABLE_WALLET_TYPE_OPTIONS: {
 
 export const KEYBOARD_SHORTCUTS = {
 	create_expense: {
-		label: "Shift E",
+		label: "⇧ E",
 		hotkey: "shift+e",
+		enabled: true,
 	},
 	create_wallet: {
-		label: "Shift W",
+		label: "⇧ W",
 		hotkey: "shift+w",
+		enabled: true,
 	},
 	create_category: {
-		label: "Shift C",
+		label: "⇧ C",
 		hotkey: "shift+c",
+		enabled: true,
 	},
 	goto_home: {
 		label: "H",
 		hotkey: "h",
+		enabled: true,
 	},
 	goto_dashboard: {
 		label: "D",
 		hotkey: "d",
+		enabled: true,
 	},
 	goto_expenses: {
 		label: "E",
 		hotkey: "e",
+		enabled: true,
 	},
 	goto_tasks: {
 		label: "T",
 		hotkey: "t",
+		enabled: false,
 	},
 	goto_workspace: {
 		label: "S",
 		hotkey: "s",
+		enabled: true,
 	},
 	goto_members: {
 		label: "M",
 		hotkey: "m",
+		enabled: false,
 	},
 	goto_library: {
 		label: "L",
 		hotkey: "l",
+		enabled: true,
 	},
 	goto_preferences: {
-		label: "P",
-		hotkey: "p",
+		label: "⇧ ⌘ P",
+		hotkey: "shift+meta+p",
+		enabled: false,
 	},
 	goto_tokens: {
-		label: "A",
-		hotkey: "a",
+		label: "⇧ ⌘ A",
+		hotkey: "shift+meta+a",
+		enabled: false,
 	},
 	toggle_theme: {
-		label: "Shift D",
+		label: "⇧ D",
 		hotkey: "shift+d",
+		enabled: true,
 	},
 	search: {
 		label: "/",
 		hotkey: "/",
+		enabled: true,
 	},
 } as const;
 

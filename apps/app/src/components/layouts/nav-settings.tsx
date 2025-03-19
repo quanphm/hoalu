@@ -22,7 +22,7 @@ export function NavSettings() {
 							<BuildingIcon />
 							<span>Workspace</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_workspace.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -34,7 +34,7 @@ export function NavSettings() {
 							<UsersIcon />
 							<span>Members</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_members.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_members} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
@@ -46,7 +46,7 @@ export function NavSettings() {
 							<LibraryBigIcon />
 							<span>Library</span>
 							<SidebarMenuBadge>
-								<HotKey>{KEYBOARD_SHORTCUTS.goto_library.label}</HotKey>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_library} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
