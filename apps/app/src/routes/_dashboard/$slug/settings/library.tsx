@@ -29,18 +29,18 @@ function RouteComponent() {
 	return (
 		<Tabs defaultValue="general">
 			<ScrollArea>
-				<TabsList className="-space-x-px mb-3 h-auto bg-background p-0 shadow-xs rtl:space-x-reverse">
+				<TabsList className="mb-8 gap-4 bg-transparent">
 					<TabsTrigger
 						value="general"
-						className="relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e data-[state=active]:bg-muted data-[state=active]:after:bg-primary"
+						className="rounded-md border px-6 data-[state=active]:bg-muted data-[state=active]:text-primary"
 					>
 						General
 					</TabsTrigger>
 					<TabsTrigger
 						value="images"
-						className="relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e data-[state=active]:bg-muted data-[state=active]:after:bg-primary"
+						className="rounded-md border px-6 data-[state=active]:bg-muted data-[state=active]:text-primary"
 					>
-						Images
+						Photos
 					</TabsTrigger>
 				</TabsList>
 				<ScrollBar orientation="horizontal" />

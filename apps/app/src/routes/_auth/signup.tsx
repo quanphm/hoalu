@@ -5,7 +5,7 @@ import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/signup")({
@@ -14,8 +14,8 @@ export const Route = createFileRoute("/_auth/signup")({
 
 function RouteComponent() {
 	const router = useRouter();
+	const navigate = useNavigate();
 	const search = Route.useSearch();
-	const navigate = Route.useNavigate();
 	const queryClient = useQueryClient();
 
 	const form = useAppForm({

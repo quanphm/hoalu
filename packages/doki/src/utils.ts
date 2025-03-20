@@ -30,4 +30,19 @@ function parseShapeData<T extends Row<unknown>>(shape: Shape<T>): UseShapeResult
 	};
 }
 
-export { sortedOptionsHash, parseShapeData };
+function shapeResultChanged<T extends Row<unknown>>(
+	oldRes: UseShapeResult<T> | undefined,
+	newRes: UseShapeResult<T>,
+) {
+	return (
+		!oldRes ||
+		oldRes.isLoading !== newRes.isLoading ||
+		oldRes.lastSyncedAt !== newRes.lastSyncedAt ||
+		oldRes.isError !== newRes.isError ||
+		oldRes.error !== newRes.error ||
+		oldRes.shape.lastOffset !== newRes.shape.lastOffset ||
+		oldRes.shape.handle !== newRes.shape.handle
+	);
+}
+
+export { sortedOptionsHash, parseShapeData, shapeResultChanged };

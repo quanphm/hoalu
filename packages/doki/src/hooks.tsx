@@ -9,7 +9,7 @@ import type {
 	ShapeStreamOptions,
 	UseShapeResult,
 } from "./types";
-import { parseShapeData, sortedOptionsHash } from "./utils";
+import { parseShapeData, shapeResultChanged, sortedOptionsHash } from "./utils";
 
 type UnknownShape = Shape<Row<unknown>>;
 type UnknownShapeStream = ShapeStream<Row<unknown>>;
@@ -24,7 +24,7 @@ function getShapeStream<T extends Row<unknown>>(
 
 	// If the stream is already cached, return it if valid
 	if (streamCache.has(shapeHash)) {
-		const stream = streamCache.get(shapeHash)! as ShapeStream<T>;
+		const stream = streamCache.get(shapeHash) as ShapeStream<T>;
 		if (!stream.options.signal?.aborted) {
 			return stream;
 		}
@@ -43,7 +43,7 @@ function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): Shape<T>
 	// If the stream is already cached, return it if valid
 	if (shapeCache.has(shapeStream)) {
 		if (!shapeStream.options.signal?.aborted) {
-			return shapeCache.get(shapeStream)! as Shape<T>;
+			return shapeCache.get(shapeStream) as Shape<T>;
 		}
 		// if stream is aborted, remove it and related shapes
 		streamCache.delete(sortedOptionsHash(shapeStream.options));
@@ -61,45 +61,54 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 	syncKey,
 	optionsFn,
 }: {
-	syncKey: string[];
+	syncKey: readonly string[];
 	optionsFn: () => Promise<AppShapeOptions<T, S>>;
 }) {
-	const eqSyncClient = useDoki();
+	const syncClient = useDoki();
 	const queryClient = useQueryClient();
-	const [controller, _] = React.useState(new AbortController());
 
 	const queryKey = syncKey[0] !== "sync" ? ["sync", ...syncKey] : syncKey;
 	const { data: options } = useQuery({
 		queryKey,
 		queryFn: () => optionsFn(),
 	});
-	const [data, setData] = React.useState<UseShapeResult<T>>({
-		data: [] as T[],
-		isLoading: false,
-		isError: false,
-	});
+
+	const [controller, _] = React.useState(new AbortController());
+	const [data, setData] = React.useState<Pick<UseShapeResult<T>, "data" | "isLoading" | "isError">>(
+		{
+			data: [] as T[],
+			isLoading: false,
+			isError: false,
+		},
+	);
+	const latestShapeData = React.useRef<UseShapeResult<T> | undefined>(undefined);
 
 	React.useEffect(() => {
-		if (!options) {
-			return;
-		}
+		if (!options) return;
 
 		const shapeStream = getShapeStream<T>({
 			...options,
-			url: eqSyncClient.baseUrl,
+			url: syncClient.baseUrl,
 			signal: controller.signal,
 			fetchClient: (req, init) => fetch(req, { ...init, credentials: "include" }),
 		} as ShapeStreamOptions<GetExtensions<T>>);
 		const shape = getShape<T>(shapeStream);
-		const unsubscribe = shape.subscribe((data) => {
-			const latestShapeData = parseShapeData(shape);
-			setData(latestShapeData);
+
+		const unsubscribe = shape.subscribe((_data) => {
+			/**
+			 * @see https://github.com/electric-sql/electric/pull/2408
+			 */
+			const newShapeData = parseShapeData(shape);
+			if (shapeResultChanged(latestShapeData.current, newShapeData)) {
+				latestShapeData.current = newShapeData;
+				setData(newShapeData);
+			}
 		});
 
 		return () => {
 			unsubscribe();
 		};
-	}, [options, eqSyncClient.baseUrl, controller.signal]);
+	}, [options, syncClient.baseUrl, controller.signal]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: bypass
 	React.useEffect(() => {
@@ -107,7 +116,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 			queryClient.cancelQueries({ queryKey });
 			controller.abort();
 		};
-	}, []);
+	}, [queryKey]);
 
 	return data;
 }
@@ -115,7 +124,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 function useDoki() {
 	const context = React.useContext(DokiClientContext);
 	if (!context) {
-		throw new Error("useDoki must be use inside <EqSyncClientProvider> component.");
+		throw new Error("useDoki must be use inside <DokiClientProvider> component.");
 	}
 	return context;
 }

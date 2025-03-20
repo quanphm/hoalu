@@ -10,18 +10,27 @@ import type {
  * @see https://github.com/electric-sql/electric/blob/main/packages/react-hooks/src/react-hooks.tsx#L94C1-L116C2
  */
 interface UseShapeResult<T extends Row<unknown> = Row> {
-	/** The array of rows that make up the Shape */
+	/**
+	 * The array of rows that make up the Shape.
+	 * @type {T[]}
+	 */
 	data: T[];
-	/** The Shape instance used by this useShape */
-	shape?: Shape<T>;
-	/** The ShapeStream instance used by this Shape */
-	stream?: ShapeStream<T>;
-	/** True during initial fetch. False afterwise */
+	/**
+	 * The Shape instance used by this useShape
+	 * @type {Shape<T>}
+	 */
+	shape: Shape<T>;
+	/**
+	 * The ShapeStream instance used by this Shape
+	 * @type {ShapeStream<T>}
+	 */
+	stream: ShapeStream<T>;
+	/** True during initial fetch. False afterwise. */
 	isLoading: boolean;
-	error?: Shape<T>[`error`];
-	isError: boolean;
-	/** Unix time at which we last synced. Undefined when `isLoading` is true */
+	/** Unix time at which we last synced. Undefined when `isLoading` is true. */
 	lastSyncedAt?: number;
+	error: Shape<T>[`error`];
+	isError: boolean;
 }
 
 interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
