@@ -43,8 +43,8 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_home: {
-		label: "H",
-		hotkey: "h",
+		label: "⇧ H",
+		hotkey: "shift+h",
 		enabled: true,
 	},
 	goto_dashboard: {

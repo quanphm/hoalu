@@ -1,6 +1,6 @@
 import { HotKey } from "@/components/hotkey";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { BuildingIcon, LibraryBigIcon, UsersIcon } from "@hoalu/icons/lucide";
+import { BuildingIcon, LibraryIcon, UsersIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -43,7 +43,7 @@ export function NavSettings() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
 						<Link from="/$slug/" to="./settings/library">
-							<LibraryBigIcon />
+							<LibraryIcon />
 							<span>Library</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_library} />
