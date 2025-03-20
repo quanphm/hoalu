@@ -12,6 +12,8 @@ import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-op
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import { ScrollArea, ScrollBar } from "@hoalu/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -25,79 +27,102 @@ function RouteComponent() {
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
 	return (
-		<>
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Wallets</SectionTitle>
-					<CreateWalletDialogTrigger>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create wallet
-						</Button>
-					</CreateWalletDialogTrigger>
-				</SectionHeader>
-				<SectionContent columns={3}>
-					{wallets.map((w) => (
-						<ContentCard
-							key={w.id}
-							className="flex flex-col justify-between"
-							title={
-								<p className="flex items-center gap-1.5">
-									<WalletIcon type={w.type} />
-									{w.name}
-								</p>
-							}
-							description={w.description}
-							content={
-								<>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center gap-1.5">
-											<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
-											<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
+		<Tabs defaultValue="general">
+			<ScrollArea>
+				<TabsList className="-space-x-px mb-3 h-auto bg-background p-0 shadow-xs rtl:space-x-reverse">
+					<TabsTrigger
+						value="general"
+						className="relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e data-[state=active]:bg-muted data-[state=active]:after:bg-primary"
+					>
+						General
+					</TabsTrigger>
+					<TabsTrigger
+						value="images"
+						className="relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e data-[state=active]:bg-muted data-[state=active]:after:bg-primary"
+					>
+						Images
+					</TabsTrigger>
+				</TabsList>
+				<ScrollBar orientation="horizontal" />
+			</ScrollArea>
+			<TabsContent value="general" className="flex flex-col gap-10">
+				<Section>
+					<SectionHeader>
+						<SectionTitle>Wallets</SectionTitle>
+						<CreateWalletDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create wallet
+							</Button>
+						</CreateWalletDialogTrigger>
+					</SectionHeader>
+					<SectionContent columns={3}>
+						{wallets.map((w) => (
+							<ContentCard
+								key={w.id}
+								className="flex flex-col justify-between"
+								title={
+									<p className="flex items-center gap-1.5">
+										<WalletIcon type={w.type} />
+										{w.name}
+									</p>
+								}
+								description={w.description}
+								content={
+									<>
+										<div className="flex items-center justify-between">
+											<div className="flex items-center gap-1.5">
+												<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
+												<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
+											</div>
+											<Badge
+												variant="outline"
+												className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
+											>
+												{w.isActive ? (
+													<>
+														<span
+															className="size-1.5 rounded-full bg-green-500"
+															aria-hidden="true"
+														/>
+														In use
+													</>
+												) : (
+													<>
+														<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
+														Unused
+													</>
+												)}
+											</Badge>
 										</div>
-										<Badge
-											variant="outline"
-											className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
-										>
-											{w.isActive ? (
-												<>
-													<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
-													In use
-												</>
-											) : (
-												<>
-													<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
-													Unused
-												</>
-											)}
-										</Badge>
-									</div>
-									<div className="absolute top-3 right-4">
-										<WalletDropdownMenuWithModal id={w.id} />
-									</div>
-								</>
-							}
-						/>
-					))}
-				</SectionContent>
-			</Section>
+										<div className="absolute top-3 right-4">
+											<WalletDropdownMenuWithModal id={w.id} />
+										</div>
+									</>
+								}
+							/>
+						))}
+					</SectionContent>
+				</Section>
 
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Categories</SectionTitle>
-					<CreateCategoryDialogTrigger>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create category
-						</Button>
-					</CreateCategoryDialogTrigger>
-				</SectionHeader>
-				<SectionContent columns={12}>
-					<div className="sm:col-span-8">
-						<CategoriesTable data={categories} />
-					</div>
-				</SectionContent>
-			</Section>
-		</>
+				<Section>
+					<SectionHeader>
+						<SectionTitle>Categories</SectionTitle>
+						<CreateCategoryDialogTrigger>
+							<Button variant="outline" size="sm">
+								<PlusIcon className="mr-2 size-4" />
+								Create category
+							</Button>
+						</CreateCategoryDialogTrigger>
+					</SectionHeader>
+					<SectionContent columns={12}>
+						<div className="sm:col-span-8">
+							<CategoriesTable data={categories} />
+						</div>
+					</SectionContent>
+				</Section>
+			</TabsContent>
+			<TabsContent value="images">images</TabsContent>
+		</Tabs>
 	);
 }

@@ -10,5 +10,5 @@
 		"@biomejs/biome": "^1.9.4",
 		"typescript": "^5.8.2"
 	},
-	"packageManager": "bun@1.2.2"
+	"packageManager": "bun@1.2.6"
 }

@@ -16,7 +16,7 @@ export default defineConfig({
 	},
 	plugins: [
 		tailwindcss(),
-		TanStackRouterVite(),
+		TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
 		react(),
 		VitePWA({
 			registerType: "autoUpdate",
