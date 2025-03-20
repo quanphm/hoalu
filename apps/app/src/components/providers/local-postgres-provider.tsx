@@ -33,18 +33,14 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 			if (!pg) return;
 
 			console.log("PGlite worker started");
-			// pg.onLeaderChange(() => {
-			// 	if (pg.isLeader && !syncStarted) {
-			// 		syncStarted = true;
-			// 		startSync(pg);
-			// 	}
-			// });
+			pg.onLeaderChange(() => {
+				if (pg.isLeader && !syncStarted) {
+					syncStarted = true;
+					startSync(pg);
+				}
+			});
 
 			setPgForProvider(pg);
-			if (!syncStarted) {
-				syncStarted = true;
-				startSync(pg);
-			}
 		})();
 	}, []);
 
