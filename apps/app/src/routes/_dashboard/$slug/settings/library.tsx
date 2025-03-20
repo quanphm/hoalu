@@ -12,7 +12,6 @@ import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-op
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
