@@ -1,4 +1,5 @@
 import { createCategoryDialogOpenAtom } from "@/atoms/dialogs";
+import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
@@ -29,7 +30,6 @@ import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { useAppForm } from "./forms";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useAtom(createCategoryDialogOpenAtom);
@@ -101,7 +101,7 @@ function CreateCategoryForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -111,7 +111,9 @@ function CreateCategoryForm() {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>{name}</Badge>
+							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+								{name || <>&nbsp;</>}
+							</Badge>
 						)}
 					</form.Subscribe>
 				</div>
@@ -201,7 +203,7 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -211,7 +213,9 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>{name}</Badge>
+							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+								{name || <>&nbsp;</>}
+							</Badge>
 						)}
 					</form.Subscribe>
 				</div>

@@ -38,6 +38,7 @@
 	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
 	"typescript.preferences.autoImportFileExcludePatterns": [
     "react-aria-components",
+		"frimousse"
   ],
 	"typescript.implementationsCodeLens.enabled": false,
 	"typescript.referencesCodeLens.enabled": false,

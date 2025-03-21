@@ -396,7 +396,11 @@ function WorkspaceLogo({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage src={logo ?? undefined} alt={name} className={cn(!logo && "grayscale")} />
+			<AvatarImage
+				src={logo ?? `https://avatar.vercel.sh/${name}.svg`}
+				alt={name}
+				className={cn(!logo && "grayscale")}
+			/>
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>
@@ -410,7 +414,6 @@ function S3WorkspaceLogo({
 	...props
 }: Props & VariantProps<typeof workspaceAvatarVariants> & { slug: string }) {
 	const { data } = useQuery(workspaceLogoOptions(slug, logo));
-	console.log(data);
 	return <WorkspaceLogo {...props} logo={data} />;
 }
 

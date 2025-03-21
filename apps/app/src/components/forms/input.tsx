@@ -11,7 +11,7 @@ export function InputField(props: Props) {
 	const field = useFieldContext<string>();
 
 	return (
-		<Field>
+		<Field className={props.className}>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<FieldControl>
 				<Input
