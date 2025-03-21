@@ -22,7 +22,6 @@ function RouteComponent() {
 		syncKey: taskKeys.all(slug),
 		optionsFn: () => withWorkspace(tasksShapeOptions),
 	});
-	console.log(data);
 
 	return (
 		<Section>
