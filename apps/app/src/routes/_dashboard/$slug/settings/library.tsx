@@ -37,7 +37,7 @@ function RouteComponent() {
 						General
 					</TabsTrigger>
 					<TabsTrigger
-						value="images"
+						value="photos"
 						className="rounded-md border px-6 data-[state=active]:bg-muted data-[state=active]:text-primary"
 					>
 						Photos
@@ -122,7 +122,7 @@ function RouteComponent() {
 					</SectionContent>
 				</Section>
 			</TabsContent>
-			<TabsContent value="images">images</TabsContent>
+			<TabsContent value="photos">photos list</TabsContent>
 		</Tabs>
 	);
 }

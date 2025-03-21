@@ -15,9 +15,10 @@ services:
       - /var/lib/postgresql/data
       - /tmp
     command:
-      - "postgres"
-      - "-c"
-      - "wal_level=logical"
+      - -c
+      - listen_addresses=*
+      - -c
+      - wal_level=logical
     volumes:
       - pg_data:/var/lib/postgresql/data
     deploy:

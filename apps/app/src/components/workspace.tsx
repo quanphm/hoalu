@@ -410,6 +410,7 @@ function S3WorkspaceLogo({
 	...props
 }: Props & VariantProps<typeof workspaceAvatarVariants> & { slug: string }) {
 	const { data } = useQuery(workspaceLogoOptions(slug, logo));
+	console.log(data);
 	return <WorkspaceLogo {...props} logo={data} />;
 }
 
