@@ -70,7 +70,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 								<Link to="/">
 									<HomeIcon />
 									Home
-									<HotKey className="ml-auto">{KEYBOARD_SHORTCUTS.goto_home.label}</HotKey>
+									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_home} />
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem className="gap-2 p-2" asChild>

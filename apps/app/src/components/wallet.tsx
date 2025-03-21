@@ -17,7 +17,7 @@ import {
 	WalletIcon as CashIcon,
 	CreditCardIcon,
 	LandmarkIcon,
-	MoreHorizontalIcon,
+	MoreVerticalIcon,
 } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -70,10 +70,7 @@ function CreateWalletDialogTrigger({ children }: { children: React.ReactNode }) 
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	return (
-		<HotKeyWithTooltip
-			onClick={() => setOpen(true)}
-			shortcut={KEYBOARD_SHORTCUTS.create_wallet.label}
-		>
+		<HotKeyWithTooltip onClick={() => setOpen(true)} shortcut={KEYBOARD_SHORTCUTS.create_wallet}>
 			{children}
 		</HotKeyWithTooltip>
 	);
@@ -288,7 +285,7 @@ function WalletDropdownMenuWithModal({ id }: { id: string }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

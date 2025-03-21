@@ -13,7 +13,7 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import { useEditWorkspace } from "@/services/mutations";
-import { getActiveMemberOptions, getWorkspaceLogo } from "@/services/query-options";
+import { getActiveMemberOptions, workspaceLogoOptions } from "@/services/query-options";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 function RouteComponent() {
 	const { slug } = Route.useParams();
 	const workspace = useWorkspace();
-	const { data: logo } = useQuery(getWorkspaceLogo(workspace.slug, workspace.logo));
+	const { data: logo } = useQuery(workspaceLogoOptions(workspace.slug, workspace.logo));
 	const mutation = useEditWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const {

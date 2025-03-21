@@ -9,6 +9,10 @@ import { useEffect, useState } from "react";
 
 let syncStarted = false;
 
+function startSync(pg: PGliteWithLive) {
+	console.log("start syncing...", pg);
+}
+
 export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 	const [pgForProvider, setPgForProvider] = useState<PGliteWithLive | null>(null);
 
@@ -30,10 +34,9 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 
 			console.log("PGlite worker started");
 			pg.onLeaderChange(() => {
-				console.log("Leader changed, isLeader:", pg.isLeader);
 				if (pg.isLeader && !syncStarted) {
 					syncStarted = true;
-					//startSync(pg);
+					startSync(pg);
 				}
 			});
 

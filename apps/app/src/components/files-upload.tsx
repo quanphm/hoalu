@@ -1,6 +1,7 @@
 import { useFilesUpload } from "@/hooks/use-files-upload";
 import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
-import { ImageIcon, UploadIcon, XIcon } from "@hoalu/icons/lucide";
+import { UploadIcon, XIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 
 interface FileUploadProps {
 	acceptedFileTypes?: string;
@@ -16,7 +17,7 @@ export function FilesUpload({
 	onFilesSelectedUpdate,
 }: FileUploadProps) {
 	const {
-		data: { files },
+		data: { files, previewUrls },
 		error: errors,
 		fileInputRef,
 		handleDragLeave,
@@ -55,35 +56,31 @@ export function FilesUpload({
 			)}
 
 			{files.length > 0 && (
-				<div className="mb-2.5 space-y-2">
-					<ul className="space-y-2">
-						{files.map((file, index) => (
-							<li
-								key={index}
-								className="flex items-center justify-between rounded-md bg-muted/50 p-2 px-3 text-sm"
-							>
-								<div className="flex items-center gap-2">
-									<ImageIcon className="size-4 text-muted-foreground" />
-									<span className="max-w-[200px] truncate tracking-wide">{file.name}</span>
-									<span className="text-muted-foreground text-xs leading-0">
-										{(file.size / (1024 * 1024)).toFixed(2)}MB
-									</span>
+				<ul className="mb-2.5 grid grid-cols-4 gap-1.5">
+					{files.map((file, index) => (
+						<li key={file.name} className="relative flex rounded-md bg-muted/50 text-sm">
+							<div className="relative aspect-square w-full overflow-hidden rounded-md">
+								<img src={previewUrls[index]} alt="" />
+								<div className="absolute bottom-0 w-full bg-muted/90 p-1 text-center text-xs">
+									{(file.size / (1024 * 1024)).toFixed(2)}MB
 								</div>
-								<div className="flex items-center gap-2">
-									<button
-										type="button"
-										onClick={(e) => {
-											e.stopPropagation();
-											handleRemove(index);
-										}}
-									>
-										<XIcon className="size-4" />
-									</button>
-								</div>
-							</li>
-						))}
-					</ul>
-				</div>
+							</div>
+							<div className="absolute top-1 right-1 flex items-center gap-2">
+								<Button
+									size="icon"
+									variant="destructive"
+									className="size-6 rounded-full"
+									onClick={(e) => {
+										e.stopPropagation();
+										handleRemove(index);
+									}}
+								>
+									<XIcon className="size-4" />
+								</Button>
+							</div>
+						</li>
+					))}
+				</ul>
 			)}
 
 			<div

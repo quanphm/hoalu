@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/data-table";
 import type { TaskSchema } from "@/lib/schema";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogTrigger } from "@hoalu/ui/dialog";
@@ -56,7 +56,7 @@ function RowActions({ row }: { row: Row<TaskSchema> }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

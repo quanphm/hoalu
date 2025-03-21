@@ -258,10 +258,21 @@ const images = {
 		return {
 			id: presignedData.id,
 			name: presignedData.fileName,
-			path: presignedData.path,
+			path: presignedData.s3Url,
 		};
 	},
-	workspaceLogo: async (slug: string) => {
+	createImageExpense: async (slug: string, id: string, payload: { ids: string[] }) => {
+		const response = await honoClient.api.images.workspace.expense[":id"].$post({
+			param: { id },
+			query: { workspaceIdOrSlug: slug },
+			json: { ids: payload.ids },
+		});
+		if (response.status !== 201) {
+			throw new Error("Upload failed");
+		}
+		return true;
+	},
+	getWorkspaceLogo: async (slug: string) => {
 		const response = await honoClient.api.images.workpsace.logo.$get({
 			query: { workspaceIdOrSlug: slug },
 		});

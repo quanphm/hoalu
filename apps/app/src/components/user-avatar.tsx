@@ -13,7 +13,7 @@ export function UserAvatar({
 			<AvatarImage
 				src={image || `https://avatar.vercel.sh/${name}.svg`}
 				alt={name}
-				className="rounded-full"
+				className="rounded-full grayscale"
 			/>
 			<AvatarFallback className="rounded-full">{userShortName}</AvatarFallback>
 		</Avatar>

@@ -70,7 +70,7 @@ function RouteComponent() {
 					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets</SectionTitle>
-							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library.label}>
+							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library}>
 								<Button variant="outline" size="sm" asChild>
 									<Link to="/$slug/settings/library" params={{ slug }}>
 										View all
@@ -109,7 +109,7 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Recent entries</SectionTitle>
-					<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses.label}>
+					<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
 						<Button variant="outline" size="sm" asChild>
 							<Link to="/$slug/expenses" params={{ slug }}>
 								View all

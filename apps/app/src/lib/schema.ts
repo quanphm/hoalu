@@ -9,13 +9,6 @@ import {
 import { type } from "arktype";
 import type { InferRequestType, InferResponseType } from "hono/client";
 
-export const imageFileSchema = type({
-	name: "string",
-	type: "string",
-	size: "number",
-});
-export type ImageFile = typeof imageFileSchema.inferOut;
-
 /**
  * enums
  */
@@ -67,7 +60,7 @@ export const expenseFormSchema = type({
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
 	repeat: repeatSchema,
-	attachments: imageFileSchema.array(),
+	attachments: type("File").array(),
 });
 export type ExpenseFormSchema = typeof expenseFormSchema.infer;
 export type ExpenseSchema = InferResponseType<

@@ -1,5 +1,4 @@
 import { FilesUpload } from "@/components/files-upload";
-import type { ImageFile } from "@/lib/schema";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -9,7 +8,7 @@ interface Props {
 }
 
 export function FilesField(props: Props) {
-	const field = useFieldContext<ImageFile[]>();
+	const field = useFieldContext<File[]>();
 
 	function handleFiles(files: File[]) {
 		field.handleChange(files);

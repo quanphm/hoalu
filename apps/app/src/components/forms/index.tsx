@@ -5,6 +5,7 @@ import { DatepickerField } from "./datepicker";
 import { FilesField } from "./files";
 import { Form } from "./form";
 import { InputField } from "./input";
+import { InputWithEmojiPickerField } from "./input-with-emoji-picker";
 import { InputWithPrefixField } from "./input-with-prefix";
 import { SelectField } from "./select";
 import { SelectCategoryField } from "./select-category";
@@ -18,6 +19,7 @@ const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
 		InputField,
 		InputWithPrefixField,
+		InputWithEmojiPickerField,
 		SelectField,
 		SelectWithSearchField,
 		SelectWithGroupsField,

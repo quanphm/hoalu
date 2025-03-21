@@ -2,7 +2,16 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { Slot, type SlotProps } from "@radix-ui/react-slot";
 
-export function HotKey({ className, children, ...props }: React.ComponentProps<"span">) {
+export function HotKey({
+	className,
+	label,
+	enabled,
+	...props
+}: React.ComponentProps<"span"> & { label: string | number; enabled: boolean }) {
+	if (!enabled) {
+		return null;
+	}
+
 	return (
 		<span
 			className={cn(
@@ -13,7 +22,7 @@ export function HotKey({ className, children, ...props }: React.ComponentProps<"
 			)}
 			{...props}
 		>
-			{children}
+			{label}
 		</span>
 	);
 }
@@ -23,8 +32,8 @@ export function HotKeyWithTooltip({
 	shortcut,
 	showTooltip = true,
 	...props
-}: SlotProps & { shortcut: string; showTooltip?: boolean }) {
-	if (!showTooltip) {
+}: SlotProps & { shortcut: { label: string; enabled: boolean }; showTooltip?: boolean }) {
+	if (!showTooltip || !shortcut.enabled) {
 		return <Slot {...props}>{children}</Slot>;
 	}
 
@@ -34,7 +43,7 @@ export function HotKeyWithTooltip({
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
 			</Slot>
 			<TooltipContent side="bottom">
-				<HotKey>{shortcut}</HotKey>
+				<HotKey enabled={showTooltip && shortcut.enabled} label={shortcut.label} />
 			</TooltipContent>
 		</Tooltip>
 	);

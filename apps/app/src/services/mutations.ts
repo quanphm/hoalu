@@ -282,6 +282,30 @@ export function useDeleteExpense() {
 	return mutation;
 }
 
+export function useUploadExpenseFiles() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, files }: { id: string; files: File[] }) => {
+			const ids = await Promise.all(
+				files.map(async (file) => {
+					const response = await apiClient.images.uploadWithPresignedUrl(slug, file);
+					return response.id;
+				}),
+			);
+			await apiClient.images.createImageExpense(slug, id, { ids });
+			return id;
+		},
+		onSuccess: (expenseId) => {
+			queryClient.invalidateQueries({ queryKey: expenseKeys.withId(slug, expenseId) });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+	return mutation;
+}
+
 /**
  * wallets
  */

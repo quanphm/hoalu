@@ -3,6 +3,7 @@ import { eq, inArray } from "drizzle-orm";
 import { db, schema } from "../../db";
 
 type NewImage = typeof schema.image.$inferInsert;
+type NewImageExpense = typeof schema.imageExpense.$inferInsert;
 
 export class ImageRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
@@ -54,5 +55,10 @@ export class ImageRepository {
 			.returning();
 
 		return image;
+	}
+
+	async insertImageExpense(param: NewImageExpense[]) {
+		const images = await db.insert(schema.imageExpense).values(param).returning();
+		return images;
 	}
 }

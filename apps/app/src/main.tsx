@@ -40,8 +40,7 @@ declare global {
 	}
 }
 
-const container = document.getElementById("root");
-const root = createRoot(container as HTMLElement);
+const rootElement = document.getElementById("root");
 
 function App() {
 	return (
@@ -57,4 +56,7 @@ function App() {
 	);
 }
 
-root.render(<App />);
+if (!rootElement?.innerHTML) {
+	const root = createRoot(rootElement as HTMLElement);
+	root.render(<App />);
+}

@@ -7,9 +7,14 @@ import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
-import { useCreateExpense, useDeleteExpense, useEditExpense } from "@/services/mutations";
+import {
+	useCreateExpense,
+	useDeleteExpense,
+	useEditExpense,
+	useUploadExpenseFiles,
+} from "@/services/mutations";
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -56,10 +61,7 @@ function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode })
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<HotKeyWithTooltip
-			onClick={() => setOpen(true)}
-			shortcut={KEYBOARD_SHORTCUTS.create_expense.label}
-		>
+		<HotKeyWithTooltip onClick={() => setOpen(true)} shortcut={KEYBOARD_SHORTCUTS.create_expense}>
 			{children}
 		</HotKeyWithTooltip>
 	);
@@ -70,6 +72,7 @@ function CreateExpenseForm() {
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const mutation = useCreateExpense();
+	const expenseFilesMutation = useUploadExpenseFiles();
 
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
@@ -130,7 +133,7 @@ function CreateExpenseForm() {
 			onSubmit: expenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
+			const expense = await mutation.mutateAsync({
 				payload: {
 					title: value.title,
 					description: value.description,
@@ -142,8 +145,11 @@ function CreateExpenseForm() {
 					repeat: value.repeat,
 				},
 			});
-			setOpen(false);
 			setDraft(RESET);
+			setOpen(false);
+			if (value.attachments.length > 0) {
+				await expenseFilesMutation.mutateAsync({ id: expense.id, files: value.attachments });
+			}
 		},
 	});
 
@@ -222,7 +228,7 @@ function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">

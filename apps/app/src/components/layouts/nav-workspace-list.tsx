@@ -32,7 +32,7 @@ export function NavWorkspaceList() {
 								<span>{ws.name}</span>
 								{idx + 1 <= AVAILABLE_WORKSPACE_SHORTCUT.length && (
 									<SidebarMenuBadge>
-										<HotKey>{idx + 1}</HotKey>
+										<HotKey enabled label={idx + 1} />
 									</SidebarMenuBadge>
 								)}
 							</Link>

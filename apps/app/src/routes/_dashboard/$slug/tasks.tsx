@@ -1,6 +1,7 @@
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { TasksTable } from "@/components/tasks-table";
 import type { TaskSchema } from "@/lib/schema";
+import { taskKeys } from "@/services/query-key-factory";
 import { tasksQueryOptions } from "@/services/query-options";
 import { tasksShapeOptions, withWorkspace } from "@/services/shape-options";
 import { useDokiShape } from "@hoalu/doki";
@@ -16,8 +17,9 @@ export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 });
 
 function RouteComponent() {
+	const { slug } = Route.useParams();
 	const { data } = useDokiShape<TaskSchema>({
-		syncKey: ["tasks", "all"],
+		syncKey: taskKeys.all(slug),
 		optionsFn: () => withWorkspace(tasksShapeOptions),
 	});
 

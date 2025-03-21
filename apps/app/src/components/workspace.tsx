@@ -11,7 +11,7 @@ import {
 	useEditWorkspace,
 	useEditWorkspaceMetadata,
 } from "@/services/mutations";
-import { getWorkspaceLogo } from "@/services/query-options";
+import { workspaceLogoOptions } from "@/services/query-options";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
@@ -396,7 +396,11 @@ function WorkspaceLogo({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage src={logo ?? undefined} alt={name} className={cn(!logo && "grayscale")} />
+			<AvatarImage
+				src={logo ?? `https://avatar.vercel.sh/${name}.svg`}
+				alt={name}
+				className={cn(!logo && "grayscale")}
+			/>
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>
@@ -409,7 +413,7 @@ function S3WorkspaceLogo({
 	logo,
 	...props
 }: Props & VariantProps<typeof workspaceAvatarVariants> & { slug: string }) {
-	const { data } = useQuery(getWorkspaceLogo(slug, logo));
+	const { data } = useQuery(workspaceLogoOptions(slug, logo));
 	return <WorkspaceLogo {...props} logo={data} />;
 }
 

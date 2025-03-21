@@ -1,4 +1,5 @@
 import { createCategoryDialogOpenAtom } from "@/atoms/dialogs";
+import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
@@ -6,7 +7,7 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import { type CategoryFormSchema, categoryFormSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
-import { MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -29,7 +30,6 @@ import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { useAppForm } from "./forms";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useAtom(createCategoryDialogOpenAtom);
@@ -66,7 +66,7 @@ function CreateCategoryDialogTrigger({
 		<HotKeyWithTooltip
 			onClick={() => setOpen(true)}
 			showTooltip={showTooltip}
-			shortcut={KEYBOARD_SHORTCUTS.create_category.label}
+			shortcut={KEYBOARD_SHORTCUTS.create_category}
 		>
 			{children}
 		</HotKeyWithTooltip>
@@ -101,7 +101,7 @@ function CreateCategoryForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -111,7 +111,9 @@ function CreateCategoryForm() {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>{name}</Badge>
+							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+								{name || <>&nbsp;</>}
+							</Badge>
 						)}
 					</form.Subscribe>
 				</div>
@@ -140,7 +142,7 @@ function CategoryDropdownMenuWithModal({ id }: { id: string }) {
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<span className="sr-only">Open menu</span>
-						<MoreHorizontalIcon className="size-4" />
+						<MoreVerticalIcon className="size-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
@@ -201,7 +203,7 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -211,7 +213,9 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>{name}</Badge>
+							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+								{name || <>&nbsp;</>}
+							</Badge>
 						)}
 					</form.Subscribe>
 				</div>

@@ -21,7 +21,7 @@ export function SearchInput() {
 					<SearchIcon size={16} strokeWidth={2} aria-hidden="true" />
 				</div>
 				<div className="absolute inset-y-0 end-0 flex items-center justify-center pe-2 text-muted-foreground">
-					<HotKey>{KEYBOARD_SHORTCUTS.search.label}</HotKey>
+					<HotKey {...KEYBOARD_SHORTCUTS.search} />
 				</div>
 			</div>
 		</div>

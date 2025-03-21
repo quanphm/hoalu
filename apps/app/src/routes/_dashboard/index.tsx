@@ -65,7 +65,7 @@ function RouteComponent() {
 
 			<Section>
 				<SectionHeader>
-					<SectionTitle>Workspaces ({workspaces.length})</SectionTitle>
+					<SectionTitle>Workspaces</SectionTitle>
 					<CreateWorkspaceDialog>
 						<CreateWorkspaceDialogTrigger>
 							<Button variant="outline" size="sm">
