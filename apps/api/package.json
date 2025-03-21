@@ -33,7 +33,7 @@
 		"hono-openapi": "^0.4.6",
 		"ioredis": "^5.6.0",
 		"nodemailer": "^6.10.0",
-		"postgres": "^3.4.5",
+		"pg": "^8.14.1",
 		"react": "^19.0.0",
 		"resend": "^4.1.2"
 	},
@@ -41,6 +41,7 @@
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
+		"@types/pg": "^8.11.11",
 		"drizzle-kit": "^0.30.5",
 		"rimraf": "^6.0.1"
 	}

@@ -60,7 +60,7 @@ export const KEYBOARD_SHORTCUTS = {
 	goto_tasks: {
 		label: "T",
 		hotkey: "t",
-		enabled: false,
+		enabled: true,
 	},
 	goto_workspace: {
 		label: "S",

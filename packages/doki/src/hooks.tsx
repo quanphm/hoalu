@@ -116,7 +116,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 			queryClient.cancelQueries({ queryKey });
 			controller.abort();
 		};
-	}, [queryKey]);
+	}, []);
 
 	return data;
 }
