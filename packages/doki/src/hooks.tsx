@@ -124,7 +124,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 function useDoki() {
 	const context = React.useContext(DokiClientContext);
 	if (!context) {
-		throw new Error("useDoki must be use inside <EqSyncClientProvider> component.");
+		throw new Error("useDoki must be use inside <DokiClientProvider> component.");
 	}
 	return context;
 }
