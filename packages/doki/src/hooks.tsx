@@ -116,7 +116,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 			queryClient.cancelQueries({ queryKey });
 			controller.abort();
 		};
-	}, [queryKey]);
+	}, []);
 
 	return data;
 }
@@ -124,7 +124,7 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 function useDoki() {
 	const context = React.useContext(DokiClientContext);
 	if (!context) {
-		throw new Error("useDoki must be use inside <DokiClientProvider> component.");
+		throw new Error("useDoki must be use inside <EqSyncClientProvider> component.");
 	}
 	return context;
 }
