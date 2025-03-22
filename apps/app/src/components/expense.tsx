@@ -236,9 +236,7 @@ function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
 						<DropdownMenuItem>Edit</DropdownMenuItem>
 					</DialogTrigger>
 					<DialogTrigger asChild onClick={() => setContent("delete")}>
-						<DropdownMenuItem>
-							<span className="text-destructive">Delete</span>
-						</DropdownMenuItem>
+						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
 					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
