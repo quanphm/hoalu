@@ -2,7 +2,7 @@ import { standardValidate } from "@hoalu/common/standard-validate";
 import { type } from "arktype";
 
 export const envSchema = type({
-	AUTH_SECRET: "string",
+	AUTH_SECRET: "string > 0",
 	AUTH_URL: "string.url",
 	DB_HOST: "string > 0",
 	DB_NAME: "string > 0",
@@ -18,6 +18,7 @@ export const envSchema = type({
 	S3_SECRET_KEY: "string > 0",
 	S3_BUCKET: "string > 0",
 	S3_ENDPOINT: "string > 0",
+	SYNC_SECRET: "string > 0",
 	SYNC_URL: "string.url",
 });
 

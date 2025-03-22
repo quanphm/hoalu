@@ -30,6 +30,8 @@ export function syncModule() {
 			searchParams.forEach((value, key) => {
 				shapeUrl.searchParams.set(key, value);
 			});
+			// ELECTRIC_SECRET
+			shapeUrl.searchParams.set("api_secret", process.env.SYNC_SECRET);
 
 			const electricResponse = await fetch(shapeUrl.toString());
 
