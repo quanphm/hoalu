@@ -1,8 +1,8 @@
 import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
-import { ExpensesTable } from "@/components/expenses-table";
 import { HotKeyWithTooltip } from "@/components/hotkey";
+import { RecentExpensesTable } from "@/components/recent-expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
 import { CreateWalletDialogTrigger, WalletIcon } from "@/components/wallet";
@@ -59,14 +59,32 @@ function RouteComponent() {
 
 			<Section>
 				<SectionContent columns={12}>
-					<Section className="col-span-8">
-						<SectionHeader>
-							<SectionTitle>Overview</SectionTitle>
-						</SectionHeader>
-						<SectionContent>
-							<ExpensesStats />
-						</SectionContent>
-					</Section>
+					<SectionContent className="col-span-8">
+						<Section>
+							<SectionHeader>
+								<SectionTitle>Overview</SectionTitle>
+							</SectionHeader>
+							<SectionContent>
+								<ExpensesStats />
+							</SectionContent>
+						</Section>
+						<Section>
+							<SectionHeader>
+								<SectionTitle>Recent entries</SectionTitle>
+								<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
+									<Button variant="outline" size="sm" asChild>
+										<Link to="/$slug/expenses" params={{ slug }}>
+											View all
+											<ArrowRight className="ml-2 size-4" />
+										</Link>
+									</Button>
+								</HotKeyWithTooltip>
+							</SectionHeader>
+							<SectionContent>
+								<RecentExpensesTable data={expenses} />
+							</SectionContent>
+						</Section>
+					</SectionContent>
 					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets</SectionTitle>
@@ -103,23 +121,6 @@ function RouteComponent() {
 								))}
 						</SectionContent>
 					</Section>
-				</SectionContent>
-			</Section>
-
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Recent entries</SectionTitle>
-					<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
-						<Button variant="outline" size="sm" asChild>
-							<Link to="/$slug/expenses" params={{ slug }}>
-								View all
-								<ArrowRight className="ml-2 size-4" />
-							</Link>
-						</Button>
-					</HotKeyWithTooltip>
-				</SectionHeader>
-				<SectionContent>
-					<ExpensesTable data={expenses} actionable={false} />
 				</SectionContent>
 			</Section>
 		</>

@@ -372,7 +372,7 @@ const workspaceAvatarVariants = cva("rounded-md", {
 	variants: {
 		size: {
 			default: "size-8",
-			lg: "size-14 rounded-lg",
+			lg: "size-14 rounded-lg text-xl",
 			sm: "size-6 rounded-sm",
 		},
 	},
@@ -396,11 +396,7 @@ function WorkspaceLogo({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage
-				src={logo ?? `https://avatar.vercel.sh/${name}.svg`}
-				alt={name}
-				className={cn(!logo && "grayscale")}
-			/>
+			<AvatarImage src={logo ?? undefined} alt={name} />
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>

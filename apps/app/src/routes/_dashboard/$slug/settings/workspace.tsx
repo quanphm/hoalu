@@ -99,7 +99,7 @@ function RouteComponent() {
 								<Button
 									variant="outline"
 									size="icon"
-									className="size-14"
+									className="size-14 border-0"
 									onClick={handleBrowseFiles}
 								>
 									<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
@@ -140,7 +140,7 @@ function RouteComponent() {
 							layout="horizontal"
 							title="Delete workspace"
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
-							className="col-span-8"
+							className="col-span-8 bg-destructive/5"
 						>
 							<DeleteWorkspaceDialog>
 								<DeleteWorkspaceTrigger>

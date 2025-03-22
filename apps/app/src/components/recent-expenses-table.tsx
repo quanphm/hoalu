@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/data-table";
-import { ExpenseDropdownMenuWithModal } from "@/components/expense";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { ExpenseSchema } from "@/lib/schema";
@@ -48,34 +47,13 @@ const columns = [
 			const className = createCategoryTheme(value.color);
 			return <Badge className={className}>{value.name}</Badge>;
 		},
-		meta: {
-			headerClassName:
-				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
-			cellClassName:
-				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
-		},
 	}),
 	columnHelper.accessor("wallet.name", {
 		header: "Wallet",
 		cell: (info) => info.getValue(),
-		meta: {
-			headerClassName:
-				"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
-			cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
-		},
-	}),
-	columnHelper.display({
-		id: "actions",
-		header: () => <span className="sr-only">Actions</span>,
-		cell: (info) => <ExpenseDropdownMenuWithModal id={info.row.original.id} />,
-		meta: {
-			headerClassName:
-				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
-		},
 	}),
 ];
 
-export function ExpensesTable({ data }: { data: ExpenseSchema[] }) {
+export function RecentExpensesTable({ data }: { data: ExpenseSchema[] }) {
 	return <DataTable data={data} columns={columns} />;
 }
