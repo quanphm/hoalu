@@ -36,6 +36,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
+      - ELECTRIC_SECRET=${SYNC_SECRET}
     depends_on:
       - database
     volumes:
