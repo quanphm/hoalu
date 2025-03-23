@@ -70,6 +70,30 @@ CREATE TABLE "expense" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "file" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"s3_url" text NOT NULL,
+	"description" text,
+	"tags" text[] DEFAULT ARRAY[]::text[],
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "file_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
+CREATE TABLE "file_expense" (
+	"workspace_id" uuid NOT NULL,
+	"expense_id" uuid NOT NULL,
+	"file_id" uuid NOT NULL,
+	CONSTRAINT "file_expense_workspace_id_expense_id_file_id_pk" PRIMARY KEY("workspace_id","expense_id","file_id")
+);
+--> statement-breakpoint
+CREATE TABLE "file_task" (
+	"workspace_id" uuid NOT NULL,
+	"task_id" uuid NOT NULL,
+	"file_id" uuid NOT NULL,
+	CONSTRAINT "file_task_workspace_id_task_id_file_id_pk" PRIMARY KEY("workspace_id","task_id","file_id")
+);
+--> statement-breakpoint
 CREATE TABLE "fx_rate" (
 	"from_currency" varchar(3) NOT NULL,
 	"to_currency" varchar(3) NOT NULL,
@@ -78,30 +102,6 @@ CREATE TABLE "fx_rate" (
 	"valid_from" date DEFAULT now() NOT NULL,
 	"valid_to" date DEFAULT now() NOT NULL,
 	CONSTRAINT "fx_rate_from_currency_to_currency_exchange_rate_valid_from_pk" PRIMARY KEY("from_currency","to_currency","exchange_rate","valid_from")
-);
---> statement-breakpoint
-CREATE TABLE "image" (
-	"id" uuid PRIMARY KEY NOT NULL,
-	"file_name" text NOT NULL,
-	"s3_url" text NOT NULL,
-	"description" text,
-	"tags" text[] DEFAULT ARRAY[]::text[],
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "image_file_name_unique" UNIQUE("file_name")
-);
---> statement-breakpoint
-CREATE TABLE "image_expense" (
-	"workspace_id" uuid NOT NULL,
-	"expense_id" uuid NOT NULL,
-	"image_id" uuid NOT NULL,
-	CONSTRAINT "image_expense_workspace_id_expense_id_image_id_pk" PRIMARY KEY("workspace_id","expense_id","image_id")
-);
---> statement-breakpoint
-CREATE TABLE "image_task" (
-	"workspace_id" uuid NOT NULL,
-	"task_id" uuid NOT NULL,
-	"image_id" uuid NOT NULL,
-	CONSTRAINT "image_task_workspace_id_task_id_image_id_pk" PRIMARY KEY("workspace_id","task_id","image_id")
 );
 --> statement-breakpoint
 CREATE TABLE "invitation" (
@@ -209,12 +209,12 @@ ALTER TABLE "expense" ADD CONSTRAINT "expense_creator_id_user_id_fk" FOREIGN KEY
 ALTER TABLE "expense" ADD CONSTRAINT "expense_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_wallet_id_wallet_id_fk" FOREIGN KEY ("wallet_id") REFERENCES "public"."wallet"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_expense_id_expense_id_fk" FOREIGN KEY ("expense_id") REFERENCES "public"."expense"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_expense" ADD CONSTRAINT "image_expense_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_task" ADD CONSTRAINT "image_task_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_task" ADD CONSTRAINT "image_task_task_id_task_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."task"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "image_task" ADD CONSTRAINT "image_task_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_expense" ADD CONSTRAINT "file_expense_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_expense" ADD CONSTRAINT "file_expense_expense_id_expense_id_fk" FOREIGN KEY ("expense_id") REFERENCES "public"."expense"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_expense" ADD CONSTRAINT "file_expense_file_id_file_id_fk" FOREIGN KEY ("file_id") REFERENCES "public"."file"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_task" ADD CONSTRAINT "file_task_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_task" ADD CONSTRAINT "file_task_task_id_task_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."task"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "file_task" ADD CONSTRAINT "file_task_file_id_file_id_fk" FOREIGN KEY ("file_id") REFERENCES "public"."file"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "member" ADD CONSTRAINT "member_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -229,10 +229,10 @@ CREATE INDEX "expense_title_idx" ON "expense" USING gin (to_tsvector('english', 
 CREATE INDEX "expense_description_idx" ON "expense" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
 CREATE INDEX "expense_workspace_id_idx" ON "expense" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "expense_wallet_id_idx" ON "expense" USING btree ("wallet_id");--> statement-breakpoint
-CREATE INDEX "image_s3_url_idx" ON "image" USING btree ("s3_url");--> statement-breakpoint
-CREATE INDEX "image_description_idx" ON "image" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
-CREATE INDEX "image_expense_workspace_id_idx" ON "image_expense" USING btree ("workspace_id");--> statement-breakpoint
-CREATE INDEX "image_task_workspace_id_idx" ON "image_task" USING btree ("workspace_id");--> statement-breakpoint
+CREATE INDEX "file_s3_url_idx" ON "file" USING btree ("s3_url");--> statement-breakpoint
+CREATE INDEX "file_description_idx" ON "file" USING gin (to_tsvector('english', "description"));--> statement-breakpoint
+CREATE INDEX "file_expense_workspace_id_idx" ON "file_expense" USING btree ("workspace_id");--> statement-breakpoint
+CREATE INDEX "file_task_workspace_id_idx" ON "file_task" USING btree ("workspace_id");--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "task_title_idx" ON "task" USING gin (to_tsvector('english', "title"));--> statement-breakpoint
 CREATE INDEX "task_workspace_id_idx" ON "task" USING btree ("workspace_id");--> statement-breakpoint

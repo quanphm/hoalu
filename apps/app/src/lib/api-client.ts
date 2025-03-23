@@ -267,7 +267,7 @@ const files = {
 		});
 		return {
 			id: presignedData.id,
-			name: presignedData.fileName,
+			name: presignedData.name,
 			path: presignedData.s3Url,
 		};
 	},

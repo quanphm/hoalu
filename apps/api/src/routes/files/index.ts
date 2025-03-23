@@ -58,10 +58,10 @@ const route = app
 				method: "PUT",
 			});
 			const fileSlot = await fileRepository.insert({
-				fileName,
-				s3Url,
+				name: fileName,
 				tags: payload.tags,
 				description: payload.description,
+				s3Url,
 			});
 
 			const parsed = uploadUrlSchema({
@@ -167,9 +167,9 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const values = payload.ids.map((id) => ({
+				fileId: id,
 				workspaceId: workspace.id,
 				expenseId: param.id,
-				imageId: id,
 			}));
 			await fileRepository.insertFileExpense(values);
 

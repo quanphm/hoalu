@@ -287,27 +287,27 @@ export const task = pgTable(
 );
 
 /**
- * image
+ * file
  */
 
-export const image = pgTable(
-	"image",
+export const file = pgTable(
+	"file",
 	{
 		id: uuid("id").primaryKey(),
-		fileName: text("file_name").notNull().unique(),
+		name: text("name").notNull().unique(),
 		s3Url: text("s3_url").notNull(),
 		description: text("description"),
 		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
-		index("image_s3_url_idx").on(table.s3Url),
-		index("image_description_idx").using("gin", sql`to_tsvector('english', ${table.description})`),
+		index("file_s3_url_idx").on(table.s3Url),
+		index("file_description_idx").using("gin", sql`to_tsvector('english', ${table.description})`),
 	],
 );
 
-export const imageExpense = pgTable(
-	"image_expense",
+export const fileExpense = pgTable(
+	"file_expense",
 	{
 		workspaceId: uuid("workspace_id")
 			.notNull()
@@ -315,18 +315,18 @@ export const imageExpense = pgTable(
 		expenseId: uuid("expense_id")
 			.notNull()
 			.references(() => expense.id, { onDelete: "cascade" }),
-		imageId: uuid("image_id")
+		fileId: uuid("file_id")
 			.notNull()
-			.references(() => image.id, { onDelete: "cascade" }),
+			.references(() => file.id, { onDelete: "cascade" }),
 	},
 	(table) => [
-		primaryKey({ columns: [table.workspaceId, table.expenseId, table.imageId] }),
-		index("image_expense_workspace_id_idx").on(table.workspaceId),
+		primaryKey({ columns: [table.workspaceId, table.expenseId, table.fileId] }),
+		index("file_expense_workspace_id_idx").on(table.workspaceId),
 	],
 );
 
-export const imageTask = pgTable(
-	"image_task",
+export const fileTask = pgTable(
+	"file_task",
 	{
 		workspaceId: uuid("workspace_id")
 			.notNull()
@@ -334,12 +334,12 @@ export const imageTask = pgTable(
 		taskId: uuid("task_id")
 			.notNull()
 			.references(() => task.id, { onDelete: "cascade" }),
-		imageId: uuid("image_id")
+		fileId: uuid("file_id")
 			.notNull()
-			.references(() => image.id, { onDelete: "cascade" }),
+			.references(() => file.id, { onDelete: "cascade" }),
 	},
 	(table) => [
-		primaryKey({ columns: [table.workspaceId, table.taskId, table.imageId] }),
-		index("image_task_workspace_id_idx").on(table.workspaceId),
+		primaryKey({ columns: [table.workspaceId, table.taskId, table.fileId] }),
+		index("file_task_workspace_id_idx").on(table.workspaceId),
 	],
 );

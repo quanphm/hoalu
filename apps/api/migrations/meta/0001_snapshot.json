@@ -1,6 +1,6 @@
 {
-  "id": "89192537-ef03-41f6-9245-b24561933355",
-  "prevId": "a6be9e0f-f812-420f-977e-7bc0d1d1d407",
+  "id": "ef7eccd2-1e1d-475b-95c3-f9e8613f52d1",
+  "prevId": "b29d21c7-478c-4899-b1a5-4dc5b56f2f8c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -570,6 +570,288 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.file": {
+      "name": "file",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "s3_url": {
+          "name": "s3_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "ARRAY[]::text[]"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "file_s3_url_idx": {
+          "name": "file_s3_url_idx",
+          "columns": [
+            {
+              "expression": "s3_url",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "file_description_idx": {
+          "name": "file_description_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('english', \"description\")",
+              "isExpression": true,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "gin",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "file_name_unique": {
+          "name": "file_name_unique",
+          "columns": [
+            "name"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.file_expense": {
+      "name": "file_expense",
+      "schema": "",
+      "columns": {
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expense_id": {
+          "name": "expense_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_id": {
+          "name": "file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "file_expense_workspace_id_idx": {
+          "name": "file_expense_workspace_id_idx",
+          "columns": [
+            {
+              "expression": "workspace_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "file_expense_workspace_id_workspace_id_fk": {
+          "name": "file_expense_workspace_id_workspace_id_fk",
+          "tableFrom": "file_expense",
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "tableTo": "workspace",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "file_expense_expense_id_expense_id_fk": {
+          "name": "file_expense_expense_id_expense_id_fk",
+          "tableFrom": "file_expense",
+          "columnsFrom": [
+            "expense_id"
+          ],
+          "tableTo": "expense",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "file_expense_file_id_file_id_fk": {
+          "name": "file_expense_file_id_file_id_fk",
+          "tableFrom": "file_expense",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "tableTo": "file",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "file_expense_workspace_id_expense_id_file_id_pk": {
+          "name": "file_expense_workspace_id_expense_id_file_id_pk",
+          "columns": [
+            "workspace_id",
+            "expense_id",
+            "file_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.file_task": {
+      "name": "file_task",
+      "schema": "",
+      "columns": {
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "task_id": {
+          "name": "task_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_id": {
+          "name": "file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "file_task_workspace_id_idx": {
+          "name": "file_task_workspace_id_idx",
+          "columns": [
+            {
+              "expression": "workspace_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "file_task_workspace_id_workspace_id_fk": {
+          "name": "file_task_workspace_id_workspace_id_fk",
+          "tableFrom": "file_task",
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "tableTo": "workspace",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "file_task_task_id_task_id_fk": {
+          "name": "file_task_task_id_task_id_fk",
+          "tableFrom": "file_task",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "tableTo": "task",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "file_task_file_id_file_id_fk": {
+          "name": "file_task_file_id_file_id_fk",
+          "tableFrom": "file_task",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "tableTo": "file",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "file_task_workspace_id_task_id_file_id_pk": {
+          "name": "file_task_workspace_id_task_id_file_id_pk",
+          "columns": [
+            "workspace_id",
+            "task_id",
+            "file_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.fx_rate": {
       "name": "fx_rate",
       "schema": "",
@@ -623,288 +905,6 @@
             "to_currency",
             "exchange_rate",
             "valid_from"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.image": {
-      "name": "image",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "file_name": {
-          "name": "file_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "s3_url": {
-          "name": "s3_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "tags": {
-          "name": "tags",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "ARRAY[]::text[]"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "image_s3_url_idx": {
-          "name": "image_s3_url_idx",
-          "columns": [
-            {
-              "expression": "s3_url",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "image_description_idx": {
-          "name": "image_description_idx",
-          "columns": [
-            {
-              "expression": "to_tsvector('english', \"description\")",
-              "isExpression": true,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "gin",
-          "concurrently": false
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "image_file_name_unique": {
-          "name": "image_file_name_unique",
-          "columns": [
-            "file_name"
-          ],
-          "nullsNotDistinct": false
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.image_expense": {
-      "name": "image_expense",
-      "schema": "",
-      "columns": {
-        "workspace_id": {
-          "name": "workspace_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "expense_id": {
-          "name": "expense_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "image_id": {
-          "name": "image_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "image_expense_workspace_id_idx": {
-          "name": "image_expense_workspace_id_idx",
-          "columns": [
-            {
-              "expression": "workspace_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        }
-      },
-      "foreignKeys": {
-        "image_expense_workspace_id_workspace_id_fk": {
-          "name": "image_expense_workspace_id_workspace_id_fk",
-          "tableFrom": "image_expense",
-          "columnsFrom": [
-            "workspace_id"
-          ],
-          "tableTo": "workspace",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "image_expense_expense_id_expense_id_fk": {
-          "name": "image_expense_expense_id_expense_id_fk",
-          "tableFrom": "image_expense",
-          "columnsFrom": [
-            "expense_id"
-          ],
-          "tableTo": "expense",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "image_expense_image_id_image_id_fk": {
-          "name": "image_expense_image_id_image_id_fk",
-          "tableFrom": "image_expense",
-          "columnsFrom": [
-            "image_id"
-          ],
-          "tableTo": "image",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {
-        "image_expense_workspace_id_expense_id_image_id_pk": {
-          "name": "image_expense_workspace_id_expense_id_image_id_pk",
-          "columns": [
-            "workspace_id",
-            "expense_id",
-            "image_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.image_task": {
-      "name": "image_task",
-      "schema": "",
-      "columns": {
-        "workspace_id": {
-          "name": "workspace_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "task_id": {
-          "name": "task_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "image_id": {
-          "name": "image_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "image_task_workspace_id_idx": {
-          "name": "image_task_workspace_id_idx",
-          "columns": [
-            {
-              "expression": "workspace_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        }
-      },
-      "foreignKeys": {
-        "image_task_workspace_id_workspace_id_fk": {
-          "name": "image_task_workspace_id_workspace_id_fk",
-          "tableFrom": "image_task",
-          "columnsFrom": [
-            "workspace_id"
-          ],
-          "tableTo": "workspace",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "image_task_task_id_task_id_fk": {
-          "name": "image_task_task_id_task_id_fk",
-          "tableFrom": "image_task",
-          "columnsFrom": [
-            "task_id"
-          ],
-          "tableTo": "task",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "image_task_image_id_image_id_fk": {
-          "name": "image_task_image_id_image_id_fk",
-          "tableFrom": "image_task",
-          "columnsFrom": [
-            "image_id"
-          ],
-          "tableTo": "image",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {
-        "image_task_workspace_id_task_id_image_id_pk": {
-          "name": "image_task_workspace_id_task_id_image_id_pk",
-          "columns": [
-            "workspace_id",
-            "task_id",
-            "image_id"
           ]
         }
       },

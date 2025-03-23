@@ -2,43 +2,43 @@ import { generateId } from "@hoalu/common/generate-id";
 import { eq, inArray } from "drizzle-orm";
 import { db, schema } from "../../db";
 
-type NewFile = typeof schema.image.$inferInsert;
-type NewFileExpense = typeof schema.imageExpense.$inferInsert;
+type NewFile = typeof schema.file.$inferInsert;
+type NewFileExpense = typeof schema.fileExpense.$inferInsert;
 
 export class FileRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
-		const imageExpenseSubquery = db
-			.select({ imageId: schema.imageExpense.imageId })
-			.from(schema.imageExpense)
-			.where(eq(schema.imageExpense.workspaceId, param.workspaceId))
-			.as("image_expense_subquery");
+		const expenseSubquery = db
+			.select({ fileId: schema.fileExpense.fileId })
+			.from(schema.fileExpense)
+			.where(eq(schema.fileExpense.workspaceId, param.workspaceId))
+			.as("file_expense_subquery");
 
-		const imageTaskSubquery = db
-			.select({ imageId: schema.imageTask.imageId })
-			.from(schema.imageTask)
-			.where(eq(schema.imageTask.workspaceId, param.workspaceId))
-			.as("image_task_subquery");
+		const taskSubquery = db
+			.select({ fileId: schema.fileTask.fileId })
+			.from(schema.fileTask)
+			.where(eq(schema.fileTask.workspaceId, param.workspaceId))
+			.as("file_task_subquery");
 
-		const combinedImageIds = await db
-			.selectDistinct({ imageId: imageExpenseSubquery.imageId })
-			.from(imageExpenseSubquery)
-			.union(db.selectDistinct({ imageId: imageTaskSubquery.imageId }).from(imageTaskSubquery));
+		const combinedIds = await db
+			.selectDistinct({ fileId: expenseSubquery.fileId })
+			.from(expenseSubquery)
+			.union(db.selectDistinct({ fileId: taskSubquery.fileId }).from(taskSubquery));
 
-		if (combinedImageIds.length === 0) {
+		if (combinedIds.length === 0) {
 			return [];
 		}
 
-		const imageIds = combinedImageIds.map((item) => item.imageId);
-		const images = await db.select().from(schema.image).where(inArray(schema.image.id, imageIds));
+		const fileIds = combinedIds.map((item) => item.fileId);
+		const files = await db.select().from(schema.file).where(inArray(schema.file.id, fileIds));
 
-		return images;
+		return files;
 	}
 
 	async findOne(param: { id: string }) {
 		const queryData = await db
 			.select()
-			.from(schema.image)
-			.where(eq(schema.image.id, param.id))
+			.from(schema.file)
+			.where(eq(schema.file.id, param.id))
 			.limit(1);
 
 		if (!queryData[0]) return null;
@@ -46,19 +46,19 @@ export class FileRepository {
 	}
 
 	async insert(param: Omit<NewFile, "id">) {
-		const [image] = await db
-			.insert(schema.image)
+		const [file] = await db
+			.insert(schema.file)
 			.values({
 				id: generateId({ use: "uuid" }),
 				...param,
 			})
 			.returning();
 
-		return image;
+		return file;
 	}
 
 	async insertFileExpense(param: NewFileExpense[]) {
-		const images = await db.insert(schema.imageExpense).values(param).returning();
-		return images;
+		const files = await db.insert(schema.fileExpense).values(param).returning();
+		return files;
 	}
 }
