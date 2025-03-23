@@ -302,6 +302,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 			walletId: expense?.wallet.id ?? "",
 			categoryId: expense?.category?.id ?? "",
 			repeat: expense?.repeat ?? "one-time",
+			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
 			onSubmit: expenseFormSchema,

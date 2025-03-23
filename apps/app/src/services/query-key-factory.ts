@@ -21,11 +21,6 @@ export const memberKeys = {
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "members"] as const,
 };
 
-export const invitationKeys = {
-	all: ["invitations"] as const,
-	withId: (id: string) => [...invitationKeys.all, id] as const,
-};
-
 export const walletKeys = {
 	all: (slug: string) => walletKeys["~withWorkspace"](slug),
 	withId: (slug: string, id: string) => [...walletKeys.all(slug), "id", id] as const,

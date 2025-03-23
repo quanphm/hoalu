@@ -7,7 +7,7 @@ import { redis } from "../lib/redis";
 import categoriesRoute from "../routes/categories";
 import exchangeRatesRoute from "../routes/exchange-rates";
 import expensesRoute from "../routes/expenses";
-import imagesRoute from "../routes/images";
+import filesRoute from "../routes/files";
 import tasksRoute from "../routes/tasks";
 import walletsRoute from "../routes/wallets";
 
@@ -26,7 +26,7 @@ export function apiModule() {
 		.route("/categories", categoriesRoute)
 		.route("/exchange-rates", exchangeRatesRoute)
 		.route("/expenses", expensesRoute)
-		.route("/images", imagesRoute)
+		.route("/files", filesRoute)
 		.route("/tasks", tasksRoute)
 		.route("/wallets", walletsRoute);
 

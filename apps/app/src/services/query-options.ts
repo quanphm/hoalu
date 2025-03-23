@@ -6,7 +6,6 @@ import {
 	categoryKeys,
 	exchangeRateKeys,
 	expenseKeys,
-	invitationKeys,
 	memberKeys,
 	taskKeys,
 	walletKeys,
@@ -96,25 +95,12 @@ export const getActiveMemberOptions = (slug: string) => {
 	});
 };
 
-export const invitationDetailsOptions = (id: string) => {
-	return queryOptions({
-		queryKey: invitationKeys.withId(id),
-		queryFn: async () => {
-			const { data } = await authClient.workspace.getInvitation({
-				query: { id },
-			});
-			if (!data) return null;
-			return data;
-		},
-	});
-};
-
 export const workspaceLogoOptions = (slug: string, logo: string | null | undefined) => {
 	return queryOptions({
 		enabled: logo?.startsWith("s3://"),
 		queryKey: workspaceKeys.logo(slug),
 		queryFn: async () => {
-			const data = await apiClient.images.getWorkspaceLogo(slug);
+			const data = await apiClient.files.getWorkspaceLogo(slug);
 			return data;
 		},
 		staleTime: TIME_IN_MILLISECONDS.DAY,

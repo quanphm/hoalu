@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as DashboardRouteImport } from './routes/_dashboard/route'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as DashboardIndexImport } from './routes/_dashboard/index'
@@ -29,6 +30,12 @@ import { Route as DashboardSlugSettingsMembersImport } from './routes/_dashboard
 import { Route as DashboardSlugSettingsLibraryImport } from './routes/_dashboard/$slug/settings/library'
 
 // Create/Update Routes
+
+const VerifyEmailRoute = VerifyEmailImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const DashboardRouteRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -146,6 +153,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailImport
       parentRoute: typeof rootRoute
     }
     '/_dashboard/$slug': {
@@ -320,6 +334,7 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof DashboardRouteRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/$slug': typeof DashboardSlugRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
@@ -338,6 +353,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof AuthRouteRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
@@ -357,6 +373,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_dashboard': typeof DashboardRouteRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/_dashboard/$slug': typeof DashboardSlugRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
@@ -377,6 +394,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/verify-email'
     | '/$slug'
     | '/login'
     | '/signup'
@@ -394,6 +412,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
+    | '/verify-email'
     | '/login'
     | '/signup'
     | '/'
@@ -411,6 +430,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_dashboard'
+    | '/verify-email'
     | '/_dashboard/$slug'
     | '/_auth/login'
     | '/_auth/signup'
@@ -431,12 +451,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  VerifyEmailRoute: typeof VerifyEmailRoute
   InviteIdAcceptRoute: typeof InviteIdAcceptRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  VerifyEmailRoute: VerifyEmailRoute,
   InviteIdAcceptRoute: InviteIdAcceptRoute,
 }
 
@@ -452,6 +474,7 @@ export const routeTree = rootRoute
       "children": [
         "/_auth",
         "/_dashboard",
+        "/verify-email",
         "/invite/$id/accept"
       ]
     },
@@ -470,6 +493,9 @@ export const routeTree = rootRoute
         "/_dashboard/account/preferences",
         "/_dashboard/account/tokens"
       ]
+    },
+    "/verify-email": {
+      "filePath": "verify-email.tsx"
     },
     "/_dashboard/$slug": {
       "filePath": "_dashboard/$slug/route.tsx",

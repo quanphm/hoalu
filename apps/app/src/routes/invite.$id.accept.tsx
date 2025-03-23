@@ -1,15 +1,20 @@
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { WorkspaceLogo } from "@/components/workspace";
 import { useAuth } from "@/hooks/use-auth";
-import { useAcceptInvitation } from "@/services/mutations";
-import { invitationDetailsOptions } from "@/services/query-options";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { toast } from "@hoalu/ui/sonner";
+import { useMutation } from "@tanstack/react-query";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/invite/$id/accept")({
-	loader: async ({ context: { queryClient }, params: { id } }) => {
-		return queryClient.ensureQueryData(invitationDetailsOptions(id));
+	loader: async ({ params: { id } }) => {
+		const { data } = await authClient.workspace.getInvitation({
+			query: { id },
+		});
+		if (!data) return null;
+		return data;
 	},
 	component: RouteComponent,
 });
@@ -18,7 +23,31 @@ function RouteComponent() {
 	const { user } = useAuth();
 	const invitation = Route.useLoaderData();
 	const params = Route.useParams();
-	const mutation = useAcceptInvitation();
+	const navigate = useNavigate();
+
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const { data, error } = await authClient.workspace.acceptInvitation({
+				invitationId: id,
+			});
+			if (error) {
+				throw error;
+			}
+			return data;
+		},
+		onSuccess: (data) => {
+			toast.success(`Welcome to ${data.workspace.name}!`);
+			navigate({
+				to: "/$slug",
+				params: {
+					slug: data.workspace.slug,
+				},
+			});
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
 
 	if (!invitation) {
 		return (

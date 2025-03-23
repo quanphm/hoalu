@@ -112,3 +112,10 @@ export type WalletPatchSchema = InferRequestType<
 export type ExchangeRatesQuerySchema = InferRequestType<
 	(typeof honoClient.api)["exchange-rates"]["$get"]
 >["query"];
+
+/**
+ * files
+ */
+export type FileMetaSchema = InferRequestType<
+	(typeof honoClient.api.files)["generate-upload-url"]["$post"]
+>["json"];

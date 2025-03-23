@@ -53,9 +53,8 @@ export const auth = betterAuth({
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
 		sendVerificationEmail: async ({ user, token }, _request) => {
-			const url = new URL(`${process.env.PUBLIC_API_URL}/auth/verify-email`);
+			const url = new URL(`${process.env.PUBLIC_APP_BASE_URL}/verify-email`);
 			url.searchParams.set("token", token);
-			url.searchParams.set("callbackURL", process.env.PUBLIC_APP_BASE_URL);
 
 			if (process.env.NODE_ENV === "development") {
 				console.log("Verification Link:", url.href);
