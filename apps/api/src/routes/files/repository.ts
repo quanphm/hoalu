@@ -2,10 +2,10 @@ import { generateId } from "@hoalu/common/generate-id";
 import { eq, inArray } from "drizzle-orm";
 import { db, schema } from "../../db";
 
-type NewImage = typeof schema.image.$inferInsert;
-type NewImageExpense = typeof schema.imageExpense.$inferInsert;
+type NewFile = typeof schema.image.$inferInsert;
+type NewFileExpense = typeof schema.imageExpense.$inferInsert;
 
-export class ImageRepository {
+export class FileRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
 		const imageExpenseSubquery = db
 			.select({ imageId: schema.imageExpense.imageId })
@@ -45,7 +45,7 @@ export class ImageRepository {
 		return queryData[0];
 	}
 
-	async insert(param: Omit<NewImage, "id">) {
+	async insert(param: Omit<NewFile, "id">) {
 		const [image] = await db
 			.insert(schema.image)
 			.values({
@@ -57,7 +57,7 @@ export class ImageRepository {
 		return image;
 	}
 
-	async insertImageExpense(param: NewImageExpense[]) {
+	async insertFileExpense(param: NewFileExpense[]) {
 		const images = await db.insert(schema.imageExpense).values(param).returning();
 		return images;
 	}

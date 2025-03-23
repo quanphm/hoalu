@@ -10,12 +10,14 @@ export const uploadUrlSchema = type({
 });
 
 export const fileMetaSchema = type({
+	name: "string.lower",
 	size: "number > 0",
+	type: "string > 0",
 	"tags?": "string[]",
 	"description?": "string",
 });
 
-export const imageSchema = type({
+export const fileSchema = type({
 	"+": "delete",
 	presignedUrl: "string > 0",
 	fileName: "string > 0",
@@ -24,4 +26,4 @@ export const imageSchema = type({
 	createdAt: isoDateSchema,
 });
 
-export const imagesSchema = imageSchema.array().onUndeclaredKey("delete");
+export const filesSchema = fileSchema.array().onUndeclaredKey("delete");

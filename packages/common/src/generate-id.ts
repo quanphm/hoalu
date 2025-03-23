@@ -9,6 +9,7 @@ const prefixes = {
 	user: "u_",
 	workspace: "ws_",
 	image: "img_",
+	pdf: "pdf_",
 } as const;
 
 export function generateId(options: {

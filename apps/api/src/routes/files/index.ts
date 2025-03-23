@@ -6,19 +6,19 @@ import { TIME_IN_SECONDS } from "@hoalu/common/time";
 import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { getS3Path } from "../../common/io";
+import { getS3Path, isValidFileType } from "../../common/io";
 import { createHonoInstance } from "../../lib/create-app";
 import { bunS3Client } from "../../lib/s3";
 import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { ImageRepository } from "./repository";
-import { fileMetaSchema, imagesSchema, uploadUrlSchema } from "./schema";
+import { FileRepository } from "./repository";
+import { fileMetaSchema, filesSchema, uploadUrlSchema } from "./schema";
 
 const app = createHonoInstance();
-const imageRepository = new ImageRepository();
-const TAGS = ["Images"];
+const fileRepository = new FileRepository();
+const TAGS = ["Files"];
 
 const route = app
 	.post(
@@ -44,7 +44,12 @@ const route = app
 				return c.json({ message: "Maximum file size reached" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const fileName = generateId({ use: "nanoid", kind: "image" });
+			const fileKind = isValidFileType(payload.name, payload.type);
+			if (!fileKind) {
+				return c.json({ message: "Invalid file type" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const fileName = generateId({ use: "nanoid", kind: fileKind });
 			const path = `${workspace.publicId}/${fileName}`;
 			const s3Url = `s3://${path}`;
 
@@ -52,7 +57,7 @@ const route = app
 				expiresIn: TIME_IN_SECONDS.MINUTE * 5, //  5 min
 				method: "PUT",
 			});
-			const imageSlot = await imageRepository.insert({
+			const fileSlot = await fileRepository.insert({
 				fileName,
 				s3Url,
 				tags: payload.tags,
@@ -60,7 +65,7 @@ const route = app
 			});
 
 			const parsed = uploadUrlSchema({
-				...imageSlot,
+				...fileSlot,
 				uploadUrl,
 			});
 			if (parsed instanceof type.errors) {
@@ -77,12 +82,12 @@ const route = app
 		"/workpsace",
 		describeRoute({
 			tags: TAGS,
-			summary: "Get all images from workspace",
+			summary: "Get all files from workspace",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: imagesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: filesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -90,18 +95,18 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 
-			const images = await imageRepository.findAllByWorkspaceId({ workspaceId: workspace.id });
-			const imagesWithPresignedUrl = await Promise.all(
-				images.map(async (image) => {
-					const path = getS3Path(image.s3Url);
+			const files = await fileRepository.findAllByWorkspaceId({ workspaceId: workspace.id });
+			const filesWithPresignedUrl = await Promise.all(
+				files.map(async (file) => {
+					const path = getS3Path(file.s3Url);
 					const presignedUrl = bunS3Client.presign(path, {
 						expiresIn: TIME_IN_SECONDS.DAY, // 1 day
 					});
-					return { ...image, presignedUrl };
+					return { ...file, presignedUrl };
 				}),
 			);
 
-			const parsed = imagesSchema(imagesWithPresignedUrl);
+			const parsed = filesSchema(filesWithPresignedUrl);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -142,7 +147,7 @@ const route = app
 		"/workspace/expense/:id",
 		describeRoute({
 			tags: TAGS,
-			summary: "Create images of an expense",
+			summary: "Create files for an expense",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
@@ -166,7 +171,7 @@ const route = app
 				expenseId: param.id,
 				imageId: id,
 			}));
-			await imageRepository.insertImageExpense(values);
+			await fileRepository.insertFileExpense(values);
 
 			return c.body(null, HTTPStatus.codes.CREATED);
 		},
