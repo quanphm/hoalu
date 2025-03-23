@@ -11,6 +11,8 @@ export const uploadUrlSchema = type({
 
 export const fileMetaSchema = type({
 	size: "number > 0",
+	"tags?": "string[]",
+	"description?": "string",
 });
 
 export const imageSchema = type({

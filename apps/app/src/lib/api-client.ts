@@ -4,6 +4,7 @@ import type {
 	ExchangeRatesQuerySchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
+	FileMetaSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
 } from "@/lib/schema";
@@ -234,7 +235,7 @@ const exchangeRates = {
 };
 
 const images = {
-	createPresignedUploadUrl: async (slug: string, payload: { size: number }) => {
+	createPresignedUploadUrl: async (slug: string, payload: FileMetaSchema) => {
 		const response = await honoClient.api.images["generate-upload-url"].$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
@@ -246,8 +247,8 @@ const images = {
 		const { data } = await response.json();
 		return data;
 	},
-	uploadWithPresignedUrl: async (slug: string, file: File) => {
-		const presignedData = await images.createPresignedUploadUrl(slug, { size: file.size });
+	uploadWithPresignedUrl: async (slug: string, file: File, meta?: Omit<FileMetaSchema, "size">) => {
+		const presignedData = await images.createPresignedUploadUrl(slug, { size: file.size, ...meta });
 		await fetch(presignedData.uploadUrl, {
 			method: "PUT",
 			headers: {

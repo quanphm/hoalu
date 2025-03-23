@@ -289,7 +289,9 @@ export function useUploadExpenseFiles() {
 		mutationFn: async ({ id, files }: { id: string; files: File[] }) => {
 			const ids = await Promise.all(
 				files.map(async (file) => {
-					const response = await apiClient.images.uploadWithPresignedUrl(slug, file);
+					const response = await apiClient.images.uploadWithPresignedUrl(slug, file, {
+						tags: ["expense"],
+					});
 					return response.id;
 				}),
 			);

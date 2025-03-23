@@ -56,7 +56,9 @@ function RouteComponent() {
 
 	async function handleUpload(files: File[]) {
 		try {
-			const result = await apiClient.images.uploadWithPresignedUrl(workspace.slug, files[0]);
+			const result = await apiClient.images.uploadWithPresignedUrl(workspace.slug, files[0], {
+				tags: ["logo"],
+			});
 			await mutation.mutateAsync({
 				payload: {
 					name: workspace.name,

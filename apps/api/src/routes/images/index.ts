@@ -55,6 +55,8 @@ const route = app
 			const imageSlot = await imageRepository.insert({
 				fileName,
 				s3Url,
+				tags: payload.tags,
+				description: payload.description,
 			});
 
 			const parsed = uploadUrlSchema({

@@ -66,7 +66,14 @@ function RouteComponent() {
 					<form.AppForm>
 						<form.Form>
 							<form.AppField name="name">
-								{(field) => <field.InputField label="Full name" placeholder="John Doe" required />}
+								{(field) => (
+									<field.InputField
+										label="Full name"
+										placeholder="John Doe"
+										autoComplete="name"
+										required
+									/>
+								)}
 							</form.AppField>
 							<form.AppField name="email">
 								{(field) => (
