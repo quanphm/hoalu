@@ -6,7 +6,6 @@ import {
 	categoryKeys,
 	exchangeRateKeys,
 	expenseKeys,
-	invitationKeys,
 	memberKeys,
 	taskKeys,
 	walletKeys,
@@ -91,19 +90,6 @@ export const getActiveMemberOptions = (slug: string) => {
 				},
 			});
 			if (error) throw error;
-			return data;
-		},
-	});
-};
-
-export const invitationDetailsOptions = (id: string) => {
-	return queryOptions({
-		queryKey: invitationKeys.withId(id),
-		queryFn: async () => {
-			const { data } = await authClient.workspace.getInvitation({
-				query: { id },
-			});
-			if (!data) return null;
 			return data;
 		},
 	});

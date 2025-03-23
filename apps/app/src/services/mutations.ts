@@ -10,13 +10,7 @@ import type {
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
-import {
-	categoryKeys,
-	expenseKeys,
-	invitationKeys,
-	walletKeys,
-	workspaceKeys,
-} from "@/services/query-key-factory";
+import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/services/query-key-factory";
 import { toast } from "@hoalu/ui/sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
@@ -169,36 +163,6 @@ export function useRemoveMember() {
 	return mutation;
 }
 
-export function useAcceptInvitation() {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const { data, error } = await authClient.workspace.acceptInvitation({
-				invitationId: id,
-			});
-			if (error) {
-				throw error;
-			}
-			return data;
-		},
-		onSuccess: (data) => {
-			toast.success(`Welcome to ${data.workspace.name}!`);
-			queryClient.removeQueries({ queryKey: invitationKeys.withId(data.invitation.id) });
-			navigate({
-				to: "/$slug",
-				params: {
-					slug: data.workspace.slug,
-				},
-			});
-		},
-		onError: (error) => {
-			toast.error(error.message);
-		},
-	});
-	return mutation;
-}
-
 export function useCancelInvitation() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
@@ -210,8 +174,7 @@ export function useCancelInvitation() {
 			}
 			return data;
 		},
-		onSuccess: (data) => {
-			queryClient.removeQueries({ queryKey: invitationKeys.withId(data.id) });
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
