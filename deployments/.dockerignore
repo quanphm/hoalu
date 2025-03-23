@@ -3,11 +3,8 @@
 **/node_modules
 **/dist
 **/build
-**/*.local
 **/*.turbo
 **/*.output
-**/*.vinxi
 **/*.git
 **/.DS_Store
 **/*.env
-fly.toml
