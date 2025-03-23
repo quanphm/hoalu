@@ -83,13 +83,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.hoalu-api.entrypoints=websecure
-      - traefik.http.routers.hoalu-api.rule=Host(`hoalu.local.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.hoalu-api.rule=Host(`hoalu.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.hoalu-api.tls=true
-      - traefik.http.routers.hoalu-api.tls.certresolver=cloudflare
-      - traefik.http.routers.hoalu-api.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.hoalu-api.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.hoalu-api.middlewares=internal-gateway@file
       - traefik.http.routers.hoalu-api.middlewares=web-compression@file
       - traefik.http.routers.hoalu-api.middlewares=strip-api-prefix
       - traefik.http.routers.hoalu-api.service=hoalu-api
@@ -119,12 +115,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.hoalu-app.entrypoints=websecure
-      - traefik.http.routers.hoalu-app.rule=Host(`hoalu.local.${DOMAIN}`)
+      - traefik.http.routers.hoalu-app.rule=Host(`hoalu.${DOMAIN}`)
       - traefik.http.routers.hoalu-app.tls=true
-      - traefik.http.routers.hoalu-app.tls.certresolver=cloudflare
-      - traefik.http.routers.hoalu-app.tls.domains[0].main=local.${DOMAIN}
-      - traefik.http.routers.hoalu-app.tls.domains[0].sans=*.local.${DOMAIN}
-      - traefik.http.routers.hoalu-app.middlewares=internal-gateway@file
       - traefik.http.routers.hoalu-app.middlewares=web-compression@file
       - traefik.http.routers.hoalu-app.service=hoalu-app
       - traefik.http.services.hoalu-app.loadbalancer.server.port=8080
