@@ -35,7 +35,7 @@ function RouteComponent() {
 		handleBrowseFiles,
 		handleFileChange,
 	} = useFilesUpload({
-		onUpload: handleUpload,
+		onUpload: handleUploadLogo,
 	});
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
@@ -54,9 +54,9 @@ function RouteComponent() {
 		},
 	});
 
-	async function handleUpload(files: File[]) {
+	async function handleUploadLogo(files: File[]) {
 		try {
-			const result = await apiClient.images.uploadWithPresignedUrl(workspace.slug, files[0], {
+			const result = await apiClient.files.uploadWithPresignedUrl(workspace.slug, files[0], {
 				tags: ["logo"],
 			});
 			await mutation.mutateAsync({

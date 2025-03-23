@@ -234,9 +234,9 @@ const exchangeRates = {
 	},
 };
 
-const images = {
+const files = {
 	createPresignedUploadUrl: async (slug: string, payload: FileMetaSchema) => {
-		const response = await honoClient.api.images["generate-upload-url"].$post({
+		const response = await honoClient.api.files["generate-upload-url"].$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
@@ -247,8 +247,17 @@ const images = {
 		const { data } = await response.json();
 		return data;
 	},
-	uploadWithPresignedUrl: async (slug: string, file: File, meta?: Omit<FileMetaSchema, "size">) => {
-		const presignedData = await images.createPresignedUploadUrl(slug, { size: file.size, ...meta });
+	uploadWithPresignedUrl: async (
+		slug: string,
+		file: File,
+		meta?: Omit<FileMetaSchema, "name" | "size" | "type">,
+	) => {
+		const presignedData = await files.createPresignedUploadUrl(slug, {
+			name: file.name,
+			size: file.size,
+			type: file.type,
+			...meta,
+		});
 		await fetch(presignedData.uploadUrl, {
 			method: "PUT",
 			headers: {
@@ -263,7 +272,7 @@ const images = {
 		};
 	},
 	createImageExpense: async (slug: string, id: string, payload: { ids: string[] }) => {
-		const response = await honoClient.api.images.workspace.expense[":id"].$post({
+		const response = await honoClient.api.files.workspace.expense[":id"].$post({
 			param: { id },
 			query: { workspaceIdOrSlug: slug },
 			json: { ids: payload.ids },
@@ -274,7 +283,7 @@ const images = {
 		return true;
 	},
 	getWorkspaceLogo: async (slug: string) => {
-		const response = await honoClient.api.images.workpsace.logo.$get({
+		const response = await honoClient.api.files.workpsace.logo.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		const { data } = await response.json();
@@ -288,5 +297,5 @@ export const apiClient = {
 	categories,
 	expenses,
 	exchangeRates,
-	images,
+	files,
 };

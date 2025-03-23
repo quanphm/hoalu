@@ -114,8 +114,8 @@ export type ExchangeRatesQuerySchema = InferRequestType<
 >["query"];
 
 /**
- * images
+ * files
  */
 export type FileMetaSchema = InferRequestType<
-	(typeof honoClient.api.images)["generate-upload-url"]["$post"]
+	(typeof honoClient.api.files)["generate-upload-url"]["$post"]
 >["json"];

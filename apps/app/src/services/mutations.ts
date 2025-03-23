@@ -289,13 +289,13 @@ export function useUploadExpenseFiles() {
 		mutationFn: async ({ id, files }: { id: string; files: File[] }) => {
 			const ids = await Promise.all(
 				files.map(async (file) => {
-					const response = await apiClient.images.uploadWithPresignedUrl(slug, file, {
+					const response = await apiClient.files.uploadWithPresignedUrl(slug, file, {
 						tags: ["expense"],
 					});
 					return response.id;
 				}),
 			);
-			await apiClient.images.createImageExpense(slug, id, { ids });
+			await apiClient.files.createImageExpense(slug, id, { ids });
 			return id;
 		},
 		onSuccess: (expenseId) => {
@@ -429,7 +429,3 @@ export function useDeleteCategory() {
 	});
 	return mutation;
 }
-
-/**
- * categories
- */

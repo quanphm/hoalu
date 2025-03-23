@@ -114,7 +114,7 @@ export const workspaceLogoOptions = (slug: string, logo: string | null | undefin
 		enabled: logo?.startsWith("s3://"),
 		queryKey: workspaceKeys.logo(slug),
 		queryFn: async () => {
-			const data = await apiClient.images.getWorkspaceLogo(slug);
+			const data = await apiClient.files.getWorkspaceLogo(slug);
 			return data;
 		},
 		staleTime: TIME_IN_MILLISECONDS.DAY,
