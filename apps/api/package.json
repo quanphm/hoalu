@@ -26,7 +26,7 @@
 		"@hoalu/furnace": "workspace:*",
 		"@react-email/render": "^1.0.5",
 		"@scalar/hono-api-reference": "^0.5.184",
-		"arktype": "^2.1.10",
+		"arktype": "^2.1.13",
 		"better-auth": "^1.2.4",
 		"drizzle-orm": "^0.39.3",
 		"hono": "^4.7.5",
@@ -35,7 +35,7 @@
 		"nodemailer": "^6.10.0",
 		"pg": "^8.14.1",
 		"react": "^19.0.0",
-		"resend": "^4.1.2"
+		"resend": "^4.2.0"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
