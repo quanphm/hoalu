@@ -26,8 +26,8 @@
 		"@hoalu/furnace": "workspace:*",
 		"@react-email/render": "^1.0.5",
 		"@scalar/hono-api-reference": "^0.5.184",
-		"arktype": "^2.1.13",
-		"better-auth": "^1.2.4",
+		"arktype": "^2.1.15",
+		"better-auth": "^1.2.5",
 		"drizzle-orm": "^0.39.3",
 		"hono": "^4.7.5",
 		"hono-openapi": "^0.4.6",
@@ -42,7 +42,7 @@
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
 		"@types/pg": "^8.11.11",
-		"drizzle-kit": "^0.30.5",
+		"drizzle-kit": "^0.30.6",
 		"rimraf": "^6.0.1"
 	}
 }

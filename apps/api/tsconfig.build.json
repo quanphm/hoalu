@@ -6,8 +6,7 @@
 		"allowImportingTsExtensions": false,
 		"emitDeclarationOnly": true,
 		"declaration": true,
-		"declarationMap": false,
-		"exactOptionalPropertyTypes": false
+		"declarationMap": false
 	},
 	"include": ["src/index.ts"]
 }
