@@ -1,5 +1,4 @@
 {
-	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"lib": ["ES2023"],
 		"moduleResolution": "bundler",

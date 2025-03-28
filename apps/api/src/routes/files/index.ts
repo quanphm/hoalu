@@ -44,7 +44,7 @@ const route = app
 				return c.json({ message: "Maximum file size reached" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const fileKind = isValidFileType(payload.name, payload.type);
+			const fileKind = isValidFileType(payload.type);
 			if (!fileKind) {
 				return c.json({ message: "Invalid file type" }, HTTPStatus.codes.BAD_REQUEST);
 			}
