@@ -36,39 +36,33 @@ export function syncModule() {
 			const electricResponse = await fetch(shapeUrl.toString());
 
 			if (electricResponse.status > 204) {
-				//console.error("Error: ", electricResponse.status);
-				return c.json(
-					{
-						ok: false,
-					},
-					HTTPStatus.codes.BAD_REQUEST,
-				);
+				console.error("Error: ", electricResponse.status);
+				return c.json({ ok: false }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			// @ts-expect-error
 			const electricHeaders = new Headers(electricResponse.headers);
 
 			if (electricResponse.status === HTTPStatus.codes.NO_CONTENT) {
-				electricHeaders.set("electric-up-to-date", "");
+				electricHeaders.set("Electric-Up-To-Date", "");
 				return c.body(null, HTTPStatus.codes.NO_CONTENT, {
-					...Object.fromEntries(electricResponse.headers),
+					...electricHeaders.toJSON(),
 				});
 			}
 
-			const data: any = await electricResponse.json();
+			const data = await electricResponse.json();
 
-			if (electricHeaders.get("content-encoding")) {
-				electricHeaders.delete("content-encoding");
-				electricHeaders.delete("content-length");
+			if (electricHeaders.get("Content-Encoding")) {
+				electricHeaders.delete("Content-Encoding");
+				electricHeaders.delete("Content-Length");
 			}
 
 			const isUpToDate = data.find((d: any) => d?.headers.control === "up-to-date");
 			if (isUpToDate) {
-				electricHeaders.set("electric-up-to-date", "");
+				electricHeaders.set("Electric-Up-To-Date", "");
 			}
 
 			return c.json(data, HTTPStatus.codes.OK, {
-				...Object.fromEntries(electricHeaders),
+				...electricHeaders.toJSON(),
 			});
 		});
 

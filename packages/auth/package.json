@@ -10,7 +10,7 @@
 		"./client/plugins": "./src/client/plugins/index.ts"
 	},
 	"peerDependencies": {
-		"better-auth": "^1.2.5"
+		"better-auth": "^1.2.6-beta.2"
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*"
