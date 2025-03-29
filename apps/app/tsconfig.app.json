@@ -1,4 +1,5 @@
 {
+	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"strict": true,
 		"exactOptionalPropertyTypes": false,
