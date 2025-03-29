@@ -8,38 +8,38 @@ import {
 import { RadioGroup, RadioGroupItem } from "@hoalu/ui/radio-group";
 import { cn } from "@hoalu/ui/utils";
 import { useId, useState } from "react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-// const dailyData = [
-// 	{ date: "2025-02-21", value: 1150200 },
-// 	{ date: "2025-02-22", value: 1157400 },
-// 	{ date: "2025-02-23", value: 1149800 },
-// 	{ date: "2025-02-24", value: 1143500 },
-// 	{ date: "2025-02-25", value: 1152700 },
-// 	{ date: "2025-02-26", value: 1168900 },
-// 	{ date: "2025-02-27", value: 1162300 },
-// 	{ date: "2025-02-28", value: 1175600 },
-// 	{ date: "2025-03-01", value: 1169200 },
-// 	{ date: "2025-03-02", value: 1176800 },
-// 	{ date: "2025-03-03", value: 1182500 },
-// 	{ date: "2025-03-04", value: 1167300 },
-// 	{ date: "2025-03-05", value: 1160100 },
-// 	{ date: "2025-03-06", value: 1178600 },
-// 	{ date: "2025-03-07", value: 1191200 },
-// 	{ date: "2025-03-08", value: 1183500 },
-// 	{ date: "2025-03-09", value: 1175100 },
-// 	{ date: "2025-03-10", value: 1182700 },
-// 	{ date: "2025-03-11", value: 1194300 },
-// 	{ date: "2025-03-12", value: 1185800 },
-// 	{ date: "2025-03-13", value: 1186002 },
-// 	{ date: "2025-03-14", value: 1174200 },
-// 	{ date: "2025-03-15", value: 1181700 },
-// 	{ date: "2025-03-16", value: 1186800 },
-// 	{ date: "2025-03-17", value: 1187400 },
-// 	{ date: "2025-03-18", value: 1200200 },
-// 	{ date: "2025-03-19", value: 1194100 },
-// 	{ date: "2025-03-20", value: 1206000 },
-// ];
+const dailyData = [
+	{ date: "2025-02-21", value: 1150200 },
+	{ date: "2025-02-22", value: 1157400 },
+	{ date: "2025-02-23", value: 1149800 },
+	{ date: "2025-02-24", value: 1143500 },
+	{ date: "2025-02-25", value: 1152700 },
+	{ date: "2025-02-26", value: 1168900 },
+	{ date: "2025-02-27", value: 1162300 },
+	{ date: "2025-02-28", value: 1175600 },
+	{ date: "2025-03-01", value: 1169200 },
+	{ date: "2025-03-02", value: 1176800 },
+	{ date: "2025-03-03", value: 1182500 },
+	{ date: "2025-03-04", value: 1167300 },
+	{ date: "2025-03-05", value: 1160100 },
+	{ date: "2025-03-06", value: 1178600 },
+	{ date: "2025-03-07", value: 1191200 },
+	{ date: "2025-03-08", value: 1183500 },
+	{ date: "2025-03-09", value: 1175100 },
+	{ date: "2025-03-10", value: 1182700 },
+	{ date: "2025-03-11", value: 1194300 },
+	{ date: "2025-03-12", value: 1185800 },
+	{ date: "2025-03-13", value: 1186002 },
+	{ date: "2025-03-14", value: 1174200 },
+	{ date: "2025-03-15", value: 1181700 },
+	{ date: "2025-03-16", value: 1186800 },
+	{ date: "2025-03-17", value: 1187400 },
+	{ date: "2025-03-18", value: 1200200 },
+	{ date: "2025-03-19", value: 1194100 },
+	{ date: "2025-03-20", value: 1206000 },
+];
 
 const weeklyData = [
 	{ date: "2024-12-13", value: 1132500 },
@@ -77,10 +77,6 @@ const monthlyData = [
 ];
 
 const yearlyData = [
-	{ date: "2016-01-01", value: 920500 },
-	{ date: "2017-01-01", value: 967800 },
-	{ date: "2018-01-01", value: 988200 },
-	{ date: "2019-01-01", value: 998900 },
 	{ date: "2020-01-01", value: 892600 },
 	{ date: "2021-01-01", value: 916700 },
 	{ date: "2022-01-01", value: 988300 },
@@ -93,22 +89,24 @@ const formatDate = (dateStr: string, period: string) => {
 	const date = new Date(dateStr);
 	if (period === "1d") {
 		return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-	} else if (period === "7d") {
+	}
+	if (period === "7d") {
 		return date.toLocaleDateString("en-US", {
 			// year: "numeric",
 			month: "short",
 			day: "numeric",
 		});
-	} else if (period === "30d") {
+	}
+	if (period === "1m") {
 		return date.toLocaleDateString("en-US", {
 			year: "numeric",
 			month: "short",
 		});
-	} else if (period === "1y") {
-		return date.toLocaleDateString("en-US", { year: "numeric" });
-	} else {
-		return dateStr;
 	}
+	if (period === "1y") {
+		return date.toLocaleDateString("en-US", { year: "numeric" });
+	}
+	return dateStr;
 };
 
 const chartConfig = {
@@ -122,7 +120,7 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
-const TIME_PERIOD_OPTIONS = ["7d", "30d", "1y"];
+const TIME_PERIOD_OPTIONS = ["1d", "7d", "1m", "1y"];
 
 const ViewOption = ({ id, value }: { id: string; value: string }) => {
 	return (
@@ -138,15 +136,16 @@ const ViewOption = ({ id, value }: { id: string; value: string }) => {
 
 export function ExpensesStats() {
 	const id = useId();
-	const [selectedValue, setSelectedValue] = useState("7d");
+	const [selectedValue, setSelectedValue] = useState("1d");
 	const selectedIndex = TIME_PERIOD_OPTIONS.indexOf(selectedValue);
 
-	// Determine which data set to use based on the selected time period
 	const getChartDataForTimePeriod = () => {
 		switch (selectedValue) {
+			case "1d":
+				return dailyData;
 			case "7d":
 				return weeklyData;
-			case "30d":
+			case "1m":
 				return monthlyData;
 			default:
 				return yearlyData;
@@ -195,11 +194,11 @@ export function ExpensesStats() {
 					config={chartConfig}
 					className="aspect-auto h-70 w-full [&_.recharts-cartesian-axis-line]:stroke-border dark:[&_.recharts-cartesian-axis-line]:stroke-muted [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border dark:[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/10 [&_.recharts-rectangle.recharts-tooltip-inner-cursor]:fill-(--chart-1)/25"
 				>
-					<LineChart
+					<BarChart
 						accessibilityLayer
 						key={selectedValue}
 						data={chartDataToUse}
-						margin={{ right: 12 }}
+						margin={{ right: 12, top: 12 }}
 					>
 						<CartesianGrid vertical={false} strokeDasharray="2 2" />
 						<XAxis
@@ -220,26 +219,15 @@ export function ExpensesStats() {
 							}}
 						/>
 						<ChartTooltip
+							isAnimationActive={false}
+							offset={20}
 							content={<ChartTooltipContent hideIndicator />}
 							formatter={(value) =>
 								`$${Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
 							}
 						/>
-						<Line
-							type="linear"
-							dataKey="value"
-							stroke="var(--color-value)"
-							strokeWidth={2}
-							dot={false}
-							isAnimationActive={false}
-							activeDot={{
-								r: 5,
-								fill: "var(--chart-1)",
-								stroke: "var(--background)",
-								strokeWidth: 2,
-							}}
-						/>
-					</LineChart>
+						<Bar dataKey="value" fill="var(--color-value)" radius={2} />
+					</BarChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>

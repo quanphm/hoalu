@@ -45,9 +45,9 @@ function RouteComponent() {
 					<CreateWalletDialogTrigger>
 						<Button
 							className={cn(
-								"border-yellow-800 bg-yellow-800 text-yellow-50 hover:bg-yellow-800/90",
+								"border-purple-800 bg-purple-800 text-purple-50 hover:bg-purple-800/90",
 								"dark:border-transparent dark:bg-gradient-to-b dark:bg-transparent dark:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
-								"dark:from-yellow-600/45 dark:to-yellow-600/30 dark:text-yellow-100",
+								"dark:from-purple-600/45 dark:to-purple-600/30 dark:text-purple-100",
 							)}
 						>
 							<WalletMinimalIcon className="mr-2 size-4" />

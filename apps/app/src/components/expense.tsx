@@ -188,10 +188,11 @@ function CreateExpenseForm() {
 							{(field) => <field.FilesField label="Attachments" />}
 						</form.AppField>
 					</div>
-					<div className="col-span-5">
+					<div className="col-span-5 flex flex-col gap-2.5">
 						<form.AppField name="date">
-							{(field) => <field.DatepickerField label="Date" />}
+							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
+						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">
@@ -356,10 +357,11 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							)}
 						</form.AppField>
 					</div>
-					<div className="col-span-5">
+					<div className="col-span-5 flex flex-col gap-2.5">
 						<form.AppField name="date">
-							{(field) => <field.DatepickerField label="Date" />}
+							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
+						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">
