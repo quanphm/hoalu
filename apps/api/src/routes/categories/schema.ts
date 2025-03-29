@@ -1,7 +1,7 @@
 import { type } from "arktype";
 import { colorSchema } from "../../common/schema";
 
-export const categorySchema = type({
+export const CategorySchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	name: "string",
@@ -9,17 +9,17 @@ export const categorySchema = type({
 	color: colorSchema,
 });
 
-export const categoriesSchema = categorySchema.array().onUndeclaredKey("delete");
+export const CategoriesSchema = CategorySchema.array().onUndeclaredKey("delete");
 
-export const insertCategorySchema = type({
+export const InsertCategorySchema = type({
 	name: "string > 0",
 	"description?": "string",
 	color: colorSchema.default("gray"),
 });
 
-export const updateCategorySchema = insertCategorySchema.partial();
+export const UpdateCategorySchema = InsertCategorySchema.partial();
 
-export const deleteCategorySchema = type({
+export const DeleteCategorySchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 }).or("null");

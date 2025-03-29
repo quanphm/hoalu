@@ -10,11 +10,11 @@ import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { CategoryRepository } from "./repositiory";
 import {
-	categoriesSchema,
-	categorySchema,
-	deleteCategorySchema,
-	insertCategorySchema,
-	updateCategorySchema,
+	CategoriesSchema,
+	CategorySchema,
+	DeleteCategorySchema,
+	InsertCategorySchema,
+	UpdateCategorySchema,
 } from "./schema";
 
 const app = createHonoInstance();
@@ -31,7 +31,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: categoriesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: CategoriesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -43,7 +43,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = categoriesSchema(categories);
+			const parsed = CategoriesSchema(categories);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -64,7 +64,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -82,7 +82,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = categorySchema(category);
+			const parsed = CategorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -103,12 +103,12 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(insertCategorySchema),
+		jsonBodyValidator(InsertCategorySchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -118,7 +118,7 @@ const route = app
 				...payload,
 			});
 
-			const parsed = categorySchema(category);
+			const parsed = CategorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -139,13 +139,13 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: categorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(updateCategorySchema),
+		jsonBodyValidator(UpdateCategorySchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
@@ -168,7 +168,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = categorySchema(queryData);
+			const parsed = CategorySchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -188,7 +188,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deleteCategorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: DeleteCategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -203,7 +203,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deleteCategorySchema(category);
+			const parsed = DeleteCategorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

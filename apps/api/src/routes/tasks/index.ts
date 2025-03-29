@@ -10,11 +10,11 @@ import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { TaskRepository } from "./repository";
 import {
-	deleteTaskSchema,
-	insertTaskSchema,
-	taskSchema,
-	tasksSchema,
-	updateTaskSchema,
+	DeleteTaskSchema,
+	InsertTaskSchema,
+	TaskSchema,
+	TasksSchema,
+	UpdateTaskSchema,
 } from "./schema";
 
 const app = createHonoInstance();
@@ -31,7 +31,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: tasksSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: TasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -43,7 +43,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = tasksSchema(tasks);
+			const parsed = TasksSchema(tasks);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -64,7 +64,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -82,7 +82,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = taskSchema(task);
+			const parsed = TaskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -103,12 +103,12 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(insertTaskSchema),
+		jsonBodyValidator(InsertTaskSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -120,7 +120,7 @@ const route = app
 				...payload,
 			});
 
-			const parsed = taskSchema(task);
+			const parsed = TaskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -141,13 +141,13 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: taskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(updateTaskSchema),
+		jsonBodyValidator(UpdateTaskSchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
@@ -170,7 +170,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = taskSchema(queryData);
+			const parsed = TaskSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -190,7 +190,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deleteTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: DeleteTaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -205,7 +205,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deleteTaskSchema(task);
+			const parsed = DeleteTaskSchema(task);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

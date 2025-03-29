@@ -8,7 +8,7 @@ import {
 	walletTypeSchema,
 } from "../../common/schema";
 
-export const expenseSchema = type({
+export const ExpenseSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	title: "string",
@@ -47,9 +47,9 @@ export const expenseSchema = type({
 	...e,
 	amount: monetary.fromRealAmount(e.amount, e.currency),
 }));
-export const expensesSchema = expenseSchema.array().onUndeclaredKey("delete");
+export const ExpensesSchema = ExpenseSchema.array().onUndeclaredKey("delete");
 
-export const insertExpenseSchema = type({
+export const InsertExpenseSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	amount: "number",
@@ -60,9 +60,9 @@ export const insertExpenseSchema = type({
 	categoryId: "string.uuid.v7",
 });
 
-export const updateExpenseSchema = insertExpenseSchema.partial();
+export const UpdateExpenseSchema = InsertExpenseSchema.partial();
 
-export const deleteExpenseSchema = type({
+export const DeleteExpenseSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 }).or("null");
