@@ -6,7 +6,7 @@ import { WarningMessage } from "@/components/warning-message";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
+import { ExpenseFormSchema } from "@/lib/schema";
 import {
 	useCreateExpense,
 	useDeleteExpense,
@@ -130,7 +130,7 @@ function CreateExpenseForm() {
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: expenseFormSchema,
+			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			const expense = await mutation.mutateAsync({
@@ -305,7 +305,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: expenseFormSchema,
+			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({

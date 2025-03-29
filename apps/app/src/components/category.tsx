@@ -4,7 +4,7 @@ import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { type CategoryFormSchema, categoryFormSchema } from "@/lib/schema";
+import { CategoryFormSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
@@ -83,7 +83,7 @@ function CreateCategoryForm() {
 			color: "red",
 		} as CategoryFormSchema,
 		validators: {
-			onSubmit: categoryFormSchema,
+			onSubmit: CategoryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
@@ -176,7 +176,7 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 			color: category?.color ?? "gray",
 		} as CategoryFormSchema,
 		validators: {
-			onSubmit: categoryFormSchema,
+			onSubmit: CategoryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({

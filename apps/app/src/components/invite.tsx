@@ -1,7 +1,7 @@
 import { useAppForm } from "@/components/forms";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
-import { inviteFormSchema } from "@/lib/schema";
+import { InviteFormSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
@@ -21,7 +21,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 			email: "",
 		},
 		validators: {
-			onSubmit: inviteFormSchema,
+			onSubmit: InviteFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await authClient.workspace.inviteMember(

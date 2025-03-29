@@ -1,8 +1,8 @@
-import type { Color } from "@/lib/schema";
+import type { ColorSchema } from "@/lib/schema";
 import { cn } from "@hoalu/ui/utils";
 
-export function createCategoryTheme(color: Color) {
-	const variants: Record<Color, string> = {
+export function createCategoryTheme(color: ColorSchema) {
+	const variants: Record<ColorSchema, string> = {
 		red: cn(
 			"bg-red-100 text-red-800 border-red-200 ",
 			"dark:from-red-800/45 dark:to-red-800/30 dark:text-red-200",

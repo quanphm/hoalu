@@ -12,32 +12,32 @@ import type { InferRequestType, InferResponseType } from "hono/client";
 /**
  * enums
  */
-export const taskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
-export const prioritySchema = type("===", ...PG_ENUM_PRIORITY);
-export const repeatSchema = type("===", ...PG_ENUM_REPEAT);
+export const TaskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
+export const PrioritySchema = type("===", ...PG_ENUM_PRIORITY);
+export const RepeatSchema = type("===", ...PG_ENUM_REPEAT);
 
-export const walletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-export type WalletType = typeof walletTypeSchema.inferOut;
+export const WalletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
+export type WalletTypeSchema = typeof WalletTypeSchema.inferOut;
 
-export const colorSchema = type("===", ...PG_ENUM_COLOR);
-export type Color = typeof colorSchema.inferOut;
+export const ColorSchema = type("===", ...PG_ENUM_COLOR);
+export type ColorSchema = typeof ColorSchema.inferOut;
 
 /**
  * workspaces
  */
-export const workspaceFormSchema = type({
+export const WorkspaceFormSchema = type({
 	name: "string > 0",
 	slug: "string > 0",
 	currency: "string > 0",
 	"logo?": "string | null",
 });
-export type WorkspaceFormSchema = typeof workspaceFormSchema.infer;
-export const workspaceMetadataFormSchema = type({
+export type WorkspaceFormSchema = typeof WorkspaceFormSchema.infer;
+export const WorkspaceMetadataFormSchema = type({
 	currency: "string > 0",
 });
-export type WorkspaceMetadataFormSchema = typeof workspaceMetadataFormSchema.infer;
+export type WorkspaceMetadataFormSchema = typeof WorkspaceMetadataFormSchema.infer;
 
-export const inviteFormSchema = type({
+export const InviteFormSchema = type({
 	email: "string.email",
 });
 
@@ -49,7 +49,7 @@ export type TaskSchema = InferResponseType<typeof honoClient.api.tasks.$get, 200
 /**
  * expenses
  */
-export const expenseFormSchema = type({
+export const ExpenseFormSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	transaction: {
@@ -59,10 +59,10 @@ export const expenseFormSchema = type({
 	date: "string.date.iso",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",
-	repeat: repeatSchema,
+	repeat: RepeatSchema,
 	attachments: type("File").array(),
 });
-export type ExpenseFormSchema = typeof expenseFormSchema.infer;
+export type ExpenseFormSchema = typeof ExpenseFormSchema.infer;
 export type ExpenseSchema = InferResponseType<
 	typeof honoClient.api.expenses.$get,
 	200
@@ -75,12 +75,12 @@ export type ExpensePatchSchema = InferRequestType<
 /**
  * categories
  */
-export const categoryFormSchema = type({
+export const CategoryFormSchema = type({
 	name: "string > 0",
 	"description?": "string",
-	color: colorSchema,
+	color: ColorSchema,
 });
-export type CategoryFormSchema = typeof categoryFormSchema.infer;
+export type CategoryFormSchema = typeof CategoryFormSchema.infer;
 export type CategorySchema = InferResponseType<
 	typeof honoClient.api.categories.$get,
 	200
@@ -93,14 +93,14 @@ export type CategoryPatchSchema = InferRequestType<
 /**
  * wallets
  */
-export const walletFormSchema = type({
+export const WalletFormSchema = type({
 	name: "string > 0",
 	"description?": "string",
 	currency: "string > 0",
-	type: walletTypeSchema,
+	type: WalletTypeSchema,
 	"isActive?": "boolean",
 });
-export type WalletFormSchema = typeof walletFormSchema.infer;
+export type WalletFormSchema = typeof WalletFormSchema.infer;
 export type WalletPostSchema = InferRequestType<typeof honoClient.api.wallets.$post>["json"];
 export type WalletPatchSchema = InferRequestType<
 	(typeof honoClient.api.wallets)[":id"]["$patch"]

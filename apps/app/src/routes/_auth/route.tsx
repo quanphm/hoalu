@@ -3,12 +3,10 @@ import { sessionOptions } from "@/services/query-options";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { type } from "arktype";
 
-const searchSchema = type({
-	redirect: "string = '/'",
-});
-
 export const Route = createFileRoute("/_auth")({
-	validateSearch: searchSchema,
+	validateSearch: type({
+		redirect: "string = '/'",
+	}),
 	beforeLoad: async ({ context: { queryClient }, search }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());
 		if (auth?.user) {

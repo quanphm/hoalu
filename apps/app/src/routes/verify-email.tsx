@@ -4,12 +4,10 @@ import { Button } from "@hoalu/ui/button";
 import { type ErrorComponentProps, Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { type } from "arktype";
 
-const searchSchema = type({
-	token: "string > 0",
-});
-
 export const Route = createFileRoute("/verify-email")({
-	validateSearch: searchSchema,
+	validateSearch: type({
+		token: "string > 0",
+	}),
 	loaderDeps: ({ search: { token } }) => ({ token }),
 	loader: async ({ deps: { token } }) => {
 		const { data, error } = await authClient.verifyEmail({

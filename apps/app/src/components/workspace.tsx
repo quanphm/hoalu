@@ -4,7 +4,7 @@ import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
 import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
-import { workspaceFormSchema, workspaceMetadataFormSchema } from "@/lib/schema";
+import { WorkspaceFormSchema, WorkspaceMetadataFormSchema } from "@/lib/schema";
 import {
 	useCreateWorkspace,
 	useDeleteWorkspace,
@@ -76,7 +76,7 @@ function CreateWorkspaceForm() {
 			currency: "USD",
 		},
 		validators: {
-			onSubmit: workspaceFormSchema,
+			onSubmit: WorkspaceFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({ payload: value });
@@ -144,7 +144,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: workspaceFormSchema.omit("currency"),
+			onSubmit: WorkspaceFormSchema.omit("currency"),
 			onSubmitAsync: async ({ value }) => {
 				if (value.slug === workspace.slug) {
 					return undefined;
@@ -238,7 +238,7 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 			currency: workspace.metadata.currency as string,
 		},
 		validators: {
-			onSubmit: workspaceMetadataFormSchema,
+			onSubmit: WorkspaceMetadataFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			if (!canEdit) return;

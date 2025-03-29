@@ -8,10 +8,9 @@ import {
 	KEYBOARD_SHORTCUTS,
 } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { type WalletFormSchema, walletFormSchema } from "@/lib/schema";
+import { WalletFormSchema, type WalletTypeSchema } from "@/lib/schema";
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
-import type { PG_ENUM_WALLET_TYPE } from "@hoalu/common/enums";
 import {
 	BitcoinIcon,
 	WalletIcon as CashIcon,
@@ -39,8 +38,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-
-type WalletType = (typeof PG_ENUM_WALLET_TYPE)[number];
 
 function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useAtom(createWalletDialogOpenAtom);
@@ -91,7 +88,7 @@ function CreateWalletForm() {
 			type: "cash",
 		} as WalletFormSchema,
 		validators: {
-			onSubmit: walletFormSchema,
+			onSubmit: WalletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
@@ -155,7 +152,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 			isActive: wallet?.isActive ?? true,
 		} as WalletFormSchema,
 		validators: {
-			onSubmit: walletFormSchema,
+			onSubmit: WalletFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
@@ -307,14 +304,14 @@ function WalletDropdownMenuWithModal({ id }: { id: string }) {
 	);
 }
 
-const icons: Record<WalletType, React.ReactNode> = {
+const icons: Record<WalletTypeSchema, React.ReactNode> = {
 	cash: <CashIcon className="size-4 text-yellow-500" />,
 	"bank-account": <LandmarkIcon className="size-4 text-blue-500" />,
 	"credit-card": <CreditCardIcon className="size-4 bg-transparent text-indigo-500 " />,
 	"debit-card": <CreditCardIcon className="size-4 text-violet-500" />,
 	"digital-account": <BitcoinIcon className="size-4 text-orange-500" />,
 };
-function WalletIcon(props: { type: WalletType }) {
+function WalletIcon(props: { type: WalletTypeSchema }) {
 	if (!icons[props.type]) {
 		throw new Error("unknown wallet type");
 	}
