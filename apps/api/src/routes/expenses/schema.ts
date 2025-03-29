@@ -1,11 +1,11 @@
 import { type } from "arktype";
 import { monetary } from "../../common/monetary";
 import {
-	colorSchema,
-	currencySchema,
-	isoDateSchema,
-	repeatSchema,
-	walletTypeSchema,
+	ColorSchema,
+	CurrencySchema,
+	IsoDateSchema,
+	RepeatSchema,
+	WalletTypeSchema,
 } from "../../common/schema";
 
 export const ExpenseSchema = type({
@@ -16,8 +16,8 @@ export const ExpenseSchema = type({
 	amount: "string.numeric.parse",
 	realAmount: "string.numeric.parse",
 	currency: "string",
-	repeat: repeatSchema,
-	date: isoDateSchema,
+	repeat: RepeatSchema,
+	date: IsoDateSchema,
 	creator: {
 		"+": "delete",
 		id: "string.uuid.v7",
@@ -32,7 +32,7 @@ export const ExpenseSchema = type({
 		name: "string",
 		description: "string | null",
 		currency: "string",
-		type: walletTypeSchema,
+		type: WalletTypeSchema,
 		isActive: "boolean",
 	},
 	category: type({
@@ -40,9 +40,9 @@ export const ExpenseSchema = type({
 		id: "string.uuid.v7",
 		name: "string",
 		description: "string | null",
-		color: colorSchema,
+		color: ColorSchema,
 	}).or("null"),
-	createdAt: isoDateSchema,
+	createdAt: IsoDateSchema,
 }).pipe((e) => ({
 	...e,
 	amount: monetary.fromRealAmount(e.amount, e.currency),
@@ -53,8 +53,8 @@ export const InsertExpenseSchema = type({
 	title: "string > 0",
 	"description?": "string",
 	amount: "number",
-	currency: currencySchema,
-	repeat: repeatSchema.default("one-time"),
+	currency: CurrencySchema,
+	repeat: RepeatSchema.default("one-time"),
 	"date?": "string.date.iso",
 	walletId: "string.uuid.v7",
 	categoryId: "string.uuid.v7",

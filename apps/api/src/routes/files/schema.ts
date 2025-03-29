@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { isoDateSchema } from "../../common/schema";
+import { IsoDateSchema } from "../../common/schema";
 
 export const UploadUrlSchema = type({
 	"+": "delete",
@@ -22,7 +22,7 @@ export const FileSchema = type({
 	description: "string | null",
 	tags: "string[]",
 	presignedUrl: "string > 0",
-	createdAt: isoDateSchema,
+	createdAt: IsoDateSchema,
 });
 
 export const FilesSchema = FileSchema.array().onUndeclaredKey("delete");
