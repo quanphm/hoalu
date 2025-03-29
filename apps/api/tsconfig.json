@@ -5,9 +5,7 @@
 		"types": ["bun-types"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
-		"exactOptionalPropertyTypes": true,
-		"declaration": false,
-		"declarationMap": false
+		"exactOptionalPropertyTypes": true
 	},
 	"include": ["src"]
 }
