@@ -1,5 +1,4 @@
 {
-	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"strict": true,
 		"exactOptionalPropertyTypes": false,
@@ -13,5 +12,5 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"include": ["src", "tailwind.config.ts"]
+	"include": ["src"]
 }

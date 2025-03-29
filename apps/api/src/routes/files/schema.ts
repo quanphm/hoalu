@@ -10,7 +10,6 @@ export const uploadUrlSchema = type({
 });
 
 export const fileMetaSchema = type({
-	name: "string.lower",
 	size: "number > 0",
 	type: "string > 0",
 	"tags?": "string[]",

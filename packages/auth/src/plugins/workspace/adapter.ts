@@ -217,7 +217,6 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 						value: data.workspaceId,
 					},
 				],
-				limit: options?.membershipLimit || 100,
 			});
 			return members;
 		},

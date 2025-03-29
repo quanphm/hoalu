@@ -17,9 +17,9 @@
 		"preserveWatchOutput": true,
 		"skipLibCheck": true,
 		"strict": true,
+		"strictNullChecks": true,
 		"noEmit": true,
-		"noUnusedLocals": false,
-		"strictNullChecks": true
+		"noUnusedLocals": false
 	},
 	"exclude": ["node_modules"]
 }

@@ -253,7 +253,6 @@ const files = {
 		meta?: Omit<FileMetaSchema, "name" | "size" | "type">,
 	) => {
 		const presignedData = await files.createPresignedUploadUrl(slug, {
-			name: file.name,
 			size: file.size,
 			type: file.type,
 			...meta,

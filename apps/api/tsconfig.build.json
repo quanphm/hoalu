@@ -4,9 +4,9 @@
 		"outDir": "./dist/types",
 		"noEmit": false,
 		"allowImportingTsExtensions": false,
+		"exactOptionalPropertyTypes": false,
 		"emitDeclarationOnly": true,
-		"declaration": true,
-		"declarationMap": false
+		"declaration": true
 	},
 	"include": ["src/index.ts"]
 }

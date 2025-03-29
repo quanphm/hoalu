@@ -4,8 +4,8 @@
 	"extends": "./base.json",
 	"compilerOptions": {
 		"target": "ES2020",
-		"useDefineForClassFields": true,
 		"module": "ESNext",
+		"useDefineForClassFields": true,
 		"sourceMap": true,
 		"resolveJsonModule": true,
 		"noEmit": true,
