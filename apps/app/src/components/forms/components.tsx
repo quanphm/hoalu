@@ -5,13 +5,13 @@ import { useStore } from "@tanstack/react-form";
 import { createContext, useContext, useId } from "react";
 import { useFieldContext } from "./context";
 
-interface FieldContextValue {
+interface FieldControlContextValue {
 	id: string;
 	formItemId: string;
 	formDescriptionId: string;
 	formMessageId: string;
 }
-const FieldContext = createContext<FieldContextValue>({} as FieldContextValue);
+const FieldControlContext = createContext<FieldControlContextValue>({} as FieldControlContextValue);
 
 function Field({ className, ...props }: React.ComponentProps<"div">) {
 	const id = useId();
@@ -23,14 +23,22 @@ function Field({ className, ...props }: React.ComponentProps<"div">) {
 	};
 
 	return (
-		<FieldContext.Provider value={value}>
+		<FieldControlContext.Provider value={value}>
 			<div className={cn("flex flex-col gap-1.5", className)} {...props} />
-		</FieldContext.Provider>
+		</FieldControlContext.Provider>
 	);
 }
 
+function useFieldControlContext() {
+	const context = useContext(FieldControlContext);
+	if (!context) {
+		throw new Error("Hook `useFieldControlContext` should be used within <Field>.");
+	}
+	return context;
+}
+
 function FieldControl(props: React.ComponentProps<typeof Slot>) {
-	const { formItemId, formDescriptionId, formMessageId } = useContext(FieldContext);
+	const { formItemId, formDescriptionId, formMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasErrors = errors.length > 0;
@@ -49,7 +57,7 @@ function FieldControl(props: React.ComponentProps<typeof Slot>) {
 }
 
 function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-	const { formItemId } = useContext(FieldContext);
+	const { formItemId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasErrors = errors.length > 0;
@@ -64,7 +72,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPr
 }
 
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
-	const { formDescriptionId } = useContext(FieldContext);
+	const { formDescriptionId } = useFieldControlContext();
 
 	return (
 		<p
@@ -78,7 +86,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 function FieldMessage({ className, children, ...props }: React.ComponentProps<"p">) {
-	const { formMessageId } = useContext(FieldContext);
+	const { formMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 
@@ -114,4 +122,4 @@ function FieldMessage({ className, children, ...props }: React.ComponentProps<"p
 	);
 }
 
-export { Field, FieldControl, FieldLabel, FieldDescription, FieldMessage };
+export { Field, FieldControl, FieldLabel, FieldDescription, FieldMessage, useFieldControlContext };

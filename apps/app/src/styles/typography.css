@@ -4,7 +4,7 @@
     "monospace";
 }
 
-@theme inline {
+/* @theme inline {
   --font-sans: var(--geist-sans);
   --font-mono: var(--geist-mono);
 }
@@ -23,7 +23,7 @@
   font-weight: 100 900;
   font-display: swap;
   src: url("/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
-}
+} */
 
 @theme {
   --text-xs: 0.675rem;

@@ -91,14 +91,17 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link to="/account/preferences">
+								<Link
+									to="/account/preferences"
+									disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
+								>
 									<SettingsIcon />
 									Preferences
 									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_preferences} />
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link to="/account/tokens">
+								<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled}>
 									<KeyRoundIcon />
 									Access tokens
 									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_tokens} />

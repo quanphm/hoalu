@@ -34,7 +34,7 @@ function RouteComponent() {
 					<TabsTrigger
 						value="general"
 						className={cn(
-							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-primary",
+							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-foreground",
 							"dark:data-[state=active]:bg-gradient-to-b dark:data-[state=active]:bg-sidebar-accent/45 dark:data-[state=active]:from-sidebar-primary dark:data-[state=active]:to-sidebar-primary/70 dark:data-[state=active]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
 						)}
 					>
@@ -44,7 +44,7 @@ function RouteComponent() {
 					<TabsTrigger
 						value="photos"
 						className={cn(
-							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-primary",
+							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-foreground",
 							"dark:data-[state=active]:bg-gradient-to-b dark:data-[state=active]:bg-sidebar-accent/45 dark:data-[state=active]:from-sidebar-primary dark:data-[state=active]:to-sidebar-primary/70 dark:data-[state=active]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
 						)}
 					>

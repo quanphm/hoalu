@@ -55,34 +55,6 @@ export function FilesUpload({
 				</div>
 			)}
 
-			{files.length > 0 && (
-				<ul className="mb-2.5 grid grid-cols-4 gap-1.5">
-					{files.map((file, index) => (
-						<li key={file.name} className="relative flex rounded-md bg-muted/50 text-sm">
-							<div className="relative aspect-square w-full overflow-hidden rounded-md">
-								<img src={previewUrls[index]} alt="" />
-								<div className="absolute bottom-0 w-full bg-muted/90 p-1 text-center text-xs">
-									{(file.size / (1024 * 1024)).toFixed(2)}MB
-								</div>
-							</div>
-							<div className="absolute top-1 right-1 flex items-center gap-2">
-								<Button
-									size="icon"
-									variant="destructive"
-									className="size-6 rounded-full"
-									onClick={(e) => {
-										e.stopPropagation();
-										handleRemove(index);
-									}}
-								>
-									<XIcon className="size-4" />
-								</Button>
-							</div>
-						</li>
-					))}
-				</ul>
-			)}
-
 			<div
 				className="relative rounded-lg border border-input p-4 hover:border-ring hover:outline-none hover:ring-[3px] hover:ring-ring/20"
 				onDragOver={handleDragOver}
@@ -113,6 +85,34 @@ export function FilesUpload({
 					</div>
 				</div>
 			</div>
+
+			{files.length > 0 && (
+				<ul className="mt-2.5 grid grid-cols-4 gap-1.5">
+					{files.map((file, index) => (
+						<li key={file.name} className="relative flex rounded-md bg-muted/50 text-sm">
+							<div className="relative aspect-square w-full overflow-hidden rounded-md">
+								<img src={previewUrls[index]} alt="" />
+								<div className="absolute bottom-0 w-full bg-muted/90 p-1 text-center text-xs">
+									{(file.size / (1024 * 1024)).toFixed(2)}MB
+								</div>
+							</div>
+							<div className="absolute top-1 right-1 flex items-center gap-2">
+								<Button
+									size="icon"
+									variant="destructive"
+									className="size-6 rounded-full"
+									onClick={(e) => {
+										e.stopPropagation();
+										handleRemove(index);
+									}}
+								>
+									<XIcon className="size-4" />
+								</Button>
+							</div>
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	);
 }

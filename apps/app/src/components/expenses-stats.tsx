@@ -172,7 +172,7 @@ export function ExpensesStats() {
 							className={cn(
 								"group relative inline-grid grid-cols-(--grid-cols) items-center gap-0 font-medium text-xs after:absolute after:inset-y-0 after:w-(--swidth) after:rounded-full after:duration-300 after:[transition-timing-function:cubic-bezier(0.16,1,0.3,1)] [&:after]:translate-x-[calc(var(--selected-index)*100%)]",
 								"after:bg-accent",
-								"dark:after:bg-accent dark:after:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
+								"dark:after:bg-gradient-to-b dark:after:bg-sidebar-accent/45 dark:after:from-sidebar-primary dark:after:to-sidebar-primary/50 dark:after:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
 							)}
 							data-state={selectedValue}
 							style={
