@@ -1,7 +1,7 @@
 import { standardValidate } from "@hoalu/common/standard-validate";
 import { type } from "arktype";
 
-export const envSchema = type({
+export const EnvSchema = type({
 	AUTH_SECRET: "string > 0",
 	AUTH_URL: "string.url",
 	DB_HOST: "string > 0",
@@ -22,10 +22,10 @@ export const envSchema = type({
 	SYNC_URL: "string.url",
 });
 
-export type EnvSchema = typeof envSchema.infer;
+export type EnvSchema = typeof EnvSchema.infer;
 
 export function verifyEnv() {
-	standardValidate(envSchema, {
+	standardValidate(EnvSchema, {
 		// ArkType will throw error if NOT use spread operator here.
 		...process.env,
 	});

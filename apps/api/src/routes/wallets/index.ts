@@ -11,11 +11,11 @@ import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { WalletRepository } from "./repository";
 import {
-	deletetWalletSchema,
-	insertWalletSchema,
-	updateWalletSchema,
-	walletSchema,
-	walletsSchema,
+	DeletetWalletSchema,
+	InsertWalletSchema,
+	UpdateWalletSchema,
+	WalletSchema,
+	WalletsSchema,
 } from "./schema";
 
 const app = createHonoInstance();
@@ -32,7 +32,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: walletsSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: WalletsSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -44,7 +44,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = walletsSchema(wallets);
+			const parsed = WalletsSchema(wallets);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -65,7 +65,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: WalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -83,7 +83,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = walletSchema(wallet);
+			const parsed = WalletSchema(wallet);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -103,12 +103,12 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: WalletSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(insertWalletSchema),
+		jsonBodyValidator(InsertWalletSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -120,7 +120,7 @@ const route = app
 				...payload,
 			});
 
-			const parsed = walletSchema(wallet);
+			const parsed = WalletSchema(wallet);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -141,13 +141,13 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: walletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: WalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(updateWalletSchema),
+		jsonBodyValidator(UpdateWalletSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -192,7 +192,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = walletSchema(queryData);
+			const parsed = WalletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -212,7 +212,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deletetWalletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: DeletetWalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -257,7 +257,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deletetWalletSchema(queryData);
+			const parsed = DeletetWalletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

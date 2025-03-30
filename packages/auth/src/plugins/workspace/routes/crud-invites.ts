@@ -509,3 +509,111 @@ export const getInvitation = createAuthEndpoint(
 		});
 	},
 );
+
+export const listInvitations = createAuthEndpoint(
+	"/workspace/list-invitations",
+	{
+		method: "GET",
+		query: z.object({
+			idOrSlug: z.string({
+				description: "The workspace public_id or slug to get",
+			}),
+			status: z
+				.string({
+					description: "Filter status of invitations",
+				})
+				.optional(),
+		}),
+		requireHeaders: true,
+		use: [workspaceMiddleware, workspaceSessionMiddleware],
+		metadata: {
+			openapi: {
+				description: "List all invitations",
+				responses: {
+					[HTTPStatus.codes.OK]: {
+						description: "Success",
+						content: {
+							"application/json": {
+								schema: {
+									type: "array",
+									items: {
+										type: "object",
+										properties: {
+											id: {
+												type: "string",
+											},
+											email: {
+												type: "string",
+											},
+											role: {
+												type: "string",
+											},
+											workspaceId: {
+												type: "number",
+											},
+											inviterId: {
+												type: "string",
+											},
+											status: {
+												type: "string",
+											},
+											expiresAt: {
+												type: "string",
+											},
+										},
+										required: [
+											"id",
+											"email",
+											"role",
+											"workspaceId",
+											"inviterId",
+											"status",
+											"expiresAt",
+										],
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	async (ctx) => {
+		const session = ctx.context.session;
+		const idOrSlug = ctx.query?.idOrSlug;
+		if (!idOrSlug) {
+			throw new APIError("BAD_REQUEST", {
+				message: HTTPStatus.phrases.BAD_REQUEST,
+			});
+		}
+
+		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
+
+		const workspace = await adapter.findWorkspace(idOrSlug);
+		if (!workspace) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			});
+		}
+
+		const member = await adapter.findMemberByWorkspaceId({
+			userId: session.user.id,
+			workspaceId: workspace.id,
+		});
+		if (!member) {
+			throw new APIError("BAD_REQUEST", {
+				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
+			});
+		}
+
+		const invitations = await adapter.listInvitations(workspace.id);
+
+		if (ctx.query.status) {
+			const filtered = invitations?.filter((invite) => invite.status === ctx.query.status);
+			return ctx.json(filtered);
+		}
+
+		return ctx.json(invitations);
+	},
+);

@@ -11,11 +11,11 @@ import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { ExpenseRepository } from "./repository";
 import {
-	deleteExpenseSchema,
-	expenseSchema,
-	expensesSchema,
-	insertExpenseSchema,
-	updateExpenseSchema,
+	DeleteExpenseSchema,
+	ExpenseSchema,
+	ExpensesSchema,
+	InsertExpenseSchema,
+	UpdateExpenseSchema,
 } from "./schema";
 
 const app = createHonoInstance();
@@ -32,7 +32,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: expensesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: ExpensesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -44,7 +44,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = expensesSchema(expenses);
+			const parsed = ExpensesSchema(expenses);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -65,7 +65,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: ExpenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -83,7 +83,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = expenseSchema(expense);
+			const parsed = ExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -104,12 +104,12 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: ExpenseSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(insertExpenseSchema),
+		jsonBodyValidator(InsertExpenseSchema),
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
@@ -127,7 +127,7 @@ const route = app
 				...rest,
 			});
 
-			const parsed = expenseSchema(expense);
+			const parsed = ExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -148,13 +148,13 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: expenseSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: ExpenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(updateExpenseSchema),
+		jsonBodyValidator(UpdateExpenseSchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
@@ -186,7 +186,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = expenseSchema(queryData);
+			const parsed = ExpenseSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -206,7 +206,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: deleteExpenseSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: DeleteExpenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -221,7 +221,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = deleteExpenseSchema(expense);
+			const parsed = DeleteExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

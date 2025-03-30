@@ -65,6 +65,20 @@ export const listWorkspacesOptions = () => {
 	});
 };
 
+export const listInvitationsOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: workspaceKeys.invitations(slug),
+		queryFn: async () => {
+			const { data } = await authClient.workspace.listInvitations({
+				query: { idOrSlug: slug, status: "pending" },
+			});
+			if (!data) return [];
+			return data;
+		},
+		placeholderData: [],
+	});
+};
+
 export const getWorkspaceDetailsOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: workspaceKeys.withSlug(slug),

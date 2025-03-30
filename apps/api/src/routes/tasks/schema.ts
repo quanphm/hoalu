@@ -1,32 +1,32 @@
 import { type } from "arktype";
-import { isoDateSchema, prioritySchema, taskStatusSchema } from "../../common/schema";
+import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "../../common/schema";
 
-export const taskSchema = type({
+export const TaskSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	title: "string",
 	description: "string | null",
-	status: taskStatusSchema,
-	priority: prioritySchema,
+	status: TaskStatusSchema,
+	priority: PrioritySchema,
 	creatorId: "string.uuid.v7",
 	workspaceId: "string.uuid.v7",
-	createdAt: isoDateSchema,
-	dueDate: isoDateSchema,
+	createdAt: IsoDateSchema,
+	dueDate: IsoDateSchema,
 });
 
-export const tasksSchema = taskSchema.array().onUndeclaredKey("delete");
+export const TasksSchema = TaskSchema.array().onUndeclaredKey("delete");
 
-export const insertTaskSchema = type({
+export const InsertTaskSchema = type({
 	title: "string > 0",
 	"description?": "string",
-	status: taskStatusSchema.default("todo"),
-	priority: prioritySchema.default("none"),
+	status: TaskStatusSchema.default("todo"),
+	priority: PrioritySchema.default("none"),
 	"dueDate?": "string.date.iso",
 });
 
-export const updateTaskSchema = insertTaskSchema.partial();
+export const UpdateTaskSchema = InsertTaskSchema.partial();
 
-export const deleteTaskSchema = type({
+export const DeleteTaskSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 }).or("null");

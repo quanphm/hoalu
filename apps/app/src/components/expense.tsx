@@ -6,7 +6,7 @@ import { WarningMessage } from "@/components/warning-message";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { type ExpenseFormSchema, expenseFormSchema } from "@/lib/schema";
+import { ExpenseFormSchema } from "@/lib/schema";
 import {
 	useCreateExpense,
 	useDeleteExpense,
@@ -130,7 +130,7 @@ function CreateExpenseForm() {
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: expenseFormSchema,
+			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			const expense = await mutation.mutateAsync({
@@ -188,10 +188,11 @@ function CreateExpenseForm() {
 							{(field) => <field.FilesField label="Attachments" />}
 						</form.AppField>
 					</div>
-					<div className="col-span-5">
+					<div className="col-span-5 flex flex-col gap-2.5">
 						<form.AppField name="date">
-							{(field) => <field.DatepickerField label="Date" />}
+							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
+						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">
@@ -305,7 +306,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
-			onSubmit: expenseFormSchema,
+			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
@@ -356,10 +357,11 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							)}
 						</form.AppField>
 					</div>
-					<div className="col-span-5">
+					<div className="col-span-5 flex flex-col gap-2.5">
 						<form.AppField name="date">
-							{(field) => <field.DatepickerField label="Date" />}
+							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
+						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">

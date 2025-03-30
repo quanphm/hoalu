@@ -402,9 +402,13 @@ export const getFullWorkspace = createAuthEndpoint(
 				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
 			});
 		}
-		const isMember = workspace.members.find((member) => member.userId === session.user.id);
-		if (!isMember) {
-			throw new APIError("FORBIDDEN", {
+
+		const member = await adapter.findMemberByWorkspaceId({
+			userId: session.user.id,
+			workspaceId: workspace.id,
+		});
+		if (!member) {
+			throw new APIError("BAD_REQUEST", {
 				message: WORKSPACE_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_WORKSPACE,
 			});
 		}

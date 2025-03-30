@@ -1,15 +1,15 @@
 import { type } from "arktype";
-import { currencySchema, isoDateSchema, walletTypeSchema } from "../../common/schema";
+import { CurrencySchema, IsoDateSchema, WalletTypeSchema } from "../../common/schema";
 
-export const walletSchema = type({
+export const WalletSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 	name: "string",
 	description: "string | null",
 	currency: "string",
-	type: walletTypeSchema,
+	type: WalletTypeSchema,
 	isActive: "boolean",
-	createdAt: isoDateSchema,
+	createdAt: IsoDateSchema,
 	owner: {
 		"+": "delete",
 		id: "string.uuid.v7",
@@ -28,19 +28,19 @@ export const walletSchema = type({
 	},
 });
 
-export const walletsSchema = walletSchema.array().onUndeclaredKey("delete");
+export const WalletsSchema = WalletSchema.array().onUndeclaredKey("delete");
 
-export const insertWalletSchema = type({
+export const InsertWalletSchema = type({
 	name: "string > 0",
 	"description?": "string",
-	currency: currencySchema,
-	type: walletTypeSchema,
+	currency: CurrencySchema,
+	type: WalletTypeSchema,
 	isActive: "boolean = true",
 });
 
-export const updateWalletSchema = insertWalletSchema.partial();
+export const UpdateWalletSchema = InsertWalletSchema.partial();
 
-export const deletetWalletSchema = type({
+export const DeletetWalletSchema = type({
 	"+": "delete",
 	id: "string.uuid.v7",
 }).or("null");

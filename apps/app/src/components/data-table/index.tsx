@@ -40,7 +40,11 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 					<TableBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+								<TableRow
+									key={row.id}
+									data-state={row.getIsSelected() && "selected"}
+									className="bg-card"
+								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}

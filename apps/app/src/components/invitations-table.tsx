@@ -24,6 +24,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
+import { InputWithCopy } from "./input-with-copy";
 
 type Member = {
 	id: string;
@@ -40,6 +41,18 @@ const columns = [
 			headerClassName:
 				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
 			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
+		},
+	}),
+	columnHelper.accessor("id", {
+		header: "Invitation link",
+		cell: ({ row }) => {
+			const value = `${import.meta.env.PUBLIC_APP_BASE_URL}/invite/${row.getValue("id")}/accept`;
+			return <InputWithCopy value={value} />;
+		},
+		meta: {
+			headerClassName:
+				"w-(--header-link-size) min-w-(--header-link-size) max-w-(--header-link-size)",
+			cellClassName: "w-(--col-link-size) min-w-(--col-link-size) max-w-(--col-link-size)",
 		},
 	}),
 	columnHelper.accessor("status", {

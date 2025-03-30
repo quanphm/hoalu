@@ -4,12 +4,10 @@ import { OpenAPI } from "@hoalu/furnace";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 import { validator as aValidator } from "hono-openapi/arktype";
-import { currencySchema } from "../../common/schema";
+import { CurrencySchema } from "../../common/schema";
 import { createHonoInstance } from "../../lib/create-app";
 import { ExchangeRateRepository } from "./repository";
-import { exchangeRateSchema } from "./schema";
-
-type ExchangeRateSchema = typeof exchangeRateSchema.in.infer;
+import { ExchangeRateSchema } from "./schema";
 
 const app = createHonoInstance();
 const exchangeRateRepository = new ExchangeRateRepository();
@@ -24,10 +22,10 @@ const route = app.get(
 			...OpenAPI.unauthorized(),
 			...OpenAPI.bad_request(),
 			...OpenAPI.server_parse_error(),
-			...OpenAPI.response(type({ data: exchangeRateSchema }), HTTPStatus.codes.OK),
+			...OpenAPI.response(type({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	aValidator("query", type({ from: currencySchema, to: currencySchema }), (result, c) => {
+	aValidator("query", type({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
 		if (!result.success) {
 			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
 		}
@@ -80,7 +78,7 @@ const route = app.get(
 			} satisfies ExchangeRateSchema;
 		}
 
-		const parsed = exchangeRateSchema(response);
+		const parsed = ExchangeRateSchema(response);
 		if (parsed instanceof type.errors) {
 			return c.json(
 				{ message: createIssueMsg(parsed.issues) },

@@ -4,12 +4,12 @@ import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 
-const workspaceSchema = type({
+const WorkspaceSchema = type({
 	id: "string.uuid",
 	name: "string > 0",
 	slug: "string > 0",
 });
-type WorkspaceSchema = typeof workspaceSchema.inferOut;
+type WorkspaceSchema = typeof WorkspaceSchema.inferOut;
 
 export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T>>(
 	handler: (params: WorkspaceSchema) => AppShapeOptions<T, S>,
@@ -24,7 +24,7 @@ export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T
 	const workspace = await queryClient.ensureQueryData(getWorkspaceDetailsOptions(params.slug));
 	if (!workspace) throw notFound();
 
-	const result = workspaceSchema(workspace);
+	const result = WorkspaceSchema(workspace);
 	if (result instanceof type.errors) {
 		throw new Error(result.summary);
 	}

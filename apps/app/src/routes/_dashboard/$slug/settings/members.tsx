@@ -4,7 +4,7 @@ import { MembersTable } from "@/components/members-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { getActiveMemberOptions, listInvitationsOptions } from "@/services/query-options";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -18,6 +18,8 @@ function RouteComponent() {
 	const { slug } = Route.useParams();
 	const workspace = useWorkspace();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
+	const { data: invitations } = useSuspenseQuery(listInvitationsOptions(slug));
+
 	const canInvite = authClient.workspace.checkRolePermission({
 		// @ts-expect-error: [todo] fix role type
 		role: member.role,
@@ -25,6 +27,7 @@ function RouteComponent() {
 			invitation: ["create"],
 		},
 	});
+
 	const membersTableData = workspace.members.map((member) => ({
 		id: member.user.id,
 		name: member.user.name,
@@ -32,14 +35,12 @@ function RouteComponent() {
 		image: member.user.image,
 		role: member.role,
 	}));
-	const invitationTableData = workspace.invitations
-		// .filter((invite) => invite.status !== "accepted")
-		.filter((invite) => invite.status === "pending")
-		.map((invite) => ({
-			id: invite.id,
-			email: invite.email,
-			status: invite.status,
-		}));
+
+	const invitationTableData = invitations.map((invite) => ({
+		id: invite.id,
+		email: invite.email,
+		status: invite.status,
+	}));
 
 	return (
 		<>

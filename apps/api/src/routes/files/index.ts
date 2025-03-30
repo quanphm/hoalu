@@ -14,7 +14,7 @@ import { idParamValidator } from "../../validators/id-param";
 import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { FileRepository } from "./repository";
-import { fileMetaSchema, filesSchema, uploadUrlSchema } from "./schema";
+import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "./schema";
 
 const app = createHonoInstance();
 const fileRepository = new FileRepository();
@@ -30,12 +30,12 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: uploadUrlSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: UploadUrlSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(fileMetaSchema),
+		jsonBodyValidator(FileMetaSchema),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -64,7 +64,7 @@ const route = app
 				s3Url,
 			});
 
-			const parsed = uploadUrlSchema({
+			const parsed = UploadUrlSchema({
 				...fileSlot,
 				uploadUrl,
 			});
@@ -87,7 +87,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: filesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: FilesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -106,7 +106,7 @@ const route = app
 				}),
 			);
 
-			const parsed = filesSchema(filesWithPresignedUrl);
+			const parsed = FilesSchema(filesWithPresignedUrl);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
