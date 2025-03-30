@@ -14,6 +14,9 @@
   --header-amount-size: 180px;
   --col-amount-size: 180px;
 
+  --header-link-size: 400px;
+  --col-link-size: 400px;
+
   --header-action-size: 48px;
   --col-action-size: 48px;
 }
