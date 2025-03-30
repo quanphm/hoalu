@@ -32,7 +32,7 @@ export const DEFAULT_CATEGORIES: { name: string; description: string; color: Col
 		description: "Rent, mortgage, utilities, and home maintenance",
 	},
 	{
-		name: "🚗 Transporation",
+		name: "🚗 Transportation",
 		color: "stone",
 		description: "Fuel, public transit, rideshares, and vehicle costs",
 	},
