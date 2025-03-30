@@ -17,40 +17,34 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 	const adapter = context.adapter;
 
 	return {
-		async findWorkspace(identifier: string) {
-			const isPublicId = identifier.startsWith("ws_");
+		async findWorkspace(workspaceIdOrSlug: string) {
+			const isPublicId = workspaceIdOrSlug.startsWith("ws_");
 			if (isPublicId) {
 				return await adapter.findOne<Workspace>({
 					model: "workspace",
-					where: [{ field: "publicId", value: identifier }],
+					where: [{ field: "publicId", value: workspaceIdOrSlug }],
 				});
 			}
-			const isUUID = z.string().uuid().safeParse(identifier);
+			const isUUID = z.string().uuid().safeParse(workspaceIdOrSlug);
 			if (isUUID.success) {
 				return await adapter.findOne<Workspace>({
 					model: "workspace",
-					where: [{ field: "id", value: identifier }],
+					where: [{ field: "id", value: workspaceIdOrSlug }],
 				});
 			}
 			return await adapter.findOne<Workspace>({
 				model: "workspace",
-				where: [{ field: "slug", value: identifier }],
+				where: [{ field: "slug", value: workspaceIdOrSlug }],
 			});
 		},
-		async findFullWorkspace(identifier: string) {
-			const workspace = await this.findWorkspace(identifier);
+		async findFullWorkspace(workspaceIdOrSlug: string) {
+			const workspace = await this.findWorkspace(workspaceIdOrSlug);
 			if (!workspace) return null;
 
-			const [invitations, members] = await Promise.all([
-				adapter.findMany<Invitation>({
-					model: "invitation",
-					where: [{ field: "workspaceId", value: workspace.id }],
-				}),
-				adapter.findMany<Member>({
-					model: "member",
-					where: [{ field: "workspaceId", value: workspace.id }],
-				}),
-			]);
+			const members = await adapter.findMany<Member>({
+				model: "member",
+				where: [{ field: "workspaceId", value: workspace.id }],
+			});
 
 			const userIds = members.map((member) => member.userId);
 			const users = await adapter.findMany<User>({
@@ -72,7 +66,6 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 
 			return {
 				...workspace,
-				invitations,
 				members: membersWithUsers,
 			};
 		},
@@ -131,13 +124,13 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 				],
 			};
 		},
-		async findMemberById(identifier: string) {
+		async findMemberById(id: string) {
 			const member = await adapter.findOne<Member>({
 				model: "member",
 				where: [
 					{
 						field: "id",
-						value: identifier,
+						value: id,
 					},
 				],
 			});
@@ -365,6 +358,17 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 				],
 			});
 			return invitation;
+		},
+		async listInvitations(workspaceIdOrSlug: string) {
+			const workspace = await this.findWorkspace(workspaceIdOrSlug);
+			if (!workspace) return [];
+
+			const invitations = await adapter.findMany<Invitation>({
+				model: "invitation",
+				where: [{ field: "workspaceId", value: workspace.id }],
+			});
+
+			return invitations;
 		},
 		async findPendingInvitation(data: {
 			email: string;

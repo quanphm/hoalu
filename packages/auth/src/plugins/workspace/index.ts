@@ -10,6 +10,7 @@ import {
 	cancelInvitation,
 	createInvitation,
 	getInvitation,
+	listInvitations,
 	rejectInvitation,
 } from "./routes/crud-invites";
 import { addMember, getActiveMember, removeMember, updateMemberRole } from "./routes/crud-members";
@@ -228,6 +229,7 @@ const workspace = <O extends WorkspaceOptions>(options?: O) => {
 		deleteWorkspace,
 		getFullWorkspace,
 		listWorkspaces,
+		listInvitations,
 		createInvitation,
 		cancelInvitation,
 		acceptInvitation,
