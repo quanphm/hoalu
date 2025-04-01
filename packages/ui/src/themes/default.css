@@ -70,7 +70,7 @@
 .texture {
   background-image: url("/images/noise.png");
   background-repeat: repeat;
-  opacity: 0.02;
+  opacity: 0.01;
   mix-blend-mode: multiply;
   z-index: 100;
   isolation: isolate;
@@ -81,6 +81,6 @@
   pointer-events: none;
 
   @variant dark {
-    opacity: 0.08;
+    opacity: 0.07;
   }
 }
