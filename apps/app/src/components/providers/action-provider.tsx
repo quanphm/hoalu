@@ -7,7 +7,7 @@ import { draftExpenseAtom } from "@/atoms/draft-expense";
 import { CreateCategoryDialog } from "@/components/category";
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
-import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -23,7 +23,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { slug } = useParams({ strict: false });
 	const navigate = useNavigate();
-	const { setTheme } = useTheme();
+	const { theme, setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
 	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
@@ -75,9 +75,11 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
 		() => {
-			setTheme((theme) => (theme === "light" ? "dark" : "light"));
+			const currentThemeIndex = THEMES.findIndex((t) => t === theme);
+			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+			setTheme(THEMES[nextThemeIndex]);
 		},
-		{ description: "Theme: Toggle Light/Dark mode" },
+		{ description: "Theme: Browse themes" },
 	);
 
 	useHotkeys(

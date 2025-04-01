@@ -1,16 +1,13 @@
 import { UserAvatar } from "@/components/user-avatar";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import {
 	CheckIcon,
 	ChevronsUpDownIcon,
 	KeyRoundIcon,
 	LogOutIcon,
-	Monitor,
-	MoonIcon,
 	PaletteIcon,
 	SettingsIcon,
-	SunIcon,
 } from "@hoalu/icons/lucide";
 import {
 	DropdownMenu,
@@ -69,20 +66,28 @@ export function NavUser() {
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuSubContent>
-										<DropdownMenuItem onClick={() => setTheme("light")}>
-											<SunIcon />
-											<span>Light</span>
-											{theme === "light" && <CheckIcon className="ml-auto" />}
-										</DropdownMenuItem>
-										<DropdownMenuItem onClick={() => setTheme("dark")}>
-											<MoonIcon />
-											<span>Dark</span>
-											{theme === "dark" && <CheckIcon className="ml-auto" />}
-										</DropdownMenuItem>
+										{THEMES.map((themeName) => (
+											<DropdownMenuItem
+												key={themeName}
+												onClick={() => setTheme(themeName)}
+												className="capitalize"
+											>
+												{theme === themeName && (
+													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+														<CheckIcon className="size-4" />
+													</span>
+												)}
+												<span className="ms-6">{themeName}</span>
+											</DropdownMenuItem>
+										))}
+										<DropdownMenuSeparator />
 										<DropdownMenuItem onClick={() => setTheme("system")}>
-											<Monitor />
-											<span>System</span>
-											{theme === "system" && <CheckIcon className="ml-auto" />}
+											{theme === "system" && (
+												<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+													<CheckIcon className="size-4" />
+												</span>
+											)}
+											<span className="ms-6">System</span>
 										</DropdownMenuItem>
 									</DropdownMenuSubContent>
 								</DropdownMenuPortal>
@@ -91,14 +96,17 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link to="/account/preferences">
+								<Link
+									to="/account/preferences"
+									disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
+								>
 									<SettingsIcon />
 									Preferences
 									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_preferences} />
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link to="/account/tokens">
+								<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled}>
 									<KeyRoundIcon />
 									Access tokens
 									<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_tokens} />

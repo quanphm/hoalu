@@ -1,5 +1,7 @@
-import type { WalletType } from "@/lib/schema";
+import type { RepeatSchema, WalletTypeSchema } from "@/lib/schema";
 import { getCurrencyList } from "@hoalu/countries";
+
+export const THEMES = ["light", "dark", "matsu"];
 
 export const kbdSymbols = {
 	SHIFT: "⇧",
@@ -18,12 +20,23 @@ export const AVAILABLE_CURRENCY_OPTIONS: {
 
 export const AVAILABLE_WALLET_TYPE_OPTIONS: {
 	label: string;
-	value: WalletType;
+	value: WalletTypeSchema;
 }[] = [
 	{ label: "Cash", value: "cash" },
 	{ label: "Bank account", value: "bank-account" },
 	{ label: "Credit card", value: "credit-card" },
 	{ label: "Debit card", value: "debit-card" },
+];
+
+export const AVAILABLE_REPEAT_OPTIONS: {
+	label: string;
+	value: RepeatSchema;
+}[] = [
+	{ label: "One-time", value: "one-time" },
+	{ label: "Everyday", value: "daily" },
+	{ label: "Every week", value: "weekly" },
+	{ label: "Every month", value: "monthly" },
+	{ label: "Annual", value: "yearly" },
 ];
 
 export const KEYBOARD_SHORTCUTS = {
@@ -60,7 +73,7 @@ export const KEYBOARD_SHORTCUTS = {
 	goto_tasks: {
 		label: "T",
 		hotkey: "t",
-		enabled: true,
+		enabled: false,
 	},
 	goto_workspace: {
 		label: "S",

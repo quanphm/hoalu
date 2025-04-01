@@ -26,13 +26,13 @@ export function Greeting() {
 
 	const icon =
 		currentHours > 4 && currentHours < 12 ? (
-			<ClearDayIcon className="size-8" />
+			<ClearDayIcon className="inline size-8" />
 		) : currentHours < 18 ? (
-			<PartlyCloudyDayIcon className="size-8" />
+			<PartlyCloudyDayIcon className="inline size-8" />
 		) : currentHours < 21 ? (
-			<PartlyCloudyNightIcon className="size-8" />
+			<PartlyCloudyNightIcon className="inline size-8" />
 		) : (
-			<StarryNightIcon className="size-8" />
+			<StarryNightIcon className="inline size-8" />
 		);
 
 	const message =
@@ -51,7 +51,7 @@ export function Greeting() {
 			<p className="font-semibold text-xl leading-none">
 				{message}, {user?.name}
 			</p>
-			<p className="flex items-center gap-1 text-base text-muted-foreground tracking-wide">
+			<p className="text-base text-muted-foreground tracking-wide">
 				{icon} {format(today, "EEEE, MMM d kk:mm")}
 			</p>
 		</div>

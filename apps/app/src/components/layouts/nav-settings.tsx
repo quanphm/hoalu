@@ -18,7 +18,11 @@ export function NavSettings() {
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
-						<Link from="/$slug/" to="./settings/workspace">
+						<Link
+							from="/$slug/"
+							to="./settings/workspace"
+							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
+						>
 							<BuildingIcon />
 							<span>Workspace</span>
 							<SidebarMenuBadge>
@@ -30,7 +34,7 @@ export function NavSettings() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
-						<Link from="/$slug/" to="./settings/members">
+						<Link from="/$slug/" to="./settings/members" disabled={false}>
 							<UsersIcon />
 							<span>Members</span>
 							<SidebarMenuBadge>
@@ -42,7 +46,11 @@ export function NavSettings() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
-						<Link from="/$slug/" to="./settings/library">
+						<Link
+							from="/$slug/"
+							to="./settings/library"
+							disabled={!KEYBOARD_SHORTCUTS.goto_library.enabled}
+						>
 							<LibraryIcon />
 							<span>Library</span>
 							<SidebarMenuBadge>

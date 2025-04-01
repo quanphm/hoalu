@@ -17,7 +17,7 @@ export function NavWorkspace() {
 			<SidebarGroupLabel>Workspace</SidebarGroupLabel>
 			<SidebarMenu>
 				<SidebarMenuItem>
-					<SidebarMenuButton asChild tooltip="Overview">
+					<SidebarMenuButton asChild tooltip="Dashboard">
 						<Link from="/$slug/" to="." activeOptions={{ exact: true }}>
 							<GalleryVerticalIcon />
 							<span>Dashboard</span>
@@ -29,8 +29,12 @@ export function NavWorkspace() {
 				</SidebarMenuItem>
 
 				<SidebarMenuItem>
-					<SidebarMenuButton asChild tooltip="Tasks">
-						<Link from="/$slug/" to="./expenses">
+					<SidebarMenuButton asChild tooltip="Expenses">
+						<Link
+							from="/$slug/"
+							to="./expenses"
+							disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
+						>
 							<ArrowRightLeftIcon />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
@@ -42,7 +46,7 @@ export function NavWorkspace() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Tasks">
-						<Link from="/$slug/" to="./tasks">
+						<Link from="/$slug/" to="./tasks" disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}>
 							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>

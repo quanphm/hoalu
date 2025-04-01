@@ -66,3 +66,21 @@
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
 }
+
+.texture {
+  background-image: url("/images/noise.png");
+  background-repeat: repeat;
+  opacity: 0.01;
+  mix-blend-mode: multiply;
+  z-index: 100;
+  isolation: isolate;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
+
+  @variant dark {
+    opacity: 0.07;
+  }
+}

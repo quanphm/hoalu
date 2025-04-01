@@ -46,6 +46,12 @@ export const taskKeys = {
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "tasks"] as const,
 };
 
+export const fileKeys = {
+	all: (slug: string) => fileKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...fileKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "files"] as const,
+};
+
 export const exchangeRateKeys = {
 	all: ["exchange-rates"] as const,
 	pair: ({ from = "USD", to }: ExchangeRatesQuerySchema) =>

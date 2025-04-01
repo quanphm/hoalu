@@ -15,6 +15,7 @@ import {
 } from "@/services/mutations";
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -148,7 +149,10 @@ function CreateExpenseForm() {
 			setDraft(RESET);
 			setOpen(false);
 			if (value.attachments.length > 0) {
-				await expenseFilesMutation.mutateAsync({ id: expense.id, files: value.attachments });
+				await expenseFilesMutation.mutateAsync({
+					...expense,
+					files: value.attachments,
+				});
 			}
 		},
 	});
@@ -184,15 +188,33 @@ function CreateExpenseForm() {
 						<form.AppField name="description">
 							{(field) => <field.TiptapField label="Note" defaultValue={draft.description} />}
 						</form.AppField>
-						<form.AppField name="attachments">
-							{(field) => <field.FilesField label="Attachments" />}
-						</form.AppField>
 					</div>
 					<div className="col-span-5 flex flex-col gap-2.5">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
+					</div>
+					<div className="col-span-12">
+						<Accordion type="single" collapsible className="w-full">
+							<AccordionItem value="advanced">
+								<AccordionTrigger className="-mt-4 justify-start gap-3 text-base hover:no-underline">
+									Advanced
+								</AccordionTrigger>
+								<AccordionContent className="grid grid-cols-12 gap-4">
+									<div className="col-span-7 flex flex-col gap-4">
+										<form.AppField name="repeat">
+											{(field) => <field.RepeatField label="Repeat" />}
+										</form.AppField>
+									</div>
+									<div className="col-span-5 flex flex-col gap-4">
+										<form.AppField name="attachments">
+											{(field) => <field.FilesField />}
+										</form.AppField>
+									</div>
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">
@@ -362,6 +384,27 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
+					</div>
+					<div className="col-span-12">
+						<Accordion type="single" collapsible className="w-full">
+							<AccordionItem value="advanced">
+								<AccordionTrigger className="-mt-4 justify-start gap-3 text-base hover:no-underline">
+									Advanced
+								</AccordionTrigger>
+								<AccordionContent className="grid grid-cols-12 gap-4">
+									<div className="col-span-7 flex flex-col gap-4">
+										<form.AppField name="repeat">
+											{(field) => <field.RepeatField label="Repeat" />}
+										</form.AppField>
+									</div>
+									<div className="col-span-5 flex flex-col gap-4">
+										<form.AppField name="attachments">
+											{(field) => <field.FilesField />}
+										</form.AppField>
+									</div>
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
 					</div>
 				</div>
 				<div className="ml-auto flex gap-2">

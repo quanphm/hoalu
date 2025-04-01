@@ -6,6 +6,7 @@ import {
 	categoryKeys,
 	exchangeRateKeys,
 	expenseKeys,
+	fileKeys,
 	memberKeys,
 	taskKeys,
 	walletKeys,
@@ -199,6 +200,19 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQue
 		staleTime: TIME_IN_MILLISECONDS.DAY,
 		select: (data) => data.rate,
 		enabled: from !== to,
+		retry: 1,
+	});
+};
+
+/**
+ * files
+ */
+
+export const filesQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: fileKeys.all(slug),
+		queryFn: () => apiClient.files.getFiles(slug),
+		staleTime: TIME_IN_MILLISECONDS.DAY,
 		retry: 1,
 	});
 };
