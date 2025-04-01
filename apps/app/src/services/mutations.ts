@@ -249,11 +249,17 @@ export function useUploadExpenseFiles() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
-		mutationFn: async ({ id, files }: { id: string; files: File[] }) => {
+		mutationFn: async ({
+			id,
+			title,
+			date,
+			files,
+		}: { id: string; title: string; date: string; files: File[] }) => {
 			const ids = await Promise.all(
 				files.map(async (file) => {
 					const response = await apiClient.files.uploadWithPresignedUrl(slug, file, {
 						tags: ["expense"],
+						description: `${new Date(date)} - ${title}`,
 					});
 					return response.id;
 				}),

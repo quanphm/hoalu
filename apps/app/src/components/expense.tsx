@@ -149,7 +149,10 @@ function CreateExpenseForm() {
 			setDraft(RESET);
 			setOpen(false);
 			if (value.attachments.length > 0) {
-				await expenseFilesMutation.mutateAsync({ id: expense.id, files: value.attachments });
+				await expenseFilesMutation.mutateAsync({
+					...expense,
+					files: value.attachments,
+				});
 			}
 		},
 	});
