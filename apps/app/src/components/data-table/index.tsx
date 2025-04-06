@@ -3,8 +3,8 @@ import {
 	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
-	getPaginationRowModel,
 	useReactTable,
+	// getPaginationRowModel,
 } from "@tanstack/react-table";
 
 export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<T, any>[] }) {
@@ -12,7 +12,7 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
+		// getPaginationRowModel: getPaginationRowModel(),
 	});
 
 	return (

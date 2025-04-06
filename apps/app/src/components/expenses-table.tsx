@@ -77,6 +77,5 @@ const columns = [
 ];
 
 export function ExpensesTable({ data }: { data: ExpenseSchema[] }) {
-	console.log(data.length);
 	return <DataTable data={data} columns={columns} />;
 }
