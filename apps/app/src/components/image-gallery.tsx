@@ -18,11 +18,12 @@ export function ImageGallery(props: {
 						key={image.name}
 						className="relative aspect-square cursor-pointer overflow-hidden"
 						onClick={() => setSelectedImage(image)}
+						onKeyUp={() => setSelectedImage(image)}
 					>
 						<img
 							src={image.presignedUrl}
 							alt={image.description ?? ""}
-							className="w-full object-cover"
+							className="h-full object-cover"
 						/>
 					</div>
 				))}

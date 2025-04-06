@@ -23,6 +23,7 @@ import {
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { useState } from "react";
 import { InputWithCopy } from "./input-with-copy";
 
@@ -30,6 +31,7 @@ type Member = {
 	id: string;
 	email: string;
 	status: "canceled" | "accepted" | "rejected" | "pending";
+	expiresAt: Date;
 };
 
 const columnHelper = createColumnHelper<Member>();
@@ -45,8 +47,9 @@ const columns = [
 	}),
 	columnHelper.accessor("id", {
 		header: "Invitation link",
-		cell: ({ row }) => {
-			const value = `${import.meta.env.PUBLIC_APP_BASE_URL}/invite/${row.getValue("id")}/accept`;
+		cell: ({ getValue }) => {
+			const id = getValue();
+			const value = `${import.meta.env.PUBLIC_APP_BASE_URL}/invite/${id}/accept`;
 			return <InputWithCopy value={value} />;
 		},
 		meta: {
@@ -57,8 +60,15 @@ const columns = [
 	}),
 	columnHelper.accessor("status", {
 		header: "Status",
-		cell: ({ row }) => {
-			return <p className="text-muted-foreground capitalize">{row.getValue("status")}</p>;
+		cell: ({ getValue }) => {
+			return <p className="text-muted-foreground capitalize">{getValue()}</p>;
+		},
+	}),
+	columnHelper.accessor("expiresAt", {
+		header: "Expiration time",
+		cell: ({ getValue }) => {
+			const value = format(getValue().toString(), "HH:mm d MMM yyyy");
+			return <p className="text-muted-foreground capitalize">{value}</p>;
 		},
 	}),
 	columnHelper.display({

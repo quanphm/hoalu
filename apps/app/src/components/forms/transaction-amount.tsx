@@ -36,6 +36,16 @@ export function TransactionAmountField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="isolate flex rounded-md">
+				<SelectNative
+					className="w-[80px] rounded-e-none bg-muted"
+					value={field.state.value.currency}
+					onBlur={field.handleBlur}
+					onChange={handleCurrencyChange}
+				>
+					{AVAILABLE_CURRENCY_OPTIONS.map((currency) => (
+						<option key={currency.value}>{currency.label}</option>
+					))}
+				</SelectNative>
 				<FieldControl>
 					<NumberField
 						value={field.state.value.value}
@@ -53,23 +63,13 @@ export function TransactionAmountField(props: Props) {
 						<Group
 							className={cn(
 								"doutline-none relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-md border border-input text-sm focus-visible:outline-none data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:ring-[3px] data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40",
-								"rounded-e-none data-focus-within:z-10",
+								"rounded-s-none data-focus-within:z-10",
 							)}
 						>
 							<Input className="flex-1 bg-background px-3 py-2 text-foreground tabular-nums outline-none" />
 						</Group>
 					</NumberField>
 				</FieldControl>
-				<SelectNative
-					className="w-[80px] rounded-s-none bg-muted"
-					value={field.state.value.currency}
-					onBlur={field.handleBlur}
-					onChange={handleCurrencyChange}
-				>
-					{AVAILABLE_CURRENCY_OPTIONS.map((currency) => (
-						<option key={currency.value}>{currency.label}</option>
-					))}
-				</SelectNative>
 			</div>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />

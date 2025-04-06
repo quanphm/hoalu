@@ -1,4 +1,6 @@
-.matsu {
+/* https://matsu-theme.vercel.app/ */
+
+.ghibli {
   --radius: 0.625rem;
   --background: oklch(0.91 0.048 83.6);
   --foreground: oklch(0.41 0.077 78.9);
@@ -37,7 +39,7 @@
 }
 
 @layer base {
-  .matsu {
+  .ghibli {
     * {
       @apply border-border outline-ring/50;
     }
@@ -70,7 +72,7 @@
       box-shadow: 0 2px 0 0 var(--destructive-border);
     }
     .texture {
-      background-image: url("/images/matsu-texture.jpg");
+      background-image: url("/images/ghibli-texture.jpg");
       background-size: 100% 100%;
       background-repeat: repeat;
       opacity: 0.12;
