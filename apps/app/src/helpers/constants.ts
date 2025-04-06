@@ -1,7 +1,7 @@
 import type { RepeatSchema, WalletTypeSchema } from "@/lib/schema";
 import { getCurrencyList } from "@hoalu/countries";
 
-export const THEMES = ["light", "dark", "matsu"];
+export const THEMES = ["light", "dark", "ghibli"];
 
 export const kbdSymbols = {
 	SHIFT: "⇧",

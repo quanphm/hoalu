@@ -1,6 +1,6 @@
 @import "./animate.css";
 @import "./themes/default.css";
-@import "./themes/matsu.css";
+@import "./themes/ghibli.css";
 
 @theme inline {
   --color-background: var(--background);
