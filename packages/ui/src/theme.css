@@ -1,6 +1,8 @@
 @import "./animate.css";
+
 @import "./themes/default.css";
 @import "./themes/ghibli.css";
+@import "./themes/mono.css";
 
 @theme inline {
   --color-background: var(--background);

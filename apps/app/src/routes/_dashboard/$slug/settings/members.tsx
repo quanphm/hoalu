@@ -40,6 +40,7 @@ function RouteComponent() {
 		id: invite.id,
 		email: invite.email,
 		status: invite.status,
+		expiresAt: invite.expiresAt,
 	}));
 
 	return (

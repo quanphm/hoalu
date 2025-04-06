@@ -3,7 +3,7 @@ import { draftExpenseAtom } from "@/atoms/draft-expense";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { ExpenseFormSchema } from "@/lib/schema";
@@ -196,20 +196,25 @@ function CreateExpenseForm() {
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 					<div className="col-span-12">
-						<Accordion type="single" collapsible className="w-full">
-							<AccordionItem value="advanced">
-								<AccordionTrigger className="-mt-4 justify-start gap-3 text-base hover:no-underline">
+						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
+							<AccordionItem
+								value="advanced"
+								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+							>
+								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
 									Advanced
 								</AccordionTrigger>
-								<AccordionContent className="grid grid-cols-12 gap-4">
-									<div className="col-span-7 flex flex-col gap-4">
+								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
+									<div className="col-span-5 flex flex-col gap-4">
 										<form.AppField name="repeat">
-											{(field) => <field.RepeatField label="Repeat" />}
+											{(field) => (
+												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+											)}
 										</form.AppField>
 									</div>
-									<div className="col-span-5 flex flex-col gap-4">
+									<div className="col-span-7 flex flex-col gap-4">
 										<form.AppField name="attachments">
-											{(field) => <field.FilesField />}
+											{(field) => <field.FilesField label="Attachments" />}
 										</form.AppField>
 									</div>
 								</AccordionContent>
@@ -386,20 +391,25 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 					<div className="col-span-12">
-						<Accordion type="single" collapsible className="w-full">
-							<AccordionItem value="advanced">
-								<AccordionTrigger className="-mt-4 justify-start gap-3 text-base hover:no-underline">
+						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
+							<AccordionItem
+								value="advanced"
+								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+							>
+								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
 									Advanced
 								</AccordionTrigger>
-								<AccordionContent className="grid grid-cols-12 gap-4">
-									<div className="col-span-7 flex flex-col gap-4">
+								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
+									<div className="col-span-5 flex flex-col gap-4">
 										<form.AppField name="repeat">
-											{(field) => <field.RepeatField label="Repeat" />}
+											{(field) => (
+												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+											)}
 										</form.AppField>
 									</div>
-									<div className="col-span-5 flex flex-col gap-4">
+									<div className="col-span-7 flex flex-col gap-4">
 										<form.AppField name="attachments">
-											{(field) => <field.FilesField />}
+											{(field) => <field.FilesField label="Attachments" />}
 										</form.AppField>
 									</div>
 								</AccordionContent>

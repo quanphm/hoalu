@@ -49,7 +49,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 						</>
 					)}
 					{!hasSlug && <NavWorkspaceList />}
-					<NavDocumentation />
+					{/* <NavDocumentation /> */}
 				</SidebarContent>
 				<SidebarFooter className="border-t px-4 py-4">
 					<div className="flex items-center justify-between">
