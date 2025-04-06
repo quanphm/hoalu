@@ -11,14 +11,13 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    tmpfs:
-      - /var/lib/postgresql/data
-      - /tmp
     command:
       - -c
       - listen_addresses=*
       - -c
       - wal_level=logical
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   electric:
     container_name: hoalu-electric
@@ -32,6 +31,8 @@ services:
       - 4000:4000
     depends_on:
       - database
+    volumes:
+      - electric_data:/app/persistent
 
   redis:
     container_name: hoalu-redis
@@ -55,3 +56,9 @@ services:
     restart: on-failure
     depends_on:
       - database
+
+volumes:
+  pg_data:
+    driver: local
+  electric_data:
+    driver: local

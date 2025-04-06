@@ -19,6 +19,7 @@ npm-debug.log*
 # local env files
 .env
 .env.*
+.sql
 !.env.template
 !.env.example
 
