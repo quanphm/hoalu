@@ -1,5 +1,5 @@
 import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
-import { draftExpenseAtom } from "@/atoms/draft-expense";
+import { draftExpenseAtom } from "@/atoms/expense";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";

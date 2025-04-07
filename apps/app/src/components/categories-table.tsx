@@ -4,7 +4,7 @@ import { createCategoryTheme } from "@/helpers/colors";
 import type { CategorySchema } from "@/lib/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 
 const columnHelper = createColumnHelper<CategorySchema>();
 
@@ -30,7 +30,20 @@ const columns = [
 ];
 
 export function CategoriesTable({ data }: { data: CategorySchema[] }) {
-	const setSelected = useSetAtom(selectedCategoryAtom);
+	const [selected, setSelected] = useAtom(selectedCategoryAtom);
+	const initRowSelection = selected.id
+		? {
+				[selected.id]: true,
+			}
+		: {};
+
+	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
+		const row = rows[0];
+		setSelected({
+			id: row ? row.id : undefined,
+			name: row ? row.name : undefined,
+		});
+	}
 
 	return (
 		<DataTable
@@ -38,12 +51,10 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 			columns={columns}
 			enableMultiRowSelection={false}
 			enablePagination={false}
-			onRowClick={(row) =>
-				setSelected({
-					id: row.original.id,
-					name: row.original.name,
-				})
-			}
+			onRowClick={handleRowClick}
+			initialState={{
+				rowSelection: initRowSelection,
+			}}
 		/>
 	);
 }

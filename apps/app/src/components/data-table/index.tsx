@@ -1,15 +1,16 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import {
 	type ColumnDef,
-	type Row,
+	type InitialTableState,
 	type RowData,
 	type RowSelectionState,
+	type Updater,
 	flexRender,
 	getCoreRowModel,
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { DataTablePagination } from "./data-table-pagination";
 
 type TableRowData = { id: string } & RowData;
@@ -25,8 +26,13 @@ interface DataTableProps<T extends TableRowData> {
 	 * @default true
 	 */
 	enablePagination?: boolean;
-	onRowClick?(updaterOrValue: Row<T>): void;
+	initialState?: InitialTableState;
+	onRowClick?(rows: T[]): void;
 }
+
+const initialStateValue: InitialTableState = {
+	rowSelection: {},
+};
 
 export function DataTable<T extends TableRowData>({
 	data,
@@ -34,13 +40,39 @@ export function DataTable<T extends TableRowData>({
 	onRowClick,
 	enableMultiRowSelection = true,
 	enablePagination = true,
+	initialState = initialStateValue,
 }: DataTableProps<T>) {
 	const [_isPending, startTransition] = useTransition();
-	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+		initialState?.rowSelection ?? {},
+	);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
+
+	const handleOnRowSelectionChange = useCallback(
+		(valueFn: Updater<RowSelectionState>) => {
+			if (typeof valueFn === "function") {
+				const updatedRowSelection = valueFn(rowSelection);
+				setRowSelection(updatedRowSelection);
+				const selectedRows = Object.keys(updatedRowSelection).reduce((acc, key) => {
+					if (updatedRowSelection[key]) {
+						const row = data.find((row) => row.id === key);
+						if (row) acc.push(row);
+					}
+					return acc;
+				}, [] as T[]);
+				if (onRowClick) {
+					startTransition(() => {
+						onRowClick(selectedRows);
+					});
+				}
+			}
+		},
+		[data, onRowClick, rowSelection],
+	);
 
 	const table = useReactTable({
 		data,
@@ -50,7 +82,7 @@ export function DataTable<T extends TableRowData>({
 		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
 		onPaginationChange: setPagination,
 		enableMultiRowSelection,
-		onRowSelectionChange: setRowSelection,
+		onRowSelectionChange: handleOnRowSelectionChange,
 		state: {
 			rowSelection,
 			pagination: enablePagination ? pagination : undefined,
@@ -86,14 +118,7 @@ export function DataTable<T extends TableRowData>({
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									className="bg-card"
-									onClick={(e) => {
-										row.getToggleSelectedHandler()(e);
-										if (onRowClick) {
-											startTransition(() => {
-												onRowClick(row);
-											});
-										}
-									}}
+									onClick={row.getToggleSelectedHandler()}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>

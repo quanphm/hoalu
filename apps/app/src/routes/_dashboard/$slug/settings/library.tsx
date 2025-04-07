@@ -34,6 +34,7 @@ function RouteComponent() {
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: files } = useSuspenseQuery(filesQueryOptions(slug));
+
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
 
 	return (
