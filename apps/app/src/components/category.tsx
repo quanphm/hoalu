@@ -1,13 +1,14 @@
+import { selectedCategoryAtom } from "@/atoms/category";
 import { createCategoryDialogOpenAtom } from "@/atoms/dialogs";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { CategoryFormSchema } from "@/lib/schema";
+import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -20,16 +21,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useAtom(createCategoryDialogOpenAtom);
@@ -111,7 +105,7 @@ function CreateCategoryForm() {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
 								{name || <>&nbsp;</>}
 							</Badge>
 						)}
@@ -126,49 +120,14 @@ function CreateCategoryForm() {
 	);
 }
 
-function CategoryDropdownMenuWithModal({ id }: { id: string }) {
-	const [open, setOpen] = useState(false);
-	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
-	const handleOpenChange = (state: boolean) => {
-		setOpen(state);
-		if (state === false) {
-			setContent("none");
-		}
-	};
-
-	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DialogTrigger asChild onClick={() => setContent("edit")}>
-						<DropdownMenuItem>Edit</DropdownMenuItem>
-					</DialogTrigger>
-					<DialogTrigger asChild onClick={() => setContent("delete")}>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			{content === "edit" && (
-				<EditCategoryDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
-			)}
-			{content === "delete" && (
-				<DeleteCategoryDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
-			)}
-		</Dialog>
-	);
-}
-
-function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
+function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
-	const { data: category, status } = useQuery(categoryWithIdQueryOptions(workspace.slug, props.id));
+	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	const { data: category } = useQuery(
+		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id),
+	);
 
-	const mutation = useEditCategory();
+	const editMutation = useEditCategory();
 	const form = useAppForm({
 		defaultValues: {
 			name: category?.name ?? "",
@@ -179,8 +138,8 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 			onSubmit: CategoryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				id: props.id,
+			await editMutation.mutateAsync({
+				id: selectedCategory.id,
 				payload: {
 					name: value.name,
 					description: value.description,
@@ -191,17 +150,11 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 		},
 	});
 
-	useEffect(() => {
-		if (status === "success") {
-			form.reset();
-		}
-	}, [status, form.reset]);
-
 	return (
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -211,44 +164,45 @@ function EditCategoryForm(props: { id: string; onEditCallback?(): void }) {
 				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as any), "scale-105")}>
+							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
 								{name || <>&nbsp;</>}
 							</Badge>
 						)}
 					</form.Subscribe>
 				</div>
 
-				<Button type="submit" className="ml-auto w-fit">
-					Update
-				</Button>
+				<div className="flex w-full items-center justify-between">
+					<div>
+						<Button type="submit">Update</Button>
+						<Button type="reset" variant="ghost" className="ml-2" onClick={() => form.reset()}>
+							Reset
+						</Button>
+					</div>
+					<Dialog>
+						<DialogTrigger asChild>
+							<Button size="icon" variant="destructive">
+								<Trash2Icon className="size-4" />
+							</Button>
+						</DialogTrigger>
+						<DeleteCategoryDialogContent />
+					</Dialog>
+				</div>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-function EditCategoryDialogContent(props: { id: string; onEditCallback?(): void }) {
-	return (
-		<DialogContent className="sm:max-w-[480px]">
-			<DialogHeader>
-				<DialogTitle>Edit category</DialogTitle>
-				<DialogDescription>Update your category details.</DialogDescription>
-			</DialogHeader>
-			<EditCategoryForm id={props.id} onEditCallback={props.onEditCallback} />
-		</DialogContent>
-	);
-}
-
-function DeleteCategoryDialogContent(props: { id: string; onDeleteCallback?(): void }) {
+function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
+	const selectedCategory = useAtomValue(selectedCategoryAtom);
 	const onDelete = async () => {
-		await mutation.mutateAsync({ id: props.id });
-		if (props.onDeleteCallback) props.onDeleteCallback();
+		await mutation.mutateAsync({ id: selectedCategory.id });
 	};
 
 	return (
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
-				<DialogTitle>Delete category?</DialogTitle>
+				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
 				<DialogDescription />
 			</DialogHeader>
 			<DialogFooter>
@@ -265,4 +219,4 @@ function DeleteCategoryDialogContent(props: { id: string; onDeleteCallback?(): v
 	);
 }
 
-export { CreateCategoryDialog, CreateCategoryDialogTrigger, CategoryDropdownMenuWithModal };
+export { CreateCategoryDialog, CreateCategoryDialogTrigger, EditCategoryForm };

@@ -1,18 +1,60 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import {
 	type ColumnDef,
+	type Row,
+	type RowData,
+	type RowSelectionState,
 	flexRender,
 	getCoreRowModel,
+	getPaginationRowModel,
 	useReactTable,
-	// getPaginationRowModel,
 } from "@tanstack/react-table";
+import { useState, useTransition } from "react";
+import { DataTablePagination } from "./data-table-pagination";
 
-export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<T, any>[] }) {
+type TableRowData = { id: string } & RowData;
+
+interface DataTableProps<T extends TableRowData> {
+	data: T[];
+	columns: ColumnDef<T, any>[];
+	/**
+	 * @default true
+	 */
+	enableMultiRowSelection?: boolean;
+	/**
+	 * @default true
+	 */
+	enablePagination?: boolean;
+	onRowClick?(updaterOrValue: Row<T>): void;
+}
+
+export function DataTable<T extends TableRowData>({
+	data,
+	columns,
+	onRowClick,
+	enableMultiRowSelection = true,
+	enablePagination = true,
+}: DataTableProps<T>) {
+	const [_isPending, startTransition] = useTransition();
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+	const [pagination, setPagination] = useState({
+		pageIndex: 0,
+		pageSize: 10,
+	});
+
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		// getPaginationRowModel: getPaginationRowModel(),
+		getRowId: (row) => row.id,
+		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+		onPaginationChange: setPagination,
+		enableMultiRowSelection,
+		onRowSelectionChange: setRowSelection,
+		state: {
+			rowSelection,
+			pagination: enablePagination ? pagination : undefined,
+		},
 	});
 
 	return (
@@ -44,6 +86,14 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									className="bg-card"
+									onClick={(e) => {
+										row.getToggleSelectedHandler()(e);
+										if (onRowClick) {
+											startTransition(() => {
+												onRowClick(row);
+											});
+										}
+									}}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
@@ -62,6 +112,7 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 					</TableBody>
 				</Table>
 			</div>
+			{enablePagination && <DataTablePagination table={table} />}
 		</div>
 	);
 }

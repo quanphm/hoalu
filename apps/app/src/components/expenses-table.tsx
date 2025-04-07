@@ -25,6 +25,11 @@ const columns = [
 	columnHelper.accessor("title", {
 		header: "Transaction",
 		cell: (info) => info.getValue(),
+		meta: {
+			headerClassName:
+				"w-(--header-title-size) min-w-(--header-title-size) max-w-(--header-title-size)",
+			cellClassName: "w-(--col-title-size) min-w-(--col-title-size) max-w-(--col-title-size)",
+		},
 	}),
 	columnHelper.display({
 		id: "amount",
@@ -58,11 +63,11 @@ const columns = [
 	columnHelper.accessor("wallet.name", {
 		header: "Wallet",
 		cell: (info) => info.getValue(),
-		meta: {
-			headerClassName:
-				"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
-			cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
-		},
+		// meta: {
+		// 	headerClassName:
+		// 		"w-(--header-wallet-size) min-w-(--header-wallet-size) max-w-(--header-wallet-size)",
+		// 	cellClassName: "w-(--col-wallet-size) min-w-(--col-wallet-size) max-w-(--col-wallet-size)",
+		// },
 	}),
 	columnHelper.display({
 		id: "actions",
@@ -77,5 +82,5 @@ const columns = [
 ];
 
 export function ExpensesTable({ data }: { data: ExpenseSchema[] }) {
-	return <DataTable data={data} columns={columns} />;
+	return <DataTable data={data} columns={columns} enableMultiRowSelection={false} />;
 }

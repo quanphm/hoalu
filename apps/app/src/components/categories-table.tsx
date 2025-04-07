@@ -1,9 +1,10 @@
-import { CategoryDropdownMenuWithModal } from "@/components/category";
+import { selectedCategoryAtom } from "@/atoms/category";
 import { DataTable } from "@/components/data-table";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { CategorySchema } from "@/lib/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
+import { useSetAtom } from "jotai";
 
 const columnHelper = createColumnHelper<CategorySchema>();
 
@@ -26,18 +27,23 @@ const columns = [
 		header: "Description",
 		cell: (info) => info.getValue(),
 	}),
-	columnHelper.display({
-		id: "actions",
-		header: () => <span className="sr-only">Actions</span>,
-		cell: (info) => <CategoryDropdownMenuWithModal id={info.row.original.id} />,
-		meta: {
-			headerClassName:
-				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
-		},
-	}),
 ];
 
 export function CategoriesTable({ data }: { data: CategorySchema[] }) {
-	return <DataTable data={data} columns={columns} />;
+	const setSelected = useSetAtom(selectedCategoryAtom);
+
+	return (
+		<DataTable
+			data={data}
+			columns={columns}
+			enableMultiRowSelection={false}
+			enablePagination={false}
+			onRowClick={(row) =>
+				setSelected({
+					id: row.original.id,
+					name: row.original.name,
+				})
+			}
+		/>
+	);
 }
