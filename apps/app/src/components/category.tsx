@@ -123,6 +123,7 @@ function CreateCategoryForm() {
 function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	console.log(selectedCategory);
 	const { data: category } = useQuery(
 		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id),
 	);

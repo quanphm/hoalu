@@ -28,7 +28,8 @@ const columns = [
 		meta: {
 			headerClassName:
 				"w-(--header-title-size) min-w-(--header-title-size) max-w-(--header-title-size)",
-			cellClassName: "w-(--col-title-size) min-w-(--col-title-size) max-w-(--col-title-size)",
+			cellClassName:
+				"w-(--col-title-size) min-w-(--col-title-size) max-w-(--col-title-size) font-semibold",
 		},
 	}),
 	columnHelper.display({
