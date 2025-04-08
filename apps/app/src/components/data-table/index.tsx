@@ -1,18 +1,92 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import {
 	type ColumnDef,
+	type InitialTableState,
+	type RowData,
+	type RowSelectionState,
+	type Updater,
 	flexRender,
 	getCoreRowModel,
+	getPaginationRowModel,
 	useReactTable,
-	// getPaginationRowModel,
 } from "@tanstack/react-table";
+import { useCallback, useState, useTransition } from "react";
+import { DataTablePagination } from "./data-table-pagination";
 
-export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<T, any>[] }) {
+type TableRowData = { id: string } & RowData;
+
+interface DataTableProps<T extends TableRowData> {
+	data: T[];
+	columns: ColumnDef<T, any>[];
+	/**
+	 * @default true
+	 */
+	enableMultiRowSelection?: boolean;
+	/**
+	 * @default true
+	 */
+	enablePagination?: boolean;
+	initialState?: InitialTableState;
+	onRowClick?(rows: T[]): void;
+}
+
+const initialStateValue: InitialTableState = {
+	rowSelection: {},
+};
+
+export function DataTable<T extends TableRowData>({
+	data,
+	columns,
+	onRowClick,
+	enableMultiRowSelection = true,
+	enablePagination = true,
+	initialState = initialStateValue,
+}: DataTableProps<T>) {
+	const [_isPending, startTransition] = useTransition();
+
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+		initialState?.rowSelection ?? {},
+	);
+	const [pagination, setPagination] = useState({
+		pageIndex: 0,
+		pageSize: 10,
+	});
+
+	const handleOnRowSelectionChange = useCallback(
+		(valueFn: Updater<RowSelectionState>) => {
+			if (typeof valueFn === "function") {
+				const updatedRowSelection = valueFn(rowSelection);
+				setRowSelection(updatedRowSelection);
+				const selectedRows = Object.keys(updatedRowSelection).reduce((acc, key) => {
+					if (updatedRowSelection[key]) {
+						const row = data.find((row) => row.id === key);
+						if (row) acc.push(row);
+					}
+					return acc;
+				}, [] as T[]);
+				if (onRowClick) {
+					startTransition(() => {
+						onRowClick(selectedRows);
+					});
+				}
+			}
+		},
+		[data, onRowClick, rowSelection],
+	);
+
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		// getPaginationRowModel: getPaginationRowModel(),
+		getRowId: (row) => row.id,
+		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+		onPaginationChange: setPagination,
+		enableMultiRowSelection,
+		onRowSelectionChange: handleOnRowSelectionChange,
+		state: {
+			rowSelection,
+			pagination: enablePagination ? pagination : undefined,
+		},
 	});
 
 	return (
@@ -44,6 +118,7 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									className="bg-card"
+									onClick={row.getToggleSelectedHandler()}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
@@ -62,6 +137,7 @@ export function DataTable<T>({ data, columns }: { data: T[]; columns: ColumnDef<
 					</TableBody>
 				</Table>
 			</div>
+			{enablePagination && <DataTablePagination table={table} />}
 		</div>
 	);
 }

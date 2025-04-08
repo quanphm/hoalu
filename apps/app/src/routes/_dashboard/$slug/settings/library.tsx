@@ -1,6 +1,7 @@
+import { selectedCategoryAtom } from "@/atoms/category";
 import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
-import { CreateCategoryDialogTrigger } from "@/components/category";
+import { CreateCategoryDialogTrigger, EditCategoryForm } from "@/components/category";
 import { ImageGallery } from "@/components/image-gallery";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { UserAvatar } from "@/components/user-avatar";
@@ -22,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useAtomValue } from "jotai";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/library")({
 	component: RouteComponent,
@@ -32,6 +34,8 @@ function RouteComponent() {
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: files } = useSuspenseQuery(filesQueryOptions(slug));
+
+	const selectedCategory = useAtomValue(selectedCategoryAtom);
 
 	return (
 		<Tabs defaultValue="general">
@@ -135,6 +139,11 @@ function RouteComponent() {
 						<div className="sm:col-span-8">
 							<CategoriesTable data={categories} />
 						</div>
+						{selectedCategory.id && (
+							<div className="flex max-h-fit flex-col gap-4 rounded-md border p-4 sm:col-span-4">
+								<EditCategoryForm key={selectedCategory.id} />
+							</div>
+						)}
 					</SectionContent>
 				</Section>
 			</TabsContent>

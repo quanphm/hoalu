@@ -168,6 +168,7 @@ export const categoryWithIdQueryOptions = (slug: string, id: string) => {
 	return queryOptions({
 		queryKey: categoryKeys.withId(slug, id),
 		queryFn: () => apiClient.categories.get(slug, id),
+		enabled: !!id,
 	});
 };
 

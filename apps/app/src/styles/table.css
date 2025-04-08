@@ -1,18 +1,21 @@
 @theme inline {
+  --header-title-size: 320px;
+  --col-title-size: 320px;
+
   --header-name-size: 200px;
   --col-name-size: 200px;
 
   --header-date-size: 120px;
   --col-date-size: 120px;
 
-  --header-category-size: 180px;
-  --col-category-size: 180px;
+  --header-category-size: 240px;
+  --col-category-size: 240px;
 
   --header-wallet-size: 180px;
   --col-wallet-size: 180px;
 
-  --header-amount-size: 180px;
-  --col-amount-size: 180px;
+  --header-amount-size: 150px;
+  --col-amount-size: 150px;
 
   --header-link-size: 400px;
   --col-link-size: 400px;
