@@ -79,8 +79,8 @@ export function FilesUpload({
 					<div>
 						<p className="font-medium text-sm">Click to upload or drag and drop</p>
 						<p className="mt-1 text-muted-foreground text-xs">
-							You may upload PNG or JPEG files. Max {maxFiles} {maxFiles === 1 ? "file" : "files"}{" "}
-							up to {maxSizeMB}MB each.
+							Accepted file types: PNG, JPG, JPEG. Max {maxFiles}{" "}
+							{maxFiles === 1 ? "file" : "files"} up to {maxSizeMB}MB each.
 						</p>
 					</div>
 				</div>

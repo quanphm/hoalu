@@ -8,6 +8,7 @@ import { DokiClientProvider } from "@hoalu/doki";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { RouterProvider } from "@tanstack/react-router";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
 
@@ -58,5 +59,9 @@ function App() {
 
 if (!rootElement?.innerHTML) {
 	const root = createRoot(rootElement as HTMLElement);
-	root.render(<App />);
+	root.render(
+		<StrictMode>
+			<App />
+		</StrictMode>,
+	);
 }
