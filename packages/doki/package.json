@@ -14,10 +14,10 @@
 	},
 	"dependencies": {
 		"@electric-sql/client": "^1.0.3",
-		"@tanstack/react-query": "^5.71.10"
+		"@tanstack/react-query": "^5.72.2"
 	},
 	"devDependencies": {
-		"@types/react": "^19.1.0",
+		"@types/react": "^19.1.1",
 		"@hoalu/tsconfig": "workspace:*"
 	},
 	"peerDependencies": {
