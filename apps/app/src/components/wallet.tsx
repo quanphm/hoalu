@@ -1,7 +1,8 @@
-import { createWalletDialogOpenAtom } from "@/atoms/dialogs";
+import { createWalletDialogOpenAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
+import { createWalletTheme } from "@/helpers/colors";
 import {
 	AVAILABLE_CURRENCY_OPTIONS,
 	AVAILABLE_WALLET_TYPE_OPTIONS,
@@ -35,15 +36,16 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 function CreateWalletDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useAtom(createWalletDialogOpenAtom);
+	const [dialog, setOpen] = useAtom(createWalletDialogOpenAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
 			{children}
 			<DialogContent
 				className="sm:max-w-[480px]"
@@ -304,18 +306,20 @@ function WalletDropdownMenuWithModal({ id }: { id: string }) {
 	);
 }
 
-const icons: Record<WalletTypeSchema, React.ReactNode> = {
-	cash: <CashIcon className="size-4 text-yellow-500" />,
-	"bank-account": <LandmarkIcon className="size-4 text-blue-500" />,
-	"credit-card": <CreditCardIcon className="size-4 bg-transparent text-indigo-500 " />,
-	"debit-card": <CreditCardIcon className="size-4 text-violet-500" />,
-	"digital-account": <BitcoinIcon className="size-4 text-orange-500" />,
+const icons: Record<WalletTypeSchema, any> = {
+	cash: CashIcon,
+	"bank-account": LandmarkIcon,
+	"credit-card": CreditCardIcon,
+	"debit-card": CreditCardIcon,
+	"digital-account": BitcoinIcon,
 };
 function WalletIcon(props: { type: WalletTypeSchema }) {
 	if (!icons[props.type]) {
 		throw new Error("unknown wallet type");
 	}
-	return icons[props.type];
+	const className = cn(createWalletTheme(props.type), "bg-transparent size-4");
+	const Icon = icons[props.type];
+	return <Icon className={className} />;
 }
 
 export { CreateWalletDialog, CreateWalletDialogTrigger, WalletDropdownMenuWithModal, WalletIcon };

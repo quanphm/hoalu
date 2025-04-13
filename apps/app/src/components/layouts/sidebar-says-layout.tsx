@@ -80,7 +80,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header className="flex h-16 shrink-0 items-center gap-2">
-					<div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-6">
+					<div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4">
 						<SearchInput />
 						<div className="min-w-auto">
 							<NavUser />

@@ -332,8 +332,8 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 			};
 			user: User;
 		}) {
-			const defaultExpiration = 1000 * 60 * 60 * 24;
-			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration);
+			const defaultExpiration = 60 * 60 * 24;
+			const expiresAt = getDate(options?.invitationExpiresIn || defaultExpiration, "sec");
 			const invite = await adapter.create<InvitationInput, Invitation>({
 				model: "invitation",
 				data: {

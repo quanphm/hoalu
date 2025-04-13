@@ -27,7 +27,7 @@
 		"@react-email/render": "^1.0.6",
 		"@scalar/hono-api-reference": "^0.5.184",
 		"arktype": "^2.1.19",
-		"better-auth": "^1.2.6-beta.12",
+		"better-auth": "^1.2.6",
 		"drizzle-orm": "^0.39.3",
 		"hono": "^4.7.6",
 		"hono-openapi": "^0.4.6",

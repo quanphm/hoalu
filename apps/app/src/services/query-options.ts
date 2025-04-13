@@ -180,6 +180,10 @@ export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
 		queryFn: () => apiClient.expenses.list(slug),
+		select: (data) => {
+			console.log(data);
+			return data;
+		},
 	});
 };
 

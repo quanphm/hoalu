@@ -4,6 +4,7 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { expensesQueryOptions } from "@/services/query-options";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { Calendar } from "@hoalu/ui/calendar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -26,8 +27,15 @@ function RouteComponent() {
 					</Button>
 				</CreateExpenseDialogTrigger>
 			</SectionHeader>
-			<SectionContent>
-				<ExpensesTable data={expenses} />
+			<SectionContent columns={12}>
+				<div className="col-span-9">
+					<ExpensesTable data={expenses} />
+				</div>
+				<div className="col-span-3">
+					<div className="rounded-md border">
+						<Calendar mode="single" className="w-full p-2" />
+					</div>
+				</div>
 			</SectionContent>
 		</Section>
 	);

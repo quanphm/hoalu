@@ -1,4 +1,4 @@
-import { selectedCategoryAtom } from "@/atoms/category";
+import { selectedCategoryAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { CategorySchema } from "@/lib/schema";
@@ -18,9 +18,9 @@ const columns = [
 		},
 		meta: {
 			headerClassName:
-				"w-(--header-category-size) min-w-(--header-category-size) max-w-(--header-category-size)",
+				"w-(--header-category-name-size) min-w-(--header-category-name-size) max-w-(--header-category-name-size)",
 			cellClassName:
-				"w-(--col-category-size) min-w-(--col-category-size) max-w-(--col-category-size)",
+				"w-(--col-category-name-size) min-w-(--col-category-name-size) max-w-(--col-category-name-size)",
 		},
 	}),
 	columnHelper.accessor("description", {
@@ -49,8 +49,6 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 		<DataTable
 			data={data}
 			columns={columns}
-			enableMultiRowSelection={false}
-			enablePagination={false}
 			onRowClick={handleRowClick}
 			initialState={{
 				rowSelection: initRowSelection,

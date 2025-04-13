@@ -22,6 +22,7 @@ function RouteComponent() {
 	const { slug } = Route.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const recentTransactions = expenses.slice(0, 7);
 
 	return (
 		<>
@@ -81,7 +82,7 @@ function RouteComponent() {
 								</HotKeyWithTooltip>
 							</SectionHeader>
 							<SectionContent>
-								<RecentExpensesTable data={expenses} />
+								<RecentExpensesTable data={recentTransactions} />
 							</SectionContent>
 						</Section>
 					</SectionContent>

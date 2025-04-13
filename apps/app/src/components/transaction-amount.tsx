@@ -7,15 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 
 export function TransactionAmount({ data }: { data: ExpenseSchema }) {
 	const {
-		metadata: { currency: targetCurr },
+		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const { amount, realAmount, currency: sourceCurr } = data;
+	const { amount, realAmount, currency: sourceCurrency } = data;
 	const { data: rate, status } = useQuery(
-		exchangeRatesQueryOptions({ from: sourceCurr, to: targetCurr }),
+		exchangeRatesQueryOptions({ from: sourceCurrency, to: workspaceCurrency }),
 	);
 
-	if (targetCurr === sourceCurr) {
-		return <p className="font-medium">{formatCurrency(amount, targetCurr)}</p>;
+	if (workspaceCurrency === sourceCurrency) {
+		return <p className="font-medium">{formatCurrency(amount, workspaceCurrency)}</p>;
 	}
 
 	if (status === "error") {
@@ -26,16 +26,16 @@ export function TransactionAmount({ data }: { data: ExpenseSchema }) {
 		return <p className="text-muted-foreground">Converting...</p>;
 	}
 
-	const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurr);
+	const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
 	const factor = isNoCent ? 1 : 100;
 	const convertedValue = realAmount * (rate / factor);
 
 	return (
 		<div className="leading-relaxed">
-			<p className="font-medium">{formatCurrency(convertedValue, targetCurr)}</p>
-			{targetCurr !== sourceCurr && (
+			<p className="font-medium">{formatCurrency(convertedValue, workspaceCurrency)}</p>
+			{workspaceCurrency !== sourceCurrency && (
 				<p className="text-muted-foreground text-xs tracking-tight">
-					Original {formatCurrency(amount, sourceCurr)}
+					Original {formatCurrency(amount, sourceCurrency)}
 				</p>
 			)}
 		</div>

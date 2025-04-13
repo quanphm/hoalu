@@ -55,5 +55,5 @@ const columns = [
 ];
 
 export function RecentExpensesTable({ data }: { data: ExpenseSchema[] }) {
-	return <DataTable data={data} columns={columns} />;
+	return <DataTable data={data} columns={columns} enablePagination={false} />;
 }

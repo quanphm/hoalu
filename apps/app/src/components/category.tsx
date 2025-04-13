@@ -1,5 +1,4 @@
-import { selectedCategoryAtom } from "@/atoms/category";
-import { createCategoryDialogOpenAtom } from "@/atoms/dialogs";
+import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
@@ -26,10 +25,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useAtom(createCategoryDialogOpenAtom);
+	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
 			{children}
 			<DialogContent
 				className="sm:max-w-[420px]"
@@ -123,7 +122,6 @@ function CreateCategoryForm() {
 function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
-	console.log(selectedCategory);
 	const { data: category } = useQuery(
 		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id),
 	);
@@ -139,6 +137,10 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 			onSubmit: CategoryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
+			if (!selectedCategory.id) {
+				return;
+			}
+
 			await editMutation.mutateAsync({
 				id: selectedCategory.id,
 				payload: {
