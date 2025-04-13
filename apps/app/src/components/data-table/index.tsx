@@ -111,9 +111,8 @@ export function DataTable<T extends TableRowData>({
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
 		aggregationFns: {
-			expenseSum: (_columnId, _leafRows, childRows) => {
+			expenseSum: (columnId, _leafRows, childRows) => {
 				// console.group(columnId);
-				// console.log(leafRows);
 				// console.log(childRows);
 				// console.groupEnd();
 				return childRows.reduce((sum, current) => {

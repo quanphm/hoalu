@@ -26,6 +26,7 @@ export const AVAILABLE_WALLET_TYPE_OPTIONS: {
 	{ label: "Bank account", value: "bank-account" },
 	{ label: "Credit card", value: "credit-card" },
 	{ label: "Debit card", value: "debit-card" },
+	{ label: "Digital account", value: "digital-account" },
 ];
 
 export const AVAILABLE_REPEAT_OPTIONS: {
