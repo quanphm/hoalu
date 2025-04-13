@@ -13,7 +13,8 @@
 		"./slugify": "./src/slugify.ts",
 		"./standard-validate": "./src/standard-validate.ts",
 		"./time": "./src/time.ts",
-		"./try-catch": "./src/try-catch.ts"
+		"./try-catch": "./src/try-catch.ts",
+		"./utils": "./src/utils.ts"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"

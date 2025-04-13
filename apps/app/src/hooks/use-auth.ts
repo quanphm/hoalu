@@ -1,4 +1,4 @@
-import { draftExpenseAtom } from "@/atoms/expense";
+import { draftExpenseAtom } from "@/atoms";
 import { authClient } from "@/lib/auth-client";
 import { authKeys, workspaceKeys } from "@/services/query-key-factory";
 import { sessionOptions } from "@/services/query-options";

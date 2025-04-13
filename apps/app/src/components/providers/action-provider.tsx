@@ -2,8 +2,9 @@ import {
 	createCategoryDialogOpenAtom,
 	createExpenseDialogOpenAtom,
 	createWalletDialogOpenAtom,
-} from "@/atoms/dialogs";
-import { draftExpenseAtom } from "@/atoms/expense";
+	draftExpenseAtom,
+	openedDialogsAtom,
+} from "@/atoms";
 import { CreateCategoryDialog } from "@/components/category";
 import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
@@ -11,7 +12,7 @@ import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS, THEMES } from "@/help
 import { listWorkspacesOptions } from "@/services/query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
@@ -26,19 +27,20 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { theme, setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
-	const [openExpense, setExpenseOpen] = useAtom(createExpenseDialogOpenAtom);
-	const [openWallet, setWalletOpen] = useAtom(createWalletDialogOpenAtom);
-	const [openCategory, setCategoryOpen] = useAtom(createCategoryDialogOpenAtom);
-	const setExpenseDraft = useSetAtom(draftExpenseAtom);
-
-	const isAnyDialogOpen = openExpense || openWallet || openCategory;
+	const openedDialogs = useAtomValue(openedDialogsAtom);
+	const isAnyDialogOpen = openedDialogs.length > 0;
 	const isAllowShortcutNavigateInWorkspace = !!slug && !isAnyDialogOpen;
 
+	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {
 		if (slug) {
 			setExpenseDraft(RESET);
 		}
 	}, [slug, setExpenseDraft]);
+
+	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setCategoryOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	useHotkeys(
 		AVAILABLE_WORKSPACE_SHORTCUT,

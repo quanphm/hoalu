@@ -21,8 +21,10 @@ export const auth = betterAuth({
 	}),
 	advanced: {
 		cookiePrefix: "hoalu",
-		generateId: () => {
-			return generateId({ use: "uuid" });
+		database: {
+			generateId: () => {
+				return generateId({ use: "uuid" });
+			},
 		},
 	},
 	session: {

@@ -1,5 +1,4 @@
-import { createExpenseDialogOpenAtom } from "@/atoms/dialogs";
-import { draftExpenseAtom } from "@/atoms/expense";
+import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -42,10 +41,10 @@ import { useEffect, useState } from "react";
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
-	const [open, setOpen] = useAtom(createExpenseDialogOpenAtom);
+	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
 			{children}
 			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 				<DialogHeader>
@@ -202,7 +201,7 @@ function CreateExpenseForm() {
 								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
 							>
 								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
-									Advanced
+									More
 								</AccordionTrigger>
 								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
 									<div className="col-span-5 flex flex-col gap-4">
@@ -397,7 +396,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
 							>
 								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
-									Advanced
+									More
 								</AccordionTrigger>
 								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
 									<div className="col-span-5 flex flex-col gap-4">

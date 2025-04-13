@@ -122,7 +122,6 @@ function RouteComponent() {
 							</SettingCard>
 						</SectionContent>
 					</div>
-
 					<div className="col-span-4">
 						<SettingCard title="Preferences">
 							<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />

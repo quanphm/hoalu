@@ -1,4 +1,4 @@
-import { selectedCategoryAtom } from "@/atoms/category";
+import { selectedCategoryAtom } from "@/atoms";
 import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
 import { CreateCategoryDialogTrigger, EditCategoryForm } from "@/components/category";

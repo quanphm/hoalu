@@ -1,4 +1,4 @@
-import type { ColorSchema } from "@/lib/schema";
+import type { ColorSchema, WalletTypeSchema } from "@/lib/schema";
 import { cn } from "@hoalu/ui/utils";
 
 export function createCategoryTheme(color: ColorSchema) {
@@ -59,4 +59,16 @@ export function createCategoryTheme(color: ColorSchema) {
 		variants[color],
 		"dark:bg-gradient-to-b dark:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] dark:bg-transparent dark:border-transparent",
 	);
+}
+
+export function createWalletTheme(type: WalletTypeSchema) {
+	const variants: Record<WalletTypeSchema, string> = {
+		"bank-account": "text-blue-500 bg-blue-500",
+		cash: "text-yellow-500 bg-yellow-500",
+		"credit-card": "text-lime-500 bg-lime-500",
+		"debit-card": "text-violet-500 bg-violet-500",
+		"digital-account": "text-orange-500 bg-orange-500",
+	};
+
+	return cn(variants[type]);
 }
