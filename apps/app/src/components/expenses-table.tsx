@@ -44,13 +44,17 @@ const columns = [
 			const {
 				metadata: { currency: workspaceCurrency },
 			} = useWorkspace();
-			return formatCurrency(value as number, workspaceCurrency);
+			return (
+				<span className="font-semibold tracking-tight">
+					{formatCurrency(value as number, workspaceCurrency)}
+				</span>
+			);
 		},
 		meta: {
 			headerClassName:
 				"w-(--header-expense-amount-size) min-w-(--header-expense-amount-size) max-w-(--header-expense-amount-size) text-right",
 			cellClassName:
-				"w-(--col-expense-amount-size) min-w-(--col-expense-amount-size) max-w-(--col-expense-amount-size) text-right",
+				"w-(--col-expense-amount-size) min-w-(--col-expense-amount-size) max-w-(--col-expense-amount-size) text-right tracking-tight",
 		},
 	}),
 	columnHelper.display({

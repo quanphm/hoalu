@@ -89,6 +89,10 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 						operator: "in",
 					},
 				],
+				sortBy: {
+					field: "createdAt",
+					direction: "asc",
+				},
 			});
 			return workspaces;
 		},

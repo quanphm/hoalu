@@ -9,7 +9,7 @@ interface Dialog {
 
 export const dialogsAtom = atom<PrimitiveAtom<Dialog>[]>([]);
 
-export const openedDialogsAtom = atom((get) => {
+export const openingDialogsAtom = atom((get) => {
 	const dialogs = get(dialogsAtom);
 	return dialogs.filter((dialogAtom) => get(dialogAtom).isOpen);
 });

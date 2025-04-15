@@ -32,53 +32,20 @@ const route = app.get(
 	}),
 	async (c) => {
 		const { from, to } = c.req.valid("query");
-
-		const useInverse = from !== "USD" && to === "USD";
-		const isCrossRate = from !== "USD" && to !== "USD";
-		const isSameExchange = from === to;
 		const today = new Date().toISOString();
 
-		let response = {};
-
-		if (isSameExchange) {
-			response = {
-				date: today,
-				from,
-				to,
-				rate: "1",
-				inverse_rate: "1",
-			} satisfies ExchangeRateSchema;
-		} else if (isCrossRate) {
-			// cross-rate exchange
-			// ex: VND -> SGD || SGD -> VND
-			const crossRate = await exchangeRateRepository.crossRate([from, to]);
-			if (!crossRate) {
-				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
-			}
-			response = {
-				date: today,
-				from,
-				to,
-				rate: crossRate.exchangeRate,
-				inverse_rate: crossRate.inverseRate,
-			} satisfies ExchangeRateSchema;
-		} else {
-			// direct exchange
-			// ex: VND -> USD || USD -> VND
-			const queryData = await exchangeRateRepository.find({ from, to: to });
-			if (!queryData) {
-				return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
-			}
-			response = {
-				date: today,
-				from,
-				to,
-				rate: useInverse ? queryData.inverseRate : queryData.exchangeRate,
-				inverse_rate: useInverse ? queryData.exchangeRate : queryData.inverseRate,
-			} satisfies ExchangeRateSchema;
+		const rateInfo = await exchangeRateRepository.lookup([from, to], today);
+		if (!rateInfo) {
+			return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 		}
 
-		const parsed = ExchangeRateSchema(response);
+		const parsed = ExchangeRateSchema({
+			date: rateInfo.date,
+			from: rateInfo.fromCurrency,
+			to: rateInfo.toCurrency,
+			rate: rateInfo.exchangeRate,
+			inverse_rate: rateInfo.inverseRate,
+		});
 		if (parsed instanceof type.errors) {
 			return c.json(
 				{ message: createIssueMsg(parsed.issues) },
