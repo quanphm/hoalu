@@ -3,7 +3,7 @@ import {
 	createExpenseDialogOpenAtom,
 	createWalletDialogOpenAtom,
 	draftExpenseAtom,
-	openedDialogsAtom,
+	openingDialogsAtom,
 } from "@/atoms";
 import { CreateCategoryDialog } from "@/components/category";
 import { CreateExpenseDialog } from "@/components/expense";
@@ -27,7 +27,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	const { theme, setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
-	const openedDialogs = useAtomValue(openedDialogsAtom);
+	const openedDialogs = useAtomValue(openingDialogsAtom);
 	const isAnyDialogOpen = openedDialogs.length > 0;
 	const isAllowShortcutNavigateInWorkspace = !!slug && !isAnyDialogOpen;
 
