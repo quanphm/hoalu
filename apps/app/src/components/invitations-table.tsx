@@ -2,6 +2,7 @@ import { DataTable } from "@/components/data-table";
 import { authClient } from "@/lib/auth-client";
 import { useCancelInvitation } from "@/services/mutations";
 import { getActiveMemberOptions } from "@/services/query-options";
+import { date } from "@hoalu/common/datetime";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -23,7 +24,6 @@ import {
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { type Row, createColumnHelper } from "@tanstack/react-table";
-import { format } from "date-fns";
 import { useState } from "react";
 import { InputWithCopy } from "./input-with-copy";
 
@@ -67,7 +67,7 @@ const columns = [
 	columnHelper.accessor("expiresAt", {
 		header: "Expiration time",
 		cell: ({ getValue }) => {
-			const value = format(getValue().toString(), "HH:mm d MMM yyyy");
+			const value = date.format(getValue().toString(), "HH:mm d MMM yyyy");
 			return <p className="text-muted-foreground capitalize">{value}</p>;
 		},
 	}),

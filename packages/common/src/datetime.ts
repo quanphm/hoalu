@@ -1,3 +1,10 @@
+import {
+	type DateArg,
+	type FormatOptions,
+	format as dateFnsFormat,
+	intlFormatDistance,
+} from "date-fns";
+
 export const TIME_IN_MILLISECONDS = {
 	DEFAULT: 1,
 	SECOND: 1000,
@@ -17,3 +24,9 @@ export const TIME_IN_SECONDS = {
 	WEEK: 604_800,
 	YEAR: 31_536_000,
 } as const;
+
+function format(date: DateArg<Date> & {}, formatStr: string, options?: FormatOptions) {
+	return dateFnsFormat(date, formatStr, options);
+}
+
+export const date = { format, intlFormatDistance };

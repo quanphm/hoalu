@@ -111,12 +111,9 @@ export function DataTable<T extends TableRowData>({
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
 		aggregationFns: {
-			expenseSum: (columnId, _leafRows, childRows) => {
-				// console.group(columnId);
-				// console.log(childRows);
-				// console.groupEnd();
+			expenseConvertedAmountSum: (_columnId, _leafRows, childRows) => {
 				return childRows.reduce((sum, current) => {
-					const value = current.original.realAmount;
+					const value = current.original.convertedAmount;
 					return sum + (typeof value === "number" ? value : 0);
 				}, 0);
 			},

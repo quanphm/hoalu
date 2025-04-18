@@ -1,3 +1,4 @@
+import { date as dateFn } from "@hoalu/common/datetime";
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "../../db";
 
@@ -10,10 +11,8 @@ interface ReturnRate {
 }
 
 export class ExchangeRateRepository {
-	async find([from = "USD", to]: [string, string], date?: string): Promise<ReturnRate | null> {
-		const today = new Date().toISOString();
+	async _find([from = "USD", to]: [string, string], date?: string) {
 		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
-
 		const queryData = await db
 			.select()
 			.from(schema.fxRate)
@@ -30,16 +29,11 @@ export class ExchangeRateRepository {
 
 		if (!queryData[0]) return null;
 
-		return {
-			...queryData[0],
-			date: date || today,
-		};
+		return queryData[0];
 	}
 
-	async crossRate([from, to]: [string, string], date?: string): Promise<ReturnRate | null> {
+	async _crossRate([from, to]: [string, string], date?: string) {
 		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
-		const today = new Date().toISOString();
-
 		const usdRates = await db
 			.select({
 				toCurrency: schema.fxRate.toCurrency,
@@ -61,7 +55,6 @@ export class ExchangeRateRepository {
 		if (!usdOfFrom || !usdOfTo) return null;
 
 		return {
-			date: date || today,
 			fromCurrency: from,
 			toCurrency: to,
 			exchangeRate: `${Number.parseFloat(usdOfFrom.inverseRate) * Number.parseFloat(usdOfTo.exchangeRate)}`,
@@ -73,14 +66,14 @@ export class ExchangeRateRepository {
 		const today = new Date().toISOString();
 		const isSameExchange = from === to;
 		const isCrossRate = from !== "USD" && to !== "USD";
-		const useInverse = from !== "USD" && to === "USD";
+		const returnedDate = dateFn.format(date || today, "yyyy-MM-dd");
 
 		/**
 		 * @example VND -> VND
 		 */
 		if (isSameExchange) {
 			return {
-				date: date || today,
+				date: returnedDate,
 				fromCurrency: from,
 				toCurrency: to,
 				exchangeRate: "1",
@@ -93,18 +86,30 @@ export class ExchangeRateRepository {
 		 * @example VND -> USD -> SGD || SGD -> USD -> VND
 		 */
 		if (isCrossRate) {
-			const result = await this.crossRate([from, to], date);
-			return result;
+			const result = await this._crossRate([from, to], date);
+			if (!result) return null;
+			return {
+				...result,
+				date: returnedDate,
+			};
 		}
 
 		/**
 		 * Direct exchange
 		 * @example VND -> USD || USD -> VND
 		 */
-		const result = await this.find([from, to], date);
+		const result = await this._find([from, to], date);
 		if (!result) return null;
+
+		/**
+		 * In DB, everything stored as USD -> XXX
+		 * hence, this value to detect pair of XXX -> USD.
+		 */
+		const useInverse = from !== "USD" && to === "USD";
+
 		return {
 			...result,
+			date: returnedDate,
 			exchangeRate: useInverse ? result.inverseRate : result.exchangeRate,
 			inverseRate: useInverse ? result.exchangeRate : result.inverseRate,
 		};

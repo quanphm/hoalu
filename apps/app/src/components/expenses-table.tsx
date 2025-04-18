@@ -1,25 +1,20 @@
 import { DataTable } from "@/components/data-table";
-// import { ExpenseDropdownMenuWithModal } from "@/components/expense";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
-import type { ExpenseSchema } from "@/lib/schema";
+import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { date } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
-import { format } from "date-fns";
 
-const columnHelper = createColumnHelper<ExpenseSchema>();
+const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
 const columns = [
 	columnHelper.accessor("date", {
 		header: "Date",
-		cell: (info) => {
-			const value = info.getValue();
-			return format(value, "d MMM yyyy");
-		},
-		getGroupingValue: (row) => format(row.date, "yyyy-MM-dd"),
+		getGroupingValue: (row) => date.format(row.date, "yyyy-MM-dd"),
 		meta: {
 			headerClassName:
 				"w-(--header-date-size) min-w-(--header-date-size) max-w-(--header-date-size)",
@@ -29,23 +24,20 @@ const columns = [
 	columnHelper.accessor("title", {
 		header: "Transaction",
 		cell: (info) => info.getValue(),
-		meta: {
-			cellClassName: "font-semibold",
-		},
 	}),
 	columnHelper.display({
 		id: "amount",
 		header: "Amount",
 		cell: (info) => <TransactionAmount data={info.row.original} />,
 		// @ts-expect-error
-		aggregationFn: "expenseSum",
+		aggregationFn: "expenseConvertedAmountSum",
 		aggregatedCell: ({ getValue }) => {
 			const value = getValue();
 			const {
 				metadata: { currency: workspaceCurrency },
 			} = useWorkspace();
 			return (
-				<span className="font-semibold tracking-tight">
+				<span className="font-semibold text-red-700 tracking-tight">
 					{formatCurrency(value as number, workspaceCurrency)}
 				</span>
 			);
@@ -106,7 +98,7 @@ const columns = [
 	// }),
 ];
 
-export function ExpensesTable({ data }: { data: ExpenseSchema[] }) {
+export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
 	return (
 		<DataTable
 			data={data}

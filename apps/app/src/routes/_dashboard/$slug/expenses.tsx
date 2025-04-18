@@ -1,11 +1,10 @@
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { expensesQueryOptions } from "@/services/query-options";
+import { useExpenses } from "@/hooks/use-expenses";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
@@ -13,8 +12,7 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
-	const { slug } = Route.useParams();
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const expenses = useExpenses();
 
 	return (
 		<Section>

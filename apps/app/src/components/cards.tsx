@@ -1,3 +1,4 @@
+import { date } from "@hoalu/common/datetime";
 import { Button } from "@hoalu/ui/button";
 import {
 	Card,
@@ -10,7 +11,6 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { intlFormatDistance } from "date-fns";
 import { StarIcon } from "lucide-react";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
@@ -60,7 +60,7 @@ function WorkspaceCard(props: WorkspaceCardProps) {
 			</CardHeader>
 			<CardContent className="p-4 pt-0">
 				<p className="text-muted-foreground text-xs">
-					Created {intlFormatDistance(props.createdAt, new Date())}
+					Created {date.intlFormatDistance(props.createdAt, new Date())}
 				</p>
 			</CardContent>
 		</Card>

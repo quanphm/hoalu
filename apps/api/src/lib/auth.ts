@@ -1,6 +1,6 @@
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
+import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
-import { TIME_IN_SECONDS } from "@hoalu/common/time";
 import JoinWorkspace from "@hoalu/email/join-workspace";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { betterAuth } from "better-auth";

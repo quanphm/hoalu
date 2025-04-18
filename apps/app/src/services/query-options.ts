@@ -12,7 +12,7 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
-import { TIME_IN_MILLISECONDS } from "@hoalu/common/time";
+import { TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import { queryOptions } from "@tanstack/react-query";
 
 /**
@@ -180,10 +180,6 @@ export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
 		queryFn: () => apiClient.expenses.list(slug),
-		select: (data) => {
-			console.log(data);
-			return data;
-		},
 	});
 };
 
@@ -199,13 +195,13 @@ export const expenseWithIdQueryOptions = (slug: string, id: string) => {
  */
 
 export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
-	return queryOptions({
+	return queryOptions<{ rate: number; inverse_rate: number }>({
 		queryKey: exchangeRateKeys.pair({ from, to }),
 		queryFn: () => apiClient.exchangeRates.find({ from, to }),
 		staleTime: TIME_IN_MILLISECONDS.DAY,
-		select: (data) => data.rate,
-		enabled: from !== to,
-		retry: 1,
+		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
+		placeholderData: { rate: 1, inverse_rate: 1 },
+		throwOnError: true,
 	});
 };
 
@@ -218,6 +214,5 @@ export const filesQueryOptions = (slug: string) => {
 		queryKey: fileKeys.all(slug),
 		queryFn: () => apiClient.files.getFiles(slug),
 		staleTime: TIME_IN_MILLISECONDS.DAY,
-		retry: 1,
 	});
 };

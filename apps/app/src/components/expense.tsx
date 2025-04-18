@@ -281,7 +281,6 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	const workspace = useWorkspace();
 	const { slug } = routeApi.useParams();
 	const mutation = useEditExpense();
-
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: expense, status } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
 
