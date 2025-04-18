@@ -32,7 +32,7 @@ const columns = [
 ];
 
 export function CategoriesTable({ data }: { data: CategorySchema[] }) {
-	const [isPending, startTransition] = useTransition();
+	const [_isPending, startTransition] = useTransition();
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id
 		? {
