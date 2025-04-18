@@ -50,8 +50,6 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 		});
 	}
 
-	console.log(isPending);
-
 	return (
 		<>
 			<div className="sm:col-span-8">
