@@ -7,8 +7,7 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { UserAvatar } from "@/components/user-avatar";
 import { CreateWalletDialogTrigger, WalletIcon } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { useExpenses } from "@/hooks/use-expenses";
-import { walletsQueryOptions } from "@/services/query-options";
+import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -22,7 +21,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 function RouteComponent() {
 	const { slug } = Route.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const expenses = useExpenses();
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 	const recentTransactions = expenses.slice(0, 7);
 
 	return (

@@ -47,7 +47,7 @@ export function SelectCategoryField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Popover open={open} onOpenChange={setOpen} modal={false}>
+			<Popover open={open} onOpenChange={setOpen} modal={true}>
 				<PopoverTrigger asChild disabled={props.disabled}>
 					<FieldControl>
 						<Button

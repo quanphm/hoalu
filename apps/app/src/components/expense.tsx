@@ -359,7 +359,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="@container grid grid-cols-12 gap-4">
+				<div className="@container grid grid-cols-12 gap-4 py-6">
 					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerInputField label="Date" />}
@@ -383,40 +383,20 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 								<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
 							)}
 						</form.AppField>
-					</div>
-					<div className="col-span-12">
-						<Accordion type="single" collapsible className="w-full">
-							<AccordionItem
-								value="advanced"
-								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
-							>
-								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
-									More
-								</AccordionTrigger>
-								<AccordionContent className="@container grid grid-cols-12 gap-4 px-4 py-4">
-									<div className="@md:col-span-5 col-span-12 flex flex-col gap-4">
-										<form.AppField name="repeat">
-											{(field) => (
-												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-											)}
-										</form.AppField>
-									</div>
-									<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
-										<form.AppField name="attachments">
-											{(field) => <field.FilesField label="Attachments" />}
-										</form.AppField>
-									</div>
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
+						<form.AppField name="repeat">
+							{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
+						</form.AppField>
+						<form.AppField name="attachments">
+							{(field) => <field.FilesField label="Attachments" />}
+						</form.AppField>
 					</div>
 				</div>
-				<div className="ml-auto flex gap-2">
+				{/* <div className="ml-auto flex gap-2">
 					<Button variant="ghost" type="button" onClick={() => form.reset()}>
 						Reset
 					</Button>
 					<Button type="submit">Update</Button>
-				</div>
+				</div> */}
 			</form.Form>
 		</form.AppForm>
 	);

@@ -7,6 +7,7 @@ import {
 	type ExpandedState,
 	type GroupingState,
 	type InitialTableState,
+	type OnChangeFn,
 	type RowData,
 	type RowSelectionState,
 	type Updater,
@@ -61,12 +62,12 @@ export function DataTable<T extends TableRowData>({
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
 		initialState?.rowSelection ?? {},
 	);
+	const [grouping, setGrouping] = useState<GroupingState>(initialState?.grouping ?? []);
+	const [expanded, setExpanded] = useState<ExpandedState>(initialState?.expanded ?? true);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
-	const [grouping, setGrouping] = useState<GroupingState>(initialState?.grouping ?? []);
-	const [expanded, setExpanded] = useState<ExpandedState>(initialState?.expanded ?? {});
 
 	const handleOnRowSelectionChange = useCallback(
 		(valueFn: Updater<RowSelectionState>) => {
@@ -89,6 +90,12 @@ export function DataTable<T extends TableRowData>({
 		},
 		[data, onRowClick, rowSelection],
 	);
+
+	const handleExpendedChange = (valueFn: Updater<ExpandedState>) => {
+		if (typeof valueFn !== "function") return;
+		const value = valueFn(expanded);
+		setExpanded(value);
+	};
 
 	useHotkeys(
 		"j",
@@ -117,9 +124,9 @@ export function DataTable<T extends TableRowData>({
 		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
 		getRowId: (row) => row.id,
 		enableMultiRowSelection,
-		onGroupingChange: setGrouping,
-		onExpandedChange: setExpanded,
-		onPaginationChange: setPagination,
+		onGroupingChange: enableGrouping ? setGrouping : () => undefined,
+		onExpandedChange: enableGrouping ? handleExpendedChange : () => undefined,
+		onPaginationChange: enablePagination ? setPagination : () => undefined,
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
 		debugTable: false,
@@ -135,11 +142,11 @@ export function DataTable<T extends TableRowData>({
 
 	return (
 		<div className="space-y-4">
-			<div className="border border-border bg-background">
+			<div className="overflow-hidden rounded-md border border-border bg-background">
 				<Table>
 					<TableHeader className="sticky top-0 z-20 bg-background">
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
+							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50 ">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
@@ -163,7 +170,7 @@ export function DataTable<T extends TableRowData>({
 									data-state={row.getIsSelected() && "selected"}
 									className="group bg-card"
 									onClick={(ev) => {
-										if (!row.parentId) return;
+										if (row.groupingColumnId) return;
 										row.getToggleSelectedHandler()(ev);
 									}}
 								>
@@ -175,7 +182,7 @@ export function DataTable<T extends TableRowData>({
 											}
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
-												"group-has-[[data-group=grouped]]:bg-background group-hover:group-has-[[data-group=grouped]]:bg-background",
+												"group-has-[[data-group=grouped]]:bg-muted/50 group-hover:group-has-[[data-group=grouped]]:bg-muted/50",
 											)}
 										>
 											{cell.getIsGrouped() ? (

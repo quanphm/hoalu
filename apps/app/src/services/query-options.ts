@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
-import type { ExchangeRatesQuerySchema } from "@/lib/schema";
+import { queryClient } from "@/lib/query-client";
+import type { ExchangeRatesQuerySchema, ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import {
 	authKeys,
 	categoryKeys,
@@ -12,7 +13,8 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
-import { TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
+import { TIME_IN_MILLISECONDS, date } from "@hoalu/common/datetime";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { queryOptions } from "@tanstack/react-query";
 
 /**
@@ -179,7 +181,39 @@ export const categoryWithIdQueryOptions = (slug: string, id: string) => {
 export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
-		queryFn: () => apiClient.expenses.list(slug),
+		queryFn: async () => {
+			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const expenses = await apiClient.expenses.list(slug);
+			const promises = expenses.map(async (expense) => {
+				const { realAmount, currency: sourceCurrency } = expense;
+				try {
+					const result = await queryClient.fetchQuery(
+						exchangeRatesQueryOptions({
+							from: sourceCurrency,
+							to: (workspace as any).metadata.currency,
+						}),
+					);
+
+					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
+					const factor = isNoCent ? 1 : 100;
+					const convertedAmount = realAmount * (result.rate / factor);
+
+					return {
+						...expense,
+						date: date.format(expense.date, "d MMM yyyy"),
+						convertedAmount: convertedAmount,
+					};
+				} catch {
+					return {
+						...expense,
+						date: date.format(expense.date, "d MMM yyyy"),
+						convertedAmount: -1,
+					};
+				}
+			});
+			const result = await Promise.all(promises);
+			return result as ExpenseWithClientConvertedSchema[];
+		},
 	});
 };
 

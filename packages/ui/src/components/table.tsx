@@ -3,10 +3,10 @@ import { cn } from "../utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
-		<div className="scrollbar-thin relative max-h-[calc(100vh_-_var(--top-height))] w-full overflow-auto">
+		<div className="scrollbar-none relative max-h-[calc(100vh_-_var(--top-height))] w-full overflow-auto">
 			<table
 				data-slot="table"
-				className={cn("w-full caption-bottom border-spacing-0 text-sm", className)}
+				className={cn("w-full caption-bottom border-separate border-spacing-0 text-sm", className)}
 				{...props}
 			/>
 		</div>
@@ -43,7 +43,9 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b transition-colors hover:bg-muted/80 data-[state=selected]:inset-ring data-[state=selected]:inset-ring-primary/40 data-[state=selected]:bg-muted/40",
+				"border-b transition-colors hover:bg-muted/80 data-[state=selected]:bg-muted/40",
+				"-outline-offset-1 outline-0 outline-primary focus-visible:outline data-[state=selected]:outline",
+				// "[&>*]:border-t [&>:not(:last-child)]:border-r",
 				className,
 			)}
 			{...props}
@@ -56,7 +58,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 		<th
 			data-slot="table-head"
 			className={cn(
-				"h-12 select-none px-3 text-left align-middle font-medium text-muted-foreground has-[role=checkbox]:w-px [&:has([role=checkbox])]:pr-0",
+				"h-12 select-none border-b px-3 text-left align-middle font-medium text-muted-foreground has-[role=checkbox]:w-px [&:has([role=checkbox])]:pr-0",
 				className,
 			)}
 			{...props}
@@ -68,7 +70,10 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 	return (
 		<td
 			data-slot="table-cell"
-			className={cn("select-none p-3 align-middle [&:has([role=checkbox])]:pr-0", className)}
+			className={cn(
+				"select-none border-b p-3 align-middle [&:has([role=checkbox])]:pr-0",
+				className,
+			)}
 			{...props}
 		/>
 	);

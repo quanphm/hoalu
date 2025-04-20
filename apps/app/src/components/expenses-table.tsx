@@ -6,18 +6,15 @@ import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { date } from "@hoalu/common/datetime";
+import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
-import {
-	Drawer,
-	DrawerContent,
-	DrawerDescription,
-	DrawerHeader,
-	DrawerTitle,
-} from "@hoalu/ui/drawer";
+import { Button } from "@hoalu/ui/button";
+import { Card, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { EditExpenseForm } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
@@ -97,33 +94,28 @@ const columns = [
 				"w-(--col-expense-wallet-size) min-w-(--col-expense-wallet-size) max-w-(--col-expense-wallet-size)",
 		},
 	}),
-	// columnHelper.display({
-	// 	id: "actions",
-	// 	header: () => <span className="sr-only">Actions</span>,
-	// 	cell: (info) => <ExpenseDropdownMenuWithModal id={info.row.original.id} />,
-	// 	meta: {
-	// 		headerClassName:
-	// 			"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-	// 		cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
-	// 	},
-	// }),
 ];
 
 export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
-	const [open, setOpen] = useState(false);
 	const [selected, setSelected] = useAtom(selectedExpenseAtom);
 
 	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
 		const row = rows[0];
-		setOpen(!!row);
 		setSelected({
 			id: row ? row.id : null,
 			data: row ? {} : null,
 		});
 	}
 
+	function handleClose() {
+		setSelected({
+			id: null,
+			data: null,
+		});
+	}
+
 	return (
-		<Drawer direction="right" open={open} onOpenChange={setOpen}>
+		<>
 			<DataTable
 				data={data}
 				columns={columns}
@@ -135,16 +127,28 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 				}}
 			/>
 			<Suspense>
-				<DrawerContent>
-					<DrawerHeader>
-						<DrawerTitle>Expense</DrawerTitle>
-						<DrawerDescription>Details</DrawerDescription>
-					</DrawerHeader>
-					<div className="flex-1 overflow-y-auto p-4 pb-0">
-						{selected.id && <EditExpenseForm id={selected.id} />}
-					</div>
-				</DrawerContent>
+				{selected.id && (
+					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col shadow-xl">
+						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
+							<CardTitle className="text-md">Expense details</CardTitle>
+							<Button size="icon" variant="outline" onClick={() => handleClose()}>
+								<XIcon className="size-4" />
+							</Button>
+						</CardHeader>
+						<ScrollArea className="scrollbar-none h-[72vh] px-6">
+							<EditExpenseForm id={selected.id} />
+						</ScrollArea>
+						<CardFooter className="border-t py-4">
+							<div className="ml-auto flex gap-2">
+								<Button variant="ghost" type="button">
+									Reset
+								</Button>
+								<Button type="submit">Update</Button>
+							</div>
+						</CardFooter>
+					</Card>
+				)}
 			</Suspense>
-		</Drawer>
+		</>
 	);
 }

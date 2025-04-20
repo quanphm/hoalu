@@ -11,12 +11,7 @@ export function PageContent({
 }) {
 	return (
 		<>
-			<div
-				className={cn(
-					"mx-auto flex h-[100vh] w-full max-w-6xl flex-1 flex-col gap-10 px-4 py-10",
-					className,
-				)}
-			>
+			<div className={cn("relative flex h-[100vh] w-full flex-1 flex-col gap-10 p-10", className)}>
 				{breadcrumb && <div className="pb-4">{breadcrumb}</div>}
 				{children}
 			</div>
