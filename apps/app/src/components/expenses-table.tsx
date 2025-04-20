@@ -15,6 +15,7 @@ import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { Suspense } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { EditExpenseForm } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
@@ -114,6 +115,8 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 		});
 	}
 
+	useHotkeys("esc", handleClose, []);
+
 	return (
 		<>
 			<DataTable
@@ -131,7 +134,7 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col shadow-xl">
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
 							<CardTitle className="text-md">Expense details</CardTitle>
-							<Button size="icon" variant="outline" onClick={() => handleClose()}>
+							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
 								<XIcon className="size-4" />
 							</Button>
 						</CardHeader>

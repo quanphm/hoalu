@@ -365,7 +365,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
 						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" autoFocus required />}
+							{(field) => <field.InputField label="Description" required />}
 						</form.AppField>
 						<form.AppField name="transaction">
 							{(field) => <field.TransactionAmountField label="Amount" />}

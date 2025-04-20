@@ -175,12 +175,6 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 				</div>
 
 				<div className="flex w-full items-center justify-between">
-					<div>
-						<Button type="submit">Update</Button>
-						<Button type="reset" variant="ghost" className="ml-2" onClick={() => form.reset()}>
-							Reset
-						</Button>
-					</div>
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button size="icon" variant="destructive">
@@ -189,6 +183,12 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 						</DialogTrigger>
 						<DeleteCategoryDialogContent />
 					</Dialog>
+					<div>
+						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
+							Reset
+						</Button>
+						<Button type="submit">Update</Button>
+					</div>
 				</div>
 			</form.Form>
 		</form.AppForm>

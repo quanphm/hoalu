@@ -33,7 +33,7 @@ export function TiptapField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<FieldControl>
-				<div className="relative overflow-hidden rounded-lg border border-input focus-within:border-ring focus-within:outline-none focus-within:ring-[3px] focus-within:ring-ring/20">
+				<div className="relative overflow-hidden rounded-lg border border-input bg-background focus-within:border-ring focus-within:outline-none focus-within:ring-[3px] focus-within:ring-ring/20">
 					<Toolbar editor={editor} />
 					<EditorContent editor={editor} onBlur={field.handleBlur} />
 				</div>
