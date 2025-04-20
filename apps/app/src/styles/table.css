@@ -1,4 +1,6 @@
 @theme inline {
+  --top-height: 180px;
+
   /** common */
   --header-name-size: 200px;
   --col-name-size: 200px;

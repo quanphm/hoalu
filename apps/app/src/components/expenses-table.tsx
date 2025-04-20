@@ -1,3 +1,4 @@
+import { selectedExpenseAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
@@ -6,8 +7,18 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { date } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
+import {
+	Drawer,
+	DrawerContent,
+	DrawerDescription,
+	DrawerHeader,
+	DrawerTitle,
+} from "@hoalu/ui/drawer";
 import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
+import { useAtom } from "jotai";
+import { Suspense, useState } from "react";
+import { EditExpenseForm } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
@@ -99,15 +110,41 @@ const columns = [
 ];
 
 export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
+	const [open, setOpen] = useState(false);
+	const [selected, setSelected] = useAtom(selectedExpenseAtom);
+
+	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
+		const row = rows[0];
+		setOpen(!!row);
+		setSelected({
+			id: row ? row.id : null,
+			data: row ? {} : null,
+		});
+	}
+
 	return (
-		<DataTable
-			data={data}
-			columns={columns}
-			enableGrouping={true}
-			initialState={{
-				grouping: ["date"],
-				expanded: true,
-			}}
-		/>
+		<Drawer direction="right" open={open} onOpenChange={setOpen}>
+			<DataTable
+				data={data}
+				columns={columns}
+				enableGrouping
+				onRowClick={handleRowClick}
+				initialState={{
+					grouping: ["date"],
+					expanded: true,
+				}}
+			/>
+			<Suspense>
+				<DrawerContent>
+					<DrawerHeader>
+						<DrawerTitle>Expense</DrawerTitle>
+						<DrawerDescription>Details</DrawerDescription>
+					</DrawerHeader>
+					<div className="flex-1 overflow-y-auto p-4 pb-0">
+						{selected.id && <EditExpenseForm id={selected.id} />}
+					</div>
+				</DrawerContent>
+			</Suspense>
+		</Drawer>
 	);
 }

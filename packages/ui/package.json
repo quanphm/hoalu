@@ -19,7 +19,7 @@
 		"./collapsible": "./src/components/collapsible.tsx",
 		"./command": "./src/components/command.tsx",
 		"./dialog": "./src/components/dialog.tsx",
-		"./drawe": "./src/components/drawer.tsx",
+		"./drawer": "./src/components/drawer.tsx",
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",

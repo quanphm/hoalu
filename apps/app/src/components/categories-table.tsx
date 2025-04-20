@@ -5,7 +5,7 @@ import type { CategorySchema } from "@/lib/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
-import { Suspense, useTransition } from "react";
+import { Suspense } from "react";
 import { EditCategoryForm } from "./category";
 
 const columnHelper = createColumnHelper<CategorySchema>();
@@ -32,7 +32,6 @@ const columns = [
 ];
 
 export function CategoriesTable({ data }: { data: CategorySchema[] }) {
-	const [_isPending, startTransition] = useTransition();
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id
 		? {
@@ -42,11 +41,9 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 
 	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
 		const row = rows[0];
-		startTransition(() => {
-			setSelected({
-				id: row ? row.id : undefined,
-				name: row ? row.name : undefined,
-			});
+		setSelected({
+			id: row ? row.id : null,
+			name: row ? row.name : null,
 		});
 	}
 

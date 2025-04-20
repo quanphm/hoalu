@@ -41,9 +41,9 @@ export const createExpenseDialogOpenAtom = createDialogAtom("create-expense");
 export const createWalletDialogOpenAtom = createDialogAtom("create-wallet");
 export const createCategoryDialogOpenAtom = createDialogAtom("create-category");
 
-export const selectedCategoryAtom = atom<{ id: string | undefined; name: string | undefined }>({
-	id: undefined,
-	name: undefined,
+export const selectedCategoryAtom = atom<{ id: string | null; name: string | null }>({
+	id: null,
+	name: null,
 });
 
 type ExpenseAtomSchema = Omit<ExpenseFormSchema, "attachments">;
@@ -61,4 +61,10 @@ const basedExpense: ExpenseAtomSchema = {
 };
 
 export const draftExpenseAtom = atomWithStorage("draft-expense", basedExpense);
-export const selectedExpenseAtom = atom(basedExpense);
+export const selectedExpenseAtom = atom<{
+	id: string | null;
+	data: Record<string, unknown> | null;
+}>({
+	id: null,
+	data: null,
+});

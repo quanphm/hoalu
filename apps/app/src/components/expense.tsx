@@ -279,9 +279,8 @@ function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
 
 function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	const workspace = useWorkspace();
-	const { slug } = routeApi.useParams();
 	const mutation = useEditExpense();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
 	const { data: expense, status } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
 
 	const walletGroups = wallets.reduce(
@@ -360,8 +359,11 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="grid grid-cols-12 gap-4">
-					<div className="col-span-7 flex flex-col gap-4">
+				<div className="@container grid grid-cols-12 gap-4">
+					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
+						<form.AppField name="date">
+							{(field) => <field.DatepickerInputField label="Date" />}
+						</form.AppField>
 						<form.AppField name="title">
 							{(field) => <field.InputField label="Description" autoFocus required />}
 						</form.AppField>
@@ -382,14 +384,8 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 							)}
 						</form.AppField>
 					</div>
-					<div className="col-span-5 flex flex-col gap-2.5">
-						<form.AppField name="date">
-							{(field) => <field.DatepickerInputField label="Date" />}
-						</form.AppField>
-						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
-					</div>
 					<div className="col-span-12">
-						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
+						<Accordion type="single" collapsible className="w-full">
 							<AccordionItem
 								value="advanced"
 								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
@@ -397,15 +393,15 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
 									More
 								</AccordionTrigger>
-								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
-									<div className="col-span-5 flex flex-col gap-4">
+								<AccordionContent className="@container grid grid-cols-12 gap-4 px-4 py-4">
+									<div className="@md:col-span-5 col-span-12 flex flex-col gap-4">
 										<form.AppField name="repeat">
 											{(field) => (
 												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 											)}
 										</form.AppField>
 									</div>
-									<div className="col-span-7 flex flex-col gap-4">
+									<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
 										<form.AppField name="attachments">
 											{(field) => <field.FilesField label="Attachments" />}
 										</form.AppField>
@@ -469,4 +465,9 @@ function DeleteExpenseDialogContent(props: { id: string; onDeleteCallback?(): vo
 	);
 }
 
-export { CreateExpenseDialog, CreateExpenseDialogTrigger, ExpenseDropdownMenuWithModal };
+export {
+	CreateExpenseDialog,
+	CreateExpenseDialogTrigger,
+	ExpenseDropdownMenuWithModal,
+	EditExpenseForm,
+};
