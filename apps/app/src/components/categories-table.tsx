@@ -33,11 +33,7 @@ const columns = [
 
 export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
-	const initRowSelection = selected.id
-		? {
-				[selected.id]: true,
-			}
-		: {};
+	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 
 	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
 		const row = rows[0];
@@ -54,7 +50,7 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 					data={data}
 					columns={columns}
 					onRowClick={handleRowClick}
-					initialState={{
+					controlledState={{
 						rowSelection: initRowSelection,
 					}}
 				/>

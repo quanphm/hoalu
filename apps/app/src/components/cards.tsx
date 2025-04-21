@@ -1,5 +1,5 @@
 import { date } from "@hoalu/common/datetime";
-import { Button } from "@hoalu/ui/button";
+// import { Button } from "@hoalu/ui/button";
 import {
 	Card,
 	CardContent,
@@ -8,10 +8,10 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+// import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { StarIcon } from "lucide-react";
+// import { StarIcon } from "lucide-react";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
 	title: React.ReactNode;
@@ -47,16 +47,16 @@ function WorkspaceCard(props: WorkspaceCardProps) {
 		<Card className="hover:border-foreground/20">
 			<CardHeader className="flex flex-row items-start justify-between p-4">
 				<CardTitle className="text-base">{props.name}</CardTitle>
-				<Tooltip>
+				{/* <Tooltip>
 					<TooltipTrigger asChild>
 						<Button variant="link" size="icon" className="size-4">
 							<StarIcon className="size-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p>Favourite</p>
+						<p>Favorite</p>
 					</TooltipContent>
-				</Tooltip>
+				</Tooltip> */}
 			</CardHeader>
 			<CardContent className="p-4 pt-0">
 				<p className="text-muted-foreground text-xs">

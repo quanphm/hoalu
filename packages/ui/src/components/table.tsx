@@ -3,7 +3,7 @@ import { cn } from "../utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
-		<div className="scrollbar-none relative max-h-[calc(100vh_-_var(--top-height))] w-full overflow-auto">
+		<div className="relative w-full">
 			<table
 				data-slot="table"
 				className={cn("w-full caption-bottom border-separate border-spacing-0 text-sm", className)}

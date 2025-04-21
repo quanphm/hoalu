@@ -1,4 +1,4 @@
-import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
+import { createExpenseDialogOpenAtom, draftExpenseAtom, selectedExpenseAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -13,7 +13,6 @@ import {
 	useUploadExpenseFiles,
 } from "@/services/mutations";
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -26,12 +25,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
@@ -239,45 +232,48 @@ function CreateExpenseForm() {
 	);
 }
 
-function ExpenseDropdownMenuWithModal({ id }: { id: string }) {
+function DeleteExpense({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
-	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
-	const handleOpenChange = (state: boolean) => {
-		setOpen(state);
-		if (state === false) {
-			setContent("none");
-		}
+	const setSelectedExpense = useSetAtom(selectedExpenseAtom);
+	const mutation = useDeleteExpense();
+
+	const onDelete = async () => {
+		await mutation.mutateAsync({ id });
+		setOpen(false);
+		setSelectedExpense({ id: null, data: null });
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button variant="destructive">Delete</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[480px]">
+				<DialogHeader>
+					<DialogTitle>Delete this expense?</DialogTitle>
+					<DialogDescription>
+						<WarningMessage>
+							The expense will be deleted and removed from your history. This action cannot be
+							undone.
+						</WarningMessage>
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button type="button" variant="secondary">
+							Cancel
+						</Button>
+					</DialogClose>
+					<Button variant="destructive" onClick={() => onDelete()}>
+						Delete
 					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DialogTrigger asChild onClick={() => setContent("edit")}>
-						<DropdownMenuItem>Edit</DropdownMenuItem>
-					</DialogTrigger>
-					<DialogTrigger asChild onClick={() => setContent("delete")}>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			{content === "edit" && (
-				<EditExpenseDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
-			)}
-			{content === "delete" && (
-				<DeleteExpenseDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
-			)}
+				</DialogFooter>
+			</DialogContent>
 		</Dialog>
 	);
 }
 
-function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
+function EditExpenseForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
@@ -346,7 +342,6 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 					repeat: value.repeat,
 				},
 			});
-			if (props.onEditCallback) props.onEditCallback();
 		},
 	});
 
@@ -359,7 +354,7 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="@container grid grid-cols-12 gap-4 py-6">
+				<div className="@container grid grid-cols-12 gap-4 px-6 py-6">
 					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerInputField label="Date" />}
@@ -391,63 +386,18 @@ function EditExpenseForm(props: { id: string; onEditCallback?(): void }) {
 						</form.AppField>
 					</div>
 				</div>
-				{/* <div className="ml-auto flex gap-2">
+				<div className="sticky bottom-0 flex w-full justify-end gap-2 bg-neutral-100 px-6 py-4 dark:bg-neutral-800">
+					<div className="mr-auto">
+						<DeleteExpense id={props.id} />
+					</div>
 					<Button variant="ghost" type="button" onClick={() => form.reset()}>
 						Reset
 					</Button>
 					<Button type="submit">Update</Button>
-				</div> */}
+				</div>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-function EditExpenseDialogContent(props: { id: string; onEditCallback?(): void }) {
-	return (
-		<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
-			<DialogHeader>
-				<DialogTitle>Edit expense</DialogTitle>
-				<DialogDescription>Update your expense details.</DialogDescription>
-			</DialogHeader>
-			<EditExpenseForm id={props.id} onEditCallback={props.onEditCallback} />
-		</DialogContent>
-	);
-}
-
-function DeleteExpenseDialogContent(props: { id: string; onDeleteCallback?(): void }) {
-	const mutation = useDeleteExpense();
-	const onDelete = async () => {
-		await mutation.mutateAsync({ id: props.id });
-		if (props.onDeleteCallback) props.onDeleteCallback();
-	};
-
-	return (
-		<DialogContent className="sm:max-w-[480px]">
-			<DialogHeader>
-				<DialogTitle>Delete expense?</DialogTitle>
-				<DialogDescription>
-					<WarningMessage>
-						The expense will be deleted and removed from your history. This action cannot be undone.
-					</WarningMessage>
-				</DialogDescription>
-			</DialogHeader>
-			<DialogFooter>
-				<DialogClose asChild>
-					<Button type="button" variant="secondary">
-						Cancel
-					</Button>
-				</DialogClose>
-				<Button variant="destructive" onClick={() => onDelete()}>
-					Delete
-				</Button>
-			</DialogFooter>
-		</DialogContent>
-	);
-}
-
-export {
-	CreateExpenseDialog,
-	CreateExpenseDialogTrigger,
-	ExpenseDropdownMenuWithModal,
-	EditExpenseForm,
-};
+export { CreateExpenseDialog, CreateExpenseDialogTrigger, EditExpenseForm };

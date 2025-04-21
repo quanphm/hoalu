@@ -28,13 +28,13 @@ function RouteComponent() {
 				</CreateExpenseDialogTrigger>
 			</SectionHeader>
 			<SectionContent columns={12}>
-				<div className="col-span-9">
-					<ExpensesTable data={expenses} />
-				</div>
 				<div className="col-span-3">
 					<div className="rounded-md border">
 						<Calendar mode="single" className="w-full p-2" />
 					</div>
+				</div>
+				<div className="col-span-9">
+					<ExpensesTable data={expenses} />
 				</div>
 			</SectionContent>
 		</Section>

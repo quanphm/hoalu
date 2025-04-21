@@ -2,7 +2,6 @@ import { AppLogo } from "@/components/layouts/app-logo";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
-import { SearchInput } from "@/components/search-input";
 import { listWorkspacesOptions } from "@/services/query-options";
 import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SidebarFooter, SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
@@ -11,7 +10,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
-import { NavDocumentation } from "./nav-documentation";
+// import { NavDocumentation } from "./nav-documentation";
 import { NavSettings } from "./nav-settings";
 import { NavWorkspaceList } from "./nav-workspace-list";
 
@@ -50,6 +49,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					)}
 					{!hasSlug && <NavWorkspaceList />}
 					{/* <NavDocumentation /> */}
+					<NavUser />
 				</SidebarContent>
 				<SidebarFooter className="border-t px-4 py-4">
 					<div className="flex items-center justify-between">
@@ -78,17 +78,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 				</SidebarFooter>
 			</Sidebar>
 
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2">
-					<div className="flex w-full items-center justify-between gap-2 px-10">
-						<SearchInput />
-						<div className="min-w-auto">
-							<NavUser />
-						</div>
-					</div>
-				</header>
-				{children}
-			</SidebarInset>
+			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>
 	);
 }

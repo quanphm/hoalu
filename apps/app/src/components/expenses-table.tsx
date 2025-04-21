@@ -9,7 +9,7 @@ import { date } from "@hoalu/common/datetime";
 import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Card, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -109,10 +109,7 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 	}
 
 	function handleClose() {
-		setSelected({
-			id: null,
-			data: null,
-		});
+		setSelected({ id: null, data: null });
 	}
 
 	useHotkeys("esc", handleClose, []);
@@ -124,31 +121,20 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 				columns={columns}
 				enableGrouping
 				onRowClick={handleRowClick}
-				initialState={{
-					grouping: ["date"],
-					expanded: true,
-				}}
+				controlledState={{ grouping: ["date"] }}
 			/>
 			<Suspense>
 				{selected.id && (
-					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col shadow-xl">
+					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
 							<CardTitle className="text-md">Expense details</CardTitle>
 							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
 								<XIcon className="size-4" />
 							</Button>
 						</CardHeader>
-						<ScrollArea className="scrollbar-none h-[72vh] px-6">
+						<ScrollArea className="h-[76vh]">
 							<EditExpenseForm id={selected.id} />
 						</ScrollArea>
-						<CardFooter className="border-t py-4">
-							<div className="ml-auto flex gap-2">
-								<Button variant="ghost" type="button">
-									Reset
-								</Button>
-								<Button type="submit">Update</Button>
-							</div>
-						</CardFooter>
 					</Card>
 				)}
 			</Suspense>
