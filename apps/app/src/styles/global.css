@@ -26,11 +26,4 @@
   body {
     @apply w-full min-h-screen;
   }
-
-  .prose-base {
-    :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-  }
 }

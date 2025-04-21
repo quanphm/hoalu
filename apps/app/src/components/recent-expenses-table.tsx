@@ -1,19 +1,19 @@
 import { DataTable } from "@/components/data-table";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme } from "@/helpers/colors";
-import type { ExpenseSchema } from "@/lib/schema";
+import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { date } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
-import { format } from "date-fns";
 
-const columnHelper = createColumnHelper<ExpenseSchema>();
+const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
 const columns = [
 	columnHelper.accessor("date", {
 		header: "Date",
 		cell: (info) => {
 			const value = info.getValue();
-			return <p className="text-muted-foreground">{format(value, "d MMM yyyy")}</p>;
+			return <p className="text-muted-foreground">{date.format(value, "d MMM yyyy")}</p>;
 		},
 		meta: {
 			headerClassName:
@@ -54,6 +54,6 @@ const columns = [
 	}),
 ];
 
-export function RecentExpensesTable({ data }: { data: ExpenseSchema[] }) {
+export function RecentExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
 	return <DataTable data={data} columns={columns} enablePagination={false} />;
 }

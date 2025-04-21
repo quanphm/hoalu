@@ -1,11 +1,11 @@
 import { useAuth } from "@/hooks/use-auth";
+import { date } from "@hoalu/common/datetime";
 import {
 	ClearDayIcon,
 	PartlyCloudyDayIcon,
 	PartlyCloudyNightIcon,
 	StarryNightIcon,
 } from "@hoalu/icons/meteocons";
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 export function Greeting() {
@@ -52,7 +52,7 @@ export function Greeting() {
 				{message}, {user?.name}
 			</p>
 			<p className="text-base text-muted-foreground tracking-wide">
-				{icon} {format(today, "EEEE, MMM d kk:mm")}
+				{icon} {date.format(today, "EEEE, MMM d kk:mm")}
 			</p>
 		</div>
 	);

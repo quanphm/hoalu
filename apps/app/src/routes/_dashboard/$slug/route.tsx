@@ -13,13 +13,13 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		await queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug));
 		await Promise.all([
-			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
 			queryClient.ensureQueryData(walletsQueryOptions(slug)),
 			queryClient.ensureQueryData(tasksQueryOptions(slug)),
-			queryClient.ensureQueryData(categoriesQueryOptions(slug)),
 			queryClient.ensureQueryData(expensesQueryOptions(slug)),
+			queryClient.ensureQueryData(categoriesQueryOptions(slug)),
 			queryClient.ensureQueryData(filesQueryOptions(slug)),
 		]);
 	},

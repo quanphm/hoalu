@@ -6,10 +6,10 @@ export function AppLogo() {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<SidebarMenuButton size="lg" asChild>
+				<SidebarMenuButton size="lg" variant="outline" className="bg-none! shadow-none!" asChild>
 					<Link to="/">
-						<div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-amber-500 text-sidebar-primary-foreground">
-							<BotIcon className="size-4" />
+						<div className="flex aspect-square size-8 items-center justify-center text-sidebar-primary-foreground">
+							<BotIcon className="size-8" />
 						</div>
 						<div className="grid flex-1 text-left text-sm leading-tight">
 							<span className="truncate font-semibold">HoaLu.app</span>

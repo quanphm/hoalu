@@ -21,7 +21,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
@@ -122,8 +122,8 @@ function CreateCategoryForm() {
 function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
-	const { data: category } = useQuery(
-		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id),
+	const { data: category } = useSuspenseQuery(
+		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id || ""),
 	);
 
 	const editMutation = useEditCategory();
@@ -175,12 +175,6 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 				</div>
 
 				<div className="flex w-full items-center justify-between">
-					<div>
-						<Button type="submit">Update</Button>
-						<Button type="reset" variant="ghost" className="ml-2" onClick={() => form.reset()}>
-							Reset
-						</Button>
-					</div>
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button size="icon" variant="destructive">
@@ -189,6 +183,12 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 						</DialogTrigger>
 						<DeleteCategoryDialogContent />
 					</Dialog>
+					<div>
+						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
+							Reset
+						</Button>
+						<Button type="submit">Update</Button>
+					</div>
 				</div>
 			</form.Form>
 		</form.AppForm>
@@ -199,6 +199,7 @@ function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
 	const onDelete = async () => {
+		if (!selectedCategory.id) return;
 		await mutation.mutateAsync({ id: selectedCategory.id });
 	};
 

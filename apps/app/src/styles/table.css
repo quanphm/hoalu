@@ -1,10 +1,12 @@
 @theme inline {
+  --top-height: 200px;
+
   /** common */
   --header-name-size: 200px;
   --col-name-size: 200px;
 
-  --header-date-size: 180px;
-  --col-date-size: 180px;
+  --header-date-size: 140px;
+  --col-date-size: 140px;
 
   --header-link-size: 400px;
   --col-link-size: 400px;

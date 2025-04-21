@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@hoalu/ui/utils";
 import {
 	type ColumnDef,
-	type ExpandedState,
 	type GroupingState,
 	type InitialTableState,
 	type RowData,
@@ -19,6 +18,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useCallback, useState, useTransition } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { DataTablePagination } from "./data-table-pagination";
 
 type TableRowData = { id: string } & RowData;
@@ -39,10 +39,11 @@ interface DataTableProps<T extends TableRowData> {
 	 */
 	enableGrouping?: boolean;
 	initialState?: InitialTableState;
+	controlledState?: InitialTableState;
 	onRowClick?(rows: T[]): void;
 }
 
-const initialStateValue: InitialTableState = {
+const initialControlledState: InitialTableState = {
 	rowSelection: {},
 };
 
@@ -53,37 +54,41 @@ export function DataTable<T extends TableRowData>({
 	enableMultiRowSelection = false,
 	enablePagination = false,
 	enableGrouping = false,
-	initialState = initialStateValue,
+	initialState = {
+		expanded: true,
+	},
+	controlledState = initialControlledState,
 }: DataTableProps<T>) {
 	const [_isPending, startTransition] = useTransition();
 
-	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
-		initialState?.rowSelection ?? {},
-	);
+	/**
+	 * Controlled states
+	 */
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
-	const [grouping, setGrouping] = useState<GroupingState>(initialState?.grouping ?? []);
-	const [expanded, setExpanded] = useState<ExpandedState>(initialState?.expanded ?? {});
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+		controlledState?.rowSelection ?? {},
+	);
+	const [grouping, setGrouping] = useState<GroupingState>(controlledState?.grouping ?? []);
 
 	const handleOnRowSelectionChange = useCallback(
 		(valueFn: Updater<RowSelectionState>) => {
-			if (typeof valueFn === "function") {
-				const updatedRowSelection = valueFn(rowSelection);
-				setRowSelection(updatedRowSelection);
+			if (typeof valueFn !== "function") return;
+
+			const updatedRowSelection = valueFn(rowSelection);
+			setRowSelection(updatedRowSelection);
+
+			if (onRowClick) {
 				const selectedRows = Object.keys(updatedRowSelection).reduce((acc, key) => {
-					if (updatedRowSelection[key]) {
-						const row = data.find((row) => row.id === key);
-						if (row) acc.push(row);
-					}
+					const row = data.find((row) => row.id === key);
+					if (row) acc.push(row);
 					return acc;
 				}, [] as T[]);
-				if (onRowClick) {
-					startTransition(() => {
-						onRowClick(selectedRows);
-					});
-				}
+				startTransition(() => {
+					onRowClick(selectedRows);
+				});
 			}
 		},
 		[data, onRowClick, rowSelection],
@@ -92,49 +97,127 @@ export function DataTable<T extends TableRowData>({
 	const table = useReactTable({
 		data,
 		columns,
+		initialState,
 		state: {
-			rowSelection,
 			pagination,
+			rowSelection,
 			grouping,
-			expanded,
 		},
-		enableMultiRowSelection,
-		getExpandedRowModel: enableGrouping ? getExpandedRowModel() : undefined,
-		getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
-		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
-		getFilteredRowModel: getFilteredRowModel(),
+		/**
+		 * @see https://tanstack.com/table/v8/docs/guide/row-models#the-order-of-row-model-execution
+		 */
 		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
+		getExpandedRowModel: enableGrouping ? getExpandedRowModel() : undefined,
+		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
 		getRowId: (row) => row.id,
-		onGroupingChange: setGrouping,
-		onPaginationChange: setPagination,
-		onExpandedChange: setExpanded,
+		enableMultiRowSelection,
+		onGroupingChange: enableGrouping ? setGrouping : () => undefined,
+		// onExpandedChange: enableGrouping ? handleExpendedChange : () => undefined,
+		onPaginationChange: enablePagination ? setPagination : () => undefined,
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
+		debugTable: false,
 		aggregationFns: {
-			expenseSum: (columnId, _leafRows, childRows) => {
-				// console.group(columnId);
-				// console.log(childRows);
-				// console.groupEnd();
+			expenseConvertedAmountSum: (_columnId, _leafRows, childRows) => {
 				return childRows.reduce((sum, current) => {
-					const value = current.original.realAmount;
+					const value = current.original.convertedAmount;
 					return sum + (typeof value === "number" ? value : 0);
 				}, 0);
 			},
 		},
 	});
 
+	useHotkeys(
+		"down",
+		(_data) => {
+			const selectedRow = table.getSelectedRowModel().rows[0];
+			if (!selectedRow) return;
+
+			const currentIndex = selectedRow.index;
+			const nextIndex = currentIndex + 1;
+			const nextRowData = table.getCoreRowModel().rows[nextIndex];
+
+			if (nextRowData) {
+				const nextRowId = nextRowData.original.id;
+				setRowSelection({ [nextRowId]: true });
+
+				// side-effect
+				if (onRowClick) {
+					const selectedRows = data.find((row) => row.id === nextRowId);
+					if (!selectedRows) return;
+					startTransition(() => {
+						onRowClick([selectedRows]);
+					});
+				}
+			}
+		},
+		[],
+	);
+
+	useHotkeys(
+		"esc",
+		() => {
+			setRowSelection({});
+		},
+		[],
+	);
+
+	useHotkeys(
+		"up",
+		(_data) => {
+			const selectedRow = table.getSelectedRowModel().rows[0];
+			if (!selectedRow) return;
+
+			const currentIndex = selectedRow.index;
+			const prevIndex = currentIndex - 1;
+			const prevRowData = table.getCoreRowModel().rows[prevIndex];
+
+			if (prevRowData) {
+				const prevRowId = prevRowData.original.id;
+				setRowSelection({ [prevRowId]: true });
+
+				// side-effect
+				if (onRowClick) {
+					const selectedRows = data.find((row) => row.id === prevRowId);
+					if (!selectedRows) return;
+					startTransition(() => {
+						onRowClick([selectedRows]);
+					});
+				}
+			}
+		},
+		[],
+	);
+
 	return (
 		<div className="space-y-4">
-			<div className="overflow-hidden rounded-md border border-border bg-background">
+			<div>
+				{enableGrouping && (
+					<Button
+						variant="outline"
+						onClick={() => {
+							table.toggleAllRowsExpanded(false);
+						}}
+					>
+						Collapse all
+					</Button>
+				)}
+			</div>
+			<div className="rounded-md border border-border bg-background">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/80 hover:bg-muted/80">
+							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50 ">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
 											key={header.id}
-											className={cn(header.column.columnDef.meta?.headerClassName)}
+											className={cn(
+												header.column.columnDef.meta?.headerClassName,
+												"sticky top-0 bg-muted",
+											)}
 										>
 											{header.isPlaceholder
 												? null
@@ -152,7 +235,10 @@ export function DataTable<T extends TableRowData>({
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									className="group bg-card"
-									onClick={row.getToggleSelectedHandler()}
+									onClick={(ev) => {
+										if (row.groupingColumnId) return;
+										row.getToggleSelectedHandler()(ev);
+									}}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell
@@ -162,12 +248,17 @@ export function DataTable<T extends TableRowData>({
 											}
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
-												"group-has-[[data-group=grouped]]:bg-muted/80 dark:group-has-[[data-group=grouped]]:bg-background/60",
+												"group-has-[[data-group=grouped]]:bg-muted/50 group-hover:group-has-[[data-group=grouped]]:bg-muted/50",
 											)}
 										>
 											{cell.getIsGrouped() ? (
 												<>
-													<Button variant="ghost" onClick={row.getToggleExpandedHandler()}>
+													<Button
+														variant="ghost"
+														size="sm"
+														className="hover:bg-transparent"
+														onClick={row.getToggleExpandedHandler()}
+													>
 														{flexRender(cell.column.columnDef.cell, cell.getContext())} (
 														{row.subRows.length})
 														{row.getIsExpanded() ? (

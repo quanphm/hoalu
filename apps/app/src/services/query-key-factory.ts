@@ -36,7 +36,11 @@ export const categoryKeys = {
 
 export const expenseKeys = {
 	all: (slug: string) => expenseKeys["~withWorkspace"](slug),
+	withCurrencyConverted: (slug: string) =>
+		[...expenseKeys.all(slug), "currency-converted"] as const,
 	withId: (slug: string, id: string) => [...expenseKeys.all(slug), "id", id] as const,
+	withIdCurrencyConverted: (slug: string, id: string) =>
+		[...expenseKeys.withCurrencyConverted(slug), "id", id] as const,
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "expenses"] as const,
 };
 

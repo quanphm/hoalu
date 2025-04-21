@@ -46,8 +46,12 @@
 
 .prose-base {
   :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  :where(ul > li):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    padding-inline-start: 0.25rem
   }
 }
 

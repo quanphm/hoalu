@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 import { type Session, type SessionData, type User, authClient } from "@/lib/auth-client";
-import type { ExchangeRatesQuerySchema } from "@/lib/schema";
+import { queryClient } from "@/lib/query-client";
+import type { ExchangeRatesQuerySchema, ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import {
 	authKeys,
 	categoryKeys,
@@ -12,7 +13,8 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
-import { TIME_IN_MILLISECONDS } from "@hoalu/common/time";
+import { TIME_IN_MILLISECONDS, date } from "@hoalu/common/datetime";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { queryOptions } from "@tanstack/react-query";
 
 /**
@@ -179,10 +181,38 @@ export const categoryWithIdQueryOptions = (slug: string, id: string) => {
 export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
-		queryFn: () => apiClient.expenses.list(slug),
-		select: (data) => {
-			console.log(data);
-			return data;
+		queryFn: async () => {
+			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const expenses = await apiClient.expenses.list(slug);
+			const promises = expenses.map(async (expense) => {
+				const { realAmount, currency: sourceCurrency } = expense;
+				try {
+					const result = await queryClient.fetchQuery(
+						exchangeRatesQueryOptions({
+							from: sourceCurrency,
+							to: (workspace as any).metadata.currency,
+						}),
+					);
+
+					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
+					const factor = isNoCent ? 1 : 100;
+					const convertedAmount = realAmount * (result.rate / factor);
+
+					return {
+						...expense,
+						date: date.format(expense.date, "d MMM yyyy"),
+						convertedAmount: convertedAmount,
+					};
+				} catch {
+					return {
+						...expense,
+						date: date.format(expense.date, "d MMM yyyy"),
+						convertedAmount: -1,
+					};
+				}
+			});
+			const result = await Promise.all(promises);
+			return result as ExpenseWithClientConvertedSchema[];
 		},
 	});
 };
@@ -199,13 +229,13 @@ export const expenseWithIdQueryOptions = (slug: string, id: string) => {
  */
 
 export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
-	return queryOptions({
+	return queryOptions<{ rate: number; inverse_rate: number }>({
 		queryKey: exchangeRateKeys.pair({ from, to }),
 		queryFn: () => apiClient.exchangeRates.find({ from, to }),
 		staleTime: TIME_IN_MILLISECONDS.DAY,
-		select: (data) => data.rate,
-		enabled: from !== to,
-		retry: 1,
+		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
+		placeholderData: { rate: 1, inverse_rate: 1 },
+		throwOnError: true,
 	});
 };
 
@@ -218,6 +248,5 @@ export const filesQueryOptions = (slug: string) => {
 		queryKey: fileKeys.all(slug),
 		queryFn: () => apiClient.files.getFiles(slug),
 		staleTime: TIME_IN_MILLISECONDS.DAY,
-		retry: 1,
 	});
 };

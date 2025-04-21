@@ -1,25 +1,29 @@
+import { selectedExpenseAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
-// import { ExpenseDropdownMenuWithModal } from "@/components/expense";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
-import type { ExpenseSchema } from "@/lib/schema";
+import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { date } from "@hoalu/common/datetime";
+import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
+import { Card, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { cn } from "@hoalu/ui/utils";
 import { createColumnHelper } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { useAtom } from "jotai";
+import { Suspense } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { EditExpenseForm } from "./expense";
 
-const columnHelper = createColumnHelper<ExpenseSchema>();
+const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
 const columns = [
 	columnHelper.accessor("date", {
 		header: "Date",
-		cell: (info) => {
-			const value = info.getValue();
-			return format(value, "d MMM yyyy");
-		},
-		getGroupingValue: (row) => format(row.date, "yyyy-MM-dd"),
+		getGroupingValue: (row) => date.format(row.date, "yyyy-MM-dd"),
 		meta: {
 			headerClassName:
 				"w-(--header-date-size) min-w-(--header-date-size) max-w-(--header-date-size)",
@@ -29,23 +33,20 @@ const columns = [
 	columnHelper.accessor("title", {
 		header: "Transaction",
 		cell: (info) => info.getValue(),
-		meta: {
-			cellClassName: "font-semibold",
-		},
 	}),
 	columnHelper.display({
 		id: "amount",
 		header: "Amount",
 		cell: (info) => <TransactionAmount data={info.row.original} />,
 		// @ts-expect-error
-		aggregationFn: "expenseSum",
+		aggregationFn: "expenseConvertedAmountSum",
 		aggregatedCell: ({ getValue }) => {
 			const value = getValue();
 			const {
 				metadata: { currency: workspaceCurrency },
 			} = useWorkspace();
 			return (
-				<span className="font-semibold tracking-tight">
+				<span className="font-semibold text-red-700 tracking-tight">
 					{formatCurrency(value as number, workspaceCurrency)}
 				</span>
 			);
@@ -94,28 +95,49 @@ const columns = [
 				"w-(--col-expense-wallet-size) min-w-(--col-expense-wallet-size) max-w-(--col-expense-wallet-size)",
 		},
 	}),
-	// columnHelper.display({
-	// 	id: "actions",
-	// 	header: () => <span className="sr-only">Actions</span>,
-	// 	cell: (info) => <ExpenseDropdownMenuWithModal id={info.row.original.id} />,
-	// 	meta: {
-	// 		headerClassName:
-	// 			"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-	// 		cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
-	// 	},
-	// }),
 ];
 
-export function ExpensesTable({ data }: { data: ExpenseSchema[] }) {
+export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
+	const [selected, setSelected] = useAtom(selectedExpenseAtom);
+
+	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
+		const row = rows[0];
+		setSelected({
+			id: row ? row.id : null,
+			data: row ? {} : null,
+		});
+	}
+
+	function handleClose() {
+		setSelected({ id: null, data: null });
+	}
+
+	useHotkeys("esc", handleClose, []);
+
 	return (
-		<DataTable
-			data={data}
-			columns={columns}
-			enableGrouping={true}
-			initialState={{
-				grouping: ["date"],
-				expanded: true,
-			}}
-		/>
+		<>
+			<DataTable
+				data={data}
+				columns={columns}
+				enableGrouping
+				onRowClick={handleRowClick}
+				controlledState={{ grouping: ["date"] }}
+			/>
+			<Suspense>
+				{selected.id && (
+					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
+						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
+							<CardTitle className="text-md">Expense details</CardTitle>
+							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
+								<XIcon className="size-4" />
+							</Button>
+						</CardHeader>
+						<ScrollArea className="h-[76vh]">
+							<EditExpenseForm id={selected.id} />
+						</ScrollArea>
+					</Card>
+				)}
+			</Suspense>
+		</>
 	);
 }
