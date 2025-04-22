@@ -13,7 +13,7 @@ import { Link } from "@tanstack/react-router";
 
 export function NavWorkspace() {
 	return (
-		<SidebarGroup id="nav-workspace">
+		<SidebarGroup id="nav-workspace" className="border-b">
 			<SidebarGroupLabel>Workspace</SidebarGroupLabel>
 			<SidebarMenu>
 				<SidebarMenuItem>

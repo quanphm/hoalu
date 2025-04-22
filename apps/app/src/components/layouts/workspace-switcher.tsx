@@ -63,7 +63,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 						<DropdownMenuContent
 							className="w-(--radix-dropdown-menu-trigger-width) rounded-lg"
 							align="start"
-							side="bottom"
+							side="right"
 							sideOffset={4}
 						>
 							<DropdownMenuItem className="gap-2 p-2" asChild>

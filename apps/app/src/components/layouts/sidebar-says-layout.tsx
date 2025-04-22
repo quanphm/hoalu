@@ -33,7 +33,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 			<div className="texture" />
 
 			<Sidebar>
-				<SidebarHeader>
+				<SidebarHeader className="border-b">
 					{hasSlug && currentWorkspace ? (
 						<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
 					) : (
