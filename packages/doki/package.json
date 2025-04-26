@@ -13,7 +13,7 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"@electric-sql/client": "^1.0.3",
+		"@electric-sql/client": "^1.0.4",
 		"@tanstack/react-query": "^5.74.4"
 	},
 	"devDependencies": {
