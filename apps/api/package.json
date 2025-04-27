@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/api",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"type": "module",
 	"files": ["dist"],
 	"exports": {
@@ -33,15 +33,15 @@
 		"hono-openapi": "^0.4.6",
 		"ioredis": "^5.6.1",
 		"nodemailer": "^6.10.1",
-		"pg": "^8.14.1",
+		"pg": "^8.15.6",
 		"react": "^19.1.0",
-		"resend": "^4.3.0"
+		"resend": "^4.4.1"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
-		"@types/pg": "^8.11.13",
+		"@types/pg": "^8.11.14",
 		"drizzle-kit": "^0.30.6",
 		"rimraf": "^6.0.1"
 	}

@@ -19,7 +19,7 @@ function RouteComponent() {
 	return (
 		<Section>
 			<SectionHeader>
-				<SectionTitle>Expense entries</SectionTitle>
+				<SectionTitle>Expenses</SectionTitle>
 				<CreateExpenseDialogTrigger>
 					<Button variant="outline" size="sm">
 						<PlusIcon className="mr-2 size-4" />

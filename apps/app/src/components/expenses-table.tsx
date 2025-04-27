@@ -125,14 +125,14 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 			/>
 			<Suspense>
 				{selected.id && (
-					<Card className="fixed top-20 right-10 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
+					<Card className="fixed top-10 right-0 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
 							<CardTitle className="text-md">Expense details</CardTitle>
 							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
 								<XIcon className="size-4" />
 							</Button>
 						</CardHeader>
-						<ScrollArea className="h-[76vh]">
+						<ScrollArea className="h-[calc(100vh-(--spacing(4)*10))]">
 							<EditExpenseForm id={selected.id} />
 						</ScrollArea>
 					</Card>

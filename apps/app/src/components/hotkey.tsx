@@ -1,6 +1,6 @@
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { Slot, type SlotProps } from "@radix-ui/react-slot";
 
 export function HotKey({
 	className,
@@ -32,16 +32,19 @@ export function HotKeyWithTooltip({
 	shortcut,
 	showTooltip = true,
 	...props
-}: SlotProps & { shortcut: { label: string; enabled: boolean }; showTooltip?: boolean }) {
+}: SlotPrimitive.SlotProps & {
+	shortcut: { label: string; enabled: boolean };
+	showTooltip?: boolean;
+}) {
 	if (!showTooltip || !shortcut.enabled) {
-		return <Slot {...props}>{children}</Slot>;
+		return <SlotPrimitive.Slot {...props}>{children}</SlotPrimitive.Slot>;
 	}
 
 	return (
 		<Tooltip>
-			<Slot {...props}>
+			<SlotPrimitive.Slot {...props}>
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
-			</Slot>
+			</SlotPrimitive.Slot>
 			<TooltipContent side="bottom">
 				<HotKey enabled={showTooltip && shortcut.enabled} label={shortcut.label} />
 			</TooltipContent>

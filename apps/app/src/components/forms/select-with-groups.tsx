@@ -24,7 +24,7 @@ export function SelectWithGroupsField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Select value={field.state.value} onValueChange={(value) => field.handleChange(value)}>
 				<FieldControl>
-					<SelectTrigger className="focus:border-ring focus:ring-[3px] focus:ring-ring/20">
+					<SelectTrigger className="bg-background focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue placeholder="Select" />
 					</SelectTrigger>
 				</FieldControl>
