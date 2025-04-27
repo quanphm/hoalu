@@ -1,5 +1,5 @@
 import { Label, type LabelPrimitive } from "@hoalu/ui/label";
-import { Slot } from "@hoalu/ui/slot";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { useStore } from "@tanstack/react-form";
 import { createContext, useContext, useId } from "react";
@@ -37,14 +37,14 @@ function useFieldControlContext() {
 	return context;
 }
 
-function FieldControl(props: React.ComponentProps<typeof Slot>) {
+function FieldControl(props: React.ComponentProps<typeof SlotPrimitive.Slot>) {
 	const { formItemId, formDescriptionId, formMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasErrors = errors.length > 0;
 
 	return (
-		<Slot
+		<SlotPrimitive.Slot
 			id={formItemId}
 			aria-labelledby={formItemId}
 			aria-describedby={

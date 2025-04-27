@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
-import * as SelectPrimitive from "@radix-ui/react-select";
+import { Select as SelectPrimitive } from "radix-ui";
 import type * as React from "react";
 import { cn } from "../utils";
 
