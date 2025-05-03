@@ -2,6 +2,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { cn } from "@hoalu/ui/utils";
+import { useLayoutEffect } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	type GroupingState,
@@ -17,7 +18,7 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { DataTablePagination } from "./data-table-pagination";
 
@@ -41,6 +42,10 @@ interface DataTableProps<T extends TableRowData> {
 	initialState?: InitialTableState;
 	controlledState?: InitialTableState;
 	onRowClick?(rows: T[]): void;
+	/**
+	 * Other customizations
+	 */
+	tableClassName?: string;
 }
 
 const initialControlledState: InitialTableState = {
@@ -58,8 +63,10 @@ export function DataTable<T extends TableRowData>({
 		expanded: true,
 	},
 	controlledState = initialControlledState,
+	tableClassName,
 }: DataTableProps<T>) {
 	const [_isPending, startTransition] = useTransition();
+	const tableContainerRef = useRef<HTMLDivElement>(null);
 
 	/**
 	 * Controlled states
@@ -86,6 +93,7 @@ export function DataTable<T extends TableRowData>({
 					if (row) acc.push(row);
 					return acc;
 				}, [] as T[]);
+
 				startTransition(() => {
 					onRowClick(selectedRows);
 				});
@@ -130,7 +138,7 @@ export function DataTable<T extends TableRowData>({
 	});
 
 	useHotkeys(
-		"down",
+		"j",
 		(_data) => {
 			const selectedRow = table.getSelectedRowModel().rows[0];
 			if (!selectedRow) return;
@@ -157,15 +165,7 @@ export function DataTable<T extends TableRowData>({
 	);
 
 	useHotkeys(
-		"esc",
-		() => {
-			setRowSelection({});
-		},
-		[],
-	);
-
-	useHotkeys(
-		"up",
+		"k",
 		(_data) => {
 			const selectedRow = table.getSelectedRowModel().rows[0];
 			if (!selectedRow) return;
@@ -191,33 +191,62 @@ export function DataTable<T extends TableRowData>({
 		[],
 	);
 
+	useHotkeys(
+		"esc",
+		() => {
+			setRowSelection({});
+		},
+		[],
+	);
+
+	useLayoutEffect(() => {
+		if (!tableContainerRef.current) {
+			return;
+		}
+
+		const selectedRowId = Object.keys(rowSelection).find((key) => rowSelection[key]);
+		if (selectedRowId) {
+			const rowElement = tableContainerRef.current.querySelector(
+				`tr[data-row-id="${selectedRowId}"]`,
+			);
+			if (rowElement) {
+				rowElement.scrollIntoView({
+					behavior: "instant",
+					block: "nearest",
+				});
+			}
+		}
+	}, [rowSelection]);
+
+	const expanedState = table.getIsAllRowsExpanded();
+
 	return (
-		<div className="space-y-4">
+		<div className="flex flex-col gap-4">
 			<div>
 				{enableGrouping && (
 					<Button
 						variant="outline"
 						onClick={() => {
-							table.toggleAllRowsExpanded(false);
+							table.toggleAllRowsExpanded();
 						}}
 					>
-						Collapse all
+						{expanedState ? "Collapse" : "Expand"}
 					</Button>
 				)}
 			</div>
-			<div className="rounded-md border border-border bg-background">
+			<div
+				ref={tableContainerRef}
+				className={cn("rounded-md border border-border bg-background", tableClassName)}
+			>
 				<Table>
-					<TableHeader>
+					<TableHeader className="sticky top-0 bg-muted">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50 ">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
 											key={header.id}
-											className={cn(
-												header.column.columnDef.meta?.headerClassName,
-												"sticky top-0 bg-muted",
-											)}
+											className={header.column.columnDef.meta?.headerClassName}
 										>
 											{header.isPlaceholder
 												? null
@@ -234,6 +263,7 @@ export function DataTable<T extends TableRowData>({
 								<TableRow
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
+									data-row-id={row.id}
 									className="group bg-card"
 									onClick={(ev) => {
 										if (row.groupingColumnId) return;
@@ -248,7 +278,8 @@ export function DataTable<T extends TableRowData>({
 											}
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
-												"group-has-[[data-group=grouped]]:bg-muted/50 group-hover:group-has-[[data-group=grouped]]:bg-muted/50",
+												"group-has-[[data-group=grouped]]:bg-accent group-hover:group-has-[[data-group=grouped]]:bg-accent",
+												"dark:group-has-[[data-group=grouped]]:bg-accent/50 dark:group-hover:group-has-[[data-group=grouped]]:bg-accent/50",
 											)}
 										>
 											{cell.getIsGrouped() ? (

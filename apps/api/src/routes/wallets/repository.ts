@@ -1,6 +1,7 @@
 import { generateId } from "@hoalu/common/generate-id";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db, schema } from "../../db";
+import type { UpdateWalletSchema } from "./schema";
 
 type NewWallet = typeof schema.wallet.$inferInsert;
 
@@ -57,7 +58,11 @@ export class WalletRepository {
 		return result;
 	}
 
-	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
+	async update<T extends typeof UpdateWalletSchema.infer>(param: {
+		id: string;
+		workspaceId: string;
+		payload: T;
+	}) {
 		const [wallet] = await db
 			.update(schema.wallet)
 			.set({

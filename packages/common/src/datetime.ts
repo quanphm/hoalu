@@ -1,9 +1,4 @@
-import {
-	type DateArg,
-	type FormatOptions,
-	format as dateFnsFormat,
-	intlFormatDistance,
-} from "date-fns";
+import * as dateFns from "date-fns";
 
 export const TIME_IN_MILLISECONDS = {
 	DEFAULT: 1,
@@ -25,8 +20,4 @@ export const TIME_IN_SECONDS = {
 	YEAR: 31_536_000,
 } as const;
 
-function format(date: DateArg<Date> & {}, formatStr: string, options?: FormatOptions) {
-	return dateFnsFormat(date, formatStr, options);
-}
-
-export const date = { format, intlFormatDistance };
+export const datetime = { format: dateFns.format, intlFormatDistance: dateFns.intlFormatDistance };

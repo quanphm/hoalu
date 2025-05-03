@@ -1,7 +1,7 @@
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { expenseKeys } from "@/services/query-key-factory";
 import { exchangeRatesQueryOptions, expensesQueryOptions } from "@/services/query-options";
-import { date } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useWorkspace } from "./use-workspace";
@@ -29,13 +29,13 @@ export function useExpenses() {
 
 					return {
 						...expense,
-						date: date.format(expense.date, "d MMM yyyy"),
+						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: convertedAmount,
 					};
 				} catch {
 					return {
 						...expense,
-						date: date.format(expense.date, "d MMM yyyy"),
+						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: -1,
 					};
 				}

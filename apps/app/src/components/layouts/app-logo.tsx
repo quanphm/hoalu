@@ -6,9 +6,9 @@ export function AppLogo() {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<SidebarMenuButton size="lg" variant="outline" className="bg-none! shadow-none!" asChild>
+				<SidebarMenuButton size="lg" variant="outline" asChild>
 					<Link to="/">
-						<div className="flex aspect-square size-8 items-center justify-center text-foreground">
+						<div className="flex aspect-square size-8 items-center justify-center">
 							<BotIcon className="size-8" />
 						</div>
 						<div className="grid flex-1 text-left text-sm leading-tight">

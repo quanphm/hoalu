@@ -1,4 +1,4 @@
-import { date } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 // import { Button } from "@hoalu/ui/button";
 import {
 	Card,
@@ -60,7 +60,7 @@ function WorkspaceCard(props: WorkspaceCardProps) {
 			</CardHeader>
 			<CardContent className="p-4 pt-0">
 				<p className="text-muted-foreground text-xs">
-					Created {date.intlFormatDistance(props.createdAt, new Date())}
+					Created {datetime.intlFormatDistance(props.createdAt, new Date())}
 				</p>
 			</CardContent>
 		</Card>

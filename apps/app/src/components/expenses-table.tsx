@@ -5,7 +5,7 @@ import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { date } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -23,7 +23,11 @@ const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 const columns = [
 	columnHelper.accessor("date", {
 		header: "Date",
-		getGroupingValue: (row) => date.format(row.date, "yyyy-MM-dd"),
+		cell: ({ row }) => {
+			const value = datetime.format(row.original.date, "EEEE, d LLL, yyyy");
+			return value;
+		},
+		getGroupingValue: (row) => row.date,
 		meta: {
 			headerClassName:
 				"w-(--header-date-size) min-w-(--header-date-size) max-w-(--header-date-size)",
@@ -46,7 +50,7 @@ const columns = [
 				metadata: { currency: workspaceCurrency },
 			} = useWorkspace();
 			return (
-				<span className="font-semibold text-red-700 tracking-tight">
+				<span className="font-semibold text-destructive tracking-tight">
 					{formatCurrency(value as number, workspaceCurrency)}
 				</span>
 			);
@@ -122,10 +126,11 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 				enableGrouping
 				onRowClick={handleRowClick}
 				controlledState={{ grouping: ["date"] }}
+				tableClassName="max-h-[calc(100vh-180px)] overflow-auto "
 			/>
 			<Suspense>
 				{selected.id && (
-					<Card className="fixed top-10 right-0 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
+					<Card className="fixed top-12 right-0 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
 							<CardTitle className="text-md">Expense details</CardTitle>
 							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>

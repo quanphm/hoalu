@@ -5,16 +5,6 @@ import { HTTPException } from "hono/http-exception";
 import { db } from "../db";
 import type { AppBindings } from "../types";
 
-interface Workspace {
-	id: string;
-	publicId: string;
-	name: string;
-	createdAt: Date;
-	slug: string;
-	logo: string | null;
-	metadata: Record<string, any>;
-}
-
 interface Member {
 	id: string;
 	createdAt: Date;
@@ -23,11 +13,22 @@ interface Member {
 	role: string;
 }
 
+interface Workspace {
+	id: string;
+	publicId: string;
+	name: string;
+	createdAt: Date;
+	slug: string;
+	logo: string | null;
+	metadata: Record<string, any>;
+	members: Omit<Member, "workspaceId" | "createdAt">[];
+}
+
 export const workspaceMember = createMiddleware<
 	AppBindings & {
 		Variables: {
 			workspace: Workspace;
-			member: Member;
+			membership: Member;
 		};
 	}
 >(async (c, next) => {
@@ -44,18 +45,26 @@ export const workspaceMember = createMiddleware<
 		});
 	}
 
-	const currentMember = await db.query.member.findFirst({
-		where: (table, { eq, and }) =>
-			and(eq(table.workspaceId, currentWorkspace.id), eq(table.userId, user.id)),
+	const allMembersOfCurrentWorkspace = await db.query.member.findMany({
+		where: (table, { eq }) => eq(table.workspaceId, currentWorkspace.id),
 	});
+
+	const currentMember = allMembersOfCurrentWorkspace.find((member) => member.userId === user.id);
 	if (!currentMember) {
 		throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {
 			message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
 		});
 	}
 
-	c.set("workspace", currentWorkspace);
-	c.set("member", currentMember);
+	c.set("workspace", {
+		...currentWorkspace,
+		members: allMembersOfCurrentWorkspace.map((member) => ({
+			id: member.id,
+			role: member.role,
+			userId: member.userId,
+		})),
+	});
+	c.set("membership", currentMember);
 
 	await next();
 });

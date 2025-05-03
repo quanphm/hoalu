@@ -9,6 +9,7 @@ import { MailPlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 	component: RouteComponent,
@@ -36,7 +37,7 @@ function RouteComponent() {
 		role: member.role,
 	}));
 
-	const invitationTableData = invitations.map((invite) => ({
+	const invitationTableData = invitations?.map((invite) => ({
 		id: invite.id,
 		email: invite.email,
 		status: invite.status,
@@ -67,7 +68,9 @@ function RouteComponent() {
 					<SectionTitle>Invitations</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
-					<InvitationsTable data={invitationTableData} />
+					<Suspense>
+						<InvitationsTable data={invitationTableData || []} />
+					</Suspense>
 				</SectionContent>
 			</Section>
 		</>
