@@ -6,7 +6,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
 		<div className="relative w-full">
 			<table
 				data-slot="table"
-				className={cn("w-full caption-bottom border-separate border-spacing-0 text-sm", className)}
+				className={cn("w-full caption-bottom border-spacing-0 text-sm", className)}
 				{...props}
 			/>
 		</div>
@@ -21,7 +21,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
 	return (
 		<tbody
 			data-slot="table-body"
-			className={cn("[&_tr:last-child]:border-0", className)}
+			className={cn("outline-0 focus-visible:outline [&_tr:last-child]:border-0", className)}
 			tabIndex={-1}
 			{...props}
 		/>
@@ -43,9 +43,9 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b transition-colors hover:bg-muted/80 data-[state=selected]:bg-muted/40",
+				"border-b transition-colors hover:bg-primary/10 data-[state=selected]:bg-muted/40",
 				"-outline-offset-1 outline-0 outline-primary focus-visible:outline data-[state=selected]:outline",
-				// "[&>*]:border-t [&>:not(:last-child)]:border-r",
+				// "[&>*]:border-t [&>:not(:last-child)]:border-b",
 				className,
 			)}
 			{...props}
@@ -70,10 +70,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 	return (
 		<td
 			data-slot="table-cell"
-			className={cn(
-				"select-none border-b p-3 align-middle [&:has([role=checkbox])]:pr-0",
-				className,
-			)}
+			className={cn("select-none p-3 align-middle [&:has([role=checkbox])]:pr-0", className)}
 			{...props}
 		/>
 	);

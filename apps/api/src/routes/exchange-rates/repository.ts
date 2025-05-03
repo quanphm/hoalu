@@ -1,4 +1,4 @@
-import { date as dateFn } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "../../db";
 
@@ -66,7 +66,7 @@ export class ExchangeRateRepository {
 		const today = new Date().toISOString();
 		const isSameExchange = from === to;
 		const isCrossRate = from !== "USD" && to !== "USD";
-		const returnedDate = dateFn.format(date || today, "yyyy-MM-dd");
+		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
 
 		/**
 		 * @example VND -> VND

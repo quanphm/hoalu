@@ -273,7 +273,7 @@ function DeleteExpense({ id }: { id: string }) {
 	);
 }
 
-function EditExpenseForm(props: { id: string }) {
+function EditExpenseForm(props: { id: string; className?: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));

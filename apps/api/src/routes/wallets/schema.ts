@@ -38,7 +38,14 @@ export const InsertWalletSchema = type({
 	isActive: "boolean = true",
 });
 
-export const UpdateWalletSchema = InsertWalletSchema.partial();
+export const UpdateWalletSchema = type({
+	name: "string > 0",
+	"description?": "string",
+	currency: CurrencySchema,
+	type: WalletTypeSchema,
+	isActive: "boolean = true",
+	ownerId: "string.uuid.v7",
+}).partial();
 
 export const DeletetWalletSchema = type({
 	"+": "delete",

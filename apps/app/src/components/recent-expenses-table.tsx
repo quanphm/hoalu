@@ -2,7 +2,7 @@ import { DataTable } from "@/components/data-table";
 import { TransactionAmount } from "@/components/transaction-amount";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { date } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
 
@@ -13,7 +13,7 @@ const columns = [
 		header: "Date",
 		cell: (info) => {
 			const value = info.getValue();
-			return <p className="text-muted-foreground">{date.format(value, "d MMM yyyy")}</p>;
+			return <p className="text-muted-foreground">{datetime.format(value, "d MMM yyyy")}</p>;
 		},
 		meta: {
 			headerClassName:

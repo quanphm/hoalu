@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
-import { date } from "@hoalu/common/datetime";
+import { TIME_IN_MILLISECONDS, datetime } from "@hoalu/common/datetime";
 import {
 	ClearDayIcon,
 	PartlyCloudyDayIcon,
@@ -15,7 +15,7 @@ export function Greeting() {
 	useEffect(() => {
 		const id = setInterval(() => {
 			setCurrentTime(new Date());
-		}, 1000);
+		}, TIME_IN_MILLISECONDS.MINUTE);
 		return () => {
 			clearInterval(id);
 		};
@@ -52,7 +52,7 @@ export function Greeting() {
 				{message}, {user?.name}
 			</p>
 			<p className="text-base text-muted-foreground tracking-wide">
-				{icon} {date.format(today, "EEEE, MMM d kk:mm")}
+				{icon} {datetime.format(today, "EEEE, MMM d HH:mm")}
 			</p>
 		</div>
 	);

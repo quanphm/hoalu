@@ -9,7 +9,7 @@ import {
 	KEYBOARD_SHORTCUTS,
 } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { WalletFormSchema, type WalletTypeSchema } from "@/lib/schema";
+import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from "@/lib/schema";
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
 import {
@@ -145,6 +145,9 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	const { data: wallet, status } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
 
+	console.log(workspace.members);
+	console.log(wallet?.owner.id);
+
 	const form = useAppForm({
 		defaultValues: {
 			name: wallet?.name ?? "",
@@ -152,7 +155,8 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 			currency: wallet?.currency ?? "",
 			type: wallet?.type ?? "",
 			isActive: wallet?.isActive ?? true,
-		} as WalletFormSchema,
+			ownerId: wallet?.owner.id ?? "",
+		} as WalletPatchSchema,
 		validators: {
 			onSubmit: WalletFormSchema,
 		},
@@ -165,6 +169,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 					currency: value.currency,
 					type: value.type,
 					isActive: value.isActive,
+					ownerId: value.ownerId,
 				},
 			});
 			if (props.onEditCallback) props.onEditCallback();
@@ -213,6 +218,20 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 									? "You won't be able to create new expense with this wallet."
 									: ""
 							}
+						/>
+					)}
+				</form.AppField>
+				<form.AppField name="ownerId">
+					{(field) => (
+						<field.SelectField
+							label="Owner"
+							description="You can transfer wallet ownership to the others"
+							options={workspace.members.map((member) => {
+								return {
+									label: member.user.name,
+									value: member.user.id,
+								};
+							})}
 						/>
 					)}
 				</form.AppField>

@@ -151,7 +151,7 @@ const route = app
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
-			const membership = c.get("member");
+			const membership = c.get("membership");
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
@@ -170,8 +170,8 @@ const route = app
 				);
 			}
 
-			// workspace must has atleast 1 active wallet
-			// Prevent deactivate the last available wallet
+			// workspace must has atleast 1 active wallet.
+			// Prevent users from deactivating the only available wallet.
 			const wallets = await walletRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
@@ -181,6 +181,17 @@ const route = app
 					{ message: "This wallet cannot be deactivated because it's your only available wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
+			}
+
+			// If ownerId is updated, the new owner must be a member of the workspace
+			if (payload.ownerId) {
+				const newOwner = workspace.members.find((member) => member.userId === payload.ownerId);
+				if (!newOwner) {
+					return c.json(
+						{ message: "The new owner must be a member of the workspace" },
+						HTTPStatus.codes.BAD_REQUEST,
+					);
+				}
 			}
 
 			const queryData = await walletRepository.update({
@@ -221,7 +232,7 @@ const route = app
 		async (c) => {
 			const user = c.get("user")!;
 			const workspace = c.get("workspace");
-			const membership = c.get("member");
+			const membership = c.get("membership");
 			const param = c.req.valid("param");
 
 			// owner or workspace owener can delete their wallet

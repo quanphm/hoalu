@@ -13,7 +13,7 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "@/services/query-key-factory";
-import { TIME_IN_MILLISECONDS, date } from "@hoalu/common/datetime";
+import { TIME_IN_MILLISECONDS, datetime } from "@hoalu/common/datetime";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { queryOptions } from "@tanstack/react-query";
 
@@ -200,19 +200,28 @@ export const expensesQueryOptions = (slug: string) => {
 
 					return {
 						...expense,
-						date: date.format(expense.date, "d MMM yyyy"),
+						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: convertedAmount,
 					};
 				} catch {
 					return {
 						...expense,
-						date: date.format(expense.date, "d MMM yyyy"),
+						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: -1,
 					};
 				}
 			});
 			const result = await Promise.all(promises);
 			return result as ExpenseWithClientConvertedSchema[];
+		},
+		select: (expenses) => {
+			return expenses.map(
+				(expense) =>
+					({
+						...expense,
+						date: datetime.format(expense.date, "yyyy-MM-dd"),
+					}) as ExpenseWithClientConvertedSchema,
+			);
 		},
 	});
 };

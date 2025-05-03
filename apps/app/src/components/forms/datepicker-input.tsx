@@ -1,4 +1,4 @@
-import { date } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 import { CalendarIcon } from "@hoalu/icons/lucide";
 import { Input } from "@hoalu/ui/input";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
@@ -12,7 +12,7 @@ interface Props {
 export function DatepickerInputField(props: Props) {
 	const field = useFieldContext<string | undefined>();
 	const selected = field.state.value ? new Date(field.state.value) : new Date();
-	const inputValue = date.format(selected, "yyyy-MM-dd");
+	const inputValue = datetime.format(selected, "yyyy-MM-dd");
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;

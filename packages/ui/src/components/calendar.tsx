@@ -85,6 +85,7 @@ function Calendar({
 	return (
 		<DayPicker
 			showOutsideDays={showOutsideDays}
+			weekStartsOn={1}
 			className={cn("w-fit", className)}
 			classNames={mergedClassNames}
 			components={mergedComponents}
