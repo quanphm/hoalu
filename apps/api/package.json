@@ -24,18 +24,18 @@
 		"@hoalu/countries": "workspace:*",
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
-		"@react-email/render": "^1.0.6",
+		"@react-email/render": "^1.1.0",
 		"@scalar/hono-api-reference": "^0.5.184",
 		"arktype": "^2.1.20",
 		"better-auth": "^1.2.7",
 		"drizzle-orm": "^0.39.3",
-		"hono": "^4.7.7",
-		"hono-openapi": "^0.4.6",
+		"hono": "^4.7.8",
+		"hono-openapi": "^0.4.8",
 		"ioredis": "^5.6.1",
 		"nodemailer": "^6.10.1",
 		"pg": "^8.15.6",
 		"react": "^19.1.0",
-		"resend": "^4.4.1"
+		"resend": "^4.5.0"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
