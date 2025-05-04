@@ -8,13 +8,13 @@
 		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"hono": "^4.7.7"
+		"hono": "^4.7.8"
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-		"@hono/arktype-validator": "^2.0.0",
+		"@hono/arktype-validator": "^2.0.1",
 		"arktype": "^2.1.20",
-		"hono-openapi": "^0.4.6",
+		"hono-openapi": "^0.4.8",
 		"hono-pino": "^0.7.2",
 		"hono-rate-limiter": "^0.4.2",
 		"pino": "^9.6.0",

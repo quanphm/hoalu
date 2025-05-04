@@ -236,12 +236,15 @@ export function DataTable<T extends TableRowData>({
 			</div>
 			<div
 				ref={tableContainerRef}
-				className={cn("rounded-md border border-border bg-background", tableClassName)}
+				className={cn(
+					"overflow-hidden rounded-md border border-border bg-background",
+					tableClassName,
+				)}
 			>
 				<Table>
-					<TableHeader className="sticky top-0 bg-muted">
+					<TableHeader className="sticky top-0 bg-card">
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50 ">
+							<TableRow key={headerGroup.id} className="bg-card hover:bg-card ">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
@@ -279,7 +282,7 @@ export function DataTable<T extends TableRowData>({
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
 												"group-has-[[data-group=grouped]]:bg-accent group-hover:group-has-[[data-group=grouped]]:bg-accent",
-												"dark:group-has-[[data-group=grouped]]:bg-accent/50 dark:group-hover:group-has-[[data-group=grouped]]:bg-accent/50",
+												"group-has-[[data-group=grouped]]:border-t group-has-[[data-group=grouped]]:border-b",
 											)}
 										>
 											{cell.getIsGrouped() ? (

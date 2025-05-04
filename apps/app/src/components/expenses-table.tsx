@@ -126,7 +126,7 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 				enableGrouping
 				onRowClick={handleRowClick}
 				controlledState={{ grouping: ["date"] }}
-				tableClassName="max-h-[calc(100vh-180px)] overflow-auto "
+				tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
 			/>
 			<Suspense>
 				{selected.id && (

@@ -30,8 +30,6 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<div className="texture" />
-
 			<Sidebar>
 				<SidebarHeader className="border-b">
 					{hasSlug && currentWorkspace ? (
