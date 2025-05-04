@@ -1,42 +1,26 @@
 FROM oven/bun:1.2.10 AS base
 WORKDIR /repo
 
-FROM base AS deps
-WORKDIR /repo
+# stage 1: turbo prune
+FROM base AS turbo
+RUN bun install -g turbo
+COPY . .
+RUN turbo prune @hoalu/api --docker
 
-COPY package.json bun.lock ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/app/package.json ./apps/app/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/common/package.json ./packages/common/
-COPY packages/countries/package.json ./packages/countries/
-COPY packages/email/package.json ./packages/email/
-COPY packages/furnace/package.json ./packages/furnace/
-COPY packages/icons/package.json ./packages/icons/
-COPY packages/doki/package.json ./packages/doki/
-COPY packages/tsconfig/package.json ./packages/tsconfig/
-COPY packages/ui/package.json ./packages/ui/
-
-FROM deps AS build
+# stage 2: build
+FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
-RUN bun install
+RUN set -eu; \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 gcompat
 
-COPY apps/api ./apps/api
-COPY apps/app ./apps/app
-COPY packages/auth ./packages/auth
-COPY packages/common ./packages/common
-COPY packages/countries ./packages/countries
-COPY packages/email ./packages/email
-COPY packages/furnace ./packages/furnace
-COPY packages/icons ./packages/icons
-COPY packages/doki ./packages/doki
-COPY packages/tsconfig ./packages/tsconfig
-COPY packages/ui ./packages/ui
+COPY --from=turbo /repo/out/json/ .
+RUN bun install
+COPY --from=turbo /repo/out/full/ .
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_APP_BASE_URL
-
 RUN printf "PUBLIC_API_URL=%s\n\
 PUBLIC_APP_BASE_URL=%s\n" \
 "${PUBLIC_API_URL}" \
@@ -45,11 +29,10 @@ PUBLIC_APP_BASE_URL=%s\n" \
 # for import HonoRPC types in client.
 WORKDIR /repo/apps/api
 RUN bun run build:types
-
 WORKDIR /repo/apps/app
-ENV NODE_ENV='production'
 RUN bun run build
 
+# stage 3: runtime
 FROM nginx:alpine
 COPY --from=build /repo/apps/app/dist /usr/share/nginx/html
 COPY --from=build /repo/apps/app/nginx.conf /etc/nginx/nginx.conf
