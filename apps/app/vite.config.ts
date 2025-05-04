@@ -24,7 +24,28 @@ export default defineConfig({
 			manifest: {
 				name: "Hoalu",
 				short_name: "Hoalu",
-				theme_color: "#030712",
+				icons: [
+					{
+						src: "/images/web-app-manifest-192x192.png",
+						sizes: "192x192",
+						type: "image/png",
+						purpose: "maskable",
+					},
+					{
+						src: "/images/web-app-manifest-144x144.png",
+						sizes: "144x144",
+						type: "image/png",
+						purpose: "any",
+					},
+					{
+						src: "/images/web-app-manifest-512x512.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "maskable",
+					},
+				],
+				theme_color: "#242a3a",
+				background_color: "#242a3a",
 			},
 			workbox: {
 				maximumFileSizeToCacheInBytes: 10_000_000,
