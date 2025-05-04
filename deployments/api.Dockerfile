@@ -12,7 +12,7 @@ FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
-RUN bun install --frozen-lockfile
+RUN bun install
 COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
 RUN bun run build:api
