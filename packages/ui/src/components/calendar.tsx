@@ -12,6 +12,7 @@ function Calendar({
 	...props
 }: React.ComponentProps<typeof DayPicker>) {
 	const defaultClassNames = {
+		root: "bg-card rounded-md",
 		months: "relative flex flex-col sm:flex-row gap-4",
 		month: "w-full",
 		month_grid: "w-full",
