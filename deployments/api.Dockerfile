@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.10 AS base
+FROM oven/bun:1.2.11 AS base
 WORKDIR /repo
 
 # stage 1: turbo prune
@@ -11,12 +11,8 @@ RUN turbo prune @hoalu/api --docker
 FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
-RUN set -eu; \
-    apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 gcompat
-
 COPY --from=turbo /repo/out/json/ .
-RUN bun install --production
+RUN bun install --frozen-lockfile
 COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
 RUN bun run build:api
