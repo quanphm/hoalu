@@ -30,7 +30,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={6}>
+				<SectionContent columns={6} className="gap-4">
 					<CreateExpenseDialogTrigger>
 						<Button
 							className={cn(
