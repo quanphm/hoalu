@@ -14,16 +14,14 @@ import {
 	filesQueryOptions,
 	walletsQueryOptions,
 } from "@/services/query-options";
-import { BoltIcon, ImagesIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { ScrollArea, ScrollBar } from "@hoalu/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
-import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/library")({
+export const Route = createFileRoute("/_dashboard/$slug/library")({
 	component: RouteComponent,
 });
 
@@ -35,19 +33,10 @@ function RouteComponent() {
 
 	return (
 		<Tabs defaultValue="general">
-			<ScrollArea>
-				<TabsList className="mb-8">
-					<TabsTrigger value="general">
-						<BoltIcon className="size-4" />
-						General
-					</TabsTrigger>
-					<TabsTrigger value="photos">
-						<ImagesIcon className="size-4" />
-						Photos
-					</TabsTrigger>
-				</TabsList>
-				<ScrollBar orientation="horizontal" />
-			</ScrollArea>
+			<TabsList className="mb-8">
+				<TabsTrigger value="general">General</TabsTrigger>
+				<TabsTrigger value="photos">Photos</TabsTrigger>
+			</TabsList>
 
 			<TabsContent value="general" className="flex flex-col gap-10">
 				<Section>

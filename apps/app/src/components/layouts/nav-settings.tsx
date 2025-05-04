@@ -43,22 +43,6 @@ export function NavSettings() {
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
-
-				<SidebarMenuItem>
-					<SidebarMenuButton asChild>
-						<Link
-							from="/$slug/"
-							to="./settings/library"
-							disabled={!KEYBOARD_SHORTCUTS.goto_library.enabled}
-						>
-							<LibraryIcon />
-							<span>Library</span>
-							<SidebarMenuBadge>
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_library} />
-							</SidebarMenuBadge>
-						</Link>
-					</SidebarMenuButton>
-				</SidebarMenuItem>
 			</SidebarMenu>
 		</SidebarGroup>
 	);
