@@ -16,7 +16,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
@@ -60,9 +59,7 @@ export function NavUser() {
 									<DropdownMenuSubTrigger>
 										<PaletteIcon />
 										<span>Themes</span>
-										<DropdownMenuShortcut>
-											<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
-										</DropdownMenuShortcut>
+										<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
 									</DropdownMenuSubTrigger>
 									<DropdownMenuPortal>
 										<DropdownMenuSubContent>

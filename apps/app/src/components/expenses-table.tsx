@@ -24,7 +24,7 @@ const columns = [
 	columnHelper.accessor("date", {
 		header: "Date",
 		cell: ({ row }) => {
-			const value = datetime.format(row.original.date, "EEEE, d LLL, yyyy");
+			const value = datetime.format(row.original.date, "dd/LL/yyyy");
 			return value;
 		},
 		getGroupingValue: (row) => row.date,

@@ -26,8 +26,8 @@ export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 function RouteComponent() {
 	const { slug } = Route.useParams();
 	const workspace = useWorkspace();
-	const { data: logo } = useQuery(workspaceLogoOptions(workspace.slug, workspace.logo));
 	const mutation = useEditWorkspace();
+	const { data: logo } = useQuery(workspaceLogoOptions(workspace.slug, workspace.logo));
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
 	const {
 		data: { previewUrls },

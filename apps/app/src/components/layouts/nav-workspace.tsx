@@ -1,9 +1,14 @@
 import { HotKey } from "@/components/hotkey";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { ArrowRightLeftIcon, GalleryVerticalIcon, ListTodoIcon } from "@hoalu/icons/lucide";
+import {
+	ArrowRightLeftIcon,
+	GalleryVerticalIcon,
+	LibraryIcon,
+	ListTodoIcon,
+	SettingsIcon,
+} from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
-	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuBadge,
 	SidebarMenuButton,
@@ -13,8 +18,7 @@ import { Link } from "@tanstack/react-router";
 
 export function NavWorkspace() {
 	return (
-		<SidebarGroup id="nav-workspace" className="border-b">
-			<SidebarGroupLabel>Workspace</SidebarGroupLabel>
+		<SidebarGroup id="nav-workspace">
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">
@@ -51,6 +55,34 @@ export function NavWorkspace() {
 							<span>Tasks</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
+							</SidebarMenuBadge>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild>
+						<Link from="/$slug/" to="./library" disabled={!KEYBOARD_SHORTCUTS.goto_library.enabled}>
+							<LibraryIcon />
+							<span>Library</span>
+							<SidebarMenuBadge>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_library} />
+							</SidebarMenuBadge>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild>
+						<Link
+							from="/$slug/"
+							to="./settings/workspace"
+							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
+						>
+							<SettingsIcon />
+							<span>Settings</span>
+							<SidebarMenuBadge>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
 							</SidebarMenuBadge>
 						</Link>
 					</SidebarMenuButton>
