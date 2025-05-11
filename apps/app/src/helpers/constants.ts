@@ -16,7 +16,7 @@ export const AVAILABLE_CURRENCY_OPTIONS: {
 		label: c,
 		value: c,
 	}))
-	.filter((c) => c.value === "USD" || c.value === "VND" || c.value === "SGD" || c.value === "EUR");
+	.filter((c) => ["USD", "VND", "SGD", "EUR"].includes(c.value));
 
 export const AVAILABLE_WALLET_TYPE_OPTIONS: {
 	label: string;

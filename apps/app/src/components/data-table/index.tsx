@@ -219,21 +219,24 @@ export function DataTable<T extends TableRowData>({
 	}, [rowSelection]);
 
 	const expanedState = table.getIsAllRowsExpanded();
+	const showToolbar = !!enableGrouping;
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div>
-				{enableGrouping && (
-					<Button
-						variant="outline"
-						onClick={() => {
-							table.toggleAllRowsExpanded();
-						}}
-					>
-						{expanedState ? "Collapse" : "Expand"}
-					</Button>
-				)}
-			</div>
+			{showToolbar && (
+				<div className="flex gap-4">
+					{enableGrouping && (
+						<Button
+							variant="outline"
+							onClick={() => {
+								table.toggleAllRowsExpanded();
+							}}
+						>
+							{expanedState ? "Collapse" : "Expand"}
+						</Button>
+					)}
+				</div>
+			)}
 			<div
 				ref={tableContainerRef}
 				className={cn(

@@ -30,7 +30,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Shortcuts</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={6}>
+				<SectionContent columns={6} className="gap-4">
 					<CreateExpenseDialogTrigger>
 						<Button
 							className={cn(
@@ -91,7 +91,7 @@ function RouteComponent() {
 							<SectionTitle>Wallets</SectionTitle>
 							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library}>
 								<Button variant="outline" size="sm" asChild>
-									<Link to="/$slug/settings/library" params={{ slug }}>
+									<Link to="/$slug/library" params={{ slug }}>
 										View all
 										<ArrowRight className="ml-2 size-4" />
 									</Link>

@@ -29,19 +29,19 @@
 		"arktype": "^2.1.20",
 		"better-auth": "^1.2.7",
 		"drizzle-orm": "^0.39.3",
-		"hono": "^4.7.8",
+		"hono": "^4.7.9",
 		"hono-openapi": "^0.4.8",
 		"ioredis": "^5.6.1",
 		"nodemailer": "^6.10.1",
 		"pg": "^8.15.6",
 		"react": "^19.1.0",
-		"resend": "^4.5.0"
+		"resend": "^4.5.1"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
-		"@types/pg": "^8.11.14",
+		"@types/pg": "^8.15.1",
 		"drizzle-kit": "^0.30.6",
 		"rimraf": "^6.0.1"
 	}

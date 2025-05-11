@@ -8,7 +8,7 @@
 		".": "./src/index.ts"
 	},
 	"peerDependencies": {
-		"hono": "^4.7.8"
+		"hono": "^4.7.9"
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
@@ -22,6 +22,6 @@
 		"rate-limit-redis": "^4.2.0"
 	},
 	"devDependencies": {
-		"vitest": "^3.1.2"
+		"vitest": "^3.1.3"
 	}
 }

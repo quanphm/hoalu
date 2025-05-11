@@ -14,16 +14,14 @@ import {
 	filesQueryOptions,
 	walletsQueryOptions,
 } from "@/services/query-options";
-import { BoltIcon, ImagesIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { ScrollArea, ScrollBar } from "@hoalu/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
-import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/library")({
+export const Route = createFileRoute("/_dashboard/$slug/library")({
 	component: RouteComponent,
 });
 
@@ -35,31 +33,10 @@ function RouteComponent() {
 
 	return (
 		<Tabs defaultValue="general">
-			<ScrollArea>
-				<TabsList className="mb-8 gap-2 bg-muted/50">
-					<TabsTrigger
-						value="general"
-						className={cn(
-							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-foreground",
-							"dark:data-[state=active]:bg-gradient-to-b dark:data-[state=active]:bg-sidebar-accent/45 dark:data-[state=active]:from-sidebar-primary dark:data-[state=active]:to-sidebar-primary/70 dark:data-[state=active]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
-						)}
-					>
-						<BoltIcon className="mr-2 size-4" />
-						General
-					</TabsTrigger>
-					<TabsTrigger
-						value="photos"
-						className={cn(
-							"rounded-md px-6 py-2 data-[state=active]:bg-muted data-[state=active]:text-foreground",
-							"dark:data-[state=active]:bg-gradient-to-b dark:data-[state=active]:bg-sidebar-accent/45 dark:data-[state=active]:from-sidebar-primary dark:data-[state=active]:to-sidebar-primary/70 dark:data-[state=active]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)]",
-						)}
-					>
-						<ImagesIcon className="mr-2 size-4" />
-						Photos
-					</TabsTrigger>
-				</TabsList>
-				<ScrollBar orientation="horizontal" />
-			</ScrollArea>
+			<TabsList className="mb-8">
+				<TabsTrigger value="general">General</TabsTrigger>
+				<TabsTrigger value="photos">Photos</TabsTrigger>
+			</TabsList>
 
 			<TabsContent value="general" className="flex flex-col gap-10">
 				<Section>
@@ -72,7 +49,7 @@ function RouteComponent() {
 							</Button>
 						</CreateWalletDialogTrigger>
 					</SectionHeader>
-					<SectionContent columns={3}>
+					<SectionContent columns={3} className="gap-4">
 						{wallets.map((w) => (
 							<ContentCard
 								key={w.id}
