@@ -5,7 +5,7 @@
 		"build": {
 			"dependsOn": ["^build"],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["build/**", "dist/**", ".output/**", ".vinxi/**"]
+			"outputs": ["build/**", "dist/**", ".output/**"]
 		},
 		"format": {},
 		"lint": {
