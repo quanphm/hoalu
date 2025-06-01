@@ -23,6 +23,16 @@ function RouteComponent() {
 							Members
 						</Link>
 					</TabsTrigger>
+					<TabsTrigger value="library" asChild>
+						<Link from="/$slug/settings" to="./library">
+							Library
+						</Link>
+					</TabsTrigger>
+					<TabsTrigger value="photos" asChild>
+						<Link from="/$slug/settings" to="./photos">
+							Photos
+						</Link>
+					</TabsTrigger>
 				</TabsList>
 			</Tabs>
 			<Outlet />
