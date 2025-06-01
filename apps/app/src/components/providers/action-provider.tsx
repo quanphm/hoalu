@@ -185,7 +185,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 		KEYBOARD_SHORTCUTS.goto_library.hotkey,
 		() => {
 			if (slug) {
-				navigate({ to: "/$slug/library", params: { slug } });
+				navigate({ to: "/$slug/settings/library", params: { slug } });
 			}
 		},
 		{

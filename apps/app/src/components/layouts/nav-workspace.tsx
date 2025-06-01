@@ -3,7 +3,6 @@ import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import {
 	ArrowRightLeftIcon,
 	GalleryVerticalIcon,
-	LibraryIcon,
 	ListTodoIcon,
 	SettingsIcon,
 } from "@hoalu/icons/lucide";
@@ -62,21 +61,9 @@ export function NavWorkspace() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
-						<Link from="/$slug/" to="./library" disabled={!KEYBOARD_SHORTCUTS.goto_library.enabled}>
-							<LibraryIcon />
-							<span>Library</span>
-							<SidebarMenuBadge>
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_library} />
-							</SidebarMenuBadge>
-						</Link>
-					</SidebarMenuButton>
-				</SidebarMenuItem>
-
-				<SidebarMenuItem>
-					<SidebarMenuButton asChild>
 						<Link
 							from="/$slug/"
-							to="./settings/workspace"
+							to="./settings"
 							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
 						>
 							<SettingsIcon />
