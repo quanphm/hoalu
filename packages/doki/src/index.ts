@@ -1,4 +1,4 @@
-export { DokiClientProvider } from "./provider";
+export { DokiClientProvider } from "./context";
 export { useDokiShape, useDoki } from "./hooks";
 
 // types

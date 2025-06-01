@@ -7,13 +7,6 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
 	envPrefix: "PUBLIC_",
-	build: {
-		rollupOptions: {
-			output: {
-				experimentalMinChunkSize: 10_000,
-			},
-		},
-	},
 	plugins: [
 		tailwindcss(),
 		TanStackRouterVite({ target: "react", autoCodeSplitting: false }),

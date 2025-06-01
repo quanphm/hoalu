@@ -54,7 +54,6 @@
 		"@vitejs/plugin-react-swc": "^3.10.0",
 		"tailwind-scrollbar": "4.0.0-beta.0",
 		"tailwindcss": "^4.1.8",
-		"vite": "^6.3.5",
 		"vite-plugin-pwa": "^0.21.2",
 		"vite-tsconfig-paths": "^5.1.4"
 	}

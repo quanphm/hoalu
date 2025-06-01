@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.13
+FROM oven/bun:1.2.15
 WORKDIR /migrations
 
 RUN bun install drizzle-orm drizzle-kit pg

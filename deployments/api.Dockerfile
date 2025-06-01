@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.13 AS base
+FROM oven/bun:1.2.15 AS base
 WORKDIR /repo
 
 # stage 1: turbo prune
