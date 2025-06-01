@@ -59,9 +59,5 @@ function App() {
 
 if (!rootElement?.innerHTML) {
 	const root = createRoot(rootElement as HTMLElement);
-	root.render(
-		<StrictMode>
-			<App />
-		</StrictMode>,
-	);
+	root.render(<App />);
 }

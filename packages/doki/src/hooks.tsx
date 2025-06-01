@@ -90,14 +90,12 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 			...options,
 			url: syncClient.baseUrl,
 			signal: controller.signal,
-			fetchClient: (req, init) => fetch(req, { ...init, credentials: "include" }),
+			fetchClient: (req: RequestInfo, init: RequestInit) =>
+				fetch(req, { ...init, credentials: "include" }),
 		} as ShapeStreamOptions<GetExtensions<T>>);
 		const shape = getShape<T>(shapeStream);
 
 		const unsubscribe = shape.subscribe((_data) => {
-			/**
-			 * @see https://github.com/electric-sql/electric/pull/2408
-			 */
 			const newShapeData = parseShapeData(shape);
 			if (shapeResultChanged(latestShapeData.current, newShapeData)) {
 				latestShapeData.current = newShapeData;
@@ -108,9 +106,8 @@ function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
 		return () => {
 			unsubscribe();
 		};
-	}, [options, syncClient.baseUrl, controller.signal]);
+	}, [options, syncClient.baseUrl]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: bypass
 	React.useEffect(() => {
 		return () => {
 			queryClient.cancelQueries({ queryKey });
