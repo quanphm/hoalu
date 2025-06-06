@@ -46,9 +46,9 @@
 		"format": "biome check --write ."
 	},
 	"devDependencies": {
-		"@types/react": "^19.1.5",
+		"@types/react": "^19.1.6",
 		"@hoalu/tsconfig": "workspace:*",
-		"tailwindcss": "^4.1.7"
+		"tailwindcss": "^4.1.8"
 	},
 	"dependencies": {
 		"@hoalu/icons": "workspace:*",
