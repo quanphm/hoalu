@@ -1,4 +1,4 @@
-import { ContentCard, WorkspaceCard } from "@/components/cards";
+import { WorkspaceCard } from "@/components/cards";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -21,16 +21,12 @@ function RouteComponent() {
 		return (
 			<PageContent className="gap-12">
 				<Greeting />
-
 				<Section className="gap-2">
 					<SectionHeader>
 						<h3 className="font-semibold text-lg">Create a new workspace</h3>
 					</SectionHeader>
 					<SectionContent columns={12}>
 						<div className="col-span-6">
-							<p className="mb-6 text-muted-foreground text-sm">
-								Workspaces are shared environments where members can interact with content together.
-							</p>
 							<CreateWorkspaceForm />
 						</div>
 					</SectionContent>
@@ -42,27 +38,6 @@ function RouteComponent() {
 	return (
 		<PageContent>
 			<Greeting />
-
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Explore</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={4}>
-					<ContentCard
-						title="Create workspace"
-						description="Experience the power of AI in generating unique content."
-					/>
-					<ContentCard
-						title="Finance tracking"
-						description="Experience the power of AI in generating unique content."
-					/>
-					<ContentCard
-						title="Group tasks"
-						description="Let AI handle the proofreading of your documents."
-					/>
-				</SectionContent>
-			</Section>
-
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Workspaces</SectionTitle>

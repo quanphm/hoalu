@@ -49,10 +49,6 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
 						<DialogTitle>Create a new workspace</DialogTitle>
-						<DialogDescription>
-							Create a new workspace to establish a shared environment where members can collaborate
-							on and manage content together.
-						</DialogDescription>
 					</DialogHeader>
 					<CreateWorkspaceForm />
 				</DialogContent>
