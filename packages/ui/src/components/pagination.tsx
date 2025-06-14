@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import type * as React from "react";
 import { cn } from "../utils";
 import { type Button, buttonVariants } from "./button";
@@ -18,19 +18,18 @@ function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) 
 	return (
 		<ul
 			data-slot="pagination-content"
-			className={cn("flex items-center gap-1", className)}
+			className={cn("flex flex-row items-center gap-1", className)}
 			{...props}
 		/>
 	);
 }
 
-function PaginationItem({ className, ...props }: React.ComponentProps<"li">) {
-	return <li data-slot="pagination-item" className={cn("", className)} {...props} />;
+function PaginationItem({ ...props }: React.ComponentProps<"li">) {
+	return <li data-slot="pagination-item" {...props} />;
 }
 
 type PaginationLinkProps = {
 	isActive?: boolean;
-	isDisabled?: boolean;
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
 	React.ComponentProps<"a">;
 
@@ -60,8 +59,8 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
 			className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
 			{...props}
 		>
-			<ChevronLeft size={16} strokeWidth={2} />
-			<span>Previous</span>
+			<ChevronLeftIcon />
+			<span className="hidden sm:block">Previous</span>
 		</PaginationLink>
 	);
 }
@@ -74,8 +73,8 @@ function PaginationNext({ className, ...props }: React.ComponentProps<typeof Pag
 			className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
 			{...props}
 		>
-			<span>Next</span>
-			<ChevronRight size={16} strokeWidth={2} />
+			<span className="hidden sm:block">Next</span>
+			<ChevronRightIcon />
 		</PaginationLink>
 	);
 }
@@ -88,7 +87,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
 			className={cn("flex size-9 items-center justify-center", className)}
 			{...props}
 		>
-			<MoreHorizontal size={16} strokeWidth={2} />
+			<MoreHorizontalIcon className="size-4" />
 			<span className="sr-only">More pages</span>
 		</span>
 	);
@@ -97,9 +96,9 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
 export {
 	Pagination,
 	PaginationContent,
-	PaginationEllipsis,
-	PaginationItem,
 	PaginationLink,
-	PaginationNext,
+	PaginationItem,
 	PaginationPrevious,
+	PaginationNext,
+	PaginationEllipsis,
 };

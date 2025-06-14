@@ -8,9 +8,15 @@ import { LoaderCircleIcon } from "@hoalu/icons/lucide";
 import { useEffect, useState } from "react";
 
 let syncStarted = false;
-
-function startSync(pg: PGliteWithLive) {
+async function startSync(pg: PGliteWithLive) {
 	console.log("start syncing...", pg);
+
+	const tables = await pg.query(
+		`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`,
+	);
+	if (tables.rows.length === 0) {
+		console.log("run migrations");
+	}
 }
 
 export function LocalPostgresProvider(props: { children: React.ReactNode }) {
@@ -20,9 +26,7 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 		(async function create() {
 			const { data: pg } = await tryCatch.async(
 				PGliteWorker.create(new PGWorker(), {
-					/**
-					 * @see https://pglite.dev/docs/multi-tab-worker#extension-support
-					 */
+					dataDir: "idb://hoalu",
 					extensions: {
 						live,
 						electric: electricSync(),
@@ -33,12 +37,10 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 			if (!pg) return;
 
 			console.log("PGlite worker started");
-			pg.onLeaderChange(() => {
-				if (pg.isLeader && !syncStarted) {
-					syncStarted = true;
-					startSync(pg);
-				}
-			});
+			if (!syncStarted) {
+				await startSync(pg);
+				syncStarted = true;
+			}
 
 			setPgForProvider(pg);
 		})();

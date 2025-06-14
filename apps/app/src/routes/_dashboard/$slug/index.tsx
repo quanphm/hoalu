@@ -59,33 +59,33 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
+				<SectionHeader>
+					<SectionTitle>Overview</SectionTitle>
+				</SectionHeader>
+				<SectionContent>
+					<ExpensesStats />
+				</SectionContent>
+			</Section>
+
+			<Section>
 				<SectionContent columns={12}>
-					<SectionContent className="col-span-8">
-						<Section>
-							<SectionHeader>
-								<SectionTitle>Overview</SectionTitle>
-							</SectionHeader>
-							<SectionContent>
-								<ExpensesStats />
-							</SectionContent>
-						</Section>
-						<Section>
-							<SectionHeader>
-								<SectionTitle>Recent entries</SectionTitle>
-								<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
-									<Button variant="outline" size="sm" asChild>
-										<Link to="/$slug/expenses" params={{ slug }}>
-											View all
-											<ArrowRight className="ml-2 size-4" />
-										</Link>
-									</Button>
-								</HotKeyWithTooltip>
-							</SectionHeader>
-							<SectionContent>
-								<RecentExpensesTable data={recentTransactions} />
-							</SectionContent>
-						</Section>
-					</SectionContent>
+					<Section className="col-span-8">
+						<SectionHeader>
+							<SectionTitle>Recent entries</SectionTitle>
+							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
+								<Button variant="outline" size="sm" asChild>
+									<Link to="/$slug/expenses" params={{ slug }}>
+										View all
+										<ArrowRight className="ml-2 size-4" />
+									</Link>
+								</Button>
+							</HotKeyWithTooltip>
+						</SectionHeader>
+						<SectionContent>
+							<RecentExpensesTable data={recentTransactions} />
+						</SectionContent>
+					</Section>
+
 					<Section className="col-span-4">
 						<SectionHeader>
 							<SectionTitle>Wallets</SectionTitle>

@@ -6,7 +6,6 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
 			data-slot="card"
 			className={cn(
 				"relative rounded-lg border bg-card text-card-foreground shadow-none",
-				// "shadow-lg dark:inset-shadow-[0_1px_rgb(255_255_255/0.15)] dark:bg-card/70",
 				className,
 			)}
 			{...props}
@@ -44,6 +43,16 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+	return (
+		<div
+			data-slot="card-action"
+			className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+			{...props}
+		/>
+	);
+}
+
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="card-content" className={cn("p-6 pt-0", className)} {...props} />;
 }
@@ -58,4 +67,4 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };

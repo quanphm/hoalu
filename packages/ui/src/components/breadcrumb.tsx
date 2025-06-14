@@ -1,6 +1,5 @@
 import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
 import { Slot as SlotPrimitive } from "radix-ui";
-import type * as React from "react";
 import { cn } from "../utils";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
@@ -50,7 +49,7 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
 	return (
-		// biome-ignore lint/a11y/useFocusableInteractive: shadcn/ui
+		// biome-ignore lint/a11y/useFocusableInteractive: quick fix for accessibility
 		<span
 			data-slot="breadcrumb-page"
 			role="link"

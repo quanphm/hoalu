@@ -59,7 +59,7 @@ export function NavUser() {
 									<DropdownMenuSubTrigger>
 										<PaletteIcon />
 										<span>Themes</span>
-										<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
+										<HotKey className="ml-2" {...KEYBOARD_SHORTCUTS.toggle_theme} />
 									</DropdownMenuSubTrigger>
 									<DropdownMenuPortal>
 										<DropdownMenuSubContent>

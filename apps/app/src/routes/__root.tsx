@@ -32,7 +32,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<>
 			{children}
 			<QueryDevtools buttonPosition="bottom-right" />
-			<RouterDevtools position="bottom-left" />
+			<RouterDevtools position="top-right" />
 		</>
 	);
 }
