@@ -207,7 +207,6 @@
         "recharts": "^2.15.3",
         "sonner": "^1.7.4",
         "tailwind-merge": "^2.6.0",
-        "tailwindcss-animate": "^1.0.7",
         "tw-animate-css": "^1.3.4",
         "vaul": "^1.1.2",
       },
@@ -2351,8 +2350,6 @@
     "tailwind-scrollbar": ["tailwind-scrollbar@4.0.0-beta.0", "", { "peerDependencies": { "tailwindcss": "^4.0.0-beta.8" } }, "sha512-d6qwt3rYDgsKNaQGLW0P6N1TN/87xYZDjH6/PimtFvij2NgC5i3M6mEuVKR4Ixb2u3SvMBT95t7+xzJGJRzXtA=="],
 
     "tailwindcss": ["tailwindcss@4.1.10", "", {}, "sha512-P3nr6WkvKV/ONsTzj6Gb57sWPMX29EPNPopo7+FcpkQaNsrNpZ1pv8QmrYI2RqEKD7mlGqLnGovlcYnBK0IqUA=="],
-
-    "tailwindcss-animate": ["tailwindcss-animate@1.0.7", "", { "peerDependencies": { "tailwindcss": ">=3.0.0 || insiders" } }, "sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA=="],
 
     "tapable": ["tapable@2.2.2", "", {}, "sha512-Re10+NauLTMCudc7T5WLFLAwDhQ0JWdrMK+9B2M8zR5hRExKmsRDCBA7/aV/pNJFltmBFO5BAMlQFi/vq3nKOg=="],
 

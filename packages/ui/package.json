@@ -63,7 +63,6 @@
 		"recharts": "^2.15.3",
 		"sonner": "^1.7.4",
 		"tailwind-merge": "^2.6.0",
-		"tailwindcss-animate": "^1.0.7",
 		"tw-animate-css": "^1.3.4",
 		"vaul": "^1.1.2"
 	},
