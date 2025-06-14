@@ -1,6 +1,6 @@
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -9,7 +9,7 @@ export default defineConfig({
 	envPrefix: "PUBLIC_",
 	plugins: [
 		tailwindcss(),
-		TanStackRouterVite({ target: "react", autoCodeSplitting: false }),
+		tanstackRouter({ target: "react", autoCodeSplitting: false }),
 		react(),
 		VitePWA({
 			registerType: "autoUpdate",

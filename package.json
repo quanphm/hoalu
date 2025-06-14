@@ -13,11 +13,8 @@
 		"@biomejs/biome": "^1.9.4",
 		"turbo": "^2.5.4",
 		"typescript": "^5.8.3",
-		"vite": "^6.3.18",
+		"vite": "^6.3.5",
 		"vitest": "^3.2.2"
-	},
-	"overrides": {
-		"vite": "npm:rolldown-vite@latest"
 	},
 	"packageManager": "bun@1.2.15"
 }

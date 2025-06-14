@@ -48,34 +48,30 @@ function RouteComponent() {
 								</p>
 							}
 							description={w.description}
+							actions={<WalletDropdownMenuWithModal id={w.id} />}
 							content={
-								<>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center gap-1.5">
-											<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
-											<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
-										</div>
-										<Badge
-											variant="outline"
-											className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
-										>
-											{w.isActive ? (
-												<>
-													<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
-													In use
-												</>
-											) : (
-												<>
-													<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
-													Unused
-												</>
-											)}
-										</Badge>
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-1.5">
+										<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
+										<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
 									</div>
-									<div className="absolute top-3 right-4">
-										<WalletDropdownMenuWithModal id={w.id} />
-									</div>
-								</>
+									<Badge
+										variant="outline"
+										className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
+									>
+										{w.isActive ? (
+											<>
+												<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
+												In use
+											</>
+										) : (
+											<>
+												<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
+												Unused
+											</>
+										)}
+									</Badge>
+								</div>
 							}
 						/>
 					))}

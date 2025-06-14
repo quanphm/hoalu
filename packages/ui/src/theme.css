@@ -1,26 +1,30 @@
-@import "./animate.css";
+@import "tailwindcss";
+@import "tw-animate-css";
 @import "./themes/default.css";
+
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-}
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 
+	pre::-webkit-scrollbar {
+    width: 5px;
+  }
+  pre::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  pre::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+  pre {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
 

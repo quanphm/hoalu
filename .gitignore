@@ -11,6 +11,8 @@ pg-data
 .dev.vars
 .turbo
 .next
+.tanstack
+.react-email
 
 # debug
 npm-debug.log*
@@ -26,6 +28,3 @@ npm-debug.log*
 # misc
 .DS_Store
 *.pem
-
-# react-email
-.react-email

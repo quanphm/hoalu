@@ -22,10 +22,10 @@ export function DatepickerField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<div className="rounded-md border">
+			<div className="flex items-center justify-center rounded-md border">
 				<Calendar
 					mode="single"
-					className="min-h-[300px] w-full p-2"
+					className="min-h-[300px] p-2"
 					selected={selected}
 					onSelect={handleSelect}
 					month={selected}

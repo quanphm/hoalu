@@ -49,7 +49,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{/* <NavDocumentation /> */}
 					<NavUser />
 				</SidebarContent>
-				<SidebarFooter className="border-t px-4 py-4">
+				<SidebarFooter className="border-t px-4 py-2">
 					<div className="flex items-center justify-between">
 						<p className="text-muted-foreground text-sm leading-none tracking-wider">
 							{import.meta.env.PUBLIC_APP_VERSION}
