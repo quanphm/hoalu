@@ -1,15 +1,22 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
+
+import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarInset,
+	SidebarProvider,
+} from "@hoalu/ui/sidebar";
+import { cn } from "@hoalu/ui/utils";
 import { AppLogo } from "@/components/layouts/app-logo";
 import { NavUser } from "@/components/layouts/nav-user";
 import { NavWorkspace } from "@/components/layouts/nav-workspace";
 import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
 import { listWorkspacesOptions } from "@/services/query-options";
-import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
-import { SidebarFooter, SidebarInset, SidebarProvider } from "@hoalu/ui/sidebar";
-import { Sidebar, SidebarContent, SidebarHeader } from "@hoalu/ui/sidebar";
-import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
 // import { NavDocumentation } from "./nav-documentation";
 import { NavWorkspaceList } from "./nav-workspace-list";
 

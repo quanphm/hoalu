@@ -1,4 +1,5 @@
 import { Tabs as TabsPrimitive } from "radix-ui";
+
 import { cn } from "../utils";
 
 function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {

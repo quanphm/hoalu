@@ -1,5 +1,6 @@
-import { CircleIcon } from "@hoalu/icons/lucide";
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui";
+
+import { CircleIcon } from "@hoalu/icons/lucide";
 import { cn } from "../utils";
 
 function RadioGroup({

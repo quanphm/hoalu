@@ -1,6 +1,7 @@
-import { PanelLeftIcon } from "@hoalu/icons/lucide";
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
+import { PanelLeftIcon } from "@hoalu/icons/lucide";
 import { useIsMobile } from "../hooks/use-is-mobile";
 import { cn } from "../utils";
 import { Button } from "./button";

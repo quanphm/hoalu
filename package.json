@@ -10,7 +10,8 @@
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
 		"docker:up": "cd deployments && docker compose -f docker-compose.local.yml up -d --build",
-		"docker:down": "cd deployments && docker compose down"
+		"docker:down": "cd deployments && docker compose down",
+		"format": "biome check --write"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.4",

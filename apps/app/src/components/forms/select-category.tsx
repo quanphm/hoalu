@@ -1,5 +1,7 @@
-import { CreateCategoryDialogTrigger } from "@/components/category";
-import { categoriesQueryOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { useState } from "react";
+
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -13,9 +15,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { useState } from "react";
+import { CreateCategoryDialogTrigger } from "@/components/category";
+import { categoriesQueryOptions } from "@/services/query-options";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 

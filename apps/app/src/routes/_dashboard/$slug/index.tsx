@@ -1,3 +1,9 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
 import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
@@ -8,11 +14,6 @@ import { UserAvatar } from "@/components/user-avatar";
 import { CreateWalletDialogTrigger, WalletIcon } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,

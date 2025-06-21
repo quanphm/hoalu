@@ -1,11 +1,12 @@
+import { createColumnHelper } from "@tanstack/react-table";
+import { useAtom } from "jotai";
+import { Suspense } from "react";
+
+import { Badge } from "@hoalu/ui/badge";
 import { selectedCategoryAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { CategorySchema } from "@/lib/schema";
-import { Badge } from "@hoalu/ui/badge";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useAtom } from "jotai";
-import { Suspense } from "react";
 import { EditCategoryForm } from "./category";
 
 const columnHelper = createColumnHelper<CategorySchema>();

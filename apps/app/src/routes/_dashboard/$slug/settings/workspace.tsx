@@ -1,3 +1,8 @@
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { Button } from "@hoalu/ui/button";
+import { toast } from "@hoalu/ui/sonner";
 import { SettingCard } from "@/components/cards";
 import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -14,10 +19,6 @@ import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import { useEditWorkspace } from "@/services/mutations";
 import { getActiveMemberOptions, workspaceLogoOptions } from "@/services/query-options";
-import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 	component: RouteComponent,

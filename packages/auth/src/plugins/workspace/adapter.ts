@@ -1,6 +1,7 @@
 import { BetterAuthError } from "better-auth";
 import type { AuthContext } from "better-auth/types";
 import { z } from "zod";
+
 import { getDate } from "../../utils/date";
 import type { User } from "../../utils/types";
 import type { WorkspaceOptions } from "./index";
@@ -96,10 +97,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 			});
 			return workspaces;
 		},
-		async createWorkspace(data: {
-			workspace: WorkspaceInput;
-			user: User;
-		}) {
+		async createWorkspace(data: { workspace: WorkspaceInput; user: User }) {
 			const workspace = await adapter.create<WorkspaceInput, Workspace>({
 				model: "workspace",
 				data: data.workspace,
@@ -163,10 +161,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 				},
 			};
 		},
-		async findMemberByEmail(data: {
-			email: string;
-			workspaceId: string;
-		}) {
+		async findMemberByEmail(data: { email: string; workspaceId: string }) {
 			const user = await adapter.findOne<User>({
 				model: "user",
 				where: [
@@ -217,10 +212,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 			});
 			return members;
 		},
-		async findMemberByWorkspaceId(data: {
-			userId: string;
-			workspaceId: string;
-		}) {
+		async findMemberByWorkspaceId(data: { userId: string; workspaceId: string }) {
 			const [member, user] = await Promise.all([
 				await adapter.findOne<Member>({
 					model: "member",
@@ -374,10 +366,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 
 			return invitations;
 		},
-		async findPendingInvitation(data: {
-			email: string;
-			workspaceId: string;
-		}) {
+		async findPendingInvitation(data: { email: string; workspaceId: string }) {
 			const invitation = await adapter.findMany<Invitation>({
 				model: "invitation",
 				where: [

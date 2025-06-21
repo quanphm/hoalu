@@ -1,5 +1,6 @@
+import { createFileRoute, Link, Outlet, useChildMatches, useParams } from "@tanstack/react-router";
+
 import { Tabs, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
-import { Link, Outlet, createFileRoute, useChildMatches, useParams } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings")({
 	component: RouteComponent,

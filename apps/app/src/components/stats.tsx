@@ -1,3 +1,5 @@
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
 import { TrendingUpIcon } from "@hoalu/icons/lucide";
 import {
 	Card,
@@ -13,7 +15,6 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@hoalu/ui/chart";
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 const areaChartData = [
 	{ month: "January", desktop: 186 },

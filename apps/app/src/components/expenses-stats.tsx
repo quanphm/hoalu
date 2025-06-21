@@ -1,3 +1,5 @@
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+
 import { TrendingUpIcon } from "@hoalu/icons/lucide";
 import {
 	Card,
@@ -13,7 +15,6 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@hoalu/ui/chart";
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
 export const description = "A bar chart with a label";
 

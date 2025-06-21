@@ -1,14 +1,18 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 import { WorkspaceCard } from "@/components/cards";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { CreateWorkspaceDialog, CreateWorkspaceDialogTrigger } from "@/components/workspace";
-import { CreateWorkspaceForm } from "@/components/workspace";
+import {
+	CreateWorkspaceDialog,
+	CreateWorkspaceDialogTrigger,
+	CreateWorkspaceForm,
+} from "@/components/workspace";
 import { listWorkspacesOptions } from "@/services/query-options";
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/")({
 	component: RouteComponent,

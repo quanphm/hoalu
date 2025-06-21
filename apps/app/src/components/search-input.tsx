@@ -1,7 +1,8 @@
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { useId } from "react";
+
 import { SearchIcon } from "@hoalu/icons/lucide";
 import { Input } from "@hoalu/ui/input";
-import { useId } from "react";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { HotKey } from "./hotkey";
 
 export function SearchInput() {

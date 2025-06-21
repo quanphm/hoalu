@@ -1,3 +1,7 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+
+import { toast } from "@hoalu/ui/sonner";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import type {
@@ -11,9 +15,6 @@ import type {
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
 import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/services/query-key-factory";
-import { toast } from "@hoalu/ui/sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -254,7 +255,12 @@ export function useUploadExpenseFiles() {
 			title,
 			date,
 			files,
-		}: { id: string; title: string; date: string; files: File[] }) => {
+		}: {
+			id: string;
+			title: string;
+			date: string;
+			files: File[];
+		}) => {
 			const ids = await Promise.all(
 				files.map(async (file) => {
 					const response = await apiClient.files.uploadWithPresignedUrl(slug, file, {

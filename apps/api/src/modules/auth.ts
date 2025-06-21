@@ -1,5 +1,6 @@
-import { rateLimiter } from "@hoalu/furnace";
 import { cors } from "hono/cors";
+
+import { rateLimiter } from "@hoalu/furnace";
 import { auth } from "../lib/auth";
 import { createHonoInstance } from "../lib/create-app";
 import { redis } from "../lib/redis";

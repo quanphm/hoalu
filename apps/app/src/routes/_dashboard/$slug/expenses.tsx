@@ -1,15 +1,16 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { type } from "arktype";
+
+import { datetime } from "@hoalu/common/datetime";
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { Calendar } from "@hoalu/ui/calendar";
 import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { expensesQueryOptions } from "@/services/query-options";
-import { datetime } from "@hoalu/common/datetime";
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { Calendar } from "@hoalu/ui/calendar";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { type } from "arktype";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	validateSearch: type({

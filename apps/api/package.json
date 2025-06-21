@@ -2,7 +2,9 @@
 	"name": "@hoalu/api",
 	"version": "0.6.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"exports": {
 		"./types": "./dist/types/index.d.ts"
 	},

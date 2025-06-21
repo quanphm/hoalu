@@ -1,12 +1,13 @@
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+
+import { Button } from "@hoalu/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { toast } from "@hoalu/ui/sonner";
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { WorkspaceLogo } from "@/components/workspace";
 import { useAuth } from "@/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { toast } from "@hoalu/ui/sonner";
-import { useMutation } from "@tanstack/react-query";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/invite/$id/accept")({
 	loader: async ({ params: { id } }) => {

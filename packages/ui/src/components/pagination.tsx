@@ -1,5 +1,6 @@
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import type * as React from "react";
+
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "@hoalu/icons/lucide";
 import { cn } from "../utils";
 import { type Button, buttonVariants } from "./button";
 

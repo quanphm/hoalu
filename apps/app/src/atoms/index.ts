@@ -1,6 +1,7 @@
-import type { ExpenseFormSchema } from "@/lib/schema";
-import { type PrimitiveAtom, atom } from "jotai";
+import { atom, type PrimitiveAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+
+import type { ExpenseFormSchema } from "@/lib/schema";
 
 interface Dialog {
 	id: string;

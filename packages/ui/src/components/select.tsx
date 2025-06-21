@@ -1,5 +1,6 @@
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { Select as SelectPrimitive } from "radix-ui";
+
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { cn } from "../utils";
 
 function Select({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) {

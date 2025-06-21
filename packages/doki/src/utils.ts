@@ -1,4 +1,5 @@
 import type { Shape, ShapeStream } from "@electric-sql/client";
+
 import type { Row, ShapeStreamOptions, UseShapeResult } from "./types";
 
 function sortObjectKeys(obj: any): any {

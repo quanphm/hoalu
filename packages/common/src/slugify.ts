@@ -38,7 +38,7 @@ export function slugify(string: string | undefined, opts?: Options) {
 		.normalize()
 		.split("")
 		.reduce((result, ch) => {
-			let appendChar: string | undefined = undefined;
+			let appendChar: string | undefined;
 			if (appendChar === undefined) appendChar = specialCharMap[ch];
 			if (appendChar === undefined) appendChar = ch;
 			if (appendChar === replacement) appendChar = " ";

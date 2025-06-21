@@ -1,10 +1,10 @@
-import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { useAppForm } from "@/components/forms";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth/login")({
 	component: RouteComponent,

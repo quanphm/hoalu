@@ -1,3 +1,9 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
 import { ContentCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
 import { CreateCategoryDialogTrigger } from "@/components/category";
@@ -9,11 +15,6 @@ import {
 	WalletIcon,
 } from "@/components/wallet";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/library")({
 	component: RouteComponent,

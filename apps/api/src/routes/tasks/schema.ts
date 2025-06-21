@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "../../common/schema";
 
 export const TaskSchema = type({

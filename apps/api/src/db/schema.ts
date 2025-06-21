@@ -1,10 +1,3 @@
-import {
-	PG_ENUM_COLOR,
-	PG_ENUM_PRIORITY,
-	PG_ENUM_REPEAT,
-	PG_ENUM_TASK_STATUS,
-	PG_ENUM_WALLET_TYPE,
-} from "@hoalu/common/enums";
 import { sql } from "drizzle-orm";
 import {
 	boolean,
@@ -13,6 +6,7 @@ import {
 	integer,
 	jsonb,
 	numeric,
+	pgEnum,
 	pgTable,
 	primaryKey,
 	text,
@@ -21,7 +15,14 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
+
+import {
+	PG_ENUM_COLOR,
+	PG_ENUM_PRIORITY,
+	PG_ENUM_REPEAT,
+	PG_ENUM_TASK_STATUS,
+	PG_ENUM_WALLET_TYPE,
+} from "@hoalu/common/enums";
 
 /**
  * auth

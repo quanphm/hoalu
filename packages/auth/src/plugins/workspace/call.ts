@@ -1,5 +1,6 @@
 import { createAuthMiddleware, sessionMiddleware } from "better-auth/api";
 import type { Role } from "better-auth/plugins/access";
+
 import type { GenericEndpointContext, Session, User } from "../../utils/types";
 import type { defaultRoles } from "./access/statement";
 import type { WorkspaceOptions } from "./index";

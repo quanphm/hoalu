@@ -1,17 +1,7 @@
-import { createWalletDialogOpenAtom } from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { HotKeyWithTooltip } from "@/components/hotkey";
-import { WarningMessage } from "@/components/warning-message";
-import { createWalletTheme } from "@/helpers/colors";
-import {
-	AVAILABLE_CURRENCY_OPTIONS,
-	AVAILABLE_WALLET_TYPE_OPTIONS,
-	KEYBOARD_SHORTCUTS,
-} from "@/helpers/constants";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from "@/lib/schema";
-import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
-import { walletWithIdQueryOptions } from "@/services/query-options";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
+
 import {
 	BitcoinIcon,
 	WalletIcon as CashIcon,
@@ -37,9 +27,20 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
-import { useQuery } from "@tanstack/react-query";
-import { useAtom, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { createWalletDialogOpenAtom } from "@/atoms";
+import { useAppForm } from "@/components/forms";
+import { HotKeyWithTooltip } from "@/components/hotkey";
+import { WarningMessage } from "@/components/warning-message";
+import { createWalletTheme } from "@/helpers/colors";
+import {
+	AVAILABLE_CURRENCY_OPTIONS,
+	AVAILABLE_WALLET_TYPE_OPTIONS,
+	KEYBOARD_SHORTCUTS,
+} from "@/helpers/constants";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from "@/lib/schema";
+import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
+import { walletWithIdQueryOptions } from "@/services/query-options";
 
 function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createWalletDialogOpenAtom);

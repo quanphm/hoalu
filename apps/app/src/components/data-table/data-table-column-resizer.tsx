@@ -1,5 +1,6 @@
-import { cn } from "@hoalu/ui/utils";
 import type { Header } from "@tanstack/react-table";
+
+import { cn } from "@hoalu/ui/utils";
 
 export function ColumnResizer({ header }: { header: Header<any, unknown> }) {
 	if (header.column.getCanResize() === false)

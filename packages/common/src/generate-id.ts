@@ -12,10 +12,7 @@ const prefixes = {
 	pdf: "pdf_",
 } as const;
 
-export function generateId(options: {
-	use: "uuid" | "nanoid";
-	kind?: keyof typeof prefixes;
-}) {
+export function generateId(options: { use: "uuid" | "nanoid"; kind?: keyof typeof prefixes }) {
 	const defaultAlgorithm = options.use || "nanoid";
 
 	if (defaultAlgorithm === "uuid") {

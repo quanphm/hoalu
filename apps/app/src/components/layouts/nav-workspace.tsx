@@ -1,5 +1,5 @@
-import { HotKey } from "@/components/hotkey";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { Link, useParams } from "@tanstack/react-router";
+
 import {
 	ArrowRightLeftIcon,
 	GalleryVerticalIcon,
@@ -13,7 +13,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-import { Link, useParams } from "@tanstack/react-router";
+import { HotKey } from "@/components/hotkey";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });

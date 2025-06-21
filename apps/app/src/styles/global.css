@@ -9,29 +9,29 @@
 @plugin "@tailwindcss/typography";
 
 .root {
-  isolation: isolate
+	isolation: isolate;
 }
 
 @layer base {
-  * {
-    @apply box-border border-border;
-  }
+	* {
+		@apply box-border border-border;
+	}
 
-  body {
-    @apply relative bg-transparent text-foreground overscroll-none antialiased font-sans;
-    font-synthesis-weight: none;
-    font-variant-numeric: tabular-nums lining-nums;
-    font-optical-sizing: auto;
-    text-rendering: optimizeLegibility;
-  }
+	body {
+		@apply relative bg-transparent text-foreground overscroll-none antialiased font-sans;
+		font-synthesis-weight: none;
+		font-variant-numeric: tabular-nums lining-nums;
+		font-optical-sizing: auto;
+		text-rendering: optimizeLegibility;
+	}
 
-  html,
-  body {
-    @apply w-full min-h-screen;
-  }
+	html,
+	body {
+		@apply w-full min-h-screen;
+	}
 
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
-  }
+	button:not(:disabled),
+	[role="button"]:not(:disabled) {
+		cursor: pointer;
+	}
 }

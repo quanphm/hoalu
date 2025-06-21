@@ -1,6 +1,6 @@
-import { UserAvatar } from "@/components/user-avatar";
-import { KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
-import { useAuth } from "@/hooks/use-auth";
+import { Link } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
+
 import {
 	CheckIcon,
 	ChevronsUpDownIcon,
@@ -22,8 +22,9 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
-import { Link } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
+import { UserAvatar } from "@/components/user-avatar";
+import { KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
+import { useAuth } from "@/hooks/use-auth";
 import { HotKey } from "../hotkey";
 
 export function NavUser() {

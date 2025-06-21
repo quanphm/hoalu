@@ -1,11 +1,6 @@
-import { HotKey } from "@/components/hotkey";
-import {
-	CreateWorkspaceDialog,
-	CreateWorkspaceDialogTrigger,
-	S3WorkspaceLogo,
-} from "@/components/workspace";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
+
 import {
 	CheckIcon,
 	ChevronsUpDownIcon,
@@ -24,8 +19,14 @@ import {
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
+import { HotKey } from "@/components/hotkey";
+import {
+	CreateWorkspaceDialog,
+	CreateWorkspaceDialogTrigger,
+	S3WorkspaceLogo,
+} from "@/components/workspace";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { listWorkspacesOptions } from "@/services/query-options";
 
 interface Props {
 	selectedWorkspace: {

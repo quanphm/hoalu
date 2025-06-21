@@ -1,5 +1,6 @@
-import { Dialog, DialogContent } from "@hoalu/ui/dialog";
 import { useState } from "react";
+
+import { Dialog, DialogContent } from "@hoalu/ui/dialog";
 
 export function ImageGallery(props: {
 	data: { name: string; description: string | null; presignedUrl: string }[];

@@ -1,33 +1,33 @@
 @theme inline {
-  --top-height: 200px;
+	--top-height: 200px;
 
-  /** common */
-  --header-name-size: 200px;
-  --col-name-size: 200px;
+	/** common */
+	--header-name-size: 200px;
+	--col-name-size: 200px;
 
-  --header-date-size: 140px;
-  --col-date-size: 140px;
+	--header-date-size: 140px;
+	--col-date-size: 140px;
 
-  --header-link-size: 400px;
-  --col-link-size: 400px;
+	--header-link-size: 400px;
+	--col-link-size: 400px;
 
-  --header-action-size: 48px;
-  --col-action-size: 48px;
+	--header-action-size: 48px;
+	--col-action-size: 48px;
 
-  /** Expense table */
-  --header-expense-title-size: 240px;
-  --col-expernse-title-size: 240px;
+	/** Expense table */
+	--header-expense-title-size: 240px;
+	--col-expernse-title-size: 240px;
 
-  --header-expense-category-size: 150px;
-  --col-expense-category-size: 150px;
+	--header-expense-category-size: 150px;
+	--col-expense-category-size: 150px;
 
-  --header-expense-wallet-size: 130px;
-  --col-expense-wallet-size: 130px;
+	--header-expense-wallet-size: 130px;
+	--col-expense-wallet-size: 130px;
 
-  --header-expense-amount-size: 150px;
-  --col-expense-amount-size: 150px;
+	--header-expense-amount-size: 150px;
+	--col-expense-amount-size: 150px;
 
-  /** Category table */
-  --header-category-name-size: 200px;
-  --col-category-name-size: 200px;
+	/** Category table */
+	--header-category-name-size: 200px;
+	--col-category-name-size: 200px;
 }

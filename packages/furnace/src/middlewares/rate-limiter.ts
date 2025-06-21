@@ -1,5 +1,5 @@
-import { type Store, rateLimiter as honoRateLimiter } from "hono-rate-limiter";
 import { createMiddleware } from "hono/factory";
+import { rateLimiter as honoRateLimiter, type Store } from "hono-rate-limiter";
 import { RedisStore } from "rate-limit-redis";
 
 export const rateLimiter = <T>(client: T) => {

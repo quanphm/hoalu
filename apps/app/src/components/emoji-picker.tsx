@@ -1,8 +1,9 @@
+import { EmojiPicker as Frimousse } from "frimousse";
+import * as React from "react";
+
 import { SmilePlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { EmojiPicker as Frimousse } from "frimousse";
-import * as React from "react";
 
 export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	const [isOpen, setIsOpen] = React.useState(false);

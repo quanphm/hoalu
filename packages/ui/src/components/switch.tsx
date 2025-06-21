@@ -1,4 +1,5 @@
 import { Switch as SwitchPrimitive } from "radix-ui";
+
 import { cn } from "../utils";
 
 function Switch({ className, ...props }: React.ComponentProps<typeof SwitchPrimitive.Root>) {

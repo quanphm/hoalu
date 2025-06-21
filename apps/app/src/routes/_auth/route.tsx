@@ -1,7 +1,8 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { type } from "arktype";
+
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { sessionOptions } from "@/services/query-options";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { type } from "arktype";
 
 export const Route = createFileRoute("/_auth")({
 	validateSearch: type({

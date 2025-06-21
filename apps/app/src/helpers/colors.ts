@@ -1,5 +1,5 @@
-import type { ColorSchema, WalletTypeSchema } from "@/lib/schema";
 import { cn } from "@hoalu/ui/utils";
+import type { ColorSchema, WalletTypeSchema } from "@/lib/schema";
 
 export function createCategoryTheme(color: ColorSchema) {
 	const variants: Record<ColorSchema, string> = {

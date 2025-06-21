@@ -1,3 +1,6 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
+import { toast } from "@hoalu/ui/sonner";
 import { PageContent } from "@/components/layouts/page-content";
 import {
 	categoriesQueryOptions,
@@ -8,8 +11,6 @@ import {
 	tasksQueryOptions,
 	walletsQueryOptions,
 } from "@/services/query-options";
-import { toast } from "@hoalu/ui/sonner";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

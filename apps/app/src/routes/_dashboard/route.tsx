@@ -1,7 +1,8 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
 import { SidebarSaysLayout } from "@/components/layouts/sidebar-says-layout";
 import { ActionProvider } from "@/components/providers/action-provider";
 import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard")({
 	beforeLoad: async ({ context: { queryClient } }) => {

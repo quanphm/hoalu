@@ -1,5 +1,6 @@
-import type { PinoLogger } from "@hoalu/furnace";
 import type { Hono } from "hono";
+
+import type { PinoLogger } from "@hoalu/furnace";
 import type { auth } from "./lib/auth";
 import type { EnvSchema } from "./lib/env";
 

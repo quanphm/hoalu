@@ -1,8 +1,8 @@
-import { DataTable } from "@/components/data-table";
-import { UserAvatar } from "@/components/user-avatar";
-import { authClient } from "@/lib/auth-client";
-import { useRemoveMember } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { createColumnHelper, type Row } from "@tanstack/react-table";
+import { useState } from "react";
+
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -22,10 +22,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { type Row, createColumnHelper } from "@tanstack/react-table";
-import { useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { UserAvatar } from "@/components/user-avatar";
+import { authClient } from "@/lib/auth-client";
+import { useRemoveMember } from "@/services/mutations";
+import { getActiveMemberOptions } from "@/services/query-options";
 
 type MemberSchema = {
 	id: string;
