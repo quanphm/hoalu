@@ -1,7 +1,10 @@
 {
 	"name": "hoalu",
 	"private": true,
-	"workspaces": ["apps/*", "packages/*"],
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",
@@ -10,11 +13,11 @@
 		"docker:down": "cd deployments && docker compose down"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.0.4",
 		"turbo": "^2.5.4",
 		"typescript": "^5.8.3",
 		"vite": "^6.3.5",
-		"vitest": "^3.2.2"
+		"vitest": "^3.2.4"
 	},
 	"packageManager": "bun@1.2.15"
 }
