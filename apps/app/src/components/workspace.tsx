@@ -1,3 +1,21 @@
+import { useQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { cva, type VariantProps } from "class-variance-authority";
+import { createContext, use, useMemo, useState } from "react";
+
+import { slugify } from "@hoalu/common/slugify";
+import { tryCatch } from "@hoalu/common/try-catch";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
+import { Button } from "@hoalu/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@hoalu/ui/dialog";
+import { cn } from "@hoalu/ui/utils";
 import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
@@ -12,23 +30,6 @@ import {
 	useEditWorkspaceMetadata,
 } from "@/services/mutations";
 import { workspaceLogoOptions } from "@/services/query-options";
-import { slugify } from "@hoalu/common/slugify";
-import { tryCatch } from "@hoalu/common/try-catch";
-import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
-import { Button } from "@hoalu/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
-import { cn } from "@hoalu/ui/utils";
-import { useQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { type VariantProps, cva } from "class-variance-authority";
-import { createContext, use, useMemo, useState } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

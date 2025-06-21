@@ -1,3 +1,15 @@
+import { createColumnHelper } from "@tanstack/react-table";
+import { useAtom } from "jotai";
+import { Suspense } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+
+import { datetime } from "@hoalu/common/datetime";
+import { XIcon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
+import { Card, CardAction, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { cn } from "@hoalu/ui/utils";
 import { selectedExpenseAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
 import { TransactionAmount } from "@/components/transaction-amount";
@@ -5,17 +17,6 @@ import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { datetime } from "@hoalu/common/datetime";
-import { XIcon } from "@hoalu/icons/lucide";
-import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import { Card, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { ScrollArea } from "@hoalu/ui/scroll-area";
-import { cn } from "@hoalu/ui/utils";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useAtom } from "jotai";
-import { Suspense } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import { EditExpenseForm } from "./expense";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
@@ -128,14 +129,17 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 				controlledState={{ grouping: ["date"] }}
 				tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
 			/>
+
 			<Suspense>
 				{selected.id && (
-					<Card className="fixed top-12 right-0 z-50 flex w-1/4 flex-col overflow-hidden shadow-xl">
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 border-b py-4">
-							<CardTitle className="text-md">Expense details</CardTitle>
-							<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
-								<XIcon className="size-4" />
-							</Button>
+					<Card className="fixed top-10 right-0 z-50 flex w-1/3 flex-col overflow-hidden shadow-xl">
+						<CardHeader>
+							<CardTitle>Expense details</CardTitle>
+							<CardAction>
+								<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
+									<XIcon className="size-4" />
+								</Button>
+							</CardAction>
 						</CardHeader>
 						<ScrollArea className="h-[calc(100vh-(--spacing(4)*10))]">
 							<EditExpenseForm id={selected.id} />

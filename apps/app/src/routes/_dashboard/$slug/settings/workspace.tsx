@@ -1,3 +1,8 @@
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { Button } from "@hoalu/ui/button";
+import { toast } from "@hoalu/ui/sonner";
 import { SettingCard } from "@/components/cards";
 import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -14,10 +19,6 @@ import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import { useEditWorkspace } from "@/services/mutations";
 import { getActiveMemberOptions, workspaceLogoOptions } from "@/services/query-options";
-import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 	component: RouteComponent,
@@ -95,13 +96,10 @@ function RouteComponent() {
 					<div className="col-span-4">
 						<SectionContent>
 							<SettingCard
-								layout="horizontal"
 								title="Logo"
 								description={
 									<p className="max-w-sm">
-										Recommended size 256x256px.
-										<br />
-										You may upload PNG or JPEG file. Max file size 5MB.
+										Recommended size 256x256px. PNG or JPEG file. Max file size 5MB.
 									</p>
 								}
 							>
@@ -139,8 +137,6 @@ function RouteComponent() {
 					</SectionHeader>
 					<SectionContent columns={12}>
 						<SettingCard
-							variant="destructive"
-							layout="horizontal"
 							title="Delete workspace"
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
 							className="col-span-8 bg-destructive/5"

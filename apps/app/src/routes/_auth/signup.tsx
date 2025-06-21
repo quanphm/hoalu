@@ -1,12 +1,12 @@
-import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
-import { authKeys } from "@/services/query-key-factory";
+import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { createFileRoute } from "@tanstack/react-router";
+import { useAppForm } from "@/components/forms";
+import { authClient } from "@/lib/auth-client";
+import { authKeys } from "@/services/query-key-factory";
 
 export const Route = createFileRoute("/_auth/signup")({
 	component: RouteComponent,

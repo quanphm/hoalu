@@ -1,5 +1,5 @@
-import { type PinoLogger, pinoLogger } from "hono-pino";
 import { createMiddleware } from "hono/factory";
+import { type PinoLogger, pinoLogger } from "hono-pino";
 import pino from "pino";
 import pinoPretty from "pino-pretty";
 

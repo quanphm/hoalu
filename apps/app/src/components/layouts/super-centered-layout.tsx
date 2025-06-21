@@ -1,5 +1,6 @@
-import { cn } from "@hoalu/ui/utils";
 import { useTheme } from "next-themes";
+
+import { cn } from "@hoalu/ui/utils";
 
 /**
  * The content to be perfectly centered within the parent, regardless of intrinsic size.

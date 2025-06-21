@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { monetary } from "../../common/monetary";
 import {
 	ColorSchema,

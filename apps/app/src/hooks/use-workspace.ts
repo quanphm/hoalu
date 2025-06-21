@@ -1,6 +1,7 @@
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+
+import { getWorkspaceDetailsOptions } from "@/services/query-options";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

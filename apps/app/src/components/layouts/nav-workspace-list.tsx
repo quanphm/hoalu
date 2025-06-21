@@ -1,6 +1,6 @@
-import { HotKey } from "@/components/hotkey";
-import { AVAILABLE_WORKSPACE_SHORTCUT } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+
 import { FolderClosedIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
@@ -10,8 +10,9 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { HotKey } from "@/components/hotkey";
+import { AVAILABLE_WORKSPACE_SHORTCUT } from "@/helpers/constants";
+import { listWorkspacesOptions } from "@/services/query-options";
 
 export function NavWorkspaceList() {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());

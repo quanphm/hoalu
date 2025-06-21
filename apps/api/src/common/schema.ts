@@ -1,3 +1,5 @@
+import { type } from "arktype";
+
 import {
 	PG_ENUM_COLOR,
 	PG_ENUM_PRIORITY,
@@ -5,7 +7,6 @@ import {
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
 } from "@hoalu/common/enums";
-import { type } from "arktype";
 
 export const ColorSchema = type("===", ...PG_ENUM_COLOR);
 export const TaskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);

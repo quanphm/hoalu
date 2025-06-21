@@ -1,6 +1,7 @@
-import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
-import { Button } from "@hoalu/ui/button";
 import { Link } from "@tanstack/react-router";
+
+import { Button } from "@hoalu/ui/button";
+import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 
 export function NotFound() {
 	return (

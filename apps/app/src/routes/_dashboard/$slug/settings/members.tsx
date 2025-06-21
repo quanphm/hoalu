@@ -1,3 +1,9 @@
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
+
+import { MailPlusIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 import { InvitationsTable } from "@/components/invitations-table";
 import { InviteDialog } from "@/components/invite";
 import { MembersTable } from "@/components/members-table";
@@ -5,11 +11,6 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
 import { getActiveMemberOptions, listInvitationsOptions } from "@/services/query-options";
-import { MailPlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 	component: RouteComponent,

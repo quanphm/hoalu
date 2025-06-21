@@ -1,6 +1,7 @@
-import { SearchIcon } from "@hoalu/icons/lucide";
 import { Command as CommandPrimitive } from "cmdk";
 import type * as React from "react";
+
+import { SearchIcon } from "@hoalu/icons/lucide";
 import { cn } from "../utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog";
 

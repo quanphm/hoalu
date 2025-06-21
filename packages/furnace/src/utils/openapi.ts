@@ -1,7 +1,8 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
 import { type Type, type } from "arktype";
 import type { ResolverResult } from "hono-openapi";
 import { resolver } from "hono-openapi/arktype";
+
+import { HTTPStatus } from "@hoalu/common/http-status";
 
 interface Response {
 	description: string;

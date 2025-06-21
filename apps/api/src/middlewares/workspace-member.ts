@@ -1,7 +1,8 @@
-import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
-import { HTTPStatus } from "@hoalu/common/http-status";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+
+import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
+import { HTTPStatus } from "@hoalu/common/http-status";
 import { db } from "../db";
 import type { AppBindings } from "../types";
 
@@ -32,7 +33,14 @@ export const workspaceMember = createMiddleware<
 		};
 	}
 >(async (c, next) => {
-	const user = c.get("user")!;
+	const user = c.get("user");
+
+	if (!user) {
+		throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+			message: HTTPStatus.phrases.UNAUTHORIZED,
+		});
+	}
+
 	const { workspaceIdOrSlug } = c.req.query();
 
 	const currentWorkspace = await db.query.workspace.findFirst({

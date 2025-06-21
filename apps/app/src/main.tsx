@@ -1,14 +1,14 @@
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/react-router";
+import { createRoot } from "react-dom/client";
+
+import { DokiClientProvider } from "@hoalu/doki";
 import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { LocalPostgresProvider } from "@/components/providers/local-postgres-provider";
 import { UiProvider } from "@/components/providers/ui-provider";
 import { verifyEnv } from "@/lib/env";
 import { queryClient } from "@/lib/query-client";
-import { DokiClientProvider } from "@hoalu/doki";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { RouterProvider } from "@tanstack/react-router";
-import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
 
 verifyEnv();

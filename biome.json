@@ -1,11 +1,27 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.0.4/schema.json",
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["node_modules", ".next", "build", "dist", ".vinxi", ".output"]
+		"includes": ["**/src/**", "**/email/emails/**"]
 	},
-	"organizeImports": {
-		"enabled": true
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							[":BUN:", ":NODE:"],
+							["npm:*", "npm:*/**", ":PACKAGE_WITH_PROTOCOL:", ":URL:"],
+							[":PACKAGE:", "!@hoalu/**"],
+							":BLANK_LINE:",
+							"@hoalu/**",
+							"@/**"
+						]
+					}
+				}
+			}
+		}
 	},
 	"formatter": {
 		"enabled": true,

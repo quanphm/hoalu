@@ -1,8 +1,9 @@
-import { queryClient } from "@/lib/query-client";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
-import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
+
+import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
+import { queryClient } from "@/lib/query-client";
+import { getWorkspaceDetailsOptions } from "@/services/query-options";
 
 const WorkspaceSchema = type({
 	id: "string.uuid",
@@ -34,7 +35,9 @@ export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T
 
 export const tasksShapeOptions = <T extends Row<unknown>, S = UseShapeResult<T>>({
 	id,
-}: { id: string }): AppShapeOptions<T, S> => ({
+}: {
+	id: string;
+}): AppShapeOptions<T, S> => ({
 	params: {
 		table: "task",
 		where: `workspace_id = \'${id}\'`,

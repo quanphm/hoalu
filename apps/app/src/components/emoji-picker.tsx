@@ -1,8 +1,14 @@
+import {
+	type EmojiPickerListCategoryHeaderProps,
+	type EmojiPickerListEmojiProps,
+	type EmojiPickerListRowProps,
+	EmojiPicker as Frimousse,
+} from "frimousse";
+import * as React from "react";
+
 import { SmilePlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { EmojiPicker as Frimousse } from "frimousse";
-import * as React from "react";
 
 export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -33,32 +39,40 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 						<Frimousse.List
 							className="select-none pb-1.5"
 							components={{
-								CategoryHeader: ({ category, ...props }) => (
-									<div
-										className="bg-white px-3 pt-3 pb-1.5 font-medium text-neutral-600 text-xs dark:bg-neutral-900 dark:text-neutral-400"
-										{...props}
-									>
-										{category.label}
-									</div>
-								),
-								Row: ({ children, ...props }) => (
-									<div className="scroll-my-1.5 px-1.5" {...props}>
-										{children}
-									</div>
-								),
-								Emoji: ({ emoji, ...props }) => (
-									<button
-										className="flex size-8 items-center justify-center rounded-md text-lg data-[active]:bg-neutral-100 dark:data-[active]:bg-neutral-800"
-										{...props}
-									>
-										{emoji.emoji}
-									</button>
-								),
+								CategoryHeader,
+								Row,
+								Emoji,
 							}}
 						/>
 					</Frimousse.Viewport>
 				</Frimousse.Root>
 			</PopoverContent>
 		</Popover>
+	);
+}
+
+function CategoryHeader({ category, ...props }: EmojiPickerListCategoryHeaderProps) {
+	return (
+		<div
+			className="bg-white px-3 pt-3 pb-1.5 font-medium text-neutral-600 text-xs dark:bg-neutral-900 dark:text-neutral-400"
+			{...props}
+		>
+			{category.label}
+		</div>
+	);
+}
+
+function Row(props: EmojiPickerListRowProps) {
+	return <div className="scroll-my-1.5 px-1.5" {...props} />;
+}
+
+function Emoji({ emoji, ...props }: EmojiPickerListEmojiProps) {
+	return (
+		<button
+			className="flex size-8 items-center justify-center rounded-md text-lg data-[active]:bg-neutral-100 dark:data-[active]:bg-neutral-800"
+			{...props}
+		>
+			{emoji.emoji}
+		</button>
 	);
 }

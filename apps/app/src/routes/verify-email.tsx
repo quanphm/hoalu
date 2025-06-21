@@ -1,8 +1,9 @@
+import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tanstack/react-router";
+import { type } from "arktype";
+
+import { Button } from "@hoalu/ui/button";
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@hoalu/ui/button";
-import { type ErrorComponentProps, Link, createFileRoute, redirect } from "@tanstack/react-router";
-import { type } from "arktype";
 
 export const Route = createFileRoute("/verify-email")({
 	validateSearch: type({

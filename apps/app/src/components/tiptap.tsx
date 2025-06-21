@@ -1,8 +1,9 @@
-import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
 import Placeholder from "@tiptap/extension-placeholder";
 import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+
+import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 
 export const extensions = [
 	StarterKit.configure({

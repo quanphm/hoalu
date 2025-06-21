@@ -1,5 +1,6 @@
 import { apiReference } from "@scalar/hono-api-reference";
 import { openAPISpecs } from "hono-openapi";
+
 import type { HonoApp } from "../types";
 
 export function openAPIModule(app: HonoApp) {

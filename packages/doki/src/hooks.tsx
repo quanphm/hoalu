@@ -1,6 +1,7 @@
 import { Shape, ShapeStream } from "@electric-sql/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
+
 import { DokiClientContext } from "./context";
 import type {
 	AppShapeOptions,

@@ -1,10 +1,11 @@
+import type { Table } from "@tanstack/react-table";
+import { useId } from "react";
+
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeft, ChevronRight } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Label } from "@hoalu/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@hoalu/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@hoalu/ui/select";
-import type { Table } from "@tanstack/react-table";
-import { useId } from "react";
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>;

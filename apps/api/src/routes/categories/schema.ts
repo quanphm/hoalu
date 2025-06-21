@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { ColorSchema } from "../../common/schema";
 
 export const CategorySchema = type({

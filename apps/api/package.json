@@ -2,7 +2,9 @@
 	"name": "@hoalu/api",
 	"version": "0.6.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"exports": {
 		"./types": "./dist/types/index.d.ts"
 	},
@@ -14,9 +16,7 @@
 		"build:types": "bun tsc -p tsconfig.build.json",
 		"build": "bun run build:api && bun run build:types",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"lint": "biome lint ./src",
-		"format": "biome check --write ."
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@hoalu/auth": "workspace:*",
@@ -27,13 +27,13 @@
 		"@react-email/render": "^1.1.2",
 		"@scalar/hono-api-reference": "^0.5.184",
 		"arktype": "^2.1.20",
-		"better-auth": "^1.2.9",
+		"better-auth": "^1.2.10",
 		"drizzle-orm": "^0.39.3",
-		"hono": "^4.7.11",
+		"hono": "^4.8.2",
 		"hono-openapi": "^0.4.8",
 		"ioredis": "^5.6.1",
 		"nodemailer": "^6.10.1",
-		"pg": "^8.16.0",
+		"pg": "^8.16.2",
 		"react": "^19.1.0",
 		"resend": "^4.6.0"
 	},

@@ -1,6 +1,7 @@
 import { getSessionFromCtx } from "better-auth/api";
 import type { AccessControl, Role } from "better-auth/plugins/access";
 import type { AuthContext, BetterAuthPlugin } from "better-auth/types";
+
 import { shimContext } from "../../utils/shim";
 import type { User } from "../../utils/types";
 import { defaultRoles, defaultStatements } from "./access";

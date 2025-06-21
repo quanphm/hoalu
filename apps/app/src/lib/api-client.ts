@@ -1,3 +1,6 @@
+import { hc } from "hono/client";
+
+import type { ApiRoutes } from "@hoalu/api/types";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
@@ -8,8 +11,6 @@ import type {
 	WalletPatchSchema,
 	WalletPostSchema,
 } from "@/lib/schema";
-import type { ApiRoutes } from "@hoalu/api/types";
-import { hc } from "hono/client";
 
 export const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 	init: {

@@ -1,3 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+
 import {
 	createCategoryDialogOpenAtom,
 	createExpenseDialogOpenAtom,
@@ -10,13 +18,6 @@ import { CreateExpenseDialog } from "@/components/expense";
 import { CreateWalletDialog } from "@/components/wallet";
 import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { useTheme } from "next-themes";
-import { useEffect } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 
 /**
  * Registry keyboard shortcuts & global dialogs

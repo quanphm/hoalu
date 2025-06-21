@@ -1,7 +1,8 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
 import { z } from "zod";
+
+import { HTTPStatus } from "@hoalu/common/http-status";
 import type { User } from "../../../utils/types";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";

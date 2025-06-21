@@ -1,7 +1,8 @@
-import { logger, notFound, onError } from "@hoalu/furnace";
 import { Hono } from "hono";
 import { etag } from "hono/etag";
 import { requestId } from "hono/request-id";
+
+import { logger, notFound, onError } from "@hoalu/furnace";
 import type { AppBindings } from "../types";
 
 export function createHonoInstance() {

@@ -1,6 +1,7 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
 import type { ErrorHandler } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+
+import { HTTPStatus } from "@hoalu/common/http-status";
 
 export const onError: ErrorHandler = (err, c) => {
 	const currentStatus = "status" in err ? err.status : HTTPStatus.codes.INTERNAL_SERVER_ERROR;

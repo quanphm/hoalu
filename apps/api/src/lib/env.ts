@@ -1,5 +1,6 @@
-import { standardValidate } from "@hoalu/common/standard-validate";
 import { type } from "arktype";
+
+import { standardValidate } from "@hoalu/common/standard-validate";
 
 export const EnvSchema = type({
 	AUTH_SECRET: "string > 0",

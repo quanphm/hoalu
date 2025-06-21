@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { CurrencySchema, IsoDateSchema } from "../../common/schema";
 
 export const ExchangeRateSchema = type({

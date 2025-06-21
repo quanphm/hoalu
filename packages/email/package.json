@@ -9,8 +9,6 @@
 		"./join-workspace": "./emails/join-workspace.tsx"
 	},
 	"scripts": {
-		"lint": "biome check ./emails",
-		"format": "biome format --write .",
 		"dev": "email dev -p 3003"
 	},
 	"devDependencies": {

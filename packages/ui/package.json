@@ -41,16 +41,13 @@
 		"./textarea": "./src/components/textarea.tsx",
 		"./tooltip": "./src/components/tooltip.tsx"
 	},
-	"scripts": {
-		"lint": "biome lint",
-		"format": "biome check --write ."
-	},
 	"devDependencies": {
 		"@types/react": "^19.1.8",
 		"@hoalu/tsconfig": "workspace:*",
 		"tailwindcss": "^4.1.10"
 	},
 	"dependencies": {
+		"@base-ui-components/react": "^1.0.0-beta.0",
 		"@hoalu/icons": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
@@ -60,7 +57,7 @@
 		"radix-ui": "^1.4.2",
 		"react-aria-components": "^1.10.1",
 		"react-day-picker": "^9.7.0",
-		"recharts": "^2.15.3",
+		"recharts": "^2.15.4",
 		"sonner": "^1.7.4",
 		"tailwind-merge": "^2.6.0",
 		"tw-animate-css": "^1.3.4",

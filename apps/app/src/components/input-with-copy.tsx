@@ -1,8 +1,9 @@
+import { Check, Copy } from "lucide-react";
+import { useId, useRef, useState } from "react";
+
 import { Input } from "@hoalu/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { Check, Copy } from "lucide-react";
-import { useId, useRef, useState } from "react";
 
 export function InputWithCopy({ value }: { value: string }) {
 	const id = useId();

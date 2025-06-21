@@ -1,6 +1,7 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
 import { type } from "arktype";
 import { validator as aValidator } from "hono-openapi/arktype";
+
+import { HTTPStatus } from "@hoalu/common/http-status";
 
 const IdSchema = type({
 	id: "string.uuid.v7",

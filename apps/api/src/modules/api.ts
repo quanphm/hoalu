@@ -1,8 +1,8 @@
-import { authGuard, rateLimiter } from "@hoalu/furnace";
 import { cors } from "hono/cors";
+
+import { authGuard, rateLimiter } from "@hoalu/furnace";
 import { createHonoInstance } from "../lib/create-app";
 import { redis } from "../lib/redis";
-
 // routes
 import categoriesRoute from "../routes/categories";
 import exchangeRatesRoute from "../routes/exchange-rates";

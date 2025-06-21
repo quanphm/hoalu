@@ -1,12 +1,6 @@
-import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { HotKeyWithTooltip } from "@/components/hotkey";
-import { createCategoryTheme } from "@/helpers/colors";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
-import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
-import { categoryWithIdQueryOptions } from "@/services/query-options";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -21,8 +15,15 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
+import { useAppForm } from "@/components/forms";
+import { HotKeyWithTooltip } from "@/components/hotkey";
+import { createCategoryTheme } from "@/helpers/colors";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
+import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
+import { categoryWithIdQueryOptions } from "@/services/query-options";
 
 function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
@@ -52,7 +53,10 @@ function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 function CreateCategoryDialogTrigger({
 	children,
 	showTooltip = true,
-}: { children: React.ReactNode; showTooltip?: boolean }) {
+}: {
+	children: React.ReactNode;
+	showTooltip?: boolean;
+}) {
 	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	return (

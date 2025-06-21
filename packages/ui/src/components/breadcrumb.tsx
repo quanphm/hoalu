@@ -1,5 +1,6 @@
-import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
 import { Slot as SlotPrimitive } from "radix-ui";
+
+import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
 import { cn } from "../utils";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {

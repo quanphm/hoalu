@@ -1,7 +1,7 @@
-import { useFilesUpload } from "@/hooks/use-files-upload";
 import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
 import { UploadIcon, XIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { useFilesUpload } from "@/hooks/use-files-upload";
 
 interface FileUploadProps {
 	acceptedFileTypes?: string;
