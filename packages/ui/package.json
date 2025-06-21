@@ -41,10 +41,6 @@
 		"./textarea": "./src/components/textarea.tsx",
 		"./tooltip": "./src/components/tooltip.tsx"
 	},
-	"scripts": {
-		"lint": "biome lint",
-		"format": "biome check --write ."
-	},
 	"devDependencies": {
 		"@types/react": "^19.1.8",
 		"@hoalu/tsconfig": "workspace:*",

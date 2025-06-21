@@ -6,10 +6,6 @@
 	"exports": {
 		".": "./src/index.ts"
 	},
-	"scripts": {
-		"lint": "biome check .",
-		"format": "biome format --write ."
-	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
 	}

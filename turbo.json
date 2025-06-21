@@ -8,9 +8,7 @@
 			"outputs": ["build/**", "dist/**", ".output/**"]
 		},
 		"format": {},
-		"lint": {
-			"dependsOn": ["^lint"]
-		},
+		"lint": {},
 		"dev": {
 			"cache": false,
 			"persistent": true

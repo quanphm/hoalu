@@ -8,9 +8,9 @@
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",
-		"lint": "turbo run lint",
 		"docker:up": "cd deployments && docker compose -f docker-compose.local.yml up -d --build",
 		"docker:down": "cd deployments && docker compose down",
+		"lint": "biome lint",
 		"format": "biome check --write"
 	},
 	"devDependencies": {

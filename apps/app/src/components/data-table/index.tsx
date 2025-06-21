@@ -280,28 +280,20 @@ export function DataTable<T extends TableRowData>({
 											)}
 										>
 											{cell.getIsGrouped() ? (
-												<>
-													<Button
-														variant="ghost"
-														size="date"
-														className="hover:bg-transparent"
-														onClick={row.getToggleExpandedHandler()}
-													>
-														{flexRender(cell.column.columnDef.cell, cell.getContext())} (
-														{row.subRows.length})
-														{row.getIsExpanded() ? (
-															<ChevronDownIcon
-																size={12}
-																className="ml-2 text-muted-foreground/80"
-															/>
-														) : (
-															<ChevronRightIcon
-																size={12}
-																className="ml-2 text-muted-foreground/80"
-															/>
-														)}
-													</Button>
-												</>
+												<Button
+													variant="ghost"
+													size="date"
+													className="hover:bg-transparent"
+													onClick={row.getToggleExpandedHandler()}
+												>
+													{flexRender(cell.column.columnDef.cell, cell.getContext())} (
+													{row.subRows.length})
+													{row.getIsExpanded() ? (
+														<ChevronDownIcon size={12} className="ml-2 text-muted-foreground/80" />
+													) : (
+														<ChevronRightIcon size={12} className="ml-2 text-muted-foreground/80" />
+													)}
+												</Button>
 											) : cell.getIsAggregated() ? (
 												flexRender(
 													cell.column.columnDef.aggregatedCell ?? cell.column.columnDef.cell,

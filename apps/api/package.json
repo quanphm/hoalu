@@ -16,9 +16,7 @@
 		"build:types": "bun tsc -p tsconfig.build.json",
 		"build": "bun run build:api && bun run build:types",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"lint": "biome lint ./src",
-		"format": "biome check --write ."
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@hoalu/auth": "workspace:*",
