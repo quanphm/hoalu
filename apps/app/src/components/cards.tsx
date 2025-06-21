@@ -10,7 +10,7 @@ import {
 } from "@hoalu/ui/card";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
-	title: React.ReactNode;
+	title?: React.ReactNode;
 	description?: string | null;
 	actions?: React.ReactNode;
 	content?: React.ReactNode;
@@ -28,11 +28,13 @@ function ContentCard({
 }: BasicCardProps) {
 	return (
 		<Card className={className} {...props}>
-			<CardHeader>
-				<CardTitle className="text-base">{title}</CardTitle>
-				{description && <CardDescription>{description}</CardDescription>}
-				{actions && <CardAction>{actions}</CardAction>}
-			</CardHeader>
+			{(title || description) && (
+				<CardHeader>
+					{title && <CardTitle className="text-base">{title}</CardTitle>}
+					{description && <CardDescription>{description}</CardDescription>}
+					{actions && <CardAction>{actions}</CardAction>}
+				</CardHeader>
+			)}
 			{content && <CardContent>{content}</CardContent>}
 			{footer && <CardFooter>{footer}</CardFooter>}
 		</Card>

@@ -1,3 +1,4 @@
+import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -47,20 +48,22 @@ function RouteComponent() {
 					<ExpensesTable data={filteredExpenses} />
 				</div>
 				<div className="col-span-3">
-					<div className="rounded-md border">
-						<Calendar
-							mode="single"
-							className="w-full p-2"
-							selected={currentSelectedDate}
-							onSelect={(selectedDate) => {
-								navigate({
-									search: () => ({
-										date: selectedDate ? datetime.format(selectedDate, "yyyy-MM-dd") : undefined,
-									}),
-								});
-							}}
-						/>
-					</div>
+					<ContentCard
+						content={
+							<Calendar
+								mode="single"
+								className="-mx-2"
+								selected={currentSelectedDate}
+								onSelect={(selectedDate) => {
+									navigate({
+										search: () => ({
+											date: selectedDate ? datetime.format(selectedDate, "yyyy-MM-dd") : undefined,
+										}),
+									});
+								}}
+							/>
+						}
+					/>
 				</div>
 			</SectionContent>
 		</Section>
