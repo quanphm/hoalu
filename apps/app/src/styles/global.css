@@ -1,13 +1,16 @@
 @import "tailwindcss";
-
-@source "../../../../packages/ui/**/*.{ts,tsx}";
-
 @import "@hoalu/ui/theme.css";
 @import "./typography.css";
 @import "./table.css";
 
+@source "../../../../packages/ui/**/*.{ts,tsx}";
+
 @plugin "tailwind-scrollbar";
 @plugin "@tailwindcss/typography";
+
+.root {
+  isolation: isolate
+}
 
 @layer base {
   * {

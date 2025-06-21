@@ -95,13 +95,10 @@ function RouteComponent() {
 					<div className="col-span-4">
 						<SectionContent>
 							<SettingCard
-								layout="horizontal"
 								title="Logo"
 								description={
 									<p className="max-w-sm">
-										Recommended size 256x256px.
-										<br />
-										You may upload PNG or JPEG file. Max file size 5MB.
+										Recommended size 256x256px. PNG or JPEG file. Max file size 5MB.
 									</p>
 								}
 							>
@@ -139,8 +136,6 @@ function RouteComponent() {
 					</SectionHeader>
 					<SectionContent columns={12}>
 						<SettingCard
-							variant="destructive"
-							layout="horizontal"
 							title="Delete workspace"
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
 							className="col-span-8 bg-destructive/5"

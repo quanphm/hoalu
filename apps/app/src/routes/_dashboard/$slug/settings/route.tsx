@@ -13,7 +13,7 @@ function RouteComponent() {
 	return (
 		<>
 			<Tabs value={currentMatch || "workspace"}>
-				<TabsList>
+				<TabsList className="mb-3 gap-1 bg-transparent">
 					<TabsTrigger value="workspace" asChild>
 						<Link to="/$slug/settings/workspace" params={{ slug }}>
 							Workspace
