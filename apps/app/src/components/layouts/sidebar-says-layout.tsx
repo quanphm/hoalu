@@ -11,7 +11,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 // import { NavDocumentation } from "./nav-documentation";
-// import { NavSettings } from "./nav-settings";
 import { NavWorkspaceList } from "./nav-workspace-list";
 
 /**
@@ -39,12 +38,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					)}
 				</SidebarHeader>
 				<SidebarContent className="gap-1">
-					{hasSlug && (
-						<>
-							<NavWorkspace />
-							{/* <NavSettings /> */}
-						</>
-					)}
+					{hasSlug && <NavWorkspace />}
 					{!hasSlug && <NavWorkspaceList />}
 					{/* <NavDocumentation /> */}
 					<NavUser />

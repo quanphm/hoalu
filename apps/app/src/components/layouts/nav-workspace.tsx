@@ -13,15 +13,17 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 
 export function NavWorkspace() {
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+
 	return (
 		<SidebarGroup id="nav-workspace">
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">
-						<Link from="/$slug/" to="." activeOptions={{ exact: true }}>
+						<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
 							<GalleryVerticalIcon />
 							<span>Dashboard</span>
 							<SidebarMenuBadge>
@@ -34,8 +36,8 @@ export function NavWorkspace() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Expenses">
 						<Link
-							from="/$slug/"
-							to="./expenses"
+							to="/$slug/expenses"
+							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 						>
 							<ArrowRightLeftIcon />
@@ -49,7 +51,11 @@ export function NavWorkspace() {
 
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Tasks">
-						<Link from="/$slug/" to="./tasks" disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}>
+						<Link
+							to="/$slug/tasks"
+							params={{ slug }}
+							disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
+						>
 							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
@@ -62,8 +68,8 @@ export function NavWorkspace() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
 						<Link
-							from="/$slug/"
-							to="./settings"
+							to="/$slug/settings"
+							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
 						>
 							<SettingsIcon />

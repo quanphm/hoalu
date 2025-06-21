@@ -1,11 +1,12 @@
 import { Tabs, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
-import { Link, Outlet, createFileRoute, useChildMatches } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useChildMatches, useParams } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { slug } = useParams({ from: "/_dashboard/$slug/settings" });
 	const childMatches = useChildMatches();
 	const currentMatch = childMatches[0].fullPath.split("/").slice(-1).join("");
 
@@ -14,22 +15,22 @@ function RouteComponent() {
 			<Tabs value={currentMatch || "workspace"}>
 				<TabsList>
 					<TabsTrigger value="workspace" asChild>
-						<Link from="/$slug/settings" to="./workspace">
+						<Link to="/$slug/settings/workspace" params={{ slug }}>
 							Workspace
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger value="members" asChild>
-						<Link from="/$slug/settings" to="./members">
+						<Link to="/$slug/settings/members" params={{ slug }}>
 							Members
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger value="library" asChild>
-						<Link from="/$slug/settings" to="./library">
+						<Link to="/$slug/settings/library" params={{ slug }}>
 							Library
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger value="photos" asChild>
-						<Link from="/$slug/settings" to="./photos">
+						<Link to="/$slug/settings/photos" params={{ slug }}>
 							Photos
 						</Link>
 					</TabsTrigger>

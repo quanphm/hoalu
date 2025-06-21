@@ -62,8 +62,22 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
-				<SectionContent>
-					<ExpensesStats />
+				<SectionContent columns={12}>
+					<Section className="col-span-4">
+						<SectionContent>
+							<ExpensesStats />
+						</SectionContent>
+					</Section>
+					<Section className="col-span-4">
+						<SectionContent>
+							<ExpensesStats />
+						</SectionContent>
+					</Section>
+					<Section className="col-span-4">
+						<SectionContent>
+							<ExpensesStats />
+						</SectionContent>
+					</Section>
 				</SectionContent>
 			</Section>
 
