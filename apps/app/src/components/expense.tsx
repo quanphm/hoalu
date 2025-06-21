@@ -354,7 +354,7 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="@container grid grid-cols-12 gap-4 px-6 py-6">
+				<div className="@container grid grid-cols-12 gap-4 px-6">
 					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerInputField label="Date" />}
@@ -386,14 +386,14 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 						</form.AppField>
 					</div>
 				</div>
-				<div className="sticky bottom-0 flex w-full justify-end gap-2 bg-neutral-100 px-6 py-4 dark:bg-neutral-800">
-					<div className="mr-auto">
-						<DeleteExpense id={props.id} />
-					</div>
+				<div className="sticky bottom-0 flex gap-2 px-6 py-4">
+					<Button type="submit">Update</Button>
 					<Button variant="ghost" type="button" onClick={() => form.reset()}>
 						Reset
 					</Button>
-					<Button type="submit">Update</Button>
+					<div className="ml-auto">
+						<DeleteExpense id={props.id} />
+					</div>
 				</div>
 			</form.Form>
 		</form.AppForm>

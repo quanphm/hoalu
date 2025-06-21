@@ -237,13 +237,8 @@ export function DataTable<T extends TableRowData>({
 					)}
 				</div>
 			)}
-			<div
-				ref={tableContainerRef}
-				className={cn(
-					"overflow-hidden rounded-md border border-border bg-background",
-					tableClassName,
-				)}
-			>
+
+			<div ref={tableContainerRef} className={cn("overflow-hidden border", tableClassName)}>
 				<Table>
 					<TableHeader className="sticky top-0 bg-card">
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -285,14 +280,13 @@ export function DataTable<T extends TableRowData>({
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
 												"group-has-[[data-group=grouped]]:bg-accent group-hover:group-has-[[data-group=grouped]]:bg-accent",
-												"group-has-[[data-group=grouped]]:border-t group-has-[[data-group=grouped]]:border-b",
 											)}
 										>
 											{cell.getIsGrouped() ? (
 												<>
 													<Button
 														variant="ghost"
-														size="sm"
+														size="date"
 														className="hover:bg-transparent"
 														onClick={row.getToggleExpandedHandler()}
 													>
@@ -333,6 +327,7 @@ export function DataTable<T extends TableRowData>({
 					</TableBody>
 				</Table>
 			</div>
+
 			{enablePagination && <DataTablePagination table={table} />}
 		</div>
 	);
