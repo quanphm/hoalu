@@ -1,3 +1,4 @@
+import { useRegisterSW } from "virtual:pwa-register/react";
 import { PGlite } from "@electric-sql/pglite";
 import { citext } from "@electric-sql/pglite/contrib/citext";
 import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
@@ -24,6 +25,7 @@ async function startSync(pg: PGliteWithLive) {
 
 export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 	const [pgForProvider, setPgForProvider] = useState<PGliteWithLive | null>(null);
+	const { updateServiceWorker } = useRegisterSW();
 
 	useEffect(() => {
 		(async function create() {
@@ -54,6 +56,7 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 
 	const handleHardReload: React.MouseEventHandler<HTMLButtonElement> = (event) => {
 		event.preventDefault();
+		updateServiceWorker();
 	};
 
 	if (!pgForProvider) {
