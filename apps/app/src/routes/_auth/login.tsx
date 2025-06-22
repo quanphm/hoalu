@@ -1,12 +1,23 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { type } from "arktype";
 
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
+import { ContentCard } from "@/components/cards";
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
+import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth/login")({
+	validateSearch: type({
+		redirect: "string = '/'",
+	}),
+	beforeLoad: async ({ context: { queryClient }, search }) => {
+		const auth = await queryClient.ensureQueryData(sessionOptions());
+		if (auth?.user) {
+			throw redirect({ to: search.redirect });
+		}
+	},
 	component: RouteComponent,
 });
 
@@ -35,12 +46,10 @@ function RouteComponent() {
 	});
 
 	return (
-		<Card>
-			<CardHeader className="text-center">
-				<CardTitle className="text-xl">Welcome back</CardTitle>
-				<CardDescription>Log in to your Hoalu account</CardDescription>
-			</CardHeader>
-			<CardContent>
+		<ContentCard
+			title="Welcome back"
+			description="Log in to your Hoalu account"
+			content={
 				<div className="grid gap-4">
 					{/* <div className="flex flex-col gap-4">
 						<Button variant="outline" className="w-full">
@@ -65,13 +74,18 @@ function RouteComponent() {
 							</form.AppField>
 							<form.AppField name="password">
 								{(field) => (
-									<field.InputField
-										label="Password"
-										type="password"
-										autoComplete="current-password"
-										placeholder="•••••••••••••"
-										required
-									/>
+									<div>
+										<field.InputField
+											label="Password"
+											type="password"
+											autoComplete="current-password"
+											placeholder="•••••••••••••"
+											required
+										/>
+										<Link to="/reset-password" className="text-muted-foreground text-sm underline">
+											Forgot password?
+										</Link>
+									</div>
 								)}
 							</form.AppField>
 							<Button type="submit" className="w-full">
@@ -87,7 +101,7 @@ function RouteComponent() {
 						</Link>
 					</div>
 				</div>
-			</CardContent>
-		</Card>
+			}
+		/>
 	);
 }

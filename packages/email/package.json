@@ -6,7 +6,8 @@
 	"type": "module",
 	"exports": {
 		"./verify-email": "./emails/verify-email.tsx",
-		"./join-workspace": "./emails/join-workspace.tsx"
+		"./join-workspace": "./emails/join-workspace.tsx",
+		"./reset-password": "./emails/reset-password.tsx"
 	},
 	"scripts": {
 		"dev": "email dev -p 3003"

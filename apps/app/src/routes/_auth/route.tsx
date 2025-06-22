@@ -1,19 +1,8 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { type } from "arktype";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
-import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth")({
-	validateSearch: type({
-		redirect: "string = '/'",
-	}),
-	beforeLoad: async ({ context: { queryClient }, search }) => {
-		const auth = await queryClient.ensureQueryData(sessionOptions());
-		if (auth?.user) {
-			throw redirect({ to: search.redirect });
-		}
-	},
 	component: RouteComponent,
 });
 
