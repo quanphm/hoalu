@@ -4,12 +4,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true vite --force",
-		"dev-claims": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true CLAIMS=true SW=true vite --force",
-		"dev-destroy": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DESTROY=true SW_DEV=true vite --force",
-		"dev-claims-destroy": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DESTROY=true SW_DEV=true CLAIMS=true SW=true vite --force",
+		"dev": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true SW=false CLAIMS=false SW_DESTROY=true vite --force",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview --port=4173"
 	},
 	"dependencies": {
 		"@electric-sql/pglite": "^0.3.3",
