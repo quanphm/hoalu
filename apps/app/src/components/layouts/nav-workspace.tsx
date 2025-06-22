@@ -18,11 +18,11 @@ import { HotKey } from "@/components/hotkey";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 
 export function NavWorkspace() {
-	const id = useId();
+	const reactId = useId();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	return (
-		<SidebarGroup id={`${id}-nav-workspsace`}>
+		<SidebarGroup id={`${reactId}-nav-workspsace`}>
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">

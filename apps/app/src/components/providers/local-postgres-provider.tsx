@@ -51,7 +51,10 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 		return (
 			<div className="flex h-screen w-screen flex-col items-center justify-center gap-4 bg-background">
 				<LoaderCircleIcon className="h-8 w-8 animate-spin text-foreground" />
-				<div className="text-center text-muted-foreground">Starting application...</div>
+				<p className="flex gap-2 text-muted-foreground">Starting application</p>
+				<p className="text-muted-foreground text-sm leading-none tracking-wider">
+					{import.meta.env.PUBLIC_APP_VERSION}
+				</p>
 			</div>
 		);
 	}

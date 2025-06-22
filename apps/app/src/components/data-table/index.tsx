@@ -235,11 +235,11 @@ export function DataTable<T extends TableRowData>({
 				</div>
 			)}
 
-			<div ref={tableContainerRef} className={cn("overflow-hidden border", tableClassName)}>
+			<div ref={tableContainerRef} className={cn("overflow-hidden", tableClassName)}>
 				<Table>
 					<TableHeader className="sticky top-0 bg-card">
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="bg-card hover:bg-card ">
+							<TableRow key={headerGroup.id} className="">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead

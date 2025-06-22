@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
+import { useId } from "react";
 
 import {
 	CheckIcon,
@@ -30,11 +31,12 @@ import { HotKey } from "../hotkey";
 export function NavUser() {
 	const { user, signOut } = useAuth();
 	const { theme, setTheme } = useTheme();
+	const reactId = useId();
 
 	if (!user) return null;
 
 	return (
-		<SidebarGroup id="nav-user" className="mt-auto">
+		<SidebarGroup id={`${reactId}-nav-user`} className="mt-auto">
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<DropdownMenu>

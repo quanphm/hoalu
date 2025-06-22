@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useId } from "react";
 
 import { FolderClosedIcon } from "@hoalu/icons/lucide";
 import {
@@ -15,6 +16,7 @@ import { AVAILABLE_WORKSPACE_SHORTCUT } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 
 export function NavWorkspaceList() {
+	const reactId = useId();
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 
 	if (workspaces.length === 0) {
@@ -22,7 +24,7 @@ export function NavWorkspaceList() {
 	}
 
 	return (
-		<SidebarGroup id="nav-account">
+		<SidebarGroup id={`${reactId}-nav-account`}>
 			<SidebarGroupLabel>Workspaces</SidebarGroupLabel>
 			<SidebarMenu>
 				{workspaces.map((ws, idx) => (
