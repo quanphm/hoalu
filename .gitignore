@@ -3,10 +3,10 @@ node_modules
 
 build
 dist
+dev-dist
 out
 pg-data
 .output
-.vinxi
 .wrangler
 .dev.vars
 .turbo
