@@ -1,14 +1,25 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
+import { type } from "arktype";
 
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
+import { ContentCard } from "@/components/cards";
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import { authKeys } from "@/services/query-key-factory";
+import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth/signup")({
+	validateSearch: type({
+		redirect: "string = '/'",
+	}),
+	beforeLoad: async ({ context: { queryClient }, search }) => {
+		const auth = await queryClient.ensureQueryData(sessionOptions());
+		if (auth?.user) {
+			throw redirect({ to: search.redirect });
+		}
+	},
 	component: RouteComponent,
 });
 
@@ -47,12 +58,10 @@ function RouteComponent() {
 	});
 
 	return (
-		<Card>
-			<CardHeader className="text-center">
-				<CardTitle className="text-xl">Welcome to Hoalu</CardTitle>
-				<CardDescription>Let's set up your new account</CardDescription>
-			</CardHeader>
-			<CardContent>
+		<ContentCard
+			title="Welcome to Hoalu"
+			description="Let's set up your new account"
+			content={
 				<div className="grid gap-4">
 					{/* <div className="flex flex-col gap-4">
 						<Button variant="outline" className="w-full">
@@ -109,7 +118,7 @@ function RouteComponent() {
 						</Link>
 					</div>
 				</div>
-			</CardContent>
-		</Card>
+			}
+		/>
 	);
 }

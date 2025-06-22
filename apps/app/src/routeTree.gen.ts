@@ -9,15 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
+import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
 import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as DashboardSlugRouteRouteImport } from './routes/_dashboard/$slug/route'
 import { Route as DashboardSlugIndexRouteImport } from './routes/_dashboard/$slug/index'
-import { Route as InviteIdAcceptRouteImport } from './routes/invite.$id.accept'
 import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
 import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
 import { Route as DashboardSlugTasksRouteImport } from './routes/_dashboard/$slug/tasks'
@@ -28,12 +28,8 @@ import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_da
 import { Route as DashboardSlugSettingsPhotosRouteImport } from './routes/_dashboard/$slug/settings/photos'
 import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
 import { Route as DashboardSlugSettingsLibraryRouteImport } from './routes/_dashboard/$slug/settings/library'
+import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
 
-const VerifyEmailRoute = VerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => rootRouteImport,
@@ -47,9 +43,19 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -66,11 +72,6 @@ const DashboardSlugIndexRoute = DashboardSlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const InviteIdAcceptRoute = InviteIdAcceptRouteImport.update({
-  id: '/invite/$id/accept',
-  path: '/invite/$id/accept',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAccountTokensRoute = DashboardAccountTokensRouteImport.update({
   id: '/account/tokens',
@@ -129,20 +130,26 @@ const DashboardSlugSettingsLibraryRoute =
     path: '/library',
     getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
+const AuthInviteIdAcceptRoute = AuthInviteIdAcceptRouteImport.update({
+  id: '/invite/$id/accept',
+  path: '/invite/$id/accept',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/verify-email': typeof VerifyEmailRoute
   '/$slug': typeof DashboardSlugRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
   '/': typeof DashboardIndexRoute
   '/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
-  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug/': typeof DashboardSlugIndexRoute
+  '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/photos': typeof DashboardSlugSettingsPhotosRoute
@@ -150,16 +157,17 @@ export interface FileRoutesByFullPath {
   '/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/verify-email': typeof VerifyEmailRoute
   '/login': typeof AuthLoginRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
   '/': typeof DashboardIndexRoute
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
-  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/$slug': typeof DashboardSlugIndexRoute
+  '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/photos': typeof DashboardSlugSettingsPhotosRoute
@@ -170,18 +178,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_dashboard': typeof DashboardRouteRouteWithChildren
-  '/verify-email': typeof VerifyEmailRoute
   '/_dashboard/$slug': typeof DashboardSlugRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
   '/_dashboard/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
-  '/invite/$id/accept': typeof InviteIdAcceptRoute
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
+  '/_auth/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/_dashboard/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/_dashboard/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/_dashboard/$slug/settings/photos': typeof DashboardSlugSettingsPhotosRoute
@@ -191,18 +200,19 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/verify-email'
     | '/$slug'
     | '/login'
+    | '/reset-password'
     | '/signup'
+    | '/verify-email'
     | '/'
     | '/$slug/settings'
     | '/$slug/expenses'
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
-    | '/invite/$id/accept'
     | '/$slug/'
+    | '/invite/$id/accept'
     | '/$slug/settings/library'
     | '/$slug/settings/members'
     | '/$slug/settings/photos'
@@ -210,16 +220,17 @@ export interface FileRouteTypes {
     | '/$slug/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/verify-email'
     | '/login'
+    | '/reset-password'
     | '/signup'
+    | '/verify-email'
     | '/'
     | '/$slug/expenses'
     | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
-    | '/invite/$id/accept'
     | '/$slug'
+    | '/invite/$id/accept'
     | '/$slug/settings/library'
     | '/$slug/settings/members'
     | '/$slug/settings/photos'
@@ -229,18 +240,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_dashboard'
-    | '/verify-email'
     | '/_dashboard/$slug'
     | '/_auth/login'
+    | '/_auth/reset-password'
     | '/_auth/signup'
+    | '/_auth/verify-email'
     | '/_dashboard/'
     | '/_dashboard/$slug/settings'
     | '/_dashboard/$slug/expenses'
     | '/_dashboard/$slug/tasks'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
-    | '/invite/$id/accept'
     | '/_dashboard/$slug/'
+    | '/_auth/invite/$id/accept'
     | '/_dashboard/$slug/settings/library'
     | '/_dashboard/$slug/settings/members'
     | '/_dashboard/$slug/settings/photos'
@@ -251,19 +263,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  VerifyEmailRoute: typeof VerifyEmailRoute
-  InviteIdAcceptRoute: typeof InviteIdAcceptRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-email': {
-      id: '/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
@@ -285,11 +288,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/_auth/login': {
@@ -312,13 +329,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/$slug/'
       preLoaderRoute: typeof DashboardSlugIndexRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
-    }
-    '/invite/$id/accept': {
-      id: '/invite/$id/accept'
-      path: '/invite/$id/accept'
-      fullPath: '/invite/$id/accept'
-      preLoaderRoute: typeof InviteIdAcceptRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_dashboard/account/tokens': {
       id: '/_dashboard/account/tokens'
@@ -390,17 +400,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugSettingsLibraryRouteImport
       parentRoute: typeof DashboardSlugSettingsRouteRoute
     }
+    '/_auth/invite/$id/accept': {
+      id: '/_auth/invite/$id/accept'
+      path: '/invite/$id/accept'
+      fullPath: '/invite/$id/accept'
+      preLoaderRoute: typeof AuthInviteIdAcceptRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
   }
 }
 
 interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
+  AuthInviteIdAcceptRoute: typeof AuthInviteIdAcceptRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
+  AuthInviteIdAcceptRoute: AuthInviteIdAcceptRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -467,8 +490,6 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
-  VerifyEmailRoute: VerifyEmailRoute,
-  InviteIdAcceptRoute: InviteIdAcceptRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { datetime } from "@hoalu/common/datetime";
 import {
 	Card,
@@ -30,7 +32,7 @@ function ContentCard({
 		<Card className={className} {...props}>
 			{(title || description) && (
 				<CardHeader>
-					{title && <CardTitle className="text-base">{title}</CardTitle>}
+					{title && <CardTitle className="text-md">{title}</CardTitle>}
 					{description && <CardDescription>{description}</CardDescription>}
 					{actions && <CardAction>{actions}</CardAction>}
 				</CardHeader>
@@ -80,4 +82,31 @@ function SettingCard({ className, title, description, children, ...props }: Sett
 	);
 }
 
-export { ContentCard, WorkspaceCard, SettingCard };
+function ErrorCard({
+	title = "Something went wrong",
+	error,
+	...props
+}: BasicCardProps & { error?: string | Error }) {
+	const message = error instanceof Error ? error.message : error;
+
+	useEffect(() => {
+		if (!import.meta.env.PROD) {
+			console.group("[ErrorCard]");
+			console.error(error);
+			console.groupEnd();
+		}
+	}, [error]);
+
+	return (
+		<ContentCard
+			className="w-fit min-w-sm border-destructive/50"
+			title={title}
+			content={
+				<pre className="rounded-sm bg-destructive/5 p-2 text-destructive text-sm">{message}</pre>
+			}
+			footer={props.footer}
+		/>
+	);
+}
+
+export { ContentCard, WorkspaceCard, SettingCard, ErrorCard };

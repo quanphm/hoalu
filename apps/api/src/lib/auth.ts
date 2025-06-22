@@ -6,6 +6,7 @@ import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
 import JoinWorkspace from "@hoalu/email/join-workspace";
+import ResetPassword from "@hoalu/email/reset-password";
 import VerifyEmail from "@hoalu/email/verify-email";
 import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "../common/constants";
 import { db } from "../db";
@@ -51,6 +52,21 @@ export const auth = betterAuth({
 				return await Bun.password.verify(password, hash);
 			},
 		},
+		sendResetPassword: async ({ user, token }, _request) => {
+			const url = new URL(`${process.env.PUBLIC_APP_BASE_URL}/reset-password`);
+			url.searchParams.set("token", token);
+
+			if (process.env.NODE_ENV === "development") {
+				console.log("Reset Password Link:", url.href);
+				return;
+			}
+
+			await sendEmail({
+				to: user.email,
+				subject: "[Hoalu] Reset your password",
+				react: ResetPassword({ url: url.href, name: user.name }),
+			});
+		},
 	},
 	emailVerification: {
 		sendOnSignUp: true,
@@ -66,7 +82,7 @@ export const auth = betterAuth({
 
 			sendEmail({
 				to: user.email,
-				subject: "[Hoalu] Please verify your email address",
+				subject: "[Hoalu] Verify your email address",
 				react: VerifyEmail({ url: url.href, name: user.name }),
 			});
 		},

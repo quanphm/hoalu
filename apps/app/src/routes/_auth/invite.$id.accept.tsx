@@ -2,14 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { toast } from "@hoalu/ui/sonner";
-import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
+import { ContentCard, ErrorCard } from "@/components/cards";
 import { WorkspaceLogo } from "@/components/workspace";
 import { useAuth } from "@/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/invite/$id/accept")({
+export const Route = createFileRoute("/_auth/invite/$id/accept")({
 	loader: async ({ params: { id } }) => {
 		const { data } = await authClient.workspace.getInvitation({
 			query: { id },
@@ -52,42 +51,32 @@ function RouteComponent() {
 
 	if (!invitation) {
 		return (
-			<SuperCenteredLayout>
-				<Card className="select-none text-center">
-					<CardHeader>
-						<CardTitle className="text-xl">Something went wrong</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p>We couldn't find this invite</p>
-					</CardContent>
-					<CardFooter>
-						<Button variant="outline" className="w-full" asChild>
-							<Link to="/">Go back</Link>
-						</Button>
-					</CardFooter>
-				</Card>
-			</SuperCenteredLayout>
+			<ErrorCard
+				error="We couldn't find this invite"
+				footer={
+					<Button variant="outline" className="w-full" asChild>
+						<Link to="/">Go back</Link>
+					</Button>
+				}
+			/>
 		);
 	}
 
 	return (
-		<SuperCenteredLayout>
-			<Card className="select-none text-center">
-				<CardHeader>
-					<CardTitle className="flex flex-col items-center justify-center gap-4 text-xl">
-						<WorkspaceLogo size="lg" logo={null} name={invitation.workspaceName} />
-						{invitation.inviterName} has invited you to {invitation.workspaceName}
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<hr />
+		<ContentCard
+			title={<WorkspaceLogo size="lg" logo={null} name={invitation.workspaceName} />}
+			description={`${invitation.inviterName} has invited you to {invitation.workspaceName}`}
+			content={
+				<>
 					{user && <p className="mt-6">This invite was sent to</p>}
 					{!user && <p className="mt-6">To accept the invitation please login as</p>}
 					<p>
 						<strong>{invitation.recipient}</strong>
 					</p>
-				</CardContent>
-				<CardFooter className="flex justify-center">
+				</>
+			}
+			footer={
+				<>
 					{user && invitation.status === "pending" && (
 						<Button
 							className="px-16"
@@ -111,8 +100,8 @@ function RouteComponent() {
 							</Link>
 						</Button>
 					)}
-				</CardFooter>
-			</Card>
-		</SuperCenteredLayout>
+				</>
+			}
+		/>
 	);
 }

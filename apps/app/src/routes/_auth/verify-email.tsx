@@ -2,10 +2,10 @@ import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tans
 import { type } from "arktype";
 
 import { Button } from "@hoalu/ui/button";
-import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
+import { ContentCard, ErrorCard } from "@/components/cards";
 import { authClient } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/verify-email")({
+export const Route = createFileRoute("/_auth/verify-email")({
 	validateSearch: type({
 		token: "string > 0",
 	}),
@@ -30,28 +30,18 @@ export const Route = createFileRoute("/verify-email")({
 });
 
 function RouteComponent() {
-	return (
-		<SuperCenteredLayout>
-			<p className="text-center">Verifying...</p>
-		</SuperCenteredLayout>
-	);
+	return <ContentCard content={<p className="text-center">Verifying...</p>} />;
 }
 
 function ErrorComponent(props: ErrorComponentProps) {
 	return (
-		<SuperCenteredLayout>
-			<p className="text-center">Something went wrong</p>
-			{props.error.message && (
-				<p className="text-center">
-					Cause:{" "}
-					<span className="rounded-md border border-destructive/50 bg-destructive/5 p-2 text-destructive text-sm">
-						{props.error.message}
-					</span>
-				</p>
-			)}
-			<Button className="mx-auto w-fit" asChild>
-				<Link to="/">Go to Home</Link>
-			</Button>
-		</SuperCenteredLayout>
+		<ErrorCard
+			error={props.error.message}
+			footer={
+				<Button variant="outline" className="mx-auto w-fit" asChild>
+					<Link to="/">Go to Home</Link>
+				</Button>
+			}
+		/>
 	);
 }
