@@ -4,7 +4,10 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
+		"dev": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true vite --force",
+		"dev-claims": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true CLAIMS=true SW=true vite --force",
+		"dev-destroy": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DESTROY=true SW_DEV=true vite --force",
+		"dev-claims-destroy": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DESTROY=true SW_DEV=true CLAIMS=true SW=true vite --force",
 		"build": "vite build",
 		"preview": "vite preview"
 	},
@@ -51,6 +54,7 @@
 		"@types/react": "^19.1.8",
 		"@types/react-dom": "^19.1.6",
 		"@vitejs/plugin-react-swc": "^3.10.2",
+		"rimraf": "^6.0.1",
 		"tailwind-scrollbar": "4.0.0-beta.0",
 		"tailwindcss": "^4.1.10",
 		"vite-plugin-pwa": "^0.21.2",

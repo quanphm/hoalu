@@ -1,4 +1,7 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/react" />
+/// <reference types="vite-plugin-pwa/info" />
+/// <reference lib="webworker" />
 
 import type { EnvSchema } from "./lib/env";
 import "@tanstack/react-table";

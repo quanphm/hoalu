@@ -7,6 +7,7 @@ import {
 import { lazy } from "react";
 
 import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
+import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -35,6 +36,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			{children}
+			<ReloadPromptPwa />
 			<QueryDevtools buttonPosition="bottom-right" />
 			<RouterDevtools position="top-right" />
 		</>
