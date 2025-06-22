@@ -8,6 +8,7 @@
 		"./utils": "./src/utils/index.ts",
 		"./hooks": "./src/hooks/index.ts",
 		"./accordion": "./src/components/accordion.tsx",
+		"./alert-dialog": "./src/components/alert-dialog.tsx",
 		"./alert": "./src/components/alert.tsx",
 		"./avatar": "./src/components/avatar.tsx",
 		"./badge": "./src/components/badge.tsx",
