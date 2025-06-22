@@ -12,7 +12,8 @@ export default defineConfig({
 		tanstackRouter({ target: "react", autoCodeSplitting: false }),
 		react(),
 		VitePWA({
-			registerType: "autoUpdate",
+			injectRegister: 'auto',
+			registerType: "prompt",
 			includeAssets: ["favicon.ico"],
 			manifest: {
 				name: "Hoalu",
@@ -41,9 +42,13 @@ export default defineConfig({
 				background_color: "#242a3a",
 			},
 			workbox: {
+				cleanupOutdatedCaches: true,
 				maximumFileSizeToCacheInBytes: 10_000_000,
 				globPatterns: ["**/*.{js,css,html,svg,data,wasm}"],
 			},
+			devOptions: {
+        enabled: true
+      }
 		}),
 	],
 	define: {

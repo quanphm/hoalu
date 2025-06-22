@@ -1,7 +1,7 @@
 {
 	"name": "@hoalu/doki",
 	"description": "React hook for dealing with asynchronous stream options in Electric SQL",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"type": "module",
 	"private": true,
 	"sideEffects": false,
