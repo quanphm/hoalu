@@ -4,14 +4,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { ContentCard } from "@/components/cards";
+import { WalletCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesStats } from "@/components/expenses-stats";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { RecentExpensesTable } from "@/components/recent-expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { UserAvatar } from "@/components/user-avatar";
-import { CreateWalletDialogTrigger, WalletIcon } from "@/components/wallet";
+import { CreateWalletDialogTrigger } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 
@@ -64,17 +63,12 @@ function RouteComponent() {
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12}>
-					<Section className="col-span-4">
+					<Section className="col-span-6">
 						<SectionContent>
 							<ExpensesStats />
 						</SectionContent>
 					</Section>
-					<Section className="col-span-4">
-						<SectionContent>
-							<ExpensesStats />
-						</SectionContent>
-					</Section>
-					<Section className="col-span-4">
+					<Section className="col-span-6">
 						<SectionContent>
 							<ExpensesStats />
 						</SectionContent>
@@ -118,22 +112,7 @@ function RouteComponent() {
 								.filter((w) => w.isActive)
 								.slice(0, 4)
 								.map((w) => (
-									<ContentCard
-										key={w.id}
-										title={
-											<p className="flex items-center gap-1.5">
-												<WalletIcon type={w.type} />
-												{w.name}
-											</p>
-										}
-										description={w.description}
-										content={
-											<div className="flex items-center gap-1.5">
-												<UserAvatar className="size-4" name={w.owner.name} image={w.owner.image} />
-												<p className="text-muted-foreground text-xs leading-0">{w.owner.name}</p>
-											</div>
-										}
-									/>
+									<WalletCard key={w.id} {...w} />
 								))}
 						</SectionContent>
 					</Section>

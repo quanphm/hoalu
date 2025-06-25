@@ -1,4 +1,3 @@
-import { useRegisterSW } from "virtual:pwa-register/react";
 import { PGlite } from "@electric-sql/pglite";
 import { citext } from "@electric-sql/pglite/contrib/citext";
 import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
@@ -9,7 +8,6 @@ import { useEffect, useState } from "react";
 
 import { tryCatch } from "@hoalu/common/try-catch";
 import { LoaderCircleIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
 
 let syncStarted = false;
 
@@ -23,25 +21,35 @@ async function startSync(pg: PGliteWithLive) {
 	}
 }
 
+async function createPGlite() {
+	const { data, error } = await tryCatch.async(
+		PGlite.create({
+			dataDir: "idb://hoalu",
+			relaxedDurability: true,
+			extensions: {
+				live,
+				vector,
+				citext,
+				electric: electricSync(),
+			},
+		}),
+	);
+
+	if (error) {
+		console.log(error);
+		window.indexedDB.deleteDatabase("/pglite/hoalu");
+		createPGlite();
+	}
+
+	return data;
+}
+
 export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 	const [pgForProvider, setPgForProvider] = useState<PGliteWithLive | null>(null);
-	const { updateServiceWorker } = useRegisterSW();
 
 	useEffect(() => {
 		(async function create() {
-			const { data: pg } = await tryCatch.async(
-				PGlite.create({
-					dataDir: "idb://hoalu",
-					relaxedDurability: true,
-					extensions: {
-						live,
-						vector,
-						citext,
-						electric: electricSync(),
-					},
-				}),
-			);
-
+			const pg = await createPGlite();
 			if (!pg) return;
 
 			console.log("PGlite worker started");
@@ -54,11 +62,6 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 		})();
 	}, []);
 
-	const handleHardReload: React.MouseEventHandler<HTMLButtonElement> = (event) => {
-		event.preventDefault();
-		updateServiceWorker();
-	};
-
 	if (!pgForProvider) {
 		return (
 			<div className="flex h-screen w-screen flex-col items-center justify-center gap-4 bg-background">
@@ -68,9 +71,6 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 					{"-"}
 					<p className="text-muted-foreground">v{import.meta.env.PUBLIC_APP_VERSION}</p>
 				</div>
-				<Button variant="outline" onClick={handleHardReload}>
-					Reload
-				</Button>
 			</div>
 		);
 	}

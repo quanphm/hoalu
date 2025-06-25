@@ -1,7 +1,7 @@
 import { cn } from "@hoalu/ui/utils";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
-	return <div ref={ref} className={cn("flex flex-col gap-6", className)} {...props} />;
+	return <div ref={ref} className={cn("flex flex-col gap-4", className)} {...props} />;
 }
 
 function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {
@@ -30,7 +30,7 @@ function SectionContent({
 				} as React.CSSProperties
 			}
 			className={cn(
-				"grid gap-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-(--grid-cols)",
+				"grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-(--grid-cols)",
 				className,
 			)}
 			{...props}

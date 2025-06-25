@@ -22,12 +22,12 @@ export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	return (
-		<SidebarGroup id={`${reactId}-nav-workspsace`}>
+		<SidebarGroup id={`${reactId}-nav-workspsace`} className="my-2">
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">
 						<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
-							<GalleryVerticalIcon />
+							<GalleryVerticalIcon className="text-muted-foreground/50" />
 							<span>Dashboard</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
@@ -43,7 +43,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 						>
-							<ArrowRightLeftIcon />
+							<ArrowRightLeftIcon className="text-muted-foreground/50" />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
@@ -59,7 +59,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
 						>
-							<ListTodoIcon />
+							<ListTodoIcon className="text-muted-foreground/50" />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
@@ -75,7 +75,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
 						>
-							<SettingsIcon />
+							<SettingsIcon className="text-muted-foreground/50" />
 							<span>Settings</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />

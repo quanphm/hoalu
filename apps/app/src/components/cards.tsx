@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { Badge } from "@hoalu/ui/badge";
 import {
 	Card,
 	CardAction,
@@ -10,6 +11,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
+import { UserAvatar } from "./user-avatar";
+import { WalletIcon, type WalletIconProps } from "./wallet";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
 	title?: React.ReactNode;
@@ -109,4 +112,56 @@ function ErrorCard({
 	);
 }
 
-export { ContentCard, WorkspaceCard, SettingCard, ErrorCard };
+interface WalletCardProps {
+	type: WalletIconProps["type"];
+	name: string;
+	description: string | null;
+	owner: {
+		name: string;
+		image: string | null;
+	};
+	isActive?: boolean;
+	actions?: React.ReactNode;
+}
+
+function WalletCard(props: WalletCardProps) {
+	return (
+		<ContentCard
+			className="flex flex-col justify-between gap-3"
+			title={
+				<p className="flex items-center gap-1.5">
+					<WalletIcon type={props.type} />
+					{props.name}
+				</p>
+			}
+			description={props.description}
+			content={
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-1.5">
+						<UserAvatar className="size-4" name={props.owner.name} image={props.owner.image} />
+						<p className="text-muted-foreground text-xs leading-0">{props.owner.name}</p>
+					</div>
+					<Badge
+						variant="outline"
+						className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
+					>
+						{props.isActive ? (
+							<>
+								<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
+								In use
+							</>
+						) : (
+							<>
+								<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
+								Unused
+							</>
+						)}
+					</Badge>
+				</div>
+			}
+			actions={props.actions}
+		/>
+	);
+}
+
+export { ContentCard, WorkspaceCard, SettingCard, WalletCard, ErrorCard };

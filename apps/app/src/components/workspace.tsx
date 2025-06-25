@@ -107,7 +107,7 @@ function CreateWorkspaceForm() {
 						<field.InputWithPrefixField
 							label="Workspace URL"
 							placeholder="acme-inc-42"
-							description="Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)"
+							description="lowercase letters (a-z), numbers (0-9) and hyphens (-)"
 							pattern="[a-z0-9\-]+$"
 							required
 							autoComplete="off"
@@ -118,7 +118,7 @@ function CreateWorkspaceForm() {
 					{(field) => (
 						<field.SelectWithSearchField
 							label="Workspace currency"
-							description="This will determine how monetary values appear in your dashboard."
+							description="This will determine how monetary values appear in your dashboard"
 							options={AVAILABLE_CURRENCY_OPTIONS}
 						/>
 					)}
@@ -197,9 +197,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 						<field.InputWithPrefixField
 							label="Workspace URL"
 							placeholder="acme-inc-42"
-							description={
-								canEdit ? "Use only lowercase letters (a-z), numbers (0-9) and hyphens (-)" : ""
-							}
+							description={canEdit ? "lowercase letters (a-z), numbers (0-9) and hyphens (-)" : ""}
 							pattern="[a-z0-9\-]+$"
 							required
 							autoComplete="off"
@@ -251,7 +249,7 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 					{(field) => (
 						<field.SelectWithSearchField
 							label="Default currency"
-							description="This will determine how monetary values appear in your dashboard."
+							description="This will determine how monetary values appear in your dashboard"
 							options={AVAILABLE_CURRENCY_OPTIONS}
 							disabled={!canEdit}
 						/>
