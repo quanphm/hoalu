@@ -1,63 +1,42 @@
 :root {
-	--geist-sans: "Geist", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
-	--geist-mono: "GeistMono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
+  --geist-sans: "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
+  --geist-mono: "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
 }
-
-/* @theme inline {
-  --font-sans: var(--geist-sans);
-  --font-mono: var(--geist-mono);
-}
-
-@font-face {
-  font-family: Geist;
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: GeistMono;
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
-} */
 
 @theme {
-	--text-xs: 0.675rem;
-	--text-xs--line-height: calc(1 / 0.675);
-	--text-sm: 0.7875rem;
-	--text-sm--line-height: calc(1.25 / 0.7875);
-	--text-base: 0.9rem;
-	--text-base--line-height: calc(1.5 / 0.9);
-	--text-lg: 1.0125rem;
-	--text-lg--line-height: calc(1.75 / 1.0125);
-	--text-xl: 1.125rem;
-	--text-xl--line-height: calc(1.75 / 1.125);
-	--text-2xl: 1.35rem;
-	--text-2xl--line-height: calc(2 / 1.35);
-	--text-3xl: 1.6875rem;
-	--text-3xl--line-height: calc(2.25 / 1.6875);
+  --text-xs: 0.675rem;
+  --text-xs--line-height: calc(1 / 0.675);
+  --text-sm: 0.7875rem;
+  --text-sm--line-height: calc(1.25 / 0.7875);
+  --text-base: 0.9rem;
+  --text-base--line-height: calc(1.5 / 0.9);
+  --text-lg: 1.0125rem;
+  --text-lg--line-height: calc(1.75 / 1.0125);
+  --text-xl: 1.125rem;
+  --text-xl--line-height: calc(1.75 / 1.125);
+  --text-2xl: 1.35rem;
+  --text-2xl--line-height: calc(2 / 1.35);
+  --text-3xl: 1.6875rem;
+  --text-3xl--line-height: calc(2.25 / 1.6875);
 
-	--spacing: 0.225rem;
+  --spacing: 0.225rem;
 }
 
 .prose-base {
-	:where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-		margin-top: 0.25rem;
-		margin-bottom: 0.25rem;
-	}
+  :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
 
-	:where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-		padding-inline-start: 0.25rem;
-	}
+  :where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    padding-inline-start: 0.25rem;
+  }
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-	color: var(--muted-foreground);
-	content: attr(data-placeholder);
-	float: left;
-	height: 0;
-	pointer-events: none;
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

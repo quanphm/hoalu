@@ -333,7 +333,10 @@ const icons: Record<WalletTypeSchema, any> = {
 	"debit-card": CreditCardIcon,
 	"digital-account": BitcoinIcon,
 };
-function WalletIcon(props: { type: WalletTypeSchema }) {
+interface WalletIconProps {
+	type: WalletTypeSchema;
+}
+function WalletIcon(props: WalletIconProps) {
 	if (!icons[props.type]) {
 		throw new Error("unknown wallet type");
 	}
@@ -342,4 +345,10 @@ function WalletIcon(props: { type: WalletTypeSchema }) {
 	return <Icon className={className} />;
 }
 
-export { CreateWalletDialog, CreateWalletDialogTrigger, WalletDropdownMenuWithModal, WalletIcon };
+export {
+	CreateWalletDialog,
+	CreateWalletDialogTrigger,
+	WalletDropdownMenuWithModal,
+	WalletIcon,
+	type WalletIconProps,
+};

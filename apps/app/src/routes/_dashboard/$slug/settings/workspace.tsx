@@ -95,22 +95,20 @@ function RouteComponent() {
 					</div>
 					<div className="col-span-4">
 						<SectionContent>
-							<SettingCard
-								title="Logo"
-								description={
-									<p className="max-w-sm">
+							<SettingCard title="Logo">
+								<div className="flex items-center gap-6">
+									<p className="max-w-sm text-sm">
 										Recommended size 256x256px. PNG or JPEG file. Max file size 5MB.
 									</p>
-								}
-							>
-								<Button
-									variant="outline"
-									size="icon"
-									className="size-14 border-0"
-									onClick={handleBrowseFiles}
-								>
-									<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
-								</Button>
+									<Button
+										variant="outline"
+										size="icon"
+										className="size-14 border-0"
+										onClick={handleBrowseFiles}
+									>
+										<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
+									</Button>
+								</div>
 								{canUpdateWorkspace && (
 									<input
 										type="file"

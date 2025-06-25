@@ -47,26 +47,26 @@ const pwaOptions: Partial<VitePWAOptions> = {
 	},
 };
 
-// const claims = process.env.CLAIMS === "true";
-// const selfDestroying = process.env.SW_DESTROY === "true";
+const claims = process.env.CLAIMS === "true";
+const selfDestroying = process.env.SW_DESTROY === "true";
 
-// if (process.env.SW === "true") {
-// 	pwaOptions.strategies = "injectManifest";
-// 	pwaOptions.srcDir = "src";
-// 	pwaOptions.filename = claims ? "claims-sw.ts" : "prompt-sw.ts";
-// 	pwaOptions.injectManifest = {
-// 		minify: false,
-// 		enableWorkboxModulesLogs: true,
-// 	};
-// }
+if (process.env.SW === "true") {
+	pwaOptions.strategies = "injectManifest";
+	pwaOptions.srcDir = "src";
+	pwaOptions.filename = claims ? "claims-sw.ts" : "prompt-sw.ts";
+	pwaOptions.injectManifest = {
+		minify: false,
+		enableWorkboxModulesLogs: true,
+	};
+}
 
-// if (claims) {
-// 	pwaOptions.registerType = "autoUpdate";
-// }
+if (claims) {
+	pwaOptions.registerType = "autoUpdate";
+}
 
-// if (selfDestroying) {
-// 	pwaOptions.selfDestroying = selfDestroying;
-// }
+if (selfDestroying) {
+	pwaOptions.selfDestroying = selfDestroying;
+}
 
 export default defineConfig({
 	envPrefix: "PUBLIC_",

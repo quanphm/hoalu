@@ -4,7 +4,8 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true SW=false CLAIMS=false SW_DESTROY=true vite --force",
+		"dev": "vite",
+		"dev:pwa": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true SW=false CLAIMS=false SW_DESTROY=true vite --force",
 		"build": "vite build",
 		"preview": "vite preview --port=4173"
 	},
