@@ -31,7 +31,7 @@ function RouteComponent() {
 						</Button>
 					</CreateWalletDialogTrigger>
 				</SectionHeader>
-				<SectionContent columns={3} className="gap-4">
+				<SectionContent columns={4} className="gap-4">
 					{wallets.map((w) => (
 						<WalletCard key={w.id} {...w} actions={<WalletDropdownMenuWithModal id={w.id} />} />
 					))}

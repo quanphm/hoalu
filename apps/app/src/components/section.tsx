@@ -8,7 +8,6 @@ function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {
 	return (
 		<div className="flex max-w-full items-center justify-between gap-4">
 			<div className="flex max-w-full items-center justify-between gap-4">{children}</div>
-			<div className="relative flex-1 after:absolute after:h-0.25 after:w-full after:bg-muted-foreground/10 after:content-['']" />
 		</div>
 	);
 }
@@ -39,7 +38,7 @@ function SectionContent({
 }
 
 function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"p">) {
-	return <h2 className={cn("font-medium text-lg leading-8", className)} {...props} />;
+	return <h2 className={cn("font-medium text-xl leading-8", className)} {...props} />;
 }
 
 export { Section, SectionHeader, SectionContent, SectionTitle };

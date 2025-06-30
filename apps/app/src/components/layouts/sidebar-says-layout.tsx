@@ -76,7 +76,6 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-
 			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>
 	);
