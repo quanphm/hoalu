@@ -219,7 +219,7 @@ export function DataTable<T extends TableRowData>({
 	const showToolbar = !!enableGrouping;
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-2">
 			{showToolbar && (
 				<div className="flex gap-4">
 					{enableGrouping && (

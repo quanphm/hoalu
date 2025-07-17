@@ -5,7 +5,6 @@ import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/l
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
-import { ExpensesStats } from "@/components/expenses-stats";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { RecentExpensesTable } from "@/components/recent-expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -56,7 +55,7 @@ function RouteComponent() {
 				</SectionContent>
 			</Section>
 
-			<Section>
+			{/* <Section>
 				<SectionHeader>
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
@@ -72,11 +71,11 @@ function RouteComponent() {
 						</SectionContent>
 					</Section>
 				</SectionContent>
-			</Section>
+			</Section> */}
 
 			<Section>
-				<SectionContent columns={12}>
-					<Section className="col-span-9">
+				<SectionContent>
+					<Section>
 						<SectionHeader>
 							<SectionTitle>Recent entries</SectionTitle>
 							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>

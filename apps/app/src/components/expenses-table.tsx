@@ -1,6 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
-import { Suspense } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
@@ -8,7 +7,6 @@ import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { cn } from "@hoalu/ui/utils";
 import { selectedExpenseAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
@@ -18,6 +16,7 @@ import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { EditExpenseForm } from "./expense";
+import { SectionContent } from "./section";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
@@ -120,33 +119,34 @@ export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema
 	useHotkeys("esc", handleClose, []);
 
 	return (
-		<>
-			<DataTable
-				data={data}
-				columns={columns}
-				enableGrouping
-				onRowClick={handleRowClick}
-				controlledState={{ grouping: ["date"] }}
-				tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
-			/>
-
-			<Suspense>
+		<SectionContent columns={12}>
+			<div className="col-span-8">
+				<DataTable
+					data={data}
+					columns={columns}
+					enableGrouping
+					onRowClick={handleRowClick}
+					controlledState={{ grouping: ["date"] }}
+					tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
+				/>
+			</div>
+			<div className="col-span-4 ">
 				{selected.id && (
-					<Card className="fixed top-10 right-0 z-50 flex w-1/3 flex-col overflow-hidden shadow-xl">
+					<Card className="mt-12 flex h-[calc(100vh-180px)] overflow-hidden">
 						<CardHeader>
 							<CardTitle>Expense details</CardTitle>
 							<CardAction>
-								<Button size="icon" variant="outline" onClick={() => handleClose()} autoFocus>
+								<Button size="icon" variant="ghost" onClick={() => handleClose()} autoFocus>
 									<XIcon className="size-4" />
 								</Button>
 							</CardAction>
 						</CardHeader>
-						<ScrollArea className="h-[calc(100vh-(--spacing(4)*10))]">
+						<div className="h-full overflow-auto">
 							<EditExpenseForm id={selected.id} />
-						</ScrollArea>
+						</div>
 					</Card>
 				)}
-			</Suspense>
-		</>
+			</div>
+		</SectionContent>
 	);
 }
