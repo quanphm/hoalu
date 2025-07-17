@@ -5,8 +5,6 @@ import { type } from "arktype";
 import { datetime } from "@hoalu/common/datetime";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Calendar } from "@hoalu/ui/calendar";
-import { ContentCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
 import { ExpensesTable } from "@/components/expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -23,15 +21,12 @@ function RouteComponent() {
 	const { slug } = Route.useParams();
 	const { date: searchDate } = Route.useSearch();
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
-	const navigate = Route.useNavigate();
 
 	const filteredExpenses = expenses.filter((expense) => {
 		if (!searchDate) return true;
 		const expenseDate = datetime.format(new Date(expense.date), "yyyy-MM-dd");
 		return expenseDate === searchDate;
 	});
-
-	const currentSelectedDate = searchDate ? new Date(searchDate) : undefined;
 
 	return (
 		<Section>
@@ -44,28 +39,11 @@ function RouteComponent() {
 					</Button>
 				</CreateExpenseDialogTrigger>
 			</SectionHeader>
-			<SectionContent columns={12}>
-				<div className="col-span-9">
-					<ExpensesTable data={filteredExpenses} />
-				</div>
-				<div className="col-span-3">
-					<ContentCard
-						content={
-							<Calendar
-								mode="single"
-								className="-mx-2"
-								selected={currentSelectedDate}
-								onSelect={(selectedDate) => {
-									navigate({
-										search: () => ({
-											date: selectedDate ? datetime.format(selectedDate, "yyyy-MM-dd") : undefined,
-										}),
-									});
-								}}
-							/>
-						}
-					/>
-				</div>
+			<SectionContent>
+				<ExpensesTable data={filteredExpenses} />
+				{/* <div className="col-span-3">
+					<ContentCard content={<ExpenseCalendar />} />
+				</div> */}
 			</SectionContent>
 		</Section>
 	);

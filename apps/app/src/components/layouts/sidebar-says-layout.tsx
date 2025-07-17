@@ -2,11 +2,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
-import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarHeader,
 	SidebarInset,
 	SidebarProvider,
@@ -36,7 +34,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<Sidebar>
+			<Sidebar variant="inset">
 				<SidebarHeader className="border-b">
 					{hasSlug && currentWorkspace ? (
 						<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
@@ -50,7 +48,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{/* <NavDocumentation /> */}
 					<NavUser />
 				</SidebarContent>
-				<SidebarFooter className="border-t px-4 py-2">
+				{/* <SidebarFooter className="border-t px-4 py-2">
 					<div className="flex items-center justify-between">
 						<p className="text-muted-foreground text-sm leading-none tracking-wider">
 							{import.meta.env.PUBLIC_APP_VERSION}
@@ -74,9 +72,8 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 							</a>
 						</div>
 					</div>
-				</SidebarFooter>
+				</SidebarFooter> */}
 			</Sidebar>
-
 			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>
 	);

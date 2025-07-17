@@ -14,8 +14,8 @@
 		"format": "biome check --write"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.0.4",
-		"turbo": "^2.5.4",
+		"@biomejs/biome": "^2.1.2",
+		"turbo": "^2.5.5",
 		"typescript": "^5.8.3",
 		"vite": "^6.3.5",
 		"vitest": "^3.2.4"

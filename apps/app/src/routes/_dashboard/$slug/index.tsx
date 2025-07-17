@@ -4,15 +4,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { WalletCard } from "@/components/cards";
 import { CreateExpenseDialogTrigger } from "@/components/expense";
-import { ExpensesStats } from "@/components/expenses-stats";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { RecentExpensesTable } from "@/components/recent-expenses-table";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { CreateWalletDialogTrigger } from "@/components/wallet";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { expensesQueryOptions, walletsQueryOptions } from "@/services/query-options";
+import { expensesQueryOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,
@@ -20,7 +18,6 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 
 function RouteComponent() {
 	const { slug } = Route.useParams();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 	const recentTransactions = expenses.slice(0, 7);
 
@@ -58,7 +55,7 @@ function RouteComponent() {
 				</SectionContent>
 			</Section>
 
-			<Section>
+			{/* <Section>
 				<SectionHeader>
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
@@ -74,11 +71,11 @@ function RouteComponent() {
 						</SectionContent>
 					</Section>
 				</SectionContent>
-			</Section>
+			</Section> */}
 
 			<Section>
-				<SectionContent columns={12}>
-					<Section className="col-span-8">
+				<SectionContent>
+					<Section>
 						<SectionHeader>
 							<SectionTitle>Recent entries</SectionTitle>
 							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_expenses}>
@@ -92,28 +89,6 @@ function RouteComponent() {
 						</SectionHeader>
 						<SectionContent>
 							<RecentExpensesTable data={recentTransactions} />
-						</SectionContent>
-					</Section>
-
-					<Section className="col-span-4">
-						<SectionHeader>
-							<SectionTitle>Wallets</SectionTitle>
-							<HotKeyWithTooltip shortcut={KEYBOARD_SHORTCUTS.goto_library}>
-								<Button variant="outline" size="sm" asChild>
-									<Link to="/$slug/settings/library" params={{ slug }}>
-										View all
-										<ArrowRight className="ml-2 size-4" />
-									</Link>
-								</Button>
-							</HotKeyWithTooltip>
-						</SectionHeader>
-						<SectionContent className="gap-4">
-							{wallets
-								.filter((w) => w.isActive)
-								.slice(0, 4)
-								.map((w) => (
-									<WalletCard key={w.id} {...w} />
-								))}
 						</SectionContent>
 					</Section>
 				</SectionContent>

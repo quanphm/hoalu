@@ -14,23 +14,39 @@ function RouteComponent() {
 	return (
 		<>
 			<Tabs value={currentMatch || "workspace"}>
-				<TabsList className="mb-3 gap-1 bg-transparent">
-					<TabsTrigger value="workspace" asChild>
+				<TabsList className="relative h-auto w-full justify-start gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-border">
+					<TabsTrigger
+						value="workspace"
+						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
+						asChild
+					>
 						<Link to="/$slug/settings/workspace" params={{ slug }}>
 							Workspace
 						</Link>
 					</TabsTrigger>
-					<TabsTrigger value="members" asChild>
+					<TabsTrigger
+						value="members"
+						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
+						asChild
+					>
 						<Link to="/$slug/settings/members" params={{ slug }}>
 							Members
 						</Link>
 					</TabsTrigger>
-					<TabsTrigger value="library" asChild>
+					<TabsTrigger
+						value="library"
+						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
+						asChild
+					>
 						<Link to="/$slug/settings/library" params={{ slug }}>
 							Library
 						</Link>
 					</TabsTrigger>
-					<TabsTrigger value="photos" asChild>
+					<TabsTrigger
+						value="photos"
+						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
+						asChild
+					>
 						<Link to="/$slug/settings/photos" params={{ slug }}>
 							Photos
 						</Link>

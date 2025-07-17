@@ -10,11 +10,9 @@ export function PageContent({
 	children: React.ReactNode;
 }) {
 	return (
-		<>
-			<div className={cn("relative flex h-[100vh] w-full flex-1 flex-col gap-10 p-10", className)}>
-				{breadcrumb && <div className="pb-4">{breadcrumb}</div>}
-				{children}
-			</div>
-		</>
+		<div className={cn("relative flex h-[100vh] w-full flex-1 flex-col gap-8 p-8", className)}>
+			{breadcrumb && <div className="pb-4">{breadcrumb}</div>}
+			{children}
+		</div>
 	);
 }

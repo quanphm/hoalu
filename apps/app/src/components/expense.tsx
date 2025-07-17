@@ -4,8 +4,10 @@ import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
+import { datetime } from "@hoalu/common/datetime";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
+import { Calendar } from "@hoalu/ui/calendar";
 import {
 	Dialog,
 	DialogClose,
@@ -33,6 +35,7 @@ import {
 import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
@@ -107,7 +110,7 @@ function CreateExpenseForm() {
 			{ name: string; options: { label: string; value: string; currency: string }[] }
 		>,
 	);
-	const defaultWallet = walletGroups[user!.id]?.options[0] || fallbackWallet;
+	const defaultWallet = walletGroups[user?.id]?.options[0] || fallbackWallet;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -387,7 +390,7 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 						</form.AppField>
 					</div>
 				</div>
-				<div className="sticky bottom-0 flex gap-2 px-6 py-4">
+				<div className="flex gap-2 px-6">
 					<Button type="submit">Update</Button>
 					<Button variant="ghost" type="button" onClick={() => form.reset()}>
 						Reset
@@ -401,4 +404,26 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 	);
 }
 
-export { CreateExpenseDialog, CreateExpenseDialogTrigger, EditExpenseForm };
+function ExpenseCalendar() {
+	const { date: searchDate } = expenseRouteApi.useSearch();
+	const navigate = expenseRouteApi.useNavigate();
+
+	const currentSelectedDate = searchDate ? new Date(searchDate) : undefined;
+
+	return (
+		<Calendar
+			mode="single"
+			className="-mx-2"
+			selected={currentSelectedDate}
+			onSelect={(selectedDate) => {
+				navigate({
+					search: () => ({
+						date: selectedDate ? datetime.format(selectedDate, "yyyy-MM-dd") : undefined,
+					}),
+				});
+			}}
+		/>
+	);
+}
+
+export { CreateExpenseDialog, CreateExpenseDialogTrigger, EditExpenseForm, ExpenseCalendar };
