@@ -363,12 +363,12 @@ function DeleteWorkspaceForm() {
 	);
 }
 
-const workspaceAvatarVariants = cva("rounded-md", {
+const workspaceAvatarVariants = cva([], {
 	variants: {
 		size: {
 			default: "size-8",
-			lg: "size-14 rounded-lg text-xl",
-			sm: "size-6 rounded-sm",
+			lg: "size-14 text-xl",
+			sm: "size-6",
 		},
 	},
 	defaultVariants: {
@@ -384,7 +384,7 @@ interface Props {
 
 function WorkspaceLogo({
 	logo = undefined,
-	name = "Hoa Lu",
+	name,
 	size,
 	className,
 }: Props & VariantProps<typeof workspaceAvatarVariants>) {

@@ -43,7 +43,7 @@ export function NavUser() {
 						<DropdownMenuTrigger asChild>
 							<SidebarMenuButton
 								size="lg"
-								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground "
+								className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
 								<UserAvatar name={user.name} image={user.image} />
 								<div className="grid flex-1 text-left text-sm leading-tight">

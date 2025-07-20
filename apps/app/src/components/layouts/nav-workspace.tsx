@@ -28,7 +28,7 @@ export function NavWorkspace() {
 					<SidebarMenuButton asChild tooltip="Dashboard">
 						<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
 							<GalleryVerticalIcon className="text-muted-foreground/50" />
-							<span>Dashboard</span>
+							<span>Overview</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
 							</SidebarMenuBadge>

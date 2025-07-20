@@ -195,9 +195,9 @@ function CreateExpenseForm() {
 						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
 							<AccordionItem
 								value="advanced"
-								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+								className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
 							>
-								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
+								<AccordionTrigger className="rounded-none bg-muted px-4 py-2">
 									More
 								</AccordionTrigger>
 								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
@@ -358,46 +358,40 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="@container grid grid-cols-12 gap-4 px-6">
-					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
-						<form.AppField name="date">
-							{(field) => <field.DatepickerInputField label="Date" />}
-						</form.AppField>
-						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" required />}
-						</form.AppField>
-						<form.AppField name="transaction">
-							{(field) => <field.TransactionAmountField label="Amount" />}
-						</form.AppField>
-						<div className="grid grid-cols-2 gap-4">
-							<form.AppField name="walletId">
-								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
-							</form.AppField>
-							<form.AppField name="categoryId">
-								{(field) => <field.SelectCategoryField label="Category" />}
-							</form.AppField>
-						</div>
-						<form.AppField name="description">
-							{(field) => (
-								<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
-							)}
-						</form.AppField>
-						<form.AppField name="repeat">
-							{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
-						</form.AppField>
-						<form.AppField name="attachments">
-							{(field) => <field.FilesField label="Attachments" />}
-						</form.AppField>
-					</div>
+				<form.AppField name="date">
+					{(field) => <field.DatepickerInputField label="Date" />}
+				</form.AppField>
+				<form.AppField name="title">
+					{(field) => <field.InputField label="Description" required />}
+				</form.AppField>
+				<form.AppField name="transaction">
+					{(field) => <field.TransactionAmountField label="Amount" />}
+				</form.AppField>
+				<div className="grid grid-cols-2 gap-4">
+					<form.AppField name="walletId">
+						{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
+					</form.AppField>
+					<form.AppField name="categoryId">
+						{(field) => <field.SelectCategoryField label="Category" />}
+					</form.AppField>
 				</div>
-				<div className="flex gap-2 px-6">
-					<Button type="submit">Update</Button>
-					<Button variant="ghost" type="button" onClick={() => form.reset()}>
-						Reset
-					</Button>
-					<div className="ml-auto">
+				<form.AppField name="description">
+					{(field) => <field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />}
+				</form.AppField>
+				<form.AppField name="repeat">
+					{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
+				</form.AppField>
+				<form.AppField name="attachments">
+					{(field) => <field.FilesField label="Attachments" />}
+				</form.AppField>
+				<div className="flex gap-2">
+					<div className="mr-auto">
 						<DeleteExpense id={props.id} />
 					</div>
+					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
+						Reset
+					</Button>
+					<Button type="submit">Update</Button>
 				</div>
 			</form.Form>
 		</form.AppForm>

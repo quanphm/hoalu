@@ -48,7 +48,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 						<DropdownMenuTrigger asChild>
 							<SidebarMenuButton
 								size="lg"
-								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+								className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
 								<S3WorkspaceLogo
 									slug={selectedWorkspace.slug}

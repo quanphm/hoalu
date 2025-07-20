@@ -64,8 +64,6 @@ const basedExpense: ExpenseAtomSchema = {
 export const draftExpenseAtom = atomWithStorage("draft-expense", basedExpense);
 export const selectedExpenseAtom = atom<{
 	id: string | null;
-	data: Record<string, unknown> | null;
 }>({
 	id: null,
-	data: null,
 });

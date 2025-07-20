@@ -17,7 +17,7 @@ export function TransactionAmount(props: { data: ExpenseWithClientConvertedSchem
 	// }
 
 	return (
-		<div className="leading-relaxed">
+		<div className="leading-normal">
 			<p className="font-medium">{formatCurrency(convertedAmount, workspaceCurrency)}</p>
 			{workspaceCurrency !== sourceCurrency && (
 				<p className="text-muted-foreground text-xs tracking-tight">
