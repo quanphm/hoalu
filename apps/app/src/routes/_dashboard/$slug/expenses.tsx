@@ -5,9 +5,9 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { selectedExpenseAtom } from "@/atoms";
-import { CreateExpenseDialogTrigger, EditExpenseForm } from "@/components/expense";
+import { CreateExpenseDialogTrigger, DeleteExpense, EditExpenseForm } from "@/components/expense";
 import { ExpensesList } from "@/components/expenses-list";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -51,15 +51,20 @@ function RouteComponent() {
 			</SectionHeader>
 			<SectionContent>
 				<SectionContent columns={12} className="gap-0">
-					<div className="col-span-6 h-[calc(100vh-160px)] overflow-hidden">
+					<div className="col-span-5 h-[calc(100vh-98px)] overflow-hidden">
 						<div className="scrollbar-thin h-full overflow-auto">
 							<ExpensesList data={expenses} onRowClick={handleRowClick} />
 						</div>
 					</div>
-					<div className="col-span-6 h-[calc(100vh-160px)] overflow-hidden">
-						<Card className="flex h-full overflow-auto rounded-none">
+					<div className="col-span-7 h-[calc(100vh-98px)] overflow-hidden">
+						<Card className="flex h-full overflow-auto rounded-none border-b-0">
 							<CardHeader>
 								<CardTitle>Expense details</CardTitle>
+								{selectedRow.id && (
+									<CardAction>
+										<DeleteExpense id={selectedRow.id} />
+									</CardAction>
+								)}
 							</CardHeader>
 							<CardContent>
 								{selectedRow.id && <EditExpenseForm id={selectedRow.id} />}

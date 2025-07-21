@@ -5,6 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { TrashIcon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -37,7 +38,7 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
+export function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
@@ -54,7 +55,7 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	);
 }
 
-function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
+export function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	return (
@@ -236,7 +237,7 @@ function CreateExpenseForm() {
 	);
 }
 
-function DeleteExpense({ id }: { id: string }) {
+export function DeleteExpense({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
 	const setSelectedExpense = useSetAtom(selectedExpenseAtom);
 	const mutation = useDeleteExpense();
@@ -244,13 +245,15 @@ function DeleteExpense({ id }: { id: string }) {
 	const onDelete = async () => {
 		await mutation.mutateAsync({ id });
 		setOpen(false);
-		setSelectedExpense({ id: null, data: null });
+		setSelectedExpense({ id: null });
 	};
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="destructive">Delete</Button>
+				<Button size="icon" variant="destructive" aria-label="Delete this expense">
+					<TrashIcon className="size-4" />
+				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
@@ -277,7 +280,7 @@ function DeleteExpense({ id }: { id: string }) {
 	);
 }
 
-function EditExpenseForm(props: { id: string; className?: string }) {
+export function EditExpenseForm(props: { id: string; className?: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
@@ -384,10 +387,7 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 				<form.AppField name="attachments">
 					{(field) => <field.FilesField label="Attachments" />}
 				</form.AppField>
-				<div className="flex gap-2">
-					<div className="mr-auto">
-						<DeleteExpense id={props.id} />
-					</div>
+				<div className="ml-auto flex gap-2">
 					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
 						Reset
 					</Button>
@@ -398,7 +398,7 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 	);
 }
 
-function ExpenseCalendar() {
+export function ExpenseCalendar() {
 	const { date: searchDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
 
@@ -419,5 +419,3 @@ function ExpenseCalendar() {
 		/>
 	);
 }
-
-export { CreateExpenseDialog, CreateExpenseDialogTrigger, EditExpenseForm, ExpenseCalendar };

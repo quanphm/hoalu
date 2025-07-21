@@ -4,7 +4,7 @@ import type { ColorSchema, WalletTypeSchema } from "@/lib/schema";
 export function createCategoryTheme(color: ColorSchema) {
 	const variants: Record<ColorSchema, string> = {
 		red: cn(
-			"bg-red-100 text-red-800 border-red-200 ",
+			"bg-red-100 text-red-800 border-red-200",
 			"dark:from-red-600/45 dark:to-red-600/30 dark:text-red-100",
 			"data-[state=checked]:border-red-300 data-[state=checked]:bg-red-100 data-[state=checked]:text-red-300",
 		),

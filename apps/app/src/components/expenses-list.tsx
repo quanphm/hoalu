@@ -22,12 +22,11 @@ export function ExpensesList({
 		<div key={date} data-slot="expense-group">
 			<div
 				data-slot="expense-group-title"
-				className="sticky top-0 flex items-center bg-muted py-3 pr-6 pl-3 text-xs"
+				className="sticky top-0 flex items-center bg-muted py-2 pr-6 pl-3 text-xs"
 			>
-				<div className="flex items-center gap-1">
+				<div className="flex items-center gap-1 font-semibold">
 					<CalendarIcon className="size-3" /> {date}
 				</div>
-				<span className="ml-2.5 font-bold">{value.length}</span>
 				<div className="ml-auto">
 					<TotalExpenseByDate data={value} />
 				</div>
@@ -58,42 +57,39 @@ function ExpenseContent(
 		<div
 			data-slot="expense-item"
 			className={cn(
-				"flex items-start gap-4 border border-transparent border-b-border py-3 pr-6 pl-3 text-sm hover:bg-muted/50",
-				selectedRow.id === props.id && "border-primary bg-muted/50",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/40",
+				selectedRow.id === props.id &&
+					"border-primary bg-blue-100 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
 			)}
 			role="button"
 			tabIndex={0}
 			onClick={() => props.onClick(props.id)}
 			onKeyUp={handleKeyUp}
 		>
-			<div className="flex w-2/3 flex-col gap-1 leading-normal">
+			<div className="flex w-2/3 flex-col">
 				<p>{props.title}</p>
 				{props.description && (
 					<div className="truncate text-muted-foreground text-xs">
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div className="mt-2 flex gap-2">
+				<div className="mt-1 flex gap-2">
 					{props.category && (
 						<Badge className={createCategoryTheme(props.category.color)}>
 							{props.category.name}
 						</Badge>
 					)}
+					<Badge variant="outline" className="gap-1.5 bg-background">
+						<span
+							className={cn("size-2 rounded-full", createWalletTheme(props.wallet.type))}
+							aria-hidden="true"
+						/>
+						{props.wallet.name}
+					</Badge>
 				</div>
 			</div>
-
-			<div className="ml-auto flex flex-col gap-1 text-right">
+			<div className="flex flex-col items-end gap-1 text-right">
 				<TransactionAmount data={props} />
-				<Badge variant="outline" className="gap-1.5">
-					<span
-						className={cn(
-							"size-2 rounded-full bg-emerald-500",
-							createWalletTheme(props.wallet.type),
-						)}
-						aria-hidden="true"
-					/>
-					{props.wallet.name}
-				</Badge>
 			</div>
 		</div>
 	);

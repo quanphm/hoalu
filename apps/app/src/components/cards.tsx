@@ -22,7 +22,7 @@ interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "co
 	footer?: React.ReactNode;
 }
 
-function ContentCard({
+export function ContentCard({
 	className,
 	title,
 	description,
@@ -55,7 +55,7 @@ interface WorkspaceCardProps {
 	logo?: string | null | undefined;
 }
 
-function WorkspaceCard(props: WorkspaceCardProps) {
+export function WorkspaceCard(props: WorkspaceCardProps) {
 	return (
 		<Card className="hover:border-foreground/20">
 			<CardHeader>
@@ -73,7 +73,13 @@ interface SettingCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	description?: React.ReactNode;
 }
 
-function SettingCard({ className, title, description, children, ...props }: SettingCardProps) {
+export function SettingCard({
+	className,
+	title,
+	description,
+	children,
+	...props
+}: SettingCardProps) {
 	return (
 		<Card className={className} {...props}>
 			<CardHeader>
@@ -85,7 +91,7 @@ function SettingCard({ className, title, description, children, ...props }: Sett
 	);
 }
 
-function ErrorCard({
+export function ErrorCard({
 	title = "Something went wrong",
 	error,
 	...props
@@ -124,7 +130,7 @@ interface WalletCardProps {
 	actions?: React.ReactNode;
 }
 
-function WalletCard(props: WalletCardProps) {
+export function WalletCard(props: WalletCardProps) {
 	return (
 		<ContentCard
 			className="flex flex-col justify-between gap-3"
@@ -163,5 +169,3 @@ function WalletCard(props: WalletCardProps) {
 		/>
 	);
 }
-
-export { ContentCard, WorkspaceCard, SettingCard, WalletCard, ErrorCard };
