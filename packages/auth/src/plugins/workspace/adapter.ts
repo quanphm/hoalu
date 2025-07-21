@@ -1,6 +1,6 @@
 import { BetterAuthError } from "better-auth";
 import type { AuthContext } from "better-auth/types";
-import { z } from "zod";
+import * as z from "zod/v4";
 
 import { getDate } from "../../utils/date";
 import type { User } from "../../utils/types";

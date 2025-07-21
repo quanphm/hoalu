@@ -1,13 +1,11 @@
 import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
-import { z } from "zod";
+import * as z from "zod/v4";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
-import type { User } from "../../../utils/types";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
-import type { WorkspaceOptions } from "../index";
 
 export const addMember = createAuthEndpoint(
 	"/workspace/add-member",
@@ -73,10 +71,10 @@ export const removeMember = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			userId: z.string({
+			userId: z.string().meta({
 				description: "The user ID the member to remove",
 			}),
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to remove the member from.",
 			}),
 		}),
@@ -307,7 +305,7 @@ export const getActiveMember = createAuthEndpoint(
 	{
 		method: "GET",
 		query: z.object({
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to get",
 			}),
 		}),
