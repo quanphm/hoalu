@@ -1,12 +1,11 @@
 import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
-import { z } from "zod";
+import * as z from "zod/v4";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
-import type { WorkspaceOptions } from "../index";
 
 export const createInvitation = createAuthEndpoint(
 	"/workspace/invite-member",
@@ -14,17 +13,18 @@ export const createInvitation = createAuthEndpoint(
 		method: "POST",
 		use: [workspaceMiddleware, workspaceSessionMiddleware],
 		body: z.object({
-			email: z.string({
+			email: z.string().meta({
 				description: "The email address of the user to invite",
 			}),
-			role: z.string({
+			role: z.string().meta({
 				description: "The role to assign to the user",
 			}),
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to invite the user to",
 			}),
 			resend: z
-				.boolean({
+				.boolean()
+				.meta({
 					description: "Resend the invitation email, if the user is already invited",
 				})
 				.optional(),
@@ -185,7 +185,7 @@ export const acceptInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.string().meta({
 				description: "The ID of the invitation to accept",
 			}),
 		}),
@@ -285,7 +285,7 @@ export const rejectInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.string().meta({
 				description: "The ID of the invitation to reject",
 			}),
 		}),
@@ -346,7 +346,7 @@ export const cancelInvitation = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			invitationId: z.string({
+			invitationId: z.string().meta({
 				description: "The ID of the invitation to cancel",
 			}),
 		}),
@@ -413,7 +413,7 @@ export const getInvitation = createAuthEndpoint(
 		use: [workspaceMiddleware],
 		requireHeaders: true,
 		query: z.object({
-			id: z.string({
+			id: z.string().meta({
 				description: "The ID of the invitation to get",
 			}),
 		}),
@@ -516,11 +516,12 @@ export const listInvitations = createAuthEndpoint(
 	{
 		method: "GET",
 		query: z.object({
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to get",
 			}),
 			status: z
-				.string({
+				.string()
+				.meta({
 					description: "Filter status of invitations",
 				})
 				.optional(),

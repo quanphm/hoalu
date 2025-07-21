@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/v4";
 
 export const role = z.string();
 export const invitationStatus = z

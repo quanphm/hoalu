@@ -1,12 +1,11 @@
 import { createAuthEndpoint, requestOnlySessionMiddleware } from "better-auth/api";
-import type { AccessControl, Role } from "better-auth/plugins/access";
+import type { AccessControl } from "better-auth/plugins/access";
 import { APIError } from "better-call";
-import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
+import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod/v4";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
-import type { Session, User } from "../../../utils/types";
-import { defaultRoles, type defaultStatements } from "../access";
+import type { defaultStatements } from "../access";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
@@ -16,19 +15,21 @@ export const createWorkspace = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			name: z.string({
+			name: z.string().meta({
 				description: "The name of the workspace",
 			}),
-			slug: z.string({
+			slug: z.string().meta({
 				description: "The slug of the workspace",
 			}),
 			logo: z
-				.string({
+				.string()
+				.meta({
 					description: "The logo of the workspace",
 				})
 				.optional(),
 			metadata: z
-				.record(z.string(), z.any(), {
+				.record(z.string(), z.any())
+				.meta({
 					description: "The metadata of the workspace",
 				})
 				.optional(),
@@ -162,28 +163,32 @@ export const updateWorkspace = createAuthEndpoint(
 			data: z
 				.object({
 					name: z
-						.string({
+						.string()
+						.meta({
 							description: "The name of the workspace",
 						})
 						.optional(),
 					slug: z
-						.string({
+						.string()
+						.meta({
 							description: "The slug of the workspace",
 						})
 						.optional(),
 					logo: z
-						.string({
+						.string()
+						.meta({
 							description: "The logo of the workspace",
 						})
 						.optional(),
 					metadata: z
-						.record(z.string(), z.any(), {
+						.record(z.string(), z.any())
+						.meta({
 							description: "The metadata of the workspace",
 						})
 						.optional(),
 				})
 				.partial(),
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to update",
 			}),
 		}),
@@ -268,7 +273,7 @@ export const deleteWorkspace = createAuthEndpoint(
 	{
 		method: "POST",
 		body: z.object({
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to delete",
 			}),
 		}),
@@ -361,7 +366,7 @@ export const getFullWorkspace = createAuthEndpoint(
 	{
 		method: "GET",
 		query: z.object({
-			idOrSlug: z.string({
+			idOrSlug: z.string().meta({
 				description: "The workspace public_id or slug to get",
 			}),
 		}),
@@ -466,7 +471,7 @@ export const hasWorkspacePermission = (roles: Record<string, any>) =>
 			requireHeaders: true,
 			body: z.object({
 				permission: z.record(z.string(), z.array(z.string())),
-				idOrSlug: z.string({
+				idOrSlug: z.string().meta({
 					description: "The workspace public_id or slug to delete",
 				}),
 			}) as unknown as ZodObject<{
