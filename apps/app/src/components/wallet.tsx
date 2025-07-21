@@ -42,7 +42,7 @@ import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from 
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
 
-function CreateWalletDialog({ children }: { children: React.ReactNode }) {
+export function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createWalletDialogOpenAtom);
 
 	return (
@@ -66,7 +66,7 @@ function CreateWalletDialog({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function CreateWalletDialogTrigger({ children }: { children: React.ReactNode }) {
+export function CreateWalletDialogTrigger({ children }: { children: React.ReactNode }) {
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	return (
@@ -288,7 +288,7 @@ function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): voi
 	);
 }
 
-function WalletDropdownMenuWithModal({ id }: { id: string }) {
+export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
 	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
 	const handleOpenChange = (state: boolean) => {
@@ -333,10 +333,12 @@ const icons: Record<WalletTypeSchema, any> = {
 	"debit-card": CreditCardIcon,
 	"digital-account": BitcoinIcon,
 };
-interface WalletIconProps {
+
+export interface WalletIconProps {
 	type: WalletTypeSchema;
 }
-function WalletIcon(props: WalletIconProps) {
+
+export function WalletIcon(props: WalletIconProps) {
 	if (!icons[props.type]) {
 		throw new Error("unknown wallet type");
 	}
@@ -344,11 +346,3 @@ function WalletIcon(props: WalletIconProps) {
 	const Icon = icons[props.type];
 	return <Icon className={className} />;
 }
-
-export {
-	CreateWalletDialog,
-	CreateWalletDialogTrigger,
-	WalletDropdownMenuWithModal,
-	WalletIcon,
-	type WalletIconProps,
-};

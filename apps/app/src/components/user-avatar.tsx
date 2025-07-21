@@ -15,11 +15,11 @@ export function UserAvatar({
 	return (
 		<Avatar className={cn("size-8", className)}>
 			<AvatarImage
-				src={image || `https://avatar.vercel.sh/${name}.svg`}
+				src={image ?? `https://avatar.vercel.sh/${name}`}
 				alt={name}
-				className="rounded-full grayscale"
+				className="grayscale"
 			/>
-			<AvatarFallback className="rounded-full">{userShortName}</AvatarFallback>
+			<AvatarFallback>{userShortName}</AvatarFallback>
 		</Avatar>
 	);
 }

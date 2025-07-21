@@ -1,12 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
-import { XIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import { Card, CardAction, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { selectedExpenseAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
@@ -15,8 +12,6 @@ import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { EditExpenseForm } from "./expense";
-import { SectionContent } from "./section";
 
 const columnHelper = createColumnHelper<ExpenseWithClientConvertedSchema>();
 
@@ -101,52 +96,33 @@ const columns = [
 	}),
 ];
 
+/**
+ * @deprecated
+ */
 export function ExpensesTable({ data }: { data: ExpenseWithClientConvertedSchema[] }) {
-	const [selected, setSelected] = useAtom(selectedExpenseAtom);
+	const setSelected = useSetAtom(selectedExpenseAtom);
 
 	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {
 		const row = rows[0];
 		setSelected({
 			id: row ? row.id : null,
-			data: row ? {} : null,
 		});
 	}
 
 	function handleClose() {
-		setSelected({ id: null, data: null });
+		setSelected({ id: null });
 	}
 
 	useHotkeys("esc", handleClose, []);
 
 	return (
-		<SectionContent columns={12}>
-			<div className="col-span-8">
-				<DataTable
-					data={data}
-					columns={columns}
-					enableGrouping
-					onRowClick={handleRowClick}
-					controlledState={{ grouping: ["date"] }}
-					tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
-				/>
-			</div>
-			<div className="col-span-4 ">
-				{selected.id && (
-					<Card className="mt-12 flex h-[calc(100vh-180px)] overflow-hidden">
-						<CardHeader>
-							<CardTitle>Expense details</CardTitle>
-							<CardAction>
-								<Button size="icon" variant="ghost" onClick={() => handleClose()} autoFocus>
-									<XIcon className="size-4" />
-								</Button>
-							</CardAction>
-						</CardHeader>
-						<div className="h-full overflow-auto">
-							<EditExpenseForm id={selected.id} />
-						</div>
-					</Card>
-				)}
-			</div>
-		</SectionContent>
+		<DataTable
+			data={data}
+			columns={columns}
+			enableGrouping
+			onRowClick={handleRowClick}
+			controlledState={{ grouping: ["date"] }}
+			tableClassName="max-h-[calc(100vh-180px)] overflow-auto"
+		/>
 	);
 }

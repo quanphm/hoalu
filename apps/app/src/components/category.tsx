@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
-import { Trash2Icon } from "@hoalu/icons/lucide";
+import { TrashIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -25,7 +25,7 @@ import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 
-function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
+export function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
 
 	return (
@@ -50,7 +50,7 @@ function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function CreateCategoryDialogTrigger({
+export function CreateCategoryDialogTrigger({
 	children,
 	showTooltip = true,
 }: {
@@ -123,7 +123,7 @@ function CreateCategoryForm() {
 	);
 }
 
-function EditCategoryForm(props: { onEditCallback?(): void }) {
+export function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
 	const { data: category } = useSuspenseQuery(
@@ -182,7 +182,7 @@ function EditCategoryForm(props: { onEditCallback?(): void }) {
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button size="icon" variant="destructive">
-								<Trash2Icon className="size-4" />
+								<TrashIcon className="size-4" />
 							</Button>
 						</DialogTrigger>
 						<DeleteCategoryDialogContent />
@@ -226,5 +226,3 @@ function DeleteCategoryDialogContent() {
 		</DialogContent>
 	);
 }
-
-export { CreateCategoryDialog, CreateCategoryDialogTrigger, EditCategoryForm };

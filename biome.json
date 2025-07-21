@@ -50,6 +50,9 @@
 			"a11y": {
 				"noSvgWithoutTitle": "off",
 				"useSemanticElements": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "warn"
 			}
 		}
 	}

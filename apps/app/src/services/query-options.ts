@@ -194,35 +194,23 @@ export const expensesQueryOptions = (slug: string) => {
 							to: (workspace as any).metadata.currency,
 						}),
 					);
-
 					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
 					const factor = isNoCent ? 1 : 100;
 					const convertedAmount = realAmount * (result.rate / factor);
 
 					return {
 						...expense,
-						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: convertedAmount,
 					};
 				} catch {
 					return {
 						...expense,
-						date: datetime.format(expense.date, "d MMM yyyy"),
 						convertedAmount: -1,
 					};
 				}
 			});
 			const result = await Promise.all(promises);
 			return result as ExpenseWithClientConvertedSchema[];
-		},
-		select: (expenses) => {
-			return expenses.map(
-				(expense) =>
-					({
-						...expense,
-						date: datetime.format(expense.date, "yyyy-MM-dd"),
-					}) as ExpenseWithClientConvertedSchema,
-			);
 		},
 	});
 };

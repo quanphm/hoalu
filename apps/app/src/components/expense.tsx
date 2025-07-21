@@ -5,6 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { TrashIcon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -37,7 +38,7 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
+export function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
@@ -54,7 +55,7 @@ function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
 	);
 }
 
-function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
+export function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
 
 	return (
@@ -195,9 +196,9 @@ function CreateExpenseForm() {
 						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
 							<AccordionItem
 								value="advanced"
-								className="relative rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+								className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
 							>
-								<AccordionTrigger className="rounded-none bg-muted px-4 py-2 text-base leading-6 hover:no-underline focus-visible:ring-0">
+								<AccordionTrigger className="rounded-none bg-muted px-4 py-2">
 									More
 								</AccordionTrigger>
 								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
@@ -236,7 +237,7 @@ function CreateExpenseForm() {
 	);
 }
 
-function DeleteExpense({ id }: { id: string }) {
+export function DeleteExpense({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
 	const setSelectedExpense = useSetAtom(selectedExpenseAtom);
 	const mutation = useDeleteExpense();
@@ -244,13 +245,15 @@ function DeleteExpense({ id }: { id: string }) {
 	const onDelete = async () => {
 		await mutation.mutateAsync({ id });
 		setOpen(false);
-		setSelectedExpense({ id: null, data: null });
+		setSelectedExpense({ id: null });
 	};
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="destructive">Delete</Button>
+				<Button size="icon" variant="destructive" aria-label="Delete this expense">
+					<TrashIcon className="size-4" />
+				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
@@ -277,7 +280,7 @@ function DeleteExpense({ id }: { id: string }) {
 	);
 }
 
-function EditExpenseForm(props: { id: string; className?: string }) {
+export function EditExpenseForm(props: { id: string; className?: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
@@ -358,62 +361,51 @@ function EditExpenseForm(props: { id: string; className?: string }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="@container grid grid-cols-12 gap-4 px-6">
-					<div className="@md:col-span-7 col-span-12 flex flex-col gap-4">
-						<form.AppField name="date">
-							{(field) => <field.DatepickerInputField label="Date" />}
-						</form.AppField>
-						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" required />}
-						</form.AppField>
-						<form.AppField name="transaction">
-							{(field) => <field.TransactionAmountField label="Amount" />}
-						</form.AppField>
-						<div className="grid grid-cols-2 gap-4">
-							<form.AppField name="walletId">
-								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
-							</form.AppField>
-							<form.AppField name="categoryId">
-								{(field) => <field.SelectCategoryField label="Category" />}
-							</form.AppField>
-						</div>
-						<form.AppField name="description">
-							{(field) => (
-								<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
-							)}
-						</form.AppField>
-						<form.AppField name="repeat">
-							{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
-						</form.AppField>
-						<form.AppField name="attachments">
-							{(field) => <field.FilesField label="Attachments" />}
-						</form.AppField>
-					</div>
+				<form.AppField name="date">
+					{(field) => <field.DatepickerInputField label="Date" />}
+				</form.AppField>
+				<form.AppField name="title">
+					{(field) => <field.InputField label="Description" required />}
+				</form.AppField>
+				<form.AppField name="transaction">
+					{(field) => <field.TransactionAmountField label="Amount" />}
+				</form.AppField>
+				<div className="grid grid-cols-2 gap-4">
+					<form.AppField name="walletId">
+						{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
+					</form.AppField>
+					<form.AppField name="categoryId">
+						{(field) => <field.SelectCategoryField label="Category" />}
+					</form.AppField>
 				</div>
-				<div className="flex gap-2 px-6">
-					<Button type="submit">Update</Button>
-					<Button variant="ghost" type="button" onClick={() => form.reset()}>
+				<form.AppField name="description">
+					{(field) => <field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />}
+				</form.AppField>
+				<form.AppField name="repeat">
+					{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
+				</form.AppField>
+				<form.AppField name="attachments">
+					{(field) => <field.FilesField label="Attachments" />}
+				</form.AppField>
+				<div className="ml-auto flex gap-2">
+					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
 						Reset
 					</Button>
-					<div className="ml-auto">
-						<DeleteExpense id={props.id} />
-					</div>
+					<Button type="submit">Update</Button>
 				</div>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-function ExpenseCalendar() {
+export function ExpenseCalendar() {
 	const { date: searchDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
-
 	const currentSelectedDate = searchDate ? new Date(searchDate) : undefined;
 
 	return (
 		<Calendar
 			mode="single"
-			className="-mx-2"
 			selected={currentSelectedDate}
 			onSelect={(selectedDate) => {
 				navigate({
@@ -425,5 +417,3 @@ function ExpenseCalendar() {
 		/>
 	);
 }
-
-export { CreateExpenseDialog, CreateExpenseDialogTrigger, EditExpenseForm, ExpenseCalendar };

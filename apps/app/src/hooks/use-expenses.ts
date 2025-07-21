@@ -1,49 +1,46 @@
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { datetime } from "@hoalu/common/datetime";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { expenseKeys } from "@/services/query-key-factory";
-import { exchangeRatesQueryOptions, expensesQueryOptions } from "@/services/query-options";
+import { expensesQueryOptions } from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
 
-export function useExpenses() {
-	const queryClient = useQueryClient();
-	const {
-		slug,
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+interface Options<T extends boolean = false> {
+	groupByDate: T;
+}
+
+export function useExpenses(
+	options: Options<true>,
+): Map<string, ExpenseWithClientConvertedSchema[]>;
+export function useExpenses<T extends boolean>(
+	options: Options<T>,
+): ExpenseWithClientConvertedSchema[];
+export function useExpenses<T extends boolean>(options: Options<T>) {
+	const { slug } = useWorkspace();
 	const { data } = useSuspenseQuery({
-		queryKey: expenseKeys.withCurrencyConverted(slug),
-		queryFn: async () => {
-			const promises = expenses.map(async (expense) => {
-				const { realAmount, currency: sourceCurrency } = expense;
-				try {
-					const result = await queryClient.fetchQuery(
-						exchangeRatesQueryOptions({ from: sourceCurrency, to: workspaceCurrency }),
-					);
+		...expensesQueryOptions(slug),
+		select: (expenses) => {
+			if (options.groupByDate) {
+				const groupedExpensesByDate = new Map<string, ExpenseWithClientConvertedSchema[]>();
+				expenses.forEach((expense) => {
+					const dateKey = expense.date.split("T")[0];
+					if (!groupedExpensesByDate.has(dateKey)) {
+						groupedExpensesByDate.set(dateKey, []);
+					}
+					groupedExpensesByDate.get(dateKey)!.push(expense);
+				});
+				return groupedExpensesByDate;
+			}
 
-					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
-					const factor = isNoCent ? 1 : 100;
-					const convertedAmount = realAmount * (result.rate / factor);
-
-					return {
+			return expenses.map(
+				(expense) =>
+					({
 						...expense,
-						date: datetime.format(expense.date, "d MMM yyyy"),
-						convertedAmount: convertedAmount,
-					};
-				} catch {
-					return {
-						...expense,
-						date: datetime.format(expense.date, "d MMM yyyy"),
-						convertedAmount: -1,
-					};
-				}
-			});
-			const result = await Promise.all(promises);
-			return result;
+						date: datetime.format(expense.date, "yyyy-MM-dd"),
+					}) as ExpenseWithClientConvertedSchema,
+			);
 		},
 	});
-	return data as ExpenseWithClientConvertedSchema[];
+
+	return data;
 }
