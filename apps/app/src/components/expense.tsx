@@ -401,13 +401,11 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 export function ExpenseCalendar() {
 	const { date: searchDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
-
 	const currentSelectedDate = searchDate ? new Date(searchDate) : undefined;
 
 	return (
 		<Calendar
 			mode="single"
-			className="-mx-2"
 			selected={currentSelectedDate}
 			onSelect={(selectedDate) => {
 				navigate({

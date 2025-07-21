@@ -1,5 +1,6 @@
 import { useAtomValue } from "jotai";
 
+import { datetime } from "@hoalu/common/datetime";
 import { CalendarIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
@@ -11,21 +12,27 @@ import { htmlToText } from "@/helpers/dom-parser";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 
-export function ExpensesList({
-	data,
-	onRowClick,
-}: {
-	data: Map<string, ExpenseWithClientConvertedSchema[]>;
+interface ExpenseListProps {
+	data: [string, ExpenseWithClientConvertedSchema[]][];
 	onRowClick(id: string | null): void;
-}) {
-	return Array.from(data.entries()).map(([date, value]) => (
+}
+export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
+	if (data.length === 0) {
+		return (
+			<p className="mx-4 rounded-lg bg-muted p-4 text-center text-base text-muted-foreground">
+				No expenses found
+			</p>
+		);
+	}
+
+	return data.map(([date, value]) => (
 		<div key={date} data-slot="expense-group">
 			<div
 				data-slot="expense-group-title"
 				className="sticky top-0 flex items-center bg-muted py-2 pr-6 pl-3 text-xs"
 			>
 				<div className="flex items-center gap-1 font-semibold">
-					<CalendarIcon className="size-3" /> {date}
+					<CalendarIcon className="size-3" /> {datetime.format(date, "dd/MM/yyyy")}
 				</div>
 				<div className="ml-auto">
 					<TotalExpenseByDate data={value} />
@@ -40,11 +47,11 @@ export function ExpensesList({
 	));
 }
 
-function ExpenseContent(
-	props: ExpenseWithClientConvertedSchema & { onClick(id: string | null): void },
-) {
+interface ExpenseContentProps extends ExpenseWithClientConvertedSchema {
+	onClick(id: string | null): void;
+}
+function ExpenseContent(props: ExpenseContentProps) {
 	const selectedRow = useAtomValue(selectedExpenseAtom);
-
 	const handleKeyUp: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
 		if (event.key === "Escape") {
 			props.onClick(null);
@@ -58,8 +65,9 @@ function ExpenseContent(
 			data-slot="expense-item"
 			className={cn(
 				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/40",
+				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
-					"border-primary bg-blue-100 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
+					"border-blue-600 bg-blue-100 last-of-type:border-b-blue-600 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
 			)}
 			role="button"
 			tabIndex={0}
@@ -95,7 +103,10 @@ function ExpenseContent(
 	);
 }
 
-function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] }) {
+interface TotalExpenseByDateProps {
+	data: ExpenseWithClientConvertedSchema[];
+}
+function TotalExpenseByDate(props: TotalExpenseByDateProps) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
