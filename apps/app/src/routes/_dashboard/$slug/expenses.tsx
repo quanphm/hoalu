@@ -44,6 +44,8 @@ function RouteComponent() {
 		return true;
 	});
 
+	console.log(expenseList);
+
 	return (
 		<Section>
 			<SectionHeader>
