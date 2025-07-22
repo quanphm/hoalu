@@ -23,11 +23,14 @@ export function useExpenses<T extends boolean>(options: Options<T>) {
 			if (options.groupByDate) {
 				const groupedExpensesByDate = new Map<string, ExpenseWithClientConvertedSchema[]>();
 				expenses.forEach((expense) => {
-					const dateKey = expense.date.split("T")[0];
+					const dateKey = datetime.format(expense.date, "yyyy-MM-dd");
 					if (!groupedExpensesByDate.has(dateKey)) {
 						groupedExpensesByDate.set(dateKey, []);
 					}
-					groupedExpensesByDate.get(dateKey)!.push(expense);
+					const expensesForDate = groupedExpensesByDate.get(dateKey);
+					if (expensesForDate) {
+						expensesForDate.push(expense);
+					}
 				});
 				return groupedExpensesByDate;
 			}
