@@ -20,7 +20,7 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 	}
 
 	return (
-		<div className="flex items-center space-x-0.5 overflow-hidden rounded-lg rounded-b-none bg-muted/50 p-0.5">
+		<div className="flex items-center space-x-1 overflow-hidden rounded-lg rounded-b-none bg-muted/50 p-1">
 			<Button
 				variant={editor.isActive("bold") ? "outline" : "ghost"}
 				size="icon"

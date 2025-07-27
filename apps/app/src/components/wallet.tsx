@@ -226,7 +226,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 					{(field) => (
 						<field.SelectField
 							label="Owner"
-							description="You can transfer wallet ownership to the others"
+							description="Give wallet ownership to the others"
 							options={workspace.members.map((member) => {
 								return {
 									label: member.user.name,

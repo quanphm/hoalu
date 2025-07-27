@@ -4,8 +4,8 @@ import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
-import { datetime } from "@hoalu/common/datetime";
-import { TrashIcon } from "@hoalu/icons/lucide";
+import { toFromToDateObject } from "@hoalu/common/datetime";
+import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -251,8 +251,8 @@ export function DeleteExpense({ id }: { id: string }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button size="icon" variant="outline" aria-label="Delete this expense">
-					<TrashIcon className="size-4" />
+				<Button size="icon" variant="ghost" aria-label="Delete this expense">
+					<Trash2Icon className="size-4" />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]">
@@ -361,33 +361,37 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="date">
-					{(field) => <field.DatepickerInputField label="Date" />}
-				</form.AppField>
-				<form.AppField name="title">
-					{(field) => <field.InputField label="Description" required />}
-				</form.AppField>
-				<form.AppField name="transaction">
-					{(field) => <field.TransactionAmountField label="Amount" />}
-				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
-					<form.AppField name="walletId">
-						{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
+				<div className="grid grid-cols-1 gap-4 px-4">
+					<form.AppField name="date">
+						{(field) => <field.DatepickerInputField label="Date" />}
 					</form.AppField>
-					<form.AppField name="categoryId">
-						{(field) => <field.SelectCategoryField label="Category" />}
+					<form.AppField name="title">
+						{(field) => <field.InputField label="Description" required />}
+					</form.AppField>
+					<form.AppField name="transaction">
+						{(field) => <field.TransactionAmountField label="Amount" />}
+					</form.AppField>
+					<div className="grid grid-cols-2 gap-4">
+						<form.AppField name="walletId">
+							{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
+						</form.AppField>
+						<form.AppField name="categoryId">
+							{(field) => <field.SelectCategoryField label="Category" />}
+						</form.AppField>
+					</div>
+					<form.AppField name="description">
+						{(field) => (
+							<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
+						)}
+					</form.AppField>
+					<form.AppField name="repeat">
+						{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
+					</form.AppField>
+					<form.AppField name="attachments">
+						{(field) => <field.FilesField label="Attachments" />}
 					</form.AppField>
 				</div>
-				<form.AppField name="description">
-					{(field) => <field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />}
-				</form.AppField>
-				<form.AppField name="repeat">
-					{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
-				</form.AppField>
-				<form.AppField name="attachments">
-					{(field) => <field.FilesField label="Attachments" />}
-				</form.AppField>
-				<div className="sticky bottom-0 flex w-full justify-end gap-2 bg-background py-4">
+				<div className="sticky bottom-0 flex w-full justify-end gap-2 border-t bg-card px-4 py-2">
 					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
 						Reset
 					</Button>
@@ -401,16 +405,17 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 export function ExpenseCalendar() {
 	const { date: searchDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
-	const currentSelectedDate = searchDate ? new Date(searchDate) : undefined;
+	const currentValue = toFromToDateObject(searchDate);
 
 	return (
 		<Calendar
-			mode="single"
-			selected={currentSelectedDate}
+			mode="range"
+			selected={currentValue}
 			onSelect={(selectedDate) => {
+				const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
 				navigate({
 					search: () => ({
-						date: selectedDate ? datetime.format(selectedDate, "yyyy-MM-dd") : undefined,
+						date: selectedDate ? searchQuery : undefined,
 					}),
 				});
 			}}
