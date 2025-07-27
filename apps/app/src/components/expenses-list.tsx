@@ -13,7 +13,7 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 
 interface ExpenseListProps {
-	data: [string, ExpenseWithClientConvertedSchema[]][];
+	data: ExpenseWithClientConvertedSchema[];
 	onRowClick(id: string | null): void;
 }
 export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
@@ -25,11 +25,23 @@ export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
 		);
 	}
 
-	return data.map(([date, value]) => (
+	const groupedExpensesByDate = new Map<string, ExpenseWithClientConvertedSchema[]>();
+	data.forEach((expense) => {
+		const dateKey = datetime.format(expense.date, "yyyy-MM-dd");
+		if (!groupedExpensesByDate.has(dateKey)) {
+			groupedExpensesByDate.set(dateKey, []);
+		}
+		const expensesForDate = groupedExpensesByDate.get(dateKey);
+		if (expensesForDate) {
+			expensesForDate.push(expense);
+		}
+	});
+
+	return Array.from(groupedExpensesByDate.entries()).map(([date, value]) => (
 		<div key={date} data-slot="expense-group">
 			<div
 				data-slot="expense-group-title"
-				className="sticky top-0 flex items-center bg-muted py-2 pr-6 pl-3 text-xs"
+				className="sticky top-0 z-2 flex items-center border-muted border-y bg-muted py-2 pr-6 pl-3 text-xs"
 			>
 				<div className="flex items-center gap-1 font-semibold">
 					<CalendarIcon className="size-3" /> {datetime.format(date, "dd/MM/yyyy")}
@@ -39,9 +51,11 @@ export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
 				</div>
 			</div>
 			<div data-slot="expense-group-content" className="flex flex-col">
-				{value.map((expense) => {
-					return <ExpenseContent key={expense.id} {...expense} onClick={onRowClick} />;
-				})}
+				{value
+					// .sort((a, b) => b.realAmount - a.realAmount)
+					.map((expense) => {
+						return <ExpenseContent key={expense.id} {...expense} onClick={onRowClick} />;
+					})}
 			</div>
 		</div>
 	));
@@ -64,10 +78,10 @@ function ExpenseContent(props: ExpenseContentProps) {
 		<div
 			data-slot="expense-item"
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/40",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/30",
 				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
-					"border-blue-600 bg-blue-100 last-of-type:border-b-blue-600 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
+					"border-blue-500 bg-blue-100 last-of-type:border-b-blue-500 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
 			)}
 			role="button"
 			tabIndex={0}
@@ -81,9 +95,9 @@ function ExpenseContent(props: ExpenseContentProps) {
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div className="mt-1 flex gap-2">
+				<div data-slot="item-tags" className="mt-1 flex origin-left scale-90 gap-2">
 					{props.category && (
-						<Badge className={createCategoryTheme(props.category.color)}>
+						<Badge className={cn(createCategoryTheme(props.category.color))}>
 							{props.category.name}
 						</Badge>
 					)}
@@ -116,7 +130,7 @@ function TotalExpenseByDate(props: TotalExpenseByDateProps) {
 	}, 0);
 
 	return (
-		<span className="font-semibold text-base text-destructive tracking-tight">
+		<span className="font-semibold text-base text-red-600 tracking-tight">
 			{formatCurrency(total as number, workspaceCurrency)}
 		</span>
 	);

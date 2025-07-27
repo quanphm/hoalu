@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
-import { TrashIcon } from "@hoalu/icons/lucide";
+import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -182,7 +182,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button size="icon" variant="destructive">
-								<TrashIcon className="size-4" />
+								<Trash2Icon className="size-4" />
 							</Button>
 						</DialogTrigger>
 						<DeleteCategoryDialogContent />

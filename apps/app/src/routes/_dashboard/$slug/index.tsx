@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 
 function RouteComponent() {
 	const { slug } = Route.useParams();
-	const expenses = useExpenses({ groupByDate: false });
+	const expenses = useExpenses();
 	const recentTransactions = expenses.slice(0, 8);
 
 	return (

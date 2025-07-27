@@ -1,3 +1,7 @@
+/**
+ * @deprecated
+ */
+
 import { createColumnHelper } from "@tanstack/react-table";
 import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";

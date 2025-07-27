@@ -59,7 +59,6 @@ export function TransactionAmountField(props: Props) {
 						onBlur={field.handleBlur}
 						onChange={handleValueChange}
 						minValue={0}
-						step={0.1}
 						className="-ms-px flex-1"
 					>
 						<Group

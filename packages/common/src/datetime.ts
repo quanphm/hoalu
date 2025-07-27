@@ -21,3 +21,16 @@ export const TIME_IN_SECONDS = {
 } as const;
 
 export const datetime = { format: dateFns.format, intlFormatDistance: dateFns.intlFormatDistance };
+
+/**
+ *
+ * Convert `1753030800000-1753376400000` to `{ from, to }` object
+ */
+export function toFromToDateObject(searchDate?: string) {
+	if (!searchDate) return undefined;
+	const fromto = searchDate.split("-");
+	return {
+		from: new Date(parseInt(fromto[0])),
+		to: new Date(parseInt(fromto[1])),
+	};
+}
