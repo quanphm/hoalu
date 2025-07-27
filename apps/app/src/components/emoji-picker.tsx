@@ -16,7 +16,7 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	return (
 		<Popover onOpenChange={setIsOpen} open={isOpen}>
 			<PopoverTrigger asChild>
-				<Button variant="outline" size="icon">
+				<Button variant="outline" size="icon" className="size-9">
 					<SmilePlusIcon className="size-4" />
 				</Button>
 			</PopoverTrigger>
