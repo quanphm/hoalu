@@ -210,12 +210,8 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<form.Subscribe selector={(state) => state.isPristine}>
-							{(isPristine) => (
-								<Button type="submit" disabled={isPristine}>
-									Save
-								</Button>
-							)}
+						<form.Subscribe>
+							<Button type="submit">Save</Button>
 						</form.Subscribe>
 					</div>
 				)}
@@ -260,12 +256,8 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<form.Subscribe selector={(state) => state.isPristine}>
-							{(isPristine) => (
-								<Button type="submit" disabled={isPristine}>
-									Update
-								</Button>
-							)}
+						<form.Subscribe>
+							<Button type="submit">Update</Button>
 						</form.Subscribe>
 					</div>
 				)}

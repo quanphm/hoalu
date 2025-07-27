@@ -45,7 +45,7 @@ function RouteComponent() {
 	});
 
 	return (
-		<Section>
+		<Section className="-mb-8">
 			<SectionHeader>
 				<SectionTitle>Expenses</SectionTitle>
 				<CreateExpenseDialogTrigger>
@@ -63,7 +63,7 @@ function RouteComponent() {
 						</div>
 					</div>
 					<div className="col-span-4 h-[calc(100vh-98px)] overflow-hidden">
-						<Card className="flex h-full overflow-auto rounded-none border-b-0">
+						<Card className="flex h-full overflow-auto rounded-none border-muted border-b-0 pb-0">
 							<CardHeader>
 								<CardTitle>Expense details</CardTitle>
 								{selectedRow.id && (

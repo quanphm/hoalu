@@ -81,7 +81,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div className="mt-1 flex gap-2">
+				<div data-slot="item-tags" className="mt-1 flex origin-left scale-85 gap-2">
 					{props.category && (
 						<Badge className={createCategoryTheme(props.category.color)}>
 							{props.category.name}

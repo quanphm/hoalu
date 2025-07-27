@@ -251,7 +251,7 @@ export function DeleteExpense({ id }: { id: string }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button size="icon" variant="destructive" aria-label="Delete this expense">
+				<Button size="icon" variant="outline" aria-label="Delete this expense">
 					<TrashIcon className="size-4" />
 				</Button>
 			</DialogTrigger>
@@ -387,7 +387,7 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 				<form.AppField name="attachments">
 					{(field) => <field.FilesField label="Attachments" />}
 				</form.AppField>
-				<div className="ml-auto flex gap-2">
+				<div className="sticky bottom-0 flex w-full justify-end gap-2 bg-background py-4">
 					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
 						Reset
 					</Button>
