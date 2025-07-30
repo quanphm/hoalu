@@ -1,5 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/react-router";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { DokiClientProvider } from "@hoalu/doki";
@@ -44,15 +45,17 @@ const rootElement = document.getElementById("root");
 
 function App() {
 	return (
-		<UiProvider>
-			<LocalPostgresProvider>
-				<QueryClientProvider client={queryClient}>
-					<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
-						<RouterProvider router={router} />
-					</DokiClientProvider>
-				</QueryClientProvider>
-			</LocalPostgresProvider>
-		</UiProvider>
+		<StrictMode>
+			<UiProvider>
+				<LocalPostgresProvider>
+					<QueryClientProvider client={queryClient}>
+						<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
+							<RouterProvider router={router} />
+						</DokiClientProvider>
+					</QueryClientProvider>
+				</LocalPostgresProvider>
+			</UiProvider>
+		</StrictMode>
 	);
 }
 

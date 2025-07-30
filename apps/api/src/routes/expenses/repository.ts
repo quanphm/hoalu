@@ -15,7 +15,7 @@ export class ExpenseRepository {
 			.innerJoin(schema.wallet, eq(schema.expense.walletId, schema.wallet.id))
 			.leftJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.where(eq(schema.expense.workspaceId, param.workspaceId))
-			.orderBy(desc(schema.expense.date));
+			.orderBy(desc(schema.expense.date), desc(schema.expense.amount));
 
 		const result = queryData.map((data) => ({
 			...data.expense,

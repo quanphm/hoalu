@@ -53,7 +53,7 @@ export function Greeting() {
 				{message}, {user?.name}
 			</p>
 			<p className="text-base text-muted-foreground tracking-wide">
-				{icon} {datetime.format(today, "EEEE, MMM d HH:mm")}
+				{icon} {datetime.format(today, "EEEE, d MMM HH:mm")}
 			</p>
 		</div>
 	);

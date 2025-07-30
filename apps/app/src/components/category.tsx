@@ -181,7 +181,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 				<div className="flex w-full items-center justify-between">
 					<Dialog>
 						<DialogTrigger asChild>
-							<Button size="icon" variant="destructive">
+							<Button size="icon" variant="ghost">
 								<Trash2Icon className="size-4" />
 							</Button>
 						</DialogTrigger>

@@ -51,11 +51,9 @@ export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
 				</div>
 			</div>
 			<div data-slot="expense-group-content" className="flex flex-col">
-				{value
-					// .sort((a, b) => b.realAmount - a.realAmount)
-					.map((expense) => {
-						return <ExpenseContent key={expense.id} {...expense} onClick={onRowClick} />;
-					})}
+				{value.map((expense) => {
+					return <ExpenseContent key={expense.id} {...expense} onClick={onRowClick} />;
+				})}
 			</div>
 		</div>
 	));
@@ -77,6 +75,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 	return (
 		<div
 			data-slot="expense-item"
+			id={props.id}
 			className={cn(
 				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/30",
 				"last-of-type:border-b-transparent",
