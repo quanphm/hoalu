@@ -19,6 +19,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Input } from "@hoalu/ui/input";
 import { createExpenseDialogOpenAtom, draftExpenseAtom, selectedExpenseAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
@@ -420,5 +421,23 @@ export function ExpenseCalendar() {
 				});
 			}}
 		/>
+	);
+}
+
+export function ExpenseSearch() {
+	return (
+		<div className="px-2 py-4">
+			<Input
+				placeholder="Search"
+				// value={text}
+				// onChange={(e) => {
+				// 	navigate({
+				// 		search: () => ({
+				// 			text: e.target.value,
+				// 		}),
+				// 	});
+				// }}
+			/>
+		</div>
 	);
 }

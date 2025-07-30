@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { ChevronDown, ChevronUpIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { ChevronDown, ChevronUpIcon, PlusIcon, XIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { selectedExpenseAtom } from "@/atoms";
 import {
@@ -12,6 +12,7 @@ import {
 	DeleteExpense,
 	EditExpenseForm,
 	ExpenseCalendar,
+	ExpenseSearch,
 } from "@/components/expense";
 import { ExpensesList } from "@/components/expenses-list";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
-	const { date: searchDate } = Route.useSearch();
+	const { date: searchByDate } = Route.useSearch();
 	const expenses = useExpenses();
 	const [selectedRow, setSelectedRow] = useAtom(selectedExpenseAtom);
 
@@ -33,41 +34,51 @@ function RouteComponent() {
 		setSelectedRow({ id });
 	}
 
-	useHotkeys("esc", () => {
-		setSelectedRow({ id: null });
-	}, []);
-
 	const expenseList = expenses.filter((expense) => {
-		const range = toFromToDateObject(searchDate);
+		let filterResult = true;
+
+		const range = toFromToDateObject(searchByDate);
 		if (range) {
 			const fromDate = datetime.format(range.from, "yyyy-MM-dd");
 			const toDate = datetime.format(range.to, "yyyy-MM-dd");
 			const expenseDate = datetime.format(expense.date, "yyyy-MM-dd");
-			return expenseDate >= fromDate && expenseDate <= toDate;
+			filterResult = expenseDate >= fromDate && expenseDate <= toDate;
 		}
-		return true;
+
+		// if (searchByText) {
+		// 	const lowercaseSearchQuery = searchByText.toLowerCase();
+		// 	filterResult = !!(
+		// 		expense.title.toLowerCase().includes(lowercaseSearchQuery) ||
+		// 		expense.description?.toLowerCase().includes(lowercaseSearchQuery)
+		// 	);
+		// }
+
+		return filterResult;
 	});
+
 	const currentIndex = expenseList.findIndex((item) => item.id === selectedRow.id);
 
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;
 		const prevRowData = expenseList[prevIndex];
-
-		if (!prevRowData) return;
-
-		const prevRowId = prevRowData.id;
-		setSelectedRow({ id: prevRowId });
+		if (!prevRowData) {
+			return;
+		}
+		handleRowClick(prevRowData.id);
 	}
 
 	function handleGoDown() {
 		const nextIndex = currentIndex + 1;
 		const nextRowData = expenseList[nextIndex];
-
-		if (!nextRowData) return;
-
-		const nextRowId = nextRowData.id;
-		setSelectedRow({ id: nextRowId });
+		if (!nextRowData) {
+			return;
+		}
+		handleRowClick(nextRowData.id);
 	}
+
+	useHotkeys("esc", () => handleRowClick(null), []);
+	// useHotkeys("j", () => handleGoDown());
+	// useHotkeys("k", () => handleGoUp());
 
 	return (
 		<Section className="-mb-8">
@@ -83,6 +94,7 @@ function RouteComponent() {
 			<SectionContent>
 				<SectionContent columns={12} className="gap-0">
 					<div className="col-span-4 h-[calc(100vh-98px)] overflow-hidden">
+						<ExpenseSearch />
 						<div className="scrollbar-thin h-full overflow-auto">
 							<ExpensesList data={expenseList} onRowClick={handleRowClick} />
 						</div>
@@ -102,7 +114,12 @@ function RouteComponent() {
 											<ChevronDown className="size-4" />
 										</Button>
 									</div>
-									<DeleteExpense id={selectedRow.id} />
+									<div className="flex items-center justify-center gap-2">
+										<DeleteExpense id={selectedRow.id} />
+										<Button size="icon" variant="ghost" onClick={() => handleRowClick(null)}>
+											<XIcon className="size-4" />
+										</Button>
+									</div>
 								</div>
 							)}
 							<div data-slot="expense-details-form">
