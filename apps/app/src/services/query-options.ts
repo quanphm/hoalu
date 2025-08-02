@@ -184,6 +184,7 @@ export const expensesQueryOptions = (slug: string) => {
 		queryKey: expenseKeys.all(slug),
 		queryFn: async () => {
 			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			console.log(workspace);
 			const expenses = await apiClient.expenses.list(slug);
 			const promises = expenses.map(async (expense) => {
 				const { realAmount, currency: sourceCurrency } = expense;
@@ -202,7 +203,7 @@ export const expensesQueryOptions = (slug: string) => {
 						...expense,
 						convertedAmount: convertedAmount,
 					};
-				} catch {
+				} catch (_error) {
 					return {
 						...expense,
 						convertedAmount: -1,
@@ -211,14 +212,6 @@ export const expensesQueryOptions = (slug: string) => {
 			});
 			const result = await Promise.all(promises);
 			return result as ExpenseWithClientConvertedSchema[];
-		},
-		select: (expenses) => {
-			return expenses.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				} as ExpenseWithClientConvertedSchema;
-			});
 		},
 	});
 };

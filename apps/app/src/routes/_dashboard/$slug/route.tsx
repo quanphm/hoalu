@@ -14,7 +14,9 @@ import {
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		// [Important] other queries need data from this query
 		await queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug));
+
 		await Promise.all([
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
 			queryClient.ensureQueryData(walletsQueryOptions(slug)),
