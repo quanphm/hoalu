@@ -93,13 +93,16 @@ function RouteComponent() {
 			</SectionHeader>
 			<SectionContent>
 				<SectionContent columns={12} className="gap-0">
-					<div className="col-span-4 h-[calc(100vh-98px)] overflow-hidden">
+					<div data-slot="expense-list" className="col-span-4 h-[calc(100vh-98px)] overflow-hidden">
 						<ExpenseSearch />
-						<div className="scrollbar-thin h-full overflow-auto">
+						<div className="scrollbar-thin h-[calc(100vh-150px)] overflow-auto">
 							<ExpensesList data={expenseList} onRowClick={handleRowClick} />
 						</div>
 					</div>
-					<div className="col-span-5 h-[calc(100vh-98px)] overflow-hidden">
+					<div
+						data-slot="expense-details"
+						className="col-span-5 h-[calc(100vh-98px)] overflow-hidden"
+					>
 						<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 bg-card p-0 text-card-foreground">
 							{selectedRow.id && (
 								<div

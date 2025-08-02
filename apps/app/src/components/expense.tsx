@@ -411,6 +411,7 @@ export function ExpenseCalendar() {
 	return (
 		<Calendar
 			mode="range"
+			captionLayout="dropdown"
 			selected={currentValue}
 			onSelect={(selectedDate) => {
 				const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
@@ -426,7 +427,7 @@ export function ExpenseCalendar() {
 
 export function ExpenseSearch() {
 	return (
-		<div className="px-2 py-4">
+		<div className="px-2 pb-4">
 			<Input
 				placeholder="Search"
 				// value={text}

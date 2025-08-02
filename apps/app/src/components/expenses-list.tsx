@@ -77,7 +77,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			data-slot="expense-item"
 			id={props.id}
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/30",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/30",
 				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
 					"border-blue-500 bg-blue-100 last-of-type:border-b-blue-500 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
