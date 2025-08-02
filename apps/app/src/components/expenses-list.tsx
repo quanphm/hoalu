@@ -41,7 +41,7 @@ export function ExpensesList({ data, onRowClick }: ExpenseListProps) {
 		<div key={date} data-slot="expense-group">
 			<div
 				data-slot="expense-group-title"
-				className="sticky top-0 z-2 flex items-center border-muted border-y bg-muted py-2 pr-6 pl-3 text-xs"
+				className="sticky top-0 z-2 flex items-center border-muted bg-muted py-2 pr-6 pl-3 text-xs"
 			>
 				<div className="flex items-center gap-1 font-semibold">
 					<CalendarIcon className="size-3" /> {datetime.format(date, "dd/MM/yyyy")}
@@ -77,7 +77,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			data-slot="expense-item"
 			id={props.id}
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/30",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border/10 px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/60",
 				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
 					"border-blue-500 bg-blue-100 last-of-type:border-b-blue-500 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
@@ -129,7 +129,7 @@ function TotalExpenseByDate(props: TotalExpenseByDateProps) {
 	}, 0);
 
 	return (
-		<span className="font-semibold text-base text-red-600 tracking-tight">
+		<span className="font-semibold text-base text-destructive tracking-tight">
 			{formatCurrency(total as number, workspaceCurrency)}
 		</span>
 	);

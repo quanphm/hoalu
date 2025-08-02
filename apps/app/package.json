@@ -25,6 +25,7 @@
 		"@tanstack/react-router": "^1.130.12",
 		"@tanstack/react-router-devtools": "^1.130.13",
 		"@tanstack/react-table": "^8.21.3",
+		"@tanstack/react-virtual": "^3.13.12",
 		"@tiptap/extension-placeholder": "^2.26.1",
 		"@tiptap/pm": "^2.26.1",
 		"@tiptap/react": "^2.26.1",

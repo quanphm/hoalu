@@ -1,12 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "./themes/default.css";
+@import "./themes/custom.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
 	* {
-		@apply border-border outline-ring/50;
+		@apply border-border outline-ring/50 antialiased;
 	}
 	body {
 		@apply bg-background text-foreground;

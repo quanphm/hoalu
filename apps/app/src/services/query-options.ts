@@ -212,6 +212,14 @@ export const expensesQueryOptions = (slug: string) => {
 			const result = await Promise.all(promises);
 			return result as ExpenseWithClientConvertedSchema[];
 		},
+		select: (expenses) => {
+			return expenses.map((expense) => {
+				return {
+					...expense,
+					date: datetime.format(expense.date, "yyyy-MM-dd"),
+				} as ExpenseWithClientConvertedSchema;
+			});
+		},
 	});
 };
 
