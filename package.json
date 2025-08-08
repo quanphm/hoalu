@@ -23,10 +23,10 @@
 		"format": "biome check --write"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.2",
+		"@biomejs/biome": "^2.1.4",
 		"turbo": "^2.5.5",
 		"typescript": "^5.9.2",
-		"vite": "^6.3.5",
+		"vite": "^7.1.1",
 		"vitest": "^3.2.4"
 	},
 	"packageManager": "bun@1.2.18"

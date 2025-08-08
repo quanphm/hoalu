@@ -77,10 +77,10 @@ function ExpenseContent(props: ExpenseContentProps) {
 			data-slot="expense-item"
 			id={props.id}
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border/10 px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/60",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 px-6 py-2 text-sm outline-none ring-0 hover:bg-muted/60",
 				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
-					"border-blue-500 bg-blue-100 last-of-type:border-b-blue-500 hover:bg-blue-100 dark:bg-blue-950 hover:dark:bg-blue-950",
+					" bg-blue-200 hover:bg-blue-200 dark:bg-blue-900 hover:dark:bg-blue-900",
 			)}
 			role="button"
 			tabIndex={0}
