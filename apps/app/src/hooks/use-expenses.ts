@@ -18,6 +18,5 @@ export function useExpenses() {
 			});
 		},
 	});
-
 	return data;
 }

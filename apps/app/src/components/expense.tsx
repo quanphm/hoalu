@@ -112,7 +112,8 @@ function CreateExpenseForm() {
 			{ name: string; options: { label: string; value: string; currency: string }[] }
 		>,
 	);
-	const defaultWallet = walletGroups[user?.id]?.options[0] || fallbackWallet;
+	const userId = user?.id || "";
+	const defaultWallet = walletGroups[userId]?.options[0] || fallbackWallet;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -155,7 +156,6 @@ function CreateExpenseForm() {
 		},
 	});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: shut up
 	useEffect(() => {
 		return () => {
 			if (!form.state.isSubmitted) {
@@ -411,11 +411,13 @@ export function ExpenseCalendar() {
 	return (
 		<Calendar
 			mode="range"
+			captionLayout="dropdown"
 			selected={currentValue}
 			onSelect={(selectedDate) => {
 				const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
 				navigate({
-					search: () => ({
+					search: (state) => ({
+						...state,
 						date: selectedDate ? searchQuery : undefined,
 					}),
 				});
@@ -426,7 +428,7 @@ export function ExpenseCalendar() {
 
 export function ExpenseSearch() {
 	return (
-		<div className="px-2 py-4">
+		<div className="px-2 pb-4">
 			<Input
 				placeholder="Search"
 				// value={text}

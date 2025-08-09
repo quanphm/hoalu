@@ -27,7 +27,7 @@ export function NavWorkspace() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">
 						<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
-							<GalleryVerticalIcon className="text-muted-foreground/50" />
+							<GalleryVerticalIcon />
 							<span>Overview</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
@@ -43,7 +43,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 						>
-							<ArrowRightLeftIcon className="text-muted-foreground/50" />
+							<ArrowRightLeftIcon />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
@@ -59,7 +59,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
 						>
-							<ListTodoIcon className="text-muted-foreground/50" />
+							<ListTodoIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
@@ -75,7 +75,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_workspace.enabled}
 						>
-							<SettingsIcon className="text-muted-foreground/50" />
+							<SettingsIcon />
 							<span>Settings</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
