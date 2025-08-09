@@ -17,6 +17,7 @@
 		"./calendar": "./src/components/calendar.tsx",
 		"./card": "./src/components/card.tsx",
 		"./chart": "./src/components/chart.tsx",
+		"./checkbox": "./src/components/checkbox.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
 		"./command": "./src/components/command.tsx",
 		"./dialog": "./src/components/dialog.tsx",

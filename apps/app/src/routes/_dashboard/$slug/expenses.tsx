@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { ChevronDown, ChevronUpIcon, PlusIcon, XIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { selectedExpenseAtom } from "@/atoms";
+import { expenseCategoryFilterAtom, selectedExpenseAtom } from "@/atoms";
 import {
 	CreateExpenseDialogTrigger,
 	DeleteExpense,
@@ -14,6 +14,7 @@ import {
 	ExpenseCalendar,
 	ExpenseSearch,
 } from "@/components/expense";
+import { ExpenseCategoryFilter } from "@/components/expenses-category-filter";
 import { ExpensesList } from "@/components/expenses-list";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -29,6 +30,8 @@ function RouteComponent() {
 	const { date: searchByDate } = Route.useSearch();
 	const expenses = useExpenses();
 	const [selectedRow, setSelectedRow] = useAtom(selectedExpenseAtom);
+	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
+
 	const expenseList = expenses.filter((expense) => {
 		let filterResult = true;
 
@@ -40,13 +43,10 @@ function RouteComponent() {
 			filterResult = expenseDate >= fromDate && expenseDate <= toDate;
 		}
 
-		// if (searchByText) {
-		// 	const lowercaseSearchQuery = searchByText.toLowerCase();
-		// 	filterResult = !!(
-		// 		expense.title.toLowerCase().includes(lowercaseSearchQuery) ||
-		// 		expense.description?.toLowerCase().includes(lowercaseSearchQuery)
-		// 	);
-		// }
+		if (selectedCategoryIds.length > 0) {
+			const expenseCategoryId = expense.category?.id || "";
+			filterResult = filterResult && selectedCategoryIds.includes(expenseCategoryId);
+		}
 
 		return filterResult;
 	});
@@ -138,6 +138,7 @@ function RouteComponent() {
 				>
 					<ExpenseCalendar />
 					<hr />
+					<ExpenseCategoryFilter />
 				</div>
 			</SectionContent>
 		</Section>

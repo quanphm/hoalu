@@ -67,3 +67,6 @@ export const selectedExpenseAtom = atom<{
 }>({
 	id: null,
 });
+
+// Category filter state for expenses route (do not sync to URL)
+export const expenseCategoryFilterAtom = atom<string[]>([]);
