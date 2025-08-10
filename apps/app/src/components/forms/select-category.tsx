@@ -15,7 +15,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
-import { CreateCategoryDialogTrigger } from "@/components/category";
+import { CreateCategoryDialogTrigger } from "@/components/category-actions";
 import { categoriesQueryOptions } from "@/services/query-options";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";

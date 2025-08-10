@@ -39,9 +39,7 @@ export function CreateCategoryDialog({ children }: { children: React.ReactNode }
 			>
 				<DialogHeader>
 					<DialogTitle>Create new category</DialogTitle>
-					<DialogDescription>
-						Create a new custom category to organize your expenses.
-					</DialogDescription>
+					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 				</DialogHeader>
 				<DialogDescription />
 				<CreateCategoryForm />
@@ -211,7 +209,6 @@ function DeleteCategoryDialogContent() {
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
-				<DialogDescription />
 			</DialogHeader>
 			<DialogFooter>
 				<DialogClose asChild>

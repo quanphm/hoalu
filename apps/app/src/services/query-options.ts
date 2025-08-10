@@ -184,7 +184,6 @@ export const expensesQueryOptions = (slug: string) => {
 		queryKey: expenseKeys.all(slug),
 		queryFn: async () => {
 			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
-			console.log(workspace);
 			const expenses = await apiClient.expenses.list(slug);
 			const promises = expenses.map(async (expense) => {
 				const { realAmount, currency: sourceCurrency } = expense;

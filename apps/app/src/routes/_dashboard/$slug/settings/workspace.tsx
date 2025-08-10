@@ -5,7 +5,7 @@ import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
 import { SettingCard } from "@/components/cards";
 import { InputWithCopy } from "@/components/input-with-copy";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import {
 	DeleteWorkspaceDialog,
 	DeleteWorkspaceTrigger,

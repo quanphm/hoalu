@@ -6,7 +6,7 @@ import { Button } from "@hoalu/ui/button";
 import { WorkspaceCard } from "@/components/cards";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import {
 	CreateWorkspaceDialog,
 	CreateWorkspaceDialogTrigger,

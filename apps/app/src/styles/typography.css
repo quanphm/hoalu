@@ -3,7 +3,7 @@
   --geist-mono: "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
 }
 
-/* @theme {
+@theme {
   --text-xs: 0.675rem;
   --text-xs--line-height: calc(1 / 0.675);
   --text-sm: 0.7875rem;
@@ -19,7 +19,7 @@
   --text-3xl: 1.6875rem;
   --text-3xl--line-height: calc(2.25 / 1.6875);
   --spacing: 0.225rem;
-} */
+}
 
 .prose-base {
   :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

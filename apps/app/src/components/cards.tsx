@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from "@hoalu/ui/card";
 import { UserAvatar } from "./user-avatar";
-import { WalletIcon, type WalletIconProps } from "./wallet";
+import { WalletIcon, type WalletIconProps } from "./wallet-actions";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
 	title?: React.ReactNode;

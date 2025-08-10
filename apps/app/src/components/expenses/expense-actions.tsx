@@ -48,8 +48,8 @@ export function CreateExpenseDialog({ children }: { children?: React.ReactNode }
 			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>
+					<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
 				</DialogHeader>
-				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
 				<CreateExpenseForm />
 			</DialogContent>
 		</Dialog>

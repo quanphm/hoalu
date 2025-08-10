@@ -5,9 +5,12 @@ import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { WalletCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
-import { CreateCategoryDialogTrigger } from "@/components/category";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { CreateWalletDialogTrigger, WalletDropdownMenuWithModal } from "@/components/wallet";
+import { CreateCategoryDialogTrigger } from "@/components/category-actions";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+import {
+	CreateWalletDialogTrigger,
+	WalletDropdownMenuWithModal,
+} from "@/components/wallet-actions";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/library")({
