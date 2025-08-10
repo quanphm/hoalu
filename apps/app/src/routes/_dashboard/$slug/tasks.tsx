@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useDokiShape } from "@hoalu/doki";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { TasksTable } from "@/components/tasks-table";
 import type { TaskSchema } from "@/lib/schema";
 import { taskKeys } from "@/services/query-key-factory";

@@ -12,7 +12,6 @@ const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
 
 export function ExpenseCategoryFilter() {
 	const { slug } = workspaceRouteApi.useParams();
-	const [selectedIds, setSelectedIds] = useAtom(expenseCategoryFilterAtom);
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
 	return (
@@ -21,30 +20,33 @@ export function ExpenseCategoryFilter() {
 			<div className="rounded-md border">
 				<ScrollArea className="h-[180px]">
 					<div className="divide-y divide-border/60">
-						{categories.map((c) => {
-							const active = selectedIds.includes(c.id);
-							return (
-								<Label
-									key={c.id}
-									htmlFor={c.id}
-									className="flex w-full flex-row items-center gap-2 p-2 text-xs outline-none hover:bg-muted/50"
-								>
-									<Checkbox
-										id={c.id}
-										checked={active}
-										onCheckedChange={() => {
-											setSelectedIds(
-												active ? selectedIds.filter((id) => id !== c.id) : [...selectedIds, c.id],
-											);
-										}}
-									/>
-									{c.name}
-								</Label>
-							);
-						})}
+						{categories.map((c) => (
+							<CategoryCheckbox key={c.id} id={c.id} name={c.name} />
+						))}
 					</div>
 				</ScrollArea>
 			</div>
 		</div>
+	);
+}
+
+function CategoryCheckbox(props: { id: string; name: string }) {
+	const [selectedIds, setSelectedIds] = useAtom(expenseCategoryFilterAtom);
+
+	const onChange = (checked: boolean) =>
+		setSelectedIds((prev) => {
+			return checked ? [...prev, props.id] : prev.filter((id) => id !== props.id);
+		});
+
+	const active = !!selectedIds.find((item) => item === props.id);
+
+	return (
+		<Label
+			htmlFor={props.id}
+			className="flex w-full flex-row items-center gap-2 p-2 text-xs outline-none hover:bg-muted/50"
+		>
+			<Checkbox id={props.id} checked={active} onCheckedChange={onChange} />
+			{props.name}
+		</Label>
 	);
 }

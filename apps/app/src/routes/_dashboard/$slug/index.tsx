@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { SendHorizonalIcon, WalletMinimalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { CreateExpenseDialogTrigger } from "@/components/expense";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/section";
-import { CreateWalletDialogTrigger } from "@/components/wallet";
+import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
+import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+import { CreateWalletDialogTrigger } from "@/components/wallet-actions";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,

@@ -56,10 +56,10 @@ export function CreateWalletDialog({ children }: { children: React.ReactNode }) 
 			>
 				<DialogHeader>
 					<DialogTitle>Create new wallet</DialogTitle>
+					<DialogDescription>
+						Add a new wallet to manage and track a separate set of funds or accounts.
+					</DialogDescription>
 				</DialogHeader>
-				<DialogDescription>
-					Add a new wallet to manage and track a separate set of funds or accounts.
-				</DialogDescription>
 				<CreateWalletForm />
 			</DialogContent>
 		</Dialog>

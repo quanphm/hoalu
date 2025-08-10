@@ -7,7 +7,7 @@ import { selectedCategoryAtom } from "@/atoms";
 import { DataTable } from "@/components/data-table";
 import { createCategoryTheme } from "@/helpers/colors";
 import type { CategorySchema } from "@/lib/schema";
-import { EditCategoryForm } from "./category";
+import { EditCategoryForm } from "./category-actions";
 
 const columnHelper = createColumnHelper<CategorySchema>();
 
