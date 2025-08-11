@@ -64,12 +64,17 @@ function RouteComponent() {
 
 	return (
 		<ContentCard
-			title={<WorkspaceLogo size="lg" logo={null} name={invitation.workspaceName} />}
-			description={`${invitation.inviterName} has invited you to {invitation.workspaceName}`}
+			className="text-center"
+			title={
+				<div className="flex justify-center">
+					<WorkspaceLogo size="lg" logo={null} name={invitation.workspaceName} />
+				</div>
+			}
+			description={`${invitation.inviterName} has invited you to ${invitation.workspaceName}`}
 			content={
 				<>
-					{user && <p className="mt-6">This invite was sent to</p>}
-					{!user && <p className="mt-6">To accept the invitation please login as</p>}
+					{user && <p>This invite was sent to</p>}
+					{!user && <p>To accept the invitation please login as</p>}
 					<p>
 						<strong>{invitation.recipient}</strong>
 					</p>
@@ -79,7 +84,7 @@ function RouteComponent() {
 				<>
 					{user && invitation.status === "pending" && (
 						<Button
-							className="px-16"
+							className="m-auto px-16"
 							onClick={() => {
 								mutation.mutateAsync({ id: params.id });
 							}}
@@ -89,7 +94,7 @@ function RouteComponent() {
 						</Button>
 					)}
 					{!user && (
-						<Button className="px-16" asChild>
+						<Button className="m-auto px-16" asChild>
 							<Link
 								to="/login"
 								search={{

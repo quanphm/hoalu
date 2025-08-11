@@ -88,9 +88,7 @@ function RouteComponent() {
 									</div>
 								)}
 							</form.AppField>
-							<Button type="submit" className="w-full">
-								Log in
-							</Button>
+							<form.SubscribeButton className="w-full">Log in</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
 

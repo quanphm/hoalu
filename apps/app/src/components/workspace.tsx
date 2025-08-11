@@ -123,9 +123,9 @@ function CreateWorkspaceForm() {
 						/>
 					)}
 				</form.AppField>
-				<Button type="submit" className="ml-auto w-fit">
+				<form.SubscribeButton useSound className="ml-auto w-fit">
 					Create workspace
-				</Button>
+				</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -210,9 +210,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<form.Subscribe>
-							<Button type="submit">Save</Button>
-						</form.Subscribe>
+						<form.SubscribeButton>Save</form.SubscribeButton>
 					</div>
 				)}
 			</form.Form>
@@ -256,9 +254,7 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<form.Subscribe>
-							<Button type="submit">Update</Button>
-						</form.Subscribe>
+						<form.SubscribeButton>Update</form.SubscribeButton>
 					</div>
 				)}
 			</form.Form>
@@ -347,9 +343,9 @@ function DeleteWorkspaceForm() {
 						/>
 					)}
 				</form.AppField>
-				<Button variant="destructive" type="submit">
+				<form.SubscribeButton variant="destructive">
 					I understand, delete this workspace
-				</Button>
+				</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);

@@ -65,9 +65,7 @@ function ResetPasswordRequest() {
 									/>
 								)}
 							</form.AppField>
-							<Button type="submit" className="w-full">
-								Send
-							</Button>
+							<form.SubscribeButton className="w-full">Send</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
 				</div>
@@ -114,9 +112,7 @@ function SetNewPassword(props: { token: string }) {
 							<form.AppField name="newPassword">
 								{(field) => <field.InputField label="New password" type="password" required />}
 							</form.AppField>
-							<Button type="submit" className="w-full">
-								Set new password
-							</Button>
+							<form.SubscribeButton className="w-full">Set new password</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
 				</div>

@@ -1,11 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { expenseCategoryFilterAtom, selectedExpenseAtom } from "@/atoms";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { clickSound, soundSafePlay } from "@/lib/sound-effects";
 import { expensesQueryOptions } from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
 
@@ -53,6 +54,13 @@ export function useExpenses() {
 	const onSelectExpense = useCallback((id: string | null) => {
 		setSelectedExpense({ id });
 	}, []);
+
+	useEffect(() => {
+		if (!selectedExpense.id) {
+			return;
+		}
+		soundSafePlay(clickSound);
+	}, [selectedExpense.id]);
 
 	return { data: expenseList, currentIndex, onSelectExpense };
 }

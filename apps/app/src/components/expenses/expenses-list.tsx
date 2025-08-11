@@ -1,5 +1,5 @@
 import { useSetAtom } from "jotai";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
@@ -19,6 +19,12 @@ function ExpensesList() {
 	}
 
 	useHotkeys("esc", () => handleRowClick(null), []);
+
+	useEffect(() => {
+		return () => {
+			setSelectedRow({ id: null });
+		};
+	}, []);
 
 	if (expenses.length === 0) {
 		return (
