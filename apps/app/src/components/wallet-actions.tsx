@@ -133,9 +133,9 @@ function CreateWalletForm() {
 						)}
 					</form.AppField>
 				</div>
-				<Button type="submit" className="ml-auto w-fit">
+				<form.SubscribeButton useSound className="ml-auto w-fit">
 					Create wallet
-				</Button>
+				</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -236,9 +236,9 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 						/>
 					)}
 				</form.AppField>
-				<Button type="submit" className="ml-auto w-fit">
+				<form.SubscribeButton useSound className="ml-auto w-fit">
 					Update
-				</Button>
+				</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);

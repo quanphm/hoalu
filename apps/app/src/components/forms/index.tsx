@@ -14,6 +14,7 @@ import { SelectCategoryField } from "./select-category";
 import { RepeatField } from "./select-repeat";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
+import { SubscribeButton } from "./subscribe-button";
 import { SwitchField } from "./switch";
 import { TiptapField } from "./tiptap";
 import { TransactionAmountField } from "./transaction-amount";
@@ -38,6 +39,7 @@ const { useAppForm, withForm } = createFormHook({
 	},
 	formComponents: {
 		Form,
+		SubscribeButton,
 	},
 	fieldContext,
 	formContext,

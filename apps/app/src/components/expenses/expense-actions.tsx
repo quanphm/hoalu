@@ -231,7 +231,7 @@ function CreateExpenseForm() {
 					>
 						Reset
 					</Button>
-					<Button type="submit">Create expense</Button>
+					<form.SubscribeButton useSound>Create expense</form.SubscribeButton>
 				</div>
 			</form.Form>
 		</form.AppForm>
@@ -396,7 +396,7 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
 						Reset
 					</Button>
-					<Button type="submit">Update</Button>
+					<form.SubscribeButton useSound>Update</form.SubscribeButton>
 				</div>
 			</form.Form>
 		</form.AppForm>

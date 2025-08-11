@@ -68,9 +68,9 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 					</form.Form>
 				</form.AppForm>
 				<DialogFooter>
-					<Button type="submit" form={id} className="ml-auto w-fit">
+					<form.SubscribeButton form={id} className="ml-auto w-fit">
 						Send invite
-					</Button>
+					</form.SubscribeButton>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

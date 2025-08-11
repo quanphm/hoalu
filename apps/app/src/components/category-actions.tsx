@@ -112,10 +112,9 @@ function CreateCategoryForm() {
 						)}
 					</form.Subscribe>
 				</div>
-
-				<Button type="submit" className="ml-auto w-fit">
+				<form.SubscribeButton useSound className="ml-auto w-fit">
 					Create category
-				</Button>
+				</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -189,7 +188,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<Button type="submit">Update</Button>
+						<form.SubscribeButton useSound>Update</form.SubscribeButton>
 					</div>
 				</div>
 			</form.Form>
