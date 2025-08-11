@@ -13,18 +13,14 @@ export function ExpenseDetails() {
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;
 		const prevRowData = expenses[prevIndex];
-		if (!prevRowData) {
-			return;
-		}
+		if (!prevRowData) return;
 		onSelectExpense(prevRowData.id);
 	}
 
 	function handleGoDown() {
 		const nextIndex = currentIndex + 1;
 		const nextRowData = expenses[nextIndex];
-		if (!nextRowData) {
-			return;
-		}
+		if (!nextRowData) return;
 		onSelectExpense(nextRowData.id);
 	}
 

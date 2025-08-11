@@ -1,4 +1,4 @@
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { memo, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -9,24 +9,16 @@ import { formatCurrency } from "@/helpers/currency";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { clickSound, soundSafePlay } from "@/lib/sound-effects";
 
 function ExpensesList() {
 	const { data: expenses } = useExpenses();
-	const [selectedRow, setSelectedRow] = useAtom(selectedExpenseAtom);
+	const setSelectedRow = useSetAtom(selectedExpenseAtom);
 
 	function handleRowClick(id: string | null) {
 		setSelectedRow({ id });
 	}
 
 	useHotkeys("esc", () => handleRowClick(null), []);
-
-	useEffect(() => {
-		if (!selectedRow.id) {
-			return;
-		}
-		soundSafePlay(clickSound);
-	}, [selectedRow.id]);
 
 	useEffect(() => {
 		return () => {
