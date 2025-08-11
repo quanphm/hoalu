@@ -1,7 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useState } from "react";
 
-import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -18,7 +17,6 @@ import { InviteFormSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
 
 export function InviteDialog({ children }: { children: React.ReactNode }) {
-	const id = useId();
 	const [open, setOpen] = useState(false);
 	const workspace = useWorkspace();
 	const queryClient = useQueryClient();
@@ -59,19 +57,16 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 				<DialogHeader>
 					<DialogTitle>Invite people to your workspace</DialogTitle>
 				</DialogHeader>
-
 				<form.AppForm>
-					<form.Form id={id}>
+					<form.Form>
 						<form.AppField name="email">
 							{(field) => <field.InputField label="Email" autoFocus />}
 						</form.AppField>
+						<DialogFooter>
+							<form.SubscribeButton className="ml-auto w-fit">Send invite</form.SubscribeButton>
+						</DialogFooter>
 					</form.Form>
 				</form.AppForm>
-				<DialogFooter>
-					<form.SubscribeButton form={id} className="ml-auto w-fit">
-						Send invite
-					</form.SubscribeButton>
-				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

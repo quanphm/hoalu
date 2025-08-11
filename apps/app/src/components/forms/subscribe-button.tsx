@@ -10,8 +10,8 @@ export function SubscribeButton({
 	const form = useFormContext();
 
 	return (
-		<form.Subscribe selector={(state) => state.isSubmitting}>
-			{(_isSubmitting) => {
+		<form.Subscribe>
+			{() => {
 				if (!useSound) {
 					return (
 						<Button type="submit" {...props}>

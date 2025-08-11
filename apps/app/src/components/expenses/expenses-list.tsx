@@ -26,7 +26,9 @@ function ExpensesList() {
 			return;
 		}
 		clickSound.currentTime = 0;
-		clickSound.play();
+		clickSound.play().catch((e) => {
+			console.error("Error playing sound:", e);
+		});
 	}, [selectedRow.id]);
 
 	useEffect(() => {

@@ -238,7 +238,9 @@ export function useDeleteExpense() {
 		},
 		onSuccess: async () => {
 			dropSound.currentTime = 0;
-			dropSound.play();
+			dropSound.play().catch((e) => {
+				console.error("Error playing sound:", e);
+			});
 			toast.success("Expense deleted");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
