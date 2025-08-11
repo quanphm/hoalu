@@ -9,7 +9,7 @@ import { formatCurrency } from "@/helpers/currency";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { clickSound } from "@/lib/sound-effects";
+import { clickSound, soundSafePlay } from "@/lib/sound-effects";
 
 function ExpensesList() {
 	const { data: expenses } = useExpenses();
@@ -25,10 +25,7 @@ function ExpensesList() {
 		if (!selectedRow.id) {
 			return;
 		}
-		clickSound.currentTime = 0;
-		clickSound.play().catch((e) => {
-			console.error("Error playing sound:", e);
-		});
+		soundSafePlay(clickSound);
 	}, [selectedRow.id]);
 
 	useEffect(() => {

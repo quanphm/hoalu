@@ -1,16 +1,14 @@
 import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { confirmSound } from "@/lib/sound-effects";
+import { confirmSound, soundSafePlay } from "@/lib/sound-effects";
 
-function handleClick() {
-	confirmSound.currentTime = 0;
-	confirmSound.play().catch((e) => {
-		console.error("Error playing sound:", e);
-	});
-}
+export function SoundButton({ children, onClick, ...props }: ButtonProps) {
+	function onClickWithSound(e: React.MouseEvent<HTMLButtonElement>) {
+		soundSafePlay(confirmSound);
+		onClick?.(e);
+	}
 
-export function SoundButton({ children, ...props }: ButtonProps) {
 	return (
-		<Button onClick={handleClick} {...props}>
+		<Button onClick={onClickWithSound} {...props}>
 			{children}
 		</Button>
 	);

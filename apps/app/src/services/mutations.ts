@@ -14,7 +14,7 @@ import type {
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
-import { dropSound } from "@/lib/sound-effects";
+import { dropSound, soundSafePlay } from "@/lib/sound-effects";
 import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/services/query-key-factory";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
@@ -237,10 +237,7 @@ export function useDeleteExpense() {
 			return result;
 		},
 		onSuccess: async () => {
-			dropSound.currentTime = 0;
-			dropSound.play().catch((e) => {
-				console.error("Error playing sound:", e);
-			});
+			soundSafePlay(dropSound);
 			toast.success("Expense deleted");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
