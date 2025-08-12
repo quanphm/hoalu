@@ -107,6 +107,10 @@ export const WalletFormSchema = type({
 	"isActive?": "boolean",
 });
 export type WalletFormSchema = typeof WalletFormSchema.infer;
+export type WalletSchema = InferResponseType<
+	typeof honoClient.api.wallets.$get,
+	200
+>["data"][number];
 export type WalletPostSchema = InferRequestType<typeof honoClient.api.wallets.$post>["json"];
 export type WalletPatchSchema = InferRequestType<
 	(typeof honoClient.api.wallets)[":id"]["$patch"]

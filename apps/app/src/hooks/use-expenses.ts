@@ -4,7 +4,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { expenseCategoryFilterAtom, selectedExpenseAtom } from "@/atoms";
+import { expenseCategoryFilterAtom, expenseWalletFilterAtom, selectedExpenseAtom } from "@/atoms";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { clickSound, soundSafePlay } from "@/lib/sound-effects";
 import { expensesQueryOptions } from "@/services/query-options";
@@ -29,6 +29,7 @@ export function useExpenses() {
 	});
 	const [selectedExpense, setSelectedExpense] = useAtom(selectedExpenseAtom);
 	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
+	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
 
 	const expenseList = data.filter((expense) => {
 		let filterResult = true;
@@ -42,8 +43,13 @@ export function useExpenses() {
 		}
 
 		if (selectedCategoryIds.length > 0) {
-			const expenseCategoryId = expense.category?.id || "";
-			filterResult = filterResult && selectedCategoryIds.includes(expenseCategoryId);
+			const categoryId = expense.category?.id || "";
+			filterResult = filterResult && selectedCategoryIds.includes(categoryId);
+		}
+
+		if (selectedWalletIds.length > 0) {
+			const walletId = expense.wallet?.id || "";
+			filterResult = filterResult && selectedWalletIds.includes(walletId);
 		}
 
 		return filterResult;

@@ -34,25 +34,25 @@ function RouteComponent() {
 			</SectionHeader>
 
 			<SectionContent columns={12} className="gap-0">
-				<div data-slot="expense-list" className="col-span-4 h-[calc(100vh-98px)] overflow-hidden">
+				<div data-slot="expense-list" className="col-span-4 h-[calc(100vh-89px)] overflow-hidden">
 					<ExpenseSearch />
-					<div className="scrollbar-thin h-[calc(100vh-150px)] overflow-auto">
+					<div className="scrollbar-thin h-[calc(100vh-136px)] overflow-auto">
 						<ExpensesList />
 					</div>
 				</div>
 
 				<div
 					data-slot="expense-details"
-					className="col-span-5 h-[calc(100vh-98px)] overflow-hidden"
+					className="col-span-5 h-[calc(100vh-89px)] overflow-hidden"
 				>
 					<ExpenseDetails />
 				</div>
 
 				<div
 					data-slot="expense-filter"
-					className="col-span-3 flex h-[calc(100vh-98px)] overflow-hidden px-4"
+					className="col-span-3 flex h-[calc(100vh-89px)] overflow-hidden px-4"
 				>
-					<div className="flex h-full flex-col gap-4 overflow-auto">
+					<div className="flex h-full flex-col gap-2 overflow-auto">
 						<ExpenseCalendar />
 						<hr />
 						<ExpenseCategoryFilter />
