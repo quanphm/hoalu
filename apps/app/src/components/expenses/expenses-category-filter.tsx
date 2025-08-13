@@ -48,9 +48,12 @@ export function ExpenseCategoryFilter() {
 function CategoryCheckboxGroup(props: { id: string; name: string }) {
 	const [selectedIds, setSelectedIds] = useAtom(expenseCategoryFilterAtom);
 
-	const onChange = (checked: boolean) =>
+	const onChange = (checked: boolean | "indeterminate") =>
 		setSelectedIds((prev) => {
-			return checked ? [...prev, props.id] : prev.filter((id) => id !== props.id);
+			if (checked === true) {
+				return prev.includes(props.id) ? prev : [...prev, props.id];
+			}
+			return prev.filter((id) => id !== props.id);
 		});
 
 	const active = !!selectedIds.find((item) => item === props.id);
@@ -69,12 +72,15 @@ function CategoryCheckboxGroup(props: { id: string; name: string }) {
 function WalletCheckboxGroup(props: { id: string; name: string }) {
 	const [selectedIds, setSelectedIds] = useAtom(expenseWalletFilterAtom);
 
-	const onChange = (checked: boolean) =>
+	const onChange = (checked: boolean | "indeterminate") =>
 		setSelectedIds((prev) => {
-			return checked ? [...prev, props.id] : prev.filter((id) => id !== props.id);
+			if (checked === true) {
+				return prev.includes(props.id) ? prev : [...prev, props.id];
+			}
+			return prev.filter((id) => id !== props.id);
 		});
 
-	const active = !!selectedIds.find((item) => item === props.id);
+	const active = selectedIds.includes(props.id);
 
 	return (
 		<Label
