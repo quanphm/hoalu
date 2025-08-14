@@ -32,6 +32,7 @@
 		"@tiptap/starter-kit": "^2.26.1",
 		"arktype": "catalog:",
 		"better-auth": "catalog:",
+		"fast-memoize": "^2.5.2",
 		"frimousse": "^0.1.1",
 		"hono": "catalog:",
 		"jotai": "^2.12.5",

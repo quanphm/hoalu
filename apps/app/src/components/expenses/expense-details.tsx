@@ -4,11 +4,12 @@ import { ChevronDown, ChevronUpIcon, XIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { selectedExpenseAtom } from "@/atoms";
 import { DeleteExpense, EditExpenseForm } from "@/components/expenses/expense-actions";
-import { useExpenses } from "@/hooks/use-expenses";
+import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
 
 export function ExpenseDetails() {
 	const selectedRow = useAtomValue(selectedExpenseAtom);
-	const { data: expenses, currentIndex, onSelectExpense } = useExpenses();
+	const { data: expenses, currentIndex } = useExpenses();
+	const { onSelectExpense } = useSelectedExpense();
 
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;

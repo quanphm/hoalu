@@ -10,7 +10,14 @@ export function soundSafePlay(sound?: HTMLAudioElement) {
 	}
 }
 
-export const clickSound = new Audio("/sounds/click.ogg");
-export const errorSound = new Audio("/sounds/error.ogg");
-export const dropSound = new Audio("/sounds/drop.ogg");
-export const confirmSound = new Audio("/sounds/confirmation.ogg");
+const clickSound = new Audio("/sounds/click.ogg");
+export const playClickSound = () => soundSafePlay(clickSound);
+
+const dropSound = new Audio("/sounds/drop.ogg");
+export const playDropSound = () => soundSafePlay(dropSound);
+
+const confirmSound = new Audio("/sounds/confirmation.ogg");
+export const playConfirmSound = () => soundSafePlay(confirmSound);
+
+const errorSound = new Audio("/sounds/error.ogg");
+export const playErrorSound = () => soundSafePlay(errorSound);
