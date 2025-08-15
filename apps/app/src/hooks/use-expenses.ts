@@ -94,7 +94,7 @@ export function useSelectedExpense() {
 				onSelectExpense(null);
 			}
 		};
-	}, []);
+	}, [expense.id, onSelectExpense]);
 
 	return { expense, onSelectExpense };
 }
