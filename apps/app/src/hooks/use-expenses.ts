@@ -6,7 +6,6 @@ import { useCallback, useEffect } from "react";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { expenseCategoryFilterAtom, expenseWalletFilterAtom, selectedExpenseAtom } from "@/atoms";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { playClickSound } from "@/lib/sound-effects";
 import { expensesQueryOptions } from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
 
@@ -79,13 +78,6 @@ export function useExpenses() {
 
 	const selectedExpense = useAtomValue(selectedExpenseAtom);
 	const currentIndex = data.findIndex((item) => item.id === selectedExpense.id);
-
-	useEffect(() => {
-		if (!selectedExpense.id) {
-			return;
-		}
-		playClickSound();
-	}, [selectedExpense.id]);
 
 	return { data, currentIndex };
 }
