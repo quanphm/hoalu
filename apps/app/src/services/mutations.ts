@@ -236,7 +236,7 @@ export function useDeleteExpense() {
 			const result = await apiClient.expenses.delete(slug, id);
 			return result;
 		},
-		onSuccess: async () => {
+		onSuccess: () => {
 			playDropSound();
 			toast.success("Expense deleted");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });

@@ -8,7 +8,7 @@ import { toFromToDateObject } from "@hoalu/common/datetime";
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
-import { Calendar, CalendarDayButton } from "@hoalu/ui/calendar";
+import { Calendar } from "@hoalu/ui/calendar";
 import {
 	Dialog,
 	DialogClose,

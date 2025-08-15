@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import memoize from "fast-memoize";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 
@@ -13,49 +12,52 @@ import { useWorkspace } from "./use-workspace";
 
 const routeApi = getRouteApi("/_dashboard/$slug/expenses");
 
-const select = memoize(
-	(
-		data: ExpenseWithClientConvertedSchema[],
-		selectedCategoryIds: string[],
-		selectedWalletIds: string[],
-		range:
-			| {
-					from: Date;
-					to: Date;
-			  }
-			| undefined,
-	) => {
-		return data
-			.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				} as ExpenseWithClientConvertedSchema;
-			})
-			.filter((expense) => {
-				let filterResult = true;
+const select = (
+	data: ExpenseWithClientConvertedSchema[],
+	selectedCategoryIds: string[],
+	selectedWalletIds: string[],
+	range:
+		| {
+				from: Date;
+				to: Date;
+		  }
+		| undefined,
+) => {
+	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
+	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
-				if (range) {
-					const fromDate = datetime.format(range.from, "yyyy-MM-dd");
-					const toDate = datetime.format(range.to, "yyyy-MM-dd");
-					const expenseDate = datetime.format(expense.date, "yyyy-MM-dd");
-					filterResult = expenseDate >= fromDate && expenseDate <= toDate;
+	return data
+		.map((expense) => {
+			return {
+				...expense,
+				date: datetime.format(expense.date, "yyyy-MM-dd"),
+			} as ExpenseWithClientConvertedSchema;
+		})
+		.filter((expense) => {
+			// Date range filter
+			if (fromDate && toDate) {
+				if (expense.date < fromDate || expense.date > toDate) {
+					return false;
 				}
-
-				if (selectedCategoryIds.length > 0) {
-					const categoryId = expense.category?.id || "";
-					filterResult = filterResult && selectedCategoryIds.includes(categoryId);
+			}
+			// Category filter
+			if (selectedCategoryIds.length > 0) {
+				const categoryId = expense.category?.id;
+				if (!categoryId || !selectedCategoryIds.includes(categoryId)) {
+					return false;
 				}
-
-				if (selectedWalletIds.length > 0) {
-					const walletId = expense.wallet?.id || "";
-					filterResult = filterResult && selectedWalletIds.includes(walletId);
+			}
+			// Wallet filter
+			if (selectedWalletIds.length > 0) {
+				const walletId = expense.wallet?.id;
+				if (!walletId || !selectedWalletIds.includes(walletId)) {
+					return false;
 				}
+			}
 
-				return filterResult;
-			});
-	},
-);
+			return true;
+		});
+};
 
 export function useExpenses() {
 	const { date: searchByDate } = routeApi.useSearch();
@@ -92,6 +94,14 @@ export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
 	const onSelectExpense = useCallback((id: string | null) => {
 		setSelectedExpense({ id });
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			if (expense.id) {
+				onSelectExpense(null);
+			}
+		};
 	}, []);
 
 	return { expense, onSelectExpense };

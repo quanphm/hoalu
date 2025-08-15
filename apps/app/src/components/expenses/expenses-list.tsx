@@ -36,7 +36,9 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 	} = useWorkspace();
 	const total = props.data.reduce((sum, current) => {
 		const value = current.convertedAmount;
-		return sum + (typeof value === "number" ? value : 0);
+		// convertedAmount can be -1 when conversion fails (see expenses query).
+		// Exclude negatives from the total.
+		return sum + (typeof value === "number" && value >= 0 ? value : 0);
 	}, 0);
 
 	return (
@@ -52,16 +54,10 @@ function ExpensesList() {
 
 	useHotkeys("esc", () => onSelectExpense(null), []);
 
-	useEffect(() => {
-		return () => {
-			onSelectExpense(null);
-		};
-	}, []);
-
 	const groupedExpensesByDate = useMemo(() => {
 		const grouped = new Map<string, ExpenseWithClientConvertedSchema[]>();
 		expenses.forEach((expense) => {
-			const dateKey = datetime.format(expense.date, "yyyy-MM-dd");
+			const dateKey = expense.date;
 			const existing = grouped.get(dateKey);
 			if (existing) {
 				existing.push(expense);

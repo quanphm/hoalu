@@ -11,13 +11,21 @@ export function soundSafePlay(sound?: HTMLAudioElement) {
 }
 
 const clickSound = new Audio("/sounds/click.ogg");
+clickSound.preload = "auto";
+clickSound.load();
 export const playClickSound = () => soundSafePlay(clickSound);
 
 const dropSound = new Audio("/sounds/drop.ogg");
+dropSound.preload = "auto";
+dropSound.load();
 export const playDropSound = () => soundSafePlay(dropSound);
 
 const confirmSound = new Audio("/sounds/confirmation.ogg");
+confirmSound.preload = "auto";
+confirmSound.load();
 export const playConfirmSound = () => soundSafePlay(confirmSound);
 
 const errorSound = new Audio("/sounds/error.ogg");
+errorSound.preload = "auto";
+errorSound.load();
 export const playErrorSound = () => soundSafePlay(errorSound);
