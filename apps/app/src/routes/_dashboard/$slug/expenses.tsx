@@ -52,7 +52,7 @@ function RouteComponent() {
 					data-slot="expense-filter"
 					className="col-span-3 flex h-[calc(100vh-89px)] overflow-hidden px-4"
 				>
-					<div className="flex h-full flex-col gap-4 overflow-auto">
+					<div className="flex h-full w-full flex-col gap-4 overflow-auto">
 						<ExpenseCalendar />
 						<hr />
 						<ExpenseCategoryFilter />

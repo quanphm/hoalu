@@ -20,12 +20,13 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
-import { createExpenseDialogOpenAtom, draftExpenseAtom, selectedExpenseAtom } from "@/atoms";
+import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKeyWithTooltip } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
+import { useSelectedExpense } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { ExpenseFormSchema } from "@/lib/schema";
 import {
@@ -240,13 +241,13 @@ function CreateExpenseForm() {
 
 export function DeleteExpense({ id }: { id: string }) {
 	const [open, setOpen] = useState(false);
-	const setSelectedExpense = useSetAtom(selectedExpenseAtom);
+	const { onSelectExpense } = useSelectedExpense();
 	const mutation = useDeleteExpense();
 
 	const onDelete = async () => {
 		await mutation.mutateAsync({ id });
 		setOpen(false);
-		setSelectedExpense({ id: null });
+		onSelectExpense(null);
 	};
 
 	return (
@@ -422,6 +423,7 @@ export function ExpenseCalendar() {
 					}),
 				});
 			}}
+			className="pt-0 [--cell-size:--spacing(9)]"
 		/>
 	);
 }

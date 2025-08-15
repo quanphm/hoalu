@@ -13,7 +13,7 @@
     },
     "apps/api": {
       "name": "@hoalu/api",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@hoalu/auth": "workspace:*",
         "@hoalu/common": "workspace:*",
@@ -44,7 +44,7 @@
     },
     "apps/app": {
       "name": "@hoalu/app",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@electric-sql/pglite": "^0.3.6",
         "@electric-sql/pglite-react": "^0.2.24",
@@ -98,7 +98,7 @@
     },
     "packages/auth": {
       "name": "@hoalu/auth",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@hoalu/common": "workspace:*",
       },
@@ -108,7 +108,7 @@
     },
     "packages/common": {
       "name": "@hoalu/common",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@standard-schema/spec": "^1.0.0",
         "date-fns": "^4.1.0",
@@ -121,14 +121,14 @@
     },
     "packages/countries": {
       "name": "@hoalu/countries",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "devDependencies": {
         "@hoalu/tsconfig": "workspace:*",
       },
     },
     "packages/doki": {
       "name": "@hoalu/doki",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@electric-sql/client": "^1.0.7",
         "@tanstack/react-query": "^5.84.1",
@@ -146,7 +146,7 @@
     },
     "packages/email": {
       "name": "@hoalu/email",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@react-email/components": "^0.0.32",
         "@react-email/tailwind": "^1.2.2",
@@ -161,7 +161,7 @@
     },
     "packages/furnace": {
       "name": "@hoalu/furnace",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@hoalu/common": "workspace:*",
         "@hono/arktype-validator": "^2.0.1",
@@ -179,7 +179,7 @@
     },
     "packages/icons": {
       "name": "@hoalu/icons",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "lucide-react": "^0.460.0",
       },
@@ -194,7 +194,7 @@
     },
     "packages/ui": {
       "name": "@hoalu/ui",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "dependencies": {
         "@hoalu/icons": "workspace:*",
         "class-variance-authority": "^0.7.1",
@@ -1218,7 +1218,7 @@
 
     "@tiptap/starter-kit": ["@tiptap/starter-kit@2.26.1", "", { "dependencies": { "@tiptap/core": "^2.26.1", "@tiptap/extension-blockquote": "^2.26.1", "@tiptap/extension-bold": "^2.26.1", "@tiptap/extension-bullet-list": "^2.26.1", "@tiptap/extension-code": "^2.26.1", "@tiptap/extension-code-block": "^2.26.1", "@tiptap/extension-document": "^2.26.1", "@tiptap/extension-dropcursor": "^2.26.1", "@tiptap/extension-gapcursor": "^2.26.1", "@tiptap/extension-hard-break": "^2.26.1", "@tiptap/extension-heading": "^2.26.1", "@tiptap/extension-history": "^2.26.1", "@tiptap/extension-horizontal-rule": "^2.26.1", "@tiptap/extension-italic": "^2.26.1", "@tiptap/extension-list-item": "^2.26.1", "@tiptap/extension-ordered-list": "^2.26.1", "@tiptap/extension-paragraph": "^2.26.1", "@tiptap/extension-strike": "^2.26.1", "@tiptap/extension-text": "^2.26.1", "@tiptap/extension-text-style": "^2.26.1", "@tiptap/pm": "^2.26.1" } }, "sha512-oziMGCds8SVQ3s5dRpBxVdEKZAmO/O//BjZ69mhA3q4vJdR0rnfLb5fTxSeQvHiqB878HBNn76kNaJrHrV35GA=="],
 
-    "@types/bun": ["@types/bun@1.2.19", "", { "dependencies": { "bun-types": "1.2.19" } }, "sha512-d9ZCmrH3CJ2uYKXQIUuZ/pUnTqIvLDS0SK7pFmbx8ma+ziH/FRMoAq5bYpRG7y+w1gl+HgyNZbtqgMq4W4e2Lg=="],
+    "@types/bun": ["@types/bun@1.2.20", "", { "dependencies": { "bun-types": "1.2.20" } }, "sha512-dX3RGzQ8+KgmMw7CsW4xT5ITBSCrSbfHc36SNT31EOUg/LA9JWq0VDdEXDRSe1InVWpd2yLUM1FUF/kEOyTzYA=="],
 
     "@types/chai": ["@types/chai@5.2.2", "", { "dependencies": { "@types/deep-eql": "*" } }, "sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg=="],
 
@@ -1356,7 +1356,7 @@
 
     "buffer-from": ["buffer-from@1.1.2", "", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
 
-    "bun-types": ["bun-types@1.2.19", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-uAOTaZSPuYsWIXRpj7o56Let0g/wjihKCkeRqUBhlLVM/Bt+Fj9xTo+LhC1OV1XDaGkz4hNC80et5xgy+9KTHQ=="],
+    "bun-types": ["bun-types@1.2.20", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-pxTnQYOrKvdOwyiyd/7sMt9yFOenN004Y6O4lCcCUoKVej48FS5cvTw9geRaEcB9TsDZaJKAxPTVvi8tFsVuXA=="],
 
     "bytes": ["bytes@3.1.2", "", {}, "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="],
 
