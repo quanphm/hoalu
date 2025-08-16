@@ -5,7 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { toFromToDateObject } from "@hoalu/common/datetime";
-import { Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -20,9 +20,10 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
-import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
+import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
-import { HotKeyWithTooltip } from "@/components/hotkey";
+import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useAuth } from "@/hooks/use-auth";
@@ -57,13 +58,13 @@ export function CreateExpenseDialog({ children }: { children?: React.ReactNode }
 	);
 }
 
-export function CreateExpenseDialogTrigger({ children }: { children: React.ReactNode }) {
+export function CreateExpenseDialogTrigger() {
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
-
 	return (
-		<HotKeyWithTooltip onClick={() => setOpen(true)} shortcut={KEYBOARD_SHORTCUTS.create_expense}>
-			{children}
-		</HotKeyWithTooltip>
+		<Button variant="outline" onClick={() => setOpen(true)}>
+			Create expense
+			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
+		</Button>
 	);
 }
 
@@ -407,41 +408,51 @@ export function EditExpenseForm(props: { id: string; className?: string }) {
 export function ExpenseCalendar() {
 	const { date: searchDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
-	const currentValue = toFromToDateObject(searchDate);
+	const range = toFromToDateObject(searchDate);
 
 	return (
-		<Calendar
-			mode="range"
-			captionLayout="dropdown"
-			selected={currentValue}
-			onSelect={(selectedDate) => {
-				const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
-				navigate({
-					search: (state) => ({
-						...state,
-						date: selectedDate ? searchQuery : undefined,
-					}),
-				});
-			}}
-			className="pt-0 [--cell-size:--spacing(9)]"
-		/>
+		<Popover>
+			<PopoverTrigger asChild>
+				<Button variant="outline" className="w-full justify-start font-normal">
+					<CalendarIcon />
+					{range?.from && range?.to
+						? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
+						: "Select date"}
+				</Button>
+			</PopoverTrigger>
+			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
+				<Calendar
+					mode="range"
+					captionLayout="dropdown"
+					selected={range}
+					onSelect={(selectedDate) => {
+						const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
+						navigate({
+							search: (state) => ({
+								...state,
+								date: selectedDate ? searchQuery : undefined,
+							}),
+						});
+					}}
+					className="[--cell-size:--spacing(9)]"
+				/>
+			</PopoverContent>
+		</Popover>
 	);
 }
 
 export function ExpenseSearch() {
+	const [value, setValue] = useAtom(searchKeywordsAtom);
+
 	return (
-		<div className="px-2 pb-4">
-			<Input
-				placeholder="Search"
-				// value={text}
-				// onChange={(e) => {
-				// 	navigate({
-				// 		search: () => ({
-				// 			text: e.target.value,
-				// 		}),
-				// 	});
-				// }}
-			/>
-		</div>
+		<Input
+			type="search"
+			placeholder="Search"
+			className="focus-visible:ring-0"
+			value={value}
+			onChange={(e) => {
+				setValue(e.target.value);
+			}}
+		/>
 	);
 }

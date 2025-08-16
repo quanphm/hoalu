@@ -18,7 +18,6 @@
   --text-2xl--line-height: calc(2 / 1.35);
   --text-3xl: 1.6875rem;
   --text-3xl--line-height: calc(2.25 / 1.6875);
-  --spacing: 0.225rem;
 }
 
 .prose-base {

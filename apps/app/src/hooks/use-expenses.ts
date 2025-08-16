@@ -88,13 +88,5 @@ export function useSelectedExpense() {
 		setSelectedExpense({ id });
 	}, []);
 
-	useEffect(() => {
-		return () => {
-			if (expense.id) {
-				onSelectExpense(null);
-			}
-		};
-	}, [expense.id, onSelectExpense]);
-
 	return { expense, onSelectExpense };
 }

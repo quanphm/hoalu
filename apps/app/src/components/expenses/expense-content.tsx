@@ -5,9 +5,10 @@ import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
 import { selectedExpenseAtom } from "@/atoms";
 import { TransactionAmount } from "@/components/transaction-amount";
-import { createCategoryTheme, createWalletTheme } from "@/helpers/colors";
+import { createCategoryTheme } from "@/helpers/colors";
 import { htmlToText } from "@/helpers/dom-parser";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { WalletBadge } from "../wallets/wallet-badge";
 
 interface ExpenseContentProps extends ExpenseWithClientConvertedSchema {
 	onClick(id: string | null): void;
@@ -29,9 +30,8 @@ function ExpenseContent(props: ExpenseContentProps) {
 			id={props.id}
 			className={cn(
 				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 py-2 pr-6 pl-3 text-sm outline-none ring-0 hover:bg-muted/60",
-				"last-of-type:border-b-transparent",
 				selectedRow.id === props.id &&
-					"bg-blue-200 hover:bg-blue-200 dark:bg-blue-900 hover:dark:bg-blue-900",
+					"border border-blue-800 bg-blue-100 hover:bg-blue-100 dark:bg-blue-900 hover:dark:bg-blue-900",
 			)}
 			role="button"
 			tabIndex={0}
@@ -45,19 +45,13 @@ function ExpenseContent(props: ExpenseContentProps) {
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div data-slot="item-tags" className="mt-1 flex origin-left scale-90 gap-2">
+				<div data-slot="item-tags" className="mt-1 flex origin-left scale-85 gap-2">
 					{props.category && (
 						<Badge className={cn(createCategoryTheme(props.category.color))}>
 							{props.category.name}
 						</Badge>
 					)}
-					<Badge variant="outline" className="gap-1.5 bg-background">
-						<span
-							className={cn("size-2 rounded-full", createWalletTheme(props.wallet.type))}
-							aria-hidden="true"
-						/>
-						{props.wallet.name}
-					</Badge>
+					<WalletBadge {...props.wallet} />
 				</div>
 			</div>
 			<div className="flex flex-col items-end gap-1 text-right">

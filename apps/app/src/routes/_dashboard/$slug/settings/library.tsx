@@ -10,7 +10,7 @@ import { Section, SectionContent, SectionHeader, SectionTitle } from "@/componen
 import {
 	CreateWalletDialogTrigger,
 	WalletDropdownMenuWithModal,
-} from "@/components/wallet-actions";
+} from "@/components/wallets/wallet-actions";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/library")({

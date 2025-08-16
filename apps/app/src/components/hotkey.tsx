@@ -5,9 +5,9 @@ import { cn } from "@hoalu/ui/utils";
 export function HotKey({
 	className,
 	label,
-	enabled,
+	enabled = true,
 	...props
-}: React.ComponentProps<"span"> & { label: string | number; enabled: boolean }) {
+}: React.ComponentProps<"span"> & { label: string | number; enabled?: boolean }) {
 	if (!enabled) {
 		return null;
 	}
@@ -41,13 +41,15 @@ export function HotKeyWithTooltip({
 		return <SlotPrimitive.Slot {...props}>{children}</SlotPrimitive.Slot>;
 	}
 
+	const enabled = showTooltip && shortcut.enabled;
+
 	return (
 		<Tooltip>
 			<SlotPrimitive.Slot {...props}>
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
 			</SlotPrimitive.Slot>
 			<TooltipContent side="bottom">
-				<HotKey enabled={showTooltip && shortcut.enabled} label={shortcut.label} />
+				<HotKey enabled={enabled} label={shortcut.label} />
 			</TooltipContent>
 		</Tooltip>
 	);
