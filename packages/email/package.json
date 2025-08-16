@@ -14,6 +14,7 @@
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
+		"@react-email/preview-server": "4.2.8",
 		"react-email": "^4.2.8"
 	},
 	"dependencies": {
