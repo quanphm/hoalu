@@ -30,8 +30,9 @@ function ExpenseContent(props: ExpenseContentProps) {
 			id={props.id}
 			className={cn(
 				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 py-2 pr-6 pl-3 text-sm outline-none ring-0 hover:bg-muted/60",
-				selectedRow.id === props.id &&
-					"border border-blue-800 bg-blue-100 hover:bg-blue-100 dark:bg-blue-900 hover:dark:bg-blue-900",
+				selectedRow.id === props.id
+					? "border border-blue-800 bg-blue-100 hover:bg-blue-100 dark:bg-blue-900 hover:dark:bg-blue-900"
+					: "border border-transparent border-b-border/50 hover:bg-muted/60",
 			)}
 			role="button"
 			tabIndex={0}

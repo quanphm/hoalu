@@ -30,7 +30,7 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 			className="flex items-center border-muted bg-muted py-2 pr-6 pl-3 text-xs"
 		>
 			<div className="flex items-center gap-1 font-semibold">
-				{datetime.format(date, "dd/MM/yyyy")}
+				{datetime.format(new Date(date), "dd/MM/yyyy")}
 			</div>
 			<div className="ml-auto">
 				<TotalExpenseByDate data={expenses} />
@@ -60,7 +60,7 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 
 	return (
 		<span className="font-semibold text-base text-destructive tracking-tight">
-			{formatCurrency(total as number, workspaceCurrency)}
+			{formatCurrency(total, workspaceCurrency)}
 		</span>
 	);
 }
@@ -70,7 +70,7 @@ function ExpenseList() {
 	const { onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
 
-	const flattenExepenses = useMemo(() => {
+	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, ExpenseWithClientConvertedSchema[]>();
 		expenses.forEach((expense) => {
 			const dateKey = expense.date;
@@ -102,11 +102,11 @@ function ExpenseList() {
 	}, [expenses]);
 
 	const virtualizer = useVirtualizer({
-		count: flattenExepenses.length,
+		count: flattenExpenses.length,
 		overscan: 5,
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
-			const item = flattenExepenses[index];
+			const item = flattenExpenses[index];
 			return item.type === "group-header" ? 38 : 78;
 		},
 	});
@@ -144,7 +144,7 @@ function ExpenseList() {
 					className="absolute top-0 left-0 w-full"
 				>
 					{virtualExpenses.map((virtualRow) => {
-						const expense = flattenExepenses[virtualRow.index];
+						const expense = flattenExpenses[virtualRow.index];
 						return (
 							<div key={virtualRow.key} data-index={virtualRow.index}>
 								{expense.type === "group-header" ? (

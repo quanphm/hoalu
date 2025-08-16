@@ -41,15 +41,13 @@ export function HotKeyWithTooltip({
 		return <SlotPrimitive.Slot {...props}>{children}</SlotPrimitive.Slot>;
 	}
 
-	const enabled = showTooltip && shortcut.enabled;
-
 	return (
 		<Tooltip>
 			<SlotPrimitive.Slot {...props}>
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
 			</SlotPrimitive.Slot>
 			<TooltipContent side="bottom">
-				<HotKey enabled={enabled} label={shortcut.label} />
+				<HotKey label={shortcut.label} />
 			</TooltipContent>
 		</Tooltip>
 	);

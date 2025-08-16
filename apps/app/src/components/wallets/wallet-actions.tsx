@@ -181,7 +181,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 		if (status === "success") {
 			form.reset();
 		}
-	}, [status, form.reset]);
+	}, [status]);
 
 	return (
 		<form.AppForm>

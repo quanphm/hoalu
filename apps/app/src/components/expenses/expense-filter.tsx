@@ -33,7 +33,7 @@ export function ExpenseFilter() {
 			<div className="flex flex-col gap-2">
 				<div className="flex items-center justify-between px-1 text-sm">Categories</div>
 				<div className="rounded-md border border-border/80">
-					<ScrollArea className="h-[180px]">
+					<ScrollArea className="h-[172px]">
 						<div className="divide-y divide-border/60">
 							{categories.map((c) => (
 								<CategoryCheckboxGroup key={c.id} id={c.id} name={c.name} />
