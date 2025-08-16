@@ -27,12 +27,7 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Wallets</SectionTitle>
-					<CreateWalletDialogTrigger>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create wallet
-						</Button>
-					</CreateWalletDialogTrigger>
+					<CreateWalletDialogTrigger />
 				</SectionHeader>
 				<SectionContent columns={4} className="gap-4">
 					{wallets.map((w) => (
