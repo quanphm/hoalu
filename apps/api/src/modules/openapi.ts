@@ -23,7 +23,7 @@ export function openAPIModule(app: HonoApp) {
 			Scalar({
 				theme: "saturn",
 				layout: "modern",
-				url: "openapi",
+				url: "/openapi",
 				hideDownloadButton: true,
 			}),
 		);
