@@ -156,4 +156,7 @@ export const auth = betterAuth({
 		apiKey(),
 		openAPI(),
 	],
+	telemetry: {
+		enabled: true,
+	},
 });

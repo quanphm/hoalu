@@ -129,7 +129,7 @@ function ExpenseList() {
 		<div
 			ref={parentRef}
 			data-slot="expense-list-container"
-			className="scrollbar-thin h-full w-full overflow-y-auto contain-strict"
+			className="scrollbar-thin h-full w-full overflow-y-auto border-l contain-strict"
 		>
 			<div
 				style={{
