@@ -71,7 +71,7 @@ export function CreateWalletDialogTrigger() {
 	return (
 		<Button variant="outline" onClick={() => setOpen(true)}>
 			Create wallet
-			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
+			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
 		</Button>
 	);
 }
