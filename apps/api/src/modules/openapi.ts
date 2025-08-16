@@ -1,4 +1,4 @@
-import { apiReference } from "@scalar/hono-api-reference";
+import { Scalar } from "@scalar/hono-api-reference";
 import { openAPISpecs } from "hono-openapi";
 
 import type { HonoApp } from "../types";
@@ -20,10 +20,10 @@ export function openAPIModule(app: HonoApp) {
 		)
 		.get(
 			"/reference",
-			apiReference({
+			Scalar({
 				theme: "saturn",
 				layout: "modern",
-				spec: { url: "openapi" },
+				url: "/openapi",
 				hideDownloadButton: true,
 			}),
 		);

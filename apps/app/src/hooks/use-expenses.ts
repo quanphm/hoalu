@@ -1,10 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { expenseCategoryFilterAtom, expenseWalletFilterAtom, selectedExpenseAtom } from "@/atoms";
+import {
+	expenseCategoryFilterAtom,
+	expenseWalletFilterAtom,
+	searchKeywordsAtom,
+	selectedExpenseAtom,
+} from "@/atoms";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { expensesQueryOptions } from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
@@ -21,6 +26,7 @@ const select = (
 				to: Date;
 		  }
 		| undefined,
+	searchKeywords: string,
 ) => {
 	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
 	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
@@ -53,6 +59,10 @@ const select = (
 					return false;
 				}
 			}
+			// Search by keywords
+			if (searchKeywords) {
+				return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
+			}
 
 			return true;
 		});
@@ -63,6 +73,7 @@ export function useExpenses() {
 	const { slug } = useWorkspace();
 
 	const range = toFromToDateObject(searchByDate);
+	const searchKeywords = useAtomValue(searchKeywordsAtom);
 	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
 	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
 
@@ -70,9 +81,9 @@ export function useExpenses() {
 		...expensesQueryOptions(slug),
 		select: useCallback(
 			(expenses: ExpenseWithClientConvertedSchema[]) => {
-				return select(expenses, selectedCategoryIds, selectedWalletIds, range);
+				return select(expenses, selectedCategoryIds, selectedWalletIds, range, searchKeywords);
 			},
-			[selectedCategoryIds, selectedWalletIds, range],
+			[selectedCategoryIds, selectedWalletIds, range, searchKeywords],
 		),
 	});
 
@@ -86,14 +97,6 @@ export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
 	const onSelectExpense = useCallback((id: string | null) => {
 		setSelectedExpense({ id });
-	}, []);
-
-	useEffect(() => {
-		return () => {
-			if (expense.id) {
-				onSelectExpense(null);
-			}
-		};
 	}, []);
 
 	return { expense, onSelectExpense };

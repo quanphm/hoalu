@@ -15,7 +15,7 @@ import {
 } from "@/atoms";
 import { CreateCategoryDialog } from "@/components/category-actions";
 import { CreateExpenseDialog } from "@/components/expenses/expense-actions";
-import { CreateWalletDialog } from "@/components/wallet-actions";
+import { CreateWalletDialog } from "@/components/wallets/wallet-actions";
 import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 

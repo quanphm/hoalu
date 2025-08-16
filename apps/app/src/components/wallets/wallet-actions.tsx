@@ -29,7 +29,7 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { createWalletDialogOpenAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
-import { HotKeyWithTooltip } from "@/components/hotkey";
+import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
 import { createWalletTheme } from "@/helpers/colors";
 import {
@@ -66,13 +66,13 @@ export function CreateWalletDialog({ children }: { children: React.ReactNode }) 
 	);
 }
 
-export function CreateWalletDialogTrigger({ children }: { children: React.ReactNode }) {
+export function CreateWalletDialogTrigger() {
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
-
 	return (
-		<HotKeyWithTooltip onClick={() => setOpen(true)} shortcut={KEYBOARD_SHORTCUTS.create_wallet}>
-			{children}
-		</HotKeyWithTooltip>
+		<Button variant="outline" onClick={() => setOpen(true)}>
+			Create wallet
+			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
+		</Button>
 	);
 }
 
@@ -181,7 +181,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 		if (status === "success") {
 			form.reset();
 		}
-	}, [status, form.reset]);
+	}, [status]);
 
 	return (
 		<form.AppForm>

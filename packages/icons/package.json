@@ -11,10 +11,10 @@
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@types/react": "^19.1.9",
+		"@types/react": "catalog:",
 		"react": "catalog:"
 	},
 	"dependencies": {
-		"lucide-react": "^0.460.0"
+		"lucide-react": "^0.539.0"
 	}
 }

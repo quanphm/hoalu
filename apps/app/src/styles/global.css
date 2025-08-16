@@ -8,6 +8,10 @@
 @plugin "tailwind-scrollbar";
 @plugin "@tailwindcss/typography";
 
+@theme {
+	--spacing: 0.225rem;
+}
+
 .root {
 	isolation: isolate;
 }

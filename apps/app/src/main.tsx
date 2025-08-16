@@ -45,21 +45,23 @@ const rootElement = document.getElementById("root");
 
 function App() {
 	return (
-		<StrictMode>
-			<UiProvider>
-				<LocalPostgresProvider>
-					<QueryClientProvider client={queryClient}>
-						<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
-							<RouterProvider router={router} />
-						</DokiClientProvider>
-					</QueryClientProvider>
-				</LocalPostgresProvider>
-			</UiProvider>
-		</StrictMode>
+		<UiProvider>
+			<LocalPostgresProvider>
+				<QueryClientProvider client={queryClient}>
+					<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
+						<RouterProvider router={router} />
+					</DokiClientProvider>
+				</QueryClientProvider>
+			</LocalPostgresProvider>
+		</UiProvider>
 	);
 }
 
 if (!rootElement?.innerHTML) {
 	const root = createRoot(rootElement as HTMLElement);
-	root.render(<App />);
+	root.render(
+		<StrictMode>
+			<App />
+		</StrictMode>,
+	);
 }

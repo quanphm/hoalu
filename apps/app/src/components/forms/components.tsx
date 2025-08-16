@@ -10,7 +10,7 @@ interface FieldControlContextValue {
 	id: string;
 	formItemId: string;
 	formDescriptionId: string;
-	formMessageId: string;
+	formErrorMessageId: string;
 }
 const FieldControlContext = createContext<FieldControlContextValue>({} as FieldControlContextValue);
 
@@ -20,7 +20,7 @@ function Field({ className, ...props }: React.ComponentProps<"div">) {
 		id,
 		formItemId: `${id}-form-item`,
 		formDescriptionId: `${id}-form-item-description`,
-		formMessageId: `${id}-form-item-message`,
+		formErrorMessageId: `${id}-form-error-message`,
 	};
 
 	return (
@@ -39,7 +39,7 @@ function useFieldControlContext() {
 }
 
 function FieldControl(props: React.ComponentProps<typeof SlotPrimitive.Slot>) {
-	const { formItemId, formDescriptionId, formMessageId } = useFieldControlContext();
+	const { formItemId, formDescriptionId, formErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasErrors = errors.length > 0;
@@ -49,7 +49,7 @@ function FieldControl(props: React.ComponentProps<typeof SlotPrimitive.Slot>) {
 			id={formItemId}
 			aria-labelledby={formItemId}
 			aria-describedby={
-				!hasErrors ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`
+				!hasErrors ? `${formDescriptionId}` : `${formDescriptionId} ${formErrorMessageId}`
 			}
 			aria-invalid={hasErrors}
 			{...props}
@@ -87,7 +87,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 function FieldMessage({ className, children, ...props }: React.ComponentProps<"p">) {
-	const { formMessageId } = useFieldControlContext();
+	const { formErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 
@@ -112,7 +112,7 @@ function FieldMessage({ className, children, ...props }: React.ComponentProps<"p
 
 	return (
 		<p
-			id={formMessageId}
+			id={formErrorMessageId}
 			role="alert"
 			aria-live="polite"
 			className={cn("text-destructive text-sm", className)}
