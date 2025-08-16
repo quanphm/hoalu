@@ -1,7 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { type } from "arktype";
 
-import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
 import { ContentCard } from "@/components/cards";
 import { useAppForm } from "@/components/forms";
