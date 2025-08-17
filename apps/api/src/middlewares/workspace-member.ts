@@ -34,7 +34,6 @@ export const workspaceMember = createMiddleware<
 	}
 >(async (c, next) => {
 	const user = c.get("user");
-
 	if (!user) {
 		throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
 			message: HTTPStatus.phrases.UNAUTHORIZED,

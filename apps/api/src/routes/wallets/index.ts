@@ -1,4 +1,5 @@
 import { type } from "arktype";
+import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
@@ -111,7 +112,12 @@ const route = app
 		workspaceMember,
 		jsonBodyValidator(InsertWalletSchema),
 		async (c) => {
-			const user = c.get("user")!;
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
@@ -150,7 +156,12 @@ const route = app
 		workspaceMember,
 		jsonBodyValidator(UpdateWalletSchema),
 		async (c) => {
-			const user = c.get("user")!;
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
 			const workspace = c.get("workspace");
 			const membership = c.get("membership");
 			const param = c.req.valid("param");
@@ -231,7 +242,12 @@ const route = app
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
-			const user = c.get("user")!;
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
 			const workspace = c.get("workspace");
 			const membership = c.get("membership");
 			const param = c.req.valid("param");

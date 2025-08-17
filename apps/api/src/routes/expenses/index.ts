@@ -1,4 +1,5 @@
 import { type } from "arktype";
+import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
@@ -112,7 +113,12 @@ const route = app
 		workspaceMember,
 		jsonBodyValidator(InsertExpenseSchema),
 		async (c) => {
-			const user = c.get("user")!;
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 

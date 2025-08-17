@@ -5,7 +5,7 @@ import type { GenericEndpointContext, Session, User } from "../../utils/types";
 import type { defaultRoles } from "./access/statement";
 import type { WorkspaceOptions } from "./index";
 
-export const workspaceMiddleware = createAuthMiddleware(async (ctx) => {
+export const workspaceMiddleware = createAuthMiddleware(async (_ctx) => {
 	return {} as {
 		orgOptions: WorkspaceOptions;
 		roles: typeof defaultRoles & {

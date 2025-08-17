@@ -48,14 +48,16 @@ export function FilesUpload({
 						</button>
 					</div>
 					<ul className="space-y-1 text-destructive text-xs">
-						{errors.map((error, index) => (
-							<li key={index}>{error}</li>
+						{errors.map((error) => (
+							<li key={error}>{error}</li>
 						))}
 					</ul>
 				</div>
 			)}
 
 			<div
+				role="button"
+				tabIndex={0}
 				className="relative rounded-lg border border-input p-4 hover:border-ring hover:outline-none hover:ring-[3px] hover:ring-ring/20"
 				onDragOver={handleDragOver}
 				onDragLeave={handleDragLeave}

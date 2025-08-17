@@ -17,7 +17,9 @@ export function ImageGallery(props: {
 				{props.data.map((image) => (
 					<div
 						key={image.name}
-						className="relative aspect-square cursor-pointer overflow-hidden"
+						role="button"
+						tabIndex={0}
+						className="relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-lg border bg-muted"
 						onClick={() => setSelectedImage(image)}
 						onKeyUp={() => setSelectedImage(image)}
 					>

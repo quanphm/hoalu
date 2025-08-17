@@ -33,7 +33,7 @@ interface UseShapeResult<T extends Row<unknown> = Row> {
 	isError: boolean;
 }
 
-interface AppShapeOptions<T extends Row<unknown>, S = UseShapeResult<T>>
+interface AppShapeOptions<T extends Row<unknown>>
 	extends Omit<ShapeStreamOptions<GetExtensions<T>>, "url"> {
 	url?: string;
 	selector?: (value: UseShapeResult<T>) => Selection;

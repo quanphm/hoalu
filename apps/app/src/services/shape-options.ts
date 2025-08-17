@@ -1,7 +1,7 @@
 import { notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 
-import type { AppShapeOptions, Row, UseShapeResult } from "@hoalu/doki";
+import type { AppShapeOptions, Row } from "@hoalu/doki";
 import { queryClient } from "@/lib/query-client";
 import { getWorkspaceDetailsOptions } from "@/services/query-options";
 
@@ -12,8 +12,8 @@ const WorkspaceSchema = type({
 });
 type WorkspaceSchema = typeof WorkspaceSchema.inferOut;
 
-export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T>>(
-	handler: (params: WorkspaceSchema) => AppShapeOptions<T, S>,
+export const withWorkspace = async <T extends Row<unknown>>(
+	handler: (params: WorkspaceSchema) => AppShapeOptions<T>,
 ) => {
 	const { state } = window.getRouter();
 	const id = "/_dashboard/$slug";
@@ -33,14 +33,14 @@ export const withWorkspace = async <T extends Row<unknown>, S = UseShapeResult<T
 	return handler(result);
 };
 
-export const tasksShapeOptions = <T extends Row<unknown>, S = UseShapeResult<T>>({
+export const tasksShapeOptions = <T extends Row<unknown>>({
 	id,
 }: {
 	id: string;
-}): AppShapeOptions<T, S> => ({
+}): AppShapeOptions<T> => ({
 	params: {
 		table: "task",
-		where: `workspace_id = \'${id}\'`,
+		where: `workspace_id = '${id}'`,
 		columns: [
 			"id",
 			"title",

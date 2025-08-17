@@ -9,7 +9,7 @@ import { workspaceMember } from "../../middlewares/workspace-member";
 import { idParamValidator } from "../../validators/id-param";
 import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { CategoryRepository } from "./repositiory";
+import { CategoryRepository } from "./repository";
 import {
 	CategoriesSchema,
 	CategorySchema,

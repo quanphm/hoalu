@@ -23,5 +23,3 @@ export const selectedExpenseAtom = atom<{
 }>({
 	id: null,
 });
-
-export const searchKeywordsAtom = atom<string>("");

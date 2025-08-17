@@ -1,13 +1,15 @@
 import { currencies } from "./data/currencies";
 import type { TCountryCode } from "./types";
 
+function isValidCountryCode(code: string): code is keyof typeof currencies {
+	return code in currencies;
+}
+
 export const getCurrency = (iso2: TCountryCode): string => {
-	// @ts-ignore
-	const currency = currencies[iso2];
-	if (!currency) {
+	if (!isValidCountryCode(iso2)) {
 		throw new Error("Currency not found");
 	}
-	return currency;
+	return currencies[iso2];
 };
 
 export const getCurrencyList = (): string[] => {

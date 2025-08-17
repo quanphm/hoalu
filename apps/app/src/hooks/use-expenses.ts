@@ -1,33 +1,44 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useDeferredValue } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import {
 	expenseCategoryFilterAtom,
+	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
 	searchKeywordsAtom,
 	selectedExpenseAtom,
 } from "@/atoms";
-import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { expensesQueryOptions } from "@/services/query-options";
+import { formatCurrency } from "@/helpers/currency";
+import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "@/lib/schema";
+import {
+	categoriesQueryOptions,
+	expensesQueryOptions,
+	walletsQueryOptions,
+} from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
 
 const routeApi = getRouteApi("/_dashboard/$slug/expenses");
 
 const select = (
 	data: ExpenseWithClientConvertedSchema[],
-	selectedCategoryIds: string[],
-	selectedWalletIds: string[],
-	range:
-		| {
-				from: Date;
-				to: Date;
-		  }
-		| undefined,
-	searchKeywords: string,
+	condition: {
+		selectedCategoryIds: string[];
+		selectedWalletIds: string[];
+		selectedRepeat: RepeatSchema[];
+		searchKeywords: string;
+		range:
+			| {
+					from: Date;
+					to: Date;
+			  }
+			| undefined;
+	},
 ) => {
+	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, searchKeywords, range } =
+		condition;
 	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
 	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
@@ -59,6 +70,12 @@ const select = (
 					return false;
 				}
 			}
+			// Repeat filter
+			if (selectedRepeat.length > 0) {
+				if (!selectedRepeat.includes(expense.repeat)) {
+					return false;
+				}
+			}
 			// Search by keywords
 			if (searchKeywords) {
 				return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
@@ -76,14 +93,24 @@ export function useExpenses() {
 	const searchKeywords = useAtomValue(searchKeywordsAtom);
 	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
 	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
+	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
+
+	// experiment
+	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
 	const { data } = useSuspenseQuery({
 		...expensesQueryOptions(slug),
 		select: useCallback(
 			(expenses: ExpenseWithClientConvertedSchema[]) => {
-				return select(expenses, selectedCategoryIds, selectedWalletIds, range, searchKeywords);
+				return select(expenses, {
+					selectedCategoryIds,
+					selectedWalletIds,
+					selectedRepeat,
+					searchKeywords: deferredSearchKeywords,
+					range,
+				});
 			},
-			[selectedCategoryIds, selectedWalletIds, range, searchKeywords],
+			[selectedCategoryIds, selectedWalletIds, selectedRepeat, deferredSearchKeywords, range],
 		),
 	});
 
@@ -100,4 +127,45 @@ export function useSelectedExpense() {
 	}, []);
 
 	return { expense, onSelectExpense };
+}
+
+export function useExpenseStats() {
+	const { slug } = useWorkspace();
+	const {
+		metadata: { currency },
+	} = useWorkspace();
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+
+	let totalAmount = 0;
+	const repeatCount: Record<string, number> = {};
+
+	for (const expense of expenses) {
+		const amount = expense.convertedAmount <= 0 ? 0 : expense.convertedAmount;
+		totalAmount += amount;
+		repeatCount[expense.repeat] = (repeatCount[expense.repeat] || 0) + 1;
+	}
+
+	const categoryCount: Record<string, number> = {};
+	for (const category of categories) {
+		categoryCount[category.id] = category.total;
+	}
+
+	const walletCount: Record<string, number> = {};
+	for (const wallet of wallets) {
+		walletCount[wallet.id] = wallet.total;
+	}
+
+	return {
+		amount: {
+			total: formatCurrency(totalAmount, currency),
+		},
+		transactions: {
+			total: expenses.length,
+			byCategory: categoryCount,
+			byWallet: walletCount,
+			byRepeat: repeatCount,
+		},
+	};
 }

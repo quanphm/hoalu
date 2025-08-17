@@ -27,10 +27,23 @@ export const datetime = { format: dateFns.format, intlFormatDistance: dateFns.in
  * Convert `1753030800000-1753376400000` to `{ from, to }` object
  */
 export function toFromToDateObject(searchDate?: string) {
-	if (!searchDate) return undefined;
-	const fromto = searchDate.split("-");
+	if (!searchDate) {
+		return undefined;
+	}
+
+	const [fromStr, toStr] = searchDate.split("-", 2);
+	if (!fromStr || !toStr) {
+		return undefined;
+	}
+
+	const fromMs = Number(fromStr);
+	const toMs = Number(toStr);
+	if (!Number.isFinite(fromMs) || !Number.isFinite(toMs)) {
+		return undefined;
+	}
+
 	return {
-		from: new Date(parseInt(fromto[0])),
-		to: new Date(parseInt(fromto[1])),
+		from: new Date(fromMs),
+		to: new Date(toMs),
 	};
 }

@@ -4,7 +4,7 @@ import type { AuthContext, BetterAuthPlugin } from "better-auth/types";
 
 import { shimContext } from "../../utils/shim";
 import type { User } from "../../utils/types";
-import { defaultRoles, defaultStatements } from "./access";
+import { defaultRoles } from "./access";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
 	acceptInvitation,
