@@ -20,8 +20,7 @@ export function ExpenseFilter() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">Search</div>
+			<div className="flex flex-col gap-2 pt-2">
 				<ExpenseSearch />
 			</div>
 

@@ -50,7 +50,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 				return;
 			}
 			try {
-				const idx = Number.parseInt(data.key) - 1;
+				const idx = Number.parseInt(data.key, 10) - 1;
 				if (idx > workspaces.length - 1) {
 					return;
 				}
@@ -81,7 +81,7 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
 		() => {
-			const currentThemeIndex = THEMES.findIndex((t) => t === theme);
+			const currentThemeIndex = THEMES.indexOf(theme ?? THEMES[0]);
 			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
 			setTheme(THEMES[nextThemeIndex]);
 		},

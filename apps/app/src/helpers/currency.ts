@@ -1,5 +1,8 @@
 // Special cases for currencies that commonly use different decimal places
-const specialCases = {
+const specialCases: Record<
+	string,
+	{ minimumFractionDigits: number; maximumFractionDigits: number }
+> = {
 	JPY: { minimumFractionDigits: 0, maximumFractionDigits: 0 },
 	KRW: { minimumFractionDigits: 0, maximumFractionDigits: 0 },
 	IDR: { minimumFractionDigits: 0, maximumFractionDigits: 0 },
@@ -21,10 +24,8 @@ export function formatCurrency(amount: number, code: string) {
 	let options = {};
 	const locale = navigator.language || "en-US";
 
-	// @ts-ignore
-	if (specialCases[code]) {
-		// @ts-ignore
-		options = specialCases[code];
+	if (code in specialCases) {
+		options = specialCases[code as keyof typeof specialCases];
 	}
 
 	const formatter = new Intl.NumberFormat(locale, {

@@ -5,7 +5,9 @@ export function htmlToText(html: string | null) {
 	const doc = parser.parseFromString(html, "text/html");
 
 	const scripts = doc.querySelectorAll("script, style");
-	scripts.forEach((el) => el.remove());
+	scripts.forEach((el) => {
+		el.remove();
+	});
 
 	return doc.body.textContent || doc.body.innerText || "";
 }
