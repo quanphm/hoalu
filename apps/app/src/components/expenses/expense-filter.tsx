@@ -45,7 +45,7 @@ export function ExpenseFilter() {
 								key={c.id}
 								id={c.id}
 								name={c.name}
-								stats={stats.transactions.byCategory[c.id] || 0}
+								stats={stats.transactions.byCategory[c.id] ?? 0}
 							/>
 						))}
 					</ScrollAreaWithCondition>
@@ -62,7 +62,7 @@ export function ExpenseFilter() {
 								id={w.id}
 								name={w.name}
 								type={w.type}
-								stats={stats.transactions.byWallet[w.id] || 0}
+								stats={stats.transactions.byWallet[w.id] ?? 0}
 							/>
 						))}
 					</ScrollAreaWithCondition>
@@ -78,7 +78,7 @@ export function ExpenseFilter() {
 								key={r.value}
 								id={r.value}
 								name={r.label}
-								stats={stats.transactions.byRepeat[r.value] || 0}
+								stats={stats.transactions.byRepeat[r.value] ?? 0}
 							/>
 						))}
 					</ScrollAreaWithCondition>
