@@ -414,7 +414,6 @@ export function ExpenseCalendar() {
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button variant="outline" className="w-full justify-start font-normal">
-					<CalendarIcon />
 					{range?.from && range?.to
 						? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
 						: "Select date"}

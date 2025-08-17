@@ -27,17 +27,15 @@ function RouteComponent() {
 			</SectionHeader>
 
 			<SectionContent columns={12} className="h-[calc(100vh-92px)] gap-0 overflow-hidden">
-				<div data-slot="expense-filter" className="col-span-3 pr-6">
-					<div className="flex flex-col gap-4">
-						<ExpenseFilter />
-					</div>
+				<div data-slot="expense-filter" className="col-span-2 overflow-auto pr-6 pb-8">
+					<ExpenseFilter />
 				</div>
 
-				<div data-slot="expense-list" className="col-span-4">
+				<div data-slot="expense-list" className="col-span-4 overflow-auto">
 					<ExpenseList />
 				</div>
 
-				<div data-slot="expense-details" className="col-span-5">
+				<div data-slot="expense-details" className="col-span-6 overflow-auto">
 					<ExpenseDetails />
 				</div>
 			</SectionContent>

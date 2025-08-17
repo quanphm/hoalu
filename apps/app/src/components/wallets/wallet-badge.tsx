@@ -23,7 +23,7 @@ export function WalletLabel(props: WalletCommonProps) {
 				className={cn("size-2 rounded-full", createWalletTheme(props.type))}
 				aria-hidden="true"
 			/>
-			{props.name}
+			<span className="max-w-[100px] truncate">{props.name}</span>
 		</>
 	);
 }
