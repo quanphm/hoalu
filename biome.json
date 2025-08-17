@@ -50,7 +50,7 @@
 				"noNonNullAssertion": "warn"
 			},
 			"suspicious": {
-				"noExplicitAny": "warn",
+				"noExplicitAny": "info",
 				"noArrayIndexKey": "warn"
 			},
 			"a11y": {

@@ -48,7 +48,7 @@ export function TasksTable({ data }: { data: TaskSchema[] }) {
 	return <DataTable data={data} columns={columns} />;
 }
 
-function RowActions({ row }: { row: Row<TaskSchema> }) {
+function RowActions({ row: _row }: { row: Row<TaskSchema> }) {
 	const [open, setOpen] = useState(false);
 
 	return (

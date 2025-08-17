@@ -30,7 +30,7 @@ export function toFromToDateObject(searchDate?: string) {
 	if (!searchDate) return undefined;
 	const fromto = searchDate.split("-");
 	return {
-		from: new Date(parseInt(fromto[0])),
-		to: new Date(parseInt(fromto[1])),
+		from: new Date(parseInt(fromto[0], 10)),
+		to: new Date(parseInt(fromto[1], 10)),
 	};
 }

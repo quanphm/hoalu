@@ -5,7 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { toFromToDateObject } from "@hoalu/common/datetime";
-import { CalendarIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
