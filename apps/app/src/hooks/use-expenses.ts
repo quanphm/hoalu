@@ -11,7 +11,6 @@ import {
 	searchKeywordsAtom,
 	selectedExpenseAtom,
 } from "@/atoms";
-import { AVAILABLE_REPEAT_OPTIONS } from "@/helpers/constants";
 import { formatCurrency } from "@/helpers/currency";
 import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "@/lib/schema";
 import {
