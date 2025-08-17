@@ -5,7 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { toFromToDateObject } from "@hoalu/common/datetime";
-import { Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -413,7 +413,11 @@ export function ExpenseCalendar() {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button variant="outline" className="w-full justify-start font-normal">
+				<Button
+					variant="outline"
+					className="h-auto w-full justify-start font-normal text-xs leading-none"
+				>
+					<CalendarIcon />
 					{range?.from && range?.to
 						? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
 						: "Select date"}

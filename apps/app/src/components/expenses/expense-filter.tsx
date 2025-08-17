@@ -26,7 +26,7 @@ export function ExpenseFilter() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-col gap-2 pt-2">
+			<div className="flex flex-col gap-2 pt-1">
 				<ExpenseSearch />
 			</div>
 

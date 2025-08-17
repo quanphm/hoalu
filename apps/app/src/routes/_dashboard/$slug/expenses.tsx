@@ -27,7 +27,7 @@ function RouteComponent() {
 			</SectionHeader>
 
 			<SectionContent columns={12} className="h-[calc(100vh-92px)] gap-0 overflow-hidden">
-				<div data-slot="expense-filter" className="col-span-2 overflow-auto pr-6 pb-8">
+				<div data-slot="expense-filter" className="col-span-2 overflow-auto pr-4 pb-4">
 					<ExpenseFilter />
 				</div>
 
