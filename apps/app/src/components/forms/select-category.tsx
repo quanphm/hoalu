@@ -78,7 +78,7 @@ export function SelectCategoryField(props: Props) {
 						<CommandInput placeholder="Search..." />
 						<CommandList>
 							<CommandEmpty>No result.</CommandEmpty>
-							<CommandGroup>
+							<CommandGroup className="max-h-[175px] overflow-auto">
 								{categories.map((opt) => (
 									<CommandItem
 										key={opt.value}

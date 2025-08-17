@@ -1,49 +1,55 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
 import type { UpdateWalletSchema } from "./schema";
+
+const schemaColumns = getTableColumns(schema.wallet);
 
 type NewWallet = typeof schema.wallet.$inferInsert;
 
 export class WalletRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
 		const queryData = await db
-			.select()
+			.select({
+				...schemaColumns,
+				owner: schema.user,
+				workspace: schema.workspace,
+				total: count(schema.expense.id),
+			})
 			.from(schema.wallet)
 			.innerJoin(schema.user, eq(schema.wallet.ownerId, schema.user.id))
 			.innerJoin(schema.workspace, eq(schema.wallet.workspaceId, schema.workspace.id))
+			.leftJoin(schema.expense, eq(schema.wallet.id, schema.expense.walletId))
 			.where(eq(schema.wallet.workspaceId, param.workspaceId))
-			.orderBy(desc(schema.wallet.createdAt));
+			.groupBy(schema.wallet.id, schema.user.id, schema.workspace.id)
+			.orderBy((result) => {
+				return [desc(result.total), desc(result.name)];
+			});
 
-		const result = queryData.map((data) => ({
-			...data.wallet,
-			owner: data.user,
-			workspace: data.workspace,
-		}));
-
-		return result;
+		return queryData;
 	}
 
 	async findOne(param: { id: string; workspaceId: string }) {
 		const queryData = await db
-			.select()
+			.select({
+				...schemaColumns,
+				owner: schema.user,
+				workspace: schema.workspace,
+				total: count(schema.expense.id),
+			})
 			.from(schema.wallet)
 			.innerJoin(schema.user, eq(schema.wallet.ownerId, schema.user.id))
 			.innerJoin(schema.workspace, eq(schema.wallet.workspaceId, schema.workspace.id))
+			.leftJoin(schema.expense, eq(schema.wallet.id, schema.expense.walletId))
 			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
+			.groupBy(schema.wallet.id, schema.user.id, schema.workspace.id)
 			.orderBy(desc(schema.wallet.createdAt))
 			.limit(1);
 
 		if (!queryData[0]) return null;
 
-		const result = {
-			...queryData[0].wallet,
-			owner: queryData[0].user,
-			workspace: queryData[0].workspace,
-		};
-
-		return result;
+		return queryData[0];
 	}
 
 	async insert(param: Omit<NewWallet, "id">) {

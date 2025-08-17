@@ -6,6 +6,7 @@ import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { expenseCategoryFilterAtom, expenseWalletFilterAtom } from "@/atoms";
+import { useExpenseStats } from "@/hooks/use-expenses";
 import type { WalletTypeSchema } from "@/lib/schema";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { WalletLabel } from "../wallets/wallet-badge";
@@ -57,6 +58,7 @@ export function ExpenseFilter() {
 }
 
 function CategoryCheckboxGroup(props: { id: string; name: string }) {
+	const stats = useExpenseStats();
 	const [selectedIds, setSelectedIds] = useAtom(expenseCategoryFilterAtom);
 
 	const onChange = (checked: boolean | "indeterminate") =>
@@ -72,16 +74,20 @@ function CategoryCheckboxGroup(props: { id: string; name: string }) {
 	return (
 		<Label
 			htmlFor={props.id}
-			className="flex w-full flex-row items-center gap-2 p-2 text-xs outline-none hover:bg-muted/50"
+			className="flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none hover:bg-muted/50"
 		>
-			<Checkbox id={props.id} checked={active} onCheckedChange={onChange} />
-			{props.name}
+			<div className="flex items-center gap-2">
+				<Checkbox id={props.id} checked={active} onCheckedChange={onChange} />
+				{props.name}
+			</div>
+			<span className="text-muted-foreground">{stats.transactions.byCategory[props.id]}</span>
 		</Label>
 	);
 }
 
 function WalletCheckboxGroup(props: { id: string; name: string; type: WalletTypeSchema }) {
 	const [selectedIds, setSelectedIds] = useAtom(expenseWalletFilterAtom);
+	const stats = useExpenseStats();
 
 	const onChange = (checked: boolean | "indeterminate") =>
 		setSelectedIds((prev) => {
@@ -96,10 +102,13 @@ function WalletCheckboxGroup(props: { id: string; name: string; type: WalletType
 	return (
 		<Label
 			htmlFor={props.id}
-			className="flex w-full flex-row items-center gap-2 p-2 text-xs outline-none hover:bg-muted/50"
+			className="flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none hover:bg-muted/50"
 		>
-			<Checkbox id={props.id} checked={active} onCheckedChange={onChange} />
-			<WalletLabel name={props.name} type={props.type} />
+			<div className="flex items-center gap-2">
+				<Checkbox id={props.id} checked={active} onCheckedChange={onChange} />
+				<WalletLabel name={props.name} type={props.type} />
+			</div>
+			<span className="text-muted-foreground">{stats.transactions.byWallet[props.id]}</span>
 		</Label>
 	);
 }

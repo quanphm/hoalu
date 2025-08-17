@@ -8,6 +8,7 @@ export const CategorySchema = type({
 	name: "string",
 	description: "string | null",
 	color: ColorSchema,
+	total: "number",
 });
 
 export const CategoriesSchema = CategorySchema.array().onUndeclaredKey("delete");

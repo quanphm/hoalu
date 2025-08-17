@@ -6,6 +6,7 @@ import { ExpenseDetails } from "@/components/expenses/expense-details";
 import { ExpenseFilter } from "@/components/expenses/expense-filter";
 import ExpenseList from "@/components/expenses/expense-list";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+import { useExpenseStats } from "@/hooks/use-expenses";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	validateSearch: type({
@@ -15,6 +16,9 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
+	const data = useExpenseStats();
+	console.log(data);
+
 	return (
 		<Section className="-mb-8">
 			<SectionHeader>

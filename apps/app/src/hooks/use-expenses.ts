@@ -10,8 +10,13 @@ import {
 	searchKeywordsAtom,
 	selectedExpenseAtom,
 } from "@/atoms";
+import { formatCurrency } from "@/helpers/currency";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
-import { expensesQueryOptions } from "@/services/query-options";
+import {
+	categoriesQueryOptions,
+	expensesQueryOptions,
+	walletsQueryOptions,
+} from "@/services/query-options";
 import { useWorkspace } from "./use-workspace";
 
 const routeApi = getRouteApi("/_dashboard/$slug/expenses");
@@ -100,4 +105,41 @@ export function useSelectedExpense() {
 	}, []);
 
 	return { expense, onSelectExpense };
+}
+
+export function useExpenseStats() {
+	const { slug } = useWorkspace();
+	const {
+		metadata: { currency },
+	} = useWorkspace();
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+
+	let totalAmount = 0;
+	for (const expense of expenses) {
+		const amount = expense.convertedAmount <= 0 ? 0 : expense.convertedAmount;
+		totalAmount += amount;
+	}
+
+	const categoryCount: Record<string, number> = {};
+	for (const category of categories) {
+		categoryCount[category.id] = category.total;
+	}
+
+	const walletCount: Record<string, number> = {};
+	for (const wallet of wallets) {
+		walletCount[wallet.id] = wallet.total;
+	}
+
+	return {
+		amount: {
+			total: formatCurrency(totalAmount, currency),
+		},
+		transactions: {
+			total: expenses.length,
+			byCategory: categoryCount,
+			byWallet: walletCount,
+		},
+	};
 }

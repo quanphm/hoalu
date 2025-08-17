@@ -27,6 +27,7 @@ export const WalletSchema = type({
 		name: "string",
 		logo: "string | null",
 	},
+	total: "number",
 });
 
 export const WalletsSchema = WalletSchema.array().onUndeclaredKey("delete");
