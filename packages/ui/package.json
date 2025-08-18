@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/ui",
-	"version": "0.8.0",
+	"version": "0.9.0",
 	"private": true,
 	"sideEffects": false,
 	"exports": {
@@ -56,7 +56,7 @@
 		"date-fns": "^4.1.0",
 		"next-themes": "^0.4.6",
 		"radix-ui": "^1.4.3",
-		"react-day-picker": "^9.8.1",
+		"react-day-picker": "^9.9.0",
 		"recharts": "^3.1.2",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.3.1",
