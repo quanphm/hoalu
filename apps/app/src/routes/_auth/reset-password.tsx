@@ -1,6 +1,7 @@
 import { createFileRoute, type ErrorComponentProps, Link } from "@tanstack/react-router";
 import { type } from "arktype";
 
+import { ArrowLeft } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
 import { ContentCard, ErrorCard } from "@/components/cards";
@@ -51,6 +52,7 @@ function ResetPasswordRequest() {
 		<ContentCard
 			title="Reset password"
 			description="Send a request to reset password"
+			className="border-transparent"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>
@@ -68,6 +70,14 @@ function ResetPasswordRequest() {
 							<form.SubscribeButton className="w-full">Send</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
+
+					<Link
+						to="/login"
+						className="m-auto inline-flex max-w-fit items-center text-muted-foreground text-sm"
+					>
+						<ArrowLeft className="mr-2 size-3" />
+						Back
+					</Link>
 				</div>
 			}
 		/>
