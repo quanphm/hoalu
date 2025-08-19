@@ -33,26 +33,22 @@ function filterDataByRange(
 	let endDate: Date;
 
 	if (range === "custom" && customRange) {
-		startDate = new Date(customRange.from);
-		endDate = new Date(customRange.to);
-		startDate.setHours(0, 0, 0, 0);
-		endDate.setHours(23, 59, 59, 999);
+		startDate = datetime.startOfDay(customRange.from);
+		endDate = datetime.endOfDay(customRange.to);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
-		today.setHours(23, 59, 59, 999);
+		endDate = datetime.endOfDay(today);
 		const cutoffDate = new Date(today);
 		cutoffDate.setDate(cutoffDate.getDate() - days + 1);
-		cutoffDate.setHours(0, 0, 0, 0);
-		startDate = cutoffDate;
-		endDate = today;
+		startDate = datetime.startOfDay(cutoffDate);
 	}
 
 	// Sort data by date first to ensure proper ordering
 	const sortedData = [...data].sort((a, b) => a.date.localeCompare(b.date));
 
 	const filtered = sortedData.filter((item) => {
-		const itemDate = new Date(item.date);
+		const itemDate = datetime.parse(item.date, 'yyyy-MM-dd', new Date());
 		return itemDate >= startDate && itemDate <= endDate;
 	});
 
@@ -97,7 +93,7 @@ export function ExpenseDashboardChart() {
 								tickMargin={8}
 								minTickGap={32}
 								tickFormatter={(value) => {
-									return datetime.format(new Date(`${value}T00:00:00`), "dd/MM/yyyy");
+									return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
 								}}
 							/>
 							<ChartTooltip
@@ -106,7 +102,7 @@ export function ExpenseDashboardChart() {
 										className="w-[150px]"
 										nameKey="value"
 										labelFormatter={(value) => {
-											return datetime.format(new Date(`${value}T00:00:00`), "dd/MM/yyyy");
+											return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
 										}}
 									/>
 								}

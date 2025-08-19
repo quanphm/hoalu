@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
+import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
@@ -36,23 +37,19 @@ function filterExpensesByRange(
 	let endDate: Date;
 
 	if (range === "custom" && customRange) {
-		startDate = new Date(customRange.from);
-		endDate = new Date(customRange.to);
-		startDate.setHours(0, 0, 0, 0);
-		endDate.setHours(23, 59, 59, 999);
+		startDate = datetime.startOfDay(customRange.from);
+		endDate = datetime.endOfDay(customRange.to);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
-		today.setHours(23, 59, 59, 999);
+		endDate = datetime.endOfDay(today);
 		const cutoffDate = new Date(today);
 		cutoffDate.setDate(cutoffDate.getDate() - days + 1);
-		cutoffDate.setHours(0, 0, 0, 0);
-		startDate = cutoffDate;
-		endDate = today;
+		startDate = datetime.startOfDay(cutoffDate);
 	}
 
 	return expenses.filter((expense) => {
-		const expenseDate = new Date(`${expense.date}T00:00:00`);
+		const expenseDate = datetime.parse(expense.date, 'yyyy-MM-dd', new Date());
 		return expenseDate >= startDate && expenseDate <= endDate;
 	});
 }

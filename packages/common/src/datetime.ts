@@ -20,7 +20,13 @@ export const TIME_IN_SECONDS = {
 	YEAR: 31_536_000,
 } as const;
 
-export const datetime = { format: dateFns.format, intlFormatDistance: dateFns.intlFormatDistance };
+export const datetime = { 
+	format: dateFns.format, 
+	intlFormatDistance: dateFns.intlFormatDistance,
+	parse: dateFns.parse,
+	startOfDay: dateFns.startOfDay,
+	endOfDay: dateFns.endOfDay
+};
 
 /**
  *

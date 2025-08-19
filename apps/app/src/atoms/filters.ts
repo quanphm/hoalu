@@ -13,8 +13,8 @@ export const searchKeywordsAtom = atom<string>("");
 export type DashboardDateRange = "7" | "30" | "all" | "custom";
 
 export interface CustomDateRange {
-	from: Date;
-	to: Date;
+	from: Date; // Should be startOfDay for inclusive local-day boundaries
+	to: Date;   // Should be endOfDay for inclusive local-day boundaries
 }
 
 export const selectDateRangeAtom = atom<DashboardDateRange>("7");
