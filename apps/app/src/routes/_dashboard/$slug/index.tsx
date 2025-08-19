@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CategoryBreakdownChart } from "@/components/charts/category-breakdown-chart";
+import { DashboardDateFilter } from "@/components/charts/dashboard-date-filter";
 import { ExpenseDashboardChart } from "@/components/charts/expenses-dashboard-chart";
 import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
@@ -23,13 +25,19 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
+				<SectionHeader>
+					<SectionTitle>Analytics</SectionTitle>
+					<DashboardDateFilter />
+				</SectionHeader>
 				<SectionContent>
 					<Section>
 						<SectionContent columns={12}>
-							<div data-slot="expense-filter" className="col-span-8">
+							<div data-slot="expense-chart" className="col-span-8">
 								<ExpenseDashboardChart />
 							</div>
-							<div data-slot="expense-filter" className="col-span-4"></div>
+							<div data-slot="category-breakdown" className="col-span-4">
+								<CategoryBreakdownChart />
+							</div>
 						</SectionContent>
 					</Section>
 				</SectionContent>
