@@ -152,12 +152,12 @@ export function useExpenseStats() {
 	let totalAmount = 0;
 	const repeatCount: Record<string, number> = {};
 	for (const expense of expenses) {
-		const amount = expense.convertedAmount <= 0 ? 0 : expense.convertedAmount;
+		const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
 		totalAmount += amount;
 		repeatCount[expense.repeat] = (repeatCount[expense.repeat] || 0) + 1;
 
 		const currentValue = aggregationByDate.get(expense.date) || 0;
-		aggregationByDate.set(expense.date, currentValue + expense.convertedAmount);
+		aggregationByDate.set(expense.date, currentValue + amount);
 	}
 
 	const categoryCount: Record<string, number> = {};
