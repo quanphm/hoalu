@@ -9,3 +9,7 @@ export const expenseWalletFilterAtom = atom<WalletSchema["id"][]>([]);
 export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
 
 export const searchKeywordsAtom = atom<string>("");
+
+export type DateRangeFilter = "7d" | "30d" | "all";
+
+export const dateRangeFilterAtom = atom<DateRangeFilter>("all");
