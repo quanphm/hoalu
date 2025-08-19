@@ -24,10 +24,10 @@ const chartConfig = {
 
 type DateRange = "7" | "30" | "all";
 
-const dateRangeOptions = [
-	{ value: "7" as DateRange, label: "Last 7 days" },
-	{ value: "30" as DateRange, label: "Last 30 days" },
-	{ value: "all" as DateRange, label: "All time" },
+const dateRangeOptions: { value: DateRange; label: string }[] = [
+	{ value: "7", label: "Last 7 days" },
+	{ value: "30", label: "Last 30 days" },
+	{ value: "all", label: "All time" },
 ];
 
 function filterDataByRange(data: { date: string; value: number }[], range: DateRange) {
