@@ -2,12 +2,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
-import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
+import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-options";
 
 const FALLBACK_COLORS = [
@@ -26,7 +26,7 @@ const FALLBACK_COLORS = [
 ];
 
 function filterExpensesByRange(
-	expenses: any[],
+	expenses: ExpenseWithClientConvertedSchema[],
 	range: DashboardDateRange,
 	customRange?: { from: Date; to: Date },
 ) {
@@ -65,18 +65,7 @@ export function CategoryBreakdownChart() {
 		metadata: { currency },
 	} = useWorkspace();
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
-
-	// Get raw expenses data and filter by date range
-	const { data: expenses } = useSuspenseQuery({
-		...expensesQueryOptions(slug),
-		select: (data) =>
-			data.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				};
-			}),
-	});
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 
 	const filteredExpenses = filterExpensesByRange(expenses, dateRange, customRange);
 

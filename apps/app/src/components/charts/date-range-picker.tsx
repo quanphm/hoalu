@@ -6,10 +6,11 @@ import { datetime } from "@hoalu/common/datetime";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { cn } from "@hoalu/ui/utils";
 import { type CustomDateRange, customDateRangeAtom } from "@/atoms/filters";
 
 interface DateRangePickerProps {
-	onRangeSelect: (range: CustomDateRange) => void;
+	onRangeSelect(range: CustomDateRange): void;
 	className?: string;
 }
 
@@ -35,14 +36,14 @@ export function DateRangePicker({ onRangeSelect, className }: DateRangePickerPro
 		if (customRange?.from && customRange?.to) {
 			return `${datetime.format(customRange.from, "MMM dd")} - ${datetime.format(customRange.to, "MMM dd, yyyy")}`;
 		}
-		return "Pick date range";
+		return "Select date";
 	};
 
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button variant="outline" className={`justify-start text-left font-normal ${className}`}>
-					<CalendarIcon className="mr-2 h-4 w-4" />
+				<Button variant="outline" className={cn("justify-start text-left font-normal", className)}>
+					<CalendarIcon className="h-4 w-4" />
 					{formatDateRange()}
 				</Button>
 			</PopoverTrigger>

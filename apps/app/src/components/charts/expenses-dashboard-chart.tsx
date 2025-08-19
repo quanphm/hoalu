@@ -97,7 +97,7 @@ export function ExpenseDashboardChart() {
 								tickMargin={8}
 								minTickGap={32}
 								tickFormatter={(value) => {
-									return datetime.format(new Date(value), "dd/MM/yyyy");
+									return datetime.format(new Date(`${value}T00:00:00`), "dd/MM/yyyy");
 								}}
 							/>
 							<ChartTooltip
@@ -106,7 +106,7 @@ export function ExpenseDashboardChart() {
 										className="w-[150px]"
 										nameKey="value"
 										labelFormatter={(value) => {
-											return datetime.format(new Date(value), "dd/MM/yyyy");
+											return datetime.format(new Date(`${value}T00:00:00`), "dd/MM/yyyy");
 										}}
 									/>
 								}

@@ -1,15 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
-import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent } from "@hoalu/ui/card";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
+import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { expensesQueryOptions } from "@/services/query-options";
 
 function filterExpensesByRange(
-	expenses: any[],
+	expenses: ExpenseWithClientConvertedSchema[],
 	range: DashboardDateRange,
 	customRange?: { from: Date; to: Date },
 ) {
@@ -47,22 +47,10 @@ export function ExpenseStatsRow() {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-
-	// Get raw expenses data
-	const { data: expenses } = useSuspenseQuery({
-		...expensesQueryOptions(slug),
-		select: (data) =>
-			data.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				};
-			}),
-	});
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 
 	const currentPeriodExpenses = filterExpensesByRange(expenses, dateRange, customRange);
 
-	// Calculate stats
 	const totalExpenses = currentPeriodExpenses.reduce(
 		(sum, expense) => sum + (expense.convertedAmount > 0 ? expense.convertedAmount : 0),
 		0,
@@ -84,7 +72,7 @@ export function ExpenseStatsRow() {
 			value: formatCurrency(avgPerTransaction, currency),
 		},
 		{
-			title: "Days Active",
+			title: "Days",
 			value:
 				currentPeriodExpenses.length > 0
 					? new Set(currentPeriodExpenses.map((e) => e.date)).size.toString()
