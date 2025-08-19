@@ -134,17 +134,30 @@ export function useExpenseStats() {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const { data: expenses } = useSuspenseQuery({
+		...expensesQueryOptions(slug),
+		select: (data) =>
+			data.map((expense) => {
+				return {
+					...expense,
+					date: datetime.format(expense.date, "yyyy-MM-dd"),
+				} as ExpenseWithClientConvertedSchema;
+			}),
+	});
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
+	const aggregationByDate = new Map<string, number>();
+
 	let totalAmount = 0;
 	const repeatCount: Record<string, number> = {};
-
 	for (const expense of expenses) {
-		const amount = expense.convertedAmount <= 0 ? 0 : expense.convertedAmount;
+		const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
 		totalAmount += amount;
 		repeatCount[expense.repeat] = (repeatCount[expense.repeat] || 0) + 1;
+
+		const currentValue = aggregationByDate.get(expense.date) || 0;
+		aggregationByDate.set(expense.date, currentValue + amount);
 	}
 
 	const categoryCount: Record<string, number> = {};
@@ -157,6 +170,10 @@ export function useExpenseStats() {
 		walletCount[wallet.id] = wallet.total;
 	}
 
+	const result: { date: string; value: number }[] = Array.from(aggregationByDate.entries()).map(
+		([date, value]) => ({ date, value }),
+	);
+
 	return {
 		amount: {
 			total: formatCurrency(totalAmount, currency),
@@ -166,6 +183,9 @@ export function useExpenseStats() {
 			byCategory: categoryCount,
 			byWallet: walletCount,
 			byRepeat: repeatCount,
+		},
+		aggregation: {
+			byDate: result,
 		},
 	};
 }
