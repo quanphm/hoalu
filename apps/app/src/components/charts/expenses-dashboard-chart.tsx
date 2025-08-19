@@ -11,6 +11,8 @@ import {
 } from "@hoalu/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@hoalu/ui/select";
 import { useExpenseStats } from "@/hooks/use-expenses";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { formatCurrency } from "@/helpers/currency";
 
 const chartConfig = {
 	value: {
@@ -58,17 +60,24 @@ function filterDataByRange(data: { date: string; value: number }[], range: DateR
 }
 
 export function ExpenseDashboardChart() {
-	const [dateRange, setDateRange] = useState<DateRange>("30");
+	const [dateRange, setDateRange] = useState<DateRange>("7");
 	const stats = useExpenseStats();
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange);
 	const data = filteredData.slice(-50);
+	
+	// Calculate total for the selected time range
+	const totalValue = filteredData.reduce((sum, item) => sum + item.value, 0);
+	const { metadata: { currency } } = useWorkspace();
 
 	return (
 		<Card className="py-0">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Expenses</CardTitle>
+					<div className="text-2xl font-bold">
+						{formatCurrency(totalValue, currency)}
+					</div>
 				</div>
 				<div className="flex items-center px-6 pt-4 pb-3">
 					<Select value={dateRange} onValueChange={(value: DateRange) => setDateRange(value)}>
