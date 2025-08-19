@@ -114,3 +114,9 @@ export const KEYBOARD_SHORTCUTS = {
 } as const;
 
 export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
+
+export const AVAILABLE_DATE_RANGE_OPTIONS = [
+	{ value: "7", label: "Last 7 days" },
+	{ value: "30", label: "Last 30 days" },
+	{ value: "all", label: "All time" },
+] as const;

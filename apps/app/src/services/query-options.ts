@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
+import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { apiClient } from "@/lib/api-client";
 import { authClient, type Session, type SessionData, type User } from "@/lib/auth-client";
@@ -210,7 +210,12 @@ export const expensesQueryOptions = (slug: string) => {
 				}
 			});
 			const result = await Promise.all(promises);
-			return result as ExpenseWithClientConvertedSchema[];
+			return result.map((expense) => {
+				return {
+					...expense,
+					date: datetime.format(expense.date, "yyyy-MM-dd"),
+				} as ExpenseWithClientConvertedSchema;
+			});
 		},
 	});
 };

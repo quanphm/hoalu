@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useAtomValue } from "jotai";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
@@ -9,7 +9,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@hoalu/ui/chart";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@hoalu/ui/select";
+import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
 import { useExpenseStats } from "@/hooks/use-expenses";
 
 const chartConfig = {
@@ -18,71 +18,56 @@ const chartConfig = {
 	},
 	date: {
 		label: "Expense",
-		color: "var(--chart-2)",
+		color: "var(--chart-1)",
 	},
 } satisfies ChartConfig;
 
-type DateRange = "7" | "30" | "all";
-
-const dateRangeOptions: { value: DateRange; label: string }[] = [
-	{ value: "7", label: "Last 7 days" },
-	{ value: "30", label: "Last 30 days" },
-	{ value: "all", label: "All time" },
-];
-
-function filterDataByRange(data: { date: string; value: number }[], range: DateRange) {
+function filterDataByRange(
+	data: { date: string; value: number }[],
+	range: DashboardDateRange,
+	customRange?: { from: Date; to: Date },
+) {
 	if (range === "all") return data;
 
-	const days = parseInt(range, 10);
-	const today = new Date();
-	today.setHours(23, 59, 59, 999); // End of today
-	const cutoffDate = new Date(today);
-	cutoffDate.setDate(cutoffDate.getDate() - days + 1); // Include today
-	cutoffDate.setHours(0, 0, 0, 0); // Start of cutoff day
+	let startDate: Date;
+	let endDate: Date;
+
+	if (range === "custom" && customRange) {
+		startDate = datetime.startOfDay(customRange.from);
+		endDate = datetime.endOfDay(customRange.to);
+	} else {
+		const days = parseInt(range, 10);
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const cutoffDate = new Date(today);
+		cutoffDate.setDate(cutoffDate.getDate() - days + 1);
+		startDate = datetime.startOfDay(cutoffDate);
+	}
 
 	// Sort data by date first to ensure proper ordering
 	const sortedData = [...data].sort((a, b) => a.date.localeCompare(b.date));
 
 	const filtered = sortedData.filter((item) => {
-		const itemDate = new Date(item.date + "T00:00:00"); // Ensure proper date parsing
-		const isInRange = itemDate >= cutoffDate && itemDate <= today;
-		console.log(`Date ${item.date}: ${isInRange ? "INCLUDED" : "EXCLUDED"}`, {
-			itemDate: itemDate.toISOString(),
-			value: item.value,
-		});
-		return isInRange;
+		const itemDate = datetime.parse(item.date, 'yyyy-MM-dd', new Date());
+		return itemDate >= startDate && itemDate <= endDate;
 	});
 
-	console.log(`Filtered result: ${filtered.length} items`);
 	return filtered;
 }
 
 export function ExpenseDashboardChart() {
-	const [dateRange, setDateRange] = useState<DateRange>("30");
+	const dateRange = useAtomValue(selectDateRangeAtom);
+	const customRange = useAtomValue(customDateRangeAtom);
 	const stats = useExpenseStats();
 
-	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange);
+	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 	const data = filteredData.slice(-50);
 
 	return (
 		<Card className="py-0">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
+				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
-				</div>
-				<div className="flex items-center px-6 pt-4 pb-3">
-					<Select value={dateRange} onValueChange={(value: DateRange) => setDateRange(value)}>
-						<SelectTrigger className="w-[140px]">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{dateRangeOptions.map((option) => (
-								<SelectItem key={option.value} value={option.value}>
-									{option.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
@@ -108,7 +93,7 @@ export function ExpenseDashboardChart() {
 								tickMargin={8}
 								minTickGap={32}
 								tickFormatter={(value) => {
-									return datetime.format(new Date(value), "dd/MM/yyyy");
+									return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
 								}}
 							/>
 							<ChartTooltip
@@ -117,7 +102,7 @@ export function ExpenseDashboardChart() {
 										className="w-[150px]"
 										nameKey="value"
 										labelFormatter={(value) => {
-											return datetime.format(new Date(value), "dd/MM/yyyy");
+											return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
 										}}
 									/>
 								}

@@ -42,47 +42,40 @@ const select = (
 	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
 	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
-	return data
-		.map((expense) => {
-			return {
-				...expense,
-				date: datetime.format(expense.date, "yyyy-MM-dd"),
-			} as ExpenseWithClientConvertedSchema;
-		})
-		.filter((expense) => {
-			// Date range filter
-			if (fromDate && toDate) {
-				if (expense.date < fromDate || expense.date > toDate) {
-					return false;
-				}
+	return data.filter((expense) => {
+		// Date range filter
+		if (fromDate && toDate) {
+			if (expense.date < fromDate || expense.date > toDate) {
+				return false;
 			}
-			// Category filter
-			if (selectedCategoryIds.length > 0) {
-				const categoryId = expense.category?.id;
-				if (!categoryId || !selectedCategoryIds.includes(categoryId)) {
-					return false;
-				}
+		}
+		// Category filter
+		if (selectedCategoryIds.length > 0) {
+			const categoryId = expense.category?.id;
+			if (!categoryId || !selectedCategoryIds.includes(categoryId)) {
+				return false;
 			}
-			// Wallet filter
-			if (selectedWalletIds.length > 0) {
-				const walletId = expense.wallet?.id;
-				if (!walletId || !selectedWalletIds.includes(walletId)) {
-					return false;
-				}
+		}
+		// Wallet filter
+		if (selectedWalletIds.length > 0) {
+			const walletId = expense.wallet?.id;
+			if (!walletId || !selectedWalletIds.includes(walletId)) {
+				return false;
 			}
-			// Repeat filter
-			if (selectedRepeat.length > 0) {
-				if (!selectedRepeat.includes(expense.repeat)) {
-					return false;
-				}
+		}
+		// Repeat filter
+		if (selectedRepeat.length > 0) {
+			if (!selectedRepeat.includes(expense.repeat)) {
+				return false;
 			}
-			// Search by keywords
-			if (searchKeywords) {
-				return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
-			}
+		}
+		// Search by keywords
+		if (searchKeywords) {
+			return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
+		}
 
-			return true;
-		});
+		return true;
+	});
 };
 
 export function useExpenses() {
@@ -134,16 +127,7 @@ export function useExpenseStats() {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const { data: expenses } = useSuspenseQuery({
-		...expensesQueryOptions(slug),
-		select: (data) =>
-			data.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				} as ExpenseWithClientConvertedSchema;
-			}),
-	});
+	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
