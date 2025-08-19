@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CategoryBreakdownChart } from "@/components/charts/category-breakdown-chart";
 import { DashboardDateFilter } from "@/components/charts/dashboard-date-filter";
 import { ExpenseDashboardChart } from "@/components/charts/expenses-dashboard-chart";
+import { ExpenseStatsRow } from "@/components/charts/expense-stats-row";
 import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { CreateWalletDialogTrigger } from "@/components/wallets/wallet-actions";
@@ -30,6 +31,7 @@ function RouteComponent() {
 					<DashboardDateFilter />
 				</SectionHeader>
 				<SectionContent>
+					<ExpenseStatsRow />
 					<Section>
 						<SectionContent columns={12}>
 							<div data-slot="expense-chart" className="col-span-8">
