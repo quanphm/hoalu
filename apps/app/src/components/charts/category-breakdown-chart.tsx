@@ -52,7 +52,7 @@ function filterExpensesByRange(
 	}
 
 	return expenses.filter((expense) => {
-		const expenseDate = new Date(expense.date);
+		const expenseDate = new Date(`${expense.date}T00:00:00`);
 		return expenseDate >= startDate && expenseDate <= endDate;
 	});
 }
