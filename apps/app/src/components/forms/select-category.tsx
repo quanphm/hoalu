@@ -101,7 +101,7 @@ export function SelectCategoryField(props: Props) {
 						</CommandList>
 					</Command>
 					<Separator />
-					<CreateCategoryDialogTrigger showTooltip={false}>
+					<CreateCategoryDialogTrigger>
 						<div className="overflow-hidden px-2 py-1 text-foreground [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:text-sm">
 							<Button variant="ghost" className="w-full justify-start">
 								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />

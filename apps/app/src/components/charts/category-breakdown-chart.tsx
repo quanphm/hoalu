@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 import { datetime } from "@hoalu/common/datetime";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardContent } from "@hoalu/ui/card";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
@@ -136,59 +136,57 @@ export function CategoryBreakdownChart() {
 
 	return (
 		<Card className="py-0">
-			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
-					<CardTitle>By Category</CardTitle>
-				</div>
-			</CardHeader>
 			<CardContent className="px-6 py-4">
-				{categoryData.length === 0 ? (
-					<div className="flex h-[250px] items-center justify-center text-muted-foreground">
-						No data to display
-					</div>
-				) : (
-					<div className="space-y-6">
-						<div className="flex h-6 w-full gap-1 overflow-hidden bg-muted">
-							{categoryDataWithColors.map((category) => {
-								const widthPercentage = (category.value / totalAmount) * 100;
-								return (
-									<div
-										key={category.id}
-										className="h-full transition-all duration-300"
-										style={{
-											backgroundColor: category.color,
-											width: `${widthPercentage}%`,
-										}}
-									/>
-								);
-							})}
+				<div className="flex items-center justify-between">
+					<span className="font-medium text-muted-foreground text-sm">By Category</span>
+				</div>
+				<div className="mt-2">
+					{categoryData.length === 0 ? (
+						<div className="flex h-[250px] items-center justify-center text-muted-foreground">
+							No data to display
 						</div>
-
-						{/* Category list with percentages */}
-						<div className="divide-y divide-border/60">
-							{categoryDataWithColors.map((category) => {
-								const percentage = ((category.value / totalAmount) * 100).toFixed(1);
-								return (
-									<div key={category.id} className="flex items-center justify-between py-1">
-										<div className="flex items-center gap-3">
-											<div
-												className="h-2 w-2 rounded-full"
-												style={{ backgroundColor: category.color }}
-											/>
-											<span className="text-foreground text-sm">{category.name}</span>
-										</div>
-										<div className="text-right">
-											<div className="font-medium text-sm">
-												{formatCurrency(category.value, currency)}
+					) : (
+						<div className="space-y-4">
+							<div className="flex h-6 w-full gap-1 overflow-hidden">
+								{categoryDataWithColors.map((category) => {
+									const widthPercentage = (category.value / totalAmount) * 100;
+									return (
+										<div
+											key={category.id}
+											className="h-full rounded-xs transition-all duration-300"
+											style={{
+												backgroundColor: category.color,
+												width: `${widthPercentage}%`,
+											}}
+										/>
+									);
+								})}
+							</div>
+							<div className="divide-y divide-border/60">
+								{categoryDataWithColors.map((category) => {
+									const percentage = ((category.value / totalAmount) * 100).toFixed(1);
+									return (
+										<div key={category.id} className="flex items-center justify-between py-1">
+											<div className="flex items-center gap-3">
+												<div
+													className="h-2 w-2 rounded-full"
+													style={{ backgroundColor: category.color }}
+												/>
+												<span className="text-foreground text-sm">{category.name}</span>
 											</div>
-											<div className="text-muted-foreground text-xs">{percentage}%</div>
+											<div className="text-right">
+												<div className="font-medium text-sm">
+													{formatCurrency(category.value, currency)}
+												</div>
+												<div className="text-muted-foreground text-xs">{percentage}%</div>
+											</div>
 										</div>
-									</div>
-								);
-							})}
+									);
+								})}
+							</div>
 						</div>
-					</div>
-				)}
+					)}
+				</div>
 			</CardContent>
 		</Card>
 	);

@@ -61,7 +61,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPr
 	const { formItemId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
-	const hasErrors = errors.length > 0;
+	const hasErrors = errors?.length > 0;
 
 	return (
 		<Label

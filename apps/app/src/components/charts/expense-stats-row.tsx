@@ -85,7 +85,7 @@ export function ExpenseStatsRow() {
 		<div className="grid grid-cols-2 gap-4">
 			{stats.map((stat, index) => {
 				return (
-					<Card key={`${stat.title}-${index}`} className="p-4">
+					<Card key={`${stat.title}-${index}`} className="px-6 py-4">
 						<CardContent className="p-0">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2">

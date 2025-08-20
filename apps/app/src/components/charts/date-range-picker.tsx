@@ -53,7 +53,7 @@ export function DateRangePicker({ onRangeSelect, className }: DateRangePickerPro
 					defaultMonth={tempRange?.from}
 					selected={{ from: tempRange?.from, to: tempRange?.to }}
 					onSelect={handleSelect}
-					numberOfMonths={2}
+					numberOfMonths={1}
 				/>
 			</PopoverContent>
 		</Popover>
