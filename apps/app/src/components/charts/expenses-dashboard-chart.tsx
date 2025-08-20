@@ -1,3 +1,4 @@
+import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
@@ -18,7 +19,7 @@ const chartConfig = {
 	},
 	date: {
 		label: "Expense",
-		color: "var(--chart-1)",
+		color: "var(--chart-2)",
 	},
 } satisfies ChartConfig;
 
@@ -48,20 +49,41 @@ function filterDataByRange(
 	const sortedData = [...data].sort((a, b) => a.date.localeCompare(b.date));
 
 	const filtered = sortedData.filter((item) => {
-		const itemDate = datetime.parse(item.date, 'yyyy-MM-dd', new Date());
+		const itemDate = datetime.parse(item.date, "yyyy-MM-dd", new Date());
 		return itemDate >= startDate && itemDate <= endDate;
 	});
 
 	return filtered;
 }
 
+const routeApi = getRouteApi("/_dashboard/$slug");
+
 export function ExpenseDashboardChart() {
+	const { slug } = routeApi.useParams();
+	const navigate = routeApi.useNavigate();
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 	const stats = useExpenseStats();
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 	const data = filteredData.slice(-50);
+
+	const handleBarClick = (data: { payload?: { date: string; value: number } }) => {
+		if (!data.payload?.date) {
+			return;
+		}
+
+		const clickedDate = datetime.parse(data.payload.date, "yyyy-MM-dd", new Date());
+		const startOfDay = datetime.startOfDay(clickedDate);
+		const endOfDay = datetime.endOfDay(clickedDate);
+		const searchQuery = `${startOfDay.getTime()}-${endOfDay.getTime()}`;
+
+		navigate({
+			to: "/$slug/expenses",
+			params: { slug },
+			search: { date: searchQuery },
+		});
+	};
 
 	return (
 		<Card className="py-0">
@@ -93,7 +115,10 @@ export function ExpenseDashboardChart() {
 								tickMargin={8}
 								minTickGap={32}
 								tickFormatter={(value) => {
-									return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
+									return datetime.format(
+										datetime.parse(value, "yyyy-MM-dd", new Date()),
+										"dd/MM/yyyy",
+									);
 								}}
 							/>
 							<ChartTooltip
@@ -102,12 +127,20 @@ export function ExpenseDashboardChart() {
 										className="w-[150px]"
 										nameKey="value"
 										labelFormatter={(value) => {
-											return datetime.format(datetime.parse(value, 'yyyy-MM-dd', new Date()), "dd/MM/yyyy");
+											return datetime.format(
+												datetime.parse(value, "yyyy-MM-dd", new Date()),
+												"dd/MM/yyyy",
+											);
 										}}
 									/>
 								}
 							/>
-							<Bar dataKey="value" fill={`var(--color-date)`} />
+							<Bar
+								dataKey="value"
+								fill={`var(--color-date)`}
+								onClick={handleBarClick}
+								className="cursor-pointer"
+							/>
 						</BarChart>
 					</ChartContainer>
 				)}
