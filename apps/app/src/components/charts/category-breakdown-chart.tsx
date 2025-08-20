@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Pie, PieChart } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
@@ -12,18 +12,18 @@ import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-options";
 
 const FALLBACK_COLORS = [
-	"#8884d8",
-	"#82ca9d",
-	"#ffc658",
-	"#ff7c7c",
-	"#8dd1e1",
-	"#d084d0",
-	"#ffb347",
-	"hsl(var(--chart-1))",
-	"hsl(var(--chart-2))",
-	"hsl(var(--chart-3))",
-	"hsl(var(--chart-4))",
-	"hsl(var(--chart-5))",
+	"#D97706", // Darker Orange (dominant)
+	"#EAB308", // Darker Yellow
+	"#DC2626", // Darker Red
+	"#0F766E", // Darker Teal
+	"#6B7280", // Darker Gray
+	"#7C3AED", // Darker Purple
+	"#DB2777", // Darker Pink
+	"#059669", // Darker Emerald
+	"#2563EB", // Darker Blue
+	"#EA580C", // Darker Orange variant
+	"#65A30D", // Darker Lime
+	"#4F46E5", // Darker Indigo
 ];
 
 function filterExpensesByRange(
@@ -39,6 +39,28 @@ function filterExpensesByRange(
 	if (range === "custom" && customRange) {
 		startDate = datetime.startOfDay(customRange.from);
 		endDate = datetime.endOfDay(customRange.to);
+	} else if (range === "wtd") {
+		// Week to date (Monday to today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const dayOfWeek = today.getDay();
+		const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday is 0, Monday is 1
+		const monday = new Date(today);
+		monday.setDate(monday.getDate() - daysFromMonday);
+		startDate = datetime.startOfDay(monday);
+	} else if (range === "mtd") {
+		// Month to date (1st of current month to today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+		startDate = datetime.startOfDay(firstOfMonth);
+	} else if (range === "ytd") {
+		// Year to date (12 months from today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const twelveMonthsAgo = new Date(today);
+		twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+		startDate = datetime.startOfDay(twelveMonthsAgo);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
@@ -91,12 +113,12 @@ export function CategoryBreakdownChart() {
 		.filter((item) => item.value > 0)
 		.sort((a, b) => b.value - a.value);
 
-	// Get top 3 categories and group the rest as "Others"
-	const top3Categories = allCategoryData.slice(0, 3);
-	const otherCategories = allCategoryData.slice(3);
+	// Get top 4 categories and group the rest as "Others"
+	const top4Categories = allCategoryData.slice(0, 4);
+	const otherCategories = allCategoryData.slice(4);
 	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
 
-	const categoryData = [...top3Categories];
+	const categoryData = [...top4Categories];
 	if (othersTotal > 0) {
 		categoryData.push({
 			id: "others",
@@ -136,45 +158,37 @@ export function CategoryBreakdownChart() {
 					</div>
 				) : (
 					<ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-						<ResponsiveContainer width="100%" height="100%">
-							<PieChart>
-								<Pie
-									data={categoryDataWithColors}
-									cx="50%"
-									cy="50%"
-									outerRadius={100}
-									innerRadius={50}
-									dataKey="value"
-								>
-									{categoryDataWithColors.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={entry.fill} />
-									))}
-								</Pie>
-								<ChartTooltip
-									content={({ active, payload }) => {
-										if (active && payload && payload.length) {
-											const data = payload[0].payload;
-											const percentage = ((data.value / totalAmount) * 100).toFixed(1);
-											return (
-												<div className="rounded-lg border bg-background p-2 shadow-sm">
-													<div className="grid gap-2">
-														<div className="flex flex-col">
-															<span className="text-[0.70rem] text-muted-foreground uppercase">
-																{data.name}
-															</span>
-															<span className="font-bold text-muted-foreground">
-																{formatCurrency(data.value, currency)} ({percentage}%)
-															</span>
-														</div>
+						<PieChart>
+							<Pie
+								data={categoryDataWithColors}
+								dataKey="value"
+								innerRadius={50}
+								paddingAngle={1}
+							/>
+							<ChartTooltip
+								content={({ active, payload }) => {
+									if (active && payload && payload.length) {
+										const data = payload[0].payload;
+										const percentage = ((data.value / totalAmount) * 100).toFixed(1);
+										return (
+											<div className="rounded-lg border bg-background p-2 shadow-sm">
+												<div className="grid gap-2">
+													<div className="flex flex-col">
+														<span className="text-[0.70rem] text-muted-foreground uppercase">
+															{data.name}
+														</span>
+														<span className="font-bold text-muted-foreground">
+															{formatCurrency(data.value, currency)} ({percentage}%)
+														</span>
 													</div>
 												</div>
-											);
-										}
-										return null;
-									}}
-								/>
-							</PieChart>
-						</ResponsiveContainer>
+											</div>
+										);
+									}
+									return null;
+								}}
+							/>
+						</PieChart>
 					</ChartContainer>
 				)}
 			</CardContent>

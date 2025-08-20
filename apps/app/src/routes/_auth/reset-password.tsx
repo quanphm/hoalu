@@ -52,7 +52,7 @@ function ResetPasswordRequest() {
 		<ContentCard
 			title="Reset password"
 			description="Send a request to reset password"
-			className="border-transparent"
+			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>

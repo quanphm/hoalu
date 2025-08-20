@@ -22,6 +22,28 @@ function filterExpensesByRange(
 	if (range === "custom" && customRange) {
 		startDate = datetime.startOfDay(customRange.from);
 		endDate = datetime.endOfDay(customRange.to);
+	} else if (range === "wtd") {
+		// Week to date (Monday to today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const dayOfWeek = today.getDay();
+		const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday is 0, Monday is 1
+		const monday = new Date(today);
+		monday.setDate(monday.getDate() - daysFromMonday);
+		startDate = datetime.startOfDay(monday);
+	} else if (range === "mtd") {
+		// Month to date (1st of current month to today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+		startDate = datetime.startOfDay(firstOfMonth);
+	} else if (range === "ytd") {
+		// Year to date (12 months from today)
+		const today = new Date();
+		endDate = datetime.endOfDay(today);
+		const twelveMonthsAgo = new Date(today);
+		twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+		startDate = datetime.startOfDay(twelveMonthsAgo);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
@@ -32,7 +54,7 @@ function filterExpensesByRange(
 	}
 
 	return expenses.filter((expense) => {
-		const expenseDate = datetime.parse(expense.date, 'yyyy-MM-dd', new Date());
+		const expenseDate = datetime.parse(expense.date, "yyyy-MM-dd", new Date());
 		return expenseDate >= startDate && expenseDate <= endDate;
 	});
 }
@@ -81,7 +103,7 @@ export function ExpenseStatsRow() {
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{stats.map((stat, index) => {
 				return (
-					<Card key={index} className="p-4">
+					<Card key={`${stat.title}-${index}`} className="p-4">
 						<CardContent className="p-0">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2">

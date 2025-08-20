@@ -48,7 +48,7 @@ function RouteComponent() {
 		<ContentCard
 			title="Welcome back"
 			description="Log in to your Hoalu account"
-			className="border-transparent"
+			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
 					{/* <div className="flex flex-col gap-4">

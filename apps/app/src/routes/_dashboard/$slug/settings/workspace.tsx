@@ -135,7 +135,7 @@ function RouteComponent() {
 						<SettingCard
 							title="Delete workspace"
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
-							className="col-span-8 bg-destructive/5"
+							className="col-span-8"
 						>
 							<DeleteWorkspaceDialog>
 								<DeleteWorkspaceTrigger>
