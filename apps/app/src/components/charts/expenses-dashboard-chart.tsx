@@ -50,12 +50,11 @@ function filterDataByRange(
 		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 		startDate = datetime.startOfDay(firstOfMonth);
 	} else if (range === "ytd") {
-		// Year to date (12 months from today)
+		// Year to date (Jan 1 to today)
 		const today = new Date();
 		endDate = datetime.endOfDay(today);
-		const twelveMonthsAgo = new Date(today);
-		twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-		startDate = datetime.startOfDay(twelveMonthsAgo);
+		const startOfYear = new Date(today.getFullYear(), 0, 1);
+		startDate = datetime.startOfDay(startOfYear);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
@@ -76,16 +75,26 @@ function filterDataByRange(
 	return filtered;
 }
 
-function groupDataByMonth(data: { date: string; value: number }[]) {
+function groupDataByMonth(data: { date: string; value: number }[], isYTD = false) {
 	const monthlyData: Record<string, number> = {};
-
-	// Initialize all 12 months with 0 values (12 months from today backwards)
 	const today = new Date();
-	for (let i = 11; i >= 0; i--) {
-		const monthDate = new Date(today);
-		monthDate.setMonth(monthDate.getMonth() - i);
-		const monthKey = datetime.format(monthDate, "yyyy-MM");
-		monthlyData[monthKey] = 0;
+
+	if (isYTD) {
+		// For YTD, initialize from January to current month
+		const currentMonth = today.getMonth();
+		for (let i = 0; i <= currentMonth; i++) {
+			const monthDate = new Date(today.getFullYear(), i, 1);
+			const monthKey = datetime.format(monthDate, "yyyy-MM");
+			monthlyData[monthKey] = 0;
+		}
+	} else {
+		// For "All time", initialize all 12 months (12 months from today backwards)
+		for (let i = 11; i >= 0; i--) {
+			const monthDate = new Date(today);
+			monthDate.setMonth(monthDate.getMonth() - i);
+			const monthKey = datetime.format(monthDate, "yyyy-MM");
+			monthlyData[monthKey] = 0;
+		}
 	}
 
 	// Aggregate actual data by month
@@ -122,10 +131,15 @@ export function ExpenseDashboardChart() {
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
 	// Group by month for year-to-date and all-time views
-	const data =
-		dateRange === "ytd" || dateRange === "all"
-			? groupDataByMonth(filteredData)
-			: filteredData.slice(-50);
+	const data = (() => {
+		if (dateRange === "ytd") {
+			return groupDataByMonth(filteredData, true);
+		} else if (dateRange === "all") {
+			return groupDataByMonth(filteredData, false);
+		} else {
+			return filteredData.slice(-50);
+		}
+	})();
 
 	const totalExpenses = filteredData.reduce((sum, item) => sum + item.value, 0);
 

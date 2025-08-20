@@ -37,12 +37,11 @@ function filterExpensesByRange(
 		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 		startDate = datetime.startOfDay(firstOfMonth);
 	} else if (range === "ytd") {
-		// Year to date (12 months from today)
+		// Year to date (Jan 1 to today)
 		const today = new Date();
 		endDate = datetime.endOfDay(today);
-		const twelveMonthsAgo = new Date(today);
-		twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-		startDate = datetime.startOfDay(twelveMonthsAgo);
+		const startOfYear = new Date(today.getFullYear(), 0, 1);
+		startDate = datetime.startOfDay(startOfYear);
 	} else {
 		const days = parseInt(range, 10);
 		const today = new Date();
