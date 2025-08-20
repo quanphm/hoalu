@@ -1,6 +1,5 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useId } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
