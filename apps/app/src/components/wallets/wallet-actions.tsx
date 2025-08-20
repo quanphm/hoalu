@@ -67,7 +67,7 @@ export function CreateWalletDialog({ children }: { children: React.ReactNode }) 
 	);
 }
 
-export function CreateWalletDialogTrigger(props: { children?: React.ReactNode }) {
+export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
 
 	if (props.children) {

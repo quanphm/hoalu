@@ -31,10 +31,10 @@ function RouteComponent() {
 					<DashboardDateFilter />
 				</SectionHeader>
 				<SectionContent columns={12}>
-					<div className="col-span-6">
+					<div className="col-span-12 md:col-span-6">
 						<ExpenseDashboardChart />
 					</div>
-					<div className="col-span-6 flex flex-col gap-4">
+					<div className="col-span-12 flex flex-col gap-4 md:col-span-6">
 						<ExpenseStatsRow />
 						<CategoryBreakdownChart />
 					</div>

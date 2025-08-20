@@ -51,7 +51,7 @@ For each component or feature you build, provide:
 - Ensure components are reusable and maintainable
 
 ## Coding Conventions
-- Prioritize return early instead of if
-- Use `import { cn } from "@hoalu/ui/utils"` when concat className strings
+- Prefer early returns over nested conditionals
+- Use `import { cn } from "@hoalu/ui/utils"` when concatenating className strings
 
 When building components, always consider the user experience across different devices, accessibility needs, and performance constraints. Your code should be production-ready and follow modern React development standards.

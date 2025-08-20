@@ -37,7 +37,7 @@ export function DashboardDateFilter() {
 		<div className="flex items-center gap-3">
 			<div className="flex items-center gap-2">
 				<Select value={dateRange} onValueChange={handleRangeChange}>
-					<SelectTrigger className="w-[140px]">
+					<SelectTrigger className="min-w-[160px]">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>

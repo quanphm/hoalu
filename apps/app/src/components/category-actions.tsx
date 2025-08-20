@@ -49,7 +49,7 @@ export function CreateCategoryDialog({ children }: { children: React.ReactNode }
 	);
 }
 
-export function CreateCategoryDialogTrigger(props: { children?: React.ReactNode }) {
+export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	if (props.children) {

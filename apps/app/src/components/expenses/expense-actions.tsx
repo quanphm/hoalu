@@ -21,6 +21,7 @@ import {
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
@@ -58,8 +59,13 @@ export function CreateExpenseDialog({ children }: { children?: React.ReactNode }
 	);
 }
 
-export function CreateExpenseDialogTrigger() {
+export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+
+	if (props.children) {
+		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+	}
+
 	return (
 		<Button variant="outline" onClick={() => setOpen(true)}>
 			Create expense
