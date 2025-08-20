@@ -49,7 +49,7 @@ function filterExpensesByRange(
 	}
 
 	return expenses.filter((expense) => {
-		const expenseDate = datetime.parse(expense.date, 'yyyy-MM-dd', new Date());
+		const expenseDate = datetime.parse(expense.date, "yyyy-MM-dd", new Date());
 		return expenseDate >= startDate && expenseDate <= endDate;
 	});
 }
@@ -144,7 +144,6 @@ export function CategoryBreakdownChart() {
 									cy="50%"
 									outerRadius={100}
 									innerRadius={50}
-									paddingAngle={2}
 									dataKey="value"
 								>
 									{categoryDataWithColors.map((entry, index) => (

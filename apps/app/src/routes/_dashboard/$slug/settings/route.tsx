@@ -43,16 +43,17 @@ function RouteComponent() {
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger
-						value="photos"
+						value="files"
 						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
 						asChild
 					>
-						<Link to="/$slug/settings/photos" params={{ slug }}>
-							Photos
+						<Link to="/$slug/settings/files" params={{ slug }}>
+							Files
 						</Link>
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
+
 			<Outlet />
 		</>
 	);

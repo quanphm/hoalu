@@ -5,7 +5,7 @@ import { ImageGallery } from "@/components/image-gallery";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { filesQueryOptions } from "@/services/query-options";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/photos")({
+export const Route = createFileRoute("/_dashboard/$slug/settings/files")({
 	component: RouteComponent,
 });
 
@@ -14,13 +14,22 @@ function RouteComponent() {
 	const { data } = useSuspenseQuery(filesQueryOptions(slug));
 
 	return (
-		<Section>
-			<SectionHeader>
-				<SectionTitle>Uploaded</SectionTitle>
-			</SectionHeader>
-			<SectionContent>
-				<ImageGallery data={data} />
-			</SectionContent>
-		</Section>
+		<>
+			<Section>
+				<SectionHeader>
+					<SectionTitle>Photos</SectionTitle>
+				</SectionHeader>
+				<SectionContent>
+					<ImageGallery data={data} />
+				</SectionContent>
+			</Section>
+
+			<Section>
+				<SectionHeader>
+					<SectionTitle>Others</SectionTitle>
+				</SectionHeader>
+				<SectionContent>WIP</SectionContent>
+			</Section>
+		</>
 	);
 }
