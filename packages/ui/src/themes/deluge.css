@@ -1,0 +1,155 @@
+:root {
+	--radius: 0.5rem; /* Slightly sharper corners for retro feel */
+
+	/* Light mint/seafoam as background */
+	--background: oklch(0.98 0.05 165);
+	--foreground: oklch(0.25 0.08 250);
+
+	/* Card surfaces with subtle mint tint */
+	--card: oklch(0.99 0.03 165);
+	--card-foreground: oklch(0.25 0.08 250);
+
+	/* Popover with same subtle tint */
+	--popover: oklch(0.99 0.03 165);
+	--popover-foreground: oklch(0.25 0.08 250);
+
+	/* Deep teal/navy for primary actions */
+	--primary: oklch(0.35 0.15 230);
+	--primary-foreground: oklch(0.98 0.02 165);
+
+	/* Mid-teal for secondary */
+	--secondary: oklch(0.85 0.08 180);
+	--secondary-foreground: oklch(0.3 0.12 230);
+
+	/* Muted with greenish tint */
+	--muted: oklch(0.92 0.04 170);
+	--muted-foreground: oklch(0.5 0.06 210);
+
+	/* Accent in vibrant teal */
+	--accent: oklch(0.75 0.18 185);
+	--accent-foreground: oklch(0.2 0.08 250);
+
+	/* Destructive in coral/salmon */
+	--destructive: oklch(0.62 0.22 25);
+	--destructive-foreground: oklch(0.98 0 0);
+
+	/* Borders with teal tint */
+	--border: oklch(0.88 0.06 180);
+	--input: oklch(0.88 0.06 180);
+	--ring: oklch(0.65 0.15 195);
+
+	/* Chart colors - gradient palette */
+	--chart-1: oklch(0.95 0.12 165); /* Light mint */
+	--chart-2: oklch(0.75 0.18 185); /* Mid teal */
+	--chart-3: oklch(0.55 0.20 200); /* Deep teal */
+	--chart-4: oklch(0.45 0.18 220); /* Teal-blue */
+	--chart-5: oklch(0.35 0.15 240); /* Deep navy */
+
+	/* Sidebar with subtle teal background */
+	--sidebar: oklch(0.96 0.04 170);
+	--sidebar-foreground: oklch(0.25 0.08 250);
+	--sidebar-primary: oklch(0.35 0.15 230);
+	--sidebar-primary-foreground: oklch(0.98 0.02 165);
+	--sidebar-accent: oklch(0.90 0.06 175);
+	--sidebar-accent-foreground: oklch(0.3 0.12 230);
+	--sidebar-border: oklch(0.88 0.06 180);
+	--sidebar-ring: oklch(0.65 0.15 195);
+}
+
+.dark {
+	/* Dark navy background */
+	--background: oklch(0.18 0.08 250);
+	--foreground: oklch(0.92 0.05 165);
+
+	/* Card surfaces with deep blue-green */
+	--card: oklch(0.22 0.09 240);
+	--card-foreground: oklch(0.92 0.05 165);
+
+	/* Popover matching card */
+	--popover: oklch(0.22 0.09 240);
+	--popover-foreground: oklch(0.92 0.05 165);
+
+	/* Bright teal for primary in dark mode */
+	--primary: oklch(0.72 0.20 185);
+	--primary-foreground: oklch(0.15 0.05 250);
+
+	/* Darker teal for secondary */
+	--secondary: oklch(0.32 0.12 210);
+	--secondary-foreground: oklch(0.90 0.05 170);
+
+	/* Muted deep ocean */
+	--muted: oklch(0.28 0.08 220);
+	--muted-foreground: oklch(0.65 0.08 180);
+
+	/* Accent in vibrant cyan */
+	--accent: oklch(0.45 0.18 195);
+	--accent-foreground: oklch(0.95 0.05 165);
+
+	/* Destructive in warm coral */
+	--destructive: oklch(0.55 0.25 22);
+	--destructive-foreground: oklch(0.95 0 0);
+
+	/* Borders with teal glow */
+	--border: oklch(0.35 0.10 210);
+	--input: oklch(0.32 0.10 210);
+	--ring: oklch(0.55 0.18 195);
+
+	/* Chart colors - vibrant gradient for dark mode */
+	--chart-1: oklch(0.85 0.18 165); /* Bright mint */
+	--chart-2: oklch(0.72 0.20 185); /* Bright teal */
+	--chart-3: oklch(0.55 0.22 195); /* Cyan */
+	--chart-4: oklch(0.45 0.20 210); /* Deep cyan */
+	--chart-5: oklch(0.35 0.15 230); /* Navy blue */
+
+	/* Sidebar with deep ocean theme */
+	--sidebar: oklch(0.16 0.07 250);
+	--sidebar-foreground: oklch(0.92 0.05 165);
+	--sidebar-primary: oklch(0.72 0.20 185);
+	--sidebar-primary-foreground: oklch(0.15 0.05 250);
+	--sidebar-accent: oklch(0.26 0.10 230);
+	--sidebar-accent-foreground: oklch(0.90 0.05 170);
+	--sidebar-border: oklch(0.35 0.10 210);
+	--sidebar-ring: oklch(0.55 0.18 195);
+}
+
+/* Inline theme variables for Tailwind v4 */
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-sans);
+	--font-mono: var(--font-mono);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+}

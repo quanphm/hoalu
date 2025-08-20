@@ -60,7 +60,7 @@ function RouteComponent() {
 		<ContentCard
 			title="Welcome to Hoalu"
 			description="Let's set up your new account"
-			className="border-transparent"
+			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
 					{/* <div className="flex flex-col gap-4">

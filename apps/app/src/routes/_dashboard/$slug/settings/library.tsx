@@ -1,8 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
 import { WalletCard } from "@/components/cards";
 import { CategoriesTable } from "@/components/categories-table";
 import { CreateCategoryDialogTrigger } from "@/components/category-actions";
@@ -39,12 +37,7 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Categories</SectionTitle>
-					<CreateCategoryDialogTrigger>
-						<Button variant="outline" size="sm">
-							<PlusIcon className="mr-2 size-4" />
-							Create category
-						</Button>
-					</CreateCategoryDialogTrigger>
+					<CreateCategoryDialogTrigger />
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<CategoriesTable data={categories} />

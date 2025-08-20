@@ -14,10 +14,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
-import { HotKeyWithTooltip } from "@/components/hotkey";
+import { HotKey } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { useWorkspace } from "@/hooks/use-workspace";
@@ -48,23 +49,18 @@ export function CreateCategoryDialog({ children }: { children: React.ReactNode }
 	);
 }
 
-export function CreateCategoryDialogTrigger({
-	children,
-	showTooltip = true,
-}: {
-	children: React.ReactNode;
-	showTooltip?: boolean;
-}) {
+export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 
+	if (props.children) {
+		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+	}
+
 	return (
-		<HotKeyWithTooltip
-			onClick={() => setOpen(true)}
-			showTooltip={showTooltip}
-			shortcut={KEYBOARD_SHORTCUTS.create_category}
-		>
-			{children}
-		</HotKeyWithTooltip>
+		<Button variant="outline" onClick={() => setOpen(true)}>
+			Create category
+			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
+		</Button>
 	);
 }
 

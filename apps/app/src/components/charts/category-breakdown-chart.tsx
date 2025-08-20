@@ -1,58 +1,27 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
-import { datetime } from "@hoalu/common/datetime";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
-import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
+import { Card, CardContent } from "@hoalu/ui/card";
+import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
 import { formatCurrency } from "@/helpers/currency";
+import { filterDataByRange } from "@/helpers/date-range";
 import { useWorkspace } from "@/hooks/use-workspace";
-import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-options";
 
 const FALLBACK_COLORS = [
-	"#8884d8",
-	"#82ca9d",
-	"#ffc658",
-	"#ff7c7c",
-	"#8dd1e1",
-	"#d084d0",
-	"#ffb347",
-	"hsl(var(--chart-1))",
-	"hsl(var(--chart-2))",
-	"hsl(var(--chart-3))",
-	"hsl(var(--chart-4))",
-	"hsl(var(--chart-5))",
+	"#D97706", // Darker Orange (dominant)
+	"#EAB308", // Darker Yellow
+	"#DC2626", // Darker Red
+	"#0F766E", // Darker Teal
+	"#6B7280", // Darker Gray
+	"#7C3AED", // Darker Purple
+	"#DB2777", // Darker Pink
+	"#059669", // Darker Emerald
+	"#2563EB", // Darker Blue
+	"#EA580C", // Darker Orange variant
+	"#65A30D", // Darker Lime
+	"#4F46E5", // Darker Indigo
 ];
-
-function filterExpensesByRange(
-	expenses: ExpenseWithClientConvertedSchema[],
-	range: DashboardDateRange,
-	customRange?: { from: Date; to: Date },
-) {
-	if (range === "all") return expenses;
-
-	let startDate: Date;
-	let endDate: Date;
-
-	if (range === "custom" && customRange) {
-		startDate = datetime.startOfDay(customRange.from);
-		endDate = datetime.endOfDay(customRange.to);
-	} else {
-		const days = parseInt(range, 10);
-		const today = new Date();
-		endDate = datetime.endOfDay(today);
-		const cutoffDate = new Date(today);
-		cutoffDate.setDate(cutoffDate.getDate() - days + 1);
-		startDate = datetime.startOfDay(cutoffDate);
-	}
-
-	return expenses.filter((expense) => {
-		const expenseDate = datetime.parse(expense.date, "yyyy-MM-dd", new Date());
-		return expenseDate >= startDate && expenseDate <= endDate;
-	});
-}
 
 export function CategoryBreakdownChart() {
 	const dateRange = useAtomValue(selectDateRangeAtom);
@@ -64,7 +33,7 @@ export function CategoryBreakdownChart() {
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 
-	const filteredExpenses = filterExpensesByRange(expenses, dateRange, customRange);
+	const filteredExpenses = filterDataByRange(expenses, dateRange, customRange);
 
 	// Calculate category totals from filtered expenses
 	const categoryTotals: Record<string, number> = {};
@@ -91,12 +60,12 @@ export function CategoryBreakdownChart() {
 		.filter((item) => item.value > 0)
 		.sort((a, b) => b.value - a.value);
 
-	// Get top 3 categories and group the rest as "Others"
-	const top3Categories = allCategoryData.slice(0, 3);
-	const otherCategories = allCategoryData.slice(3);
+	// Get top 4 categories and group the rest as "Others"
+	const top4Categories = allCategoryData.slice(0, 4);
+	const otherCategories = allCategoryData.slice(4);
 	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
 
-	const categoryData = [...top3Categories];
+	const categoryData = [...top4Categories];
 	if (othersTotal > 0) {
 		categoryData.push({
 			id: "others",
@@ -108,14 +77,6 @@ export function CategoryBreakdownChart() {
 
 	const totalAmount = categoryData.reduce((sum, item) => sum + item.value, 0);
 
-	const chartConfig: ChartConfig = categoryData.reduce((config, item) => {
-		config[item.id] = {
-			label: item.name,
-			color: item.color,
-		};
-		return config;
-	}, {} as ChartConfig);
-
 	// Use the actual category colors from API
 	const categoryDataWithColors = categoryData.map((item) => ({
 		...item,
@@ -124,59 +85,57 @@ export function CategoryBreakdownChart() {
 
 	return (
 		<Card className="py-0">
-			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
-					<CardTitle>By Category</CardTitle>
+			<CardContent className="px-6 py-4">
+				<div className="flex items-center justify-between">
+					<span className="font-medium text-muted-foreground text-sm">By Category</span>
 				</div>
-			</CardHeader>
-			<CardContent className="px-2 sm:p-6">
-				{categoryData.length === 0 ? (
-					<div className="flex h-[250px] items-center justify-center text-muted-foreground">
-						No data to display
-					</div>
-				) : (
-					<ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-						<ResponsiveContainer width="100%" height="100%">
-							<PieChart>
-								<Pie
-									data={categoryDataWithColors}
-									cx="50%"
-									cy="50%"
-									outerRadius={100}
-									innerRadius={50}
-									dataKey="value"
-								>
-									{categoryDataWithColors.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={entry.fill} />
-									))}
-								</Pie>
-								<ChartTooltip
-									content={({ active, payload }) => {
-										if (active && payload && payload.length) {
-											const data = payload[0].payload;
-											const percentage = ((data.value / totalAmount) * 100).toFixed(1);
-											return (
-												<div className="rounded-lg border bg-background p-2 shadow-sm">
-													<div className="grid gap-2">
-														<div className="flex flex-col">
-															<span className="text-[0.70rem] text-muted-foreground uppercase">
-																{data.name}
-															</span>
-															<span className="font-bold text-muted-foreground">
-																{formatCurrency(data.value, currency)} ({percentage}%)
-															</span>
-														</div>
-													</div>
+				<div className="mt-2">
+					{categoryData.length === 0 ? (
+						<div className="flex h-[250px] items-center justify-center text-muted-foreground">
+							No data to display
+						</div>
+					) : (
+						<div className="space-y-4">
+							<div className="flex h-6 w-full gap-1 overflow-hidden">
+								{categoryDataWithColors.map((category) => {
+									const widthPercentage = (category.value / totalAmount) * 100;
+									return (
+										<div
+											key={category.id}
+											className="h-full rounded-xs transition-all duration-300"
+											style={{
+												backgroundColor: category.color,
+												width: `${widthPercentage}%`,
+											}}
+										/>
+									);
+								})}
+							</div>
+							<div className="divide-y divide-border/60">
+								{categoryDataWithColors.map((category) => {
+									const percentage = ((category.value / totalAmount) * 100).toFixed(1);
+									return (
+										<div key={category.id} className="flex items-center justify-between py-1">
+											<div className="flex items-center gap-3">
+												<div
+													className="h-2 w-2 rounded-full"
+													style={{ backgroundColor: category.color }}
+												/>
+												<span className="text-foreground text-sm">{category.name}</span>
+											</div>
+											<div className="text-right">
+												<div className="font-medium text-sm">
+													{formatCurrency(category.value, currency)}
 												</div>
-											);
-										}
-										return null;
-									}}
-								/>
-							</PieChart>
-						</ResponsiveContainer>
-					</ChartContainer>
-				)}
+												<div className="text-muted-foreground text-xs">{percentage}%</div>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					)}
+				</div>
 			</CardContent>
 		</Card>
 	);

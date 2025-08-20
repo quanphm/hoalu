@@ -26,6 +26,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createWalletDialogOpenAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -66,8 +67,13 @@ export function CreateWalletDialog({ children }: { children: React.ReactNode }) 
 	);
 }
 
-export function CreateWalletDialogTrigger() {
+export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
+
+	if (props.children) {
+		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+	}
+
 	return (
 		<Button variant="outline" onClick={() => setOpen(true)}>
 			Create wallet
