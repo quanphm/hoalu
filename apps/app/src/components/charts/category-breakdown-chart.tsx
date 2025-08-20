@@ -1,10 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { Pie, PieChart } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
 import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
@@ -130,14 +128,6 @@ export function CategoryBreakdownChart() {
 
 	const totalAmount = categoryData.reduce((sum, item) => sum + item.value, 0);
 
-	const chartConfig: ChartConfig = categoryData.reduce((config, item) => {
-		config[item.id] = {
-			label: item.name,
-			color: item.color,
-		};
-		return config;
-	}, {} as ChartConfig);
-
 	// Use the actual category colors from API
 	const categoryDataWithColors = categoryData.map((item) => ({
 		...item,
@@ -151,45 +141,53 @@ export function CategoryBreakdownChart() {
 					<CardTitle>By Category</CardTitle>
 				</div>
 			</CardHeader>
-			<CardContent className="px-2 sm:p-6">
+			<CardContent className="px-6 py-4">
 				{categoryData.length === 0 ? (
 					<div className="flex h-[250px] items-center justify-center text-muted-foreground">
 						No data to display
 					</div>
 				) : (
-					<ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-						<PieChart>
-							<Pie
-								data={categoryDataWithColors}
-								dataKey="value"
-								innerRadius={50}
-								paddingAngle={1}
-							/>
-							<ChartTooltip
-								content={({ active, payload }) => {
-									if (active && payload && payload.length) {
-										const data = payload[0].payload;
-										const percentage = ((data.value / totalAmount) * 100).toFixed(1);
-										return (
-											<div className="rounded-lg border bg-background p-2 shadow-sm">
-												<div className="grid gap-2">
-													<div className="flex flex-col">
-														<span className="text-[0.70rem] text-muted-foreground uppercase">
-															{data.name}
-														</span>
-														<span className="font-bold text-muted-foreground">
-															{formatCurrency(data.value, currency)} ({percentage}%)
-														</span>
-													</div>
-												</div>
+					<div className="space-y-6">
+						<div className="flex h-6 w-full gap-1 overflow-hidden bg-muted">
+							{categoryDataWithColors.map((category) => {
+								const widthPercentage = (category.value / totalAmount) * 100;
+								return (
+									<div
+										key={category.id}
+										className="h-full transition-all duration-300"
+										style={{
+											backgroundColor: category.color,
+											width: `${widthPercentage}%`,
+										}}
+									/>
+								);
+							})}
+						</div>
+
+						{/* Category list with percentages */}
+						<div className="divide-y divide-border/60">
+							{categoryDataWithColors.map((category) => {
+								const percentage = ((category.value / totalAmount) * 100).toFixed(1);
+								return (
+									<div key={category.id} className="flex items-center justify-between py-1">
+										<div className="flex items-center gap-3">
+											<div
+												className="h-2 w-2 rounded-full"
+												style={{ backgroundColor: category.color }}
+											/>
+											<span className="text-foreground text-sm">{category.name}</span>
+										</div>
+										<div className="text-right">
+											<div className="font-medium text-sm">
+												{formatCurrency(category.value, currency)}
 											</div>
-										);
-									}
-									return null;
-								}}
-							/>
-						</PieChart>
-					</ChartContainer>
+											<div className="text-muted-foreground text-xs">{percentage}%</div>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</div>
 				)}
 			</CardContent>
 		</Card>

@@ -4,7 +4,6 @@ import { useAtomValue } from "jotai";
 import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent } from "@hoalu/ui/card";
 import { customDateRangeAtom, type DashboardDateRange, selectDateRangeAtom } from "@/atoms/filters";
-import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import { expensesQueryOptions } from "@/services/query-options";
@@ -63,32 +62,15 @@ export function ExpenseStatsRow() {
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 	const { slug } = useWorkspace();
-	const {
-		metadata: { currency },
-	} = useWorkspace();
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 
 	const currentPeriodExpenses = filterExpensesByRange(expenses, dateRange, customRange);
-
-	const totalExpenses = currentPeriodExpenses.reduce(
-		(sum, expense) => sum + (expense.convertedAmount > 0 ? expense.convertedAmount : 0),
-		0,
-	);
 	const totalTransactions = currentPeriodExpenses.length;
-	const avgPerTransaction = totalTransactions > 0 ? totalExpenses / totalTransactions : 0;
 
 	const stats = [
 		{
-			title: "Total Expenses",
-			value: formatCurrency(totalExpenses, currency),
-		},
-		{
 			title: "Transactions",
 			value: totalTransactions.toString(),
-		},
-		{
-			title: "Avg per Transaction",
-			value: formatCurrency(avgPerTransaction, currency),
 		},
 		{
 			title: "Days",
@@ -100,7 +82,7 @@ export function ExpenseStatsRow() {
 	];
 
 	return (
-		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+		<div className="grid grid-cols-2 gap-4">
 			{stats.map((stat, index) => {
 				return (
 					<Card key={`${stat.title}-${index}`} className="p-4">

@@ -26,10 +26,11 @@ function filterDataByRange(
 	range: DashboardDateRange,
 	customRange?: { from: Date; to: Date },
 ) {
-	if (range === "all") return data;
+	if (range === "all") {
+		return data;
+	}
 
-	let startDate: Date;
-	let endDate: Date;
+	let startDate: Date, endDate: Date;
 
 	if (range === "custom" && customRange) {
 		startDate = datetime.startOfDay(customRange.from);
@@ -91,17 +92,16 @@ function groupDataByMonth(data: { date: string; value: number }[]) {
 	// Aggregate actual data by month
 	for (const item of data) {
 		const date = datetime.parse(item.date, "yyyy-MM-dd", new Date());
-		const monthKey = datetime.format(date, "yyyy-MM"); // e.g., "2024-08"
+		const monthKey = datetime.format(date, "yyyy-MM");
 
 		if (monthlyData[monthKey] !== undefined) {
 			monthlyData[monthKey] += item.value;
 		}
 	}
 
-	// Convert back to array format and sort by date
 	return Object.entries(monthlyData)
 		.map(([monthKey, value]) => ({
-			date: monthKey + "-01", // Use first day of month for consistency
+			date: `${monthKey}-01`,
 			value,
 			isMonthly: true, // Flag to identify monthly data
 		}))
@@ -127,6 +127,8 @@ export function ExpenseDashboardChart() {
 		dateRange === "ytd" || dateRange === "all"
 			? groupDataByMonth(filteredData)
 			: filteredData.slice(-50);
+
+	const totalExpenses = filteredData.reduce((sum, item) => sum + item.value, 0);
 
 	const handleBarClick = (data: {
 		payload?: { date: string; value: number; isMonthly?: boolean };
@@ -154,7 +156,6 @@ export function ExpenseDashboardChart() {
 		}
 
 		const searchQuery = `${startDate.getTime()}-${endDate.getTime()}`;
-
 		navigate({
 			to: "/$slug/expenses",
 			params: { slug },
@@ -167,11 +168,12 @@ export function ExpenseDashboardChart() {
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
+					<div className="font-semibold text-2xl">{formatCurrency(totalExpenses, currency)}</div>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
 				{data.length === 0 ? (
-					<div className="flex h-[250px] items-center justify-center text-muted-foreground">
+					<div className="flex h-60 items-center justify-center text-muted-foreground">
 						No data to display
 					</div>
 				) : (

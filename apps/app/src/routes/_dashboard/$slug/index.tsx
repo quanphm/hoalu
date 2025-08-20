@@ -30,18 +30,14 @@ function RouteComponent() {
 					<SectionTitle>Analytics</SectionTitle>
 					<DashboardDateFilter />
 				</SectionHeader>
-				<SectionContent>
-					<ExpenseStatsRow />
-					<Section>
-						<SectionContent columns={12}>
-							<div data-slot="expense-chart" className="col-span-6">
-								<ExpenseDashboardChart />
-							</div>
-							<div data-slot="category-breakdown" className="col-span-3">
-								<CategoryBreakdownChart />
-							</div>
-						</SectionContent>
-					</Section>
+				<SectionContent columns={12}>
+					<div className="col-span-6">
+						<ExpenseDashboardChart />
+					</div>
+					<div className="col-span-6 flex flex-col gap-4">
+						<ExpenseStatsRow />
+						<CategoryBreakdownChart />
+					</div>
 				</SectionContent>
 			</Section>
 		</>

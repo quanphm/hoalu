@@ -14,7 +14,7 @@ import {
 	type DashboardDateRange,
 	selectDateRangeAtom,
 } from "@/atoms/filters";
-import { AVAILABLE_DATE_RANGE_OPTIONS } from "@/helpers/constants";
+import { AVAILABLE_LAST_RANGE_OPTIONS, AVAILABLE_TO_DATE_RANGE_OPTIONS } from "@/helpers/constants";
 import { DateRangePicker } from "./date-range-picker";
 
 export function DashboardDateFilter() {
@@ -41,7 +41,13 @@ export function DashboardDateFilter() {
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
-						{AVAILABLE_DATE_RANGE_OPTIONS.map((option) => (
+						{AVAILABLE_LAST_RANGE_OPTIONS.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+						<SelectSeparator />
+						{AVAILABLE_TO_DATE_RANGE_OPTIONS.map((option) => (
 							<SelectItem key={option.value} value={option.value}>
 								{option.label}
 							</SelectItem>
