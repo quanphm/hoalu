@@ -365,13 +365,13 @@ const workspaceAvatarVariants = cva([], {
 });
 
 interface Props {
-	logo: string | null | undefined;
+	logo?: string | null | undefined;
 	name: string;
 	className?: string;
 }
 
 function WorkspaceLogo({
-	logo = undefined,
+	logo,
 	name,
 	size,
 	className,
@@ -379,7 +379,7 @@ function WorkspaceLogo({
 	const workspaceShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn(workspaceAvatarVariants({ size, className }))}>
-			<AvatarImage src={logo ?? undefined} alt={name} />
+			{logo && <AvatarImage src={logo} alt={name} />}
 			<AvatarFallback className={cn(workspaceAvatarVariants({ size }))}>
 				{workspaceShortName}
 			</AvatarFallback>
@@ -389,7 +389,7 @@ function WorkspaceLogo({
 
 function S3WorkspaceLogo({
 	slug,
-	logo,
+	logo = undefined,
 	...props
 }: Props & VariantProps<typeof workspaceAvatarVariants> & { slug: string }) {
 	const { data } = useQuery(workspaceLogoOptions(slug, logo));

@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { PanelLeftIcon } from "@hoalu/icons/lucide";
+import { useBreakpoints } from "../hooks";
 import { useIsMobile } from "../hooks/use-is-mobile";
 import { cn } from "../utils";
 import { Button } from "./button";
@@ -36,7 +37,6 @@ function useSidebar() {
 	if (!context) {
 		throw new Error("useSidebar must be used within a SidebarProvider.");
 	}
-
 	return context;
 }
 
@@ -53,7 +53,7 @@ function SidebarProvider({
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
 }) {
-	const isMobile = useIsMobile();
+	const { isMobile } = useBreakpoints();
 	const [openMobile, setOpenMobile] = React.useState(false);
 
 	// This is the internal state of the sidebar.
