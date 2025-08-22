@@ -5,7 +5,13 @@ import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-action
 import { ExpenseDetails } from "@/components/expenses/expense-details";
 import { ExpenseFilter } from "@/components/expenses/expense-filter";
 import ExpenseList from "@/components/expenses/expense-list";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionItem,
+	SectionTitle,
+} from "@/components/layouts/section";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	validateSearch: type({
@@ -23,17 +29,34 @@ function RouteComponent() {
 			</SectionHeader>
 
 			<SectionContent columns={12} className="h-[calc(100vh-92px)] gap-0 overflow-hidden">
-				<div data-slot="expense-filter" className="col-span-2 overflow-auto pr-4 pb-4">
+				<SectionItem
+					data-slot="expense-filter"
+					desktopSpan="col-span-2"
+					tabletSpan={1}
+					mobileOrder={3}
+					hideOnMobile={true}
+					className="pr-4 pb-4"
+				>
 					<ExpenseFilter />
-				</div>
+				</SectionItem>
 
-				<div data-slot="expense-list" className="col-span-4 overflow-auto">
+				<SectionItem
+					data-slot="expense-list"
+					desktopSpan="col-span-4"
+					tabletSpan={1}
+					mobileOrder={1}
+				>
 					<ExpenseList />
-				</div>
+				</SectionItem>
 
-				<div data-slot="expense-details" className="col-span-6 overflow-auto">
+				<SectionItem
+					data-slot="expense-details"
+					desktopSpan="col-span-6"
+					tabletSpan={1}
+					mobileOrder={2}
+				>
 					<ExpenseDetails />
-				</div>
+				</SectionItem>
 			</SectionContent>
 		</Section>
 	);
