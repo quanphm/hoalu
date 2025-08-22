@@ -17,15 +17,15 @@ export function useMinBreakpoint(breakpoint: Breakpoint) {
 }
 
 export function useMaxBreakpoint(breakpoint: Breakpoint) {
-	const value = BREAKPOINTS[breakpoint];
-	const maxWidth = Math.max(0, value - 1);
+	const maxWidth = Math.max(0, BREAKPOINTS[breakpoint] - 1);
 	const query = `(max-width: ${maxWidth}px)`;
 	return useMediaQuery(query);
 }
 
 export function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
 	const minQuery = `(min-width: ${BREAKPOINTS[min]}px)`;
-	const maxQuery = `(max-width: ${BREAKPOINTS[max] - 1}px)`;
+	const maxWidth = Math.max(0, BREAKPOINTS[max] - 1);
+	const maxQuery = `(max-width: ${maxWidth}px)`;
 	const query = `${minQuery} and ${maxQuery}`;
 	return useMediaQuery(query);
 }

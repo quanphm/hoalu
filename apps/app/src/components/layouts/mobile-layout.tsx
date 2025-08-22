@@ -1,11 +1,19 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
-import { ChevronDown } from "@hoalu/icons/lucide";
+import {
+	ArrowRightLeftIcon,
+	ChevronsUpDownIcon,
+	GalleryVerticalIcon,
+	ListTodoIcon,
+	SettingsIcon,
+} from "@hoalu/icons/lucide";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
+import { ButtonLink } from "@/components/button-link";
+import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 import { listWorkspacesOptions } from "@/services/query-options";
 
 interface LayoutProps {
@@ -39,10 +47,10 @@ function MobileHeader() {
 
 	return (
 		<header className="border-b bg-background">
-			<div className="flex h-14 items-center justify-between px-4">
+			<div className="flex h-14 items-center justify-between px-8 md:px-4">
 				<div className="flex items-center gap-2">
 					<Button
-						variant="ghost"
+						variant="outline"
 						onClick={handleWorkspaceSwitcher}
 						className="flex items-center gap-2 px-2 py-1.5"
 					>
@@ -52,7 +60,7 @@ function MobileHeader() {
 							</AvatarFallback>
 						</Avatar>
 						<span className="font-medium">{currentWorkspace.name}</span>
-						<ChevronDown className="h-3 w-3 text-muted-foreground" />
+						<ChevronsUpDownIcon className="h-3 w-3 text-muted-foreground" />
 					</Button>
 				</div>
 			</div>
@@ -66,42 +74,63 @@ function MobileBottomNav() {
 	return (
 		<nav className="fixed bottom-0 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 			<div className="flex h-16 items-center justify-around px-2">
-				<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
-					<span>Dashboard</span>
-				</Link>
-				<Link to="/$slug/expenses" params={{ slug }} activeOptions={{ exact: true }}>
-					<span>Expenses</span>
-				</Link>
-				<Link to="/$slug/tasks" params={{ slug }} activeOptions={{ exact: true }}>
-					<span>Task</span>
-				</Link>
-				<Link to="/$slug/settings" params={{ slug }} activeOptions={{ exact: true }}>
-					<span>Settings</span>
-				</Link>
-				{/* {navItems.map((item) => {
-					const isActive = activeTab === item.id;
-					const Icon = item.icon;
-					return (
-						<Button
-							key={item.id}
-							variant="ghost"
-							onClick={() => handleTabPress(item)}
-							className={cn(
-								"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
-								"font-medium text-xs transition-colors",
-								isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-							)}
-						>
-							<Icon className={cn("h-5 w-5 transition-colors", isActive && "text-primary")} />
-							<span className={cn("truncate text-xs leading-none", isActive && "text-primary")}>
-								{item.label}
-							</span>
-							{isActive && (
-								<div className="-translate-x-1/2 absolute bottom-0 left-1/2 h-0.5 w-8 rounded-full bg-primary" />
-							)}
-						</Button>
-					);
-				})} */}
+				<ButtonLink
+					to="/$slug"
+					params={{ slug }}
+					size="sm"
+					variant="ghost"
+					activeOptions={{ exact: true }}
+					className={cn(
+						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
+						"font-medium text-xs transition-colors",
+					)}
+				>
+					<GalleryVerticalIcon className={cn("h-5 w-5 transition-colors")} />
+					<span className="truncate text-xs leading-none">Dashboard</span>
+				</ButtonLink>
+				<ButtonLink
+					to="/$slug/expenses"
+					params={{ slug }}
+					size="sm"
+					variant="ghost"
+					activeOptions={{ exact: true }}
+					className={cn(
+						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
+						"font-medium text-xs transition-colors",
+					)}
+				>
+					<ArrowRightLeftIcon className={cn("h-5 w-5 transition-colors")} />
+					<span className="truncate text-xs leading-none">Expense</span>
+				</ButtonLink>
+				<ButtonLink
+					to="/$slug/tasks"
+					params={{ slug }}
+					size="sm"
+					variant="ghost"
+					activeOptions={{ exact: true }}
+					className={cn(
+						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
+						"font-medium text-xs transition-colors",
+					)}
+					disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
+				>
+					<ListTodoIcon className={cn("h-5 w-5 transition-colors")} />
+					<span className="truncate text-xs leading-none">Tasks</span>
+				</ButtonLink>
+				<ButtonLink
+					to="/$slug/expenses"
+					params={{ slug }}
+					size="sm"
+					variant="ghost"
+					activeOptions={{ exact: true }}
+					className={cn(
+						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
+						"font-medium text-xs transition-colors",
+					)}
+				>
+					<SettingsIcon className={cn("h-5 w-5 transition-colors")} />
+					<span className="truncate text-xs leading-none">Settings</span>
+				</ButtonLink>
 			</div>
 		</nav>
 	);
