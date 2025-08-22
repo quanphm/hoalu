@@ -34,7 +34,6 @@ function RouteComponent() {
 					desktopSpan="col-span-2"
 					tabletSpan={1}
 					mobileOrder={3}
-					hideOnMobile={true}
 					className="pr-4 pb-4"
 				>
 					<ExpenseFilter />

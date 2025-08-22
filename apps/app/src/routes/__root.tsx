@@ -38,7 +38,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			{children}
 			<ReloadPromptPwa />
 			<QueryDevtools buttonPosition="bottom-right" />
-			<RouterDevtools position="top-right" />
+			<RouterDevtools position="bottom-right" />
 		</>
 	);
 }

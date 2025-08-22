@@ -1,75 +1,108 @@
-import { useAtom } from "jotai";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
+import { ChevronDown } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
+import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { mobileBottomNavVisibleAtom } from "@/atoms";
-import { useLayoutMode } from "@/hooks/use-layout-mode";
-import { MobileBottomNav } from "./mobile-bottom-nav";
-import { MobileHeader } from "./mobile-header";
-import { MobileSheet } from "./mobile-sheet";
-import { SidebarSaysLayout } from "./sidebar-says-layout";
+import { listWorkspacesOptions } from "@/services/query-options";
 
-interface MobileLayoutProps {
+interface LayoutProps {
 	children: React.ReactNode;
 }
 
-/**
- * Mobile-first responsive layout component
- * Switches between mobile stack layout and desktop sidebar layout
- * based on viewport size and user preferences
- */
-export function MobileLayout({ children }: MobileLayoutProps) {
+export function MobileLayout({ children }: LayoutProps) {
+	const params = useParams({ strict: false });
+	const hasSlug = !!params.slug;
 	const { theme } = useTheme();
-	const { shouldUseMobileLayout, shouldUseDesktopLayout } = useLayoutMode();
-	const [isBottomNavVisible] = useAtom(mobileBottomNavVisibleAtom);
 
-	// Use desktop layout for desktop screens
-	if (shouldUseDesktopLayout) {
-		return <SidebarSaysLayout>{children}</SidebarSaysLayout>;
-	}
-
-	// Use mobile/tablet layout for smaller screens
 	return (
-		<div className={cn("flex h-screen flex-col bg-background", theme)}>
-			{/* Mobile Header */}
-			<MobileHeader />
-
-			{/* Main Content Area */}
-			<main className="flex-1 overflow-hidden">
-				{shouldUseMobileLayout ? (
-					// Mobile: Single column stack
-					<div className="h-full overflow-y-auto">{children}</div>
-				) : (
-					// Tablet: Two column split view
-					<div className="grid h-full grid-cols-2 gap-4 p-4">{children}</div>
-				)}
-			</main>
-
-			{/* Spacer for bottom navigation */}
-			{shouldUseMobileLayout && isBottomNavVisible && <div className="h-4" />}
-
-			{/* Bottom Navigation (Mobile Only) */}
-			{shouldUseMobileLayout && isBottomNavVisible && <MobileBottomNav />}
-
-			{/* Mobile Sheet for modals/details */}
-			<MobileSheet />
+		<div className={cn("flex flex-col bg-background pb-16", theme)}>
+			{hasSlug && <MobileHeader />}
+			<main data-slot="main-content">{children}</main>
+			{hasSlug && <MobileBottomNav />}
 		</div>
 	);
 }
 
-/**
- * Responsive layout wrapper that chooses the appropriate layout
- * based on screen size and device capabilities
- */
-export function ResponsiveLayout({ children }: { children: React.ReactNode }) {
-	const { shouldUseMobileLayout, shouldUseTabletLayout } = useLayoutMode();
+function MobileHeader() {
+	const params = useParams({ strict: false });
 
-	// Always use MobileLayout for mobile and tablet
-	// It will handle the desktop case internally
-	if (shouldUseMobileLayout || shouldUseTabletLayout) {
-		return <MobileLayout>{children}</MobileLayout>;
+	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
+	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
+	const handleWorkspaceSwitcher = () => {};
+
+	if (!currentWorkspace) {
+		return null;
 	}
 
-	// Fallback to desktop layout
-	return <SidebarSaysLayout>{children}</SidebarSaysLayout>;
+	return (
+		<header className="border-b bg-background">
+			<div className="flex h-14 items-center justify-between px-4">
+				<div className="flex items-center gap-2">
+					<Button
+						variant="ghost"
+						onClick={handleWorkspaceSwitcher}
+						className="flex items-center gap-2 px-2 py-1.5"
+					>
+						<Avatar className="h-6 w-6">
+							<AvatarFallback className="font-medium text-xs">
+								{currentWorkspace.name.charAt(0).toUpperCase()}
+							</AvatarFallback>
+						</Avatar>
+						<span className="font-medium">{currentWorkspace.name}</span>
+						<ChevronDown className="h-3 w-3 text-muted-foreground" />
+					</Button>
+				</div>
+			</div>
+		</header>
+	);
+}
+
+function MobileBottomNav() {
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+
+	return (
+		<nav className="fixed bottom-0 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+			<div className="flex h-16 items-center justify-around px-2">
+				<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
+					<span>Dashboard</span>
+				</Link>
+				<Link to="/$slug/expenses" params={{ slug }} activeOptions={{ exact: true }}>
+					<span>Expenses</span>
+				</Link>
+				<Link to="/$slug/tasks" params={{ slug }} activeOptions={{ exact: true }}>
+					<span>Task</span>
+				</Link>
+				<Link to="/$slug/settings" params={{ slug }} activeOptions={{ exact: true }}>
+					<span>Settings</span>
+				</Link>
+				{/* {navItems.map((item) => {
+					const isActive = activeTab === item.id;
+					const Icon = item.icon;
+					return (
+						<Button
+							key={item.id}
+							variant="ghost"
+							onClick={() => handleTabPress(item)}
+							className={cn(
+								"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
+								"font-medium text-xs transition-colors",
+								isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+							)}
+						>
+							<Icon className={cn("h-5 w-5 transition-colors", isActive && "text-primary")} />
+							<span className={cn("truncate text-xs leading-none", isActive && "text-primary")}>
+								{item.label}
+							</span>
+							{isActive && (
+								<div className="-translate-x-1/2 absolute bottom-0 left-1/2 h-0.5 w-8 rounded-full bg-primary" />
+							)}
+						</Button>
+					);
+				})} */}
+			</div>
+		</nav>
+	);
 }

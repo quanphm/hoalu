@@ -23,10 +23,9 @@ function SectionContent({
 	columns?: number;
 	mobileLayout?: "stack" | "tabs" | "drawer";
 }) {
-	const { shouldUseMobileLayout, shouldUseTabletLayout } = useLayoutMode();
+	const { mode } = useLayoutMode();
 
-	// Mobile: Stack layout (single column)
-	if (shouldUseMobileLayout) {
+	if (mode === "mobile") {
 		return (
 			<div
 				ref={ref}
@@ -36,8 +35,7 @@ function SectionContent({
 		);
 	}
 
-	// Tablet: 2-column layout for better space usage
-	if (shouldUseTabletLayout) {
+	if (mode === "tablet") {
 		return (
 			<div
 				ref={ref}
@@ -69,10 +67,6 @@ function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<
 	return <h2 className={cn("font-medium text-lg leading-tight", className)} {...props} />;
 }
 
-/**
- * Mobile-aware section item wrapper
- * Handles responsive behavior for section children
- */
 function SectionItem({
 	children,
 	className,
@@ -93,7 +87,6 @@ function SectionItem({
 		return null;
 	}
 
-	// Mobile: Use order for stacking
 	if (shouldUseMobileLayout) {
 		return (
 			<div
@@ -106,7 +99,6 @@ function SectionItem({
 		);
 	}
 
-	// Tablet: Use span for 2-column grid
 	if (shouldUseTabletLayout) {
 		return (
 			<div className={cn(`col-span-${tabletSpan} overflow-auto`, className)} {...props}>
@@ -115,7 +107,6 @@ function SectionItem({
 		);
 	}
 
-	// Desktop: Use original span
 	return (
 		<div className={cn(desktopSpan || "col-span-1", "overflow-auto", className)} {...props}>
 			{children}

@@ -1,7 +1,6 @@
 import { useMediaQuery } from "./use-media-query";
 
-// Tailwind CSS breakpoints
-export const BREAKPOINTS = {
+const BREAKPOINTS = {
 	xs: 0,
 	sm: 640,
 	md: 768,
@@ -12,27 +11,32 @@ export const BREAKPOINTS = {
 
 export type Breakpoint = keyof typeof BREAKPOINTS;
 
-/**
- * Enhanced breakpoint system for mobile-first responsive design
- * Based on Tailwind CSS breakpoints with mobile-first approach
- */
-export function useBreakpoint(breakpoint: Breakpoint) {
+export function useMinBreakpoint(breakpoint: Breakpoint) {
 	const query = `(min-width: ${BREAKPOINTS[breakpoint]}px)`;
 	return useMediaQuery(query);
 }
 
-/**
- * Get current breakpoint information
- * Returns the active breakpoint and boolean flags for each size
- */
-export function useBreakpoints() {
-	const sm = useBreakpoint("sm");
-	const md = useBreakpoint("md");
-	const lg = useBreakpoint("lg");
-	const xl = useBreakpoint("xl");
-	const xxl = useBreakpoint("2xl");
+export function useMaxBreakpoint(breakpoint: Breakpoint) {
+	const value = BREAKPOINTS[breakpoint];
+	const maxWidth = Math.max(0, value - 1);
+	const query = `(max-width: ${maxWidth}px)`;
+	return useMediaQuery(query);
+}
 
-	// Determine current breakpoint (largest active one)
+export function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
+	const minQuery = `(min-width: ${BREAKPOINTS[min]}px)`;
+	const maxQuery = `(max-width: ${BREAKPOINTS[max] - 1}px)`;
+	const query = `${minQuery} and ${maxQuery}`;
+	return useMediaQuery(query);
+}
+
+export function useBreakpoints() {
+	const sm = useMinBreakpoint("sm");
+	const md = useMinBreakpoint("md");
+	const lg = useMinBreakpoint("lg");
+	const xl = useMinBreakpoint("xl");
+	const xxl = useMinBreakpoint("2xl");
+
 	let current: Breakpoint = "xs";
 	if (xxl) current = "2xl";
 	else if (xl) current = "xl";
@@ -42,43 +46,25 @@ export function useBreakpoints() {
 
 	return {
 		current,
-		xs: !sm, // xs is when sm is false
+
+		xs: !sm,
 		sm: sm && !md,
 		md: md && !lg,
 		lg: lg && !xl,
 		xl: xl && !xxl,
 		"2xl": xxl,
-		// Convenience flags
-		isMobile: !md, // < 768px
-		isTablet: md && !lg, // 768px - 1023px
-		isDesktop: lg, // >= 1024px
-		// Size comparisons
-		isSmallMobile: !sm, // < 640px
-		isLargeMobile: sm && !md, // 640px - 767px
+
+		/**
+		 * smaller than 768px
+		 */
+		isMobile: !md,
+		/**
+		 * 768px - 1023px
+		 */
+		isTablet: md && !lg,
+		/**
+		 * bigger than 1024px
+		 */
+		isDesktop: lg,
 	};
-}
-
-/**
- * Check if current viewport is at or above a specific breakpoint
- */
-export function useMinBreakpoint(breakpoint: Breakpoint) {
-	return useBreakpoint(breakpoint);
-}
-
-/**
- * Check if current viewport is below a specific breakpoint
- */
-export function useMaxBreakpoint(breakpoint: Breakpoint) {
-	const query = `(max-width: ${BREAKPOINTS[breakpoint] - 1}px)`;
-	return useMediaQuery(query);
-}
-
-/**
- * Check if current viewport is between two breakpoints (inclusive)
- */
-export function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
-	const minQuery = `(min-width: ${BREAKPOINTS[min]}px)`;
-	const maxQuery = `(max-width: ${BREAKPOINTS[max] - 1}px)`;
-	const query = `${minQuery} and ${maxQuery}`;
-	return useMediaQuery(query);
 }

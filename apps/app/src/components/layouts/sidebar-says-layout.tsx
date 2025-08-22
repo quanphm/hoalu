@@ -7,6 +7,8 @@ import {
 	SidebarContent,
 	SidebarHeader,
 	SidebarInset,
+	SidebarMenu,
+	SidebarMenuItem,
 	SidebarProvider,
 } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
@@ -36,11 +38,15 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 		<SidebarProvider className={cn(theme)}>
 			<Sidebar variant="inset">
 				<SidebarHeader className="border-b">
-					{hasSlug && currentWorkspace ? (
-						<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
-					) : (
-						<AppLogo />
-					)}
+					<SidebarMenu>
+						<SidebarMenuItem>
+							{hasSlug && currentWorkspace ? (
+								<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
+							) : (
+								<AppLogo />
+							)}
+						</SidebarMenuItem>
+					</SidebarMenu>
 				</SidebarHeader>
 				<SidebarContent className="gap-2">
 					{hasSlug && <NavWorkspace />}

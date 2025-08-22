@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { ResponsiveLayout } from "@/components/layouts/mobile-layout";
+import { ResponsiveLayout } from "@/components/layouts/responsive-layout";
 import { ActionProvider } from "@/components/providers/action-provider";
 import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
 
