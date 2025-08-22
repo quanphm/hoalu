@@ -26,9 +26,11 @@ export function MobileLayout({ children }: LayoutProps) {
 	const { theme } = useTheme();
 
 	return (
-		<div className={cn("flex flex-col bg-background pb-16", theme)}>
+		<div className={cn("flex flex-col bg-background", theme)}>
 			{hasSlug && <MobileHeader />}
-			<main data-slot="main-content">{children}</main>
+			<main data-slot="main-content" className="pb-16">
+				{children}
+			</main>
 			{hasSlug && <MobileBottomNav />}
 		</div>
 	);
@@ -118,7 +120,7 @@ function MobileBottomNav() {
 					<span className="truncate text-xs leading-none">Tasks</span>
 				</ButtonLink>
 				<ButtonLink
-					to="/$slug/expenses"
+					to="/$slug/settings"
 					params={{ slug }}
 					size="sm"
 					variant="ghost"
