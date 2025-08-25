@@ -1,51 +1,29 @@
 :root {
-	--radius: 0.5rem; /* Slightly sharper corners for retro feel */
-
-	/* Light mint/seafoam as background */
+	--radius: 0.5rem;
 	--background: oklch(0.98 0.05 165);
 	--foreground: oklch(0.25 0.08 250);
-
-	/* Card surfaces with subtle mint tint */
 	--card: oklch(0.99 0.03 165);
 	--card-foreground: oklch(0.25 0.08 250);
-
-	/* Popover with same subtle tint */
 	--popover: oklch(0.99 0.03 165);
 	--popover-foreground: oklch(0.25 0.08 250);
-
-	/* Deep teal/navy for primary actions */
 	--primary: oklch(0.35 0.15 230);
 	--primary-foreground: oklch(0.98 0.02 165);
-
-	/* Mid-teal for secondary */
 	--secondary: oklch(0.85 0.08 180);
 	--secondary-foreground: oklch(0.3 0.12 230);
-
-	/* Muted with greenish tint */
 	--muted: oklch(0.92 0.04 170);
 	--muted-foreground: oklch(0.5 0.06 210);
-
-	/* Accent in vibrant teal */
 	--accent: oklch(0.75 0.18 185);
 	--accent-foreground: oklch(0.2 0.08 250);
-
-	/* Destructive in coral/salmon */
 	--destructive: oklch(0.62 0.22 25);
 	--destructive-foreground: oklch(0.98 0 0);
-
-	/* Borders with teal tint */
 	--border: oklch(0.88 0.06 180);
 	--input: oklch(0.88 0.06 180);
 	--ring: oklch(0.65 0.15 195);
-
-	/* Chart colors - gradient palette */
 	--chart-1: oklch(0.95 0.12 165); /* Light mint */
 	--chart-2: oklch(0.75 0.18 185); /* Mid teal */
 	--chart-3: oklch(0.55 0.20 200); /* Deep teal */
 	--chart-4: oklch(0.45 0.18 220); /* Teal-blue */
 	--chart-5: oklch(0.35 0.15 240); /* Deep navy */
-
-	/* Sidebar with subtle teal background */
 	--sidebar: oklch(0.96 0.04 170);
 	--sidebar-foreground: oklch(0.25 0.08 250);
 	--sidebar-primary: oklch(0.35 0.15 230);
@@ -57,44 +35,25 @@
 }
 
 .dark {
-	/* Dark navy background */
 	--background: oklch(0.18 0.08 250);
 	--foreground: oklch(0.92 0.05 165);
-
-	/* Card surfaces with deep blue-green */
 	--card: oklch(0.22 0.09 240);
 	--card-foreground: oklch(0.92 0.05 165);
-
-	/* Popover matching card */
 	--popover: oklch(0.22 0.09 240);
 	--popover-foreground: oklch(0.92 0.05 165);
-
-	/* Bright teal for primary in dark mode */
 	--primary: oklch(0.72 0.20 185);
 	--primary-foreground: oklch(0.15 0.05 250);
-
-	/* Darker teal for secondary */
 	--secondary: oklch(0.32 0.12 210);
 	--secondary-foreground: oklch(0.90 0.05 170);
-
-	/* Muted deep ocean */
 	--muted: oklch(0.28 0.08 220);
 	--muted-foreground: oklch(0.65 0.08 180);
-
-	/* Accent in vibrant cyan */
 	--accent: oklch(0.45 0.18 195);
 	--accent-foreground: oklch(0.95 0.05 165);
-
-	/* Destructive in warm coral */
 	--destructive: oklch(0.55 0.25 22);
 	--destructive-foreground: oklch(0.95 0 0);
-
-	/* Borders with teal glow */
 	--border: oklch(0.35 0.10 210);
 	--input: oklch(0.32 0.10 210);
 	--ring: oklch(0.55 0.18 195);
-
-	/* Chart colors - vibrant gradient for dark mode */
 	--chart-1: oklch(0.85 0.18 165); /* Bright mint */
 	--chart-2: oklch(0.72 0.20 185); /* Bright teal */
 	--chart-3: oklch(0.55 0.22 195); /* Cyan */
@@ -112,7 +71,6 @@
 	--sidebar-ring: oklch(0.55 0.18 195);
 }
 
-/* Inline theme variables for Tailwind v4 */
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
