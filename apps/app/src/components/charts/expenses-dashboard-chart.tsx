@@ -127,8 +127,49 @@ export function ExpenseDashboardChart() {
 			.sort((a, b) => a.date.localeCompare(b.date));
 	}
 
+	// Helper function to get start of week
+	function getStartOfWeek(date: Date, weekStartsOn: number = 1): Date {
+		const day = date.getDay();
+		const diff = day < weekStartsOn ? day + 7 - weekStartsOn : day - weekStartsOn;
+		const startOfWeek = new Date(date);
+		startOfWeek.setDate(date.getDate() - diff);
+		return datetime.startOfDay(startOfWeek);
+	}
+
+	// Helper function to generate daily data for a specific date range
+	function generateDailyDataForRange(
+		data: { date: string; value: number }[],
+		startDate: Date,
+		endDate: Date,
+	): { date: string; value: number }[] {
+		const dailyData: Record<string, number> = {};
+
+		// Initialize all days in range with zero
+		const currentDate = new Date(datetime.startOfDay(startDate));
+		const normalizedEndDate = datetime.endOfDay(endDate);
+
+		while (currentDate <= normalizedEndDate) {
+			const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
+			dailyData[dateKey] = 0;
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+
+		// Fill in actual data
+		for (const item of data) {
+			if (dailyData[item.date] !== undefined) {
+				dailyData[item.date] = item.value;
+			}
+		}
+
+		return Object.entries(dailyData)
+			.map(([date, value]) => ({ date, value }))
+			.sort((a, b) => a.date.localeCompare(b.date));
+	}
+
 	// Group by month for year-to-date and all-time views
 	const data = (() => {
+		const today = new Date();
+
 		if (dateRange === "ytd") {
 			return groupDataByMonth(filteredData, true);
 		} else if (dateRange === "all") {
@@ -136,10 +177,23 @@ export function ExpenseDashboardChart() {
 		} else if (dateRange === "mtd") {
 			// For month-to-date, generate daily data with zeros for current month
 			return generateMTDDataWithZeros(filteredData);
-		} else {
-			// For daily views (7 days, 30 days, wtd), generate data with zeros
-			const days = dateRange === "7" ? 7 : dateRange === "30" ? 30 : dateRange === "wtd" ? 7 : 50;
+		} else if (dateRange === "wtd") {
+			// For week-to-date, compute start of week (Monday) and generate daily data
+			const startOfWeek = getStartOfWeek(today, 1);
+			const endOfWeek = datetime.endOfDay(today);
+			return generateDailyDataForRange(filteredData, startOfWeek, endOfWeek);
+		} else if (dateRange === "custom" && customRange) {
+			// For custom ranges, generate daily data for the specified range
+			const startDate = datetime.startOfDay(customRange.from);
+			const endDate = datetime.endOfDay(customRange.to);
+			return generateDailyDataForRange(filteredData, startDate, endDate);
+		} else if (dateRange === "7" || dateRange === "30") {
+			// For numeric day ranges, generate data with zeros for last N days
+			const days = parseInt(dateRange, 10);
 			return generateDailyDataWithZeros(filteredData, days);
+		} else {
+			// Fallback for any other ranges
+			return generateDailyDataWithZeros(filteredData, 50);
 		}
 	})();
 
