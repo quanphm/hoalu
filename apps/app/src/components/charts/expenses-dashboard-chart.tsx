@@ -237,7 +237,10 @@ export function ExpenseDashboardChart() {
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-4 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
-					<div className="font-bold text-3xl">{formatCurrency(totalExpenses, currency)}</div>
+					<div className="font-bold text-3xl">
+						{formatCurrency(totalExpenses, currency, { style: "decimal" })}
+						<span className="ml-1 font-normal text-muted-foreground text-sm">{currency}</span>
+					</div>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
@@ -299,9 +302,9 @@ export function ExpenseDashboardChart() {
 						/>
 						<Bar
 							dataKey="value"
-							fill={`var(--color-date)`}
-							onClick={handleBarClick}
+							fill="var(--color-date)"
 							className="cursor-pointer"
+							onClick={handleBarClick}
 						/>
 					</BarChart>
 				</ChartContainer>
