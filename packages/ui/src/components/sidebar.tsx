@@ -3,7 +3,6 @@ import * as React from "react";
 
 import { PanelLeftIcon } from "@hoalu/icons/lucide";
 import { useBreakpoints } from "../hooks";
-import { useIsMobile } from "../hooks/use-is-mobile";
 import { cn } from "../utils";
 import { Button } from "./button";
 import { Input } from "./input";

@@ -28,7 +28,7 @@ function RouteComponent() {
 				<CreateExpenseDialogTrigger />
 			</SectionHeader>
 
-			<SectionContent columns={12} className="h-[calc(100vh-92px)] gap-0 overflow-hidden">
+			<SectionContent columns={12} className="h-[calc(100vh-99px)] gap-0 overflow-hidden">
 				<SectionItem
 					data-slot="expense-filter"
 					desktopSpan="col-span-2"

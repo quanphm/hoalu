@@ -81,11 +81,11 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
 		() => {
-			const currentThemeIndex = THEMES.indexOf(theme ?? THEMES[0]);
+			const currentThemeIndex = THEMES.indexOf(theme as any);
 			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
 			setTheme(THEMES[nextThemeIndex]);
 		},
-		{ description: "Theme: Browse themes" },
+		{ description: "Theme: Cycle through themes" },
 	);
 
 	useHotkeys(

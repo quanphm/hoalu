@@ -76,14 +76,124 @@ export function ExpenseDashboardChart() {
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
+	// Helper function to generate daily data with zeros for missing dates
+	function generateDailyDataWithZeros(data: { date: string; value: number }[], days: number) {
+		const today = new Date();
+		const dailyData: Record<string, number> = {};
+
+		// Initialize all days in range with zero
+		for (let i = days - 1; i >= 0; i--) {
+			const date = new Date(today);
+			date.setDate(date.getDate() - i);
+			const dateKey = datetime.format(date, "yyyy-MM-dd");
+			dailyData[dateKey] = 0;
+		}
+
+		// Fill in actual data
+		for (const item of data) {
+			if (dailyData[item.date] !== undefined) {
+				dailyData[item.date] = item.value;
+			}
+		}
+
+		return Object.entries(dailyData)
+			.map(([date, value]) => ({ date, value }))
+			.sort((a, b) => a.date.localeCompare(b.date));
+	}
+
+	// Helper function to generate daily data for month-to-date
+	function generateMTDDataWithZeros(data: { date: string; value: number }[]) {
+		const today = new Date();
+		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+		const dailyData: Record<string, number> = {};
+
+		// Initialize all days from 1st of month to today with zero
+		const currentDate = new Date(firstOfMonth);
+		while (currentDate <= today) {
+			const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
+			dailyData[dateKey] = 0;
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+
+		// Fill in actual data
+		for (const item of data) {
+			if (dailyData[item.date] !== undefined) {
+				dailyData[item.date] = item.value;
+			}
+		}
+
+		return Object.entries(dailyData)
+			.map(([date, value]) => ({ date, value }))
+			.sort((a, b) => a.date.localeCompare(b.date));
+	}
+
+	// Helper function to get start of week
+	function getStartOfWeek(date: Date, weekStartsOn: number = 1): Date {
+		const day = date.getDay();
+		const diff = day < weekStartsOn ? day + 7 - weekStartsOn : day - weekStartsOn;
+		const startOfWeek = new Date(date);
+		startOfWeek.setDate(date.getDate() - diff);
+		return datetime.startOfDay(startOfWeek);
+	}
+
+	// Helper function to generate daily data for a specific date range
+	function generateDailyDataForRange(
+		data: { date: string; value: number }[],
+		startDate: Date,
+		endDate: Date,
+	): { date: string; value: number }[] {
+		const dailyData: Record<string, number> = {};
+
+		// Initialize all days in range with zero
+		const currentDate = new Date(datetime.startOfDay(startDate));
+		const normalizedEndDate = datetime.endOfDay(endDate);
+
+		while (currentDate <= normalizedEndDate) {
+			const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
+			dailyData[dateKey] = 0;
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+
+		// Fill in actual data
+		for (const item of data) {
+			if (dailyData[item.date] !== undefined) {
+				dailyData[item.date] = item.value;
+			}
+		}
+
+		return Object.entries(dailyData)
+			.map(([date, value]) => ({ date, value }))
+			.sort((a, b) => a.date.localeCompare(b.date));
+	}
+
 	// Group by month for year-to-date and all-time views
 	const data = (() => {
+		const today = new Date();
+
 		if (dateRange === "ytd") {
 			return groupDataByMonth(filteredData, true);
 		} else if (dateRange === "all") {
 			return groupDataByMonth(filteredData, false);
+		} else if (dateRange === "mtd") {
+			// For month-to-date, generate daily data with zeros for current month
+			return generateMTDDataWithZeros(filteredData);
+		} else if (dateRange === "wtd") {
+			// For week-to-date, compute start of week (Monday) and generate daily data
+			const startOfWeek = getStartOfWeek(today, 1);
+			const endOfWeek = datetime.endOfDay(today);
+			return generateDailyDataForRange(filteredData, startOfWeek, endOfWeek);
+		} else if (dateRange === "custom" && customRange) {
+			// For custom ranges, generate daily data for the specified range
+			const startDate = datetime.startOfDay(customRange.from);
+			const endDate = datetime.endOfDay(customRange.to);
+			return generateDailyDataForRange(filteredData, startDate, endDate);
+		} else if (dateRange === "7" || dateRange === "30") {
+			// For numeric day ranges, generate data with zeros for last N days
+			const days = parseInt(dateRange, 10);
+			return generateDailyDataWithZeros(filteredData, days);
 		} else {
-			return filteredData.slice(-50);
+			// Fallback for any other ranges
+			return generateDailyDataWithZeros(filteredData, 50);
 		}
 	})();
 
@@ -123,84 +233,81 @@ export function ExpenseDashboardChart() {
 	};
 
 	return (
-		<Card className="py-0">
+		<Card className="py-0 md:h-full">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
+				<div className="flex flex-1 flex-col justify-center gap-4 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
-					<div className="font-semibold text-2xl">{formatCurrency(totalExpenses, currency)}</div>
+					<div className="font-bold text-3xl">
+						{formatCurrency(totalExpenses, currency, { style: "decimal" })}
+						<span className="ml-1 font-normal text-muted-foreground text-sm">{currency}</span>
+					</div>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
-				{data.length === 0 ? (
-					<div className="flex h-60 items-center justify-center text-muted-foreground">
-						No data to display
-					</div>
-				) : (
-					<ChartContainer
-						config={chartConfig}
-						className="aspect-auto h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-[var(--chart-1)]/15"
+				<ChartContainer
+					config={chartConfig}
+					className="aspect-auto h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-[var(--chart-1)]/15"
+				>
+					<BarChart
+						accessibilityLayer
+						data={data}
+						maxBarSize={20}
+						margin={{ left: -12, right: 12, top: 12 }}
 					>
-						<BarChart
-							accessibilityLayer
-							data={data}
-							maxBarSize={20}
-							margin={{ left: -12, right: 12, top: 12 }}
-						>
-							<CartesianGrid vertical={false} strokeDasharray="2 2" stroke="var(--border)" />
-							<XAxis
-								dataKey="date"
-								tickLine={false}
-								tickMargin={12}
-								ticks={[data[0].date, data[data.length - 1].date]}
-								tickFormatter={(value) => {
-									const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-									return dateRange === "ytd" || dateRange === "all"
-										? datetime.format(date, "MMM yyyy")
-										: datetime.format(date, "dd/MM/yyyy");
-								}}
-								stroke="var(--border)"
-							/>
-							<YAxis
-								tickLine={false}
-								axisLine={false}
-								tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
-							/>
-							<ChartTooltip
-								content={({ active, payload, label }) => {
-									if (active && payload && payload.length && label) {
-										const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
-										const formattedDate =
-											dateRange === "ytd" || dateRange === "all"
-												? datetime.format(date, "MMMM yyyy")
-												: datetime.format(date, "dd/MM/yyyy");
+						<CartesianGrid vertical={false} strokeDasharray="2 2" stroke="var(--border)" />
+						<XAxis
+							dataKey="date"
+							tickLine={false}
+							tickMargin={12}
+							ticks={data.length > 0 ? [data[0].date, data[data.length - 1].date] : []}
+							tickFormatter={(value) => {
+								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
+								return dateRange === "ytd" || dateRange === "all"
+									? datetime.format(date, "MMM yyyy")
+									: datetime.format(date, "dd/MM/yyyy");
+							}}
+							stroke="var(--border)"
+						/>
+						<YAxis
+							tickLine={false}
+							axisLine={false}
+							tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
+						/>
+						<ChartTooltip
+							content={({ active, payload, label }) => {
+								if (active && payload && payload.length && label) {
+									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
+									const formattedDate =
+										dateRange === "ytd" || dateRange === "all"
+											? datetime.format(date, "MMMM yyyy")
+											: datetime.format(date, "dd/MM/yyyy");
 
-										return (
-											<div className="rounded-md border bg-background p-3 shadow-sm">
-												<div className="grid gap-2">
-													<div className="flex flex-col">
-														<span className="text-muted-foreground text-xs uppercase tracking-wider">
-															{formattedDate}
-														</span>
-														<span className="font-bold text-base">
-															{formatCurrency(payload[0].value, currency)}
-														</span>
-													</div>
+									return (
+										<div className="rounded-md border bg-background p-3 shadow-sm">
+											<div className="grid gap-2">
+												<div className="flex flex-col">
+													<span className="text-muted-foreground text-xs uppercase tracking-wider">
+														{formattedDate}
+													</span>
+													<span className="font-bold text-base">
+														{formatCurrency(payload[0].value, currency)}
+													</span>
 												</div>
 											</div>
-										);
-									}
-									return null;
-								}}
-							/>
-							<Bar
-								dataKey="value"
-								fill={`var(--color-date)`}
-								onClick={handleBarClick}
-								className="cursor-pointer"
-							/>
-						</BarChart>
-					</ChartContainer>
-				)}
+										</div>
+									);
+								}
+								return null;
+							}}
+						/>
+						<Bar
+							dataKey="value"
+							fill="var(--color-date)"
+							className="cursor-pointer"
+							onClick={handleBarClick}
+						/>
+					</BarChart>
+				</ChartContainer>
 			</CardContent>
 		</Card>
 	);
