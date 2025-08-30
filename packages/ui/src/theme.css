@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
+@import "./themes/default.css";
 @import "./themes/creamy.css";
+@import "./themes/deluge.css";
 
 @custom-variant dark (&:is(.dark *));
 

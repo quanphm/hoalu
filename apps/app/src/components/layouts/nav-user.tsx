@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
 import { useId } from "react";
 
 import {
@@ -24,9 +23,17 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { UserAvatar } from "@/components/user-avatar";
-import { KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
+import { KEYBOARD_SHORTCUTS, THEMES, type Theme } from "@/helpers/constants";
+import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
 import { HotKey } from "../hotkey";
+
+const THEME_LABELS: Record<Theme, string> = {
+	light: "Light",
+	dark: "Dark",
+	creamy: "Creamy",
+	deluge: "Deluge",
+};
 
 export function NavUser() {
 	const { user, signOut } = useAuth();
@@ -61,7 +68,7 @@ export function NavUser() {
 								<DropdownMenuSub>
 									<DropdownMenuSubTrigger>
 										<PaletteIcon />
-										<span>Themes</span>
+										<span>Theme</span>
 										<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
 									</DropdownMenuSubTrigger>
 									<DropdownMenuPortal>
@@ -77,18 +84,9 @@ export function NavUser() {
 															<CheckIcon className="size-4" />
 														</span>
 													)}
-													<span className="ms-6">{themeName}</span>
+													<span className="ms-6">{THEME_LABELS[themeName]}</span>
 												</DropdownMenuItem>
 											))}
-											<DropdownMenuSeparator />
-											<DropdownMenuItem onClick={() => setTheme("system")}>
-												{theme === "system" && (
-													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-														<CheckIcon className="size-4" />
-													</span>
-												)}
-												<span className="ms-6">System</span>
-											</DropdownMenuItem>
 										</DropdownMenuSubContent>
 									</DropdownMenuPortal>
 								</DropdownMenuSub>

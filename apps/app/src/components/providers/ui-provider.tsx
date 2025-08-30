@@ -7,8 +7,8 @@ import { THEMES } from "@/helpers/constants";
 export function UiProvider({ children }: { children: React.ReactNode }) {
 	return (
 		<NextThemesProvider
-			themes={THEMES}
-			defaultTheme={THEMES[1]}
+			themes={[...THEMES]}
+			defaultTheme="light"
 			attribute="class"
 			disableTransitionOnChange
 		>
