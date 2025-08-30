@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
@@ -18,6 +18,7 @@ import { WalletLabel } from "../wallets/wallet-badge";
 import { ExpenseCalendar, ExpenseSearch } from "./expense-actions";
 
 const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 export function ExpenseFilter() {
 	const { slug } = workspaceRouteApi.useParams();
@@ -32,12 +33,18 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">Date Range</div>
+				<div className="flex items-center justify-between px-1 text-sm">
+					<span>Date Range</span>
+					<DateRangeClearButton />
+				</div>
 				<ExpenseCalendar />
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">Categories</div>
+				<div className="flex items-center justify-between px-1 text-sm">
+					<span>Categories</span>
+					<CategoriesClearButton />
+				</div>
 				<div className="rounded-md border border-border/80">
 					<ScrollAreaWithCondition enabled={categories.length > 5}>
 						{categories.map((c) => (
@@ -53,7 +60,10 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">Wallets</div>
+				<div className="flex items-center justify-between px-1 text-sm">
+					<span>Wallets</span>
+					<WalletsClearButton />
+				</div>
 				<div className="rounded-md border border-border/80">
 					<ScrollAreaWithCondition enabled={wallets.length > 5}>
 						{wallets.map((w) => (
@@ -70,7 +80,10 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">Repeat</div>
+				<div className="flex items-center justify-between px-1 text-sm">
+					<span>Repeat</span>
+					<RepeatClearButton />
+				</div>
 				<div className="rounded-md border border-border/80">
 					<ScrollAreaWithCondition enabled={false}>
 						{AVAILABLE_REPEAT_OPTIONS.map((r) => (
@@ -189,4 +202,93 @@ function ScrollAreaWithCondition({
 		);
 	}
 	return <div className="divide-y divide-border/60">{children}</div>;
+}
+
+function DateRangeClearButton() {
+	const { date } = expenseRouteApi.useSearch();
+	const navigate = expenseRouteApi.useNavigate();
+
+	if (!date) return null;
+
+	const handleClear = () => {
+		navigate({
+			search: (state) => ({
+				...state,
+				date: undefined,
+			}),
+		});
+	};
+
+	return (
+		<button
+			type="button"
+			onClick={handleClear}
+			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
+		>
+			clear
+		</button>
+	);
+}
+
+function CategoriesClearButton() {
+	const selectedCategories = useAtomValue(expenseCategoryFilterAtom);
+	const setSelectedCategories = useSetAtom(expenseCategoryFilterAtom);
+
+	if (selectedCategories.length === 0) return null;
+
+	const handleClear = () => {
+		setSelectedCategories([]);
+	};
+
+	return (
+		<button
+			type="button"
+			onClick={handleClear}
+			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
+		>
+			clear
+		</button>
+	);
+}
+
+function WalletsClearButton() {
+	const selectedWallets = useAtomValue(expenseWalletFilterAtom);
+	const setSelectedWallets = useSetAtom(expenseWalletFilterAtom);
+
+	if (selectedWallets.length === 0) return null;
+
+	const handleClear = () => {
+		setSelectedWallets([]);
+	};
+
+	return (
+		<button
+			type="button"
+			onClick={handleClear}
+			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
+		>
+			clear
+		</button>
+	);
+}
+
+function RepeatClearButton() {
+	const selectedRepeats = useAtomValue(expenseRepeatFilterAtom);
+	const setSelectedRepeats = useSetAtom(expenseRepeatFilterAtom);
+
+	if (selectedRepeats.length === 0) return null;
+
+	const handleClear = () => {
+		setSelectedRepeats([]);
+	};
+
+	return (
+		<button
+			type="button"
+			onClick={handleClear}
+			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
+		>
+			clear
+		</button>
+	);
 }

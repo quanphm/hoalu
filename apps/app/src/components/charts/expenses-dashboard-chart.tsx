@@ -233,11 +233,11 @@ export function ExpenseDashboardChart() {
 	};
 
 	return (
-		<Card className="py-0">
+		<Card className="py-0 md:h-full">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-4">
+				<div className="flex flex-1 flex-col justify-center gap-4 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
-					<div className="font-semibold text-2xl">{formatCurrency(totalExpenses, currency)}</div>
+					<div className="font-bold text-3xl">{formatCurrency(totalExpenses, currency)}</div>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">

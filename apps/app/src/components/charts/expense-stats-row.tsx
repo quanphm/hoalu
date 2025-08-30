@@ -18,36 +18,30 @@ export function ExpenseStatsRow() {
 
 	const stats = [
 		{
-			title: "Transactions",
-			value: totalTransactions.toString(),
-		},
-		{
 			title: "Days",
 			value:
 				currentPeriodExpenses.length > 0
 					? new Set(currentPeriodExpenses.map((e) => e.date)).size.toString()
 					: "0",
 		},
+		{
+			title: "Transactions",
+			value: totalTransactions.toString(),
+		},
 	];
 
 	return (
-		<div className="grid grid-cols-2 gap-4">
-			{stats.map((stat, index) => {
-				return (
-					<Card key={`${stat.title}-${index}`} className="px-6 py-4">
-						<CardContent className="p-0">
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<span className="font-medium text-muted-foreground text-sm">{stat.title}</span>
-								</div>
-							</div>
-							<div className="mt-2">
-								<div className="font-bold text-2xl">{stat.value}</div>
-							</div>
-						</CardContent>
-					</Card>
-				);
-			})}
-		</div>
+		<Card className="w-full px-6 py-4">
+			<CardContent className="grid grid-cols-3 gap-6 p-0">
+				{stats.map((stat) => {
+					return (
+						<div key={stat.title} className="flex flex-col gap-2">
+							<span className="font-medium text-muted-foreground text-sm">{stat.title}</span>
+							<span className="font-bold text-2xl">{stat.value}</span>
+						</div>
+					);
+				})}
+			</CardContent>
+		</Card>
 	);
 }
