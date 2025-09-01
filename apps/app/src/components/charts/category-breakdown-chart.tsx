@@ -78,11 +78,12 @@ export function CategoryBreakdownChart() {
 		});
 	}
 
-	const totalAmount = categoryData.reduce((sum, item) => sum + item.value, 0);
 	const handleToggleView = () => {
 		setView((state) => (state === "less" ? "more" : "less"));
 	};
+
 	const dataToView = view === "less" ? categoryData : allCategoryData;
+	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
 
 	return (
 		<Card className="py-0">
@@ -119,7 +120,7 @@ export function CategoryBreakdownChart() {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-6 w-full gap-1 overflow-hidden">
+		<div className="flex h-6 w-full gap-0.5 overflow-hidden">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
@@ -150,6 +151,10 @@ function CategoryListBreakdown(props: {
 	const setSelectedCategories = useSetAtom(expenseCategoryFilterAtom);
 
 	const handleClick = (id: string) => {
+		if (id === "others") {
+			return;
+		}
+
 		setSelectedCategories([id]);
 
 		if (!customDateRange) {
@@ -178,7 +183,10 @@ function CategoryListBreakdown(props: {
 							<Button
 								variant="link"
 								onClick={() => handleClick(data.id)}
-								className="h-auto p-0 text-foreground text-sm underline decoration-dotted underline-offset-3"
+								className={cn(
+									"h-auto p-0 text-foreground text-sm",
+									data.id !== "others" && "underline decoration-dotted underline-offset-3",
+								)}
 							>
 								{data.name}
 							</Button>

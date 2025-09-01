@@ -54,9 +54,7 @@ export function DashboardDateFilter() {
 						</SelectItem>
 					</SelectContent>
 				</Select>
-				{predefinedDateRange === "custom" && (
-					<DateRangePicker onRangeSelect={handleCustomRangeSelect} />
-				)}
+				<DateRangePicker onRangeSelect={handleCustomRangeSelect} />
 			</div>
 		</div>
 	);

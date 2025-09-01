@@ -18,7 +18,12 @@ export interface CustomDateRange {
 }
 
 export const selectDateRangeAtom = atom<PredefinedDateRange>("7");
-export const customDateRangeAtom = atom<CustomDateRange | undefined>(undefined);
+
+const initValue = calculateDateRange("7");
+
+export const customDateRangeAtom = atom<CustomDateRange | null>(
+	initValue ? { from: initValue.startDate, to: initValue.endDate } : null,
+);
 
 export const syncedDateRangeAtom = atom(
 	(get) => ({
@@ -31,16 +36,20 @@ export const syncedDateRangeAtom = atom(
 		if (selected) {
 			set(selectDateRangeAtom, selected);
 
-			const dateRange = calculateDateRange(selected, custom);
-			console.log(dateRange);
-			if (dateRange) {
-				set(customDateRangeAtom, { from: dateRange.startDate, to: dateRange.endDate });
+			if (selected === "custom") {
+				if (custom) {
+					set(customDateRangeAtom, custom);
+				}
 			} else {
-				set(customDateRangeAtom, undefined);
+				const dateRange = calculateDateRange(selected, custom);
+				set(
+					customDateRangeAtom,
+					dateRange ? { from: dateRange.startDate, to: dateRange.endDate } : null,
+				);
 			}
 		}
 
-		if (custom) {
+		if (custom && selected !== "custom") {
 			set(selectDateRangeAtom, "custom");
 			set(customDateRangeAtom, custom);
 		}
