@@ -1,6 +1,6 @@
-import { formatCurrency } from "@/helpers/currency";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { CurrencyValue } from "./currency-value";
 
 export function TransactionAmount(props: { data: ExpenseWithClientConvertedSchema }) {
 	const {
@@ -12,17 +12,22 @@ export function TransactionAmount(props: { data: ExpenseWithClientConvertedSchem
 		return <p className="text-destructive">Error</p>;
 	}
 
-	// if (status === "pending") {
-	// 	return <p className="text-muted-foreground">Converting...</p>;
-	// }
-
 	return (
 		<div className="leading-normal">
-			<p className="font-medium">{formatCurrency(convertedAmount, workspaceCurrency)}</p>
+			<CurrencyValue
+				value={convertedAmount}
+				currency={workspaceCurrency}
+				className="font-medium"
+				as="p"
+			/>
 			{workspaceCurrency !== sourceCurrency && (
-				<p className="text-muted-foreground text-xs tracking-tight">
-					Original {formatCurrency(amount, sourceCurrency)}
-				</p>
+				<CurrencyValue
+					value={amount}
+					currency={sourceCurrency}
+					prefix="original"
+					className="text-muted-foreground text-xs"
+					as="p"
+				/>
 			)}
 		</div>
 	);

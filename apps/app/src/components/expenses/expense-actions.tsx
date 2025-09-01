@@ -4,7 +4,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
-import { toFromToDateObject } from "@hoalu/common/datetime";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CalendarIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
@@ -416,6 +416,13 @@ export function ExpenseCalendar() {
 	const navigate = expenseRouteApi.useNavigate();
 	const range = toFromToDateObject(searchDate);
 
+	const formatDateRange = () => {
+		if (range?.from && range?.to) {
+			return `${datetime.format(range.from, "MMM dd")} - ${datetime.format(range.to, "MMM dd, yyyy")}`;
+		}
+		return "Select date";
+	};
+
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -424,9 +431,7 @@ export function ExpenseCalendar() {
 					className="h-auto w-full justify-start font-normal text-xs leading-none"
 				>
 					<CalendarIcon />
-					{range?.from && range?.to
-						? `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`
-						: "Select date"}
+					{formatDateRange()}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -434,14 +439,16 @@ export function ExpenseCalendar() {
 					mode="range"
 					captionLayout="dropdown"
 					selected={range}
-					onSelect={(selectedDate) => {
-						const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
-						navigate({
-							search: (state) => ({
-								...state,
-								date: selectedDate ? searchQuery : undefined,
-							}),
-						});
+					onSelect={(selected) => {
+						if (!selected) {
+							navigate({ search: (s) => ({ ...s, date: undefined }) });
+							return;
+						}
+						const { from, to } = selected;
+						if (from && to) {
+							const query = `${from.getTime()}-${to.getTime()}`;
+							navigate({ search: (s) => ({ ...s, date: query }) });
+						}
 					}}
 					className="[--cell-size:--spacing(9)]"
 				/>

@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import {
 	Select,
@@ -10,33 +10,29 @@ import {
 } from "@hoalu/ui/select";
 import {
 	type CustomDateRange,
-	customDateRangeAtom,
-	type DashboardDateRange,
+	type PredefinedDateRange,
 	selectDateRangeAtom,
+	syncedDateRangeAtom,
 } from "@/atoms/filters";
 import { AVAILABLE_LAST_RANGE_OPTIONS, AVAILABLE_TO_DATE_RANGE_OPTIONS } from "@/helpers/constants";
 import { DateRangePicker } from "./date-range-picker";
 
 export function DashboardDateFilter() {
-	const [dateRange, setDateRange] = useAtom(selectDateRangeAtom);
-	const setCustomRange = useSetAtom(customDateRangeAtom);
+	const predefinedDateRange = useAtomValue(selectDateRangeAtom);
+	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 
-	const handleRangeChange = (value: DashboardDateRange) => {
-		setDateRange(value);
-		if (value !== "custom") {
-			setCustomRange(undefined);
-		}
+	const handleRangeChange = (value: PredefinedDateRange) => {
+		setSyncedDateRange({ selected: value });
 	};
 
 	const handleCustomRangeSelect = (range: CustomDateRange) => {
-		setCustomRange(range);
-		setDateRange("custom");
+		setSyncedDateRange({ custom: range });
 	};
 
 	return (
 		<div className="flex items-center gap-3">
 			<div className="flex items-center gap-2">
-				<Select value={dateRange} onValueChange={handleRangeChange}>
+				<Select value={predefinedDateRange} onValueChange={handleRangeChange}>
 					<SelectTrigger className="min-w-[160px]">
 						<SelectValue />
 					</SelectTrigger>
@@ -58,7 +54,7 @@ export function DashboardDateFilter() {
 						</SelectItem>
 					</SelectContent>
 				</Select>
-				{dateRange === "custom" && <DateRangePicker onRangeSelect={handleCustomRangeSelect} />}
+				<DateRangePicker onRangeSelect={handleCustomRangeSelect} />
 			</div>
 		</div>
 	);

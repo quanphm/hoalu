@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 
+import { Button } from "@hoalu/ui/button";
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
@@ -101,15 +102,44 @@ export function ExpenseFilter() {
 	);
 }
 
+function DateRangeClearButton() {
+	const { date } = expenseRouteApi.useSearch();
+	const navigate = expenseRouteApi.useNavigate();
+
+	if (!date) {
+		return null;
+	}
+
+	const handleClear = () => {
+		navigate({
+			search: (state) => ({
+				...state,
+				date: undefined,
+			}),
+		});
+	};
+
+	return (
+		<Button
+			variant="ghost"
+			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
+			size="sm"
+			onClick={handleClear}
+		>
+			clear
+		</Button>
+	);
+}
+
 function CategoryCheckboxGroup(props: { id: string; name: string; stats: number }) {
 	const [selectedIds, setSelectedIds] = useAtom(expenseCategoryFilterAtom);
 
 	const onChange = (checked: boolean | "indeterminate") =>
-		setSelectedIds((prev) => {
+		setSelectedIds((state) => {
 			if (checked === true) {
-				return prev.includes(props.id) ? prev : [...prev, props.id];
+				return state.includes(props.id) ? state : [...state, props.id];
 			}
-			return prev.filter((id) => id !== props.id);
+			return state.filter((id) => id !== props.id);
 		});
 
 	const active = selectedIds.includes(props.id);
@@ -125,6 +155,29 @@ function CategoryCheckboxGroup(props: { id: string; name: string; stats: number 
 			</div>
 			<span className="text-muted-foreground">{props.stats}</span>
 		</Label>
+	);
+}
+
+function CategoriesClearButton() {
+	const [selectedCategories, setSelectedCategories] = useAtom(expenseCategoryFilterAtom);
+
+	if (selectedCategories.length === 0) {
+		return null;
+	}
+
+	const handleClear = () => {
+		setSelectedCategories([]);
+	};
+
+	return (
+		<Button
+			variant="ghost"
+			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
+			size="sm"
+			onClick={handleClear}
+		>
+			clear
+		</Button>
 	);
 }
 
@@ -160,6 +213,29 @@ function WalletCheckboxGroup(props: {
 	);
 }
 
+function WalletsClearButton() {
+	const [selectedWallets, setSelectedWallets] = useAtom(expenseWalletFilterAtom);
+
+	if (selectedWallets.length === 0) {
+		return null;
+	}
+
+	const handleClear = () => {
+		setSelectedWallets([]);
+	};
+
+	return (
+		<Button
+			variant="ghost"
+			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
+			size="sm"
+			onClick={handleClear}
+		>
+			clear
+		</Button>
+	);
+}
+
 function RepeatCheckboxGroup(props: { id: RepeatSchema; name: string; stats: number }) {
 	const [selected, setSelected] = useAtom(expenseRepeatFilterAtom);
 
@@ -187,6 +263,29 @@ function RepeatCheckboxGroup(props: { id: RepeatSchema; name: string; stats: num
 	);
 }
 
+function RepeatClearButton() {
+	const [selectedRepeats, setSelectedRepeats] = useAtom(expenseRepeatFilterAtom);
+
+	if (selectedRepeats.length === 0) {
+		return null;
+	}
+
+	const handleClear = () => {
+		setSelectedRepeats([]);
+	};
+
+	return (
+		<Button
+			variant="ghost"
+			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
+			size="sm"
+			onClick={handleClear}
+		>
+			clear
+		</Button>
+	);
+}
+
 function ScrollAreaWithCondition({
 	enabled,
 	children,
@@ -202,93 +301,4 @@ function ScrollAreaWithCondition({
 		);
 	}
 	return <div className="divide-y divide-border/60">{children}</div>;
-}
-
-function DateRangeClearButton() {
-	const { date } = expenseRouteApi.useSearch();
-	const navigate = expenseRouteApi.useNavigate();
-
-	if (!date) return null;
-
-	const handleClear = () => {
-		navigate({
-			search: (state) => ({
-				...state,
-				date: undefined,
-			}),
-		});
-	};
-
-	return (
-		<button
-			type="button"
-			onClick={handleClear}
-			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
-		>
-			clear
-		</button>
-	);
-}
-
-function CategoriesClearButton() {
-	const selectedCategories = useAtomValue(expenseCategoryFilterAtom);
-	const setSelectedCategories = useSetAtom(expenseCategoryFilterAtom);
-
-	if (selectedCategories.length === 0) return null;
-
-	const handleClear = () => {
-		setSelectedCategories([]);
-	};
-
-	return (
-		<button
-			type="button"
-			onClick={handleClear}
-			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
-		>
-			clear
-		</button>
-	);
-}
-
-function WalletsClearButton() {
-	const selectedWallets = useAtomValue(expenseWalletFilterAtom);
-	const setSelectedWallets = useSetAtom(expenseWalletFilterAtom);
-
-	if (selectedWallets.length === 0) return null;
-
-	const handleClear = () => {
-		setSelectedWallets([]);
-	};
-
-	return (
-		<button
-			type="button"
-			onClick={handleClear}
-			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
-		>
-			clear
-		</button>
-	);
-}
-
-function RepeatClearButton() {
-	const selectedRepeats = useAtomValue(expenseRepeatFilterAtom);
-	const setSelectedRepeats = useSetAtom(expenseRepeatFilterAtom);
-
-	if (selectedRepeats.length === 0) return null;
-
-	const handleClear = () => {
-		setSelectedRepeats([]);
-	};
-
-	return (
-		<button
-			type="button"
-			onClick={handleClear}
-			className="text-muted-foreground text-xs transition-colors hover:text-foreground"
-		>
-			clear
-		</button>
-	);
 }
