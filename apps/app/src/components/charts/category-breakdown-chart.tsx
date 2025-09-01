@@ -1,11 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
+import { getRouteApi, Link } from "@tanstack/react-router";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
-import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
+import {
+	customDateRangeAtom,
+	expenseCategoryFilterAtom,
+	selectDateRangeAtom,
+} from "@/atoms/filters";
 import { createCategoryTheme } from "@/helpers/colors";
 import { filterDataByRange } from "@/helpers/date-range";
 import { useWorkspace } from "@/hooks/use-workspace";
@@ -14,6 +19,8 @@ import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-o
 import { CurrencyValue } from "../currency-value";
 
 const TOP_N_CATEGORY = 5;
+
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface CategoryData {
 	id: string;
@@ -24,7 +31,6 @@ interface CategoryData {
 
 export function CategoryBreakdownChart() {
 	const [view, setView] = useState<"less" | "more">("less");
-
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 	const { slug } = useWorkspace();
@@ -138,6 +144,29 @@ function CategoryListBreakdown(props: {
 	totalAmount: number;
 	currency: string;
 }) {
+	const { slug } = routeApi.useParams();
+	const navigate = routeApi.useNavigate();
+	const customDateRange = useAtomValue(customDateRangeAtom);
+	const setSelectedCategories = useSetAtom(expenseCategoryFilterAtom);
+
+	const handleClick = (id: string) => {
+		setSelectedCategories([id]);
+
+		if (!customDateRange) {
+			navigate({
+				to: "/$slug/expenses",
+				params: { slug },
+			});
+		} else {
+			const searchQuery = `${customDateRange.from.getTime()}-${customDateRange.to.getTime()}`;
+			navigate({
+				to: "/$slug/expenses",
+				params: { slug },
+				search: { date: searchQuery },
+			});
+		}
+	};
+
 	return (
 		<div className="divide-y divide-border/60">
 			{props.data.map((data) => {
@@ -146,7 +175,13 @@ function CategoryListBreakdown(props: {
 					<div key={data.id} className="flex items-center justify-between py-1">
 						<div className="flex items-center gap-3">
 							<div className={cn("h-2 w-2 rounded-full", createCategoryTheme(data.color))} />
-							<span className="text-foreground text-sm">{data.name}</span>
+							<Button
+								variant="link"
+								onClick={() => handleClick(data.id)}
+								className="h-auto p-0 text-foreground text-sm underline decoration-dotted underline-offset-3"
+							>
+								{data.name}
+							</Button>
 						</div>
 						<div className="text-right">
 							<CurrencyValue
