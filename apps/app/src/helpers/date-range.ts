@@ -70,13 +70,12 @@ export function filterDataByRange<T extends { date: string }>(
 	}
 	const { startDate, endDate } = dateRange;
 
-	const filtered = [...data]
-		// Sort data by date first to ensure proper ordering
-		.sort((a, b) => a.date.localeCompare(b.date))
+	const filtered = data
 		.filter((item) => {
 			const itemDate = datetime.parse(item.date, "yyyy-MM-dd", new Date());
 			return itemDate >= startDate && itemDate <= endDate;
-		});
+		})
+		.sort((a, b) => a.date.localeCompare(b.date));
 
 	return filtered;
 }

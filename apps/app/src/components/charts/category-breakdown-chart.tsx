@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi, Link } from "@tanstack/react-router";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import { Button } from "@hoalu/ui/button";

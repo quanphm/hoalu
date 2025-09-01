@@ -439,14 +439,16 @@ export function ExpenseCalendar() {
 					mode="range"
 					captionLayout="dropdown"
 					selected={range}
-					onSelect={(selectedDate) => {
-						const searchQuery = `${selectedDate?.from?.getTime()}-${selectedDate?.to?.getTime()}`;
-						navigate({
-							search: (state) => ({
-								...state,
-								date: selectedDate ? searchQuery : undefined,
-							}),
-						});
+					onSelect={(selected) => {
+						if (!selected) {
+							navigate({ search: (s) => ({ ...s, date: undefined }) });
+							return;
+						}
+						const { from, to } = selected;
+						if (from && to) {
+							const query = `${from.getTime()}-${to.getTime()}`;
+							navigate({ search: (s) => ({ ...s, date: query }) });
+						}
 					}}
 					className="[--cell-size:--spacing(9)]"
 				/>

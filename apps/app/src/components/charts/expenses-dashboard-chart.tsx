@@ -256,7 +256,13 @@ export function ExpenseDashboardChart() {
 							dataKey="date"
 							tickLine={false}
 							tickMargin={12}
-							ticks={data.length <= 1 ? [] : [data[0].date, data[data.length - 1].date]}
+							ticks={
+								data.length === 0
+									? []
+									: data.length === 1
+										? [data[0].date]
+										: [data[0].date, data[data.length - 1].date]
+							}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
 								return dateRange === "ytd" || dateRange === "all"
