@@ -6,10 +6,10 @@ import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
-import { formatCurrency } from "@/helpers/currency";
 import { filterDataByRange } from "@/helpers/date-range";
 import { useExpenseStats } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
+import { CurrencyValue } from "../currency-value";
 
 const chartConfig = {
 	value: {
@@ -233,14 +233,11 @@ export function ExpenseDashboardChart() {
 	};
 
 	return (
-		<Card className="py-0 md:h-full">
+		<Card className="py-0">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-4 px-6 pt-4">
 					<CardTitle>Expenses</CardTitle>
-					<div className="font-bold text-3xl">
-						{formatCurrency(totalExpenses, currency, { style: "decimal" })}
-						<span className="ml-1 font-normal text-muted-foreground text-sm">{currency}</span>
-					</div>
+					<CurrencyValue value={totalExpenses} currency={currency} style="decimal" />
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
@@ -289,9 +286,11 @@ export function ExpenseDashboardChart() {
 													<span className="text-muted-foreground text-xs uppercase tracking-wider">
 														{formattedDate}
 													</span>
-													<span className="font-bold text-base">
-														{formatCurrency(payload[0].value, currency)}
-													</span>
+													<CurrencyValue
+														value={payload[0].value}
+														currency={currency}
+														className="font-bold text-base"
+													/>
 												</div>
 											</div>
 										</div>

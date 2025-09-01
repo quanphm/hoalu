@@ -22,8 +22,9 @@ function calculateDateRange(
 	if (range === "custom" && customRange) {
 		startDate = datetime.startOfDay(customRange.from);
 		endDate = datetime.endOfDay(customRange.to);
-	} else if (range === "wtd") {
-		// Week to date (Monday to today)
+	}
+	// Week to date (Monday to today)
+	else if (range === "wtd") {
 		const today = new Date();
 		endDate = datetime.endOfDay(today);
 		const dayOfWeek = today.getDay();
@@ -31,20 +32,23 @@ function calculateDateRange(
 		const monday = new Date(today);
 		monday.setDate(monday.getDate() - daysFromMonday);
 		startDate = datetime.startOfDay(monday);
-	} else if (range === "mtd") {
-		// Month to date (1st of current month to today)
+	}
+	// Month to date (1st of current month to today)
+	else if (range === "mtd") {
 		const today = new Date();
 		endDate = datetime.endOfDay(today);
 		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 		startDate = datetime.startOfDay(firstOfMonth);
-	} else if (range === "ytd") {
-		// Year to date (Jan 1 to today)
+	}
+	// Year to date (Jan 1 to today)
+	else if (range === "ytd") {
 		const today = new Date();
 		endDate = datetime.endOfDay(today);
 		const startOfYear = new Date(today.getFullYear(), 0, 1);
 		startDate = datetime.startOfDay(startOfYear);
-	} else {
-		// Last N days
+	}
+	// Last N days
+	else {
 		const days = parseInt(range, 10);
 		const today = new Date();
 		endDate = datetime.endOfDay(today);

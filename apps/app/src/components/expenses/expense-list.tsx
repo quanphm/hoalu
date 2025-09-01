@@ -4,10 +4,10 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
 import ExpenseContent from "@/components/expenses/expense-content";
-import { formatCurrency } from "@/helpers/currency";
 import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+import { CurrencyValue } from "../currency-value";
 
 type ExpenseItem = {
 	type: "expense";
@@ -59,9 +59,11 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 	}, 0);
 
 	return (
-		<span className="font-semibold text-base text-destructive tracking-tight">
-			{formatCurrency(total, workspaceCurrency)}
-		</span>
+		<CurrencyValue
+			value={total}
+			currency={workspaceCurrency}
+			className="font-semibold text-destructive"
+		/>
 	);
 }
 
