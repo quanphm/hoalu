@@ -15,6 +15,6 @@
 		"react": "catalog:"
 	},
 	"dependencies": {
-		"lucide-react": "^0.539.0"
+		"lucide-react": "^0.542.0"
 	}
 }
