@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 import { toast } from "@hoalu/ui/sonner";
+import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import type {
@@ -9,6 +11,7 @@ import type {
 	CategoryPostSchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
+	ExpenseSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
 	WorkspaceFormSchema,
@@ -245,6 +248,32 @@ export function useDeleteExpense() {
 			toast.error(error.message);
 		},
 	});
+	return mutation;
+}
+
+export function useDuplicateExpense() {
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setDraft = useSetAtom(draftExpenseAtom);
+
+	const mutation = useMutation({
+		mutationFn: async ({ sourceExpense }: { sourceExpense: ExpenseSchema }) => {
+			setDraft({
+				title: sourceExpense.title,
+				description: sourceExpense.description ?? "",
+				date: new Date().toISOString(),
+				transaction: {
+					value: sourceExpense.amount,
+					currency: sourceExpense.currency,
+				},
+				walletId: sourceExpense.wallet.id,
+				categoryId: sourceExpense.category?.id ?? "",
+				repeat: sourceExpense.repeat,
+			});
+			setOpen(true);
+			return sourceExpense;
+		},
+	});
+
 	return mutation;
 }
 

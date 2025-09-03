@@ -120,6 +120,7 @@ export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", 
 export const AVAILABLE_LAST_RANGE_OPTIONS = [
 	{ value: "7", label: "Last 7 days" },
 	{ value: "30", label: "Last 30 days" },
+	{ value: "90", label: "Last 90 days" },
 	// { value: "all", label: "All time" },
 ] as const;
 
@@ -128,3 +129,5 @@ export const AVAILABLE_TO_DATE_RANGE_OPTIONS = [
 	{ value: "mtd", label: "Month to date" },
 	{ value: "ytd", label: "Year to date" },
 ] as const;
+
+export const DEFAULT_DATE_RANGE = "mtd";

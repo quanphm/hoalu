@@ -17,7 +17,7 @@ const chartConfig = {
 	},
 	date: {
 		label: "Expense",
-		color: "var(--chart-2)",
+		color: "var(--chart-1)",
 	},
 } satisfies ChartConfig;
 
@@ -187,7 +187,7 @@ export function ExpenseDashboardChart() {
 			const startDate = datetime.startOfDay(customRange.from);
 			const endDate = datetime.endOfDay(customRange.to);
 			return generateDailyDataForRange(filteredData, startDate, endDate);
-		} else if (dateRange === "7" || dateRange === "30") {
+		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
 			// For numeric day ranges, generate data with zeros for last N days
 			const days = parseInt(dateRange, 10);
 			return generateDailyDataWithZeros(filteredData, days);

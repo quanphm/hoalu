@@ -12,7 +12,7 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
 			attribute="class"
 			disableTransitionOnChange
 		>
-			<TooltipProvider>
+			<TooltipProvider delayDuration={0}>
 				{children}
 				<Toaster />
 			</TooltipProvider>

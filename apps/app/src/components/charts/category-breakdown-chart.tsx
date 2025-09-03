@@ -183,7 +183,7 @@ function CategoryListBreakdown(props: {
 				return (
 					<div key={data.id} className="flex items-center justify-between py-1">
 						<div className="flex items-center gap-3">
-							<div className={cn("h-2 w-2 rounded-full", createCategoryTheme(data.color))} />
+							<div className={cn("h-3 w-3 rounded-xs", createCategoryTheme(data.color))} />
 							<Button
 								variant="link"
 								onClick={() => {

@@ -5,7 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CalendarIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon, CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -22,6 +22,7 @@ import {
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
@@ -34,6 +35,7 @@ import { ExpenseFormSchema } from "@/lib/schema";
 import {
 	useCreateExpense,
 	useDeleteExpense,
+	useDuplicateExpense,
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "@/services/mutations";
@@ -259,11 +261,16 @@ export function DeleteExpense({ id }: { id: string }) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button size="icon" variant="ghost" aria-label="Delete this expense">
-					<Trash2Icon className="size-4" />
-				</Button>
-			</DialogTrigger>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DialogTrigger asChild>
+						<Button size="icon" variant="ghost" aria-label="Delete this expense">
+							<Trash2Icon className="size-4" />
+						</Button>
+					</DialogTrigger>
+				</TooltipTrigger>
+				<TooltipContent side="bottom">Delete</TooltipContent>
+			</Tooltip>
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>Delete this expense?</DialogTitle>
@@ -289,7 +296,29 @@ export function DeleteExpense({ id }: { id: string }) {
 	);
 }
 
-export function EditExpenseForm(props: { id: string; className?: string }) {
+export function DuplicateExpense(props: { id: string }) {
+	const workspace = useWorkspace();
+	const mutation = useDuplicateExpense();
+	const { data: expense } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
+
+	const onDuplicate = () => {
+		if (!expense) return;
+		mutation.mutate({ sourceExpense: expense });
+	};
+
+	return (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button size="icon" variant="ghost" onClick={onDuplicate} disabled={!expense}>
+					<CopyPlusIcon className="size-4" />
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent side="bottom">Duplicate</TooltipContent>
+		</Tooltip>
+	);
+}
+
+export function EditExpenseForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));

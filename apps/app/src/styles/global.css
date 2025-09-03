@@ -12,7 +12,7 @@
 	--spacing: 0.225rem;
 }
 
-.root {
+#root {
 	isolation: isolate;
 }
 
@@ -22,7 +22,8 @@
 	}
 
 	body {
-		@apply relative bg-transparent text-foreground overscroll-none antialiased font-sans;
+		@apply relative bg-transparent text-foreground overscroll-none antialiased;
+		@apply font-geist-sans;
 		font-synthesis-weight: none;
 		font-variant-numeric: tabular-nums lining-nums;
 		font-optical-sizing: auto;
