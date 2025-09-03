@@ -64,11 +64,11 @@ export function CategoryBreakdownChart() {
 		.filter((item) => item.value > 0)
 		.sort((a, b) => b.value - a.value);
 
-	const top4Categories = allCategoryData.slice(0, TOP_N_CATEGORY);
+	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
 	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
 	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
 
-	const categoryData = [...top4Categories];
+	const categoryData = [...topCategories];
 	if (othersTotal > 0) {
 		categoryData.push({
 			id: "others",
@@ -94,7 +94,7 @@ export function CategoryBreakdownChart() {
 				<div className="mt-2">
 					{dataToView.length === 0 ? (
 						<div className="flex h-[250px] items-center justify-center text-muted-foreground">
-							No data to display
+							No data
 						</div>
 					) : (
 						<div className="space-y-4">
@@ -103,13 +103,16 @@ export function CategoryBreakdownChart() {
 								data={dataToView}
 								totalAmount={totalAmount}
 								currency={currency}
+								onToggleView={handleToggleView}
 							/>
-							<div className="mb-2 flex justify-end">
-								<Button variant="outline" size="sm" onClick={handleToggleView}>
-									{view === "less" && "View all"}
-									{view === "more" && "View less"}
-								</Button>
-							</div>
+							{dataToView.length > 5 && (
+								<div className="mb-2 flex justify-end">
+									<Button variant="outline" size="sm" onClick={handleToggleView}>
+										{view === "less" && "View all"}
+										{view === "more" && "View less"}
+									</Button>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
@@ -144,6 +147,7 @@ function CategoryListBreakdown(props: {
 	data: CategoryData[];
 	totalAmount: number;
 	currency: string;
+	onToggleView(): void;
 }) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
@@ -182,7 +186,13 @@ function CategoryListBreakdown(props: {
 							<div className={cn("h-2 w-2 rounded-full", createCategoryTheme(data.color))} />
 							<Button
 								variant="link"
-								onClick={() => handleClick(data.id)}
+								onClick={() => {
+									if (data.id !== "others") {
+										handleClick(data.id);
+									} else {
+										props.onToggleView();
+									}
+								}}
 								className={cn(
 									"h-auto p-0 text-foreground text-sm",
 									data.id !== "others" && "underline decoration-dotted underline-offset-3",
