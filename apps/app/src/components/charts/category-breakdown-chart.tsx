@@ -64,11 +64,11 @@ export function CategoryBreakdownChart() {
 		.filter((item) => item.value > 0)
 		.sort((a, b) => b.value - a.value);
 
-	const top4Categories = allCategoryData.slice(0, TOP_N_CATEGORY);
+	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
 	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
 	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
 
-	const categoryData = [...top4Categories];
+	const categoryData = [...topCategories];
 	if (othersTotal > 0) {
 		categoryData.push({
 			id: "others",
@@ -105,12 +105,14 @@ export function CategoryBreakdownChart() {
 								currency={currency}
 								onToggleView={handleToggleView}
 							/>
-							<div className="mb-2 flex justify-end">
-								<Button variant="outline" size="sm" onClick={handleToggleView}>
-									{view === "less" && "View all"}
-									{view === "more" && "View less"}
-								</Button>
-							</div>
+							{dataToView.length > 5 && (
+								<div className="mb-2 flex justify-end">
+									<Button variant="outline" size="sm" onClick={handleToggleView}>
+										{view === "less" && "View all"}
+										{view === "more" && "View less"}
+									</Button>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
