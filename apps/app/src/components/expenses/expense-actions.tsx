@@ -5,7 +5,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CalendarIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -461,14 +461,19 @@ export function ExpenseSearch() {
 	const [value, setValue] = useAtom(searchKeywordsAtom);
 
 	return (
-		<Input
-			type="search"
-			placeholder="Search"
-			className="focus-visible:ring-0"
-			value={value}
-			onChange={(e) => {
-				setValue(e.target.value);
-			}}
-		/>
+		<div className="relative">
+			<Input
+				type="search"
+				placeholder="Search"
+				className="peer ps-9 focus-visible:ring-0"
+				value={value}
+				onChange={(e) => {
+					setValue(e.target.value);
+				}}
+			/>
+			<div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+				<SearchIcon size={16} aria-hidden="true" />
+			</div>
+		</div>
 	);
 }

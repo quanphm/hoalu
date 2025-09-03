@@ -11,7 +11,7 @@ interface DateRangeCalculation {
  */
 export function calculateDateRange(
 	predefinedRange: PredefinedDateRange,
-	customRange?: { from: Date; to: Date },
+	customRange?: { from: Date; to: Date } | null,
 ): DateRangeCalculation | null {
 	if (predefinedRange === "all") return null;
 
@@ -62,7 +62,7 @@ export function calculateDateRange(
 export function filterDataByRange<T extends { date: string }>(
 	data: T[],
 	range: PredefinedDateRange,
-	customRange?: { from: Date; to: Date },
+	customRange?: { from: Date; to: Date } | null,
 ): T[] {
 	const dateRange = calculateDateRange(range, customRange);
 	if (!dateRange) {
