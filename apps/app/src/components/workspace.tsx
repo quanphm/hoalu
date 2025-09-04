@@ -59,7 +59,7 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 }
 
 function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
+	return <DialogTrigger>{children}</DialogTrigger>;
 }
 
 function CreateWorkspaceForm() {
@@ -268,7 +268,7 @@ type DeleteContext = {
 };
 const DeleteContext = createContext<CreateContext | null>(null);
 
-function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
+function DeleteWorkspaceDialog() {
 	const [open, setOpen] = useState(false);
 	const contextValue = useMemo<DeleteContext>(
 		() => ({
@@ -281,7 +281,7 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	return (
 		<CreateContext value={contextValue}>
 			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
+				<DeleteWorkspaceTrigger />
 				<DialogContent className="sm:max-w-[400px]">
 					<DialogHeader className="space-y-3">
 						<DialogTitle>Confirm delete workspace</DialogTitle>
@@ -299,8 +299,8 @@ function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function DeleteWorkspaceTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
+function DeleteWorkspaceTrigger() {
+	return <DialogTrigger render={<Button variant="destructive" />}>Delete workspace</DialogTrigger>;
 }
 
 function DeleteWorkspaceForm() {
@@ -402,7 +402,6 @@ export {
 	CreateWorkspaceForm,
 	EditWorkspaceForm,
 	DeleteWorkspaceDialog,
-	DeleteWorkspaceTrigger,
 	EditWorkspaceMetadataForm,
 	WorkspaceLogo,
 	S3WorkspaceLogo,

@@ -61,9 +61,9 @@ function RowActions({ row: _row }: { row: Row<TaskSchema> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
+					<DialogTrigger
+						render={<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>}
+					/>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</Dialog>

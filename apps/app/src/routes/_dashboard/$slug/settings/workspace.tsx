@@ -8,7 +8,6 @@ import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import {
 	DeleteWorkspaceDialog,
-	DeleteWorkspaceTrigger,
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
 	WorkspaceLogo,
@@ -137,11 +136,7 @@ function RouteComponent() {
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
 							className="col-span-8"
 						>
-							<DeleteWorkspaceDialog>
-								<DeleteWorkspaceTrigger>
-									<Button variant="destructive">Delete workspace</Button>
-								</DeleteWorkspaceTrigger>
-							</DeleteWorkspaceDialog>
+							<DeleteWorkspaceDialog />
 						</SettingCard>
 					</SectionContent>
 				</Section>

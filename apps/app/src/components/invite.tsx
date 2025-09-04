@@ -52,7 +52,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogTrigger render={children} />
 			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
 				<DialogHeader>
 					<DialogTitle>Invite people to your workspace</DialogTitle>

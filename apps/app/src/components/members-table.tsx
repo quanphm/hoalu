@@ -126,18 +126,22 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
 					{isLeaving && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Leave</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
+						<DialogTrigger
+							render={
+								<DropdownMenuItem>
+									<span className="text-destructive">Leave</span>
+								</DropdownMenuItem>
+							}
+						/>
 					)}
 					{!isLeaving && canDelete && (
-						<DialogTrigger asChild>
-							<DropdownMenuItem>
-								<span className="text-destructive">Remove</span>
-							</DropdownMenuItem>
-						</DialogTrigger>
+						<DialogTrigger
+							render={
+								<DropdownMenuItem>
+									<span className="text-destructive">Remove</span>
+								</DropdownMenuItem>
+							}
+						/>
 					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
@@ -154,11 +158,13 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							No
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								No
+							</Button>
+						}
+					/>
 					<Button variant="destructive" onClick={() => onDelete()}>
 						Yes
 					</Button>

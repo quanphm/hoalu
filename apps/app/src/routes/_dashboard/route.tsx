@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 import { ResponsiveLayout } from "@/components/layouts/responsive-layout";
-import { ActionProvider } from "@/components/providers/action-provider";
+import { DashboardActionProvider } from "@/components/providers/dashboard-action-provider";
 import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_dashboard")({
@@ -25,9 +25,9 @@ export const Route = createFileRoute("/_dashboard")({
 function RouteComponent() {
 	return (
 		<ResponsiveLayout>
-			<ActionProvider>
+			<DashboardActionProvider>
 				<Outlet />
-			</ActionProvider>
+			</DashboardActionProvider>
 		</ResponsiveLayout>
 	);
 }

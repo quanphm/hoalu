@@ -21,7 +21,6 @@ import {
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -44,12 +43,15 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
+export function CreateExpenseDialogTrigger() {
 	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
 
 	return (
 		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
+			<DialogTrigger render={<Button variant="outline" onClick={() => setOpen(true)} />}>
+				Create expense
+				<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
+			</DialogTrigger>
 			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 				<DialogHeader>
 					<DialogTitle>Create new expense</DialogTitle>
@@ -58,21 +60,6 @@ export function CreateExpenseDialog({ children }: { children?: React.ReactNode }
 				<CreateExpenseForm />
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
-
-	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
-	}
-
-	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
-			Create expense
-			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
-		</Button>
 	);
 }
 
@@ -263,11 +250,13 @@ export function DeleteExpense({ id }: { id: string }) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<Tooltip>
 				<TooltipTrigger asChild>
-					<DialogTrigger asChild>
-						<Button size="icon" variant="ghost" aria-label="Delete this expense">
-							<Trash2Icon className="size-4" />
-						</Button>
-					</DialogTrigger>
+					<DialogTrigger
+						render={
+							<Button size="icon" variant="ghost" aria-label="Delete this expense">
+								<Trash2Icon className="size-4" />
+							</Button>
+						}
+					/>
 				</TooltipTrigger>
 				<TooltipContent side="bottom">Delete</TooltipContent>
 			</Tooltip>
@@ -282,11 +271,13 @@ export function DeleteExpense({ id }: { id: string }) {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								Cancel
+							</Button>
+						}
+					/>
 					<Button variant="destructive" onClick={() => onDelete()}>
 						Delete
 					</Button>

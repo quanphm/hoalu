@@ -101,14 +101,14 @@ export function SelectCategoryField(props: Props) {
 						</CommandList>
 					</Command>
 					<Separator />
-					<CreateCategoryDialogTrigger>
-						<div className="overflow-hidden px-2 py-1 text-foreground [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:text-sm">
+					<div className="overflow-hidden px-2 py-1 text-foreground [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:text-sm">
+						<CreateCategoryDialogTrigger>
 							<Button variant="ghost" className="w-full justify-start">
 								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
 								Create new
 							</Button>
-						</div>
-					</CreateCategoryDialogTrigger>
+						</CreateCategoryDialogTrigger>
+					</div>
 				</PopoverContent>
 			</Popover>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}

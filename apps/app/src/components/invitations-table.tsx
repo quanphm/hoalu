@@ -122,11 +122,13 @@ function RowActions({ row }: { row: Row<Member> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild>
-						<DropdownMenuItem>
-							<span className="text-destructive">Cancel</span>
-						</DropdownMenuItem>
-					</DialogTrigger>
+					<DialogTrigger
+						render={
+							<DropdownMenuItem>
+								<span className="text-destructive">Cancel</span>
+							</DropdownMenuItem>
+						}
+					/>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
@@ -139,11 +141,13 @@ function RowActions({ row }: { row: Row<Member> }) {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							No
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								No
+							</Button>
+						}
+					/>
 					<Button variant="destructive" onClick={() => onCancel()}>
 						Yes
 					</Button>

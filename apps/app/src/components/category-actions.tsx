@@ -14,7 +14,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -32,12 +31,7 @@ export function CreateCategoryDialog({ children }: { children: React.ReactNode }
 	return (
 		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
 			{children}
-			<DialogContent
-				className="sm:max-w-[420px]"
-				onCloseAutoFocus={(event) => {
-					event.preventDefault();
-				}}
-			>
+			<DialogContent className="sm:max-w-[420px]">
 				<DialogHeader>
 					<DialogTitle>Create new category</DialogTitle>
 					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
@@ -50,17 +44,39 @@ export function CreateCategoryDialog({ children }: { children: React.ReactNode }
 }
 
 export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
+				<DialogTrigger render={props.children} />
+				<DialogContent className="sm:max-w-[420px]">
+					<DialogHeader>
+						<DialogTitle>Create new category</DialogTitle>
+						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+					</DialogHeader>
+					<DialogDescription />
+					<CreateCategoryForm />
+				</DialogContent>
+			</Dialog>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
-			Create category
-			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
-		</Button>
+		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
+			<DialogTrigger render={<Button variant="outline" onClick={() => setOpen(true)} />}>
+				Create category
+				<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[420px]">
+				<DialogHeader>
+					<DialogTitle>Create new category</DialogTitle>
+					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+				</DialogHeader>
+				<DialogDescription />
+				<CreateCategoryForm />
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -173,11 +189,13 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 
 				<div className="flex w-full items-center justify-between">
 					<Dialog>
-						<DialogTrigger asChild>
-							<Button size="icon" variant="ghost">
-								<Trash2Icon className="size-4" />
-							</Button>
-						</DialogTrigger>
+						<DialogTrigger
+							render={
+								<Button size="icon" variant="ghost">
+									<Trash2Icon className="size-4" />
+								</Button>
+							}
+						/>
 						<DeleteCategoryDialogContent />
 					</Dialog>
 					<div>

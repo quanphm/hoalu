@@ -49,12 +49,7 @@ export function CreateWalletDialog({ children }: { children: React.ReactNode }) 
 	return (
 		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
 			{children}
-			<DialogContent
-				className="sm:max-w-[480px]"
-				onCloseAutoFocus={(event) => {
-					event.preventDefault();
-				}}
-			>
+			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>Create new wallet</DialogTitle>
 					<DialogDescription>
@@ -314,12 +309,14 @@ export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild onClick={() => setContent("edit")}>
-						<DropdownMenuItem>Edit</DropdownMenuItem>
-					</DialogTrigger>
-					<DialogTrigger asChild onClick={() => setContent("delete")}>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
+					<DialogTrigger
+						render={<DropdownMenuItem>Edit</DropdownMenuItem>}
+						onClick={() => setContent("edit")}
+					/>
+					<DialogTrigger
+						render={<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>}
+						onClick={() => setContent("delete")}
+					/>
 				</DropdownMenuContent>
 			</DropdownMenu>
 			{content === "edit" && (
