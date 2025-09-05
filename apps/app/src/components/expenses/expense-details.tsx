@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronUpIcon, XIcon } from "@hoalu/icons/lucide";
+import { ChevronDown, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import {

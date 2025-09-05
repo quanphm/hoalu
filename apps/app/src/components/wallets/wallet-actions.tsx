@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 import {
@@ -43,25 +43,6 @@ import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from 
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateWalletDialog({ children }: { children: React.ReactNode }) {
-	const [dialog, setOpen] = useAtom(createWalletDialogOpenAtom);
-
-	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
-			<DialogContent className="sm:max-w-[480px]">
-				<DialogHeader>
-					<DialogTitle>Create new wallet</DialogTitle>
-					<DialogDescription>
-						Add a new wallet to manage and track a separate set of funds or accounts.
-					</DialogDescription>
-				</DialogHeader>
-				<CreateWalletForm />
-			</DialogContent>
-		</Dialog>
-	);
-}
-
 export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
 	const setOpen = useSetAtom(createWalletDialogOpenAtom);
 
@@ -74,6 +55,20 @@ export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
 			Create wallet
 			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
 		</Button>
+	);
+}
+
+export function CreateWalletDialogContent() {
+	return (
+		<DialogContent className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Create new wallet</DialogTitle>
+				<DialogDescription>
+					Add a new wallet to manage and track a separate set of funds or accounts.
+				</DialogDescription>
+			</DialogHeader>
+			<CreateWalletForm />
+		</DialogContent>
 	);
 }
 

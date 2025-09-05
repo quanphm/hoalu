@@ -9,7 +9,7 @@ import {
 	createExpenseDialogOpenAtom,
 	createWalletDialogOpenAtom,
 	draftExpenseAtom,
-	openingDialogsAtom,
+	isOpeningDialogsAtom,
 } from "@/atoms";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 
@@ -22,9 +22,8 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
 
-	const openingDialogs = useAtomValue(openingDialogsAtom);
-	const isAnyDialogOpen = openingDialogs.length > 0;
-	const isAllowShortcutNavigateInWorkspace = !!slug && !isAnyDialogOpen;
+	const isAnyDialogOpen = useAtomValue(isOpeningDialogsAtom);
+	const allowShortcutNavigate = !isAnyDialogOpen;
 
 	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {
@@ -67,82 +66,70 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_dashboard.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug", params: { slug } });
-			}
+			navigate({ to: "/$slug", params: { slug } });
 		},
-		{ description: "Navigate: Dashboard", enabled: isAllowShortcutNavigateInWorkspace },
-		[slug, navigate],
+		{ description: "Navigate: Dashboard", enabled: allowShortcutNavigate },
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_expenses.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug/expenses", params: { slug } });
-			}
+			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
 		{
 			description: "Navigate: Expenses",
-			enabled: isAllowShortcutNavigateInWorkspace && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
+			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
 		},
-		[slug, navigate],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_tasks.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug/tasks", params: { slug } });
-			}
+			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
 		{
 			description: "Navigate: Tasks",
-			enabled: isAllowShortcutNavigateInWorkspace && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
+			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
 		},
-		[slug, navigate],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_workspace.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug/settings/workspace", params: { slug } });
-			}
+			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
 		{
 			description: "Navigate: Settings / Workspace",
-			enabled: isAllowShortcutNavigateInWorkspace && KEYBOARD_SHORTCUTS.goto_workspace.enabled,
+			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_workspace.enabled,
 		},
-		[slug, navigate],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_members.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug/settings/members", params: { slug } });
-			}
+			navigate({ to: "/$slug/settings/members", params: { slug } });
 		},
 		{
 			description: "Navigate: Settings / Members",
-			enabled: isAllowShortcutNavigateInWorkspace && KEYBOARD_SHORTCUTS.goto_members.enabled,
+			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_members.enabled,
 		},
-		[slug, navigate],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_library.hotkey,
 		() => {
-			if (slug) {
-				navigate({ to: "/$slug/settings/library", params: { slug } });
-			}
+			navigate({ to: "/$slug/settings/library", params: { slug } });
 		},
 		{
 			description: "Navigate: Settings / Library",
-			enabled: isAllowShortcutNavigateInWorkspace && KEYBOARD_SHORTCUTS.goto_library.enabled,
+			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_library.enabled,
 		},
-		[slug, navigate],
+		[slug],
 	);
 
 	return children;

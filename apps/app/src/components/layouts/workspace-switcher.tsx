@@ -1,13 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 
-import {
-	CheckIcon,
-	ChevronsUpDownIcon,
-	ExternalLinkIcon,
-	HomeIcon,
-	PlusIcon,
-} from "@hoalu/icons/lucide";
+import { CheckIcon, ChevronsUpDownIcon, ExternalLinkIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { HomeIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
 	DropdownMenuContent,

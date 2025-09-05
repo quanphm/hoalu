@@ -1,8 +1,8 @@
 import { useAtom } from "jotai";
-import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
@@ -43,7 +43,7 @@ export function DateRangePicker({ onRangeSelect, className }: DateRangePickerPro
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button variant="outline" className={cn("justify-start text-left font-normal", className)}>
-					<CalendarIcon className="h-4 w-4" />
+					<CalendarIcon className="size-4" />
 					{formatDateRange()}
 				</Button>
 			</PopoverTrigger>

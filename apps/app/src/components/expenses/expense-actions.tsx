@@ -5,7 +5,8 @@ import { RESET } from "jotai/utils";
 import { useEffect, useState } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CalendarIcon, CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -21,6 +22,7 @@ import {
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -43,23 +45,30 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function CreateExpenseDialogTrigger() {
-	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
+export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
+	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+
+	if (props.children) {
+		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+	}
 
 	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			<DialogTrigger render={<Button variant="outline" onClick={() => setOpen(true)} />}>
-				Create expense
-				<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
-			</DialogTrigger>
-			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
-				<DialogHeader>
-					<DialogTitle>Create new expense</DialogTitle>
-					<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
-				</DialogHeader>
-				<CreateExpenseForm />
-			</DialogContent>
-		</Dialog>
+		<Button variant="outline" onClick={() => setOpen(true)}>
+			Create expense
+			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
+		</Button>
+	);
+}
+
+export function CreateExpenseDialogContent() {
+	return (
+		<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
+			<DialogHeader>
+				<DialogTitle>Create new expense</DialogTitle>
+				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
+			</DialogHeader>
+			<CreateExpenseForm />
+		</DialogContent>
 	);
 }
 
@@ -450,7 +459,7 @@ export function ExpenseCalendar() {
 					variant="outline"
 					className="h-auto w-full justify-start font-normal text-xs leading-none"
 				>
-					<CalendarIcon />
+					<CalendarIcon className="size-4" />
 					{formatDateRange()}
 				</Button>
 			</PopoverTrigger>

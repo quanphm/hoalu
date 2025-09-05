@@ -1,6 +1,6 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog";
 
-import { XIcon } from "@hoalu/icons/lucide";
+import { XIcon } from "@hoalu/icons/tabler";
 import { cn } from "../utils";
 
 function Dialog(props: React.ComponentProps<typeof DialogPrimitive.Root>) {

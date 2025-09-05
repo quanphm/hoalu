@@ -12,10 +12,11 @@ import {
 	CommandItem,
 	CommandList,
 } from "@hoalu/ui/command";
+import { Dialog, DialogTrigger } from "@hoalu/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
-import { CreateCategoryDialogTrigger } from "@/components/category-actions";
+import { CreateCategoryDialogContent } from "@/components/category-actions";
 import { categoriesQueryOptions } from "@/services/query-options";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
@@ -102,12 +103,13 @@ export function SelectCategoryField(props: Props) {
 					</Command>
 					<Separator />
 					<div className="overflow-hidden px-2 py-1 text-foreground [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:text-sm">
-						<CreateCategoryDialogTrigger>
-							<Button variant="ghost" className="w-full justify-start">
+						<Dialog>
+							<DialogTrigger render={<Button variant="ghost" className="w-full justify-start" />}>
 								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
 								Create new
-							</Button>
-						</CreateCategoryDialogTrigger>
+							</DialogTrigger>
+							<CreateCategoryDialogContent />
+						</Dialog>
 					</div>
 				</PopoverContent>
 			</Popover>

@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 import { toast } from "@hoalu/ui/sonner";
 import { PageContent } from "@/components/layouts/page-content";
-import { MultiDialogsProvider } from "@/components/providers/multi-dialogs-provider";
+import { DialogProvider } from "@/components/providers/dialog-provider";
 import { WorkspaceActionProvider } from "@/components/providers/workspace-action-provider";
 import {
 	categoriesQueryOptions,
@@ -38,11 +38,11 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 function RouteComponent() {
 	return (
 		<WorkspaceActionProvider>
-			<MultiDialogsProvider>
+			<DialogProvider>
 				<PageContent>
 					<Outlet />
 				</PageContent>
-			</MultiDialogsProvider>
+			</DialogProvider>
 		</WorkspaceActionProvider>
 	);
 }

@@ -2,11 +2,11 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useId } from "react";
 
 import {
-	ArrowRightLeftIcon,
-	GalleryVerticalIcon,
-	ListTodoIcon,
+	AlignBoxTopCenterIcon,
+	ArrowsExchangeIcon,
+	LayoutDashboardIcon,
 	SettingsIcon,
-} from "@hoalu/icons/lucide";
+} from "@hoalu/icons/tabler";
 import {
 	SidebarGroup,
 	SidebarMenu,
@@ -27,7 +27,7 @@ export function NavWorkspace() {
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild tooltip="Dashboard">
 						<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
-							<GalleryVerticalIcon />
+							<LayoutDashboardIcon />
 							<span>Dashboard</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
@@ -43,7 +43,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 						>
-							<ArrowRightLeftIcon />
+							<ArrowsExchangeIcon />
 							<span>Expenses</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
@@ -59,7 +59,7 @@ export function NavWorkspace() {
 							params={{ slug }}
 							disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
 						>
-							<ListTodoIcon />
+							<AlignBoxTopCenterIcon />
 							<span>Tasks</span>
 							<SidebarMenuBadge>
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />

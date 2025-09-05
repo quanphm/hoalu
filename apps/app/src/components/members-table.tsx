@@ -24,6 +24,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { DataTable } from "@/components/data-table";
 import { UserAvatar } from "@/components/user-avatar";
+import { useAuth } from "@/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
 import { useRemoveMember } from "@/services/mutations";
 import { getActiveMemberOptions } from "@/services/query-options";
@@ -43,10 +44,12 @@ const columns = [
 		id: "name",
 		header: "Name",
 		cell: (info) => {
+			const { user } = useAuth();
 			return (
-				<div className="flex items-center gap-3">
+				<div className="flex items-center gap-2">
 					<UserAvatar name={info.row.original.name} image={info.row.original.image} />
 					<p>{info.row.original.name}</p>
+					{info.row.original.id === user?.id && <Badge variant="outline">You</Badge>}
 				</div>
 			);
 		},
@@ -66,7 +69,7 @@ const columns = [
 			const value = info.getValue();
 			return (
 				<Badge
-					variant={value === "owner" ? "emerald" : "outline"}
+					variant={value === "owner" ? "default" : "outline"}
 					className="px-1.5 font-normal text-xs capitalize"
 				>
 					{value}

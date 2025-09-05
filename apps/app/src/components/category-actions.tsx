@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
@@ -14,6 +14,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -25,58 +26,31 @@ import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
-	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
-
-	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
-			<DialogContent className="sm:max-w-[420px]">
-				<DialogHeader>
-					<DialogTitle>Create new category</DialogTitle>
-					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
-				</DialogHeader>
-				<DialogDescription />
-				<CreateCategoryForm />
-			</DialogContent>
-		</Dialog>
-	);
-}
-
 export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
-	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
+	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
 
 	if (props.children) {
-		return (
-			<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-				<DialogTrigger render={props.children} />
-				<DialogContent className="sm:max-w-[420px]">
-					<DialogHeader>
-						<DialogTitle>Create new category</DialogTitle>
-						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
-					</DialogHeader>
-					<DialogDescription />
-					<CreateCategoryForm />
-				</DialogContent>
-			</Dialog>
-		);
+		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
 	}
 
 	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			<DialogTrigger render={<Button variant="outline" onClick={() => setOpen(true)} />}>
-				Create category
-				<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
-			</DialogTrigger>
-			<DialogContent className="sm:max-w-[420px]">
-				<DialogHeader>
-					<DialogTitle>Create new category</DialogTitle>
-					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
-				</DialogHeader>
-				<DialogDescription />
-				<CreateCategoryForm />
-			</DialogContent>
-		</Dialog>
+		<Button variant="outline" onClick={() => setOpen(true)}>
+			Create category
+			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
+		</Button>
+	);
+}
+
+export function CreateCategoryDialogContent() {
+	return (
+		<DialogContent className="sm:max-w-[420px]">
+			<DialogHeader>
+				<DialogTitle>Create new category</DialogTitle>
+				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+			</DialogHeader>
+			<DialogDescription />
+			<CreateCategoryForm />
+		</DialogContent>
 	);
 }
 

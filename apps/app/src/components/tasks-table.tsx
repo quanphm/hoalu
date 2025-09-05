@@ -25,11 +25,7 @@ const columns = [
 		header: "Status",
 		cell: (info) => {
 			const value = info.getValue();
-			return value === "done" ? (
-				<Badge variant="emerald">Completed</Badge>
-			) : (
-				<Badge variant="outline">{value}</Badge>
-			);
+			return value === "done" ? <Badge>Completed</Badge> : <Badge variant="outline">{value}</Badge>;
 		},
 	}),
 	columnHelper.display({
