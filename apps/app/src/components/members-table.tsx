@@ -43,16 +43,7 @@ const columns = [
 	columnHelper.display({
 		id: "name",
 		header: "Name",
-		cell: (info) => {
-			const { user } = useAuth();
-			return (
-				<div className="flex items-center gap-2">
-					<UserAvatar name={info.row.original.name} image={info.row.original.image} />
-					<p>{info.row.original.name}</p>
-					{info.row.original.id === user?.id && <Badge variant="outline">You</Badge>}
-				</div>
-			);
-		},
+		cell: (info) => <NameCell row={info.row} />,
 		meta: {
 			headerClassName:
 				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
@@ -168,5 +159,17 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+function NameCell({ row }: { row: Row<MemberSchema> }) {
+	const { user } = useAuth();
+
+	return (
+		<div className="flex items-center gap-2">
+			<UserAvatar name={row.original.name} image={row.original.image} />
+			<p>{row.original.name}</p>
+			{row.original.id === user?.id && <Badge variant="outline">You</Badge>}
+		</div>
 	);
 }

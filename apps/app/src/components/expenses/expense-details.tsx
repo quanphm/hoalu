@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -56,7 +56,7 @@ export function ExpenseDetails() {
 									onClick={handleGoDown}
 									disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
 								>
-									<ChevronDown className="size-4" />
+									<ChevronDownIcon className="size-4" />
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent side="bottom">Go Down</TooltipContent>

@@ -8,8 +8,8 @@ import {
 	KeyRoundIcon,
 	LogOutIcon,
 	PaletteIcon,
-	SettingsIcon,
 } from "@hoalu/icons/lucide";
+import { SettingsIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
 	DropdownMenuContent,

@@ -278,12 +278,12 @@ export function DeleteExpenseDialogContent() {
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
-			// [TODO] Should throw error here.
+			setDialog({ state: false, data: undefined });
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
 		onSelectExpense(null);
-		setDialog({ state: false, data: { id: null } });
+		setDialog({ state: false, data: undefined });
 	};
 
 	return (

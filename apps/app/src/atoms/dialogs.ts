@@ -55,10 +55,10 @@ export const currentDialogAtom = atom(
 );
 
 export const wipeOutDialogsAtom = atom(null, (_get, set) => {
-	set(dialogManagerAtom, (state) => ({
-		...state,
+	set(dialogManagerAtom, {
+		currentId: null,
 		dialogs: [],
-	}));
+	});
 });
 
 const dialogsAtom = atom((get) => get(dialogManagerAtom).dialogs);

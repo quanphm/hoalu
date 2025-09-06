@@ -7,8 +7,8 @@ import {
 	ChevronsUpDownIcon,
 	GalleryVerticalIcon,
 	ListTodoIcon,
-	SettingsIcon,
 } from "@hoalu/icons/lucide";
+import { SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";

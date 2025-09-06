@@ -167,7 +167,7 @@ function EditWalletForm(props: { id: string }) {
 					ownerId: value.ownerId,
 				},
 			});
-			setDialog({ state: false, data: { id: null } });
+			setDialog({ state: false, data: undefined });
 		},
 	});
 
@@ -255,11 +255,11 @@ export function DeleteWalletDialogContent() {
 	const mutation = useDeleteWallet();
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
-			// [TODO] Should throw error here.
+			setDialog({ state: false, data: undefined });
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		setDialog({ state: false, data: { id: null } });
+		setDialog({ state: false, data: undefined });
 	};
 
 	return (
@@ -275,7 +275,7 @@ export function DeleteWalletDialogContent() {
 			</DialogHeader>
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
-				<Button variant="destructive" onClick={() => onDelete()}>
+				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
 			</DialogFooter>

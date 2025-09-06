@@ -23,7 +23,9 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const navigate = useNavigate();
 
 	const isAnyDialogOpen = useAtomValue(dialogStateAtom);
-	const allowShortcutNavigate = isAnyDialogOpen;
+	console.log("isAnyDialogOpen", isAnyDialogOpen);
+	const allowShortcutNavigate = !isAnyDialogOpen;
+	console.log("allowShortcutNavigate", allowShortcutNavigate);
 
 	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {
@@ -41,8 +43,11 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		() => {
 			setExpenseOpen({ state: true });
 		},
-		{ preventDefault: true, description: "Dialog: Create new expense", enabled: !!slug },
-		[slug],
+		{
+			preventDefault: true,
+			description: "Dialog: Create new expense",
+		},
+		[],
 	);
 
 	useHotkeys(
@@ -50,8 +55,11 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		() => {
 			setWalletOpen({ state: true });
 		},
-		{ preventDefault: true, description: "Dialog: Create new wallet", enabled: !!slug },
-		[slug],
+		{
+			preventDefault: true,
+			description: "Dialog: Create new wallet",
+		},
+		[],
 	);
 
 	useHotkeys(
@@ -59,8 +67,11 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		() => {
 			setCategoryOpen({ state: true });
 		},
-		{ preventDefault: true, description: "Dialog: Create new category", enabled: !!slug },
-		[slug],
+		{
+			preventDefault: true,
+			description: "Dialog: Create new category",
+		},
+		[],
 	);
 
 	useHotkeys(
@@ -69,7 +80,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/$slug", params: { slug } });
 		},
 		{ description: "Navigate: Dashboard", enabled: allowShortcutNavigate },
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	useHotkeys(
@@ -81,7 +92,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			description: "Navigate: Expenses",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
 		},
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	useHotkeys(
@@ -93,7 +104,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			description: "Navigate: Tasks",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
 		},
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	useHotkeys(
@@ -105,7 +116,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			description: "Navigate: Settings / Workspace",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_workspace.enabled,
 		},
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	useHotkeys(
@@ -117,7 +128,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			description: "Navigate: Settings / Members",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_members.enabled,
 		},
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	useHotkeys(
@@ -129,7 +140,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			description: "Navigate: Settings / Library",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_library.enabled,
 		},
-		[slug],
+		[slug, allowShortcutNavigate],
 	);
 
 	return children;

@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { type PropsWithChildren, useEffect } from "react";
 
 import { Dialog, DialogBackdrop, DialogPortal } from "@hoalu/ui/dialog";
@@ -16,14 +16,13 @@ import {
 import { CreateWorkspaceDialogContent, DeleteWorkspaceDialogContent } from "../workspace";
 
 export function DialogProvider(props: PropsWithChildren) {
-	const [currentDialog, setCurrentDialog] = useAtom(currentDialogAtom);
-	const wipeOutAllDialogs = useSetAtom(wipeOutDialogsAtom);
 	const [open, setOpen] = useAtom(dialogStateAtom);
+	const currentDialog = useAtomValue(currentDialogAtom);
+	const wipeOutAllDialogs = useSetAtom(wipeOutDialogsAtom);
 
 	useEffect(() => {
 		if (!open) {
 			// Backdrop doesn't unmount when set these directly in `onOpenChange` handler
-			setCurrentDialog(null);
 			wipeOutAllDialogs();
 		}
 	}, [open]);
