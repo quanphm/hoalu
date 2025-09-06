@@ -296,7 +296,7 @@ export function DeleteExpenseDialogContent() {
 			</DialogHeader>
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
-				<Button variant="destructive" onClick={() => onDelete()}>
+				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
 			</DialogFooter>

@@ -23,9 +23,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const navigate = useNavigate();
 
 	const isAnyDialogOpen = useAtomValue(dialogStateAtom);
-	console.log("isAnyDialogOpen", isAnyDialogOpen);
 	const allowShortcutNavigate = !isAnyDialogOpen;
-	console.log("allowShortcutNavigate", allowShortcutNavigate);
 
 	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {

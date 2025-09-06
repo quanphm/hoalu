@@ -12,12 +12,19 @@ import {
 	CommandItem,
 	CommandList,
 } from "@hoalu/ui/command";
-import { Dialog, DialogTrigger } from "@hoalu/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@hoalu/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
-import { CreateCategoryDialogContent } from "@/components/category-actions";
 import { categoriesQueryOptions } from "@/services/query-options";
+import { CreateCategoryForm } from "../category-actions";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -119,7 +126,14 @@ export function SelectCategoryField(props: Props) {
 						</div>
 					</PopoverContent>
 				</Popover>
-				<CreateCategoryDialogContent />
+
+				<DialogContent className="sm:max-w-[420px]">
+					<DialogHeader>
+						<DialogTitle>Create new category</DialogTitle>
+						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+					</DialogHeader>
+					<CreateCategoryForm />
+				</DialogContent>
 			</Dialog>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />

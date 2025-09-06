@@ -5,7 +5,6 @@ import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
@@ -45,17 +44,17 @@ export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
 
 export function CreateCategoryDialogContent() {
 	return (
-		<DialogContent className="sm:max-w-[420px]">
+		<DialogPopup className="sm:max-w-[420px]">
 			<DialogHeader>
 				<DialogTitle>Create new category</DialogTitle>
 				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 			</DialogHeader>
 			<CreateCategoryForm />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
-function CreateCategoryForm() {
+export function CreateCategoryForm() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
@@ -203,7 +202,7 @@ export function DeleteCategoryDialogContent() {
 				<Button type="button" variant="secondary" onClick={() => setDialog({ state: false })}>
 					Cancel
 				</Button>
-				<Button variant="destructive" onClick={() => onDelete()}>
+				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
 			</DialogFooter>
