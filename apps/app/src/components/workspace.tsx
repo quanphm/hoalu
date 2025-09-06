@@ -7,7 +7,7 @@ import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import { DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
+import { DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
 import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -29,12 +29,12 @@ const routeApi = getRouteApi("/_dashboard/$slug");
 
 export function CreateWorkspaceDialogContent() {
 	return (
-		<DialogContent className="sm:max-w-[500px]">
+		<DialogPopup className="sm:max-w-[500px]">
 			<DialogHeader>
 				<DialogTitle>Create a new workspace</DialogTitle>
 			</DialogHeader>
 			<CreateWorkspaceForm />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
@@ -239,7 +239,7 @@ export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 
 export function DeleteWorkspaceDialogContent() {
 	return (
-		<DialogContent className="sm:max-w-[400px]">
+		<DialogPopup className="sm:max-w-[400px]">
 			<DialogHeader className="space-y-3">
 				<DialogTitle>Confirm delete workspace</DialogTitle>
 				<WarningMessage>
@@ -248,7 +248,7 @@ export function DeleteWorkspaceDialogContent() {
 				</WarningMessage>
 			</DialogHeader>
 			<DeleteWorkspaceForm />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 

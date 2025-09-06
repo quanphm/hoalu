@@ -12,10 +12,10 @@ import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
 	DialogClose,
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
@@ -69,13 +69,13 @@ export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
 
 export function CreateExpenseDialogContent() {
 	return (
-		<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
+		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 			<DialogHeader>
 				<DialogTitle>Create new expense</DialogTitle>
 				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
 			</DialogHeader>
 			<CreateExpenseForm />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
@@ -287,7 +287,7 @@ export function DeleteExpenseDialogContent() {
 	};
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete this expense?</DialogTitle>
 				<WarningMessage>
@@ -300,7 +300,7 @@ export function DeleteExpenseDialogContent() {
 					Delete
 				</Button>
 			</DialogFooter>
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 

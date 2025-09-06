@@ -12,10 +12,10 @@ import {
 import { Button } from "@hoalu/ui/button";
 import {
 	DialogClose,
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import {
@@ -62,7 +62,7 @@ export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
 
 export function CreateWalletDialogContent() {
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Create new wallet</DialogTitle>
 				<DialogDescription>
@@ -70,7 +70,7 @@ export function CreateWalletDialogContent() {
 				</DialogDescription>
 			</DialogHeader>
 			<CreateWalletForm />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
@@ -240,13 +240,13 @@ export function EditWalletDialogContent() {
 	const dialog = useAtomValue(editWalletDialogAtom);
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
 				<DialogDescription>Update your wallet details.</DialogDescription>
 			</DialogHeader>
 			<EditWalletForm id={dialog?.data?.id} />
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
@@ -263,7 +263,7 @@ export function DeleteWalletDialogContent() {
 	};
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete wallet?</DialogTitle>
 				<DialogDescription>
@@ -279,7 +279,7 @@ export function DeleteWalletDialogContent() {
 					Delete
 				</Button>
 			</DialogFooter>
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 

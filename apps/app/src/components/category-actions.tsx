@@ -9,6 +9,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
@@ -195,7 +196,7 @@ export function DeleteCategoryDialogContent() {
 	};
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
 			</DialogHeader>
@@ -207,6 +208,6 @@ export function DeleteCategoryDialogContent() {
 					Delete
 				</Button>
 			</DialogFooter>
-		</DialogContent>
+		</DialogPopup>
 	);
 }

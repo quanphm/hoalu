@@ -7,7 +7,6 @@ const DIALOG_ID = [
 
 	// expense
 	"create-expense",
-	"edit-expense",
 	"delete-expense",
 
 	// wallet
@@ -31,6 +30,7 @@ interface ManagerAtom {
 	dialogs: PrimitiveAtom<DialogData>[];
 }
 
+export const dialogState = atom(false);
 export const managerAtom = atom<ManagerAtom>({
 	currentId: null,
 	dialogs: [],
@@ -65,6 +65,8 @@ function createDialogAtom(id: DialogId) {
 			return dialogAtomById ? get(dialogAtomById) : null;
 		},
 		(get, set, action: { state: boolean; data?: Record<string, any> }) => {
+			set(dialogState, action.state);
+
 			if (!action.state) {
 				set(managerAtom, (state) => ({
 					currentId: state.currentId === id ? null : state.currentId,
