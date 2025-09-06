@@ -50,7 +50,6 @@ export function CreateCategoryDialogContent() {
 				<DialogTitle>Create new category</DialogTitle>
 				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 			</DialogHeader>
-			<DialogDescription />
 			<CreateCategoryForm />
 		</DialogContent>
 	);

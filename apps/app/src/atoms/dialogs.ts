@@ -25,20 +25,21 @@ interface DialogData {
 	data: Record<string, any> | undefined;
 }
 
-interface ManagerAtom {
+interface DialogManagerAtom {
 	currentId: DialogId | null;
 	dialogs: PrimitiveAtom<DialogData>[];
 }
 
-export const dialogState = atom(false);
-export const managerAtom = atom<ManagerAtom>({
+export const dialogStateAtom = atom(false);
+
+export const dialogManagerAtom = atom<DialogManagerAtom>({
 	currentId: null,
 	dialogs: [],
 });
 
 export const currentDialogAtom = atom(
 	(get) => {
-		const { currentId, dialogs } = get(managerAtom);
+		const { currentId, dialogs } = get(dialogManagerAtom);
 		if (!currentId) {
 			return null;
 		}
@@ -46,16 +47,21 @@ export const currentDialogAtom = atom(
 		return currentDialog ? get(currentDialog) : null;
 	},
 	(_get, set, id: DialogId | null) => {
-		set(managerAtom, (state) => ({
+		set(dialogManagerAtom, (state) => ({
+			...state,
 			currentId: id,
-			dialogs: id ? state.dialogs : [],
 		}));
 	},
 );
 
-const dialogsAtom = atom((get) => get(managerAtom).dialogs);
+export const wipeOutDialogsAtom = atom(null, (_get, set) => {
+	set(dialogManagerAtom, (state) => ({
+		...state,
+		dialogs: [],
+	}));
+});
 
-export const isOpeningDialogsAtom = atom((get) => get(dialogsAtom).length > 0);
+const dialogsAtom = atom((get) => get(dialogManagerAtom).dialogs);
 
 function createDialogAtom(id: DialogId) {
 	const basedAtom = atom(
@@ -65,15 +71,15 @@ function createDialogAtom(id: DialogId) {
 			return dialogAtomById ? get(dialogAtomById) : null;
 		},
 		(get, set, action: { state: boolean; data?: Record<string, any> }) => {
-			set(dialogState, action.state);
+			set(dialogStateAtom, action.state);
 
 			if (!action.state) {
-				set(managerAtom, (state) => ({
+				set(dialogManagerAtom, (state) => ({
 					currentId: state.currentId === id ? null : state.currentId,
 					dialogs: state.dialogs.filter((dialogAtom) => get(dialogAtom).id !== id),
 				}));
 			} else {
-				set(managerAtom, (state) => {
+				set(dialogManagerAtom, (state) => {
 					const filteredDialogs = state.dialogs.filter((atom) => get(atom).id !== id);
 					return {
 						currentId: id,

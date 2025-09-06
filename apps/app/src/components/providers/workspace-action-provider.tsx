@@ -8,8 +8,8 @@ import {
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
 	createWalletDialogAtom,
+	dialogStateAtom,
 	draftExpenseAtom,
-	isOpeningDialogsAtom,
 } from "@/atoms";
 import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
 
@@ -22,8 +22,8 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
 
-	const isAnyDialogOpen = useAtomValue(isOpeningDialogsAtom);
-	const allowShortcutNavigate = !isAnyDialogOpen;
+	const isAnyDialogOpen = useAtomValue(dialogStateAtom);
+	const allowShortcutNavigate = isAnyDialogOpen;
 
 	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {
