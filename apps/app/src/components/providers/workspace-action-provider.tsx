@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import {
-	createCategoryDialogOpenAtom,
-	createExpenseDialogOpenAtom,
-	createWalletDialogOpenAtom,
+	createCategoryDialogAtom,
+	createExpenseDialogAtom,
+	createWalletDialogAtom,
 	draftExpenseAtom,
 	isOpeningDialogsAtom,
 } from "@/atoms";
@@ -32,14 +32,14 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		}
 	}, [slug, setExpenseDraft]);
 
-	const setExpenseOpen = useSetAtom(createExpenseDialogOpenAtom);
-	const setWalletOpen = useSetAtom(createWalletDialogOpenAtom);
-	const setCategoryOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
+	const setWalletOpen = useSetAtom(createWalletDialogAtom);
+	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
-			setExpenseOpen(true);
+			setExpenseOpen({ state: true });
 		},
 		{ preventDefault: true, description: "Dialog: Create new expense", enabled: !!slug },
 		[slug],
@@ -48,7 +48,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_wallet.hotkey,
 		() => {
-			setWalletOpen(true);
+			setWalletOpen({ state: true });
 		},
 		{ preventDefault: true, description: "Dialog: Create new wallet", enabled: !!slug },
 		[slug],
@@ -57,7 +57,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_category.hotkey,
 		() => {
-			setCategoryOpen(true);
+			setCategoryOpen({ state: true });
 		},
 		{ preventDefault: true, description: "Dialog: Create new category", enabled: !!slug },
 		[slug],

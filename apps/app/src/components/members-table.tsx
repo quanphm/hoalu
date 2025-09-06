@@ -161,13 +161,7 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<DialogClose
-						render={
-							<Button type="button" variant="secondary">
-								No
-							</Button>
-						}
-					/>
+					<DialogClose render={<Button type="button" variant="secondary" />}>No</DialogClose>
 					<Button variant="destructive" onClick={() => onDelete()}>
 						Yes
 					</Button>

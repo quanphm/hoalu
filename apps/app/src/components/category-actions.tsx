@@ -5,18 +5,15 @@ import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
-	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
-import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
+import { createCategoryDialogAtom, deleteCategoryDialogAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
@@ -27,14 +24,18 @@ import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/service
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 
 export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const setDialog = useSetAtom(createCategoryDialogAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
+				{props.children}
+			</SlotPrimitive.Slot>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
+		<Button variant="outline" onClick={() => setDialog({ state: true })}>
 			Create category
 			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
 		</Button>
@@ -55,7 +56,7 @@ export function CreateCategoryDialogContent() {
 }
 
 function CreateCategoryForm() {
-	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
@@ -74,7 +75,7 @@ function CreateCategoryForm() {
 					color: value.color,
 				},
 			});
-			setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -82,7 +83,7 @@ function CreateCategoryForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -140,6 +141,8 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 		},
 	});
 
+	const setDialog = useSetAtom(deleteCategoryDialogAtom);
+
 	return (
 		<form.AppForm>
 			<form.Form>
@@ -162,16 +165,14 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 				</div>
 
 				<div className="flex w-full items-center justify-between">
-					<Dialog>
-						<DialogTrigger
-							render={
-								<Button size="icon" variant="ghost">
-									<Trash2Icon className="size-4" />
-								</Button>
-							}
-						/>
-						<DeleteCategoryDialogContent />
-					</Dialog>
+					<Button
+						type="button"
+						size="icon"
+						variant="ghost"
+						onClick={() => setDialog({ state: true })}
+					>
+						<Trash2Icon className="size-4" />
+					</Button>
 					<div>
 						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
 							Reset
@@ -184,9 +185,10 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 	);
 }
 
-function DeleteCategoryDialogContent() {
+export function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	const setDialog = useSetAtom(deleteCategoryDialogAtom);
 	const onDelete = async () => {
 		if (!selectedCategory.id) return;
 		await mutation.mutateAsync({ id: selectedCategory.id });
@@ -198,11 +200,9 @@ function DeleteCategoryDialogContent() {
 				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
 			</DialogHeader>
 			<DialogFooter>
-				<DialogClose asChild>
-					<Button type="button" variant="secondary">
-						Cancel
-					</Button>
-				</DialogClose>
+				<Button type="button" variant="secondary" onClick={() => setDialog({ state: false })}>
+					Cancel
+				</Button>
 				<Button variant="destructive" onClick={() => onDelete()}>
 					Delete
 				</Button>

@@ -1,21 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { cva, type VariantProps } from "class-variance-authority";
+import { useSetAtom } from "jotai";
 import { createContext, use, useMemo, useState } from "react";
 
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
+import { deleteWorkspaceDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
@@ -39,7 +34,7 @@ type CreateContext = {
 };
 const CreateContext = createContext<CreateContext | null>(null);
 
-function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
+export function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
 
@@ -58,11 +53,11 @@ function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger>{children}</DialogTrigger>;
+export function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
+	return <DialogTrigger render={children} />;
 }
 
-function CreateWorkspaceForm() {
+export function CreateWorkspaceForm() {
 	const context = use(CreateContext);
 	const mutation = useCreateWorkspace();
 
@@ -95,7 +90,6 @@ function CreateWorkspaceForm() {
 					{(field) => (
 						<field.InputField
 							label="Workspace name"
-							autoFocus
 							required
 							autoComplete="off"
 							placeholder="Acme Inc."
@@ -131,7 +125,7 @@ function CreateWorkspaceForm() {
 	);
 }
 
-function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
+export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	const workspace = useWorkspace();
 	const mutation = useEditWorkspace();
 
@@ -218,7 +212,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	);
 }
 
-function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
+export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	const workspace = useWorkspace();
 	const mutation = useEditWorkspaceMetadata();
 
@@ -262,51 +256,25 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	);
 }
 
-type DeleteContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const DeleteContext = createContext<CreateContext | null>(null);
-
-function DeleteWorkspaceDialog() {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<DeleteContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
-
+export function DeleteWorkspaceDialogContent() {
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				<DeleteWorkspaceTrigger />
-				<DialogContent className="sm:max-w-[400px]">
-					<DialogHeader className="space-y-3">
-						<DialogTitle>Confirm delete workspace</DialogTitle>
-						<DialogDescription>
-							<WarningMessage>
-								This action cannot be undone. This will permanently delete the whole workspace and
-								all of its data.
-							</WarningMessage>
-						</DialogDescription>
-					</DialogHeader>
-					<DeleteWorkspaceForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<DialogContent className="sm:max-w-[400px]">
+			<DialogHeader className="space-y-3">
+				<DialogTitle>Confirm delete workspace</DialogTitle>
+				<WarningMessage>
+					This action cannot be undone. This will permanently delete the whole workspace and all of
+					its data.
+				</WarningMessage>
+			</DialogHeader>
+			<DeleteWorkspaceForm />
+		</DialogContent>
 	);
-}
-
-function DeleteWorkspaceTrigger() {
-	return <DialogTrigger render={<Button variant="destructive" />}>Delete workspace</DialogTrigger>;
 }
 
 function DeleteWorkspaceForm() {
-	const context = use(DeleteContext);
 	const { slug } = routeApi.useParams();
 	const mutation = useDeleteWorkspace();
+	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -314,7 +282,7 @@ function DeleteWorkspaceForm() {
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync(value);
-			context?.setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -370,7 +338,7 @@ interface Props {
 	className?: string;
 }
 
-function WorkspaceLogo({
+export function WorkspaceLogo({
 	logo,
 	name,
 	size,
@@ -387,7 +355,7 @@ function WorkspaceLogo({
 	);
 }
 
-function S3WorkspaceLogo({
+export function S3WorkspaceLogo({
 	slug,
 	logo = undefined,
 	...props
@@ -395,14 +363,3 @@ function S3WorkspaceLogo({
 	const { data } = useQuery(workspaceLogoOptions(slug, logo));
 	return <WorkspaceLogo {...props} logo={data} />;
 }
-
-export {
-	CreateWorkspaceDialog,
-	CreateWorkspaceDialogTrigger,
-	CreateWorkspaceForm,
-	EditWorkspaceForm,
-	DeleteWorkspaceDialog,
-	EditWorkspaceMetadataForm,
-	WorkspaceLogo,
-	S3WorkspaceLogo,
-};

@@ -1,13 +1,14 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
+import { deleteWorkspaceDialogAtom } from "@/atoms";
 import { SettingCard } from "@/components/cards";
 import { InputWithCopy } from "@/components/input-with-copy";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import {
-	DeleteWorkspaceDialog,
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
 	WorkspaceLogo,
@@ -37,6 +38,8 @@ function RouteComponent() {
 	} = useFilesUpload({
 		onUpload: handleUploadLogo,
 	});
+
+	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
 		role: member.role,
@@ -136,7 +139,9 @@ function RouteComponent() {
 							description="Permanently delete workspace. This action can't be undone, so please be certain."
 							className="col-span-8"
 						>
-							<DeleteWorkspaceDialog />
+							<Button variant="destructive" onClick={() => setDialog({ state: true })}>
+								Delete workspace
+							</Button>
 						</SettingCard>
 					</SectionContent>
 				</Section>

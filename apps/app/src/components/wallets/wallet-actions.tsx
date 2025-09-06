@@ -28,7 +28,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
-import { createWalletDialogOpenAtom } from "@/atoms";
+import { createWalletDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -44,14 +44,18 @@ import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/muta
 import { walletWithIdQueryOptions } from "@/services/query-options";
 
 export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setDialog = useSetAtom(createWalletDialogAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
+				{props.children}
+			</SlotPrimitive.Slot>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
+		<Button variant="outline" onClick={() => setDialog({ state: true })}>
 			Create wallet
 			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
 		</Button>
@@ -76,7 +80,7 @@ function CreateWalletForm() {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const setOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setDialog = useSetAtom(createWalletDialogAtom);
 	const mutation = useCreateWallet();
 
 	const form = useAppForm({
@@ -98,7 +102,7 @@ function CreateWalletForm() {
 					type: value.type,
 				},
 			});
-			setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -106,9 +110,7 @@ function CreateWalletForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => (
-						<field.InputField label="Name" placeholder="My cash wallet" autoFocus required />
-					)}
+					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => (
@@ -183,9 +185,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => (
-						<field.InputField label="Name" placeholder="My cash wallet" autoFocus required />
-					)}
+					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => (
@@ -271,11 +271,7 @@ function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): voi
 				</DialogDescription>
 			</DialogHeader>
 			<DialogFooter>
-				<DialogClose asChild>
-					<Button type="button" variant="secondary">
-						Cancel
-					</Button>
-				</DialogClose>
+				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
 				<Button variant="destructive" onClick={() => onDelete()}>
 					Delete
 				</Button>

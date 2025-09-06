@@ -1,10 +1,29 @@
 import { atom, type PrimitiveAtom } from "jotai";
 
-const DIALOG_ID = ["create-expense", "create-wallet", "create-category"] as const;
+const DIALOG_ID = [
+	// workspace
+	"create-workspace",
+	"delete-workspace",
+
+	// expense
+	"create-expense",
+	"edit-expense",
+	"delete-expense",
+
+	// wallet
+	"create-wallet",
+	"edit-wallet",
+	"delete-wallet",
+
+	// category
+	"create-category",
+	"delete-category",
+] as const;
 export type DialogId = (typeof DIALOG_ID)[number];
 
 interface DialogData {
 	id: DialogId;
+	data: Record<string, any> | undefined;
 }
 
 interface ManagerAtom {
@@ -36,6 +55,8 @@ export const currentDialogAtom = atom(
 
 const dialogsAtom = atom((get) => get(managerAtom).dialogs);
 
+export const isOpeningDialogsAtom = atom((get) => get(dialogsAtom).length > 0);
+
 function createDialogAtom(id: DialogId) {
 	const basedAtom = atom(
 		(get) => {
@@ -43,34 +64,34 @@ function createDialogAtom(id: DialogId) {
 			const dialogAtomById = dialogs.find((dialogAtom) => get(dialogAtom).id === id);
 			return dialogAtomById ? get(dialogAtomById) : null;
 		},
-		(get, set, state: boolean) => {
-			const dialogs = get(dialogsAtom);
-
-			if (!state) {
+		(get, set, action: { state: boolean; data?: Record<string, any> }) => {
+			if (!action.state) {
 				set(managerAtom, (state) => ({
-					...state,
 					currentId: state.currentId === id ? null : state.currentId,
+					dialogs: state.dialogs.filter((dialogAtom) => get(dialogAtom).id !== id),
 				}));
 			} else {
-				const dialogAtomById = dialogs.find((dialogAtom) => get(dialogAtom).id === id);
-				if (dialogAtomById) {
-					set(managerAtom, (state) => ({
-						...state,
+				set(managerAtom, (state) => {
+					const filteredDialogs = state.dialogs.filter((atom) => get(atom).id !== id);
+					return {
 						currentId: id,
-					}));
-				} else {
-					set(managerAtom, (state) => ({
-						currentId: id,
-						dialogs: [...state.dialogs, atom({ id })],
-					}));
-				}
+						dialogs: [...filteredDialogs, atom({ id, data: action.data })],
+					};
+				});
 			}
 		},
 	);
 	return basedAtom;
 }
-export const createExpenseDialogOpenAtom = createDialogAtom("create-expense");
-export const createWalletDialogOpenAtom = createDialogAtom("create-wallet");
-export const createCategoryDialogOpenAtom = createDialogAtom("create-category");
 
-export const isOpeningDialogsAtom = atom((get) => get(dialogsAtom).length > 0);
+export const createWorkspaceDialogAtom = createDialogAtom("create-workspace");
+export const deleteWorkspaceDialogAtom = createDialogAtom("delete-workspace");
+
+export const createExpenseDialogAtom = createDialogAtom("create-expense");
+export const deleteExpenseDialogAtom = createDialogAtom("delete-expense");
+
+export const createWalletDialogAtom = createDialogAtom("create-wallet");
+export const deleteWalletDialogAtom = createDialogAtom("delete-wallet");
+
+export const createCategoryDialogAtom = createDialogAtom("create-category");
+export const deleteCategoryDialogAtom = createDialogAtom("delete-category");

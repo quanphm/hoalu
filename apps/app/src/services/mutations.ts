@@ -3,7 +3,7 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 import { toast } from "@hoalu/ui/sonner";
-import { createExpenseDialogOpenAtom, draftExpenseAtom } from "@/atoms";
+import { createExpenseDialogAtom, draftExpenseAtom } from "@/atoms";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
 import type {
@@ -239,9 +239,10 @@ export function useDeleteExpense() {
 			const result = await apiClient.expenses.delete(slug, id);
 			return result;
 		},
-		onSuccess: () => {
+		onSuccess: (rs) => {
 			playDropSound();
 			toast.success("Expense deleted");
+			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
@@ -252,7 +253,7 @@ export function useDeleteExpense() {
 }
 
 export function useDuplicateExpense() {
-	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const setDraft = useSetAtom(draftExpenseAtom);
 
 	const mutation = useMutation({
@@ -269,7 +270,7 @@ export function useDuplicateExpense() {
 				categoryId: sourceExpense.category?.id ?? "",
 				repeat: sourceExpense.repeat,
 			});
-			setOpen(true);
+			setDialog({ state: true });
 			return sourceExpense;
 		},
 	});

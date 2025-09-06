@@ -1,6 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { MailPlusIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -16,7 +18,7 @@ import { authClient } from "@/lib/auth-client";
 import { InviteFormSchema } from "@/lib/schema";
 import { workspaceKeys } from "@/services/query-key-factory";
 
-export function InviteDialog({ children }: { children: React.ReactNode }) {
+export function InviteDialog() {
 	const [open, setOpen] = useState(false);
 	const workspace = useWorkspace();
 	const queryClient = useQueryClient();
@@ -52,7 +54,10 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger render={children} />
+			<DialogTrigger render={<Button variant="outline" size="sm" />}>
+				<MailPlusIcon className="mr-2 size-4" />
+				Invite people
+			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
 				<DialogHeader>
 					<DialogTitle>Invite people to your workspace</DialogTitle>
@@ -60,7 +65,7 @@ export function InviteDialog({ children }: { children: React.ReactNode }) {
 				<form.AppForm>
 					<form.Form>
 						<form.AppField name="email">
-							{(field) => <field.InputField label="Email" autoFocus />}
+							{(field) => <field.InputField label="Email" />}
 						</form.AppField>
 						<DialogFooter>
 							<form.SubscribeButton className="ml-auto w-fit">Send invite</form.SubscribeButton>
