@@ -45,15 +45,15 @@ const rootElement = document.getElementById("root");
 
 function App() {
 	return (
-		<UiProvider>
-			<LocalPostgresProvider>
-				<QueryClientProvider client={queryClient}>
-					<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
+		<LocalPostgresProvider>
+			<QueryClientProvider client={queryClient}>
+				<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
+					<UiProvider>
 						<RouterProvider router={router} />
-					</DokiClientProvider>
-				</QueryClientProvider>
-			</LocalPostgresProvider>
-		</UiProvider>
+					</UiProvider>
+				</DokiClientProvider>
+			</QueryClientProvider>
+		</LocalPostgresProvider>
 	);
 }
 

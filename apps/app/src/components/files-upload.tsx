@@ -1,5 +1,6 @@
 import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
-import { UploadIcon, XIcon } from "@hoalu/icons/lucide";
+import { UploadIcon } from "@hoalu/icons/lucide";
+import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { useFilesUpload } from "@/hooks/use-files-upload";
 
@@ -44,7 +45,7 @@ export function FilesUpload({
 								clearErrors();
 							}}
 						>
-							<XIcon className="h-4 w-4 text-current" />
+							<XIcon className="size-4 text-current" />
 						</button>
 					</div>
 					<ul className="space-y-1 text-destructive text-xs">

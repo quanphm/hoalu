@@ -25,11 +25,7 @@ const columns = [
 		header: "Status",
 		cell: (info) => {
 			const value = info.getValue();
-			return value === "done" ? (
-				<Badge variant="emerald">Completed</Badge>
-			) : (
-				<Badge variant="outline">{value}</Badge>
-			);
+			return value === "done" ? <Badge>Completed</Badge> : <Badge variant="outline">{value}</Badge>;
 		},
 	}),
 	columnHelper.display({
@@ -61,9 +57,9 @@ function RowActions({ row: _row }: { row: Row<TaskSchema> }) {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DialogTrigger asChild>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
+					<DialogTrigger
+						render={<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>}
+					/>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</Dialog>

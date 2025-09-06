@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 
 import {
 	BitcoinIcon,
@@ -11,14 +11,12 @@ import {
 } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
-	Dialog,
 	DialogClose,
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
-	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import {
 	DropdownMenu,
@@ -28,7 +26,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
-import { createWalletDialogOpenAtom } from "@/atoms";
+import { createWalletDialogAtom, deleteWalletDialogAtom, editWalletDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -43,42 +41,36 @@ import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from 
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateWalletDialog({ children }: { children: React.ReactNode }) {
-	const [dialog, setOpen] = useAtom(createWalletDialogOpenAtom);
-
-	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
-			<DialogContent
-				className="sm:max-w-[480px]"
-				onCloseAutoFocus={(event) => {
-					event.preventDefault();
-				}}
-			>
-				<DialogHeader>
-					<DialogTitle>Create new wallet</DialogTitle>
-					<DialogDescription>
-						Add a new wallet to manage and track a separate set of funds or accounts.
-					</DialogDescription>
-				</DialogHeader>
-				<CreateWalletForm />
-			</DialogContent>
-		</Dialog>
-	);
-}
-
 export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setDialog = useSetAtom(createWalletDialogAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
+				{props.children}
+			</SlotPrimitive.Slot>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
+		<Button variant="outline" onClick={() => setDialog({ state: true })}>
 			Create wallet
 			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
 		</Button>
+	);
+}
+
+export function CreateWalletDialogContent() {
+	return (
+		<DialogPopup className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Create new wallet</DialogTitle>
+				<DialogDescription>
+					Add a new wallet to manage and track a separate set of funds or accounts.
+				</DialogDescription>
+			</DialogHeader>
+			<CreateWalletForm />
+		</DialogPopup>
 	);
 }
 
@@ -86,7 +78,7 @@ function CreateWalletForm() {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const setOpen = useSetAtom(createWalletDialogOpenAtom);
+	const setDialog = useSetAtom(createWalletDialogAtom);
 	const mutation = useCreateWallet();
 
 	const form = useAppForm({
@@ -108,7 +100,7 @@ function CreateWalletForm() {
 					type: value.type,
 				},
 			});
-			setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -116,9 +108,7 @@ function CreateWalletForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => (
-						<field.InputField label="Name" placeholder="My cash wallet" autoFocus required />
-					)}
+					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => (
@@ -147,13 +137,11 @@ function CreateWalletForm() {
 	);
 }
 
-function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
+function EditWalletForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const { data: wallet, status } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
-
-	console.log(workspace.members);
-	console.log(wallet?.owner.id);
+	const setDialog = useSetAtom(editWalletDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -179,7 +167,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 					ownerId: value.ownerId,
 				},
 			});
-			if (props.onEditCallback) props.onEditCallback();
+			setDialog({ state: false, data: undefined });
 		},
 	});
 
@@ -193,9 +181,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => (
-						<field.InputField label="Name" placeholder="My cash wallet" autoFocus required />
-					)}
+					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => (
@@ -250,27 +236,34 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	);
 }
 
-function EditWalletDialogContent(props: { id: string; onEditCallback?(): void }) {
+export function EditWalletDialogContent() {
+	const dialog = useAtomValue(editWalletDialogAtom);
+
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
 				<DialogDescription>Update your wallet details.</DialogDescription>
 			</DialogHeader>
-			<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
-		</DialogContent>
+			<EditWalletForm id={dialog?.data?.id} />
+		</DialogPopup>
 	);
 }
 
-function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): void }) {
+export function DeleteWalletDialogContent() {
+	const [dialog, setDialog] = useAtom(deleteWalletDialogAtom);
 	const mutation = useDeleteWallet();
 	const onDelete = async () => {
-		await mutation.mutateAsync({ id: props.id });
-		if (props.onDeleteCallback) props.onDeleteCallback();
+		if (!dialog?.data?.id) {
+			setDialog({ state: false, data: undefined });
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		setDialog({ state: false, data: undefined });
 	};
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete wallet?</DialogTitle>
 				<DialogDescription>
@@ -281,54 +274,39 @@ function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): voi
 				</DialogDescription>
 			</DialogHeader>
 			<DialogFooter>
-				<DialogClose asChild>
-					<Button type="button" variant="secondary">
-						Cancel
-					</Button>
-				</DialogClose>
-				<Button variant="destructive" onClick={() => onDelete()}>
+				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
 			</DialogFooter>
-		</DialogContent>
+		</DialogPopup>
 	);
 }
 
 export function WalletDropdownMenuWithModal({ id }: { id: string }) {
-	const [open, setOpen] = useState(false);
-	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
-	const handleOpenChange = (state: boolean) => {
-		setOpen(state);
-		if (state === false) {
-			setContent("none");
-		}
-	};
+	const setEditDialog = useSetAtom(editWalletDialogAtom);
+	const setDeleteDialog = useSetAtom(deleteWalletDialogAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DialogTrigger asChild onClick={() => setContent("edit")}>
-						<DropdownMenuItem>Edit</DropdownMenuItem>
-					</DialogTrigger>
-					<DialogTrigger asChild onClick={() => setContent("delete")}>
-						<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-					</DialogTrigger>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			{content === "edit" && (
-				<EditWalletDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
-			)}
-			{content === "delete" && (
-				<DeleteWalletDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
-			)}
-		</Dialog>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="ghost" className="h-8 w-8 p-0">
+					<span className="sr-only">Open menu</span>
+					<MoreVerticalIcon className="size-4" />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end">
+				<DropdownMenuItem onClick={() => setEditDialog({ state: true, data: { id } })}>
+					Edit
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					variant="destructive"
+					onClick={() => setDeleteDialog({ state: true, data: { id } })}
+				>
+					Delete
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

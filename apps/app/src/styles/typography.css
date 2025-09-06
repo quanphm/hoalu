@@ -1,7 +1,4 @@
-:root {
-  --geist-sans: "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
-  --geist-mono: "ui-monospace", "SFMono-Regular", "Menlo", "monospace";
-}
+@import './font-geist.css';
 
 @theme {
   --text-xs: 0.675rem;
@@ -38,3 +35,4 @@
   height: 0;
   pointer-events: none;
 }
+

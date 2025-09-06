@@ -2,27 +2,32 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CalendarIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
-	Dialog,
 	DialogClose,
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
-	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
-import { createExpenseDialogOpenAtom, draftExpenseAtom, searchKeywordsAtom } from "@/atoms";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import {
+	createExpenseDialogAtom,
+	deleteExpenseDialogAtom,
+	draftExpenseAtom,
+	searchKeywordsAtom,
+} from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -34,6 +39,7 @@ import { ExpenseFormSchema } from "@/lib/schema";
 import {
 	useCreateExpense,
 	useDeleteExpense,
+	useDuplicateExpense,
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "@/services/mutations";
@@ -42,35 +48,34 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function CreateExpenseDialog({ children }: { children?: React.ReactNode }) {
-	const [dialog, setOpen] = useAtom(createExpenseDialogOpenAtom);
-
-	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
-			<DialogContent className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
-				<DialogHeader>
-					<DialogTitle>Create new expense</DialogTitle>
-					<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
-				</DialogHeader>
-				<CreateExpenseForm />
-			</DialogContent>
-		</Dialog>
-	);
-}
-
 export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setDialog = useSetAtom(createExpenseDialogAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
+				{props.children}
+			</SlotPrimitive.Slot>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
+		<Button variant="outline" onClick={() => setDialog({ state: true })}>
 			Create expense
 			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
 		</Button>
+	);
+}
+
+export function CreateExpenseDialogContent() {
+	return (
+		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
+			<DialogHeader>
+				<DialogTitle>Create new expense</DialogTitle>
+				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
+			</DialogHeader>
+			<CreateExpenseForm />
+		</DialogPopup>
 	);
 }
 
@@ -81,7 +86,7 @@ function CreateExpenseForm() {
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 
-	const setOpen = useSetAtom(createExpenseDialogOpenAtom);
+	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 
 	const fallbackWallet = {
@@ -154,7 +159,7 @@ function CreateExpenseForm() {
 				},
 			});
 			setDraft(RESET);
-			setOpen(false);
+			setDialog({ state: false });
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
 					...expense,
@@ -178,7 +183,7 @@ function CreateExpenseForm() {
 				<div className="grid grid-cols-12 gap-4">
 					<div className="col-span-7 flex flex-col gap-4">
 						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" autoFocus required />}
+							{(field) => <field.InputField label="Description" required />}
 						</form.AppField>
 						<form.AppField name="transaction">
 							{(field) => <field.TransactionAmountField label="Amount" />}
@@ -247,49 +252,81 @@ function CreateExpenseForm() {
 }
 
 export function DeleteExpense({ id }: { id: string }) {
-	const [open, setOpen] = useState(false);
-	const { onSelectExpense } = useSelectedExpense();
-	const mutation = useDeleteExpense();
-
-	const onDelete = async () => {
-		await mutation.mutateAsync({ id });
-		setOpen(false);
-		onSelectExpense(null);
-	};
+	const setDialog = useSetAtom(deleteExpenseDialogAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button size="icon" variant="ghost" aria-label="Delete this expense">
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button
+					size="icon"
+					variant="ghost"
+					aria-label="Delete this expense"
+					onClick={() => setDialog({ state: true, data: { id } })}
+				>
 					<Trash2Icon className="size-4" />
 				</Button>
-			</DialogTrigger>
-			<DialogContent className="sm:max-w-[480px]">
-				<DialogHeader>
-					<DialogTitle>Delete this expense?</DialogTitle>
-					<DialogDescription>
-						<WarningMessage>
-							The expense will be deleted and removed from your history. This action cannot be
-							undone.
-						</WarningMessage>
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
-					<Button variant="destructive" onClick={() => onDelete()}>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+			</TooltipTrigger>
+			<TooltipContent side="bottom">Delete</TooltipContent>
+		</Tooltip>
 	);
 }
 
-export function EditExpenseForm(props: { id: string; className?: string }) {
+export function DeleteExpenseDialogContent() {
+	const { onSelectExpense } = useSelectedExpense();
+	const mutation = useDeleteExpense();
+	const [dialog, setDialog] = useAtom(deleteExpenseDialogAtom);
+
+	const onDelete = async () => {
+		if (!dialog?.data?.id) {
+			setDialog({ state: false, data: undefined });
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		onSelectExpense(null);
+		setDialog({ state: false, data: undefined });
+	};
+
+	return (
+		<DialogPopup className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Delete this expense?</DialogTitle>
+				<WarningMessage>
+					The expense will be deleted and removed from your history. This action cannot be undone.
+				</WarningMessage>
+			</DialogHeader>
+			<DialogFooter>
+				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<Button variant="destructive" onClick={onDelete}>
+					Delete
+				</Button>
+			</DialogFooter>
+		</DialogPopup>
+	);
+}
+
+export function DuplicateExpense(props: { id: string }) {
+	const workspace = useWorkspace();
+	const mutation = useDuplicateExpense();
+	const { data: expense } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
+
+	const onDuplicate = () => {
+		if (!expense) return;
+		mutation.mutate({ sourceExpense: expense });
+	};
+
+	return (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button size="icon" variant="ghost" onClick={onDuplicate} disabled={!expense}>
+					<CopyPlusIcon className="size-4" />
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent side="bottom">Duplicate</TooltipContent>
+		</Tooltip>
+	);
+}
+
+export function EditExpenseForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
@@ -430,7 +467,7 @@ export function ExpenseCalendar() {
 					variant="outline"
 					className="h-auto w-full justify-start font-normal text-xs leading-none"
 				>
-					<CalendarIcon />
+					<CalendarIcon className="size-4" />
 					{formatDateRange()}
 				</Button>
 			</PopoverTrigger>

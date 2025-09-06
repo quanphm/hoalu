@@ -8,23 +8,13 @@ export function SubscribeButton({
 	...props
 }: ButtonProps & { useSound?: boolean }) {
 	const form = useFormContext();
+	const ButtonComponent = useSound ? SoundButton : Button;
 
 	return (
 		<form.Subscribe>
-			{() => {
-				if (!useSound) {
-					return (
-						<Button type="submit" {...props}>
-							{children}
-						</Button>
-					);
-				}
-				return (
-					<SoundButton type="submit" {...props}>
-						{children}
-					</SoundButton>
-				);
-			}}
+			<ButtonComponent type="submit" {...props}>
+				{children}
+			</ButtonComponent>
 		</form.Subscribe>
 	);
 }

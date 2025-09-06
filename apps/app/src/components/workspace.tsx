@@ -1,21 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { cva, type VariantProps } from "class-variance-authority";
-import { createContext, use, useMemo, useState } from "react";
+import { useSetAtom } from "jotai";
 
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
+import { DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
+import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
@@ -33,38 +27,20 @@ import { workspaceLogoOptions } from "@/services/query-options";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-type CreateContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const CreateContext = createContext<CreateContext | null>(null);
-
-function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
-
+export function CreateWorkspaceDialogContent() {
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent className="sm:max-w-[500px]">
-					<DialogHeader>
-						<DialogTitle>Create a new workspace</DialogTitle>
-					</DialogHeader>
-					<CreateWorkspaceForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<DialogPopup className="sm:max-w-[500px]">
+			<DialogHeader>
+				<DialogTitle>Create a new workspace</DialogTitle>
+			</DialogHeader>
+			<CreateWorkspaceForm />
+		</DialogPopup>
 	);
 }
 
-function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
-}
-
-function CreateWorkspaceForm() {
-	const context = use(CreateContext);
+export function CreateWorkspaceForm() {
 	const mutation = useCreateWorkspace();
+	const setDialog = useSetAtom(createWorkspaceDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -77,7 +53,7 @@ function CreateWorkspaceForm() {
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({ payload: value });
-			context?.setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -95,7 +71,6 @@ function CreateWorkspaceForm() {
 					{(field) => (
 						<field.InputField
 							label="Workspace name"
-							autoFocus
 							required
 							autoComplete="off"
 							placeholder="Acme Inc."
@@ -131,7 +106,7 @@ function CreateWorkspaceForm() {
 	);
 }
 
-function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
+export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	const workspace = useWorkspace();
 	const mutation = useEditWorkspace();
 
@@ -218,7 +193,7 @@ function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	);
 }
 
-function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
+export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	const workspace = useWorkspace();
 	const mutation = useEditWorkspaceMetadata();
 
@@ -262,51 +237,25 @@ function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	);
 }
 
-type DeleteContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const DeleteContext = createContext<CreateContext | null>(null);
-
-function DeleteWorkspaceDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<DeleteContext>(
-		() => ({
-			open,
-			setOpen,
-		}),
-		[open],
-	);
-
+export function DeleteWorkspaceDialogContent() {
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent className="sm:max-w-[400px]">
-					<DialogHeader className="space-y-3">
-						<DialogTitle>Confirm delete workspace</DialogTitle>
-						<DialogDescription>
-							<WarningMessage>
-								This action cannot be undone. This will permanently delete the whole workspace and
-								all of its data.
-							</WarningMessage>
-						</DialogDescription>
-					</DialogHeader>
-					<DeleteWorkspaceForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<DialogPopup className="sm:max-w-[400px]">
+			<DialogHeader className="space-y-3">
+				<DialogTitle>Confirm delete workspace</DialogTitle>
+				<WarningMessage>
+					This action cannot be undone. This will permanently delete the whole workspace and all of
+					its data.
+				</WarningMessage>
+			</DialogHeader>
+			<DeleteWorkspaceForm />
+		</DialogPopup>
 	);
-}
-
-function DeleteWorkspaceTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger asChild>{children}</DialogTrigger>;
 }
 
 function DeleteWorkspaceForm() {
-	const context = use(DeleteContext);
 	const { slug } = routeApi.useParams();
 	const mutation = useDeleteWorkspace();
+	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -314,7 +263,7 @@ function DeleteWorkspaceForm() {
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync(value);
-			context?.setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -370,7 +319,7 @@ interface Props {
 	className?: string;
 }
 
-function WorkspaceLogo({
+export function WorkspaceLogo({
 	logo,
 	name,
 	size,
@@ -387,7 +336,7 @@ function WorkspaceLogo({
 	);
 }
 
-function S3WorkspaceLogo({
+export function S3WorkspaceLogo({
 	slug,
 	logo = undefined,
 	...props
@@ -395,15 +344,3 @@ function S3WorkspaceLogo({
 	const { data } = useQuery(workspaceLogoOptions(slug, logo));
 	return <WorkspaceLogo {...props} logo={data} />;
 }
-
-export {
-	CreateWorkspaceDialog,
-	CreateWorkspaceDialogTrigger,
-	CreateWorkspaceForm,
-	EditWorkspaceForm,
-	DeleteWorkspaceDialog,
-	DeleteWorkspaceTrigger,
-	EditWorkspaceMetadataForm,
-	WorkspaceLogo,
-	S3WorkspaceLogo,
-};

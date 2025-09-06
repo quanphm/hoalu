@@ -156,6 +156,7 @@ function CategoryListBreakdown(props: {
 
 	const handleClick = (id: string) => {
 		if (id === "others") {
+			props.onToggleView();
 			return;
 		}
 
@@ -183,16 +184,10 @@ function CategoryListBreakdown(props: {
 				return (
 					<div key={data.id} className="flex items-center justify-between py-1">
 						<div className="flex items-center gap-3">
-							<div className={cn("h-2 w-2 rounded-full", createCategoryTheme(data.color))} />
+							<div className={cn("h-3 w-3 rounded-xs", createCategoryTheme(data.color))} />
 							<Button
 								variant="link"
-								onClick={() => {
-									if (data.id !== "others") {
-										handleClick(data.id);
-									} else {
-										props.onToggleView();
-									}
-								}}
+								onClick={() => handleClick(data.id)}
 								className={cn(
 									"h-auto p-0 text-foreground text-sm",
 									data.id !== "others" && "underline decoration-dotted underline-offset-3",

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
 import { useId } from "react";
 
 import {
@@ -7,8 +8,8 @@ import {
 	KeyRoundIcon,
 	LogOutIcon,
 	PaletteIcon,
-	SettingsIcon,
 } from "@hoalu/icons/lucide";
+import { SettingsIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,7 +25,6 @@ import {
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { UserAvatar } from "@/components/user-avatar";
 import { KEYBOARD_SHORTCUTS, THEMES, type Theme } from "@/helpers/constants";
-import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
 import { HotKey } from "../hotkey";
 

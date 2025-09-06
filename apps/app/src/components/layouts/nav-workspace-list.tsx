@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId } from "react";
 
-import { FolderClosedIcon } from "@hoalu/icons/lucide";
+import { FolderIcon } from "@hoalu/icons/tabler";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -31,7 +31,7 @@ export function NavWorkspaceList() {
 					<SidebarMenuItem key={ws.publicId}>
 						<SidebarMenuButton asChild tooltip={ws.name}>
 							<Link to="/$slug" params={{ slug: ws.slug }}>
-								<FolderClosedIcon />
+								<FolderIcon />
 								<span>{ws.name}</span>
 								{idx + 1 <= AVAILABLE_WORKSPACE_SHORTCUT.length && (
 									<SidebarMenuBadge>

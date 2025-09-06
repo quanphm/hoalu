@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 
+import { DEFAULT_DATE_RANGE } from "@/helpers/constants";
 import { calculateDateRange } from "@/helpers/date-range";
 import type { CategorySchema, RepeatSchema, WalletSchema } from "@/lib/schema";
 
@@ -11,16 +12,15 @@ export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
 
 export const searchKeywordsAtom = atom<string>("");
 
-export type PredefinedDateRange = "7" | "30" | "wtd" | "mtd" | "ytd" | "all" | "custom";
+export type PredefinedDateRange = "7" | "30" | "90" | "wtd" | "mtd" | "ytd" | "all" | "custom";
 export interface CustomDateRange {
 	from: Date;
 	to: Date;
 }
 
-export const selectDateRangeAtom = atom<PredefinedDateRange>("7");
+export const selectDateRangeAtom = atom<PredefinedDateRange>(DEFAULT_DATE_RANGE);
 
-const initValue = calculateDateRange("7");
-
+const initValue = calculateDateRange(DEFAULT_DATE_RANGE);
 export const customDateRangeAtom = atom<CustomDateRange | null>(
 	initValue ? { from: initValue.startDate, to: initValue.endDate } : null,
 );

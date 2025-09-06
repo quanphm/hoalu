@@ -1,6 +1,12 @@
-import { ChevronDown, ChevronUpIcon, XIcon } from "@hoalu/icons/lucide";
+import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
-import { DeleteExpense, EditExpenseForm } from "@/components/expenses/expense-actions";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import {
+	DeleteExpense,
+	DuplicateExpense,
+	EditExpenseForm,
+} from "@/components/expenses/expense-actions";
 import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
 
 export function ExpenseDetails() {
@@ -29,23 +35,44 @@ export function ExpenseDetails() {
 					className="flex justify-between border-b px-4 py-2"
 				>
 					<div className="flex items-center justify-center gap-2">
-						<Button size="icon" variant="outline" onClick={handleGoUp} disabled={currentIndex <= 0}>
-							<ChevronUpIcon className="size-4" />
-						</Button>
-						<Button
-							size="icon"
-							variant="outline"
-							onClick={handleGoDown}
-							disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
-						>
-							<ChevronDown className="size-4" />
-						</Button>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									size="icon"
+									variant="outline"
+									onClick={handleGoUp}
+									disabled={currentIndex <= 0}
+								>
+									<ChevronUpIcon className="size-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">Go Up</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									size="icon"
+									variant="outline"
+									onClick={handleGoDown}
+									disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
+								>
+									<ChevronDownIcon className="size-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">Go Down</TooltipContent>
+						</Tooltip>
 					</div>
 					<div className="flex items-center justify-center gap-2">
+						<DuplicateExpense id={selectedRow.id} />
 						<DeleteExpense id={selectedRow.id} />
-						<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)}>
-							<XIcon className="size-4" />
-						</Button>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)}>
+									<XIcon className="size-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">Close</TooltipContent>
+						</Tooltip>
 					</div>
 				</div>
 			)}

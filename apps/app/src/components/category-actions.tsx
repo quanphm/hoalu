@@ -1,22 +1,19 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogPopup,
 	DialogTitle,
-	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
-import { createCategoryDialogOpenAtom, selectedCategoryAtom } from "@/atoms";
+import { createCategoryDialogAtom, deleteCategoryDialogAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { createCategoryTheme } from "@/helpers/colors";
@@ -26,46 +23,39 @@ import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateCategoryDialog({ children }: { children: React.ReactNode }) {
-	const [dialog, setOpen] = useAtom(createCategoryDialogOpenAtom);
-
-	return (
-		<Dialog open={dialog.isOpen} onOpenChange={setOpen}>
-			{children}
-			<DialogContent
-				className="sm:max-w-[420px]"
-				onCloseAutoFocus={(event) => {
-					event.preventDefault();
-				}}
-			>
-				<DialogHeader>
-					<DialogTitle>Create new category</DialogTitle>
-					<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
-				</DialogHeader>
-				<DialogDescription />
-				<CreateCategoryForm />
-			</DialogContent>
-		</Dialog>
-	);
-}
-
 export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
-	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+	const setDialog = useSetAtom(createCategoryDialogAtom);
 
 	if (props.children) {
-		return <SlotPrimitive.Slot onClick={() => setOpen(true)}>{props.children}</SlotPrimitive.Slot>;
+		return (
+			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
+				{props.children}
+			</SlotPrimitive.Slot>
+		);
 	}
 
 	return (
-		<Button variant="outline" onClick={() => setOpen(true)}>
+		<Button variant="outline" onClick={() => setDialog({ state: true })}>
 			Create category
 			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
 		</Button>
 	);
 }
 
-function CreateCategoryForm() {
-	const setOpen = useSetAtom(createCategoryDialogOpenAtom);
+export function CreateCategoryDialogContent() {
+	return (
+		<DialogPopup className="sm:max-w-[420px]">
+			<DialogHeader>
+				<DialogTitle>Create new category</DialogTitle>
+				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+			</DialogHeader>
+			<CreateCategoryForm />
+		</DialogPopup>
+	);
+}
+
+export function CreateCategoryForm() {
+	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
@@ -84,7 +74,7 @@ function CreateCategoryForm() {
 					color: value.color,
 				},
 			});
-			setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 
@@ -92,7 +82,7 @@ function CreateCategoryForm() {
 		<form.AppForm>
 			<form.Form>
 				<form.AppField name="name">
-					{(field) => <field.InputWithEmojiPickerField label="Category" autoFocus required />}
+					{(field) => <field.InputWithEmojiPickerField label="Category" required />}
 				</form.AppField>
 				<form.AppField name="description">
 					{(field) => <field.InputField label="Description" autoComplete="off" />}
@@ -150,6 +140,8 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 		},
 	});
 
+	const setDialog = useSetAtom(deleteCategoryDialogAtom);
+
 	return (
 		<form.AppForm>
 			<form.Form>
@@ -172,14 +164,14 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 				</div>
 
 				<div className="flex w-full items-center justify-between">
-					<Dialog>
-						<DialogTrigger asChild>
-							<Button size="icon" variant="ghost">
-								<Trash2Icon className="size-4" />
-							</Button>
-						</DialogTrigger>
-						<DeleteCategoryDialogContent />
-					</Dialog>
+					<Button
+						type="button"
+						size="icon"
+						variant="ghost"
+						onClick={() => setDialog({ state: true })}
+					>
+						<Trash2Icon className="size-4" />
+					</Button>
 					<div>
 						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
 							Reset
@@ -192,29 +184,28 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 	);
 }
 
-function DeleteCategoryDialogContent() {
+export function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
 	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	const setDialog = useSetAtom(deleteCategoryDialogAtom);
 	const onDelete = async () => {
 		if (!selectedCategory.id) return;
 		await mutation.mutateAsync({ id: selectedCategory.id });
 	};
 
 	return (
-		<DialogContent className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
 			</DialogHeader>
 			<DialogFooter>
-				<DialogClose asChild>
-					<Button type="button" variant="secondary">
-						Cancel
-					</Button>
-				</DialogClose>
-				<Button variant="destructive" onClick={() => onDelete()}>
+				<Button type="button" variant="secondary" onClick={() => setDialog({ state: false })}>
+					Cancel
+				</Button>
+				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
 			</DialogFooter>
-		</DialogContent>
+		</DialogPopup>
 	);
 }

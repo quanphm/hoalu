@@ -1,0 +1,61 @@
+/* Geist Sans Variable Font */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-sans/Geist-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geist Mono Variable Font */
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/GeistMono-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geist Sans Fallback Fonts for older browsers */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geist Mono Fallback Font */
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --geist-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --geist-mono: "Geist Mono", "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+
+@theme {
+	--font-geist-sans: var(--geist-sans);
+	--font-geist-mono: var(--geist-mono);
+}
