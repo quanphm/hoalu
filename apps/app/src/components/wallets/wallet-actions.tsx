@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 
 import {
 	BitcoinIcon,
@@ -11,14 +11,12 @@ import {
 } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
-	Dialog,
 	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import {
 	DropdownMenu,
@@ -28,7 +26,7 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
-import { createWalletDialogAtom } from "@/atoms";
+import { createWalletDialogAtom, deleteWalletDialogAtom, editWalletDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { HotKey } from "@/components/hotkey";
 import { WarningMessage } from "@/components/warning-message";
@@ -139,13 +137,11 @@ function CreateWalletForm() {
 	);
 }
 
-function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
+function EditWalletForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const { data: wallet, status } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
-
-	console.log(workspace.members);
-	console.log(wallet?.owner.id);
+	const setDialog = useSetAtom(editWalletDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -171,7 +167,7 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 					ownerId: value.ownerId,
 				},
 			});
-			if (props.onEditCallback) props.onEditCallback();
+			setDialog({ state: false, data: { id: null } });
 		},
 	});
 
@@ -240,23 +236,30 @@ function EditWalletForm(props: { id: string; onEditCallback?(): void }) {
 	);
 }
 
-function EditWalletDialogContent(props: { id: string; onEditCallback?(): void }) {
+export function EditWalletDialogContent() {
+	const dialog = useAtomValue(editWalletDialogAtom);
+
 	return (
 		<DialogContent className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
 				<DialogDescription>Update your wallet details.</DialogDescription>
 			</DialogHeader>
-			<EditWalletForm id={props.id} onEditCallback={props.onEditCallback} />
+			<EditWalletForm id={dialog?.data?.id} />
 		</DialogContent>
 	);
 }
 
-function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): void }) {
+export function DeleteWalletDialogContent() {
+	const [dialog, setDialog] = useAtom(deleteWalletDialogAtom);
 	const mutation = useDeleteWallet();
 	const onDelete = async () => {
-		await mutation.mutateAsync({ id: props.id });
-		if (props.onDeleteCallback) props.onDeleteCallback();
+		if (!dialog?.data?.id) {
+			// [TODO] Should throw error here.
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		setDialog({ state: false, data: { id: null } });
 	};
 
 	return (
@@ -281,42 +284,29 @@ function DeleteWalletDialogContent(props: { id: string; onDeleteCallback?(): voi
 }
 
 export function WalletDropdownMenuWithModal({ id }: { id: string }) {
-	const [open, setOpen] = useState(false);
-	const [content, setContent] = useState<"none" | "edit" | "delete">("none");
-	const handleOpenChange = (state: boolean) => {
-		setOpen(state);
-		if (state === false) {
-			setContent("none");
-		}
-	};
+	const setEditDialog = useSetAtom(editWalletDialogAtom);
+	const setDeleteDialog = useSetAtom(deleteWalletDialogAtom);
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DialogTrigger
-						render={<DropdownMenuItem>Edit</DropdownMenuItem>}
-						onClick={() => setContent("edit")}
-					/>
-					<DialogTrigger
-						render={<DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>}
-						onClick={() => setContent("delete")}
-					/>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			{content === "edit" && (
-				<EditWalletDialogContent id={id} onEditCallback={() => handleOpenChange(false)} />
-			)}
-			{content === "delete" && (
-				<DeleteWalletDialogContent id={id} onDeleteCallback={() => handleOpenChange(false)} />
-			)}
-		</Dialog>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="ghost" className="h-8 w-8 p-0">
+					<span className="sr-only">Open menu</span>
+					<MoreVerticalIcon className="size-4" />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end">
+				<DropdownMenuItem onClick={() => setEditDialog({ state: true, data: { id } })}>
+					Edit
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					variant="destructive"
+					onClick={() => setDeleteDialog({ state: true, data: { id } })}
+				>
+					Delete
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

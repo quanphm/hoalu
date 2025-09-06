@@ -31,7 +31,7 @@ interface ManagerAtom {
 	dialogs: PrimitiveAtom<DialogData>[];
 }
 
-const managerAtom = atom<ManagerAtom>({
+export const managerAtom = atom<ManagerAtom>({
 	currentId: null,
 	dialogs: [],
 });
@@ -47,8 +47,8 @@ export const currentDialogAtom = atom(
 	},
 	(_get, set, id: DialogId | null) => {
 		set(managerAtom, (state) => ({
-			...state,
 			currentId: id,
+			dialogs: id ? state.dialogs : [],
 		}));
 	},
 );
@@ -91,6 +91,7 @@ export const createExpenseDialogAtom = createDialogAtom("create-expense");
 export const deleteExpenseDialogAtom = createDialogAtom("delete-expense");
 
 export const createWalletDialogAtom = createDialogAtom("create-wallet");
+export const editWalletDialogAtom = createDialogAtom("edit-wallet");
 export const deleteWalletDialogAtom = createDialogAtom("delete-wallet");
 
 export const createCategoryDialogAtom = createDialogAtom("create-category");

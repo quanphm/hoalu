@@ -2,15 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { cva, type VariantProps } from "class-variance-authority";
 import { useSetAtom } from "jotai";
-import { createContext, use, useMemo, useState } from "react";
 
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { deleteWorkspaceDialogAtom } from "@/atoms";
+import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
 import { WarningMessage } from "@/components/warning-message";
 import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
@@ -28,38 +27,20 @@ import { workspaceLogoOptions } from "@/services/query-options";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-type CreateContext = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-};
-const CreateContext = createContext<CreateContext | null>(null);
-
-export function CreateWorkspaceDialog({ children }: { children: React.ReactNode }) {
-	const [open, setOpen] = useState(false);
-	const contextValue = useMemo<CreateContext>(() => ({ open, setOpen }), [open]);
-
+export function CreateWorkspaceDialogContent() {
 	return (
-		<CreateContext value={contextValue}>
-			<Dialog open={open} onOpenChange={setOpen}>
-				{children}
-				<DialogContent className="sm:max-w-[500px]">
-					<DialogHeader>
-						<DialogTitle>Create a new workspace</DialogTitle>
-					</DialogHeader>
-					<CreateWorkspaceForm />
-				</DialogContent>
-			</Dialog>
-		</CreateContext>
+		<DialogContent className="sm:max-w-[500px]">
+			<DialogHeader>
+				<DialogTitle>Create a new workspace</DialogTitle>
+			</DialogHeader>
+			<CreateWorkspaceForm />
+		</DialogContent>
 	);
 }
 
-export function CreateWorkspaceDialogTrigger({ children }: { children: React.ReactNode }) {
-	return <DialogTrigger render={children} />;
-}
-
 export function CreateWorkspaceForm() {
-	const context = use(CreateContext);
 	const mutation = useCreateWorkspace();
+	const setDialog = useSetAtom(createWorkspaceDialogAtom);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -72,7 +53,7 @@ export function CreateWorkspaceForm() {
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({ payload: value });
-			context?.setOpen(false);
+			setDialog({ state: false });
 		},
 	});
 

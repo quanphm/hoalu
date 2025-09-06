@@ -283,7 +283,7 @@ export function DeleteExpenseDialogContent() {
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
 		onSelectExpense(null);
-		setDialog({ state: false });
+		setDialog({ state: false, data: { id: null } });
 	};
 
 	return (

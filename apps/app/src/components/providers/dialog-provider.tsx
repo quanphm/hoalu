@@ -8,8 +8,12 @@ import {
 	CreateExpenseDialogContent,
 	DeleteExpenseDialogContent,
 } from "../expenses/expense-actions";
-import { CreateWalletDialogContent } from "../wallets/wallet-actions";
-import { DeleteWorkspaceDialogContent } from "../workspace";
+import {
+	CreateWalletDialogContent,
+	DeleteWalletDialogContent,
+	EditWalletDialogContent,
+} from "../wallets/wallet-actions";
+import { CreateWorkspaceDialogContent, DeleteWorkspaceDialogContent } from "../workspace";
 
 export function DialogProvider(props: PropsWithChildren) {
 	const [currentDialog, setCurrentDialog] = useAtom(currentDialogAtom);
@@ -27,6 +31,8 @@ export function DialogProvider(props: PropsWithChildren) {
 
 function Content(props: { id: DialogId }) {
 	switch (props.id) {
+		case "create-workspace":
+			return <CreateWorkspaceDialogContent />;
 		case "delete-workspace":
 			return <DeleteWorkspaceDialogContent />;
 		case "create-expense":
@@ -35,6 +41,10 @@ function Content(props: { id: DialogId }) {
 			return <DeleteExpenseDialogContent />;
 		case "create-wallet":
 			return <CreateWalletDialogContent />;
+		case "edit-wallet":
+			return <EditWalletDialogContent />;
+		case "delete-wallet":
+			return <DeleteWalletDialogContent />;
 		case "create-category":
 			return <CreateCategoryDialogContent />;
 		case "delete-category":
