@@ -17,7 +17,7 @@ const chartConfig = {
 	},
 	date: {
 		label: "Expense",
-		color: "var(--chart-2)",
+		color: "var(--chart-1)",
 	},
 } satisfies ChartConfig;
 
@@ -187,7 +187,7 @@ export function ExpenseDashboardChart() {
 			const startDate = datetime.startOfDay(customRange.from);
 			const endDate = datetime.endOfDay(customRange.to);
 			return generateDailyDataForRange(filteredData, startDate, endDate);
-		} else if (dateRange === "7" || dateRange === "30") {
+		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
 			// For numeric day ranges, generate data with zeros for last N days
 			const days = parseInt(dateRange, 10);
 			return generateDailyDataWithZeros(filteredData, days);
@@ -235,9 +235,13 @@ export function ExpenseDashboardChart() {
 	return (
 		<Card className="py-0">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-4 px-6 pt-4">
+				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-6">
 					<CardTitle>Expenses</CardTitle>
-					<CurrencyValue value={totalExpenses} currency={currency} style="decimal" />
+					<CurrencyValue
+						value={totalExpenses}
+						currency={currency}
+						className="font-semibold text-3xl"
+					/>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
@@ -295,7 +299,7 @@ export function ExpenseDashboardChart() {
 													<CurrencyValue
 														value={payload[0].value}
 														currency={currency}
-														className="font-bold text-base"
+														className="font-bold"
 													/>
 												</div>
 											</div>

@@ -38,7 +38,7 @@ const pwaOptions: Partial<VitePWAOptions> = {
 	workbox: {
 		cleanupOutdatedCaches: true,
 		maximumFileSizeToCacheInBytes: 10_000_000,
-		globPatterns: ["**/*.{js,css,html,svg,data,wasm}"],
+		globPatterns: ["**/*.{js,css,html,svg,data,wasm,woff2}"],
 	},
 	devOptions: {
 		enabled: process.env.SW_DEV === "true",

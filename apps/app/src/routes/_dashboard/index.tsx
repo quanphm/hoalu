@@ -1,17 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { createWorkspaceDialogAtom } from "@/atoms";
 import { WorkspaceCard } from "@/components/cards";
 import { Greeting } from "@/components/greeting";
 import { PageContent } from "@/components/layouts/page-content";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
-import {
-	CreateWorkspaceDialog,
-	CreateWorkspaceDialogTrigger,
-	CreateWorkspaceForm,
-} from "@/components/workspace";
+import { CreateWorkspaceForm } from "@/components/workspace";
 import { listWorkspacesOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_dashboard/")({
@@ -20,6 +18,7 @@ export const Route = createFileRoute("/_dashboard/")({
 
 function RouteComponent() {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
+	const setDialog = useSetAtom(createWorkspaceDialogAtom);
 
 	if (workspaces.length === 0) {
 		return (
@@ -45,14 +44,10 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Workspaces</SectionTitle>
-					<CreateWorkspaceDialog>
-						<CreateWorkspaceDialogTrigger>
-							<Button variant="outline" size="sm">
-								<PlusIcon className="mr-2 size-4" />
-								Create
-							</Button>
-						</CreateWorkspaceDialogTrigger>
-					</CreateWorkspaceDialog>
+					<Button variant="outline" size="sm" onClick={() => setDialog({ state: true })}>
+						<PlusIcon className="mr-2 size-4" />
+						Create
+					</Button>
 				</SectionHeader>
 				<SectionContent columns={4}>
 					{workspaces.map((ws) => (

@@ -92,8 +92,8 @@ export class ExpenseRepository {
 			)
 			.returning();
 
-		if (!expense) return null;
+		if (!expense) return { id: param.id };
 
-		return expense;
+		return { id: expense.id };
 	}
 }

@@ -64,6 +64,5 @@ export const InsertExpenseSchema = type({
 export const UpdateExpenseSchema = InsertExpenseSchema.partial();
 
 export const DeleteExpenseSchema = type({
-	"+": "delete",
 	id: "string.uuid.v7",
-}).or("null");
+});

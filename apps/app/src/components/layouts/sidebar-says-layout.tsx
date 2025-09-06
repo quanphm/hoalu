@@ -2,9 +2,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
+import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarHeader,
 	SidebarInset,
 	SidebarMenu,
@@ -54,12 +56,12 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{/* <NavDocumentation /> */}
 					<NavUser />
 				</SidebarContent>
-				{/* <SidebarFooter className="border-t px-4 py-2">
+				<SidebarFooter className="border-t">
 					<div className="flex items-center justify-between">
 						<p className="text-muted-foreground text-sm leading-none tracking-wider">
 							{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
-						<div className="flex gap-1.5">
+						<div className="flex gap-1">
 							<a
 								href="https://github.com/quanphm/hoalu"
 								target="_blank"
@@ -78,7 +80,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 							</a>
 						</div>
 					</div>
-				</SidebarFooter> */}
+				</SidebarFooter>
 			</Sidebar>
 			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>

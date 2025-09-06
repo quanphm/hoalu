@@ -2,8 +2,6 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-import { MailPlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
 import { InvitationsTable } from "@/components/invitations-table";
 import { InviteDialog } from "@/components/invite";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
@@ -50,14 +48,7 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Members</SectionTitle>
-					{canInvite && (
-						<InviteDialog>
-							<Button variant="outline" size="sm">
-								<MailPlusIcon className="mr-2 size-4" />
-								Invite people
-							</Button>
-						</InviteDialog>
-					)}
+					{canInvite && <InviteDialog />}
 				</SectionHeader>
 				<SectionContent>
 					<MembersTable data={membersTableData} />
