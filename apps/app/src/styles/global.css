@@ -23,7 +23,7 @@
 
 	body {
 		@apply relative bg-transparent text-foreground overscroll-none antialiased;
-		@apply font-geist-mono;
+		@apply font-geist-sans;
 		font-synthesis-weight: none;
 		font-variant-numeric: tabular-nums lining-nums;
 		font-optical-sizing: auto;
