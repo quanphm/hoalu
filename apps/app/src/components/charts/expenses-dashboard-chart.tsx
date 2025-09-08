@@ -314,6 +314,7 @@ export function ExpenseDashboardChart() {
 							fill="var(--color-date)"
 							className="cursor-pointer"
 							onClick={handleBarClick}
+							isAnimationActive={false}
 						/>
 					</BarChart>
 				</ChartContainer>
