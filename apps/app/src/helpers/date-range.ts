@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import type { PredefinedDateRange } from "@/atoms/filters";
 
 interface DateRangeCalculation {
@@ -63,14 +63,9 @@ export function calculateDateRange(
  * Check if a custom date range represents a full month
  */
 function isCustomRangeFullMonth(startDate: Date, endDate: Date): boolean {
-	// Check if start is the first day of a month
 	const isStartFirstOfMonth = startDate.getDate() === 1;
-
-	// Check if end is the last day of a month
 	const lastDayOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
 	const isEndLastOfMonth = endDate.getDate() === lastDayOfMonth.getDate();
-
-	// Check if they're in the same month
 	const isSameMonth =
 		startDate.getMonth() === endDate.getMonth() &&
 		startDate.getFullYear() === endDate.getFullYear();
@@ -98,11 +93,10 @@ export function calculateComparisonDateRange(
 	let previousStart: Date, previousEnd: Date;
 
 	if (predefinedRange === "custom") {
-		// Check if custom range represents a full month
 		const isFullMonth = isCustomRangeFullMonth(currentStart, currentEnd);
 
 		if (isFullMonth) {
-			// Compare to previous full month
+			// Compare to previous month
 			const currentMonth = new Date(currentStart.getFullYear(), currentStart.getMonth(), 1);
 			const prevMonth = new Date(currentMonth);
 			prevMonth.setMonth(prevMonth.getMonth() - 1);
@@ -112,8 +106,8 @@ export function calculateComparisonDateRange(
 				new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1, 0),
 			);
 		} else {
-			// For custom ranges, go back by the same duration
-			previousEnd = new Date(currentStart.getTime() - 1000 * 60 * 60 * 24); // Day before current start
+			// go back by the same duration
+			previousEnd = new Date(currentStart.getTime() - TIME_IN_MILLISECONDS.DAY); // Day before current start
 			previousStart = new Date(previousEnd.getTime() - durationMs);
 		}
 	}
@@ -160,8 +154,8 @@ export function calculateComparisonDateRange(
 	// For last N days, go back by the same number of days
 	else {
 		const days = parseInt(predefinedRange, 10);
-		previousEnd = new Date(currentStart.getTime() - 1000 * 60 * 60 * 24); // Day before current start
-		previousStart = new Date(previousEnd.getTime() - (days - 1) * 1000 * 60 * 60 * 24);
+		previousEnd = new Date(currentStart.getTime() - TIME_IN_MILLISECONDS.DAY); // Day before current start
+		previousStart = new Date(previousEnd.getTime() - (days - 1) * TIME_IN_MILLISECONDS.DAY);
 		previousStart = datetime.startOfDay(previousStart);
 		previousEnd = datetime.endOfDay(previousEnd);
 	}
@@ -224,19 +218,15 @@ export function getComparisonPeriodText(
 		const start = datetime.format(startDate, "MMM d");
 		const end = datetime.format(endDate, "MMM d, yyyy");
 		return `vs ${start} - ${end}`;
-	}
-	// For period-to-date comparisons
-	else if (predefinedRange === "wtd") {
+	} else if (predefinedRange === "wtd") {
 		// Previous week same period
 		const start = datetime.format(startDate, "MMM d");
 		const end = datetime.format(endDate, "MMM d, yyyy");
 		return `vs ${start} - ${end}`;
 	} else if (predefinedRange === "mtd") {
-		// Previous month same period
 		const monthName = datetime.format(startDate, "MMMM yyyy");
 		return `vs ${monthName}`;
 	} else if (predefinedRange === "ytd") {
-		// Previous year same period
 		const year = datetime.format(startDate, "yyyy");
 		return `vs ${year}`;
 	}

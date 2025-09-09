@@ -130,7 +130,7 @@ export function useSelectedExpense() {
 	return { expense, onSelectExpense };
 }
 
-export function useExpenseStatsWithComparison() {
+export function useExpenseStats() {
 	const { slug } = useWorkspace();
 	const {
 		metadata: { currency },

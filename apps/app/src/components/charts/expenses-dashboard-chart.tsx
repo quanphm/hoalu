@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
 import { filterDataByRange } from "@/helpers/date-range";
-import { useExpenseStatsWithComparison } from "@/hooks/use-expenses";
+import { useExpenseStats } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { CurrencyValue } from "../currency-value";
 import { PercentageChangeDisplay } from "../percentage-change";
@@ -70,7 +70,7 @@ export function ExpenseDashboardChart() {
 	const navigate = routeApi.useNavigate();
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
-	const stats = useExpenseStatsWithComparison();
+	const stats = useExpenseStats();
 	const {
 		metadata: { currency },
 	} = useWorkspace();
