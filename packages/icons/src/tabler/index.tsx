@@ -5,4 +5,6 @@ export * from "./folder";
 export * from "./home";
 export * from "./layout-dashboard";
 export * from "./settings";
+export * from "./trending-down";
+export * from "./trending-up";
 export * from "./x";

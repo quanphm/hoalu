@@ -12,7 +12,7 @@ import {
 	expenseWalletFilterAtom,
 } from "@/atoms";
 import { AVAILABLE_REPEAT_OPTIONS } from "@/helpers/constants";
-import { useExpenseStats } from "@/hooks/use-expenses";
+import { useExpenseStatsWithComparison } from "@/hooks/use-expenses";
 import type { RepeatSchema, WalletTypeSchema } from "@/lib/schema";
 import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
 import { WalletLabel } from "../wallets/wallet-badge";
@@ -25,7 +25,7 @@ export function ExpenseFilter() {
 	const { slug } = workspaceRouteApi.useParams();
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const stats = useExpenseStats();
+	const stats = useExpenseStatsWithComparison();
 
 	return (
 		<div className="flex flex-col gap-4.5">

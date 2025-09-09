@@ -59,6 +59,85 @@ export function calculateDateRange(
 	return { startDate, endDate };
 }
 
+/**
+ * Calculate the comparison/previous period date range for percentage change calculations
+ */
+export function calculateComparisonDateRange(
+	predefinedRange: PredefinedDateRange,
+	customRange?: { from: Date; to: Date } | null,
+): DateRangeCalculation | null {
+	if (predefinedRange === "all") return null;
+
+	const currentRange = calculateDateRange(predefinedRange, customRange);
+	if (!currentRange) return null;
+
+	const { startDate: currentStart, endDate: currentEnd } = currentRange;
+
+	// Calculate the duration of current period in milliseconds
+	const durationMs = currentEnd.getTime() - currentStart.getTime();
+
+	let previousStart: Date, previousEnd: Date;
+
+	if (predefinedRange === "custom") {
+		// For custom ranges, go back by the same duration
+		previousEnd = new Date(currentStart.getTime() - 1000 * 60 * 60 * 24); // Day before current start
+		previousStart = new Date(previousEnd.getTime() - durationMs);
+	}
+	// For period-to-date comparisons, use same period from previous timeframe
+	else if (predefinedRange === "wtd") {
+		// Previous week same period
+		const prevWeekEnd = new Date(currentEnd);
+		prevWeekEnd.setDate(prevWeekEnd.getDate() - 7);
+		const prevWeekStart = new Date(currentStart);
+		prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+		previousStart = datetime.startOfDay(prevWeekStart);
+		previousEnd = datetime.endOfDay(prevWeekEnd);
+	} else if (predefinedRange === "mtd") {
+		// Previous month same period (1st to same day of month)
+		const prevMonth = new Date(currentEnd);
+		prevMonth.setMonth(prevMonth.getMonth() - 1);
+
+		// Handle cases where previous month has fewer days
+		const currentDay = currentEnd.getDate();
+		const prevMonthLastDay = new Date(
+			prevMonth.getFullYear(),
+			prevMonth.getMonth() + 1,
+			0,
+		).getDate();
+		const adjustedDay = Math.min(currentDay, prevMonthLastDay);
+
+		prevMonth.setDate(adjustedDay);
+
+		previousEnd = datetime.endOfDay(prevMonth);
+		previousStart = datetime.startOfDay(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
+	} else if (predefinedRange === "ytd") {
+		// Previous year same period (Jan 1 to same date)
+		const prevYear = new Date(currentEnd);
+		prevYear.setFullYear(prevYear.getFullYear() - 1);
+
+		// Handle leap year edge case for Feb 29
+		if (currentEnd.getMonth() === 1 && currentEnd.getDate() === 29) {
+			prevYear.setDate(28); // Feb 28 in non-leap year
+		}
+
+		previousEnd = datetime.endOfDay(prevYear);
+		previousStart = datetime.startOfDay(new Date(prevYear.getFullYear(), 0, 1));
+	}
+	// For last N days, go back by the same number of days
+	else {
+		const days = parseInt(predefinedRange, 10);
+		previousEnd = new Date(currentStart.getTime() - 1000 * 60 * 60 * 24); // Day before current start
+		previousStart = new Date(previousEnd.getTime() - (days - 1) * 1000 * 60 * 60 * 24);
+		previousStart = datetime.startOfDay(previousStart);
+		previousEnd = datetime.endOfDay(previousEnd);
+	}
+
+	return {
+		startDate: previousStart,
+		endDate: previousEnd,
+	};
+}
+
 export function filterDataByRange<T extends { date: string }>(
 	data: T[],
 	range: PredefinedDateRange,
@@ -78,4 +157,47 @@ export function filterDataByRange<T extends { date: string }>(
 		.sort((a, b) => a.date.localeCompare(b.date));
 
 	return filtered;
+}
+
+/**
+ * Get a human-readable description of the comparison period
+ */
+export function getComparisonPeriodText(
+	predefinedRange: PredefinedDateRange,
+	customRange?: { from: Date; to: Date } | null,
+): string | null {
+	if (predefinedRange === "all") return null;
+
+	const comparisonRange = calculateComparisonDateRange(predefinedRange, customRange);
+	if (!comparisonRange) return null;
+
+	const { startDate, endDate } = comparisonRange;
+
+	if (predefinedRange === "custom") {
+		// For custom ranges, show the exact dates
+		const start = datetime.format(startDate, "MMM d");
+		const end = datetime.format(endDate, "MMM d, yyyy");
+		return `vs ${start} - ${end}`;
+	}
+	// For period-to-date comparisons
+	else if (predefinedRange === "wtd") {
+		// Previous week same period
+		const start = datetime.format(startDate, "MMM d");
+		const end = datetime.format(endDate, "MMM d, yyyy");
+		return `vs ${start} - ${end}`;
+	} else if (predefinedRange === "mtd") {
+		// Previous month same period
+		const monthName = datetime.format(startDate, "MMMM yyyy");
+		return `vs ${monthName}`;
+	} else if (predefinedRange === "ytd") {
+		// Previous year same period
+		const year = datetime.format(startDate, "yyyy");
+		return `vs ${year}`;
+	}
+	// For last N days
+	else {
+		const start = datetime.format(startDate, "MMM d");
+		const end = datetime.format(endDate, "MMM d, yyyy");
+		return `vs ${start} - ${end}`;
+	}
 }
