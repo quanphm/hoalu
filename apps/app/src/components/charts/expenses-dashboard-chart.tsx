@@ -10,6 +10,7 @@ import { filterDataByRange } from "@/helpers/date-range";
 import { useExpenseStats } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { CurrencyValue } from "../currency-value";
+import { PercentageChangeDisplay } from "../percentage-change";
 
 const chartConfig = {
 	value: {
@@ -237,11 +238,20 @@ export function ExpenseDashboardChart() {
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-6">
 					<CardTitle>Expenses</CardTitle>
-					<CurrencyValue
-						value={totalExpenses}
-						currency={currency}
-						className="font-semibold text-3xl"
-					/>
+					<div className="flex flex-col gap-1">
+						<CurrencyValue
+							value={totalExpenses}
+							currency={currency}
+							className="font-semibold text-3xl"
+						/>
+						{stats.hasComparison && (
+							<PercentageChangeDisplay
+								change={stats.amount.change}
+								className="self-start"
+								comparisonText={stats.comparisonText || undefined}
+							/>
+						)}
+					</div>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">

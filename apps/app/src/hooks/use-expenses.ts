@@ -5,13 +5,21 @@ import { useCallback, useDeferredValue } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import {
+	customDateRangeAtom,
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
 	searchKeywordsAtom,
+	selectDateRangeAtom,
 	selectedExpenseAtom,
 } from "@/atoms";
 import { formatCurrency } from "@/helpers/currency";
+import {
+	calculateComparisonDateRange,
+	filterDataByRange,
+	getComparisonPeriodText,
+} from "@/helpers/date-range";
+import { calculatePercentageChange } from "@/helpers/percentage-change";
 import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "@/lib/schema";
 import {
 	categoriesQueryOptions,
@@ -130,19 +138,55 @@ export function useExpenseStats() {
 	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const dateRange = useAtomValue(selectDateRangeAtom);
+	const customRange = useAtomValue(customDateRangeAtom);
 
-	const aggregationByDate = new Map<string, number>();
+	// Get current period data
+	const currentPeriodData = filterDataByRange(expenses, dateRange, customRange);
 
-	let totalAmount = 0;
-	const repeatCount: Record<string, number> = {};
-	for (const expense of expenses) {
+	// Get comparison period data
+	const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
+	const previousPeriodData = comparisonRange
+		? expenses.filter((expense) => {
+				const expenseDate = datetime.parse(expense.date, "yyyy-MM-dd", new Date());
+				return expenseDate >= comparisonRange.startDate && expenseDate <= comparisonRange.endDate;
+			})
+		: [];
+
+	// Calculate current period stats
+	const currentAggregationByDate = new Map<string, number>();
+	let currentTotalAmount = 0;
+	const currentRepeatCount: Record<string, number> = {};
+
+	for (const expense of currentPeriodData) {
 		const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
-		totalAmount += amount;
-		repeatCount[expense.repeat] = (repeatCount[expense.repeat] || 0) + 1;
+		currentTotalAmount += amount;
+		currentRepeatCount[expense.repeat] = (currentRepeatCount[expense.repeat] || 0) + 1;
 
-		const currentValue = aggregationByDate.get(expense.date) || 0;
-		aggregationByDate.set(expense.date, currentValue + amount);
+		const currentValue = currentAggregationByDate.get(expense.date) || 0;
+		currentAggregationByDate.set(expense.date, currentValue + amount);
 	}
+
+	// Calculate previous period stats
+	let previousTotalAmount = 0;
+	for (const expense of previousPeriodData) {
+		const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
+		previousTotalAmount += amount;
+	}
+
+	const currentActiveDays = new Set(currentPeriodData.map((e) => e.date)).size;
+	const previousActiveDays = new Set(previousPeriodData.map((e) => e.date)).size;
+
+	// Get comparison period text
+	const comparisonText = getComparisonPeriodText(dateRange, customRange);
+
+	// Calculate percentage changes
+	const totalAmountChange = calculatePercentageChange(currentTotalAmount, previousTotalAmount);
+	const transactionCountChange = calculatePercentageChange(
+		currentPeriodData.length,
+		previousPeriodData.length,
+	);
+	const activeDaysChange = calculatePercentageChange(currentActiveDays, previousActiveDays);
 
 	const categoryCount: Record<string, number> = {};
 	for (const category of categories) {
@@ -154,22 +198,31 @@ export function useExpenseStats() {
 		walletCount[wallet.id] = wallet.total;
 	}
 
-	const result: { date: string; value: number }[] = Array.from(aggregationByDate.entries()).map(
-		([date, value]) => ({ date, value }),
-	);
+	const result: { date: string; value: number }[] = Array.from(
+		currentAggregationByDate.entries(),
+	).map(([date, value]) => ({ date, value }));
 
 	return {
 		amount: {
-			total: formatCurrency(totalAmount, currency),
+			total: formatCurrency(currentTotalAmount, currency),
+			totalRaw: currentTotalAmount,
+			change: totalAmountChange,
 		},
 		transactions: {
-			total: expenses.length,
+			total: currentPeriodData.length,
+			change: transactionCountChange,
 			byCategory: categoryCount,
 			byWallet: walletCount,
-			byRepeat: repeatCount,
+			byRepeat: currentRepeatCount,
+		},
+		activeDays: {
+			total: currentActiveDays,
+			change: activeDaysChange,
 		},
 		aggregation: {
 			byDate: result,
 		},
+		hasComparison: comparisonRange !== null,
+		comparisonText,
 	};
 }
