@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CategoryBreakdownChart } from "@/components/charts/category-breakdown-chart";
+import { CategoryBreakdown } from "@/components/charts/category-breakdown";
 import { DashboardDateFilter } from "@/components/charts/dashboard-date-filter";
 import { ExpenseStatsRow } from "@/components/charts/expense-stats-row";
-import { ExpenseDashboardChart } from "@/components/charts/expenses-dashboard-chart";
+import { ExpenseOverview } from "@/components/charts/expenses-overview";
 import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { CreateWalletDialogTrigger } from "@/components/wallets/wallet-actions";
@@ -17,7 +17,7 @@ function RouteComponent() {
 		<>
 			<Section>
 				<SectionHeader>
-					<SectionTitle>Shortcuts</SectionTitle>
+					<SectionTitle>Quick actions</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={6} className="gap-4">
 					<CreateExpenseDialogTrigger />
@@ -34,11 +34,11 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<div className="col-span-12 md:col-span-6">
-						<ExpenseDashboardChart />
+						<ExpenseOverview />
 					</div>
 					<div className="col-span-12 flex flex-col gap-4 md:col-span-6">
 						<ExpenseStatsRow />
-						<CategoryBreakdownChart />
+						<CategoryBreakdown />
 					</div>
 				</SectionContent>
 			</Section>

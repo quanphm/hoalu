@@ -1,6 +1,6 @@
-import { Check, Copy } from "lucide-react";
 import { useId, useRef, useState } from "react";
 
+import { CheckIcon, CopyIcon } from "@hoalu/icons/lucide";
 import { Input } from "@hoalu/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
@@ -43,7 +43,12 @@ export function InputWithCopy({ value }: { value: string }) {
 								copied ? "scale-100 opacity-100" : "scale-0 opacity-0",
 							)}
 						>
-							<Check className="stroke-emerald-500" size={16} strokeWidth={2} aria-hidden="true" />
+							<CheckIcon
+								className="stroke-emerald-500"
+								size={16}
+								strokeWidth={2}
+								aria-hidden="true"
+							/>
 						</div>
 						<div
 							className={cn(
@@ -51,7 +56,7 @@ export function InputWithCopy({ value }: { value: string }) {
 								copied ? "scale-0 opacity-0" : "scale-100 opacity-100",
 							)}
 						>
-							<Copy size={16} strokeWidth={2} aria-hidden="true" />
+							<CopyIcon size={16} strokeWidth={2} aria-hidden="true" />
 						</div>
 					</button>
 				</TooltipTrigger>

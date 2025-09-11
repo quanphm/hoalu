@@ -2,13 +2,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
+import { ChevronsUpDownIcon } from "@hoalu/icons/lucide";
 import {
-	ArrowRightLeftIcon,
-	ChevronsUpDownIcon,
-	GalleryVerticalIcon,
-	ListTodoIcon,
-} from "@hoalu/icons/lucide";
-import { SettingsIcon } from "@hoalu/icons/tabler";
+	AlignBoxTopCenterIcon,
+	ArrowsExchangeIcon,
+	LayoutDashboardIcon,
+	SettingsIcon,
+} from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -84,10 +84,10 @@ function MobileBottomNav() {
 					activeOptions={{ exact: true }}
 					className={cn(
 						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
-						"font-medium text-xs transition-colors",
+						"font-medium text-xs",
 					)}
 				>
-					<GalleryVerticalIcon className={cn("h-5 w-5 transition-colors")} />
+					<LayoutDashboardIcon className="size-5" />
 					<span className="truncate text-xs leading-none">Dashboard</span>
 				</ButtonLink>
 				<ButtonLink
@@ -98,10 +98,10 @@ function MobileBottomNav() {
 					activeOptions={{ exact: true }}
 					className={cn(
 						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
-						"font-medium text-xs transition-colors",
+						"font-medium text-xs",
 					)}
 				>
-					<ArrowRightLeftIcon className={cn("h-5 w-5 transition-colors")} />
+					<ArrowsExchangeIcon className="size-5" />
 					<span className="truncate text-xs leading-none">Expense</span>
 				</ButtonLink>
 				<ButtonLink
@@ -112,11 +112,11 @@ function MobileBottomNav() {
 					activeOptions={{ exact: true }}
 					className={cn(
 						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
-						"font-medium text-xs transition-colors",
+						"font-medium text-xs",
 					)}
 					disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
 				>
-					<ListTodoIcon className={cn("h-5 w-5 transition-colors")} />
+					<AlignBoxTopCenterIcon className="size-5" />
 					<span className="truncate text-xs leading-none">Tasks</span>
 				</ButtonLink>
 				<ButtonLink
@@ -127,10 +127,10 @@ function MobileBottomNav() {
 					activeOptions={{ exact: true }}
 					className={cn(
 						"relative flex h-12 min-w-12 flex-col items-center justify-center gap-1 px-2 py-1",
-						"font-medium text-xs transition-colors",
+						"font-medium text-xs",
 					)}
 				>
-					<SettingsIcon className={cn("h-5 w-5 transition-colors")} />
+					<SettingsIcon className="size-5" />
 					<span className="truncate text-xs leading-none">Settings</span>
 				</ButtonLink>
 			</div>

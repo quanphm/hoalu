@@ -62,7 +62,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 				<CardTitle>{props.name}</CardTitle>
 			</CardHeader>
 			<CardContent className="text-muted-foreground text-xs">
-				Created at {datetime.format(props.createdAt, "d MMM")}
+				Created at {datetime.format(props.createdAt, "d MMM yyyy")}
 			</CardContent>
 		</Card>
 	);

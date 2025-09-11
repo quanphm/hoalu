@@ -43,7 +43,6 @@ function DialogPopup({
 }: React.ComponentProps<typeof DialogPrimitive.Popup> & {
 	showCloseButton?: boolean;
 }) {
-	console.log(className);
 	return (
 		<DialogPrimitive.Popup
 			data-slot="dialog-content"

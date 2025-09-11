@@ -5,7 +5,7 @@ import { ImageGallery } from "@/components/image-gallery";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { filesQueryOptions } from "@/services/query-options";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/files")({
+export const Route = createFileRoute("/_dashboard/$slug/files")({
 	component: RouteComponent,
 });
 
