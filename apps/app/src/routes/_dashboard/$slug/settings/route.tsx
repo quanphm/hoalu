@@ -33,24 +33,6 @@ function RouteComponent() {
 							Members
 						</Link>
 					</TabsTrigger>
-					<TabsTrigger
-						value="library"
-						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-						asChild
-					>
-						<Link to="/$slug/settings/library" params={{ slug }}>
-							Library
-						</Link>
-					</TabsTrigger>
-					<TabsTrigger
-						value="files"
-						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-						asChild
-					>
-						<Link to="/$slug/settings/files" params={{ slug }}>
-							Files
-						</Link>
-					</TabsTrigger>
 				</TabsList>
 			</Tabs>
 

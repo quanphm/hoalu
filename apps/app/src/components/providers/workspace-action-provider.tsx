@@ -129,17 +129,5 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		[slug, allowShortcutNavigate],
 	);
 
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.goto_library.hotkey,
-		() => {
-			navigate({ to: "/$slug/settings/library", params: { slug } });
-		},
-		{
-			description: "Navigate: Settings / Library",
-			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_library.enabled,
-		},
-		[slug, allowShortcutNavigate],
-	);
-
 	return children;
 }

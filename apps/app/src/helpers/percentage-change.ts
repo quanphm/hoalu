@@ -1,9 +1,7 @@
 export interface PercentageChange {
 	percentage: number;
-	isIncrease: boolean;
-	isDecrease: boolean;
-	isNoChange: boolean;
 	displayValue: string;
+	status: "increase" | "decrease" | "no-change";
 }
 
 /**
@@ -16,46 +14,38 @@ export function calculatePercentageChange(
 	if (previousValue === 0 && currentValue === 0) {
 		return {
 			percentage: 0,
-			isIncrease: false,
-			isDecrease: false,
-			isNoChange: true,
 			displayValue: "0%",
+			status: "no-change",
 		};
 	}
 
 	if (previousValue === 0) {
 		return {
 			percentage: 100,
-			isIncrease: currentValue > 0,
-			isDecrease: false,
-			isNoChange: currentValue === 0,
 			displayValue: currentValue > 0 ? "+100%" : "0%",
+			status: currentValue > 0 ? "increase" : "no-change",
 		};
 	}
 
 	const percentage = ((currentValue - previousValue) / previousValue) * 100;
-	const isIncrease = percentage > 0;
-	const isDecrease = percentage < 0;
-	const isNoChange = percentage === 0;
+	const status = percentage === 0 ? "no-change" : percentage > 0 ? "increase" : "decrease";
 
-	const displayValue = isNoChange
-		? "0%"
-		: `${isIncrease ? "+" : ""}${Math.abs(percentage).toFixed(1)}%`;
+	const displayValue =
+		status === "no-change"
+			? "0%"
+			: `${status === "increase" ? "+" : "-"}${Math.abs(percentage).toFixed(1)}%`;
 
 	return {
 		percentage: Math.abs(percentage),
-		isIncrease,
-		isDecrease,
-		isNoChange,
 		displayValue,
+		status,
 	};
 }
 
 export function getPercentageChangeClasses(change: PercentageChange) {
-	if (change.isNoChange) {
-		return "text-muted-foreground";
-	}
-	return change.isIncrease
-		? "text-green-600 dark:text-green-400"
-		: "text-red-600 dark:text-red-400";
+	return change.status === "no-change"
+		? "text-muted-foreground"
+		: change.status === "increase"
+			? "text-green-600 dark:text-green-400"
+			: "text-red-600 dark:text-red-400";
 }

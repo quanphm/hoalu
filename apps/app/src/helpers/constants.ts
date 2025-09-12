@@ -86,11 +86,6 @@ export const KEYBOARD_SHORTCUTS = {
 	goto_members: {
 		label: "M",
 		hotkey: "m",
-		enabled: false,
-	},
-	goto_library: {
-		label: "L",
-		hotkey: "l",
 		enabled: true,
 	},
 	goto_preferences: {

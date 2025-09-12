@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent } from "@hoalu/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import {
 	customDateRangeAtom,
@@ -29,7 +29,7 @@ interface CategoryData {
 	color: ColorSchema;
 }
 
-export function CategoryBreakdownChart() {
+export function CategoryBreakdown() {
 	const [view, setView] = useState<"less" | "more">("less");
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
@@ -87,10 +87,10 @@ export function CategoryBreakdownChart() {
 
 	return (
 		<Card className="py-0">
-			<CardContent className="px-6 py-4">
-				<div className="flex items-center justify-between">
-					<span className="font-medium text-muted-foreground text-sm">Category Breakdown</span>
-				</div>
+			<CardHeader className="pt-6">
+				<CardTitle>Top Categories</CardTitle>
+			</CardHeader>
+			<CardContent className="px-6 pb-6">
 				<div className="mt-2">
 					{dataToView.length === 0 ? (
 						<div className="flex h-[250px] items-center justify-center text-muted-foreground">

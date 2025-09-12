@@ -65,7 +65,7 @@ function groupDataByMonth(data: { date: string; value: number }[], isYTD = false
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-export function ExpenseDashboardChart() {
+export function ExpenseOverview() {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
 	const dateRange = useAtomValue(selectDateRangeAtom);

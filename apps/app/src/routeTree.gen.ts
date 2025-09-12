@@ -20,14 +20,15 @@ import { Route as DashboardSlugRouteRouteImport } from './routes/_dashboard/$slu
 import { Route as DashboardSlugIndexRouteImport } from './routes/_dashboard/$slug/index'
 import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
 import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
+import { Route as DashboardSlugWalletsRouteImport } from './routes/_dashboard/$slug/wallets'
 import { Route as DashboardSlugTasksRouteImport } from './routes/_dashboard/$slug/tasks'
+import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
 import { Route as DashboardSlugExpensesRouteImport } from './routes/_dashboard/$slug/expenses'
+import { Route as DashboardSlugCategoriesRouteImport } from './routes/_dashboard/$slug/categories'
 import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
 import { Route as DashboardSlugSettingsIndexRouteImport } from './routes/_dashboard/$slug/settings/index'
 import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
 import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
-import { Route as DashboardSlugSettingsLibraryRouteImport } from './routes/_dashboard/$slug/settings/library'
-import { Route as DashboardSlugSettingsFilesRouteImport } from './routes/_dashboard/$slug/settings/files'
 import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -84,14 +85,29 @@ const DashboardAccountPreferencesRoute =
     path: '/account/preferences',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardSlugWalletsRoute = DashboardSlugWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
 const DashboardSlugTasksRoute = DashboardSlugTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
   getParentRoute: () => DashboardSlugRouteRoute,
 } as any)
+const DashboardSlugFilesRoute = DashboardSlugFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
 const DashboardSlugExpensesRoute = DashboardSlugExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
+const DashboardSlugCategoriesRoute = DashboardSlugCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => DashboardSlugRouteRoute,
 } as any)
 const DashboardSlugSettingsRouteRoute =
@@ -118,18 +134,6 @@ const DashboardSlugSettingsMembersRoute =
     path: '/members',
     getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
-const DashboardSlugSettingsLibraryRoute =
-  DashboardSlugSettingsLibraryRouteImport.update({
-    id: '/library',
-    path: '/library',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
-  } as any)
-const DashboardSlugSettingsFilesRoute =
-  DashboardSlugSettingsFilesRouteImport.update({
-    id: '/files',
-    path: '/files',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
-  } as any)
 const AuthInviteIdAcceptRoute = AuthInviteIdAcceptRouteImport.update({
   id: '/invite/$id/accept',
   path: '/invite/$id/accept',
@@ -144,14 +148,15 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/': typeof DashboardIndexRoute
   '/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
+  '/$slug/categories': typeof DashboardSlugCategoriesRoute
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
+  '/$slug/files': typeof DashboardSlugFilesRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
   '/$slug/': typeof DashboardSlugIndexRoute
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/$slug/settings/files': typeof DashboardSlugSettingsFilesRoute
-  '/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
   '/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
@@ -162,14 +167,15 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/': typeof DashboardIndexRoute
+  '/$slug/categories': typeof DashboardSlugCategoriesRoute
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
+  '/$slug/files': typeof DashboardSlugFilesRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
   '/$slug': typeof DashboardSlugIndexRoute
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/$slug/settings/files': typeof DashboardSlugSettingsFilesRoute
-  '/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
   '/$slug/settings': typeof DashboardSlugSettingsIndexRoute
@@ -185,14 +191,15 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
+  '/_dashboard/$slug/categories': typeof DashboardSlugCategoriesRoute
   '/_dashboard/$slug/expenses': typeof DashboardSlugExpensesRoute
+  '/_dashboard/$slug/files': typeof DashboardSlugFilesRoute
   '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/_dashboard/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
   '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
   '/_auth/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/_dashboard/$slug/settings/files': typeof DashboardSlugSettingsFilesRoute
-  '/_dashboard/$slug/settings/library': typeof DashboardSlugSettingsLibraryRoute
   '/_dashboard/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/_dashboard/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
   '/_dashboard/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
@@ -207,14 +214,15 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/'
     | '/$slug/settings'
+    | '/$slug/categories'
     | '/$slug/expenses'
+    | '/$slug/files'
     | '/$slug/tasks'
+    | '/$slug/wallets'
     | '/account/preferences'
     | '/account/tokens'
     | '/$slug/'
     | '/invite/$id/accept'
-    | '/$slug/settings/files'
-    | '/$slug/settings/library'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
     | '/$slug/settings/'
@@ -225,14 +233,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/'
+    | '/$slug/categories'
     | '/$slug/expenses'
+    | '/$slug/files'
     | '/$slug/tasks'
+    | '/$slug/wallets'
     | '/account/preferences'
     | '/account/tokens'
     | '/$slug'
     | '/invite/$id/accept'
-    | '/$slug/settings/files'
-    | '/$slug/settings/library'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
     | '/$slug/settings'
@@ -247,14 +256,15 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_dashboard/'
     | '/_dashboard/$slug/settings'
+    | '/_dashboard/$slug/categories'
     | '/_dashboard/$slug/expenses'
+    | '/_dashboard/$slug/files'
     | '/_dashboard/$slug/tasks'
+    | '/_dashboard/$slug/wallets'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
     | '/_dashboard/$slug/'
     | '/_auth/invite/$id/accept'
-    | '/_dashboard/$slug/settings/files'
-    | '/_dashboard/$slug/settings/library'
     | '/_dashboard/$slug/settings/members'
     | '/_dashboard/$slug/settings/workspace'
     | '/_dashboard/$slug/settings/'
@@ -344,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountPreferencesRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/$slug/wallets': {
+      id: '/_dashboard/$slug/wallets'
+      path: '/wallets'
+      fullPath: '/$slug/wallets'
+      preLoaderRoute: typeof DashboardSlugWalletsRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
     '/_dashboard/$slug/tasks': {
       id: '/_dashboard/$slug/tasks'
       path: '/tasks'
@@ -351,11 +368,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugTasksRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
+    '/_dashboard/$slug/files': {
+      id: '/_dashboard/$slug/files'
+      path: '/files'
+      fullPath: '/$slug/files'
+      preLoaderRoute: typeof DashboardSlugFilesRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
     '/_dashboard/$slug/expenses': {
       id: '/_dashboard/$slug/expenses'
       path: '/expenses'
       fullPath: '/$slug/expenses'
       preLoaderRoute: typeof DashboardSlugExpensesRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
+    '/_dashboard/$slug/categories': {
+      id: '/_dashboard/$slug/categories'
+      path: '/categories'
+      fullPath: '/$slug/categories'
+      preLoaderRoute: typeof DashboardSlugCategoriesRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
     '/_dashboard/$slug/settings': {
@@ -384,20 +415,6 @@ declare module '@tanstack/react-router' {
       path: '/members'
       fullPath: '/$slug/settings/members'
       preLoaderRoute: typeof DashboardSlugSettingsMembersRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
-    }
-    '/_dashboard/$slug/settings/library': {
-      id: '/_dashboard/$slug/settings/library'
-      path: '/library'
-      fullPath: '/$slug/settings/library'
-      preLoaderRoute: typeof DashboardSlugSettingsLibraryRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
-    }
-    '/_dashboard/$slug/settings/files': {
-      id: '/_dashboard/$slug/settings/files'
-      path: '/files'
-      fullPath: '/$slug/settings/files'
-      preLoaderRoute: typeof DashboardSlugSettingsFilesRouteImport
       parentRoute: typeof DashboardSlugSettingsRouteRoute
     }
     '/_auth/invite/$id/accept': {
@@ -431,8 +448,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface DashboardSlugSettingsRouteRouteChildren {
-  DashboardSlugSettingsFilesRoute: typeof DashboardSlugSettingsFilesRoute
-  DashboardSlugSettingsLibraryRoute: typeof DashboardSlugSettingsLibraryRoute
   DashboardSlugSettingsMembersRoute: typeof DashboardSlugSettingsMembersRoute
   DashboardSlugSettingsWorkspaceRoute: typeof DashboardSlugSettingsWorkspaceRoute
   DashboardSlugSettingsIndexRoute: typeof DashboardSlugSettingsIndexRoute
@@ -440,8 +455,6 @@ interface DashboardSlugSettingsRouteRouteChildren {
 
 const DashboardSlugSettingsRouteRouteChildren: DashboardSlugSettingsRouteRouteChildren =
   {
-    DashboardSlugSettingsFilesRoute: DashboardSlugSettingsFilesRoute,
-    DashboardSlugSettingsLibraryRoute: DashboardSlugSettingsLibraryRoute,
     DashboardSlugSettingsMembersRoute: DashboardSlugSettingsMembersRoute,
     DashboardSlugSettingsWorkspaceRoute: DashboardSlugSettingsWorkspaceRoute,
     DashboardSlugSettingsIndexRoute: DashboardSlugSettingsIndexRoute,
@@ -454,15 +467,21 @@ const DashboardSlugSettingsRouteRouteWithChildren =
 
 interface DashboardSlugRouteRouteChildren {
   DashboardSlugSettingsRouteRoute: typeof DashboardSlugSettingsRouteRouteWithChildren
+  DashboardSlugCategoriesRoute: typeof DashboardSlugCategoriesRoute
   DashboardSlugExpensesRoute: typeof DashboardSlugExpensesRoute
+  DashboardSlugFilesRoute: typeof DashboardSlugFilesRoute
   DashboardSlugTasksRoute: typeof DashboardSlugTasksRoute
+  DashboardSlugWalletsRoute: typeof DashboardSlugWalletsRoute
   DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
 }
 
 const DashboardSlugRouteRouteChildren: DashboardSlugRouteRouteChildren = {
   DashboardSlugSettingsRouteRoute: DashboardSlugSettingsRouteRouteWithChildren,
+  DashboardSlugCategoriesRoute: DashboardSlugCategoriesRoute,
   DashboardSlugExpensesRoute: DashboardSlugExpensesRoute,
+  DashboardSlugFilesRoute: DashboardSlugFilesRoute,
   DashboardSlugTasksRoute: DashboardSlugTasksRoute,
+  DashboardSlugWalletsRoute: DashboardSlugWalletsRoute,
   DashboardSlugIndexRoute: DashboardSlugIndexRoute,
 }
 

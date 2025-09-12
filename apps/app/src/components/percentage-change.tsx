@@ -22,18 +22,18 @@ export function PercentageChangeDisplay({
 		md: "text-sm",
 		lg: "text-base",
 	};
-
 	const iconSizeClasses = {
 		sm: "h-3 w-3",
 		md: "h-4 w-4",
 		lg: "h-5 w-5",
 	};
 
-	const IconComponent = change.isNoChange
-		? null
-		: change.isIncrease
-			? TrendingUpIcon
-			: TrendingDownIcon;
+	const IconComponent =
+		change.status === "no-change"
+			? null
+			: change.status === "increase"
+				? TrendingUpIcon
+				: TrendingDownIcon;
 
 	return (
 		<span
@@ -67,9 +67,9 @@ export function PercentageChangeBadge({
 	const classes = getPercentageChangeClasses(change);
 
 	let bgClasses = "bg-muted/50";
-	if (change.isIncrease) {
+	if (change.status === "increase") {
 		bgClasses = "bg-green-50 dark:bg-green-950/30";
-	} else if (change.isDecrease) {
+	} else if (change.status === "decrease") {
 		bgClasses = "bg-red-50 dark:bg-red-950/30";
 	}
 

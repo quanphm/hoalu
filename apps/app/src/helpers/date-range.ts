@@ -59,10 +59,7 @@ export function calculateDateRange(
 	return { startDate, endDate };
 }
 
-/**
- * Check if a custom date range represents a full month
- */
-function isCustomRangeFullMonth(startDate: Date, endDate: Date): boolean {
+function isRangeFullMonth(startDate: Date, endDate: Date): boolean {
 	const isStartFirstOfMonth = startDate.getDate() === 1;
 	const lastDayOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
 	const isEndLastOfMonth = endDate.getDate() === lastDayOfMonth.getDate();
@@ -93,7 +90,7 @@ export function calculateComparisonDateRange(
 	let previousStart: Date, previousEnd: Date;
 
 	if (predefinedRange === "custom") {
-		const isFullMonth = isCustomRangeFullMonth(currentStart, currentEnd);
+		const isFullMonth = isRangeFullMonth(currentStart, currentEnd);
 
 		if (isFullMonth) {
 			// Compare to previous month
@@ -187,9 +184,6 @@ export function filterDataByRange<T extends { date: string }>(
 	return filtered;
 }
 
-/**
- * Get a human-readable description of the comparison period
- */
 export function getComparisonPeriodText(
 	predefinedRange: PredefinedDateRange,
 	customRange?: { from: Date; to: Date } | null,
@@ -202,37 +196,22 @@ export function getComparisonPeriodText(
 	const { startDate, endDate } = comparisonRange;
 
 	if (predefinedRange === "custom" && customRange) {
-		// Check if the original custom range was a full month
 		const currentRange = calculateDateRange(predefinedRange, customRange);
 		if (currentRange) {
-			const isFullMonth = isCustomRangeFullMonth(currentRange.startDate, currentRange.endDate);
-
+			const isFullMonth = isRangeFullMonth(currentRange.startDate, currentRange.endDate);
 			if (isFullMonth) {
-				// For full month comparisons, show month name
 				const monthName = datetime.format(startDate, "MMMM yyyy");
 				return `vs ${monthName}`;
 			}
 		}
-
-		// For other custom ranges, show the exact dates
-		const start = datetime.format(startDate, "MMM d");
+		const start = datetime.format(startDate, "MMM d, yyyy");
 		const end = datetime.format(endDate, "MMM d, yyyy");
 		return `vs ${start} - ${end}`;
-	} else if (predefinedRange === "wtd") {
-		// Previous week same period
-		const start = datetime.format(startDate, "MMM d");
-		const end = datetime.format(endDate, "MMM d, yyyy");
-		return `vs ${start} - ${end}`;
-	} else if (predefinedRange === "mtd") {
-		const monthName = datetime.format(startDate, "MMMM yyyy");
-		return `vs ${monthName}`;
 	} else if (predefinedRange === "ytd") {
 		const year = datetime.format(startDate, "yyyy");
 		return `vs ${year}`;
-	}
-	// For last N days
-	else {
-		const start = datetime.format(startDate, "MMM d");
+	} else {
+		const start = datetime.format(startDate, "MMM d, yyyy");
 		const end = datetime.format(endDate, "MMM d, yyyy");
 		return `vs ${start} - ${end}`;
 	}
