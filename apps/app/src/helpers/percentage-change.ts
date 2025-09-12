@@ -33,7 +33,7 @@ export function calculatePercentageChange(
 	const displayValue =
 		status === "no-change"
 			? "0%"
-			: `${status === "increase" ? "+" : ""}${Math.abs(percentage).toFixed(1)}%`;
+			: `${status === "increase" ? "+" : "-"}${Math.abs(percentage).toFixed(1)}%`;
 
 	return {
 		percentage: Math.abs(percentage),
