@@ -43,12 +43,7 @@ export function InputWithCopy({ value }: { value: string }) {
 								copied ? "scale-100 opacity-100" : "scale-0 opacity-0",
 							)}
 						>
-							<CheckIcon
-								className="stroke-emerald-500"
-								size={16}
-								strokeWidth={2}
-								aria-hidden="true"
-							/>
+							<CheckIcon className="size-4 text-emerald-500" aria-hidden="true" />
 						</div>
 						<div
 							className={cn(

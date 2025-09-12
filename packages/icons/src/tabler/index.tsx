@@ -1,5 +1,6 @@
 export * from "./align-box-top-center";
 export * from "./arrows-exchange";
+export * from "./building-cottage";
 export * from "./calendar";
 export * from "./file-upload";
 export * from "./folder";

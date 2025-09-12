@@ -18,11 +18,11 @@
 
 @layer base {
 	* {
-		@apply box-border border-border;
+		@apply box-border border-border overscroll-none;
 	}
 
 	body {
-		@apply relative bg-transparent text-foreground overscroll-none antialiased;
+		@apply relative bg-transparent text-foreground antialiased;
 		@apply font-geist-sans;
 		font-synthesis-weight: none;
 		font-variant-numeric: tabular-nums lining-nums;

@@ -3,9 +3,9 @@ import { Link, useParams } from "@tanstack/react-router";
 import {
 	AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
+	BuildingCottageIcon,
 	FileUploadIcon,
 	LayoutDashboardIcon,
-	SettingsIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
 	WalletIcon,
@@ -116,7 +116,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton asChild>
 								<Link to="/$slug/settings/workspace" params={{ slug }}>
-									<SettingsIcon />
+									<BuildingCottageIcon />
 									<span>Workspace</span>
 									<SidebarMenuBadge>
 										<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
