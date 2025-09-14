@@ -18,7 +18,7 @@ export function FilesField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<FieldControl>
-				<FilesUpload onFilesSelectedUpdate={handleFiles} />
+				<FilesUpload onFilesSelectedUpdate={handleFiles} {...props} />
 			</FieldControl>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />

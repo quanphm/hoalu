@@ -47,71 +47,76 @@ export function NavUser() {
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<SidebarMenuButton
-								size="lg"
-								className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-							>
-								<UserAvatar name={user.name} image={user.image} />
-								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">{user.name}</span>
-									<span className="truncate text-xs">{user.email}</span>
-								</div>
-								<ChevronsUpDownIcon className="ml-auto size-4" />
-							</SidebarMenuButton>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent
-							className="w-(--radix-dropdown-menu-trigger-width) min-w-52 rounded-lg"
-							side="top"
+						<DropdownMenuTrigger
+							render={
+								<SidebarMenuButton
+									size="lg"
+									className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+								/>
+							}
 						>
-							<DropdownMenuGroup>
-								<DropdownMenuSub>
-									<DropdownMenuSubTrigger>
-										<PaletteIcon />
-										<span>Theme</span>
-										<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
-									</DropdownMenuSubTrigger>
-									<DropdownMenuPortal>
-										<DropdownMenuSubContent>
-											{THEMES.map((themeName) => (
-												<DropdownMenuItem
-													key={themeName}
-													onClick={() => setTheme(themeName)}
-													className="capitalize"
-												>
-													{theme === themeName && (
-														<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-															<CheckIcon className="size-4" />
-														</span>
-													)}
-													<span className="ms-6">{THEME_LABELS[themeName]}</span>
-												</DropdownMenuItem>
-											))}
-										</DropdownMenuSubContent>
-									</DropdownMenuPortal>
-								</DropdownMenuSub>
-							</DropdownMenuGroup>
+							<UserAvatar name={user.name} image={user.image} />
+							<div className="grid flex-1 text-left text-sm leading-tight">
+								<span className="truncate font-semibold">{user.name}</span>
+								<span className="truncate text-xs">{user.email}</span>
+							</div>
+							<ChevronsUpDownIcon className="ml-auto size-4" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent className="w-(--anchor-width) min-w-52 rounded-lg" side="top">
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger>
+									<PaletteIcon />
+									<span>Theme</span>
+									<HotKey {...KEYBOARD_SHORTCUTS.toggle_theme} />
+								</DropdownMenuSubTrigger>
+								<DropdownMenuPortal>
+									<DropdownMenuSubContent>
+										{THEMES.map((themeName) => (
+											<DropdownMenuItem
+												key={themeName}
+												onClick={() => setTheme(themeName)}
+												className="capitalize"
+											>
+												{theme === themeName && (
+													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+														<CheckIcon className="size-4" />
+													</span>
+												)}
+												<span className="ms-6">{THEME_LABELS[themeName]}</span>
+											</DropdownMenuItem>
+										))}
+									</DropdownMenuSubContent>
+								</DropdownMenuPortal>
+							</DropdownMenuSub>
+
 							<DropdownMenuSeparator />
+
 							<DropdownMenuGroup>
-								<DropdownMenuItem asChild>
-									<Link
-										to="/account/preferences"
-										disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
-									>
-										<SettingsIcon />
-										Preferences
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_preferences} />
-									</Link>
+								<DropdownMenuItem
+									render={
+										<Link
+											to="/account/preferences"
+											disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
+										/>
+									}
+								>
+									<SettingsIcon />
+									Preferences
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_preferences} />
 								</DropdownMenuItem>
-								<DropdownMenuItem asChild>
-									<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled}>
-										<KeyRoundIcon />
-										Access tokens
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_tokens} />
-									</Link>
+								<DropdownMenuItem
+									render={
+										<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled} />
+									}
+								>
+									<KeyRoundIcon />
+									Access tokens
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_tokens} />
 								</DropdownMenuItem>
 							</DropdownMenuGroup>
+
 							<DropdownMenuSeparator />
+
 							<DropdownMenuItem onClick={() => signOut()}>
 								<LogOutIcon />
 								Log out

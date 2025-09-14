@@ -24,7 +24,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createWalletDialogAtom, deleteWalletDialogAtom, editWalletDialogAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -41,16 +40,8 @@ import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from 
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
 import { walletWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateWalletDialogTrigger(props: React.PropsWithChildren) {
+export function CreateWalletDialogTrigger() {
 	const setDialog = useSetAtom(createWalletDialogAtom);
-
-	if (props.children) {
-		return (
-			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
-				{props.children}
-			</SlotPrimitive.Slot>
-		);
-	}
 
 	return (
 		<Button variant="outline" onClick={() => setDialog({ state: true })}>
@@ -208,7 +199,7 @@ function EditWalletForm(props: { id: string }) {
 							label="In use"
 							description={
 								field.state.value === false
-									? "You won't be able to create new expense with this wallet."
+									? "You won't be able to create new expense with this wallet"
 									: ""
 							}
 						/>
@@ -289,11 +280,9 @@ export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" className="h-8 w-8 p-0">
-					<span className="sr-only">Open menu</span>
-					<MoreVerticalIcon className="size-4" />
-				</Button>
+			<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
+				<span className="sr-only">Open menu</span>
+				<MoreVerticalIcon className="size-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem onClick={() => setEditDialog({ state: true, data: { id } })}>

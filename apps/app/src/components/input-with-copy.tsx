@@ -29,31 +29,30 @@ export function InputWithCopy({ value }: { value: string }) {
 				readOnly
 			/>
 			<Tooltip>
-				<TooltipTrigger asChild>
-					<button
-						type="button"
-						onClick={handleCopy}
-						className="absolute inset-y-0 end-0 flex h-full w-9 cursor-pointer items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 hover:text-foreground focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
-						aria-label={copied ? "Copied" : "Copy to clipboard"}
-						disabled={copied}
+				<TooltipTrigger
+					render={
+						<button
+							type="button"
+							onClick={handleCopy}
+							className="absolute inset-y-0 end-0 flex h-full w-9 cursor-pointer items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 hover:text-foreground focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
+							aria-label={copied ? "Copied" : "Copy to clipboard"}
+							disabled={copied}
+						/>
+					}
+				>
+					<div
+						className={cn("transition-all", copied ? "scale-100 opacity-100" : "scale-0 opacity-0")}
 					>
-						<div
-							className={cn(
-								"transition-all",
-								copied ? "scale-100 opacity-100" : "scale-0 opacity-0",
-							)}
-						>
-							<CheckIcon className="size-4 text-emerald-500" aria-hidden="true" />
-						</div>
-						<div
-							className={cn(
-								"absolute transition-all",
-								copied ? "scale-0 opacity-0" : "scale-100 opacity-100",
-							)}
-						>
-							<CopyIcon size={16} strokeWidth={2} aria-hidden="true" />
-						</div>
-					</button>
+						<CheckIcon className="size-4 text-emerald-500" aria-hidden="true" />
+					</div>
+					<div
+						className={cn(
+							"absolute transition-all",
+							copied ? "scale-0 opacity-0" : "scale-100 opacity-100",
+						)}
+					>
+						<CopyIcon size={16} strokeWidth={2} aria-hidden="true" />
+					</div>
 				</TooltipTrigger>
 				<TooltipContent>Copy to clipboard</TooltipContent>
 			</Tooltip>

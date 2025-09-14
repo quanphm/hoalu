@@ -11,7 +11,6 @@ import { InputWithEmojiPickerField } from "./input-with-emoji-picker";
 import { InputWithPrefixField } from "./input-with-prefix";
 import { SelectField } from "./select";
 import { SelectCategoryField } from "./select-category";
-import { RepeatField } from "./select-repeat";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
 import { SubscribeButton } from "./subscribe-button";
@@ -35,7 +34,6 @@ const { useAppForm, withForm } = createFormHook({
 		ColorsField,
 		TiptapField,
 		FilesField,
-		RepeatField,
 	},
 	formComponents: {
 		Form,

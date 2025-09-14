@@ -17,6 +17,12 @@ import {
 import { AVAILABLE_LAST_RANGE_OPTIONS, AVAILABLE_TO_DATE_RANGE_OPTIONS } from "@/helpers/constants";
 import { DateRangePicker } from "./date-range-picker";
 
+const options = [
+	...AVAILABLE_LAST_RANGE_OPTIONS,
+	...AVAILABLE_TO_DATE_RANGE_OPTIONS,
+	{ label: "Custom range", value: "custom" },
+];
+
 export function DashboardDateFilter() {
 	const predefinedDateRange = useAtomValue(selectDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
@@ -32,9 +38,14 @@ export function DashboardDateFilter() {
 	return (
 		<div className="flex items-center gap-3">
 			<div className="flex items-center gap-2">
-				<Select value={predefinedDateRange} onValueChange={handleRangeChange}>
+				<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
 					<SelectTrigger className="min-w-[160px]">
-						<SelectValue />
+						<SelectValue>
+							{(value: string) => {
+								const find = options.find((v) => v.value === value);
+								return find?.label;
+							}}
+						</SelectValue>
 					</SelectTrigger>
 					<SelectContent>
 						{AVAILABLE_LAST_RANGE_OPTIONS.map((option) => (

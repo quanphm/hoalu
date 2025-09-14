@@ -16,12 +16,14 @@ function PopoverBackdrop(props: React.ComponentProps<typeof PopoverPrimitive.Bac
 
 function PopoverPositioner({
 	className,
+	sideOffset = 4,
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Positioner>) {
 	return (
 		<PopoverPrimitive.Positioner
 			data-slot="popover-positioner"
 			className={cn("z-50", className)}
+			sideOffset={sideOffset}
 			{...props}
 		/>
 	);

@@ -1,5 +1,3 @@
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 
 export function HotKey({
@@ -25,30 +23,5 @@ export function HotKey({
 		>
 			{label}
 		</span>
-	);
-}
-
-export function HotKeyWithTooltip({
-	children,
-	shortcut,
-	showTooltip = true,
-	...props
-}: SlotPrimitive.SlotProps & {
-	shortcut: { label: string; enabled: boolean };
-	showTooltip?: boolean;
-}) {
-	if (!showTooltip || !shortcut.enabled) {
-		return <SlotPrimitive.Slot {...props}>{children}</SlotPrimitive.Slot>;
-	}
-
-	return (
-		<Tooltip>
-			<SlotPrimitive.Slot {...props}>
-				<TooltipTrigger asChild>{children}</TooltipTrigger>
-			</SlotPrimitive.Slot>
-			<TooltipContent side="bottom">
-				<HotKey label={shortcut.label} />
-			</TooltipContent>
-		</Tooltip>
 	);
 }

@@ -5,6 +5,7 @@ import { Button } from "@hoalu/ui/button";
 import { useFilesUpload } from "@/hooks/use-files-upload";
 
 interface FileUploadProps {
+	id?: string;
 	acceptedFileTypes?: string;
 	maxFiles?: number;
 	maxSizeMB?: number;
@@ -12,6 +13,7 @@ interface FileUploadProps {
 }
 
 export function FilesUpload({
+	id,
 	acceptedFileTypes = "image/*",
 	maxFiles = FILE_LIMIT,
 	maxSizeMB = FILE_SIZE_LIMIT / (1024 * 1024),
@@ -67,6 +69,7 @@ export function FilesUpload({
 				onKeyDown={handleBrowseFiles}
 			>
 				<input
+					id={id}
 					type="file"
 					ref={fileInputRef}
 					className="hidden"

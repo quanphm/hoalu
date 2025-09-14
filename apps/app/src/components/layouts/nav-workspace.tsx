@@ -31,46 +31,53 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild tooltip="Dashboard">
-								<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }}>
-									<LayoutDashboardIcon />
-									<span>Dashboard</span>
-									<SidebarMenuBadge>
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
-									</SidebarMenuBadge>
-								</Link>
+							<SidebarMenuButton
+								render={<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }} />}
+								tooltip="Dashboard"
+							>
+								<LayoutDashboardIcon />
+								<span>Dashboard</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild tooltip="Expenses">
-								<Link
-									to="/$slug/expenses"
-									params={{ slug }}
-									disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
-								>
-									<ArrowsExchangeIcon />
-									<span>Expenses</span>
-									<SidebarMenuBadge>
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
-									</SidebarMenuBadge>
-								</Link>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/expenses"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
+									/>
+								}
+								tooltip="Expenses"
+							>
+								<ArrowsExchangeIcon />
+								<span>Expenses</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild tooltip="Tasks">
-								<Link
-									to="/$slug/tasks"
-									params={{ slug }}
-									disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-								>
-									<AlignBoxTopCenterIcon />
-									<span>Tasks</span>
-									<SidebarMenuBadge>
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
-									</SidebarMenuBadge>
-								</Link>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/tasks"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
+									/>
+								}
+								tooltip="Tasks"
+							>
+								<AlignBoxTopCenterIcon />
+								<span>Tasks</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -82,27 +89,21 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild>
-								<Link to="/$slug/wallets" params={{ slug }}>
-									<WalletIcon />
-									<span>Wallets</span>
-								</Link>
+							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
+								<WalletIcon />
+								<span>Wallets</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild>
-								<Link to="/$slug/categories" params={{ slug }}>
-									<TriangleSquareCircleIcon />
-									<span>Categories</span>
-								</Link>
+							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
+								<TriangleSquareCircleIcon />
+								<span>Categories</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild>
-								<Link to="/$slug/files" params={{ slug }}>
-									<FileUploadIcon />
-									<span>Files</span>
-								</Link>
+							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
+								<FileUploadIcon />
+								<span>Files</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -114,25 +115,21 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild>
-								<Link to="/$slug/settings/workspace" params={{ slug }}>
-									<BuildingCottageIcon />
-									<span>Workspace</span>
-									<SidebarMenuBadge>
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
-									</SidebarMenuBadge>
-								</Link>
+							<SidebarMenuButton render={<Link to="/$slug/settings/workspace" params={{ slug }} />}>
+								<BuildingCottageIcon />
+								<span>Workspace</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton asChild>
-								<Link to="/$slug/settings/members" params={{ slug }}>
-									<UsersGroupIcon />
-									<span>Members</span>
-									<SidebarMenuBadge>
-										<HotKey {...KEYBOARD_SHORTCUTS.goto_members} />
-									</SidebarMenuBadge>
-								</Link>
+							<SidebarMenuButton render={<Link to="/$slug/settings/members" params={{ slug }} />}>
+								<UsersGroupIcon />
+								<span>Members</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_members} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>

@@ -7,8 +7,9 @@ import { HomeIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuGroupLabel,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
@@ -36,56 +37,62 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<SidebarMenuButton
-					size="lg"
-					className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-				>
-					<S3WorkspaceLogo {...selectedWorkspace} />
-					<div className="grid flex-1 text-left text-sm leading-tight">
-						<span className="truncate font-semibold">{selectedWorkspace.name}</span>
-					</div>
-					<ChevronsUpDownIcon className="ml-auto" />
-				</SidebarMenuButton>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent
-				className="w-(--radix-dropdown-menu-trigger-width) rounded-lg"
-				side="bottom"
-				sideOffset={4}
+			<DropdownMenuTrigger
+				render={
+					<SidebarMenuButton
+						size="lg"
+						className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+					/>
+				}
 			>
-				<DropdownMenuItem className="gap-2 p-2" asChild>
-					<Link to="/">
-						<HomeIcon />
-						Home
-						<HotKey {...KEYBOARD_SHORTCUTS.goto_home} />
-					</Link>
+				<S3WorkspaceLogo {...selectedWorkspace} />
+				<div className="grid flex-1 text-left text-sm leading-tight">
+					<span className="truncate font-semibold">{selectedWorkspace.name}</span>
+				</div>
+				<ChevronsUpDownIcon className="ml-auto" />
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="bottom" sideOffset={4}>
+				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
+					<HomeIcon />
+					Home
+					<HotKey {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
-				<DropdownMenuItem className="gap-2 p-2" asChild>
-					<a href="https://hoalu.app" target="_blank" rel="noreferrer">
-						<ExternalLinkIcon />
-						<span>
-							Website <span className="text-muted-foreground text-xs">hoalu.app</span>
-						</span>
-					</a>
-				</DropdownMenuItem>
+				<DropdownMenuItem
+					className="gap-2 p-2"
+					render={
+						<a href="https://hoalu.app" target="_blank" rel="noreferrer">
+							<ExternalLinkIcon />
+							<span>
+								Website <span className="text-muted-foreground text-xs">hoalu.app</span>
+							</span>
+						</a>
+					}
+				/>
 				<DropdownMenuSeparator />
-				<DropdownMenuLabel className="text-muted-foreground/60 text-xs">
-					Workspaces
-				</DropdownMenuLabel>
-				<ScrollArea className="max-h-72">
-					{workspaces.map((ws) => (
-						<DropdownMenuItem key={ws.publicId} className="gap-2 p-2" asChild>
-							<Link to="/$slug" params={{ slug: ws.slug }}>
+
+				<DropdownMenuGroup>
+					<DropdownMenuGroupLabel className="text-muted-foreground/60 text-xs">
+						Workspaces
+					</DropdownMenuGroupLabel>
+					<ScrollArea className="max-h-72">
+						{workspaces.map((ws) => (
+							<DropdownMenuItem
+								key={ws.publicId}
+								className="gap-2 p-2"
+								render={<Link to="/$slug" params={{ slug: ws.slug }} />}
+							>
 								<S3WorkspaceLogo slug={ws.slug} logo={ws.logo} name={ws.name} size="sm" />
 								{ws.name}
 								<CheckIcon
 									className={cn("ml-auto", ws.slug === params.slug ? "opacity-100" : "opacity-0")}
 								/>
-							</Link>
-						</DropdownMenuItem>
-					))}
-				</ScrollArea>
+							</DropdownMenuItem>
+						))}
+					</ScrollArea>
+				</DropdownMenuGroup>
+
 				<DropdownMenuSeparator />
+
 				<DropdownMenuItem className="gap-2 p-2" onClick={() => setDialog({ state: true })}>
 					<div className="flex size-4 items-center justify-center text-muted-foreground">
 						<PlusIcon className="size-4" />
