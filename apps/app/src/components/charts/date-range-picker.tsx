@@ -41,11 +41,16 @@ export function DateRangePicker({ onRangeSelect, className }: DateRangePickerPro
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild>
-				<Button variant="outline" className={cn("justify-start text-left font-normal", className)}>
-					<CalendarIcon className="size-4" />
-					{formatDateRange()}
-				</Button>
+			<PopoverTrigger
+				render={
+					<Button
+						variant="outline"
+						className={cn("justify-start text-left font-normal", className)}
+					/>
+				}
+			>
+				<CalendarIcon className="size-4" />
+				{formatDateRange()}
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">
 				<Calendar

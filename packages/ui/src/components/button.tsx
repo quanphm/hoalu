@@ -1,5 +1,6 @@
+import { mergeProps } from "@base-ui-components/react/merge-props";
+import { useRender } from "@base-ui-components/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Slot as SlotPrimitive } from "radix-ui";
 
 import { cn } from "../utils";
 
@@ -32,21 +33,17 @@ const buttonVariants = cva(
 	},
 );
 
-type ButtonProps = React.ComponentProps<"button"> &
-	VariantProps<typeof buttonVariants> & {
-		asChild?: boolean;
-	};
+type ButtonProps = useRender.ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
 
-function Button({ className, variant, size, asChild = false, ...props }: ButtonProps) {
-	const Comp = asChild ? SlotPrimitive.Slot : "button";
-
-	return (
-		<Comp
-			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className }))}
-			{...props}
-		/>
-	);
+function Button({ className, variant, size, render, ...props }: ButtonProps) {
+	return useRender({
+		defaultTagName: "button",
+		render,
+		props: mergeProps(
+			{ "data-slot": "button", className: cn(buttonVariants({ variant, size, className })) },
+			props,
+		),
+	});
 }
 
 export { Button, type ButtonProps, buttonVariants };

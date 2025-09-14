@@ -25,6 +25,7 @@
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",
+		"./number-field": "./src/components/number-field.tsx",
 		"./pagination": "./src/components/pagination.tsx",
 		"./popover": "./src/components/popover.tsx",
 		"./radio-group": "./src/components/radio-group.tsx",

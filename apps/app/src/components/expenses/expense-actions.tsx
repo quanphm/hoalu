@@ -462,14 +462,16 @@ export function ExpenseCalendar() {
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					className="h-auto w-full justify-start font-normal text-xs leading-none"
-				>
-					<CalendarIcon className="size-4" />
-					{formatDateRange()}
-				</Button>
+			<PopoverTrigger
+				render={
+					<Button
+						variant="outline"
+						className="h-auto w-full justify-start font-normal text-xs leading-none"
+					/>
+				}
+			>
+				<CalendarIcon className="size-4" />
+				{formatDateRange()}
 			</PopoverTrigger>
 			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
 				<Calendar

@@ -3,10 +3,8 @@ import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { DokiClientProvider } from "@hoalu/doki";
 import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
-import { LocalPostgresProvider } from "@/components/providers/local-postgres-provider";
 import { UiProvider } from "@/components/providers/ui-provider";
 import { verifyEnv } from "@/lib/env";
 import { queryClient } from "@/lib/query-client";
@@ -45,15 +43,11 @@ const rootElement = document.getElementById("root");
 
 function App() {
 	return (
-		<LocalPostgresProvider>
-			<QueryClientProvider client={queryClient}>
-				<DokiClientProvider baseUrl={`${import.meta.env.PUBLIC_API_URL}/sync`}>
-					<UiProvider>
-						<RouterProvider router={router} />
-					</UiProvider>
-				</DokiClientProvider>
-			</QueryClientProvider>
-		</LocalPostgresProvider>
+		<QueryClientProvider client={queryClient}>
+			<UiProvider>
+				<RouterProvider router={router} />
+			</UiProvider>
+		</QueryClientProvider>
 	);
 }
 

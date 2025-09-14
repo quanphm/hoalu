@@ -40,10 +40,6 @@
 		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
-	"typescript.preferences.autoImportFileExcludePatterns": [
-    "react-aria-components",
-		"frimousse"
-  ],
 	"typescript.implementationsCodeLens.enabled": true,
 	"typescript.referencesCodeLens.enabled": true,
 	"typescript.suggest.autoImports": true,

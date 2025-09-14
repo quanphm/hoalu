@@ -1,12 +1,12 @@
 @import "tailwindcss";
+@plugin "tailwind-scrollbar";
+@plugin "@tailwindcss/typography";
+
 @import "@hoalu/ui/theme.css";
 @import "./typography.css";
 @import "./table.css";
 
 @source "../../../../packages/ui/**/*.{ts,tsx}";
-
-@plugin "tailwind-scrollbar";
-@plugin "@tailwindcss/typography";
 
 @theme {
 	--spacing: 0.225rem;
@@ -23,7 +23,7 @@
 
 	body {
 		@apply relative bg-transparent text-foreground antialiased;
-		@apply font-geist-sans;
+		@apply font-sans;
 		font-synthesis-weight: none;
 		font-variant-numeric: tabular-nums lining-nums;
 		font-optical-sizing: auto;

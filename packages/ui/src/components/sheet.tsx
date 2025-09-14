@@ -1,4 +1,4 @@
-import { Dialog as SheetPrimitive } from "radix-ui";
+import { Dialog as SheetPrimitive } from "@base-ui-components/react/dialog";
 
 import { XIcon } from "@hoalu/icons/tabler";
 import { cn } from "../utils";
@@ -22,10 +22,10 @@ function SheetPortal({ ...props }: React.ComponentProps<typeof SheetPrimitive.Po
 function SheetOverlay({
 	className,
 	...props
-}: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
+}: React.ComponentProps<typeof SheetPrimitive.Backdrop>) {
 	return (
-		<SheetPrimitive.Overlay
-			data-slot="sheet-overlay"
+		<SheetPrimitive.Backdrop
+			data-slot="sheet-backdrop"
 			className={cn(
 				"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
 				className,
@@ -40,24 +40,24 @@ function SheetContent({
 	children,
 	side = "right",
 	...props
-}: React.ComponentProps<typeof SheetPrimitive.Content> & {
+}: React.ComponentProps<typeof SheetPrimitive.Popup> & {
 	side?: "top" | "right" | "bottom" | "left";
 }) {
 	return (
 		<SheetPortal>
 			<SheetOverlay />
-			<SheetPrimitive.Content
-				data-slot="sheet-content"
+			<SheetPrimitive.Popup
+				data-slot="sheet-popup"
 				className={cn(
-					"fixed z-50 flex flex-col gap-4 bg-background transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-500",
+					"fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[closed]:animate-out data-[open]:animate-in data-[closed]:duration-300 data-[open]:duration-500",
 					side === "right" &&
-						"data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
+						"data-[closed]:slide-out-to-right data-[open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
 					side === "left" &&
-						"data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
+						"data-[closed]:slide-out-to-left data-[open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
 					side === "top" &&
-						"data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
+						"data-[closed]:slide-out-to-top data-[open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
 					side === "bottom" &&
-						"data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
+						"data-[closed]:slide-out-to-bottom data-[open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
 					className,
 				)}
 				{...props}
@@ -67,7 +67,7 @@ function SheetContent({
 					<XIcon className="size-4" />
 					<span className="sr-only">Close</span>
 				</SheetPrimitive.Close>
-			</SheetPrimitive.Content>
+			</SheetPrimitive.Popup>
 		</SheetPortal>
 	);
 }
