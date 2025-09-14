@@ -5,10 +5,10 @@ import {
 	AlertDialog,
 	AlertDialogAction,
 	AlertDialogCancel,
-	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
+	AlertDialogPopup,
 	AlertDialogTitle,
 } from "@hoalu/ui/alert-dialog";
 
@@ -32,7 +32,7 @@ export function ReloadPromptPwa() {
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogContent>
+			<AlertDialogPopup>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Application status</AlertDialogTitle>
 					<AlertDialogDescription>
@@ -45,7 +45,7 @@ export function ReloadPromptPwa() {
 					<AlertDialogCancel onClick={() => close()}>Close</AlertDialogCancel>
 					<AlertDialogAction onClick={() => updateServiceWorker()}>Reload</AlertDialogAction>
 				</AlertDialogFooter>
-			</AlertDialogContent>
+			</AlertDialogPopup>
 		</AlertDialog>
 	);
 }

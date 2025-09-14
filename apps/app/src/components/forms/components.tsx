@@ -1,9 +1,8 @@
 import { useStore } from "@tanstack/react-form";
 import { createContext, useContext, useId } from "react";
 
-import { Label, type LabelPrimitive } from "@hoalu/ui/label";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
-import { cn } from "@hoalu/ui/utils";
+import { Label } from "@hoalu/ui/label";
+import { cn, useRender } from "@hoalu/ui/utils";
 import { useFieldContext } from "./context";
 
 interface FieldControlContextValue {
@@ -38,26 +37,27 @@ function useFieldControlContext() {
 	return context;
 }
 
-function FieldControl(props: React.ComponentProps<typeof SlotPrimitive.Slot>) {
+function FieldControl({ children }: { children?: useRender.RenderProp }) {
 	const { formItemId, formDescriptionId, formErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasErrors = errors.length > 0;
 
-	return (
-		<SlotPrimitive.Slot
-			id={formItemId}
-			aria-labelledby={formItemId}
-			aria-describedby={
-				!hasErrors ? `${formDescriptionId}` : `${formDescriptionId} ${formErrorMessageId}`
-			}
-			aria-invalid={hasErrors}
-			{...props}
-		/>
-	);
+	return useRender({
+		defaultTagName: "div",
+		render: children,
+		props: {
+			id: formItemId,
+			"aria-labelledby": formItemId,
+			"aria-describedby": !hasErrors
+				? `${formDescriptionId}`
+				: `${formDescriptionId} ${formErrorMessageId}`,
+			"aria-invalid": hasErrors,
+		},
+	});
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function FieldLabel({ className, ...props }: React.ComponentProps<"label">) {
 	const { formItemId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);

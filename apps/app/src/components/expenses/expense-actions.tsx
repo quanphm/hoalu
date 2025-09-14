@@ -20,7 +20,6 @@ import {
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import {
 	createExpenseDialogAtom,
@@ -48,16 +47,8 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function CreateExpenseDialogTrigger(props: React.PropsWithChildren) {
+export function CreateExpenseDialogTrigger() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
-
-	if (props.children) {
-		return (
-			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
-				{props.children}
-			</SlotPrimitive.Slot>
-		);
-	}
 
 	return (
 		<Button variant="outline" onClick={() => setDialog({ state: true })}>
@@ -207,7 +198,7 @@ function CreateExpenseForm() {
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
 					</div>
 					<div className="col-span-12">
-						<Accordion type="single" collapsible className="w-full" defaultValue="advanced">
+						<Accordion className="w-full">
 							<AccordionItem
 								value="advanced"
 								className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
@@ -256,15 +247,17 @@ export function DeleteExpense({ id }: { id: string }) {
 
 	return (
 		<Tooltip>
-			<TooltipTrigger asChild>
-				<Button
-					size="icon"
-					variant="ghost"
-					aria-label="Delete this expense"
-					onClick={() => setDialog({ state: true, data: { id } })}
-				>
-					<Trash2Icon className="size-4" />
-				</Button>
+			<TooltipTrigger
+				render={
+					<Button
+						size="icon"
+						variant="ghost"
+						aria-label="Delete this expense"
+						onClick={() => setDialog({ state: true, data: { id } })}
+					/>
+				}
+			>
+				<Trash2Icon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Delete</TooltipContent>
 		</Tooltip>
@@ -316,10 +309,10 @@ export function DuplicateExpense(props: { id: string }) {
 
 	return (
 		<Tooltip>
-			<TooltipTrigger asChild>
-				<Button size="icon" variant="ghost" onClick={onDuplicate} disabled={!expense}>
-					<CopyPlusIcon className="size-4" />
-				</Button>
+			<TooltipTrigger
+				render={<Button size="icon" variant="ghost" onClick={onDuplicate} disabled={!expense} />}
+			>
+				<CopyPlusIcon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>
 		</Tooltip>
@@ -462,14 +455,16 @@ export function ExpenseCalendar() {
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					className="h-auto w-full justify-start font-normal text-xs leading-none"
-				>
-					<CalendarIcon className="size-4" />
-					{formatDateRange()}
-				</Button>
+			<PopoverTrigger
+				render={
+					<Button
+						variant="outline"
+						className="h-auto w-full justify-start font-normal text-xs leading-none"
+					/>
+				}
+			>
+				<CalendarIcon className="size-4" />
+				{formatDateRange()}
 			</PopoverTrigger>
 			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
 				<Calendar

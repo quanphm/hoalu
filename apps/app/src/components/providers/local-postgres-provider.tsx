@@ -1,9 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
-import { citext } from "@electric-sql/pglite/contrib/citext";
 import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
-import { vector } from "@electric-sql/pglite/vector";
 import { PGliteProvider } from "@electric-sql/pglite-react";
-import { electricSync } from "@electric-sql/pglite-sync";
+// import { electricSync } from "@electric-sql/pglite-sync";
 import { useEffect, useState } from "react";
 
 import { tryCatch } from "@hoalu/common/try-catch";
@@ -13,12 +11,6 @@ let syncStarted = false;
 
 async function startSync(pg: PGliteWithLive) {
 	console.log("start syncing...", pg);
-	const tables = await pg.query(
-		`SELECT table_name FROM information_schema.tables WHERE table_schema='public'`,
-	);
-	if (tables.rows.length === 0) {
-		console.log("run migrations");
-	}
 }
 
 async function createPGlite() {
@@ -28,9 +20,9 @@ async function createPGlite() {
 			relaxedDurability: true,
 			extensions: {
 				live,
-				vector,
-				citext,
-				electric: electricSync(),
+				// vector,
+				// citext,
+				// electric: electricSync(),
 			},
 		}),
 	);

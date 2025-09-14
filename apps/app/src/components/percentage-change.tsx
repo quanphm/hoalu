@@ -9,6 +9,23 @@ interface PercentageChangeDisplayProps {
 	comparisonText?: string;
 }
 
+const IconComponent = {
+	"no-change": null,
+	increase: TrendingUpIcon,
+	decrease: TrendingDownIcon,
+} as Record<PercentageChange["status"], any>;
+
+const sizeClasses = {
+	sm: "text-xs",
+	md: "text-sm",
+	lg: "text-base",
+};
+const iconSizeClasses = {
+	sm: "size-3",
+	md: "size-4",
+	lg: "size-5",
+};
+
 export function PercentageChangeDisplay({
 	change,
 	className,
@@ -16,24 +33,7 @@ export function PercentageChangeDisplay({
 	comparisonText,
 }: PercentageChangeDisplayProps) {
 	const classes = getPercentageChangeClasses(change);
-
-	const sizeClasses = {
-		sm: "text-xs",
-		md: "text-sm",
-		lg: "text-base",
-	};
-	const iconSizeClasses = {
-		sm: "h-3 w-3",
-		md: "h-4 w-4",
-		lg: "h-5 w-5",
-	};
-
-	const IconComponent =
-		change.status === "no-change"
-			? null
-			: change.status === "increase"
-				? TrendingUpIcon
-				: TrendingDownIcon;
+	const Icon = IconComponent[change.status];
 
 	return (
 		<span
@@ -44,7 +44,7 @@ export function PercentageChangeDisplay({
 				className,
 			)}
 		>
-			{IconComponent && <IconComponent className={iconSizeClasses[size]} />}
+			{IconComponent && <Icon className={iconSizeClasses[size]} />}
 			{change.displayValue}
 			{comparisonText && (
 				<span className="font-normal text-muted-foreground">{comparisonText}</span>

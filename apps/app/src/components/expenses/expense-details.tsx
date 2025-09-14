@@ -36,28 +36,32 @@ export function ExpenseDetails() {
 				>
 					<div className="flex items-center justify-center gap-2">
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button
-									size="icon"
-									variant="outline"
-									onClick={handleGoUp}
-									disabled={currentIndex <= 0}
-								>
-									<ChevronUpIcon className="size-4" />
-								</Button>
+							<TooltipTrigger
+								render={
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={handleGoUp}
+										disabled={currentIndex <= 0}
+									/>
+								}
+							>
+								<ChevronUpIcon className="size-4" />
 							</TooltipTrigger>
 							<TooltipContent side="bottom">Go Up</TooltipContent>
 						</Tooltip>
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button
-									size="icon"
-									variant="outline"
-									onClick={handleGoDown}
-									disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
-								>
-									<ChevronDownIcon className="size-4" />
-								</Button>
+							<TooltipTrigger
+								render={
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={handleGoDown}
+										disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
+									/>
+								}
+							>
+								<ChevronDownIcon className="size-4" />
 							</TooltipTrigger>
 							<TooltipContent side="bottom">Go Down</TooltipContent>
 						</Tooltip>
@@ -66,10 +70,12 @@ export function ExpenseDetails() {
 						<DuplicateExpense id={selectedRow.id} />
 						<DeleteExpense id={selectedRow.id} />
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)}>
-									<XIcon className="size-4" />
-								</Button>
+							<TooltipTrigger
+								render={
+									<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)} />
+								}
+							>
+								<XIcon className="size-4" />
 							</TooltipTrigger>
 							<TooltipContent side="bottom">Close</TooltipContent>
 						</Tooltip>

@@ -18,14 +18,15 @@ interface Props {
 
 export function SelectWithGroupsField(props: Props) {
 	const field = useFieldContext<string>();
+	const items = Object.values(props.groups).flatMap((v) => v.options);
 
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Select value={field.state.value} onValueChange={(value) => field.handleChange(value)}>
+			<Select items={items} value={field.state.value} onValueChange={field.handleChange}>
 				<FieldControl>
 					<SelectTrigger className="bg-background focus:border-ring focus:ring-[3px] focus:ring-ring/20">
-						<SelectValue placeholder="Select" />
+						<SelectValue />
 					</SelectTrigger>
 				</FieldControl>
 				<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">

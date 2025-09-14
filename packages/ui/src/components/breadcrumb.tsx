@@ -1,7 +1,7 @@
-import { Slot as SlotPrimitive } from "radix-ui";
+import { useRender } from "@base-ui-components/react/use-render";
 
 import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
-import { cn } from "../utils";
+import { cn, mergeProps } from "../utils";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
 	return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
@@ -31,21 +31,23 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 function BreadcrumbLink({
-	asChild,
+	render,
 	className,
 	...props
 }: React.ComponentProps<"a"> & {
-	asChild?: boolean;
+	render?: useRender.RenderProp;
 }) {
-	const Comp = asChild ? SlotPrimitive.Slot : "a";
-
-	return (
-		<Comp
-			data-slot="breadcrumb-link"
-			className={cn("transition-colors hover:text-foreground", className)}
-			{...props}
-		/>
-	);
+	return useRender({
+		defaultTagName: "a",
+		render,
+		props: mergeProps(
+			{
+				"data-slot": "breadcrumb-link",
+				className: cn("transition-colors hover:text-foreground", className),
+			},
+			props,
+		),
+	});
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {

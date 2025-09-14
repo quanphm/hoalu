@@ -11,6 +11,14 @@ interface DataTablePaginationProps<TData> {
 	table: Table<TData>;
 }
 
+const items = [
+	{ label: "Select number of results", value: null },
+	{ label: "5", value: 5 },
+	{ label: "10", value: 10 },
+	{ label: "25", value: 25 },
+	{ label: "50", value: 50 },
+];
+
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
 	const id = useId();
 
@@ -22,18 +30,19 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 					Rows per page
 				</Label>
 				<Select
-					value={table.getState().pagination.pageSize.toString()}
+					items={items}
+					value={table.getState().pagination.pageSize}
 					onValueChange={(value) => {
 						table.setPageSize(Number(value));
 					}}
 				>
 					<SelectTrigger id={id} className="w-fit whitespace-nowrap">
-						<SelectValue placeholder="Select number of results" />
+						<SelectValue />
 					</SelectTrigger>
 					<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
-						{[5, 10, 25, 50].map((pageSize) => (
-							<SelectItem key={pageSize} value={pageSize.toString()}>
-								{pageSize}
+						{items.map((pageSize) => (
+							<SelectItem key={pageSize.value} value={pageSize.toString()}>
+								{pageSize.label}
 							</SelectItem>
 						))}
 					</SelectContent>

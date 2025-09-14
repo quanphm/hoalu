@@ -29,16 +29,17 @@ export function NavWorkspaceList() {
 			<SidebarMenu>
 				{workspaces.map((ws, idx) => (
 					<SidebarMenuItem key={ws.publicId}>
-						<SidebarMenuButton asChild tooltip={ws.name}>
-							<Link to="/$slug" params={{ slug: ws.slug }}>
-								<FolderIcon />
-								<span>{ws.name}</span>
-								{idx + 1 <= AVAILABLE_WORKSPACE_SHORTCUT.length && (
-									<SidebarMenuBadge>
-										<HotKey enabled label={idx + 1} />
-									</SidebarMenuBadge>
-								)}
-							</Link>
+						<SidebarMenuButton
+							render={<Link to="/$slug" params={{ slug: ws.slug }} />}
+							tooltip={ws.name}
+						>
+							<FolderIcon />
+							<span>{ws.name}</span>
+							{idx + 1 <= AVAILABLE_WORKSPACE_SHORTCUT.length && (
+								<SidebarMenuBadge>
+									<HotKey enabled label={idx + 1} />
+								</SidebarMenuBadge>
+							)}
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				))}

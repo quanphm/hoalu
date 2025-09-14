@@ -58,29 +58,32 @@ export function SelectCategoryField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Dialog>
 				<Popover open={open} onOpenChange={setOpen} modal={true}>
-					<PopoverTrigger asChild disabled={props.disabled}>
-						<FieldControl>
-							<Button
-								variant="outline"
-								role="combobox"
-								aria-expanded={open}
-								className={cn(
-									"w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
-									"focus:border-ring focus:ring-[3px] focus:ring-ring/20",
-								)}
-							>
-								<span className={cn("truncate", !value && "text-muted-foreground")}>
-									{value ? categories.find((opt) => opt.value === value)?.label : "Select"}
-								</span>
-								<ChevronDownIcon
-									aria-hidden="true"
-									className="size-4 shrink-0 text-muted-foreground/80"
+					<FieldControl>
+						<PopoverTrigger
+							render={
+								<Button
+									variant="outline"
+									role="combobox"
+									aria-expanded={open}
+									className={cn(
+										"w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
+										"focus:border-ring focus:ring-[3px] focus:ring-ring/20",
+									)}
 								/>
-							</Button>
-						</FieldControl>
-					</PopoverTrigger>
+							}
+							disabled={props.disabled}
+						>
+							<span className={cn("truncate", !value && "text-muted-foreground")}>
+								{value ? categories.find((opt) => opt.value === value)?.label : "Select"}
+							</span>
+							<ChevronDownIcon
+								aria-hidden="true"
+								className="size-4 shrink-0 text-muted-foreground/80"
+							/>
+						</PopoverTrigger>
+					</FieldControl>
 					<PopoverContent
-						className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0"
+						className="w-full min-w-[var(--anchor-width)] border-input p-0"
 						align="start"
 					>
 						<Command>

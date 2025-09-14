@@ -22,9 +22,7 @@ export function SwitchField(props: Props) {
 					/>
 				</FieldControl>
 			</div>
-			{props.description && field.state.value === false && (
-				<FieldDescription>{props.description}</FieldDescription>
-			)}
+			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />
 		</Field>
 	);

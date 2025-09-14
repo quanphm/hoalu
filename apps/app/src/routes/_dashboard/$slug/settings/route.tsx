@@ -14,21 +14,13 @@ function RouteComponent() {
 	return (
 		<>
 			<Tabs value={currentMatch || "workspace"}>
-				<TabsList className="relative h-auto w-full justify-start gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-border">
-					<TabsTrigger
-						value="workspace"
-						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-						asChild
-					>
+				<TabsList>
+					<TabsTrigger value="workspace">
 						<Link to="/$slug/settings/workspace" params={{ slug }}>
 							Workspace
 						</Link>
 					</TabsTrigger>
-					<TabsTrigger
-						value="members"
-						className="overflow-hidden rounded-b-none border-x border-t bg-muted py-2 data-[state=active]:z-10 data-[state=active]:shadow-none"
-						asChild
-					>
+					<TabsTrigger value="members">
 						<Link to="/$slug/settings/members" params={{ slug }}>
 							Members
 						</Link>

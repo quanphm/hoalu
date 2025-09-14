@@ -50,11 +50,9 @@ function RowActions({ row: _row }: { row: Row<TaskSchema> }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
-					</Button>
+				<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
+					<span className="sr-only">Open menu</span>
+					<MoreVerticalIcon className="size-4" />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
 					<DialogTrigger

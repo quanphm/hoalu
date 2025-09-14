@@ -22,7 +22,9 @@ export function ColorsField(props: Props) {
 			<RadioGroup
 				className="flex gap-1.5"
 				value={field.state.value}
-				onValueChange={field.handleChange}
+				onValueChange={(value) => {
+					field.handleChange(value as string);
+				}}
 				onBlur={field.handleBlur}
 			>
 				{PG_ENUM_COLOR.map((color) => (

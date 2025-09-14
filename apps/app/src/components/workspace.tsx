@@ -300,12 +300,12 @@ function DeleteWorkspaceForm() {
 	);
 }
 
-const workspaceAvatarVariants = cva([], {
+const workspaceAvatarVariants = cva("outline outline-border", {
 	variants: {
 		size: {
 			default: "size-8",
 			lg: "size-14 text-xl",
-			sm: "size-6",
+			sm: "size-6 text-[9px]",
 		},
 	},
 	defaultVariants: {

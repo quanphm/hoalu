@@ -11,7 +11,6 @@ import {
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
-import { Slot as SlotPrimitive } from "@hoalu/ui/slot";
 import { cn } from "@hoalu/ui/utils";
 import { createCategoryDialogAtom, deleteCategoryDialogAtom, selectedCategoryAtom } from "@/atoms";
 import { useAppForm } from "@/components/forms";
@@ -23,16 +22,8 @@ import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
 import { categoryWithIdQueryOptions } from "@/services/query-options";
 
-export function CreateCategoryDialogTrigger(props: React.PropsWithChildren) {
+export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
-
-	if (props.children) {
-		return (
-			<SlotPrimitive.Slot onClick={() => setDialog({ state: true })}>
-				{props.children}
-			</SlotPrimitive.Slot>
-		);
-	}
 
 	return (
 		<Button variant="outline" onClick={() => setDialog({ state: true })}>

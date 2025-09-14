@@ -14,15 +14,13 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	const [isOpen, setIsOpen] = React.useState(false);
 
 	return (
-		<Popover onOpenChange={setIsOpen} open={isOpen}>
-			<PopoverTrigger asChild>
-				<Button variant="outline" size="icon" className="size-9">
-					<SmilePlusIcon className="size-4" />
-				</Button>
+		<Popover open={isOpen} onOpenChange={setIsOpen}>
+			<PopoverTrigger render={<Button variant="outline" size="icon" className="size-9" />}>
+				<SmilePlusIcon className="size-4" />
 			</PopoverTrigger>
-			<PopoverContent className="w-fit p-0">
+			<PopoverContent className="w-fit overflow-auto p-0" align="start">
 				<Frimousse.Root
-					className="isolate flex h-[326px] w-fit flex-col rounded-lg border bg-white dark:bg-neutral-900"
+					className="isolate flex h-[326px] w-fit flex-col bg-white dark:bg-neutral-900"
 					onEmojiSelect={({ emoji }) => {
 						props.onEmojiSelect?.(emoji);
 						setIsOpen(false);
