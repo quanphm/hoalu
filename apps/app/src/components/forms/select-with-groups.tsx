@@ -23,27 +23,28 @@ export function SelectWithGroupsField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Select items={items} value={field.state.value} onValueChange={field.handleChange}>
-				<FieldControl>
+			<FieldControl>
+				<Select items={items} value={field.state.value} onValueChange={field.handleChange}>
 					<SelectTrigger className="bg-background focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue />
 					</SelectTrigger>
-				</FieldControl>
-				<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
-					{Object.entries(props.groups).map(([id, data]) => {
-						return (
-							<SelectGroup key={id}>
-								<SelectLabel className="ps-2 text-muted-foreground/60">{data.name}</SelectLabel>
-								{data.options.map((opt) => (
-									<SelectItem key={opt.value} value={opt.value}>
-										{opt.label}
-									</SelectItem>
-								))}
-							</SelectGroup>
-						);
-					})}
-				</SelectContent>
-			</Select>
+
+					<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
+						{Object.entries(props.groups).map(([id, data]) => {
+							return (
+								<SelectGroup key={id}>
+									<SelectLabel className="ps-2 text-muted-foreground/60">{data.name}</SelectLabel>
+									{data.options.map((opt) => (
+										<SelectItem key={opt.value} value={opt.value}>
+											{opt.label}
+										</SelectItem>
+									))}
+								</SelectGroup>
+							);
+						})}
+					</SelectContent>
+				</Select>
+			</FieldControl>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />
 		</Field>
