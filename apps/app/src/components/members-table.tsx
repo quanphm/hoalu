@@ -63,6 +63,7 @@ const columns = [
 					variant={value === "owner" ? "default" : "outline"}
 					className="px-1.5 font-normal text-xs capitalize"
 				>
+					{value === "owner" && "🔑 "}
 					{value}
 				</Badge>
 			);

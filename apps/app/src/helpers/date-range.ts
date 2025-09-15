@@ -106,6 +106,10 @@ export function calculateComparisonDateRange(
 			// go back by the same duration
 			previousEnd = new Date(currentStart.getTime() - TIME_IN_MILLISECONDS.DAY); // Day before current start
 			previousStart = new Date(previousEnd.getTime() - durationMs);
+
+			// Normalize to full-day boundaries for consistency
+			previousStart = datetime.startOfDay(previousStart);
+			previousEnd = datetime.endOfDay(previousEnd);
 		}
 	}
 	// For period-to-date comparisons, use same period from previous timeframe
@@ -215,4 +219,137 @@ export function getComparisonPeriodText(
 		const end = datetime.format(endDate, "MMM d, yyyy");
 		return `vs ${start} - ${end}`;
 	}
+}
+
+/**
+ * Generate daily data with zeros for missing dates
+ */
+export function generateDailyDataWithZeros(data: { date: string; value: number }[], days: number) {
+	const today = new Date();
+	const dailyData: Record<string, number> = {};
+
+	// Initialize all days in range with zero
+	for (let i = days - 1; i >= 0; i--) {
+		const date = new Date(today);
+		date.setDate(date.getDate() - i);
+		const dateKey = datetime.format(date, "yyyy-MM-dd");
+		dailyData[dateKey] = 0;
+	}
+
+	// Fill in actual data
+	for (const item of data) {
+		if (dailyData[item.date] !== undefined) {
+			dailyData[item.date] = item.value;
+		}
+	}
+
+	return Object.entries(dailyData)
+		.map(([date, value]) => ({ date, value }))
+		.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/**
+ * Generate daily data for month-to-date
+ */
+export function generateMTDDataWithZeros(data: { date: string; value: number }[]) {
+	const today = new Date();
+	const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+	const dailyData: Record<string, number> = {};
+
+	// Initialize all days from 1st of month to today with zero
+	const currentDate = new Date(firstOfMonth);
+	while (currentDate <= today) {
+		const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
+		dailyData[dateKey] = 0;
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
+
+	// Fill in actual data
+	for (const item of data) {
+		if (dailyData[item.date] !== undefined) {
+			dailyData[item.date] = item.value;
+		}
+	}
+
+	return Object.entries(dailyData)
+		.map(([date, value]) => ({ date, value }))
+		.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function getStartOfWeek(date: Date, weekStartsOn: number = 1) {
+	const day = date.getDay();
+	const diff = day < weekStartsOn ? day + 7 - weekStartsOn : day - weekStartsOn;
+	const startOfWeek = new Date(date);
+	startOfWeek.setDate(date.getDate() - diff);
+	return datetime.startOfDay(startOfWeek);
+}
+
+export function generateDailyDataForRange(
+	data: { date: string; value: number }[],
+	startDate: Date,
+	endDate: Date,
+): { date: string; value: number }[] {
+	const dailyData: Record<string, number> = {};
+
+	// Initialize all days in range with zero
+	const currentDate = new Date(datetime.startOfDay(startDate));
+	const normalizedEndDate = datetime.endOfDay(endDate);
+
+	while (currentDate <= normalizedEndDate) {
+		const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
+		dailyData[dateKey] = 0;
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
+
+	// Fill in actual data
+	for (const item of data) {
+		if (dailyData[item.date] !== undefined) {
+			dailyData[item.date] = item.value;
+		}
+	}
+
+	return Object.entries(dailyData)
+		.map(([date, value]) => ({ date, value }))
+		.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function groupDataByMonth(data: { date: string; value: number }[], isYTD = false) {
+	const monthlyData: Record<string, number> = {};
+	const today = new Date();
+
+	if (isYTD) {
+		// For YTD, initialize from January to current month
+		const currentMonth = today.getMonth();
+		for (let i = 0; i <= currentMonth; i++) {
+			const monthDate = new Date(today.getFullYear(), i, 1);
+			const monthKey = datetime.format(monthDate, "yyyy-MM");
+			monthlyData[monthKey] = 0;
+		}
+	} else {
+		// For "All time", initialize all 12 months (12 months from today backwards)
+		for (let i = 11; i >= 0; i--) {
+			const monthDate = new Date(today);
+			monthDate.setMonth(monthDate.getMonth() - i);
+			const monthKey = datetime.format(monthDate, "yyyy-MM");
+			monthlyData[monthKey] = 0;
+		}
+	}
+
+	// Aggregate actual data by month
+	for (const item of data) {
+		const date = datetime.parse(item.date, "yyyy-MM-dd", new Date());
+		const monthKey = datetime.format(date, "yyyy-MM");
+
+		if (monthlyData[monthKey] !== undefined) {
+			monthlyData[monthKey] += item.value;
+		}
+	}
+
+	return Object.entries(monthlyData)
+		.map(([monthKey, value]) => ({
+			date: `${monthKey}-01`,
+			value,
+			isMonthly: true, // Flag to identify monthly data
+		}))
+		.sort((a, b) => a.date.localeCompare(b.date));
 }
