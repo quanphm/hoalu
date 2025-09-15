@@ -50,12 +50,12 @@ export function PercentageChangeDisplay({
 				className,
 			)}
 		>
-			{IconComponent && <Icon className={iconSizeClasses[size]} />}
+			{Icon && <Icon className={iconSizeClasses[size]} />}
 			{change.displayValue}
 			{comparisonText && (
 				<Button
 					variant="link"
-					className="p-0 underline decoration-dotted"
+					className="p-0 decoration-dotted"
 					onClick={onComparisonClick}
 					disabled={!onComparisonClick}
 				>

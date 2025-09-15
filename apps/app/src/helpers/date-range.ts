@@ -106,6 +106,10 @@ export function calculateComparisonDateRange(
 			// go back by the same duration
 			previousEnd = new Date(currentStart.getTime() - TIME_IN_MILLISECONDS.DAY); // Day before current start
 			previousStart = new Date(previousEnd.getTime() - durationMs);
+
+			// Normalize to full-day boundaries for consistency
+			previousStart = datetime.startOfDay(previousStart);
+			previousEnd = datetime.endOfDay(previousEnd);
 		}
 	}
 	// For period-to-date comparisons, use same period from previous timeframe
