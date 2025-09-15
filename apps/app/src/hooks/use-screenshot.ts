@@ -1,4 +1,3 @@
-import html2canvas from "html2canvas-pro";
 import { useCallback, useState } from "react";
 
 interface UseScreenshotOptions {
@@ -14,29 +13,27 @@ export function useScreenshot({ scale = 2 }: UseScreenshotOptions = {}) {
 	const takeScreenshot = useCallback(
 		async (element: HTMLElement) => {
 			if (!element) {
-				console.error("Element not found");
-				setStatus("error");
-				return;
+				throw new Error("Element not found");
 			}
 			if (!navigator.clipboard) {
-				console.error("Clipboard not supported in this browser");
-				setStatus("error");
-				return;
+				throw new Error("Clipboard not supported in this browser");
 			}
 
-			setStatus("pending");
-
 			try {
+				setStatus("pending");
+
+				const { default: html2canvas } = await import("html2canvas-pro");
 				const canvas = await html2canvas(element, {
 					backgroundColor: "transparent",
 					scale,
 					width: element.offsetWidth,
 					height: element.offsetHeight,
-					logging: true,
+					logging: import.meta.env.DEV,
+					useCORS: true,
 					onclone: (clonedDoc) => {
 						const style = clonedDoc.createElement("style");
 						style.textContent = `
-							* { border-radius: 0 }
+							* { border-radius: 0; }
 							.border, .border-border { border-color: transparent; }
 							.hide-in-screenshot { display: none; }
 						`;
@@ -44,30 +41,24 @@ export function useScreenshot({ scale = 2 }: UseScreenshotOptions = {}) {
 					},
 				});
 
-				canvas.toBlob(async (blob) => {
-					if (!blob) {
-						console.error("Failed to generate image");
-						setStatus("error");
-						return;
-					}
+				const blob: Blob | null = await new Promise((resolve) =>
+					canvas.toBlob(resolve, "image/png"),
+				);
+				if (!blob) {
+					throw new Error("Failed to generate image");
+				}
 
-					try {
-						await navigator.clipboard.write([
-							new ClipboardItem({
-								"image/png": blob,
-							}),
-						]);
-						setStatus("success");
-					} catch (clipboardError) {
-						console.error("Failed to copy to clipboard:", clipboardError);
-						setStatus("error");
-					} finally {
-						setTimeout(() => setStatus("idle"), 1500);
-					}
-				}, "image/png");
+				try {
+					await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+					setStatus("success");
+				} catch (clipboardError) {
+					throw new Error("Failed to copy to clipboard", { cause: clipboardError });
+				}
 			} catch (screenshotError) {
 				console.error("Failed to take screenshot:", screenshotError);
 				setStatus("error");
+			} finally {
+				setTimeout(() => setStatus("idle"), 1500);
 			}
 		},
 		[scale],
