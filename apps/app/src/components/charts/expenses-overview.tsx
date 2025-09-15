@@ -1,12 +1,20 @@
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
-import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
-import { filterDataByRange } from "@/helpers/date-range";
+import { customDateRangeAtom, selectDateRangeAtom, syncedDateRangeAtom } from "@/atoms/filters";
+import {
+	calculateComparisonDateRange,
+	filterDataByRange,
+	generateDailyDataForRange,
+	generateDailyDataWithZeros,
+	generateMTDDataWithZeros,
+	getStartOfWeek,
+	groupDataByMonth,
+} from "@/helpers/date-range";
 import { useExpenseStats } from "@/hooks/use-expenses";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { CurrencyValue } from "../currency-value";
@@ -22,150 +30,21 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
-function groupDataByMonth(data: { date: string; value: number }[], isYTD = false) {
-	const monthlyData: Record<string, number> = {};
-	const today = new Date();
-
-	if (isYTD) {
-		// For YTD, initialize from January to current month
-		const currentMonth = today.getMonth();
-		for (let i = 0; i <= currentMonth; i++) {
-			const monthDate = new Date(today.getFullYear(), i, 1);
-			const monthKey = datetime.format(monthDate, "yyyy-MM");
-			monthlyData[monthKey] = 0;
-		}
-	} else {
-		// For "All time", initialize all 12 months (12 months from today backwards)
-		for (let i = 11; i >= 0; i--) {
-			const monthDate = new Date(today);
-			monthDate.setMonth(monthDate.getMonth() - i);
-			const monthKey = datetime.format(monthDate, "yyyy-MM");
-			monthlyData[monthKey] = 0;
-		}
-	}
-
-	// Aggregate actual data by month
-	for (const item of data) {
-		const date = datetime.parse(item.date, "yyyy-MM-dd", new Date());
-		const monthKey = datetime.format(date, "yyyy-MM");
-
-		if (monthlyData[monthKey] !== undefined) {
-			monthlyData[monthKey] += item.value;
-		}
-	}
-
-	return Object.entries(monthlyData)
-		.map(([monthKey, value]) => ({
-			date: `${monthKey}-01`,
-			value,
-			isMonthly: true, // Flag to identify monthly data
-		}))
-		.sort((a, b) => a.date.localeCompare(b.date));
-}
-
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 export function ExpenseOverview() {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
+
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
+	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const stats = useExpenseStats();
 	const {
 		metadata: { currency },
 	} = useWorkspace();
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
-
-	// Helper function to generate daily data with zeros for missing dates
-	function generateDailyDataWithZeros(data: { date: string; value: number }[], days: number) {
-		const today = new Date();
-		const dailyData: Record<string, number> = {};
-
-		// Initialize all days in range with zero
-		for (let i = days - 1; i >= 0; i--) {
-			const date = new Date(today);
-			date.setDate(date.getDate() - i);
-			const dateKey = datetime.format(date, "yyyy-MM-dd");
-			dailyData[dateKey] = 0;
-		}
-
-		// Fill in actual data
-		for (const item of data) {
-			if (dailyData[item.date] !== undefined) {
-				dailyData[item.date] = item.value;
-			}
-		}
-
-		return Object.entries(dailyData)
-			.map(([date, value]) => ({ date, value }))
-			.sort((a, b) => a.date.localeCompare(b.date));
-	}
-
-	// Helper function to generate daily data for month-to-date
-	function generateMTDDataWithZeros(data: { date: string; value: number }[]) {
-		const today = new Date();
-		const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-		const dailyData: Record<string, number> = {};
-
-		// Initialize all days from 1st of month to today with zero
-		const currentDate = new Date(firstOfMonth);
-		while (currentDate <= today) {
-			const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
-			dailyData[dateKey] = 0;
-			currentDate.setDate(currentDate.getDate() + 1);
-		}
-
-		// Fill in actual data
-		for (const item of data) {
-			if (dailyData[item.date] !== undefined) {
-				dailyData[item.date] = item.value;
-			}
-		}
-
-		return Object.entries(dailyData)
-			.map(([date, value]) => ({ date, value }))
-			.sort((a, b) => a.date.localeCompare(b.date));
-	}
-
-	// Helper function to get start of week
-	function getStartOfWeek(date: Date, weekStartsOn: number = 1): Date {
-		const day = date.getDay();
-		const diff = day < weekStartsOn ? day + 7 - weekStartsOn : day - weekStartsOn;
-		const startOfWeek = new Date(date);
-		startOfWeek.setDate(date.getDate() - diff);
-		return datetime.startOfDay(startOfWeek);
-	}
-
-	// Helper function to generate daily data for a specific date range
-	function generateDailyDataForRange(
-		data: { date: string; value: number }[],
-		startDate: Date,
-		endDate: Date,
-	): { date: string; value: number }[] {
-		const dailyData: Record<string, number> = {};
-
-		// Initialize all days in range with zero
-		const currentDate = new Date(datetime.startOfDay(startDate));
-		const normalizedEndDate = datetime.endOfDay(endDate);
-
-		while (currentDate <= normalizedEndDate) {
-			const dateKey = datetime.format(currentDate, "yyyy-MM-dd");
-			dailyData[dateKey] = 0;
-			currentDate.setDate(currentDate.getDate() + 1);
-		}
-
-		// Fill in actual data
-		for (const item of data) {
-			if (dailyData[item.date] !== undefined) {
-				dailyData[item.date] = item.value;
-			}
-		}
-
-		return Object.entries(dailyData)
-			.map(([date, value]) => ({ date, value }))
-			.sort((a, b) => a.date.localeCompare(b.date));
-	}
 
 	// Group by month for year-to-date and all-time views
 	const data = (() => {
@@ -233,6 +112,19 @@ export function ExpenseOverview() {
 		});
 	};
 
+	const handleComparisonClick = () => {
+		const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
+		if (comparisonRange) {
+			setSyncedDateRange({
+				selected: "custom",
+				custom: {
+					from: comparisonRange.startDate,
+					to: comparisonRange.endDate,
+				},
+			});
+		}
+	};
+
 	return (
 		<Card className="py-0">
 			<CardHeader className="!p-0 flex flex-col sm:flex-row">
@@ -249,6 +141,7 @@ export function ExpenseOverview() {
 								change={stats.amount.change}
 								className="self-start"
 								comparisonText={stats.comparisonText || undefined}
+								onComparisonClick={handleComparisonClick}
 							/>
 						)}
 					</div>

@@ -1,19 +1,16 @@
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { getPercentageChangeClasses, type PercentageChange } from "@/helpers/percentage-change";
+import { getPercentageChangeTextClasses, type PercentageChange } from "@/helpers/percentage-change";
 
-interface PercentageChangeDisplayProps {
-	change: PercentageChange;
-	className?: string;
-	size?: "sm" | "md" | "lg";
-	comparisonText?: string;
-}
-
-const IconComponent = {
+const IconComponent: Record<
+	PercentageChange["status"],
+	React.ComponentType<React.SVGProps<SVGSVGElement>> | null
+> = {
 	"no-change": null,
 	increase: TrendingUpIcon,
 	decrease: TrendingDownIcon,
-} as Record<PercentageChange["status"], any>;
+};
 
 const sizeClasses = {
 	sm: "text-xs",
@@ -26,20 +23,29 @@ const iconSizeClasses = {
 	lg: "size-5",
 };
 
+interface PercentageChangeDisplayProps {
+	change: PercentageChange;
+	className?: string;
+	size?: "sm" | "md" | "lg";
+	comparisonText?: string;
+	onComparisonClick?: () => void;
+}
+
 export function PercentageChangeDisplay({
 	change,
 	className,
 	size = "md",
 	comparisonText,
+	onComparisonClick,
 }: PercentageChangeDisplayProps) {
-	const classes = getPercentageChangeClasses(change);
+	const textClasses = getPercentageChangeTextClasses(change);
 	const Icon = IconComponent[change.status];
 
 	return (
 		<span
 			className={cn(
 				"inline-flex items-center gap-1 font-medium",
-				classes,
+				textClasses,
 				sizeClasses[size],
 				className,
 			)}
@@ -47,7 +53,14 @@ export function PercentageChangeDisplay({
 			{IconComponent && <Icon className={iconSizeClasses[size]} />}
 			{change.displayValue}
 			{comparisonText && (
-				<span className="font-normal text-muted-foreground">{comparisonText}</span>
+				<Button
+					variant="link"
+					className="p-0 underline decoration-dotted"
+					onClick={onComparisonClick}
+					disabled={!onComparisonClick}
+				>
+					{comparisonText}
+				</Button>
 			)}
 		</span>
 	);
@@ -57,28 +70,24 @@ interface PercentageChangeBadgeProps {
 	change: PercentageChange;
 	className?: string;
 	comparisonText?: string;
+	onComparisonClick?: () => void;
 }
 
 export function PercentageChangeBadge({
 	change,
 	className,
 	comparisonText,
+	onComparisonClick,
 }: PercentageChangeBadgeProps) {
-	const classes = getPercentageChangeClasses(change);
-
-	let bgClasses = "bg-muted/50";
-	if (change.status === "increase") {
-		bgClasses = "bg-green-50 dark:bg-green-950/30";
-	} else if (change.status === "decrease") {
-		bgClasses = "bg-red-50 dark:bg-red-950/30";
-	}
+	const textClasses = getPercentageChangeTextClasses(change);
 
 	return (
 		<span
 			className={cn(
-				"inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-xs",
-				classes,
-				bgClasses,
+				"inline-flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 font-medium text-xs",
+				textClasses,
+				change.status === "increase" && "bg-green-50 dark:bg-green-950/30",
+				change.status === "decrease" && "bg-red-50 dark:bg-red-950/30",
 				className,
 			)}
 		>
@@ -87,6 +96,7 @@ export function PercentageChangeBadge({
 				size="sm"
 				className="text-inherit"
 				comparisonText={comparisonText}
+				onComparisonClick={onComparisonClick}
 			/>
 		</span>
 	);

@@ -1,12 +1,11 @@
+import { cn } from "@hoalu/ui/utils";
+
 export interface PercentageChange {
 	percentage: number;
 	displayValue: string;
 	status: "increase" | "decrease" | "no-change";
 }
 
-/**
- * Calculate percentage change between current and previous values
- */
 export function calculatePercentageChange(
 	currentValue: number,
 	previousValue: number,
@@ -42,10 +41,10 @@ export function calculatePercentageChange(
 	};
 }
 
-export function getPercentageChangeClasses(change: PercentageChange) {
-	return change.status === "no-change"
-		? "text-muted-foreground"
-		: change.status === "increase"
-			? "text-green-600 dark:text-green-400"
-			: "text-red-600 dark:text-red-400";
+export function getPercentageChangeTextClasses(change: PercentageChange) {
+	return cn(
+		change.status === "no-change" && "text-muted-foreground",
+		change.status === "increase" && "text-green-600 dark:text-green-400",
+		change.status === "decrease" && "text-red-600 dark:text-red-400",
+	);
 }
