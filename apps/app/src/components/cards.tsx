@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import {
@@ -97,14 +95,6 @@ export function ErrorCard({
 	...props
 }: BasicCardProps & { error?: string | Error }) {
 	const message = error instanceof Error ? error.message : error;
-
-	useEffect(() => {
-		if (!import.meta.env.PROD) {
-			console.group("[ErrorCard]");
-			console.error(error);
-			console.groupEnd();
-		}
-	}, [error]);
 
 	return (
 		<ContentCard

@@ -1,9 +1,19 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useRef } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { CameraIcon, CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import {
+	Card,
+	CardAction,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { customDateRangeAtom, selectDateRangeAtom, syncedDateRangeAtom } from "@/atoms/filters";
 import {
@@ -16,6 +26,7 @@ import {
 	groupDataByMonth,
 } from "@/helpers/date-range";
 import { useExpenseStats } from "@/hooks/use-expenses";
+import { useScreenshot } from "@/hooks/use-screenshot";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { CurrencyValue } from "../currency-value";
 import { PercentageChangeDisplay } from "../percentage-change";
@@ -43,6 +54,8 @@ export function ExpenseOverview() {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
+	const chartRef = useRef<HTMLDivElement>(null);
+	const { takeScreenshot, status } = useScreenshot();
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
@@ -125,11 +138,17 @@ export function ExpenseOverview() {
 		}
 	};
 
+	const handleScreenshot = () => {
+		if (chartRef.current) {
+			takeScreenshot(chartRef.current);
+		}
+	};
+
 	return (
-		<Card className="py-0">
-			<CardHeader className="!p-0 flex flex-col sm:flex-row">
-				<div className="flex flex-1 flex-col justify-center gap-2 px-6 pt-6">
-					<CardTitle>Expenses</CardTitle>
+		<Card ref={chartRef}>
+			<CardHeader>
+				<CardTitle>Expenses</CardTitle>
+				<CardDescription>
 					<div className="flex flex-col gap-1">
 						<CurrencyValue
 							value={totalExpenses}
@@ -139,13 +158,26 @@ export function ExpenseOverview() {
 						{stats.hasComparison && (
 							<PercentageChangeDisplay
 								change={stats.amount.change}
-								className="self-start"
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
 							/>
 						)}
 					</div>
-				</div>
+				</CardDescription>
+				<CardAction>
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={handleScreenshot}
+						disabled={status === "pending"}
+						className="hide-in-screenshot size-8"
+						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
+					>
+						{(status === "idle" || status === "error") && <CameraIcon className="size-4" />}
+						{status === "pending" && <Loader2Icon className="size-4 animate-spin" />}{" "}
+						{status === "success" && <CheckIcon className="size-4 text-green-600" />}{" "}
+					</Button>
+				</CardAction>
 			</CardHeader>
 			<CardContent className="px-2 sm:p-6">
 				<ChartContainer
