@@ -18,7 +18,10 @@ export function CurrencyValue({ as: Component = "span", ...props }: CurrencyValu
 	if (props?.style === "decimal") {
 		return (
 			<div
-				className={cn("font-geist-mono font-semibold text-base tracking-tight", props.className)}
+				className={cn(
+					"font-geist-mono font-semibold text-base text-foreground tracking-tight",
+					props.className,
+				)}
 			>
 				{formattedValue}
 				<span className="ml-1 font-normal text-muted-foreground">{props.currency}</span>
@@ -29,7 +32,9 @@ export function CurrencyValue({ as: Component = "span", ...props }: CurrencyValu
 	const content = props.prefix ? `${props.prefix} ${formattedValue}` : formattedValue;
 
 	return (
-		<Component className={cn("font-geist-mono text-base tracking-tight", props.className)}>
+		<Component
+			className={cn("font-geist-mono text-base text-foreground tracking-tight", props.className)}
+		>
 			{content}
 		</Component>
 	);
