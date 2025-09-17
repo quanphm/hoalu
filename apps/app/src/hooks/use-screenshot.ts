@@ -11,7 +11,7 @@ export function useScreenshot({ scale = 2 }: UseScreenshotOptions = {}) {
 	const [status, setStatus] = useState<"idle" | "success" | "error" | "pending">("idle");
 
 	const takeScreenshot = useCallback(
-		async (element: HTMLElement) => {
+		async (element?: HTMLElement | null) => {
 			if (!element) {
 				throw new Error("Element not found");
 			}
@@ -47,16 +47,11 @@ export function useScreenshot({ scale = 2 }: UseScreenshotOptions = {}) {
 				if (!blob) {
 					throw new Error("Failed to generate image");
 				}
-
-				try {
-					await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-					setStatus("success");
-				} catch (clipboardError) {
-					throw new Error("Failed to copy to clipboard", { cause: clipboardError });
-				}
+				setStatus("success");
+				return blob;
 			} catch (screenshotError) {
-				console.error("Failed to take screenshot:", screenshotError);
-				setStatus("error");
+				// setStatus("error");
+				throw new Error("Failed to take screenshot:", { cause: screenshotError });
 			} finally {
 				setTimeout(() => setStatus("idle"), 1500);
 			}

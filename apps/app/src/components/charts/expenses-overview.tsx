@@ -139,9 +139,15 @@ export function ExpenseOverview() {
 	};
 
 	const handleScreenshot = () => {
-		if (chartRef.current) {
-			takeScreenshot(chartRef.current);
-		}
+		if (!chartRef.current) return;
+		if (!("clipboard" in navigator) || typeof ClipboardItem === "undefined") return;
+		navigator.clipboard.write([
+			new ClipboardItem({
+				"image/png": new Promise((resolve, reject) => {
+					takeScreenshot(chartRef.current).then(resolve).catch(reject);
+				}),
+			}),
+		]);
 	};
 
 	return (
