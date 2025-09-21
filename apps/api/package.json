@@ -9,7 +9,7 @@
 		"./types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
-		"dev": "bun --watch src/index.ts",
+		"dev": "bun db:migrate && bun --watch src/index.ts",
 		"clean": "rimraf -rf dist",
 		"prebuild": "bun run clean",
 		"build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
