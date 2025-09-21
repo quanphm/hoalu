@@ -1,7 +1,7 @@
-FROM oven/bun:1.2.20
+FROM oven/bun:1.2.22
 WORKDIR /migrations
 
-RUN bun install drizzle-orm drizzle-kit pg
+RUN bun add --global drizzle-orm drizzle-kit pg
 COPY ./apps/api/drizzle.config.ts .
 COPY ./apps/api/src/db/schema.ts ./src/db/schema.ts
 COPY ./apps/api/migrations ./migrations

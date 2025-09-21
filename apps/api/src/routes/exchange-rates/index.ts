@@ -1,6 +1,6 @@
+import { arktypeValidator } from "@hono/arktype-validator";
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
-import { validator as aValidator } from "hono-openapi/arktype";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
@@ -26,7 +26,7 @@ const route = app.get(
 			...OpenAPI.response(type({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	aValidator("query", type({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
+	arktypeValidator("query", type({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
 		if (!result.success) {
 			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
 		}

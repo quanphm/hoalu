@@ -1,5 +1,5 @@
 import { Scalar } from "@scalar/hono-api-reference";
-import { openAPISpecs } from "hono-openapi";
+import { openAPIRouteHandler } from "hono-openapi";
 
 import type { HonoApp } from "../types";
 
@@ -7,7 +7,7 @@ export function openAPIModule(app: HonoApp) {
 	app
 		.get(
 			"/openapi",
-			openAPISpecs(app, {
+			openAPIRouteHandler(app, {
 				documentation: {
 					info: {
 						title: "Hoalu API",

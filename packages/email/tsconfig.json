@@ -3,5 +3,5 @@
 	"compilerOptions": {
 		"noImplicitAny": false
 	},
-	"include": ["emails"]
+	"include": ["src/emails"]
 }
