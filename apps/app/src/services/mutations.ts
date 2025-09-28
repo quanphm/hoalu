@@ -366,6 +366,7 @@ export function useDeleteWallet() {
 			return result;
 		},
 		onSuccess: async (rs) => {
+			playDropSound();
 			toast.success("Wallet deleted");
 			queryClient.removeQueries({ queryKey: walletKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
@@ -428,6 +429,7 @@ export function useDeleteCategory() {
 			return result;
 		},
 		onSuccess: async (rs) => {
+			playDropSound();
 			toast.success("Category deleted");
 			queryClient.removeQueries({ queryKey: categoryKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
