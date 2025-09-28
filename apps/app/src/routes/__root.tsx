@@ -1,10 +1,12 @@
+import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
 	createRootRouteWithContext,
 	type ErrorComponentProps,
 	Outlet,
 } from "@tanstack/react-router";
-import { lazy } from "react";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
@@ -37,24 +39,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<>
 			{children}
 			<ReloadPromptPwa />
-			<QueryDevtools buttonPosition="top-right" />
-			<RouterDevtools position="bottom-right" />
+			<TanStackDevtools
+				plugins={[
+					{
+						name: "Query",
+						render: <ReactQueryDevtoolsPanel />,
+					},
+					{
+						name: "Router",
+						render: <TanStackRouterDevtoolsPanel />,
+					},
+				]}
+			/>
 		</>
 	);
 }
-
-const RouterDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/react-router-devtools").then((res) => ({
-				default: res.TanStackRouterDevtools,
-			})),
-		);
-
-const QueryDevtools = import.meta.env.PROD
-	? () => null
-	: lazy(() =>
-			import("@tanstack/react-query-devtools").then((res) => ({
-				default: res.ReactQueryDevtools,
-			})),
-		);

@@ -6,6 +6,7 @@ import { toast } from "@hoalu/ui/sonner";
 import { createExpenseDialogAtom, draftExpenseAtom } from "@/atoms";
 import { apiClient } from "@/lib/api-client";
 import { authClient } from "@/lib/auth-client";
+import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/lib/query-key-factory";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
@@ -18,7 +19,6 @@ import type {
 	WorkspaceMetadataFormSchema,
 } from "@/lib/schema";
 import { playDropSound } from "@/lib/sound-effects";
-import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/services/query-key-factory";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -365,8 +365,9 @@ export function useDeleteWallet() {
 			const result = await apiClient.wallets.delete(slug, id);
 			return result;
 		},
-		onSuccess: async () => {
+		onSuccess: async (rs) => {
 			toast.success("Wallet deleted");
+			queryClient.removeQueries({ queryKey: walletKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
@@ -426,8 +427,9 @@ export function useDeleteCategory() {
 			const result = await apiClient.categories.delete(slug, id);
 			return result;
 		},
-		onSuccess: async () => {
+		onSuccess: async (rs) => {
 			toast.success("Category deleted");
+			queryClient.removeQueries({ queryKey: categoryKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {

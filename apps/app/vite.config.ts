@@ -1,5 +1,6 @@
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
+import { devtools } from "@tanstack/devtools-vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
@@ -50,6 +51,7 @@ const pwaOptions: Partial<VitePWAOptions> = {
 export default defineConfig({
 	envPrefix: "PUBLIC_",
 	plugins: [
+		devtools(),
 		tailwindcss(),
 		tanstackRouter({ target: "react", autoCodeSplitting: false }),
 		react(),

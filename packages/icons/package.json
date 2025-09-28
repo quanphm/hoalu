@@ -6,7 +6,6 @@
 	"exports": {
 		"./lucide": "./src/lucide/index.tsx",
 		"./meteocons": "./src/meteocons/index.tsx",
-		"./pixelart": "./src/pixelart/index.tsx",
 		"./social": "./src/social/index.tsx",
 		"./tabler": "./src/tabler/index.tsx"
 	},

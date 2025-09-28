@@ -115,7 +115,7 @@ app.get("/", workspaceQueryValidator, workspaceMember, async (c) => {
 
 #### Data Layer
 - **Query Management**: TanStack Query with factory pattern
-  - `services/query-key-factory.ts` - Centralized query key management
+  - `lib/query-key-factory.ts` - Centralized query key management
   - `services/query-options.ts` - Reusable query configurations
   - `services/mutations.ts` - Mutation configurations
 

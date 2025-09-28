@@ -10,12 +10,14 @@ interface CurrencyValueProps {
 	as?: "span" | "p";
 }
 
-export function CurrencyValue({ as: Component = "span", ...props }: CurrencyValueProps) {
-	const formattedValue = formatCurrency(props.value, props.currency, {
-		style: props.style || "currency",
-	});
+export function CurrencyValue({
+	as: Component = "span",
+	style = "currency",
+	...props
+}: CurrencyValueProps) {
+	const formattedValue = formatCurrency(props.value, props.currency, { style });
 
-	if (props?.style === "decimal") {
+	if (style === "decimal") {
 		return (
 			<div
 				className={cn(

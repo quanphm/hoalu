@@ -181,12 +181,21 @@ export function useExpenseStats() {
 	const comparisonText = getComparisonPeriodText(dateRange, customRange);
 
 	// Calculate percentage changes
-	const totalAmountChange = calculatePercentageChange(currentTotalAmount, previousTotalAmount);
+	const totalAmountChange = calculatePercentageChange(
+		currentTotalAmount,
+		previousTotalAmount,
+		currency,
+	);
 	const transactionCountChange = calculatePercentageChange(
 		currentPeriodData.length,
 		previousPeriodData.length,
+		currency,
 	);
-	const activeDaysChange = calculatePercentageChange(currentActiveDays, previousActiveDays);
+	const activeDaysChange = calculatePercentageChange(
+		currentActiveDays,
+		previousActiveDays,
+		currency,
+	);
 
 	const categoryCount: Record<string, number> = {};
 	for (const category of categories) {

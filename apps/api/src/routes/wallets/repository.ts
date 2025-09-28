@@ -1,6 +1,5 @@
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
 
-import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
 import type { UpdateWalletSchema } from "./schema";
 
@@ -14,15 +13,13 @@ export class WalletRepository {
 			.select({
 				...schemaColumns,
 				owner: schema.user,
-				workspace: schema.workspace,
 				total: count(schema.expense.id),
 			})
 			.from(schema.wallet)
 			.innerJoin(schema.user, eq(schema.wallet.ownerId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.wallet.workspaceId, schema.workspace.id))
 			.leftJoin(schema.expense, eq(schema.wallet.id, schema.expense.walletId))
 			.where(eq(schema.wallet.workspaceId, param.workspaceId))
-			.groupBy(schema.wallet.id, schema.user.id, schema.workspace.id)
+			.groupBy(schema.wallet.id, schema.user.id)
 			.orderBy((result) => {
 				return [desc(result.total), desc(result.name)];
 			});
@@ -35,15 +32,13 @@ export class WalletRepository {
 			.select({
 				...schemaColumns,
 				owner: schema.user,
-				workspace: schema.workspace,
 				total: count(schema.expense.id),
 			})
 			.from(schema.wallet)
 			.innerJoin(schema.user, eq(schema.wallet.ownerId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.wallet.workspaceId, schema.workspace.id))
 			.leftJoin(schema.expense, eq(schema.wallet.id, schema.expense.walletId))
 			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
-			.groupBy(schema.wallet.id, schema.user.id, schema.workspace.id)
+			.groupBy(schema.wallet.id, schema.user.id)
 			.orderBy(desc(schema.wallet.createdAt))
 			.limit(1);
 
@@ -52,15 +47,8 @@ export class WalletRepository {
 		return queryData[0];
 	}
 
-	async insert(param: Omit<NewWallet, "id">) {
-		const [wallet] = await db
-			.insert(schema.wallet)
-			.values({
-				id: generateId({ use: "uuid" }),
-				...param,
-			})
-			.returning();
-
+	async insert(param: NewWallet) {
+		const [wallet] = await db.insert(schema.wallet).values(param).returning();
 		const result = await this.findOne({ id: wallet.id, workspaceId: wallet.workspaceId });
 		return result;
 	}
@@ -91,8 +79,8 @@ export class WalletRepository {
 			.where(eq(schema.wallet.id, param.id))
 			.returning();
 
-		if (!wallet) return null;
+		if (!wallet) return { id: param.id };
 
-		return wallet;
+		return { id: wallet.id };
 	}
 }

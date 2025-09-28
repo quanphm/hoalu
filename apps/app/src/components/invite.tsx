@@ -15,8 +15,8 @@ import { toast } from "@hoalu/ui/sonner";
 import { useAppForm } from "@/components/forms";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { authClient } from "@/lib/auth-client";
+import { workspaceKeys } from "@/lib/query-key-factory";
 import { InviteFormSchema } from "@/lib/schema";
-import { workspaceKeys } from "@/services/query-key-factory";
 
 export function InviteDialog() {
 	const [open, setOpen] = useState(false);

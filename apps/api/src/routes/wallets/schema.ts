@@ -19,14 +19,6 @@ export const WalletSchema = type({
 		email: "string.email",
 		image: "string | null",
 	},
-	workspace: {
-		"+": "delete",
-		id: "string.uuid.v7",
-		publicId: "string",
-		slug: "string",
-		name: "string",
-		logo: "string | null",
-	},
 	total: "number",
 });
 
@@ -50,6 +42,5 @@ export const UpdateWalletSchema = type({
 }).partial();
 
 export const DeletetWalletSchema = type({
-	"+": "delete",
 	id: "string.uuid.v7",
-}).or("null");
+});

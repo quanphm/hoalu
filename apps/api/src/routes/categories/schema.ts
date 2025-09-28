@@ -22,6 +22,5 @@ export const InsertCategorySchema = type({
 export const UpdateCategorySchema = InsertCategorySchema.partial();
 
 export const DeleteCategorySchema = type({
-	"+": "delete",
 	id: "string.uuid.v7",
-}).or("null");
+});

@@ -86,11 +86,11 @@ export function CategoryBreakdown() {
 	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
 
 	return (
-		<Card className="py-0">
-			<CardHeader className="pt-4">
+		<Card>
+			<CardHeader>
 				<CardTitle>Top Categories</CardTitle>
 			</CardHeader>
-			<CardContent className="px-6 pb-4">
+			<CardContent>
 				<div className="mt-2">
 					{dataToView.length === 0 ? (
 						<div className="flex h-[250px] items-center justify-center text-muted-foreground">
@@ -106,7 +106,7 @@ export function CategoryBreakdown() {
 								onToggleView={handleToggleView}
 							/>
 							{dataToView.length > TOP_N_CATEGORY && (
-								<div className="mb-2 flex justify-end">
+								<div className="flex justify-end">
 									<Button variant="outline" size="sm" onClick={handleToggleView}>
 										{view === "less" && "View all"}
 										{view === "more" && "View less"}

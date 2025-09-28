@@ -1,6 +1,7 @@
 import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
 
+import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
@@ -115,8 +116,9 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const category = await catgegoryRepository.insert({
-				workspaceId: workspace.id,
 				...payload,
+				id: generateId({ use: "uuid" }),
+				workspaceId: workspace.id,
 			});
 
 			const parsed = CategorySchema(category);

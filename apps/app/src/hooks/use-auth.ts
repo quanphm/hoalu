@@ -6,7 +6,7 @@ import { useCallback } from "react";
 
 import { draftExpenseAtom } from "@/atoms";
 import { authClient } from "@/lib/auth-client";
-import { authKeys, workspaceKeys } from "@/services/query-key-factory";
+import { authKeys, workspaceKeys } from "@/lib/query-key-factory";
 import { sessionOptions } from "@/services/query-options";
 
 export function useAuth() {

@@ -2,6 +2,7 @@ import { type } from "arktype";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 
+import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
@@ -126,12 +127,13 @@ const route = app
 			const realAmount = monetary.toRealAmount(amount, currency);
 
 			const expense = await expenseRepository.insert({
-				creatorId: user.id,
+				...rest,
+				currency,
+				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
+				creatorId: user.id,
 				date: date || new Date().toISOString(),
 				amount: `${realAmount}`,
-				currency,
-				...rest,
 			});
 
 			const parsed = ExpenseSchema(expense);

@@ -2,6 +2,7 @@ import { type } from "arktype";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 
+import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
@@ -122,9 +123,10 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const task = await taskRepository.insert({
+				...payload,
+				id: generateId({ use: "uuid" }),
 				creatorId: user.id,
 				workspaceId: workspace.id,
-				...payload,
 			});
 
 			const parsed = TaskSchema(task);

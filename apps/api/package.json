@@ -9,14 +9,14 @@
 		"./types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
+    "build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
+    "build:types": "bun tsc -p tsconfig.build.json",
+    "prebuild": "bun run clean",
+    "build": "bun run build:api && bun run build:types",
+    "clean": "rimraf -rf dist",
 		"dev": "bun db:migrate && bun --watch src/index.ts",
-		"clean": "rimraf -rf dist",
-		"prebuild": "bun run clean",
-		"build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
-		"build:types": "bun tsc -p tsconfig.build.json",
-		"build": "bun run build:api && bun run build:types",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@hoalu/auth": "workspace:*",

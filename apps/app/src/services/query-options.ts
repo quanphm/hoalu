@@ -5,7 +5,6 @@ import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { apiClient } from "@/lib/api-client";
 import { authClient, type Session, type SessionData, type User } from "@/lib/auth-client";
 import { queryClient } from "@/lib/query-client";
-import type { ExchangeRatesQuerySchema, ExpenseWithClientConvertedSchema } from "@/lib/schema";
 import {
 	authKeys,
 	categoryKeys,
@@ -16,7 +15,8 @@ import {
 	taskKeys,
 	walletKeys,
 	workspaceKeys,
-} from "@/services/query-key-factory";
+} from "@/lib/query-key-factory";
+import type { ExchangeRatesQuerySchema, ExpenseWithClientConvertedSchema } from "@/lib/schema";
 
 /**
  * auth

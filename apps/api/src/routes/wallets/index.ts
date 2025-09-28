@@ -2,6 +2,7 @@ import { type } from "arktype";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 
+import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
@@ -122,9 +123,10 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const wallet = await walletRepository.insert({
+				...payload,
+				id: generateId({ use: "uuid" }),
 				ownerId: user.id,
 				workspaceId: workspace.id,
-				...payload,
 			});
 
 			const parsed = WalletSchema(wallet);
@@ -252,15 +254,12 @@ const route = app
 			const membership = c.get("membership");
 			const param = c.req.valid("param");
 
-			// owner or workspace owener can delete their wallet
+			// only wallet-owner or workspace-owner can delete wallet
 			const wallet = await walletRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!wallet) {
-				return c.json({ data: null }, HTTPStatus.codes.OK);
-			}
-			if (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE) {
+			if (!wallet || (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE)) {
 				return c.json(
 					{ message: "You don't have permission to delete this wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
@@ -275,7 +274,7 @@ const route = app
 			const activeWallets = wallets.filter((w) => w.isActive);
 			if (activeWallets.length === 1 && wallet.isActive) {
 				return c.json(
-					{ message: "This wallet cannot be deleted because it's your only available wallet" },
+					{ message: "This wallet cannot be deleted because it's the only available wallet" },
 					HTTPStatus.codes.BAD_REQUEST,
 				);
 			}
