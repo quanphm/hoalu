@@ -23,8 +23,7 @@ services:
       - traefik.http.routers.hoalu-api.rule=Host(`hoalu.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.hoalu-api.tls=true
-      - traefik.http.routers.hoalu-api.middlewares=web-compression@file
-      - traefik.http.routers.hoalu-api.middlewares=strip-api-prefix
+      - traefik.http.routers.hoalu-api.middlewares=web-compression@file,strip-api-prefix
       - traefik.http.routers.hoalu-api.service=hoalu-api
       - traefik.http.services.hoalu-api.loadbalancer.server.port=3000
 

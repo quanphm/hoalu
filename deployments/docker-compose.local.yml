@@ -1,4 +1,4 @@
-name: hoalu-local
+name: hoalu
 
 services:
   database:
