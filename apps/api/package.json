@@ -25,6 +25,7 @@
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@hono/arktype-validator": "^2.0.1",
+		"@hono/standard-validator": "^0.1.5",
 		"@react-email/render": "^1.2.3",
 		"@scalar/hono-api-reference": "^0.9.19",
 		"arktype": "catalog:",
