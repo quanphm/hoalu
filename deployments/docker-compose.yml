@@ -3,7 +3,7 @@ name: hoalu
 services:
   database:
     container_name: hoalu-db
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     restart: always
     networks:
       - hoalu_network
@@ -17,7 +17,7 @@ services:
       - -c
       - wal_level=logical
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/18/docker
     deploy:
       resources:
         limits:
