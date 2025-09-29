@@ -17,7 +17,16 @@ COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
 RUN bun run build:api
 
-# stage 3: runtime
+# stage 3: migration
+FROM base AS migration
+WORKDIR /repo
+ENV NODE_ENV='production'
+# Copy installed dependencies and source code from build stage
+COPY --from=build /repo .
+WORKDIR /repo/apps/api
+CMD ["bun", "run", "db:migrate"]
+
+# stage 4: runtime
 FROM base AS runner
 WORKDIR /api
 COPY --from=build /repo/apps/api/dist .

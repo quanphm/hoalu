@@ -1,0 +1,62 @@
+name: hoalu-platform
+
+services:
+  api:
+    container_name: hoalu-api
+    build:
+      context: ../
+      dockerfile: ./deployments/api.Dockerfile
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - hoalu_network
+      - traefik_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hoalu-api.entrypoints=websecure
+      - traefik.http.routers.hoalu-api.rule=Host(`hoalu.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api
+      - traefik.http.routers.hoalu-api.tls=true
+      - traefik.http.routers.hoalu-api.middlewares=web-compression@file,strip-api-prefix
+      - traefik.http.routers.hoalu-api.service=hoalu-api
+      - traefik.http.services.hoalu-api.loadbalancer.server.port=3000
+
+  app:
+    container_name: hoalu-app
+    build:
+      context: ../
+      dockerfile: ./deployments/app.Dockerfile
+      args:
+        - PUBLIC_API_URL=${PUBLIC_API_URL}
+        - PUBLIC_APP_BASE_URL=${PUBLIC_APP_BASE_URL}
+    restart: always
+    networks:
+      - hoalu_network
+      - traefik_network
+    depends_on:
+      - api
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hoalu-app.entrypoints=websecure
+      - traefik.http.routers.hoalu-app.rule=Host(`hoalu.${DOMAIN}`)
+      - traefik.http.routers.hoalu-app.tls=true
+      - traefik.http.routers.hoalu-app.middlewares=web-compression@file
+      - traefik.http.routers.hoalu-app.service=hoalu-app
+      - traefik.http.services.hoalu-app.loadbalancer.server.port=8080
+
+networks:
+  hoalu_network:
+    external: true
+  traefik_network:
+    external: true

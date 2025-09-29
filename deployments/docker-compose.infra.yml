@@ -1,0 +1,72 @@
+name: hoalu-infra
+
+services:
+  database:
+    container_name: hoalu-db
+    image: postgres:18-alpine
+    restart: always
+    networks:
+      - hoalu_network
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    command:
+      - -c
+      - listen_addresses=*
+      - -c
+      - wal_level=logical
+    volumes:
+      - pg_data:/var/lib/postgresql/18/docker
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+
+  electric:
+    container_name: hoalu-electric
+    image: electricsql/electric:latest
+    restart: always
+    networks:
+      - hoalu_network
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
+      - ELECTRIC_PORT=4000
+      - ELECTRIC_SECRET=${SYNC_SECRET}
+    depends_on:
+      - database
+    volumes:
+      - electric_data:/app/persistent
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+
+  redis:
+    container_name: hoalu-redis
+    image: redis:7.4.2-alpine
+    restart: always
+    networks:
+      - hoalu_network
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+volumes:
+  pg_data:
+    driver: local
+  electric_data:
+    driver: local
+
+networks:
+  hoalu_network:
+    name: hoalu_network
+    driver: bridge
+  traefik_network:
+    external: true
