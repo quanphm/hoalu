@@ -40,7 +40,7 @@ export default function VerifyEmail({ url, name }: Props) {
 						<Text>
 							Or, you can copy and paste the link below into your browser:
 							<br />
-							<Link href={url} className="text-blue-700">
+							<Link href={url} className="break-all text-blue-700">
 								{url}
 							</Link>
 						</Text>
