@@ -45,7 +45,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 						<Text>
 							Or, you can copy and paste the link below into your browser:
 							<br />
-							<Link href={inviteLink} className="text-blue-700">
+							<Link href={inviteLink} className="break-all text-blue-700">
 								{inviteLink}
 							</Link>
 						</Text>
