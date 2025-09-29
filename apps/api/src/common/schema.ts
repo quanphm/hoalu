@@ -13,7 +13,7 @@ export const TaskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
 export const PrioritySchema = type("===", ...PG_ENUM_PRIORITY);
 export const RepeatSchema = type("===", ...PG_ENUM_REPEAT);
 export const WalletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-export const CurrencySchema = type("string > 0").exactlyLength(3).default("USD");
+export const CurrencySchema = type("string == 3").default("USD");
 
 /**
  * Consolidate date/timestamp with `mode: string` from drizzle-orm & openapi.

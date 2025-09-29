@@ -62,7 +62,7 @@ export function PercentageChangeDisplay({
 				variant="link"
 				className={cn("p-0 decoration-dotted", textClasses)}
 				onClick={handleViewModeChange}
-				title="toggle view percent or value"
+				title="toggle view percent or absolute value"
 			>
 				{viewMode === "percent" && change.displayInPercent}
 				{viewMode === "value" && change.displayInValue}

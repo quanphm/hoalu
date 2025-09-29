@@ -7,7 +7,7 @@ export const WalletSchema = type({
 	id: "string.uuid.v7",
 	name: "string",
 	description: "string | null",
-	currency: "string",
+	currency: CurrencySchema,
 	type: WalletTypeSchema,
 	isActive: "boolean",
 	createdAt: IsoDateSchema,
@@ -41,6 +41,6 @@ export const UpdateWalletSchema = type({
 	ownerId: "string.uuid.v7",
 }).partial();
 
-export const DeletetWalletSchema = type({
+export const DeleteWalletSchema = type({
 	id: "string.uuid.v7",
 });

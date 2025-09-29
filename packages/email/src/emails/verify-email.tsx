@@ -23,7 +23,7 @@ export default function VerifyEmail({ url, name }: Props) {
 			<Preview>Verify your new email address with Hoalu. Clicking the link bellow.</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
-					<Container className="mx-auto my-10 max-w-[465px] rounded-md border border-[#eaeaea] border-solid px-5 py-3">
+					<Container className="mx-auto my-10 max-w-[465px] border border-[#eaeaea] border-solid px-5 py-3">
 						<Heading className="my-5 text-center font-normal text-[24px]">
 							Verify your email address
 						</Heading>
@@ -32,7 +32,7 @@ export default function VerifyEmail({ url, name }: Props) {
 						</Text>
 						<Text>Please verify your email address by clicking the button below.</Text>
 						<Button
-							className="block rounded-md bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
+							className="block bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
 							href={url}
 						>
 							Verify Email
@@ -40,7 +40,7 @@ export default function VerifyEmail({ url, name }: Props) {
 						<Text>
 							Or, you can copy and paste the link below into your browser:
 							<br />
-							<Link href={url} className="break-all text-blue-700 no-underline">
+							<Link href={url} className="text-blue-700">
 								{url}
 							</Link>
 						</Text>

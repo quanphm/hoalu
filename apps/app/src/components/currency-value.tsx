@@ -19,7 +19,7 @@ export function CurrencyValue({
 
 	if (style === "decimal") {
 		return (
-			<div
+			<Component
 				className={cn(
 					"font-geist-mono font-semibold text-base text-foreground tracking-tight",
 					props.className,
@@ -27,7 +27,7 @@ export function CurrencyValue({
 			>
 				{formattedValue}
 				<span className="ml-1 font-normal text-muted-foreground">{props.currency}</span>
-			</div>
+			</Component>
 		);
 	}
 

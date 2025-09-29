@@ -9,14 +9,14 @@
 		"./types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
-    "build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
-    "build:types": "bun tsc -p tsconfig.build.json",
-    "prebuild": "bun run clean",
-    "build": "bun run build:api && bun run build:types",
-    "clean": "rimraf -rf dist",
+		"build:api": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
+		"build:types": "bun tsc -p tsconfig.build.json",
+		"prebuild": "bun run clean",
+		"build": "bun run build:api && bun run build:types",
+		"clean": "rimraf -rf dist",
 		"dev": "bun db:migrate && bun --watch src/index.ts",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@hoalu/auth": "workspace:*",
@@ -25,7 +25,6 @@
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@hono/arktype-validator": "^2.0.1",
-		"@hono/standard-validator": "^0.1.5",
 		"@react-email/render": "^1.2.3",
 		"@scalar/hono-api-reference": "^0.9.19",
 		"arktype": "catalog:",

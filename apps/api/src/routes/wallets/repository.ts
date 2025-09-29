@@ -64,7 +64,7 @@ export class WalletRepository {
 				updatedAt: sql`now()`,
 				...param.payload,
 			})
-			.where(eq(schema.wallet.id, param.id))
+			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
 			.returning();
 
 		if (!wallet) return null;

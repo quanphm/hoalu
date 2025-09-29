@@ -14,7 +14,7 @@ import { jsonBodyValidator } from "../../validators/json-body";
 import { workspaceQueryValidator } from "../../validators/workspace-query";
 import { WalletRepository } from "./repository";
 import {
-	DeletetWalletSchema,
+	DeleteWalletSchema,
 	InsertWalletSchema,
 	UpdateWalletSchema,
 	WalletSchema,
@@ -237,7 +237,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: DeletetWalletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: DeleteWalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -284,7 +284,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = DeletetWalletSchema(queryData);
+			const parsed = DeleteWalletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

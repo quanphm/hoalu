@@ -27,7 +27,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 			</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
-					<Container className="mx-auto my-10 max-w-[465px] rounded-md border border-[#eaeaea] border-solid px-5 py-3">
+					<Container className="mx-auto my-10 max-w-[465px] border border-[#eaeaea] border-solid px-5 py-3">
 						<Heading className="my-5 text-center font-normal text-[24px]">
 							Join <strong>{inviterName}</strong> on <strong>{workspaceName}</strong>
 						</Heading>
@@ -37,7 +37,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 							<strong>Hoalu</strong>.
 						</Text>
 						<Button
-							className="block rounded-md bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
+							className="block bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
 							href={inviteLink}
 						>
 							Accept
@@ -45,7 +45,7 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 						<Text>
 							Or, you can copy and paste the link below into your browser:
 							<br />
-							<Link href={inviteLink} className="break-all text-blue-700 no-underline">
+							<Link href={inviteLink} className="text-blue-700">
 								{inviteLink}
 							</Link>
 						</Text>

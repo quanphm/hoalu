@@ -38,22 +38,27 @@ export function calculatePercentageChange(
 	}
 
 	const value = currentValue - previousValue;
-	const percentage = Math.abs(((currentValue - previousValue) / previousValue) * 100);
-	const status = percentage === 0 ? "no-change" : percentage > 0 ? "increase" : "decrease";
+	const status = value === 0 ? "no-change" : value > 0 ? "increase" : "decrease";
+
+	const percentageRaw = (value / previousValue) * 100;
+	const percentage = Math.abs(percentageRaw);
 
 	const displayInValue =
 		status === "no-change"
 			? `${formatCurrency(0, currency)}`
-			: `${status === "increase" ? "+" : "-"}${formatCurrency(value, currency)}`;
+			: `${status === "increase" ? "+" : "-"}${formatCurrency(Math.abs(value), currency)}`;
+
 	const displayInPercent =
-		status === "no-change" ? "0%" : `${status === "increase" ? "+" : "-"}${percentage.toFixed(1)}%`;
+		status === "no-change"
+			? "0%"
+			: `${status === "increase" ? "+" : "-"}${Math.abs(percentageRaw).toFixed(1)}%`;
 
 	return {
+		status,
 		value,
 		percentage,
 		displayInValue,
 		displayInPercent,
-		status,
 	};
 }
 
