@@ -1,4 +1,4 @@
-name: hoalu-apps
+name: hoalu-platform
 
 services:
   api:
