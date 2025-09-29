@@ -61,5 +61,17 @@
 				"noDangerouslySetInnerHtml": "warn"
 			}
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["apps/app/src/routes/__root.tsx"],
+			"assist": {
+				"actions": {
+					"source": {
+						"organizeImports": "off"
+					}
+				}
+			}
+		}
+	]
 }

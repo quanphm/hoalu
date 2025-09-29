@@ -1,15 +1,18 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
 	createRootRouteWithContext,
 	type ErrorComponentProps,
 	Outlet,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
 import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
+
+// devtools
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { FormDevtools } from "@tanstack/react-form-devtools";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -48,6 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					{
 						name: "Router",
 						render: <TanStackRouterDevtoolsPanel />,
+					},
+					{
+						name: "Form",
+						render: <FormDevtools />,
 					},
 				]}
 			/>
