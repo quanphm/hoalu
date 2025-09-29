@@ -5,8 +5,8 @@ import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
 import { TasksTable } from "@/components/tasks-table";
+import { taskKeys } from "@/lib/query-key-factory";
 import type { TaskSchema } from "@/lib/schema";
-import { taskKeys } from "@/services/query-key-factory";
 import { tasksQueryOptions } from "@/services/query-options";
 import { tasksShapeOptions, withWorkspace } from "@/services/shape-options";
 

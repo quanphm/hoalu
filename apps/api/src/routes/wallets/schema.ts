@@ -7,7 +7,7 @@ export const WalletSchema = type({
 	id: "string.uuid.v7",
 	name: "string",
 	description: "string | null",
-	currency: "string",
+	currency: CurrencySchema,
 	type: WalletTypeSchema,
 	isActive: "boolean",
 	createdAt: IsoDateSchema,
@@ -18,14 +18,6 @@ export const WalletSchema = type({
 		name: "string",
 		email: "string.email",
 		image: "string | null",
-	},
-	workspace: {
-		"+": "delete",
-		id: "string.uuid.v7",
-		publicId: "string",
-		slug: "string",
-		name: "string",
-		logo: "string | null",
 	},
 	total: "number",
 });
@@ -49,7 +41,6 @@ export const UpdateWalletSchema = type({
 	ownerId: "string.uuid.v7",
 }).partial();
 
-export const DeletetWalletSchema = type({
-	"+": "delete",
+export const DeleteWalletSchema = type({
 	id: "string.uuid.v7",
-}).or("null");
+});

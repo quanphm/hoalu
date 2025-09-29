@@ -1,7 +1,4 @@
 {
 	"extends": "@hoalu/tsconfig/react-library.json",
-	"compilerOptions": {
-		"noImplicitAny": false
-	},
-	"include": ["emails"]
+	"include": ["src/emails"]
 }

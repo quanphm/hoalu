@@ -5,20 +5,18 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"./verify-email": "./emails/verify-email.tsx",
-		"./join-workspace": "./emails/join-workspace.tsx",
-		"./reset-password": "./emails/reset-password.tsx"
+		".": "./src/index.ts"
 	},
 	"scripts": {
-		"dev": "email dev -p 3003"
+		"dev": "email dev --port 3003 --dir src/emails"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@react-email/preview-server": "4.2.8",
-		"react-email": "^4.2.8"
+		"@react-email/preview-server": "4.2.11",
+		"react-email": "^4.2.11"
 	},
 	"dependencies": {
-		"@react-email/components": "^0.5.1",
+		"@react-email/components": "^0.5.3",
 		"@react-email/tailwind": "^1.2.2"
 	},
 	"peerDependencies": {

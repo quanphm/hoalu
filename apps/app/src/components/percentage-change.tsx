@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -38,8 +40,13 @@ export function PercentageChangeDisplay({
 	comparisonText,
 	onComparisonClick,
 }: PercentageChangeDisplayProps) {
+	const [viewMode, setViewMode] = useState<"percent" | "value">("percent");
 	const textClasses = getPercentageChangeTextClasses(change);
 	const Icon = IconComponent[change.status];
+
+	function handleViewModeChange() {
+		setViewMode((prev) => (prev === "percent" ? "value" : "percent"));
+	}
 
 	return (
 		<span
@@ -51,13 +58,22 @@ export function PercentageChangeDisplay({
 			)}
 		>
 			{Icon && <Icon className={iconSizeClasses[size]} />}
-			{change.displayValue}
+			<Button
+				variant="link"
+				className={cn("p-0 decoration-dotted", textClasses)}
+				onClick={handleViewModeChange}
+				title="toggle view percent or absolute value"
+			>
+				{viewMode === "percent" && change.displayInPercent}
+				{viewMode === "value" && change.displayInValue}
+			</Button>
 			{comparisonText && (
 				<Button
 					variant="link"
 					className="p-0 decoration-dotted"
 					onClick={onComparisonClick}
 					disabled={!onComparisonClick}
+					title="see all expenses"
 				>
 					{comparisonText}
 				</Button>

@@ -7,6 +7,7 @@ export * from "./folder";
 export * from "./home";
 export * from "./layout-dashboard";
 export * from "./settings";
+export * from "./tent";
 export * from "./trending-down";
 export * from "./trending-up";
 export * from "./triangle-square-circle";

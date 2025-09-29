@@ -1,9 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
+  dialect: "postgresql",
+  schema: "./src/db/schema.ts",
 	out: "./migrations",
-	schema: "./src/db/schema.ts",
-	dialect: "postgresql",
 	dbCredentials: {
 		host: process.env.DB_HOST!,
 		port: 5432,

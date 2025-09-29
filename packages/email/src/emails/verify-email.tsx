@@ -16,29 +16,31 @@ interface Props {
 	name: string;
 }
 
-export default function ResetPassword({ url, name }: Props) {
+export default function VerifyEmail({ url, name }: Props) {
 	return (
 		<Html>
 			<Head />
-			<Preview>Reset your password. Clicking the link bellow.</Preview>
+			<Preview>Verify your new email address with Hoalu. Clicking the link bellow.</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
-					<Container className="mx-auto my-10 max-w-[465px] rounded-md border border-[#eaeaea] border-solid px-5 py-3">
-						<Heading className="my-5 text-center font-normal text-[24px]">Reset password</Heading>
+					<Container className="mx-auto my-10 max-w-[465px] border border-[#eaeaea] border-solid px-5 py-3">
+						<Heading className="my-5 text-center font-normal text-[24px]">
+							Verify your email address
+						</Heading>
 						<Text>
 							Hello <strong>{name}</strong>,
 						</Text>
-						<Text>Reset your password by clicking the button below.</Text>
+						<Text>Please verify your email address by clicking the button below.</Text>
 						<Button
-							className="block rounded-md bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
+							className="block bg-blue-800 px-5 py-3 text-center text-[13px] text-white"
 							href={url}
 						>
-							Reset Password
+							Verify Email
 						</Button>
 						<Text>
 							Or, you can copy and paste the link below into your browser:
 							<br />
-							<Link href={url} className="break-all text-blue-700 no-underline">
+							<Link href={url} className="text-blue-700">
 								{url}
 							</Link>
 						</Text>
@@ -55,7 +57,7 @@ export default function ResetPassword({ url, name }: Props) {
 	);
 }
 
-ResetPassword.PreviewProps = {
-	url: "http://localhost:5173/reset-password?token=1234567890",
+VerifyEmail.PreviewProps = {
+	url: "http://localhost:5173/verify-email?token=1234567890",
 	name: "John Doe",
 } as Props;

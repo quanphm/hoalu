@@ -1,6 +1,5 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 
-import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
 
 type NewExpense = typeof schema.expense.$inferInsert;
@@ -11,7 +10,6 @@ export class ExpenseRepository {
 			.select()
 			.from(schema.expense)
 			.innerJoin(schema.user, eq(schema.expense.creatorId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.expense.workspaceId, schema.workspace.id))
 			.innerJoin(schema.wallet, eq(schema.expense.walletId, schema.wallet.id))
 			.leftJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.where(eq(schema.expense.workspaceId, param.workspaceId))
@@ -33,7 +31,6 @@ export class ExpenseRepository {
 			.select()
 			.from(schema.expense)
 			.innerJoin(schema.user, eq(schema.expense.creatorId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.expense.workspaceId, schema.workspace.id))
 			.innerJoin(schema.wallet, eq(schema.expense.walletId, schema.wallet.id))
 			.leftJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.where(
@@ -55,15 +52,8 @@ export class ExpenseRepository {
 		return result;
 	}
 
-	async insert(param: Omit<NewExpense, "id" | "amount"> & { amount: string }) {
-		const [expense] = await db
-			.insert(schema.expense)
-			.values({
-				id: generateId({ use: "uuid" }),
-				...param,
-			})
-			.returning();
-
+	async insert(param: NewExpense) {
+		const [expense] = await db.insert(schema.expense).values(param).returning();
 		const result = await this.findOne({ id: expense.id, workspaceId: expense.workspaceId });
 		return result;
 	}

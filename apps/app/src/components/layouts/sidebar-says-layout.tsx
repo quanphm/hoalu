@@ -50,7 +50,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarHeader>
-				<SidebarContent className="gap-2">
+				<SidebarContent className="gap-0">
 					{hasSlug && <NavWorkspace />}
 					{!hasSlug && <NavWorkspaceList />}
 					{/* <NavDocumentation /> */}

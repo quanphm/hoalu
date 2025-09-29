@@ -1,6 +1,5 @@
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
 
-import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
 
 const schemaColumns = getTableColumns(schema.category);
@@ -15,10 +14,9 @@ export class CategoryRepository {
 				total: count(schema.expense.id),
 			})
 			.from(schema.category)
-			.innerJoin(schema.workspace, eq(schema.category.workspaceId, schema.workspace.id))
 			.leftJoin(schema.expense, eq(schema.category.id, schema.expense.categoryId))
 			.where(eq(schema.category.workspaceId, param.workspaceId))
-			.groupBy(schema.category.id, schema.workspace.id)
+			.groupBy(schema.category.id)
 			.orderBy((result) => {
 				return [desc(result.total), desc(result.name)];
 			});
@@ -33,12 +31,11 @@ export class CategoryRepository {
 				total: count(schema.expense.id),
 			})
 			.from(schema.category)
-			.innerJoin(schema.workspace, eq(schema.category.workspaceId, schema.workspace.id))
 			.leftJoin(schema.expense, eq(schema.expense.categoryId, schema.category.id))
 			.where(
 				and(eq(schema.category.id, param.id), eq(schema.category.workspaceId, param.workspaceId)),
 			)
-			.groupBy(schema.category.id, schema.workspace.id)
+			.groupBy(schema.category.id)
 			.limit(1);
 
 		if (!queryData[0]) return null;
@@ -48,15 +45,8 @@ export class CategoryRepository {
 		return result;
 	}
 
-	async insert(param: Omit<NewCategory, "id">) {
-		const [category] = await db
-			.insert(schema.category)
-			.values({
-				id: generateId({ use: "uuid" }),
-				...param,
-			})
-			.returning();
-
+	async insert(param: NewCategory) {
+		const [category] = await db.insert(schema.category).values(param).returning();
 		const result = await this.findOne({ id: category.id, workspaceId: category.workspaceId });
 		return result;
 	}
@@ -85,8 +75,8 @@ export class CategoryRepository {
 			)
 			.returning();
 
-		if (!category) return null;
+		if (!category) return { id: param.id };
 
-		return category;
+		return { id: category.id };
 	}
 }

@@ -12,6 +12,8 @@ import {
 	SectionItem,
 	SectionTitle,
 } from "@/components/layouts/section";
+// import { useWorkspace } from "@/hooks/use-workspace";
+// import { expenseCollection } from "@/services/collections";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	validateSearch: type({
@@ -21,6 +23,16 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
+	// const workspace = useWorkspace();
+	// const { data: expenses } = useLiveQuery((q) =>
+	// 	q.from({ expense: expenseCollection(workspace.id) }).select(({ expense }) => ({
+	// 		id: expense.id,
+	// 		title: expense.title,
+	// 		description: expense.description,
+	// 	})),
+	// );
+	// console.log(expenses);
+
 	return (
 		<Section className="-mb-8">
 			<SectionHeader>

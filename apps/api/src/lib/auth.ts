@@ -1,13 +1,11 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, jwt, openAPI } from "better-auth/plugins";
+import { apiKey, jwt } from "better-auth/plugins";
 
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
-import JoinWorkspace from "@hoalu/email/join-workspace";
-import ResetPassword from "@hoalu/email/reset-password";
-import VerifyEmail from "@hoalu/email/verify-email";
+import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
 import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "../common/constants";
 import { db } from "../db";
 import { category, wallet } from "../db/schema";
@@ -33,7 +31,7 @@ export const auth = betterAuth({
 		cookieCache: {
 			enabled: true,
 		},
-		expiresIn: TIME_IN_SECONDS.DAY * 7, // 7 days
+		expiresIn: TIME_IN_SECONDS.WEEK * 4, // 4 weeks
 		updateAge: TIME_IN_SECONDS.DAY, // 1 day (every 1 day the session expiration is updated)
 	},
 	emailAndPassword: {
@@ -154,9 +152,9 @@ export const auth = betterAuth({
 			},
 		}),
 		apiKey(),
-		openAPI(),
+		// openAPI(),
 	],
 	telemetry: {
-		enabled: true,
+		enabled: false,
 	},
 });

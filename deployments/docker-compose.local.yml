@@ -3,7 +3,7 @@ name: hoalu
 services:
   database:
     container_name: hoalu-db
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     restart: always
     ports:
       - 5432:5432
@@ -17,7 +17,7 @@ services:
       - -c
       - wal_level=logical
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/18/docker
 
   electric:
     container_name: hoalu-electric
@@ -42,20 +42,6 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6379:6379
-
-  migration:
-    container_name: hoalu-migration
-    build:
-      context: ../
-      dockerfile: ./deployments/migration.Dockerfile
-    environment:
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=database
-      - DB_NAME=${DB_NAME}
-    restart: on-failure
-    depends_on:
-      - database
 
 volumes:
   pg_data:

@@ -1,6 +1,5 @@
 import { type Type, type } from "arktype";
-import type { ResolverResult } from "hono-openapi";
-import { resolver } from "hono-openapi/arktype";
+import { resolver } from "hono-openapi";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 
@@ -8,7 +7,7 @@ interface Response {
 	description: string;
 	content: {
 		"application/json": {
-			schema: ResolverResult;
+			schema: ReturnType<typeof resolver>;
 		};
 	};
 }

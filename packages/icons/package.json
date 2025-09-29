@@ -6,7 +6,6 @@
 	"exports": {
 		"./lucide": "./src/lucide/index.tsx",
 		"./meteocons": "./src/meteocons/index.tsx",
-		"./pixelart": "./src/pixelart/index.tsx",
 		"./social": "./src/social/index.tsx",
 		"./tabler": "./src/tabler/index.tsx"
 	},
@@ -16,6 +15,6 @@
 		"react": "catalog:"
 	},
 	"dependencies": {
-		"lucide-react": "^0.542.0"
+		"lucide-react": "^0.544.0"
 	}
 }

@@ -10,14 +10,16 @@ interface CurrencyValueProps {
 	as?: "span" | "p";
 }
 
-export function CurrencyValue({ as: Component = "span", ...props }: CurrencyValueProps) {
-	const formattedValue = formatCurrency(props.value, props.currency, {
-		style: props.style || "currency",
-	});
+export function CurrencyValue({
+	as: Component = "span",
+	style = "currency",
+	...props
+}: CurrencyValueProps) {
+	const formattedValue = formatCurrency(props.value, props.currency, { style });
 
-	if (props?.style === "decimal") {
+	if (style === "decimal") {
 		return (
-			<div
+			<Component
 				className={cn(
 					"font-geist-mono font-semibold text-base text-foreground tracking-tight",
 					props.className,
@@ -25,7 +27,7 @@ export function CurrencyValue({ as: Component = "span", ...props }: CurrencyValu
 			>
 				{formattedValue}
 				<span className="ml-1 font-normal text-muted-foreground">{props.currency}</span>
-			</div>
+			</Component>
 		);
 	}
 

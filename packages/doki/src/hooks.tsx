@@ -58,12 +58,12 @@ function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): Shape<T>
 	return newShape;
 }
 
-function useDokiShape<T extends Row<unknown> = Row, S = UseShapeResult<T>>({
+function useDokiShape<T extends Row<unknown> = Row, _S = UseShapeResult<T>>({
 	syncKey,
 	optionsFn,
 }: {
 	syncKey: readonly string[];
-	optionsFn: () => Promise<AppShapeOptions<T, S>>;
+	optionsFn: () => Promise<AppShapeOptions<T>>;
 }) {
 	const syncClient = useDoki();
 	const queryClient = useQueryClient();

@@ -1,55 +1,39 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, sql } from "drizzle-orm";
 
-import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
+
+const schemaColumns = getTableColumns(schema.task);
 
 type NewTask = typeof schema.task.$inferInsert;
 
 export class TaskRepository {
 	async findAllByWorkspaceId(param: { workspaceId: string }) {
 		const queryData = await db
-			.select()
+			.select(schemaColumns)
 			.from(schema.task)
 			.innerJoin(schema.user, eq(schema.task.creatorId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.task.workspaceId, schema.workspace.id))
 			.where(eq(schema.task.workspaceId, param.workspaceId))
 			.orderBy(desc(schema.task.createdAt));
 
-		const result = queryData.map((data) => ({
-			...data.task,
-		}));
-
-		return result;
+		return queryData;
 	}
 
 	async findOne(param: { id: string; workspaceId: string }) {
 		const queryData = await db
-			.select()
+			.select(schemaColumns)
 			.from(schema.task)
 			.innerJoin(schema.user, eq(schema.task.creatorId, schema.user.id))
-			.innerJoin(schema.workspace, eq(schema.task.workspaceId, schema.workspace.id))
 			.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, param.workspaceId)))
 			.orderBy(desc(schema.task.createdAt))
 			.limit(1);
 
 		if (!queryData[0]) return null;
 
-		const result = {
-			...queryData[0].task,
-		};
-
-		return result;
+		return queryData;
 	}
 
-	async insert(param: Omit<NewTask, "id">) {
-		const [task] = await db
-			.insert(schema.task)
-			.values({
-				id: generateId({ use: "uuid" }),
-				...param,
-			})
-			.returning();
-
+	async insert(param: NewTask) {
+		const [task] = await db.insert(schema.task).values(param).returning();
 		const result = await this.findOne({ id: task.id, workspaceId: task.workspaceId });
 		return result;
 	}
@@ -76,8 +60,8 @@ export class TaskRepository {
 			.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, param.workspaceId)))
 			.returning();
 
-		if (!task) return null;
+		if (!task) return { id: param.id };
 
-		return task;
+		return { id: task.id };
 	}
 }

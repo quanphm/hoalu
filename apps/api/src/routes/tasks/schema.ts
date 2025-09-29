@@ -28,6 +28,5 @@ export const InsertTaskSchema = type({
 export const UpdateTaskSchema = InsertTaskSchema.partial();
 
 export const DeleteTaskSchema = type({
-	"+": "delete",
 	id: "string.uuid.v7",
-}).or("null");
+});

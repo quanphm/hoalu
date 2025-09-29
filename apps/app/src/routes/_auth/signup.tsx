@@ -6,7 +6,7 @@ import { toast } from "@hoalu/ui/sonner";
 import { ContentCard } from "@/components/cards";
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
-import { authKeys } from "@/services/query-key-factory";
+import { authKeys } from "@/lib/query-key-factory";
 import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth/signup")({

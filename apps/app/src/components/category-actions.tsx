@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
@@ -177,11 +177,16 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 
 export function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
-	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
 	const setDialog = useSetAtom(deleteCategoryDialogAtom);
 	const onDelete = async () => {
-		if (!selectedCategory.id) return;
+		if (!selectedCategory.id) {
+			setDialog({ state: false, data: undefined });
+			return;
+		}
 		await mutation.mutateAsync({ id: selectedCategory.id });
+		setDialog({ state: false, data: undefined });
+		setSelectedCategory({ id: null, name: null });
 	};
 
 	return (

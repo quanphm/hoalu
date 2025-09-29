@@ -1,43 +1,64 @@
 import { cn } from "@hoalu/ui/utils";
+import { formatCurrency } from "@/helpers/currency";
 
 export interface PercentageChange {
+	value: number;
 	percentage: number;
-	displayValue: string;
+	displayInValue: string;
+	displayInPercent: string;
 	status: "increase" | "decrease" | "no-change";
 }
 
 export function calculatePercentageChange(
 	currentValue: number,
 	previousValue: number,
+	currency: string,
 ): PercentageChange {
 	if (previousValue === 0 && currentValue === 0) {
 		return {
+			value: 0,
 			percentage: 0,
-			displayValue: "0%",
+			displayInValue: formatCurrency(0, currency),
+			displayInPercent: "0%",
 			status: "no-change",
 		};
 	}
 
 	if (previousValue === 0) {
 		return {
+			value: currentValue,
 			percentage: 100,
-			displayValue: currentValue > 0 ? "+100%" : "0%",
+			displayInValue:
+				currentValue > 0
+					? `+${formatCurrency(currentValue, currency)}`
+					: `${formatCurrency(currentValue, currency)}`,
+			displayInPercent: currentValue > 0 ? "+100%" : "0%",
 			status: currentValue > 0 ? "increase" : "no-change",
 		};
 	}
 
-	const percentage = ((currentValue - previousValue) / previousValue) * 100;
-	const status = percentage === 0 ? "no-change" : percentage > 0 ? "increase" : "decrease";
+	const value = currentValue - previousValue;
+	const status = value === 0 ? "no-change" : value > 0 ? "increase" : "decrease";
 
-	const displayValue =
+	const percentageRaw = (value / previousValue) * 100;
+	const percentage = Math.abs(percentageRaw);
+
+	const displayInValue =
+		status === "no-change"
+			? `${formatCurrency(0, currency)}`
+			: `${status === "increase" ? "+" : "-"}${formatCurrency(Math.abs(value), currency)}`;
+
+	const displayInPercent =
 		status === "no-change"
 			? "0%"
-			: `${status === "increase" ? "+" : "-"}${Math.abs(percentage).toFixed(1)}%`;
+			: `${status === "increase" ? "+" : "-"}${Math.abs(percentageRaw).toFixed(1)}%`;
 
 	return {
-		percentage: Math.abs(percentage),
-		displayValue,
 		status,
+		value,
+		percentage,
+		displayInValue,
+		displayInPercent,
 	};
 }
 
