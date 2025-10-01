@@ -125,7 +125,7 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const { amount, currency, date, ...rest } = payload;
-			const convertedAmount = monetary.toRealAmount(amount, currency);
+			const realAmount = monetary.toRealAmount(amount, currency);
 
 			const expense = await expenseRepository.insert({
 				...rest,
@@ -133,7 +133,7 @@ const route = app
 				workspaceId: workspace.id,
 				creatorId: user.id,
 				date: date || new Date().toISOString(),
-				amount: `${convertedAmount}`,
+				amount: `${realAmount}`,
 				currency,
 			});
 
@@ -179,7 +179,7 @@ const route = app
 			}
 
 			const { amount, currency } = payload;
-			const convertedAmount = monetary.toRealAmount(
+			const realAmount = monetary.toRealAmount(
 				amount || Number.parseFloat(expense.amount),
 				currency || expense.currency,
 			);
@@ -189,7 +189,7 @@ const route = app
 				workspaceId: workspace.id,
 				payload: {
 					...payload,
-					amount: `${convertedAmount}`,
+					amount: `${realAmount}`,
 				},
 			});
 			if (!queryData) {
