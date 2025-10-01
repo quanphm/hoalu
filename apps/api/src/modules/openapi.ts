@@ -12,7 +12,7 @@ export function openAPIModule(app: HonoApp) {
 					info: {
 						title: "Hoalu API",
 						description: "OpenAPI documentation",
-						version: "0.12.0",
+						version: "0.13.0",
 					},
 					servers: [{ url: process.env.PUBLIC_API_URL }],
 				},
