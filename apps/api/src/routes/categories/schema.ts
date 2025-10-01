@@ -24,3 +24,5 @@ export const UpdateCategorySchema = InsertCategorySchema.partial();
 export const DeleteCategorySchema = type({
 	id: "string.uuid.v7",
 });
+
+export const LiteCategorySchema = CategorySchema.pick("id", "name", "description", "color");

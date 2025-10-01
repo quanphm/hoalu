@@ -150,10 +150,12 @@ function CreateExpenseForm() {
 				},
 			});
 			setDraft(RESET);
-			setDialog({ state: false });
+			setDialog({ state: false, data: undefined });
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
-					...expense,
+					id: expense.id,
+					title: expense.title,
+					date: expense.date,
 					files: value.attachments,
 				});
 			}

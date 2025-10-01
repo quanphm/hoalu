@@ -17,7 +17,6 @@ export class ExpenseRepository {
 
 		const result = queryData.map((data) => ({
 			...data.expense,
-			realAmount: data.expense.amount,
 			creator: data.user,
 			wallet: data.wallet,
 			category: data.category,
@@ -43,7 +42,6 @@ export class ExpenseRepository {
 
 		const result = {
 			...queryData[0].expense,
-			realAmount: queryData[0].expense.amount,
 			creator: queryData[0].user,
 			wallet: queryData[0].wallet,
 			category: queryData[0].category,
@@ -53,13 +51,12 @@ export class ExpenseRepository {
 	}
 
 	async insert(param: NewExpense) {
-		const [expense] = await db.insert(schema.expense).values(param).returning();
-		const result = await this.findOne({ id: expense.id, workspaceId: expense.workspaceId });
+		const [result] = await db.insert(schema.expense).values(param).returning();
 		return result;
 	}
 
 	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-		const [expense] = await db
+		const [result] = await db
 			.update(schema.expense)
 			.set({
 				updatedAt: sql`now()`,
@@ -68,22 +65,17 @@ export class ExpenseRepository {
 			.where(eq(schema.expense.id, param.id))
 			.returning();
 
-		if (!expense) return null;
-
-		const result = await this.findOne({ id: expense.id, workspaceId: expense.workspaceId });
-		return result;
+		return result || null;
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {
-		const [expense] = await db
+		await db
 			.delete(schema.expense)
 			.where(
 				and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, param.workspaceId)),
 			)
 			.returning();
 
-		if (!expense) return { id: param.id };
-
-		return { id: expense.id };
+		return { id: param.id };
 	}
 }

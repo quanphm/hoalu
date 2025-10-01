@@ -25,7 +25,7 @@ export class CategoryRepository {
 	}
 
 	async findOne(param: { id: string; workspaceId: string }) {
-		const queryData = await db
+		const [result] = await db
 			.select({
 				...schemaColumns,
 				total: count(schema.expense.id),
@@ -38,45 +38,37 @@ export class CategoryRepository {
 			.groupBy(schema.category.id)
 			.limit(1);
 
-		if (!queryData[0]) return null;
-
-		const result = queryData[0];
-
-		return result;
+		return result || null;
 	}
 
 	async insert(param: NewCategory) {
-		const [category] = await db.insert(schema.category).values(param).returning();
-		const result = await this.findOne({ id: category.id, workspaceId: category.workspaceId });
+		const [result] = await db.insert(schema.category).values(param).returning();
 		return result;
 	}
 
 	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-		const [category] = await db
+		const [result] = await db
 			.update(schema.category)
 			.set({
 				updatedAt: sql`now()`,
 				...param.payload,
 			})
-			.where(eq(schema.category.id, param.id))
+			.where(
+				and(eq(schema.category.id, param.id), eq(schema.category.workspaceId, param.workspaceId)),
+			)
 			.returning();
 
-		if (!category) return null;
-
-		const result = await this.findOne({ id: category.id, workspaceId: category.workspaceId });
-		return result;
+		return result || null;
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {
-		const [category] = await db
+		await db
 			.delete(schema.category)
 			.where(
 				and(eq(schema.category.id, param.id), eq(schema.category.workspaceId, param.workspaceId)),
 			)
 			.returning();
 
-		if (!category) return { id: param.id };
-
-		return { id: category.id };
+		return { id: param.id };
 	}
 }

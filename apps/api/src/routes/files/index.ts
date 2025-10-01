@@ -59,6 +59,7 @@ const route = app
 				method: "PUT",
 			});
 			const fileSlot = await fileRepository.insert({
+				id: generateId({ use: "uuid" }),
 				name: fileName,
 				tags: payload.tags,
 				description: payload.description,

@@ -16,6 +16,7 @@ import { WalletRepository } from "./repository";
 import {
 	DeleteWalletSchema,
 	InsertWalletSchema,
+	LiteWalletSchema,
 	UpdateWalletSchema,
 	WalletSchema,
 	WalletsSchema,
@@ -129,7 +130,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = WalletSchema(wallet);
+			const parsed = LiteWalletSchema(wallet);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -184,7 +185,7 @@ const route = app
 				);
 			}
 
-			// workspace must has atleast 1 active wallet.
+			// workspace must has at least 1 active wallet.
 			// Prevent users from deactivating the only available wallet.
 			const wallets = await walletRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
@@ -217,7 +218,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = WalletSchema(queryData);
+			const parsed = LiteWalletSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

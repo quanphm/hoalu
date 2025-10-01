@@ -15,10 +15,10 @@ export const ExpenseSchema = type({
 	title: "string",
 	description: "string | null",
 	amount: "string.numeric.parse",
-	realAmount: "string.numeric.parse",
 	currency: "string",
 	repeat: RepeatSchema,
 	date: IsoDateSchema,
+	createdAt: IsoDateSchema,
 	creator: {
 		"+": "delete",
 		id: "string.uuid.v7",
@@ -43,10 +43,10 @@ export const ExpenseSchema = type({
 		description: "string | null",
 		color: ColorSchema,
 	}).or("null"),
-	createdAt: IsoDateSchema,
 }).pipe((e) => ({
 	...e,
 	amount: monetary.fromRealAmount(e.amount, e.currency),
+	realAmount: e.amount,
 }));
 export const ExpensesSchema = ExpenseSchema.array().onUndeclaredKey("delete");
 
@@ -66,3 +66,17 @@ export const UpdateExpenseSchema = InsertExpenseSchema.partial();
 export const DeleteExpenseSchema = type({
 	id: "string.uuid.v7",
 });
+
+export const LiteExpenseSchema = type({
+	id: "string.uuid.v7",
+	title: "string",
+	description: "string | null",
+	amount: "string.numeric.parse",
+	currency: "string",
+	repeat: RepeatSchema,
+	date: IsoDateSchema,
+}).pipe((e) => ({
+	...e,
+	amount: monetary.fromRealAmount(e.amount, e.currency),
+	realAmount: e.amount,
+}));

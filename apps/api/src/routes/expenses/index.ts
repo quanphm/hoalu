@@ -18,6 +18,7 @@ import {
 	ExpenseSchema,
 	ExpensesSchema,
 	InsertExpenseSchema,
+	LiteExpenseSchema,
 	UpdateExpenseSchema,
 } from "./schema";
 
@@ -124,19 +125,19 @@ const route = app
 			const payload = c.req.valid("json");
 
 			const { amount, currency, date, ...rest } = payload;
-			const realAmount = monetary.toRealAmount(amount, currency);
+			const convertedAmount = monetary.toRealAmount(amount, currency);
 
 			const expense = await expenseRepository.insert({
 				...rest,
-				currency,
 				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
 				creatorId: user.id,
 				date: date || new Date().toISOString(),
-				amount: `${realAmount}`,
+				amount: `${convertedAmount}`,
+				currency,
 			});
 
-			const parsed = ExpenseSchema(expense);
+			const parsed = LiteExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -178,7 +179,7 @@ const route = app
 			}
 
 			const { amount, currency } = payload;
-			const realAmount = monetary.toRealAmount(
+			const convertedAmount = monetary.toRealAmount(
 				amount || Number.parseFloat(expense.amount),
 				currency || expense.currency,
 			);
@@ -188,14 +189,14 @@ const route = app
 				workspaceId: workspace.id,
 				payload: {
 					...payload,
-					amount: realAmount,
+					amount: `${convertedAmount}`,
 				},
 			});
 			if (!queryData) {
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = ExpenseSchema(queryData);
+			const parsed = LiteExpenseSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

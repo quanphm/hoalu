@@ -28,7 +28,7 @@ export class WalletRepository {
 	}
 
 	async findOne(param: { id: string; workspaceId: string }) {
-		const queryData = await db
+		const [result] = await db
 			.select({
 				...schemaColumns,
 				owner: schema.user,
@@ -42,14 +42,11 @@ export class WalletRepository {
 			.orderBy(desc(schema.wallet.createdAt))
 			.limit(1);
 
-		if (!queryData[0]) return null;
-
-		return queryData[0];
+		return result || null;
 	}
 
 	async insert(param: NewWallet) {
-		const [wallet] = await db.insert(schema.wallet).values(param).returning();
-		const result = await this.findOne({ id: wallet.id, workspaceId: wallet.workspaceId });
+		const [result] = await db.insert(schema.wallet).values(param).returning();
 		return result;
 	}
 
@@ -58,7 +55,7 @@ export class WalletRepository {
 		workspaceId: string;
 		payload: T;
 	}) {
-		const [wallet] = await db
+		const [result] = await db
 			.update(schema.wallet)
 			.set({
 				updatedAt: sql`now()`,
@@ -67,20 +64,15 @@ export class WalletRepository {
 			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
 			.returning();
 
-		if (!wallet) return null;
-
-		const result = await this.findOne({ id: wallet.id, workspaceId: wallet.workspaceId });
-		return result;
+		return result || null;
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {
-		const [wallet] = await db
+		await db
 			.delete(schema.wallet)
-			.where(eq(schema.wallet.id, param.id))
+			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
 			.returning();
 
-		if (!wallet) return { id: param.id };
-
-		return { id: wallet.id };
+		return { id: param.id };
 	}
 }
