@@ -9,7 +9,7 @@ const client = new Pool({
 	host: process.env.DB_HOST,
 	port: 5432,
 	database: process.env.DB_NAME,
-	max: 20,
+	max: 10,
 });
 
 export const db = drizzle({ client, schema });

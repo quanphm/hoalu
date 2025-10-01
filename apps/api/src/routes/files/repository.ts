@@ -1,6 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
 
-import { generateId } from "@hoalu/common/generate-id";
 import { db, schema } from "../../db";
 
 type NewFile = typeof schema.file.$inferInsert;
@@ -36,30 +35,22 @@ export class FileRepository {
 	}
 
 	async findOne(param: { id: string }) {
-		const queryData = await db
+		const [result] = await db
 			.select()
 			.from(schema.file)
 			.where(eq(schema.file.id, param.id))
 			.limit(1);
 
-		if (!queryData[0]) return null;
-		return queryData[0];
+		return result || null;
 	}
 
-	async insert(param: Omit<NewFile, "id">) {
-		const [file] = await db
-			.insert(schema.file)
-			.values({
-				id: generateId({ use: "uuid" }),
-				...param,
-			})
-			.returning();
-
-		return file;
+	async insert(param: NewFile) {
+		const [result] = await db.insert(schema.file).values(param).returning();
+		return result;
 	}
 
 	async insertFileExpense(param: NewFileExpense[]) {
-		const files = await db.insert(schema.fileExpense).values(param).returning();
-		return files;
+		const result = await db.insert(schema.fileExpense).values(param).returning();
+		return result;
 	}
 }

@@ -37,10 +37,19 @@ export const UpdateWalletSchema = type({
 	"description?": "string",
 	currency: CurrencySchema,
 	type: WalletTypeSchema,
-	isActive: "boolean = true",
+	isActive: "boolean",
 	ownerId: "string.uuid.v7",
 }).partial();
 
 export const DeleteWalletSchema = type({
 	id: "string.uuid.v7",
 });
+
+export const LiteWalletSchema = WalletSchema.pick(
+	"id",
+	"name",
+	"description",
+	"currency",
+	"type",
+	"isActive",
+);

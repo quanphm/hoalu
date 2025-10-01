@@ -16,6 +16,7 @@ import {
 	CategorySchema,
 	DeleteCategorySchema,
 	InsertCategorySchema,
+	LiteCategorySchema,
 	UpdateCategorySchema,
 } from "./schema";
 
@@ -105,7 +106,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: LiteCategorySchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -121,7 +122,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = CategorySchema(category);
+			const parsed = LiteCategorySchema(category);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -142,7 +143,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: LiteCategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -171,7 +172,7 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = CategorySchema(queryData);
+			const parsed = LiteCategorySchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },

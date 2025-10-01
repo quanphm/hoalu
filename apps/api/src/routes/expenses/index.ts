@@ -18,6 +18,7 @@ import {
 	ExpenseSchema,
 	ExpensesSchema,
 	InsertExpenseSchema,
+	LiteExpenseSchema,
 	UpdateExpenseSchema,
 } from "./schema";
 
@@ -107,7 +108,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: ExpenseSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(type({ data: LiteExpenseSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -128,15 +129,15 @@ const route = app
 
 			const expense = await expenseRepository.insert({
 				...rest,
-				currency,
 				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
 				creatorId: user.id,
 				date: date || new Date().toISOString(),
 				amount: `${realAmount}`,
+				currency,
 			});
 
-			const parsed = ExpenseSchema(expense);
+			const parsed = LiteExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
@@ -157,7 +158,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: ExpenseSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(type({ data: LiteExpenseSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -188,14 +189,14 @@ const route = app
 				workspaceId: workspace.id,
 				payload: {
 					...payload,
-					amount: realAmount,
+					amount: `${realAmount}`,
 				},
 			});
 			if (!queryData) {
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = ExpenseSchema(queryData);
+			const parsed = LiteExpenseSchema(queryData);
 			if (parsed instanceof type.errors) {
 				return c.json(
 					{ message: createIssueMsg(parsed.issues) },
