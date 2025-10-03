@@ -129,6 +129,9 @@ const route = app
 				ownerId: user.id,
 				workspaceId: workspace.id,
 			});
+			if (!wallet) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
 			const parsed = LiteWalletSchema(wallet);
 			if (parsed instanceof type.errors) {
@@ -215,7 +218,7 @@ const route = app
 				payload,
 			});
 			if (!queryData) {
-				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
 			const parsed = LiteWalletSchema(queryData);

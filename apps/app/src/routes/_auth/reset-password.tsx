@@ -115,6 +115,7 @@ function SetNewPassword(props: { token: string }) {
 		<ContentCard
 			title="Reset password"
 			description="Create new password for your account"
+			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>

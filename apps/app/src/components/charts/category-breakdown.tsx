@@ -88,7 +88,7 @@ export function CategoryBreakdown() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Top Categories</CardTitle>
+				<CardTitle>Categories Breakdown</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<div className="mt-2">

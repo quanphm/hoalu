@@ -46,8 +46,12 @@ export class WalletRepository {
 	}
 
 	async insert(param: NewWallet) {
-		const [result] = await db.insert(schema.wallet).values(param).returning();
-		return result;
+		try {
+			const [result] = await db.insert(schema.wallet).values(param).returning();
+			return result;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async update<T extends typeof UpdateWalletSchema.infer>(param: {
@@ -55,16 +59,22 @@ export class WalletRepository {
 		workspaceId: string;
 		payload: T;
 	}) {
-		const [result] = await db
-			.update(schema.wallet)
-			.set({
-				updatedAt: sql`now()`,
-				...param.payload,
-			})
-			.where(and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)))
-			.returning();
+		try {
+			const [result] = await db
+				.update(schema.wallet)
+				.set({
+					updatedAt: sql`now()`,
+					...param.payload,
+				})
+				.where(
+					and(eq(schema.wallet.id, param.id), eq(schema.wallet.workspaceId, param.workspaceId)),
+				)
+				.returning();
 
-		return result || null;
+			return result || null;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {

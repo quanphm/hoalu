@@ -42,23 +42,31 @@ export class CategoryRepository {
 	}
 
 	async insert(param: NewCategory) {
-		const [result] = await db.insert(schema.category).values(param).returning();
-		return result;
+		try {
+			const [result] = await db.insert(schema.category).values(param).returning();
+			return result;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-		const [result] = await db
-			.update(schema.category)
-			.set({
-				updatedAt: sql`now()`,
-				...param.payload,
-			})
-			.where(
-				and(eq(schema.category.id, param.id), eq(schema.category.workspaceId, param.workspaceId)),
-			)
-			.returning();
+		try {
+			const [result] = await db
+				.update(schema.category)
+				.set({
+					updatedAt: sql`now()`,
+					...param.payload,
+				})
+				.where(
+					and(eq(schema.category.id, param.id), eq(schema.category.workspaceId, param.workspaceId)),
+				)
+				.returning();
 
-		return result || null;
+			return result || null;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {

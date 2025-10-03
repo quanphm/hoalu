@@ -5,14 +5,14 @@ import {
 	Outlet,
 } from "@tanstack/react-router";
 
-import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
-import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
-
 // devtools
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { FormDevtools } from "@tanstack/react-form-devtools";
+
+import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
+import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

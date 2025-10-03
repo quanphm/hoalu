@@ -25,8 +25,6 @@ function RouteComponent() {
 				</SectionContent>
 			</Section>
 
-			<hr />
-
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Analytics</SectionTitle>

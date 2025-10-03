@@ -136,6 +136,9 @@ const route = app
 				amount: `${realAmount}`,
 				currency,
 			});
+			if (!expense) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
 			const parsed = LiteExpenseSchema(expense);
 			if (parsed instanceof type.errors) {
@@ -193,7 +196,7 @@ const route = app
 				},
 			});
 			if (!queryData) {
-				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
 			const parsed = LiteExpenseSchema(queryData);

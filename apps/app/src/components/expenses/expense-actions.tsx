@@ -176,7 +176,7 @@ function CreateExpenseForm() {
 				<div className="grid grid-cols-12 gap-4">
 					<div className="col-span-7 flex flex-col gap-4">
 						<form.AppField name="title">
-							{(field) => <field.InputField label="Description" required />}
+							{(field) => <field.InputField label="Title" required />}
 						</form.AppField>
 						<form.AppField name="transaction">
 							{(field) => <field.TransactionAmountField label="Amount" />}
@@ -407,7 +407,7 @@ export function EditExpenseForm(props: { id: string }) {
 						{(field) => <field.DatepickerInputField label="Date" />}
 					</form.AppField>
 					<form.AppField name="title">
-						{(field) => <field.InputField label="Description" required />}
+						{(field) => <field.InputField label="Title" required />}
 					</form.AppField>
 					<form.AppField name="transaction">
 						{(field) => <field.TransactionAmountField label="Amount" />}

@@ -39,7 +39,8 @@ interface Props {
 
 export function SelectCategoryField(props: Props) {
 	const { slug } = routeApi.useParams();
-	const [open, setOpen] = useState(false);
+	const [popoverOpen, setPopoverOpen] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const field = useFieldContext<string>();
 	const { value } = field.state;
@@ -56,15 +57,15 @@ export function SelectCategoryField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<Dialog>
-				<Popover open={open} onOpenChange={setOpen} modal={true}>
+			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+				<Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>
 					<FieldControl>
 						<PopoverTrigger
 							render={
 								<Button
 									variant="outline"
 									role="combobox"
-									aria-expanded={open}
+									aria-expanded={popoverOpen}
 									className={cn(
 										"w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
 										"focus:border-ring focus:ring-[3px] focus:ring-ring/20",
@@ -102,7 +103,7 @@ export function SelectCategoryField(props: Props) {
 														currentOption.value === value ? "" : currentOption.value,
 													);
 												}
-												setOpen(false);
+												setPopoverOpen(false);
 											}}
 										>
 											{opt.label}
@@ -119,7 +120,7 @@ export function SelectCategoryField(props: Props) {
 									<Button
 										variant="ghost"
 										className="w-full justify-start"
-										onClick={() => setOpen(false)}
+										onClick={() => setPopoverOpen(false)}
 									/>
 								}
 							>
@@ -135,7 +136,11 @@ export function SelectCategoryField(props: Props) {
 						<DialogTitle>Create new category</DialogTitle>
 						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 					</DialogHeader>
-					<CreateCategoryForm />
+					<CreateCategoryForm
+						callback={() => {
+							setDialogOpen(false);
+						}}
+					/>
 				</DialogContent>
 			</Dialog>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}

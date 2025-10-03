@@ -45,14 +45,14 @@ export function CreateCategoryDialogContent() {
 	);
 }
 
-export function CreateCategoryForm() {
+export function CreateCategoryForm({ callback }: { callback?(): void }) {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
-			name: "✨ Magic",
+			name: "🔮 Magic",
 			description: "",
-			color: "red",
+			color: "purple",
 		} as CategoryFormSchema,
 		validators: {
 			onSubmit: CategoryFormSchema,
@@ -65,7 +65,13 @@ export function CreateCategoryForm() {
 					color: value.color,
 				},
 			});
-			setDialog({ state: false });
+
+			if (callback) {
+				console.log("test");
+				callback();
+			} else {
+				setDialog({ state: false });
+			}
 		},
 	});
 

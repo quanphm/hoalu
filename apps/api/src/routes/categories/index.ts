@@ -121,6 +121,9 @@ const route = app
 				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
 			});
+			if (!category) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
 			const parsed = LiteCategorySchema(category);
 			if (parsed instanceof type.errors) {
@@ -169,7 +172,7 @@ const route = app
 				payload,
 			});
 			if (!queryData) {
-				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
 			const parsed = LiteCategorySchema(queryData);
