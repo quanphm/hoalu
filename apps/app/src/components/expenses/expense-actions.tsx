@@ -8,7 +8,7 @@ import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
-import { Button } from "@hoalu/ui/button";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
 	DialogClose,
@@ -47,13 +47,16 @@ import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function CreateExpenseDialogTrigger() {
+export function CreateExpenseDialogTrigger({
+	showKbd = true,
+	...props
+}: ButtonProps & { showKbd?: boolean }) {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 
 	return (
-		<Button variant="outline" onClick={() => setDialog({ state: true })}>
+		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
 			Create expense
-			<HotKey {...KEYBOARD_SHORTCUTS.create_expense} />
+			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_expense} />}
 		</Button>
 	);
 }
@@ -397,7 +400,7 @@ export function EditExpenseForm(props: { id: string }) {
 		if (status === "success") {
 			form.reset();
 		}
-	}, [status, form.reset]);
+	}, [status, props.id]);
 
 	return (
 		<form.AppForm>

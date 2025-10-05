@@ -4,7 +4,15 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import {
+	Card,
+	CardAction,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@hoalu/ui/card";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import {
 	customDateRangeAtom,
@@ -17,8 +25,9 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import type { ColorSchema } from "@/lib/schema";
 import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-options";
 import { CurrencyValue } from "../currency-value";
+import { CreateExpenseDialogTrigger } from "../expenses/expense-actions";
 
-const TOP_N_CATEGORY = 4;
+const TOP_N_CATEGORY = 5;
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -89,33 +98,32 @@ export function CategoryBreakdown() {
 		<Card>
 			<CardHeader>
 				<CardTitle>Categories Breakdown</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<div className="mt-2">
-					{dataToView.length === 0 ? (
-						<div className="flex h-[250px] items-center justify-center text-muted-foreground">
-							No data
-						</div>
-					) : (
-						<div className="space-y-4">
-							<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
-							<CategoryListBreakdown
-								data={dataToView}
-								totalAmount={totalAmount}
-								currency={currency}
-								onToggleView={handleToggleView}
-							/>
-							{dataToView.length > TOP_N_CATEGORY && (
-								<div className="flex justify-end">
-									<Button variant="outline" size="sm" onClick={handleToggleView}>
-										{view === "less" && "View all"}
-										{view === "more" && "View less"}
-									</Button>
-								</div>
-							)}
+				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
+				<CardAction>
+					{dataToView.length > TOP_N_CATEGORY && (
+						<div className="flex justify-end">
+							<Button variant="outline" size="sm" onClick={handleToggleView}>
+								{view === "less" && "View all"}
+								{view === "more" && "View less"}
+							</Button>
 						</div>
 					)}
-				</div>
+				</CardAction>
+			</CardHeader>
+			<CardContent>
+				{dataToView.length === 0 ? (
+					<EmptyData />
+				) : (
+					<div className="space-y-4">
+						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
+						<CategoryListBreakdown
+							data={dataToView}
+							totalAmount={totalAmount}
+							currency={currency}
+							onToggleView={handleToggleView}
+						/>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);
@@ -208,5 +216,23 @@ function CategoryListBreakdown(props: {
 				);
 			})}
 		</div>
+	);
+}
+
+export function EmptyData() {
+	return (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No Data Yet</EmptyTitle>
+				<EmptyDescription>
+					You haven&apos;t created any expenses yet. Get started by creating your first expense.
+				</EmptyDescription>
+			</EmptyHeader>
+			<EmptyContent>
+				<div className="flex gap-2">
+					<CreateExpenseDialogTrigger variant="default" showKbd={false} />
+				</div>
+			</EmptyContent>
+		</Empty>
 	);
 }

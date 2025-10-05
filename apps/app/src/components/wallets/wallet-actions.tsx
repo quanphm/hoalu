@@ -166,7 +166,7 @@ function EditWalletForm(props: { id: string }) {
 		if (status === "success") {
 			form.reset();
 		}
-	}, [status]);
+	}, [status, props.id]);
 
 	return (
 		<form.AppForm>

@@ -12,6 +12,7 @@ import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
 export function ExpenseDetails() {
 	const { data: expenses, currentIndex } = useExpenses();
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
+	console.log(selectedRow);
 
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;

@@ -12,6 +12,7 @@ export function Form({ id, className, ...props }: React.ComponentProps<"fieldset
 			id={id ?? randomId}
 			onSubmit={(e) => {
 				e.preventDefault();
+				e.stopPropagation();
 				void form.handleSubmit();
 			}}
 		>
