@@ -51,21 +51,29 @@ export class ExpenseRepository {
 	}
 
 	async insert(param: NewExpense) {
-		const [result] = await db.insert(schema.expense).values(param).returning();
-		return result;
+		try {
+			const [result] = await db.insert(schema.expense).values(param).returning();
+			return result;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-		const [result] = await db
-			.update(schema.expense)
-			.set({
-				updatedAt: sql`now()`,
-				...param.payload,
-			})
-			.where(eq(schema.expense.id, param.id))
-			.returning();
+		try {
+			const [result] = await db
+				.update(schema.expense)
+				.set({
+					updatedAt: sql`now()`,
+					...param.payload,
+				})
+				.where(eq(schema.expense.id, param.id))
+				.returning();
 
-		return result || null;
+			return result || null;
+		} catch (_error) {
+			return null;
+		}
 	}
 
 	async delete(param: { id: string; workspaceId: string }) {

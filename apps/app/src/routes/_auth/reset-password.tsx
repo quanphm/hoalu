@@ -1,5 +1,5 @@
 import { createFileRoute, type ErrorComponentProps, Link } from "@tanstack/react-router";
-import { type } from "arktype";
+import * as z from "zod";
 
 import { ArrowLeft } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
@@ -9,8 +9,8 @@ import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth/reset-password")({
-	validateSearch: type({
-		"token?": "string > 0",
+	validateSearch: z.object({
+		token: z.optional(z.string().min(1)),
 	}),
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
@@ -115,6 +115,7 @@ function SetNewPassword(props: { token: string }) {
 		<ContentCard
 			title="Reset password"
 			description="Create new password for your account"
+			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>
@@ -136,9 +137,7 @@ function ErrorComponent(props: ErrorComponentProps) {
 		<ErrorCard
 			error={props.error}
 			footer={
-				<Button variant="outline" className="w-full" asChild>
-					<Link to="/">Go to Home</Link>
-				</Button>
+				<Button variant="outline" className="w-full" render={<Link to="/">Go to Home</Link>} />
 			}
 		/>
 	);

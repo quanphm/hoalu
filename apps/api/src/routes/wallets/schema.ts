@@ -1,55 +1,55 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema, WalletTypeSchema } from "../../common/schema";
 
-export const WalletSchema = type({
-	"+": "delete",
-	id: "string.uuid.v7",
-	name: "string",
-	description: "string | null",
+export const WalletSchema = z.object({
+	id: z.uuidv7(),
+	name: z.string(),
+	description: z.string().nullable(),
 	currency: CurrencySchema,
 	type: WalletTypeSchema,
-	isActive: "boolean",
+	isActive: z.boolean(),
 	createdAt: IsoDateSchema,
-	owner: {
-		"+": "delete",
-		id: "string.uuid.v7",
-		publicId: "string",
-		name: "string",
-		email: "string.email",
-		image: "string | null",
-	},
-	total: "number",
+	owner: z.object({
+		id: z.uuidv7(),
+		publicId: z.string(),
+		name: z.string(),
+		email: z.email(),
+		image: z.string().nullable(),
+	}),
+	total: z.number(),
 });
 
-export const WalletsSchema = WalletSchema.array().onUndeclaredKey("delete");
+export const WalletsSchema = z.array(WalletSchema);
 
-export const InsertWalletSchema = type({
-	name: "string > 0",
-	"description?": "string",
+export const InsertWalletSchema = z.object({
+	name: z.string().min(1),
+	description: z.optional(z.string()),
 	currency: CurrencySchema,
 	type: WalletTypeSchema,
-	isActive: "boolean = true",
+	isActive: z.boolean().default(true),
 });
 
-export const UpdateWalletSchema = type({
-	name: "string > 0",
-	"description?": "string",
-	currency: CurrencySchema,
-	type: WalletTypeSchema,
-	isActive: "boolean",
-	ownerId: "string.uuid.v7",
-}).partial();
+export const UpdateWalletSchema = z
+	.object({
+		name: z.string().min(1),
+		description: z.optional(z.string()),
+		currency: CurrencySchema,
+		type: WalletTypeSchema,
+		isActive: z.boolean(),
+		ownerId: z.uuidv7(),
+	})
+	.partial();
 
-export const DeleteWalletSchema = type({
-	id: "string.uuid.v7",
+export const DeleteWalletSchema = z.object({
+	id: z.uuidv7(),
 });
 
-export const LiteWalletSchema = WalletSchema.pick(
-	"id",
-	"name",
-	"description",
-	"currency",
-	"type",
-	"isActive",
-);
+export const LiteWalletSchema = WalletSchema.pick({
+	id: true,
+	name: true,
+	description: true,
+	currency: true,
+	type: true,
+	isActive: true,
+});

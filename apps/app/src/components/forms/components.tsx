@@ -90,6 +90,7 @@ function FieldMessage({ className, children, ...props }: React.ComponentProps<"p
 	const { formErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
 	const errors = useStore(field.store, (state) => state.meta.errors);
+	console.log(errors);
 
 	const isTouched = field.state.meta.isTouched;
 	const hasErrors = errors.length > 0;

@@ -2,7 +2,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useLayoutMode } from "@/hooks/use-layout-mode";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
-	return <div ref={ref} className={cn("flex flex-col gap-6", className)} {...props} />;
+	return <div ref={ref} className={cn("flex flex-col gap-4", className)} {...props} />;
 }
 
 function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {

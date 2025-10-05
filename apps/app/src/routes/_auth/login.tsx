@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { type } from "arktype";
+import * as z from "zod";
 
 import { toast } from "@hoalu/ui/sonner";
 import { ContentCard } from "@/components/cards";
@@ -8,8 +8,8 @@ import { authClient } from "@/lib/auth-client";
 import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth/login")({
-	validateSearch: type({
-		redirect: "string = '/'",
+	validateSearch: z.object({
+		redirect: z.string().catch("/"),
 	}),
 	beforeLoad: async ({ context: { queryClient }, search }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());

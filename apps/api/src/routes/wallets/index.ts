@@ -1,6 +1,6 @@
-import { type } from "arktype";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
+import * as z from "zod";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
@@ -36,7 +36,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: WalletsSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: WalletsSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -48,15 +48,15 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = WalletsSchema(wallets);
-			if (parsed instanceof type.errors) {
+			const parsed = WalletsSchema.safeParse(wallets);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
@@ -69,7 +69,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: WalletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: WalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -87,15 +87,15 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = WalletSchema(wallet);
-			if (parsed instanceof type.errors) {
+			const parsed = WalletSchema.safeParse(wallet);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(
@@ -107,7 +107,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: LiteWalletSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: LiteWalletSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -129,16 +129,19 @@ const route = app
 				ownerId: user.id,
 				workspaceId: workspace.id,
 			});
+			if (!wallet) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
-			const parsed = LiteWalletSchema(wallet);
-			if (parsed instanceof type.errors) {
+			const parsed = LiteWalletSchema.safeParse(wallet);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.CREATED);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.CREATED);
 		},
 	)
 	.patch(
@@ -151,7 +154,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: LiteWalletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: LiteWalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -215,18 +218,18 @@ const route = app
 				payload,
 			});
 			if (!queryData) {
-				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteWalletSchema(queryData);
-			if (parsed instanceof type.errors) {
+			const parsed = LiteWalletSchema.safeParse(queryData);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.delete(
@@ -238,7 +241,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: DeleteWalletSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: DeleteWalletSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -285,15 +288,15 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = DeleteWalletSchema(queryData);
-			if (parsed instanceof type.errors) {
+			const parsed = DeleteWalletSchema.safeParse(queryData);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	);
 

@@ -1,29 +1,27 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { IsoDateSchema } from "../../common/schema";
 
-export const UploadUrlSchema = type({
-	"+": "delete",
-	id: "string.uuid.v7",
-	name: "string > 0",
-	s3Url: "string",
-	uploadUrl: "string",
+export const UploadUrlSchema = z.object({
+	id: z.uuidv7(),
+	name: z.string().min(1),
+	s3Url: z.string(),
+	uploadUrl: z.string(),
 });
 
-export const FileMetaSchema = type({
-	size: "number > 0",
-	type: "string > 0",
-	"tags?": "string[]",
-	"description?": "string",
+export const FileMetaSchema = z.object({
+	size: z.number().positive(),
+	type: z.string().min(1),
+	tags: z.optional(z.array(z.string())),
+	description: z.optional(z.string()),
 });
 
-export const FileSchema = type({
-	"+": "delete",
-	name: "string > 0",
-	description: "string | null",
-	tags: "string[]",
-	presignedUrl: "string > 0",
+export const FileSchema = z.object({
+	name: z.string().min(1),
+	description: z.string().nullable(),
+	tags: z.optional(z.array(z.string())),
+	presignedUrl: z.string().min(1),
 	createdAt: IsoDateSchema,
 });
 
-export const FilesSchema = FileSchema.array().onUndeclaredKey("delete");
+export const FilesSchema = z.array(FileSchema);

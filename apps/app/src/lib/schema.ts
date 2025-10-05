@@ -1,5 +1,5 @@
-import { type } from "arktype";
 import type { InferRequestType, InferResponseType } from "hono/client";
+import * as z from "zod";
 
 import {
 	PG_ENUM_COLOR,
@@ -13,35 +13,35 @@ import type { honoClient } from "@/lib/api-client";
 /**
  * enums
  */
-export const TaskStatusSchema = type("===", ...PG_ENUM_TASK_STATUS);
-export const PrioritySchema = type("===", ...PG_ENUM_PRIORITY);
+export const TaskStatusSchema = z.enum(PG_ENUM_TASK_STATUS);
+export const PrioritySchema = z.enum(PG_ENUM_PRIORITY);
 
-export const RepeatSchema = type("===", ...PG_ENUM_REPEAT);
-export type RepeatSchema = typeof RepeatSchema.infer;
+export const RepeatSchema = z.enum(PG_ENUM_REPEAT);
+export type RepeatSchema = z.infer<typeof RepeatSchema>;
 
-export const WalletTypeSchema = type("===", ...PG_ENUM_WALLET_TYPE);
-export type WalletTypeSchema = typeof WalletTypeSchema.inferOut;
+export const WalletTypeSchema = z.enum(PG_ENUM_WALLET_TYPE);
+export type WalletTypeSchema = z.infer<typeof WalletTypeSchema>;
 
-export const ColorSchema = type("===", ...PG_ENUM_COLOR);
-export type ColorSchema = typeof ColorSchema.inferOut;
+export const ColorSchema = z.enum(PG_ENUM_COLOR);
+export type ColorSchema = z.infer<typeof ColorSchema>;
 
 /**
  * workspaces
  */
-export const WorkspaceFormSchema = type({
-	name: "string > 0",
-	slug: "string > 0",
-	currency: "string > 0",
-	"logo?": "string | null",
+export const WorkspaceFormSchema = z.object({
+	name: z.string().min(1),
+	slug: z.string().min(1),
+	currency: z.string().min(1),
+	logo: z.optional(z.string().nullable()),
 });
-export type WorkspaceFormSchema = typeof WorkspaceFormSchema.infer;
-export const WorkspaceMetadataFormSchema = type({
-	currency: "string > 0",
+export type WorkspaceFormSchema = z.infer<typeof WorkspaceFormSchema>;
+export const WorkspaceMetadataFormSchema = z.object({
+	currency: z.string().length(3),
 });
-export type WorkspaceMetadataFormSchema = typeof WorkspaceMetadataFormSchema.infer;
+export type WorkspaceMetadataFormSchema = z.infer<typeof WorkspaceMetadataFormSchema>;
 
-export const InviteFormSchema = type({
-	email: "string.email",
+export const InviteFormSchema = z.object({
+	email: z.email(),
 });
 
 /**
@@ -52,20 +52,20 @@ export type TaskSchema = InferResponseType<typeof honoClient.api.tasks.$get, 200
 /**
  * expenses
  */
-export const ExpenseFormSchema = type({
-	title: "string > 0",
-	"description?": "string",
-	transaction: {
-		value: "number",
-		currency: "string",
-	},
-	date: "string.date.iso",
-	walletId: "string.uuid.v7",
-	categoryId: "string.uuid.v7",
+export const ExpenseFormSchema = z.object({
+	title: z.string().min(1),
+	description: z.optional(z.string()),
+	transaction: z.object({
+		value: z.number(),
+		currency: z.string(),
+	}),
+	date: z.iso.datetime(),
+	walletId: z.uuidv7(),
+	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
-	attachments: type("File").array(),
+	attachments: z.array(z.file()),
 });
-export type ExpenseFormSchema = typeof ExpenseFormSchema.infer;
+export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;
 export type ExpenseSchema = InferResponseType<
 	typeof honoClient.api.expenses.$get,
 	200
@@ -81,12 +81,12 @@ export type ExpensePatchSchema = InferRequestType<
 /**
  * categories
  */
-export const CategoryFormSchema = type({
-	name: "string > 0",
-	"description?": "string",
+export const CategoryFormSchema = z.object({
+	name: z.string().min(1),
+	description: z.optional(z.string()),
 	color: ColorSchema,
 });
-export type CategoryFormSchema = typeof CategoryFormSchema.infer;
+export type CategoryFormSchema = z.infer<typeof CategoryFormSchema>;
 export type CategorySchema = InferResponseType<
 	typeof honoClient.api.categories.$get,
 	200
@@ -99,14 +99,14 @@ export type CategoryPatchSchema = InferRequestType<
 /**
  * wallets
  */
-export const WalletFormSchema = type({
-	name: "string > 0",
-	"description?": "string",
-	currency: "string > 0",
+export const WalletFormSchema = z.object({
+	name: z.string().min(1),
+	description: z.optional(z.string()),
+	currency: z.string().min(1),
 	type: WalletTypeSchema,
-	"isActive?": "boolean",
+	isActive: z.optional(z.boolean()),
 });
-export type WalletFormSchema = typeof WalletFormSchema.infer;
+export type WalletFormSchema = z.infer<typeof WalletFormSchema>;
 export type WalletSchema = InferResponseType<
 	typeof honoClient.api.wallets.$get,
 	200

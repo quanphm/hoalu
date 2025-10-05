@@ -1,5 +1,5 @@
-import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
+import * as z from "zod";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
@@ -34,7 +34,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: CategoriesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: CategoriesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -46,15 +46,15 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = CategoriesSchema(categories);
-			if (parsed instanceof type.errors) {
+			const parsed = CategoriesSchema.safeParse(categories);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
@@ -67,7 +67,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: CategorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: CategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -85,15 +85,15 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = CategorySchema(category);
-			if (parsed instanceof type.errors) {
+			const parsed = CategorySchema.safeParse(category);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(
@@ -106,7 +106,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: LiteCategorySchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: LiteCategorySchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -121,16 +121,19 @@ const route = app
 				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
 			});
+			if (!category) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
-			const parsed = LiteCategorySchema(category);
-			if (parsed instanceof type.errors) {
+			const parsed = LiteCategorySchema.safeParse(category);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.CREATED);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.CREATED);
 		},
 	)
 	.patch(
@@ -143,7 +146,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: LiteCategorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: LiteCategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -169,18 +172,18 @@ const route = app
 				payload,
 			});
 			if (!queryData) {
-				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteCategorySchema(queryData);
-			if (parsed instanceof type.errors) {
+			const parsed = LiteCategorySchema.safeParse(queryData);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.delete(
@@ -192,7 +195,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: DeleteCategorySchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: DeleteCategorySchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -207,15 +210,15 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = DeleteCategorySchema(category);
-			if (parsed instanceof type.errors) {
+			const parsed = DeleteCategorySchema.safeParse(category);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	);
 

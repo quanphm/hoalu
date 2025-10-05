@@ -116,7 +116,7 @@ export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 			slug: workspace.slug,
 		},
 		validators: {
-			onSubmit: WorkspaceFormSchema.omit("currency"),
+			onSubmit: WorkspaceFormSchema.omit({ currency: true }),
 			onSubmitAsync: async ({ value }) => {
 				if (value.slug === workspace.slug) {
 					return undefined;

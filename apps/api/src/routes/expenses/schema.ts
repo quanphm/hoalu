@@ -1,4 +1,4 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { monetary } from "../../common/monetary";
 import {
@@ -9,74 +9,77 @@ import {
 	WalletTypeSchema,
 } from "../../common/schema";
 
-export const ExpenseSchema = type({
-	"+": "delete",
-	id: "string.uuid.v7",
-	title: "string",
-	description: "string | null",
-	amount: "string.numeric.parse",
-	currency: "string",
-	repeat: RepeatSchema,
-	date: IsoDateSchema,
-	createdAt: IsoDateSchema,
-	creator: {
-		"+": "delete",
-		id: "string.uuid.v7",
-		publicId: "string",
-		name: "string",
-		email: "string.email",
-		image: "string | null",
-	},
-	wallet: {
-		"+": "delete",
-		id: "string.uuid.v7",
-		name: "string",
-		description: "string | null",
-		currency: "string",
-		type: WalletTypeSchema,
-		isActive: "boolean",
-	},
-	category: type({
-		"+": "delete",
-		id: "string.uuid.v7",
-		name: "string",
-		description: "string | null",
-		color: ColorSchema,
-	}).or("null"),
-}).pipe((e) => ({
-	...e,
-	amount: monetary.fromRealAmount(e.amount, e.currency),
-	realAmount: e.amount,
-}));
-export const ExpensesSchema = ExpenseSchema.array().onUndeclaredKey("delete");
+export const ExpenseSchema = z
+	.object({
+		id: z.uuidv7(),
+		title: z.string(),
+		description: z.string().nullable(),
+		amount: z.coerce.number(),
+		currency: z.string(),
+		repeat: RepeatSchema,
+		date: IsoDateSchema,
+		createdAt: IsoDateSchema,
+		creator: z.object({
+			id: z.uuidv7(),
+			publicId: z.string(),
+			name: z.string(),
+			email: z.email(),
+			image: z.string().nullable(),
+		}),
+		wallet: z.object({
+			id: z.uuidv7(),
+			name: z.string(),
+			description: z.string().nullable(),
+			currency: z.string(),
+			type: WalletTypeSchema,
+			isActive: z.boolean(),
+		}),
+		category: z
+			.object({
+				id: z.uuidv7(),
+				name: z.string(),
+				description: z.string().nullable(),
+				color: ColorSchema,
+			})
+			.nullable(),
+	})
+	.transform((val) => ({
+		...val,
+		amount: monetary.fromRealAmount(val.amount, val.currency),
+		realAmount: val.amount,
+	}));
 
-export const InsertExpenseSchema = type({
-	title: "string > 0",
-	"description?": "string",
-	amount: "number",
+export const ExpensesSchema = z.array(ExpenseSchema);
+
+export const InsertExpenseSchema = z.object({
+	title: z.string().min(1),
+	description: z.optional(z.string()),
+	amount: z.number(),
 	currency: CurrencySchema,
 	repeat: RepeatSchema.default("one-time"),
-	"date?": "string.date.iso",
-	walletId: "string.uuid.v7",
-	categoryId: "string.uuid.v7",
+	date: z.optional(z.iso.datetime()),
+	walletId: z.uuidv7(),
+	categoryId: z.uuidv7(),
 });
 
 export const UpdateExpenseSchema = InsertExpenseSchema.partial();
 
-export const DeleteExpenseSchema = type({
-	id: "string.uuid.v7",
+export const DeleteExpenseSchema = z.object({
+	id: z.uuidv7(),
 });
 
-export const LiteExpenseSchema = type({
-	id: "string.uuid.v7",
-	title: "string",
-	description: "string | null",
-	amount: "string.numeric.parse",
-	currency: "string",
-	repeat: RepeatSchema,
-	date: IsoDateSchema,
-}).pipe((e) => ({
-	...e,
-	amount: monetary.fromRealAmount(e.amount, e.currency),
-	realAmount: e.amount,
-}));
+export const LiteExpenseSchema = z
+	.object({
+		id: z.uuidv7(),
+		title: z.string(),
+		description: z.string().nullable(),
+		amount: z.coerce.number(),
+		currency: z.string(),
+		repeat: RepeatSchema,
+		date: IsoDateSchema,
+	})
+	.transform((val) => ({
+		...val,
+		amount: monetary.fromRealAmount(val.amount, val.currency),
+		realAmount: val.amount,
+	}));
