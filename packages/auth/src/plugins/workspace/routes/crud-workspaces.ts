@@ -1,7 +1,7 @@
 import { createAuthEndpoint, requestOnlySessionMiddleware } from "better-auth/api";
 import type { AccessControl } from "better-auth/plugins/access";
 import { APIError } from "better-call";
-import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod/v4";
+import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";

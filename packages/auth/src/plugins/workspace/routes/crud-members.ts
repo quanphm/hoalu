@@ -1,6 +1,6 @@
 import { createAuthEndpoint } from "better-auth/api";
 import { APIError } from "better-call";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { getAdapter } from "../adapter";

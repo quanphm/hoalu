@@ -25,7 +25,7 @@ export function ExpenseStatsRow() {
 					: "0",
 		},
 		{
-			title: "Records",
+			title: "Transactions",
 			value: totalTransactions.toString(),
 		},
 	];

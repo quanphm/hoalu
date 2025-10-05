@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, jwt } from "better-auth/plugins";
+import { apiKey, jwt, openAPI } from "better-auth/plugins";
 
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
@@ -152,7 +152,7 @@ export const auth = betterAuth({
 			},
 		}),
 		apiKey(),
-		// openAPI(),
+		openAPI(),
 	],
 	telemetry: {
 		enabled: false,
