@@ -54,7 +54,7 @@ const route = app.get(
 			);
 		}
 
-		return c.json({ data: parsed }, HTTPStatus.codes.OK);
+		return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 	},
 );
 

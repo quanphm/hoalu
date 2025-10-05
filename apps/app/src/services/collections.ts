@@ -1,14 +1,14 @@
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
-import { type } from "arktype";
+import * as z from "zod";
 
-const ExpenseFormSchema = type({
-	id: "string.uuid.v7",
-	title: "string",
-	"description?": "string",
-	date: "string.date.iso",
-	walletId: "string.uuid.v7",
-	categoryId: "string.uuid.v7",
+const ExpenseFormSchema = z.object({
+	id: z.uuidv7(),
+	title: z.string(),
+	description: z.optional(z.string()),
+	date: z.iso.datetime(),
+	walletId: z.uuidv7(),
+	categoryId: z.uuidv7(),
 });
 
 export const expenseCollection = (id: string) =>

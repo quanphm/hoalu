@@ -10,13 +10,13 @@ export const WalletSchema = z.object({
 	type: WalletTypeSchema,
 	isActive: z.boolean(),
 	createdAt: IsoDateSchema,
-	owner: {
+	owner: z.object({
 		id: z.uuidv7(),
 		publicId: z.string(),
 		name: z.string(),
 		email: z.email(),
 		image: z.string().nullable(),
-	},
+	}),
 	total: z.number(),
 });
 

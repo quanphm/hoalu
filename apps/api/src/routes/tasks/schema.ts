@@ -18,10 +18,10 @@ export const TasksSchema = z.array(TaskSchema);
 
 export const InsertTaskSchema = z.object({
 	title: z.string().min(1),
-	"description?": z.string(),
+	description: z.optional(z.string()),
 	status: TaskStatusSchema.default("todo"),
 	priority: PrioritySchema.default("none"),
-	"dueDate?": z.iso.date(),
+	dueDate: z.optional(z.iso.datetime()),
 });
 
 export const UpdateTaskSchema = InsertTaskSchema.partial();

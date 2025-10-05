@@ -1,13 +1,13 @@
 import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tanstack/react-router";
-import { type } from "arktype";
+import * as z from "zod";
 
 import { Button } from "@hoalu/ui/button";
 import { ContentCard, ErrorCard } from "@/components/cards";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth/verify-email")({
-	validateSearch: type({
-		token: "string > 0",
+	validateSearch: z.object({
+		token: z.string().min(1),
 	}),
 	loaderDeps: ({ search: { token } }) => ({ token }),
 	loader: async ({ deps: { token } }) => {

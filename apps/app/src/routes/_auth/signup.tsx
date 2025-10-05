@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import { type } from "arktype";
+import * as z from "zod";
 
 import { toast } from "@hoalu/ui/sonner";
 import { ContentCard } from "@/components/cards";
@@ -10,8 +10,8 @@ import { authKeys } from "@/lib/query-key-factory";
 import { sessionOptions } from "@/services/query-options";
 
 export const Route = createFileRoute("/_auth/signup")({
-	validateSearch: type({
-		redirect: "string = '/'",
+	validateSearch: z.object({
+		redirect: z.string().catch("/"),
 	}),
 	beforeLoad: async ({ context: { queryClient }, search }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());

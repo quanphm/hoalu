@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { type } from "arktype";
+import * as z from "zod";
 
 import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
 import { ExpenseDetails } from "@/components/expenses/expense-details";
@@ -16,8 +16,8 @@ import {
 // import { expenseCollection } from "@/services/collections";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
-	validateSearch: type({
-		"date?": "string",
+	validateSearch: z.object({
+		date: z.optional(z.string()),
 	}),
 	component: RouteComponent,
 });

@@ -14,7 +14,7 @@ export const CategoriesSchema = z.array(CategorySchema);
 
 export const InsertCategorySchema = z.object({
 	name: z.string().min(1),
-	"description?": z.string(),
+	description: z.optional(z.string()),
 	color: ColorSchema.default("gray"),
 });
 

@@ -56,7 +56,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
@@ -95,7 +95,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(
@@ -141,7 +141,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.CREATED);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.CREATED);
 		},
 	)
 	.patch(
@@ -229,7 +229,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.delete(
@@ -296,7 +296,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	);
 

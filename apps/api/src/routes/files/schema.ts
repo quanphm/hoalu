@@ -10,7 +10,7 @@ export const UploadUrlSchema = z.object({
 });
 
 export const FileMetaSchema = z.object({
-	size: z.number(),
+	size: z.number().positive(),
 	type: z.string().min(1),
 	tags: z.optional(z.array(z.string())),
 	description: z.optional(z.string()),
