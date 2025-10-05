@@ -1,13 +1,11 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema } from "../../common/schema";
 
-export const ExchangeRateSchema = type({
+export const ExchangeRateSchema = z.object({
 	date: IsoDateSchema,
 	from: CurrencySchema,
 	to: CurrencySchema,
-	rate: "string.numeric.parse",
-	inverse_rate: "string.numeric.parse",
+	rate: z.coerce.number(),
+	inverse_rate: z.coerce.number(),
 });
-
-export type ExchangeRateSchema = typeof ExchangeRateSchema.in.infer;

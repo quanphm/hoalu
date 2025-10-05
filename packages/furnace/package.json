@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-		"arktype": "catalog:",
+		"zod": "catalog:",
 		"hono-openapi": "^1.0.8",
 		"hono-pino": "^0.10.2",
 		"hono-rate-limiter": "^0.4.2",

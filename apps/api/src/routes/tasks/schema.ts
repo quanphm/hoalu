@@ -1,32 +1,31 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "../../common/schema";
 
-export const TaskSchema = type({
-	"+": "delete",
-	id: "string.uuid.v7",
-	title: "string",
-	description: "string | null",
+export const TaskSchema = z.object({
+	id: z.uuidv7(),
+	title: z.string(),
+	description: z.string().nullable(),
+	creatorId: z.uuidv7(),
+	workspaceId: z.uuidv7(),
 	status: TaskStatusSchema,
 	priority: PrioritySchema,
-	creatorId: "string.uuid.v7",
-	workspaceId: "string.uuid.v7",
 	createdAt: IsoDateSchema,
 	dueDate: IsoDateSchema,
 });
 
-export const TasksSchema = TaskSchema.array().onUndeclaredKey("delete");
+export const TasksSchema = z.array(TaskSchema);
 
-export const InsertTaskSchema = type({
-	title: "string > 0",
-	"description?": "string",
+export const InsertTaskSchema = z.object({
+	title: z.string().min(1),
+	"description?": z.string(),
 	status: TaskStatusSchema.default("todo"),
 	priority: PrioritySchema.default("none"),
-	"dueDate?": "string.date.iso",
+	"dueDate?": z.iso.date(),
 });
 
 export const UpdateTaskSchema = InsertTaskSchema.partial();
 
-export const DeleteTaskSchema = type({
-	id: "string.uuid.v7",
+export const DeleteTaskSchema = z.object({
+	id: z.uuidv7(),
 });

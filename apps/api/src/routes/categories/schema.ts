@@ -1,28 +1,32 @@
-import { type } from "arktype";
+import * as z from "zod";
 
 import { ColorSchema } from "../../common/schema";
 
-export const CategorySchema = type({
-	"+": "delete",
-	id: "string.uuid.v7",
-	name: "string",
-	description: "string | null",
+export const CategorySchema = z.object({
+	id: z.uuidv7(),
+	name: z.string(),
+	description: z.string().nullable(),
 	color: ColorSchema,
-	total: "number",
+	total: z.number(),
 });
 
-export const CategoriesSchema = CategorySchema.array().onUndeclaredKey("delete");
+export const CategoriesSchema = z.array(CategorySchema);
 
-export const InsertCategorySchema = type({
-	name: "string > 0",
-	"description?": "string",
+export const InsertCategorySchema = z.object({
+	name: z.string().min(1),
+	"description?": z.string(),
 	color: ColorSchema.default("gray"),
 });
 
 export const UpdateCategorySchema = InsertCategorySchema.partial();
 
-export const DeleteCategorySchema = type({
-	id: "string.uuid.v7",
+export const DeleteCategorySchema = z.object({
+	id: z.uuidv7(),
 });
 
-export const LiteCategorySchema = CategorySchema.pick("id", "name", "description", "color");
+export const LiteCategorySchema = CategorySchema.pick({
+	id: true,
+	name: true,
+	description: true,
+	color: true,
+});

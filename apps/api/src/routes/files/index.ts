@@ -1,5 +1,5 @@
-import { type } from "arktype";
 import { describeRoute } from "hono-openapi";
+import * as z from "zod";
 
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
@@ -31,7 +31,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: UploadUrlSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: UploadUrlSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -66,13 +66,13 @@ const route = app
 				s3Url,
 			});
 
-			const parsed = UploadUrlSchema({
+			const parsed = UploadUrlSchema.safeParse({
 				...fileSlot,
 				uploadUrl,
 			});
-			if (parsed instanceof type.errors) {
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -89,7 +89,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: FilesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: FilesSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -108,10 +108,10 @@ const route = app
 				}),
 			);
 
-			const parsed = FilesSchema(filesWithPresignedUrl);
-			if (parsed instanceof type.errors) {
+			const parsed = FilesSchema.safeParse(filesWithPresignedUrl);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -128,7 +128,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: type("string | null") }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: z.string().nullable() }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -162,7 +162,7 @@ const route = app
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(type({ ids: "string.uuid.v7[]" })),
+		jsonBodyValidator(z.object({ ids: z.array(z.uuidv7()) })),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");

@@ -1,4 +1,5 @@
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
+import type * as z from "zod";
 
 import { db, schema } from "../../db";
 import type { UpdateWalletSchema } from "./schema";
@@ -54,7 +55,7 @@ export class WalletRepository {
 		}
 	}
 
-	async update<T extends typeof UpdateWalletSchema.infer>(param: {
+	async update<T extends z.infer<typeof UpdateWalletSchema>>(param: {
 		id: string;
 		workspaceId: string;
 		payload: T;

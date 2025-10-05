@@ -1,22 +1,15 @@
-import { arktypeValidator } from "@hono/arktype-validator";
-import { type } from "arktype";
+import { zValidator } from "@hono/zod-validator";
+import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 
-const WorkspaceIdOrSlugSchema = type({
-	workspaceIdOrSlug: "string > 0",
+const WorkspaceIdOrSlugSchema = z.object({
+	workspaceIdOrSlug: z.string().min(1),
 });
 
-export const workspaceQueryValidator = arktypeValidator(
-	"query",
-	WorkspaceIdOrSlugSchema,
-	(result, c) => {
-		if (!result.success) {
-			return c.json(
-				{ message: createIssueMsg(result.errors.issues) },
-				HTTPStatus.codes.BAD_REQUEST,
-			);
-		}
-	},
-);
+export const workspaceQueryValidator = zValidator("query", WorkspaceIdOrSlugSchema, (result, c) => {
+	if (!result.success) {
+		return c.json({ message: createIssueMsg(result.error.issues) }, HTTPStatus.codes.BAD_REQUEST);
+	}
+});

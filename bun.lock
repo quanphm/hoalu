@@ -20,11 +20,10 @@
         "@hoalu/countries": "workspace:*",
         "@hoalu/email": "workspace:*",
         "@hoalu/furnace": "workspace:*",
-        "@hono/arktype-validator": "^2.0.1",
         "@hono/standard-validator": "^0.1.5",
+        "@hono/zod-validator": "^0.7.3",
         "@react-email/render": "^1.2.3",
         "@scalar/hono-api-reference": "^0.9.19",
-        "arktype": "catalog:",
         "better-auth": "catalog:",
         "drizzle-orm": "^0.44.5",
         "hono": "catalog:",
@@ -173,13 +172,13 @@
       "version": "0.13.0",
       "dependencies": {
         "@hoalu/common": "workspace:*",
-        "arktype": "catalog:",
         "hono-openapi": "^1.0.8",
         "hono-pino": "^0.10.2",
         "hono-rate-limiter": "^0.4.2",
         "pino": "^9.11.0",
         "pino-pretty": "^13.1.1",
         "rate-limit-redis": "^4.2.2",
+        "zod": "catalog:",
       },
       "peerDependencies": {
         "hono": "catalog:",
@@ -629,9 +628,9 @@
 
     "@hoalu/ui": ["@hoalu/ui@workspace:packages/ui"],
 
-    "@hono/arktype-validator": ["@hono/arktype-validator@2.0.1", "", { "peerDependencies": { "arktype": "^2.0.0-dev.14", "hono": "*" } }, "sha512-Z4PQFtzgbGneBap+TTViRIBAoUWbwEwg8PaKNqALAP6z9N2ksJI81PfcsSQNUzwtrn8LipkMvBb8/D9Pei2GJw=="],
-
     "@hono/standard-validator": ["@hono/standard-validator@0.1.5", "", { "peerDependencies": { "@standard-schema/spec": "1.0.0", "hono": ">=3.9.0" } }, "sha512-EIyZPPwkyLn6XKwFj5NBEWHXhXbgmnVh2ceIFo5GO7gKI9WmzTjPDKnppQB0KrqKeAkq3kpoW4SIbu5X1dgx3w=="],
+
+    "@hono/zod-validator": ["@hono/zod-validator@0.7.3", "", { "peerDependencies": { "hono": ">=3.9.0", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-uYGdgVib3RlGD698WR5dVM0zB3UuPY5vHKXffGUbUh7r4xY+mFIhF3/v4AcQVLrU5CQdBso8BJr4wuVoCrjTuQ=="],
 
     "@img/sharp-darwin-arm64": ["@img/sharp-darwin-arm64@0.34.1", "", { "optionalDependencies": { "@img/sharp-libvips-darwin-arm64": "1.1.0" }, "os": "darwin", "cpu": "arm64" }, "sha512-pn44xgBtgpEbZsu+lWf2KNb6OAf70X68k+yk69Ic2Xz11zHR/w24/U49XT7AeRwJ0Px+mhALhU5LPci1Aymk7A=="],
 

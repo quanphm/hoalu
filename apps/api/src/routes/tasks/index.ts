@@ -1,6 +1,6 @@
-import { type } from "arktype";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
+import * as z from "zod";
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
@@ -34,7 +34,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: TasksSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: TasksSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
@@ -46,10 +46,10 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = TasksSchema(tasks);
-			if (parsed instanceof type.errors) {
+			const parsed = TasksSchema.safeParse(tasks);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -67,7 +67,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: TaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -85,10 +85,10 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const parsed = TaskSchema(task);
-			if (parsed instanceof type.errors) {
+			const parsed = TaskSchema.safeParse(task);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -106,7 +106,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: TaskSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -129,10 +129,10 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = TaskSchema(task);
-			if (parsed instanceof type.errors) {
+			const parsed = TaskSchema.safeParse(task);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -150,7 +150,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: TaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: TaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -179,10 +179,10 @@ const route = app
 				return c.json({ message: "Update operation failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = TaskSchema(queryData);
-			if (parsed instanceof type.errors) {
+			const parsed = TaskSchema.safeParse(queryData);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
@@ -199,7 +199,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(type({ data: DeleteTaskSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: DeleteTaskSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -214,10 +214,10 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			const parsed = DeleteTaskSchema(task);
-			if (parsed instanceof type.errors) {
+			const parsed = DeleteTaskSchema.safeParse(task);
+			if (!parsed.success) {
 				return c.json(
-					{ message: createIssueMsg(parsed.issues) },
+					{ message: createIssueMsg(parsed.error.issues) },
 					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}

@@ -1,5 +1,5 @@
-import { type Type, type } from "arktype";
 import { resolver } from "hono-openapi";
+import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 
@@ -15,7 +15,7 @@ interface Response {
 /**
  * General response. Mostly use for `200`, `201` & `204` response.
  */
-function response<T extends Type>(
+function response<T extends z.ZodObject>(
 	schema: T,
 	status: number,
 	description?: string,
@@ -24,7 +24,7 @@ function response<T extends Type>(
 		[status]: {
 			content: {
 				"application/json": {
-					schema: resolver(schema.in),
+					schema: resolver(schema),
 				},
 			},
 			description: description || "Success",
@@ -38,8 +38,8 @@ function unauthorized(): Record<401, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						type({
-							message: `'${HTTPStatus.phrases.UNAUTHORIZED}'`,
+						z.object({
+							message: z.string().default(HTTPStatus.phrases.UNAUTHORIZED),
 						}),
 					),
 				},
@@ -58,8 +58,8 @@ function bad_request(description?: string): Record<400, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						type({
-							message: `'string = ${HTTPStatus.phrases.BAD_REQUEST}'`,
+						z.object({
+							message: z.string().default(HTTPStatus.phrases.BAD_REQUEST),
 						}),
 					),
 				},
@@ -80,8 +80,8 @@ function not_found(description?: string): Record<404, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						type({
-							message: `'string = ${HTTPStatus.phrases.NOT_FOUND}'`,
+						z.object({
+							message: z.string().default(HTTPStatus.phrases.NOT_FOUND),
 						}),
 					),
 				},
@@ -97,8 +97,8 @@ function server_parse_error(description?: string): Record<422, Response> {
 			content: {
 				"application/json": {
 					schema: resolver(
-						type({
-							message: `'string = ${HTTPStatus.phrases.UNPROCESSABLE_ENTITY}'`,
+						z.object({
+							message: z.string().default(HTTPStatus.phrases.UNPROCESSABLE_ENTITY),
 						}),
 					),
 				},

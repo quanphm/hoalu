@@ -1,6 +1,6 @@
-import { arktypeValidator } from "@hono/arktype-validator";
-import { type } from "arktype";
+import { zValidator } from "@hono/zod-validator";
 import { describeRoute } from "hono-openapi";
+import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
@@ -23,10 +23,10 @@ const route = app.get(
 			...OpenAPI.unauthorized(),
 			...OpenAPI.bad_request(),
 			...OpenAPI.server_parse_error(),
-			...OpenAPI.response(type({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
+			...OpenAPI.response(z.object({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	arktypeValidator("query", type({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
+	zValidator("query", z.object({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
 		if (!result.success) {
 			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
 		}
@@ -40,16 +40,16 @@ const route = app.get(
 			return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 		}
 
-		const parsed = ExchangeRateSchema({
+		const parsed = ExchangeRateSchema.safeParse({
 			date: rateInfo.date,
 			from: rateInfo.fromCurrency,
 			to: rateInfo.toCurrency,
 			rate: rateInfo.exchangeRate,
 			inverse_rate: rateInfo.inverseRate,
 		});
-		if (parsed instanceof type.errors) {
+		if (!parsed.success) {
 			return c.json(
-				{ message: createIssueMsg(parsed.issues) },
+				{ message: createIssueMsg(parsed.error.issues) },
 				HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 			);
 		}
