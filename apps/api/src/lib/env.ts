@@ -5,6 +5,7 @@ import { standardValidate } from "@hoalu/common/standard-validate";
 export const EnvSchema = z.object({
 	AUTH_SECRET: z.string().min(1),
 	AUTH_URL: z.url(),
+	PGBOUNCER_HOST: z.string().min(1),
 	DB_HOST: z.string().min(1),
 	DB_NAME: z.string().min(1),
 	DB_USER: z.string().min(1),
