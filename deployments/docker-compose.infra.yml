@@ -33,7 +33,7 @@ services:
     environment:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=database
       - DB_NAME=${DB_NAME}
       - POOL_MODE=session
       - MAX_CLIENT_CONN=100
@@ -57,7 +57,7 @@ services:
     networks:
       - hoalu_network
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
       - ELECTRIC_SECRET=${SYNC_SECRET}
     depends_on:
