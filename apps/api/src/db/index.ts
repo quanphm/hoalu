@@ -7,7 +7,7 @@ const client = new Pool({
 	user: process.env.DB_USER,
 	password: process.env.DB_PASSWORD,
 	host: process.env.PGBOUNCER_HOST,
-	port: 5432,
+	port: 6432,
 	database: process.env.DB_NAME,
 	max: 20,
 });
