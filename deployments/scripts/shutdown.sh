@@ -17,7 +17,7 @@ trap cleanup_on_failure ERR
 
 cd "$DEPLOY_DIR"
 
-echo "Step 1: Stopping Platform Services"
+echo "⏳ Stopping Platform Services"
 echo "-----------------------------------"
 if docker compose -f docker-compose.platform.yml down; then
     echo "✅ Platform services stopped successfully"
@@ -27,7 +27,7 @@ else
 fi
 
 echo ""
-echo "Step 2: Stopping Infrastructure Services"
+echo "⏳ Stopping Infrastructure Services"
 echo "-----------------------------------------"
 if docker compose -f docker-compose.infra.yml down; then
     echo "✅ Infrastructure services stopped successfully"

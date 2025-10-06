@@ -36,7 +36,6 @@ if [[ ! -f "$DEPLOY_DIR/.env" ]]; then
     echo "❌ Error: .env file not found in deployments directory"
     exit 1
 fi
-source "$DEPLOY_DIR/.env"
 
 echo "⏳ Deploying Infrastructure"
 echo "--------------------------------"
