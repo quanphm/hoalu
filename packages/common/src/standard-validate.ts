@@ -16,8 +16,7 @@ export function standardValidate<T extends StandardSchemaV1>(
 		throw new TypeError("Schema validation must be synchronous");
 	}
 	if (parsed.issues) {
-		const reducedIssues = createIssueMsg(parsed.issues);
-		throw new Error(`❌ Invalid: ${JSON.stringify(reducedIssues, null, 2)}`);
+		throw new Error(`❌ Invalid: ${JSON.stringify(parsed.issues, null, 2)}`);
 	}
 	return parsed.value;
 }
