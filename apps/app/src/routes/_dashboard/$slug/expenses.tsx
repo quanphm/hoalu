@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import * as z from "zod";
 
@@ -12,8 +13,8 @@ import {
 	SectionItem,
 	SectionTitle,
 } from "@/components/layouts/section";
-// import { useWorkspace } from "@/hooks/use-workspace";
-// import { expenseCollection } from "@/services/collections";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { expenseCollection } from "@/services/collections";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 	validateSearch: z.object({
@@ -23,15 +24,15 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
-	// const workspace = useWorkspace();
-	// const { data: expenses } = useLiveQuery((q) =>
-	// 	q.from({ expense: expenseCollection(workspace.id) }).select(({ expense }) => ({
-	// 		id: expense.id,
-	// 		title: expense.title,
-	// 		description: expense.description,
-	// 	})),
-	// );
-	// console.log(expenses);
+	const workspace = useWorkspace();
+	const { data: expenses } = useLiveQuery((q) =>
+		q.from({ expense: expenseCollection(workspace.id) }).select(({ expense }) => ({
+			id: expense.id,
+			title: expense.title,
+			description: expense.description,
+		})),
+	);
+	console.log(expenses);
 
 	return (
 		<Section className="-mb-8">

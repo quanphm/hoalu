@@ -5,8 +5,6 @@ services:
     container_name: hoalu-db
     image: postgres:18-alpine
     restart: always
-    ports:
-      - 5432:5432
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -19,16 +17,37 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/18/docker
 
+  pgbouncer:
+    container_name: hoalu-pgbouncer
+    image: edoburu/pgbouncer:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=database
+      - DB_NAME=${DB_NAME}
+      - POOL_MODE=session
+      - MAX_CLIENT_CONN=100
+      - DEFAULT_POOL_SIZE=20
+      - MIN_POOL_SIZE=5
+      - RESERVE_POOL_SIZE=5
+      - MAX_DB_CONNECTIONS=25
+      - AUTH_TYPE=scram-sha-256
+    depends_on:
+      - database
+
   electric:
     container_name: hoalu-electric
     image: electricsql/electric:latest
     restart: always
+    ports:
+      - 4000:4000
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sslmode=disable
       - ELECTRIC_PORT=4000
       - ELECTRIC_SECRET=${SYNC_SECRET}
-    ports:
-      - 4000:4000
     depends_on:
       - database
     volumes:
@@ -38,10 +57,10 @@ services:
     container_name: hoalu-redis
     image: redis:7.4.2-alpine
     restart: always
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
 
 volumes:
   pg_data:
