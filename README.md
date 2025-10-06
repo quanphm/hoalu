@@ -4,12 +4,12 @@
 
 ## Tech Stack
 
-- **Frontend**: React, Tanstack (Router, Query, Form), TailwindCSS, shadcn/ui
-- **Backend**: Hono, Drizzle ORM
+- **Frontend**: React, Tanstack (Router, Query, Form), TailwindCSS, Base UI
+- **Backend**: Hono, Drizzle
 - **Database**: PostgreSQL
 - **Authentication**: Better Auth
 - **Sync Engine**: Electric SQL, PGlite
-- **Validation**: Arktype
+- **Validation**: Zod
 - **Email**: Resend
 
 ## Directories
@@ -32,7 +32,7 @@
 | [@hoalu/furnace](packages/furnace)     | Hono handlers & utils for `@hoalu/api`                                                               |
 | [@hoalu/email](packages/email)         | Email templates                                                                                      |
 | [@hoalu/icons](packages/icons)         | Icon library                                                                                         |
-| [@hoalu/ui](packages/ui)               | [Shadcn UI](https://ui.shadcn.com/) + [Origin UI](https://originui.com/)                             |
+| [@hoalu/ui](packages/ui)               | [Shadcn UI](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/react/overview/quick-start)      |
 | [@hoalu/tsconfig](packages/tsconfig)   | Typescript configurations                                                                            |
 
 ## Getting Started
