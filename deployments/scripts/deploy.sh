@@ -28,12 +28,22 @@ cleanup_on_failure() {
 }
 trap cleanup_on_failure ERR
 
-echo "Step 1: Deploying Infrastructure"
+cd "$DEPLOY_DIR"
+
+echo "🔍 Checking env variables"
+echo "--------------------------------"
+if [[ ! -f "$DEPLOY_DIR/.env" ]]; then
+    echo "❌ Error: .env file not found in deployments directory"
+    exit 1
+fi
+source "$DEPLOY_DIR/.env"
+
+echo "⏳ Deploying Infrastructure"
 echo "--------------------------------"
 bash "$SCRIPT_DIR/deploy-infra.sh"
 
 echo ""
-echo "Step 2: Deploying Platform"
+echo "⏳ Deploying Platform"
 echo "---------------------------"
 bash "$SCRIPT_DIR/deploy-platform.sh"
 

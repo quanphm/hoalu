@@ -2,19 +2,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEPLOY_DIR="$(dirname "$SCRIPT_DIR")"
-
-echo "🚀 Starting Hoalu Infrastructure Deployment"
-
-if [[ ! -f "$DEPLOY_DIR/.env" ]]; then
-    echo "❌ Error: .env file not found in deployments directory"
-    exit 1
-fi
-
-echo "📋 Deploying infrastructure services..."
-
-cd "$DEPLOY_DIR"
+echo "🚀 Starting Infrastructure Deployment"
 
 if docker compose -f docker-compose.infra.yml up -d --build; then
     echo "✅ Infrastructure services deployed successfully"
