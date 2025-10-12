@@ -9,12 +9,12 @@
 		"./social": "./src/social/index.tsx",
 		"./tabler": "./src/tabler/index.tsx"
 	},
+	"dependencies": {
+		"lucide-react": "^0.544.0"
+	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/react": "catalog:",
 		"react": "catalog:"
-	},
-	"dependencies": {
-		"lucide-react": "^0.544.0"
 	}
 }
