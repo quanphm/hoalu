@@ -1,20 +1,36 @@
-.PHONY: help deploy deploy-infra deploy-platform shutdown status logs logs-infra logs-platform clean check-env wait-for-db
+.PHONY: help deploy deploy-infra deploy-platform shutdown status logs logs-infra logs-platform clean wait-for-db fetch-env check-env check-env-or-fetch
 
 help:
-	@echo "Hoalu deployment"
+	@echo "Hoalu Deployment"
 	@echo "========================="
 	@echo ""
 	@echo "Available commands:"
-	@echo "  deploy          - Full deployment (infrastructure + platform)"
-	@echo "  deploy-infra    - Deploy infrastructure services only"
-	@echo "  deploy-platform - Deploy platform services only"
-	@echo "  shutdown        - Stop all services gracefully"
-	@echo "  status          - Show status of all services"
-	@echo "  logs            - Show logs from all services"
-	@echo "  logs-infra      - Show logs from infrastructure services"
-	@echo "  logs-platform   - Show logs from platform services"
-	@echo "  clean           - Remove all containers and volumes"
-	@echo "  help            - Show this help message"
+	@echo "  deploy             - Full deployment (infrastructure + platform)"
+	@echo "  deploy-infra       - Deploy infrastructure services only"
+	@echo "  deploy-platform    - Deploy platform services only"
+	@echo "  shutdown           - Stop all services gracefully"
+	@echo "  status             - Show status of all services"
+	@echo "  logs               - Show logs from all services"
+	@echo "  logs-infra         - Show logs from infrastructure services"
+	@echo "  logs-platform      - Show logs from platform services"
+	@echo "  clean              - Remove all containers and volumes"
+	@echo "  fetch-env          - Fetch .env"
+	@echo "  check-env          - Check .env"
+	@echo "  check-env-or-fetch - Check for .env or fetch"
+	@echo "  help               - Show this help message"
+
+fetch-env:
+	@echo "Fetching environment from Infisical..."
+	@if [ -z "$$INFISICAL_CLIENT_ID" ] || [ -z "$$INFISICAL_CLIENT_SECRET" ] || [ -z "$$INFISICAL_HOALU_PROJECT_ID" ]; then \
+		echo "Error: Required Infisical environment variables not set:"; \
+		echo "  INFISICAL_CLIENT_ID"; \
+		echo "  INFISICAL_CLIENT_SECRET"; \
+		echo "  INFISICAL_HOALU_PROJECT_ID"; \
+		exit 1; \
+	fi
+	@export INFISICAL_TOKEN=$$(infisical login --method=universal-auth --client-id=$$INFISICAL_CLIENT_ID --client-secret=$$INFISICAL_CLIENT_SECRET --silent --plain) && \
+	infisical export --projectId=$$INFISICAL_HOALU_PROJECT_ID --env=prod > .env
+	@echo "Environment variables fetched successfully from Infisical"
 
 check-env:
 	@echo "Checking environment configuration..."
@@ -23,6 +39,14 @@ check-env:
 		exit 1; \
 	fi
 	@echo "Environment configuration OK"
+
+check-env-or-fetch:
+	@if [ ! -f ".env" ]; then \
+		echo ".env file not found. Fetching from Infisical..."; \
+		$(MAKE) fetch-env; \
+	else \
+		echo "Using existing .env file"; \
+	fi
 
 wait-for-db:
 	@echo "Waiting for database to be ready..."
@@ -42,7 +66,7 @@ wait-for-db:
 	done
 	@echo "Database is ready"
 
-deploy-infra: check-env
+deploy-infra: check-env-or-fetch
 	@echo "Starting Infrastructure Deployment"
 	@if docker compose -f docker-compose.infra.yml up -d --build; then \
 		echo "Infrastructure services deployed successfully"; \
@@ -53,7 +77,7 @@ deploy-infra: check-env
 	@$(MAKE) wait-for-db
 	@echo "Infrastructure deployment completed successfully"
 
-deploy-platform: check-env
+deploy-platform: check-env-or-fetch
 	@echo "Starting Platform Deployment"
 	@echo "Checking infrastructure availability..."
 	@if ! docker compose -f docker-compose.infra.yml ps --filter "status=running" | grep -q "hoalu-db"; then \
@@ -69,7 +93,7 @@ deploy-platform: check-env
 	fi
 	@echo "Platform deployment completed successfully"
 
-deploy: check-env
+deploy: check-env-or-fetch
 	@echo "Hoalu Production Deployment"
 	@echo "================================"
 	@echo ""
@@ -134,3 +158,4 @@ clean:
 	@docker compose -f docker-compose.platform.yml down -v --remove-orphans || true
 	@docker compose -f docker-compose.infra.yml down -v --remove-orphans || true
 	@echo "Cleanup completed"
+
