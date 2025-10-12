@@ -29,7 +29,8 @@ fetch-env:
 		exit 1; \
 	fi
 	@export INFISICAL_TOKEN=$$(infisical login --method=universal-auth --client-id=$$INFISICAL_CLIENT_ID --client-secret=$$INFISICAL_CLIENT_SECRET --silent --plain) && \
-	infisical export --projectId=$$INFISICAL_HOALU_PROJECT_ID --env=prod > .env
+	infisical export --projectId=$$INFISICAL_HOALU_PROJECT_ID --env=prod > .env && \
+	chmod 600 .env
 	@echo "Environment variables fetched successfully from Infisical"
 
 check-env:
