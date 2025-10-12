@@ -26,9 +26,12 @@ check-env:
 
 wait-for-db:
 	@echo "Waiting for database to be ready..."
-	@max_attempts=30; \
+	@set -a; \
+	. ./.env; \
+	set +a; \
+	max_attempts=30; \
 	attempt=0; \
-	while ! docker exec hoalu-db pg_isready -U "$$DB_USER" -d "$$DB_NAME" > /dev/null 2>&1; do \
+	while ! docker compose -f docker-compose.infra.yml exec -T db pg_isready -U "$$DB_USER" -d "$$DB_NAME" > /dev/null 2>&1; do \
 		attempt=$$((attempt + 1)); \
 		if [ $$attempt -ge $$max_attempts ]; then \
 			echo "Database failed to start within expected time"; \
