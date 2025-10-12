@@ -16,13 +16,13 @@
 		"./try-catch": "./src/try-catch.ts",
 		"./utils": "./src/utils.ts"
 	},
-	"devDependencies": {
-		"@hoalu/tsconfig": "workspace:*"
-	},
 	"dependencies": {
 		"@standard-schema/spec": "^1.0.0",
 		"date-fns": "^4.1.0",
 		"nanoid": "^5.1.5",
 		"uuid": "^13.0.0"
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
 	}
 }

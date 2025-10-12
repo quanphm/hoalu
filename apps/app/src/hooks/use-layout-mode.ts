@@ -1,6 +1,6 @@
 import { useBreakpoints } from "@hoalu/ui/hooks";
 
-export type LayoutMode = "mobile" | "tablet" | "desktop";
+type LayoutMode = "mobile" | "tablet" | "desktop";
 
 /**
  * Layout detection hook that determines the current layout mode

@@ -9,12 +9,12 @@
 		"./plugins": "./src/plugins/index.ts",
 		"./client/plugins": "./src/client/plugins/index.ts"
 	},
-	"devDependencies": {
-		"@hoalu/tsconfig": "workspace:*"
-	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
     "better-auth": "catalog:",
     "zod": "catalog:"
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
 	}
 }

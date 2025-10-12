@@ -2,7 +2,6 @@
 	"extends": "@hoalu/tsconfig/bun.json",
 	"compilerOptions": {
 		"strict": true,
-		"types": ["bun-types"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
 		"exactOptionalPropertyTypes": true
