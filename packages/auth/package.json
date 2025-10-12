@@ -9,10 +9,12 @@
 		"./plugins": "./src/plugins/index.ts",
 		"./client/plugins": "./src/client/plugins/index.ts"
 	},
-	"peerDependencies": {
-		"better-auth": "catalog:"
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
 	},
 	"dependencies": {
-		"@hoalu/common": "workspace:*"
+		"@hoalu/common": "workspace:*",
+    "better-auth": "catalog:",
+    "zod": "catalog:"
 	}
 }
