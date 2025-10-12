@@ -12,6 +12,7 @@ FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
+COPY --from=turbo /repo/bunfig.toml .
 RUN bun install
 COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
@@ -21,7 +22,6 @@ RUN bun run build:api
 FROM base AS migration
 WORKDIR /repo
 ENV NODE_ENV='production'
-# Copy installed dependencies and source code from build stage
 COPY --from=build /repo .
 WORKDIR /repo/apps/api
 CMD ["bun", "run", "db:migrate"]
