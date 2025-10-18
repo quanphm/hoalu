@@ -23,7 +23,7 @@ interface Props {
 
 function evaluateExpression(expression: string): number | null {
 	try {
-		const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, "");
+		const sanitized = expression.replace(/x/gi, "*").replace(/[^0-9+\-*/().\s]/g, "");
 		if (!sanitized.trim()) {
 			return null;
 		}
