@@ -57,7 +57,7 @@ export function TransactionAmountField(props: Props) {
 				setCalculatedValue(result);
 			}
 		}
-	}, [isCalculatorMode]);
+	}, [isCalculatorMode, field.state.value.value]);
 
 	const handleValueChange = (value: number | null) => {
 		field.setValue((state) => ({
@@ -135,7 +135,7 @@ export function TransactionAmountField(props: Props) {
 								onKeyDown={handleKeyDown}
 								onBlur={handleBlur}
 								placeholder="100+50*2"
-								className="h-9 rounded-s-none font-geist-mono"
+								className="h-9 rounded-s-none"
 							/>
 							{calculatedValue !== null && (
 								<div className="-bottom-6 absolute right-3 left-3 text-muted-foreground text-xs">
