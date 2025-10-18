@@ -30,7 +30,7 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 			className="flex items-center border-muted bg-muted py-2 pr-6 pl-3 text-xs"
 		>
 			<div className="flex items-center gap-1 font-semibold">
-				{datetime.format(new Date(date), "dd/MM/yyyy")}
+				{datetime.format(new Date(date), "E dd/MM/yyyy")}
 			</div>
 			<div className="ml-auto">
 				<TotalExpenseByDate data={expenses} />
