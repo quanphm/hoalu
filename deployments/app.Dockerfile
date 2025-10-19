@@ -1,5 +1,4 @@
-FROM oven/bun:1.3 AS base
-WORKDIR /repo
+FROM skyanlabs/hoalu:latest AS base
 
 # stage 1: turbo prune
 FROM base AS turbo
