@@ -10,7 +10,7 @@ Hoalu is a modern expense tracking and workspace management application built as
 
 ### Frontend (@hoalu/app)
 - **Framework**: React 19 with TanStack Router, Query, and Form
-- **Styling**: TailwindCSS with shadcn/ui components
+- **Styling**: TailwindCSS with shadcn/ui & base-ui components
 - **State Management**: Jotai atoms for local state
 - **Data Fetching**: TanStack Query with custom query options
 - **Real-time Sync**: Electric SQL with PGlite for offline-first experience

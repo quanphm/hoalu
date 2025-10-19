@@ -7,10 +7,12 @@ import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 import { sessionOptions } from "@/services/query-options";
 
+const searchSchema = z.object({
+	redirect: z.string().default("/").catch("/"),
+});
+
 export const Route = createFileRoute("/_auth/login")({
-	validateSearch: z.object({
-		redirect: z.string().catch("/"),
-	}),
+	validateSearch: searchSchema,
 	beforeLoad: async ({ context: { queryClient }, search }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());
 		if (auth?.user) {
@@ -51,19 +53,11 @@ function RouteComponent() {
 			className="border-transparent bg-background"
 			content={
 				<div className="grid gap-4">
-					{/* <div className="flex flex-col gap-4">
-						<Button variant="outline" className="w-full">
-							Continue with Google
-						</Button>
-					</div>
-					<div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
-						<span className="relative z-10 bg-card px-2 text-muted-foreground">or</span>
-					</div> */}
-
 					<form.AppForm>
 						<form.Form>
-							<form.AppField name="email">
-								{(field) => (
+							<form.AppField
+								name="email"
+								children={(field) => (
 									<field.InputField
 										label="Email"
 										type="email"
@@ -71,9 +65,10 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
-							<form.AppField name="password">
-								{(field) => (
+							/>
+							<form.AppField
+								name="password"
+								children={(field) => (
 									<div>
 										<field.InputField
 											label="Password"
@@ -87,7 +82,7 @@ function RouteComponent() {
 										</Link>
 									</div>
 								)}
-							</form.AppField>
+							/>
 							<form.SubscribeButton className="w-full">Log in</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
