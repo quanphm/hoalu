@@ -178,7 +178,7 @@ build-image:
 
 push-image:
 	@echo "Pushing base image to Docker Hub..."
-	 @docker push $(BASE_IMAGE):$(VERSION)
+	@docker push $(BASE_IMAGE):$(VERSION)
 	@if [ "$(VERSION)" != "latest" ]; then \
 			docker push $(BASE_IMAGE):latest; \
 	fi

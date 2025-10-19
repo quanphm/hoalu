@@ -2,7 +2,6 @@ FROM skyanlabs/hoalu:latest AS base
 
 # stage 1: turbo prune
 FROM base AS turbo
-RUN bun install -g turbo
 COPY . .
 RUN turbo prune @hoalu/app --docker
 
