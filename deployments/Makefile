@@ -170,7 +170,7 @@ VERSION ?= latest
 
 build-image:
 	@echo "Building base image..."
-	@docker build -f base.Dockerfile --progress=plain -t $(BASE_IMAGE):$(VERSION) --platform linux/amd64 ..
+	@docker build -f base.Dockerfile -t $(BASE_IMAGE):$(VERSION) --platform linux/amd64 ..
 	@if [ "$(VERSION)" != "latest" ]; then \
 		docker tag $(BASE_IMAGE):$(VERSION) $(BASE_IMAGE):latest; \
 	fi
