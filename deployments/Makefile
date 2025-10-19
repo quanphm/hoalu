@@ -160,3 +160,26 @@ clean:
 	@docker compose -f docker-compose.infra.yml down -v --remove-orphans || true
 	@echo "Cleanup completed"
 
+# Docker Hub Configuration
+DOCKER_USERNAME ?= skyanlabs
+DOCKER_REGISTRY ?= docker.io
+BASE_IMAGE = $(DOCKER_USERNAME)/hoalu
+VERSION ?= latest
+
+.PHONY: build-image push-image
+
+build-image:
+	@echo "Building base image..."
+	@docker build -f base.Dockerfile -t $(BASE_IMAGE):$(VERSION) .
+	@if [ "$(VERSION)" != "latest" ]; then \
+		docker tag $(BASE_IMAGE):$(VERSION) $(BASE_IMAGE):latest; \
+	fi
+	@echo "Base image built: $(BASE_IMAGE):$(VERSION)"
+
+push-image:
+	@echo "Pushing base image to Docker Hub..."
+	@docker push $(BASE_IMAGE):$(VERSION)
+	@if [ "$(VERSION)" != "latest" ]; then \
+		docker push $(BASE_IMAGE):latest; \
+	fi
+	@echo "Base image pushed: $(BASE_IMAGE):$(VERSION)"
