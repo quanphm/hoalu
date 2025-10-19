@@ -8,10 +8,12 @@ import { ContentCard, ErrorCard } from "@/components/cards";
 import { useAppForm } from "@/components/forms";
 import { authClient } from "@/lib/auth-client";
 
+const searchSchema = z.object({
+	token: z.optional(z.string().min(1)),
+});
+
 export const Route = createFileRoute("/_auth/reset-password")({
-	validateSearch: z.object({
-		token: z.optional(z.string().min(1)),
-	}),
+	validateSearch: searchSchema,
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
 });
@@ -57,8 +59,9 @@ function ResetPasswordRequest() {
 				<div className="grid gap-4">
 					<form.AppForm>
 						<form.Form>
-							<form.AppField name="email">
-								{(field) => (
+							<form.AppField
+								name="email"
+								children={(field) => (
 									<field.InputField
 										label="Email"
 										type="email"
@@ -66,7 +69,7 @@ function ResetPasswordRequest() {
 										required
 									/>
 								)}
-							</form.AppField>
+							/>
 							<form.SubscribeButton className="w-full">Send</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>
@@ -120,9 +123,12 @@ function SetNewPassword(props: { token: string }) {
 				<div className="grid gap-4">
 					<form.AppForm>
 						<form.Form>
-							<form.AppField name="newPassword">
-								{(field) => <field.InputField label="New password" type="password" required />}
-							</form.AppField>
+							<form.AppField
+								name="newPassword"
+								children={(field) => (
+									<field.InputField label="New password" type="password" required />
+								)}
+							/>
 							<form.SubscribeButton className="w-full">Set new password</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>

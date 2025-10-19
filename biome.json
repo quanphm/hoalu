@@ -39,6 +39,9 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"correctness": {
+				"noChildrenProp": "off"
+			},
 			"nursery": {
 				"useSortedClasses": {
 					"level": "error",

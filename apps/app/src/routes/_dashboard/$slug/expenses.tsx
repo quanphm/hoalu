@@ -16,10 +16,12 @@ import {
 import { useWorkspace } from "@/hooks/use-workspace";
 import { expenseCollection } from "@/services/collections";
 
+const searchSchema = z.object({
+	date: z.optional(z.string()),
+});
+
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
-	validateSearch: z.object({
-		date: z.optional(z.string()),
-	}),
+	validateSearch: searchSchema,
 	component: RouteComponent,
 });
 

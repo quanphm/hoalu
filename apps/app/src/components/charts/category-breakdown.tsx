@@ -131,15 +131,16 @@ export function CategoryBreakdown() {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-6 w-full gap-[1px] overflow-hidden">
+		<div className="flex h-4 w-full items-center justify-center gap-[1px] overflow-hidden rounded-md">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
 					<div
 						key={data.id}
 						className={cn(
-							"h-full rounded-[1px] transition-all duration-300",
+							"h-full transition-all duration-300",
 							createCategoryTheme(data.color),
+							"shadow-none dark:shadow-none",
 						)}
 						style={{
 							width: `${widthPercentage}%`,

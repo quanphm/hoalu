@@ -9,10 +9,12 @@ import { authClient } from "@/lib/auth-client";
 import { authKeys } from "@/lib/query-key-factory";
 import { sessionOptions } from "@/services/query-options";
 
+const searchSchema = z.object({
+	redirect: z.string().default("/").catch("/"),
+});
+
 export const Route = createFileRoute("/_auth/signup")({
-	validateSearch: z.object({
-		redirect: z.string().catch("/"),
-	}),
+	validateSearch: searchSchema,
 	beforeLoad: async ({ context: { queryClient }, search }) => {
 		const auth = await queryClient.ensureQueryData(sessionOptions());
 		if (auth?.user) {

@@ -119,16 +119,7 @@ function DateRangeClearButton() {
 		});
 	};
 
-	return (
-		<Button
-			variant="ghost"
-			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
-			size="sm"
-			onClick={handleClear}
-		>
-			clear
-		</Button>
-	);
+	return <ClearButton onClick={handleClear} />;
 }
 
 function CategoryCheckboxGroup(props: { id: string; name: string; stats: number }) {
@@ -169,16 +160,7 @@ function CategoriesClearButton() {
 		setSelectedCategories([]);
 	};
 
-	return (
-		<Button
-			variant="ghost"
-			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
-			size="sm"
-			onClick={handleClear}
-		>
-			clear
-		</Button>
-	);
+	return <ClearButton onClick={handleClear} />;
 }
 
 function WalletCheckboxGroup(props: {
@@ -224,16 +206,7 @@ function WalletsClearButton() {
 		setSelectedWallets([]);
 	};
 
-	return (
-		<Button
-			variant="ghost"
-			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
-			size="sm"
-			onClick={handleClear}
-		>
-			clear
-		</Button>
-	);
+	return <ClearButton onClick={handleClear} />;
 }
 
 function RepeatCheckboxGroup(props: { id: RepeatSchema; name: string; stats: number }) {
@@ -274,16 +247,7 @@ function RepeatClearButton() {
 		setSelectedRepeats([]);
 	};
 
-	return (
-		<Button
-			variant="ghost"
-			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
-			size="sm"
-			onClick={handleClear}
-		>
-			clear
-		</Button>
-	);
+	return <ClearButton onClick={handleClear} />;
 }
 
 function ScrollAreaWithCondition({
@@ -301,4 +265,17 @@ function ScrollAreaWithCondition({
 		);
 	}
 	return <div className="divide-y divide-border/60">{children}</div>;
+}
+
+function ClearButton({ onClick }: { onClick: React.MouseEventHandler<HTMLButtonElement> }) {
+	return (
+		<Button
+			variant="ghost"
+			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
+			size="sm"
+			onClick={onClick}
+		>
+			clear
+		</Button>
+	);
 }

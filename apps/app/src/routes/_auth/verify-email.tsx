@@ -5,10 +5,12 @@ import { Button } from "@hoalu/ui/button";
 import { ContentCard, ErrorCard } from "@/components/cards";
 import { authClient } from "@/lib/auth-client";
 
+const searchSchema = z.object({
+	token: z.string().min(1),
+});
+
 export const Route = createFileRoute("/_auth/verify-email")({
-	validateSearch: z.object({
-		token: z.string().min(1),
-	}),
+	validateSearch: searchSchema,
 	loaderDeps: ({ search: { token } }) => ({ token }),
 	loader: async ({ deps: { token } }) => {
 		const { data, error } = await authClient.verifyEmail({
