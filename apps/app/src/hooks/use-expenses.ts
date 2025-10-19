@@ -207,6 +207,16 @@ export function useExpenseStats() {
 		walletCount[wallet.id] = wallet.total;
 	}
 
+	const repeatCount: Record<string, number> = {};
+	for (const expense of expenses) {
+		const repeatValue = expense.repeat;
+		if (!repeatCount[repeatValue]) {
+			repeatCount[repeatValue] = 1;
+		} else {
+			repeatCount[repeatValue] += 1;
+		}
+	}
+
 	const result: { date: string; value: number }[] = Array.from(
 		currentAggregationByDate.entries(),
 	).map(([date, value]) => ({ date, value }));
@@ -222,7 +232,7 @@ export function useExpenseStats() {
 			change: transactionCountChange,
 			byCategory: categoryCount,
 			byWallet: walletCount,
-			byRepeat: currentRepeatCount,
+			byRepeat: repeatCount,
 		},
 		activeDays: {
 			total: currentActiveDays,
