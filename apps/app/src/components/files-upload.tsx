@@ -2,7 +2,8 @@ import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
 import { UploadIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
-import { useFilesUpload } from "@/hooks/use-files-upload";
+
+import { useFilesUpload } from "#app/hooks/use-files-upload.ts";
 
 interface FileUploadProps {
 	id?: string;

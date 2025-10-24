@@ -2,7 +2,8 @@ import { cors } from "hono/cors";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { authGuard } from "@hoalu/furnace";
-import { createHonoInstance } from "../lib/create-app";
+
+import { createHonoInstance } from "#api/lib/create-app.ts";
 
 export function syncModule() {
 	const app = createHonoInstance()

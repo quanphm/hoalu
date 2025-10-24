@@ -4,9 +4,10 @@ import * as z from "zod";
 import { ArrowLeft } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { ContentCard, ErrorCard } from "@/components/cards";
-import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
+
+import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { authClient } from "#app/lib/auth-client.ts";
 
 const searchSchema = z.object({
 	token: z.optional(z.string().min(1)),

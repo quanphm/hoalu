@@ -12,15 +12,20 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { createCategoryDialogAtom, deleteCategoryDialogAtom, selectedCategoryAtom } from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { HotKey } from "@/components/hotkey";
-import { createCategoryTheme } from "@/helpers/colors";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { CategoryFormSchema, type ColorSchema } from "@/lib/schema";
-import { useCreateCategory, useDeleteCategory, useEditCategory } from "@/services/mutations";
-import { categoryWithIdQueryOptions } from "@/services/query-options";
+
+import {
+	createCategoryDialogAtom,
+	deleteCategoryDialogAtom,
+	selectedCategoryAtom,
+} from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { CategoryFormSchema, type ColorSchema } from "#app/lib/schema.ts";
+import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
+import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
 
 export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
@@ -67,7 +72,6 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 			});
 
 			if (callback) {
-				console.log("test");
 				callback();
 			} else {
 				setDialog({ state: false });

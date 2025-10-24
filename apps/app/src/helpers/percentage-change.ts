@@ -1,5 +1,5 @@
 import { cn } from "@hoalu/ui/utils";
-import { formatCurrency } from "@/helpers/currency";
+import { formatCurrency } from "#app/helpers/currency.ts";
 
 export interface PercentageChange {
 	value: number;

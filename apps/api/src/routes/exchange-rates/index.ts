@@ -5,10 +5,11 @@ import * as z from "zod";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { CurrencySchema } from "../../common/schema";
-import { createHonoInstance } from "../../lib/create-app";
-import { ExchangeRateRepository } from "./repository";
-import { ExchangeRateSchema } from "./schema";
+
+import { CurrencySchema } from "#api/common/schema.ts";
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
+import { ExchangeRateSchema } from "#api/routes/exchange-rates/schema.ts";
 
 const app = createHonoInstance();
 const exchangeRateRepository = new ExchangeRateRepository();

@@ -1,6 +1,6 @@
 import { eq, inArray } from "drizzle-orm";
 
-import { db, schema } from "../../db";
+import { db, schema } from "#api/db/index.ts";
 
 type NewFile = typeof schema.file.$inferInsert;
 type NewFileExpense = typeof schema.fileExpense.$inferInsert;

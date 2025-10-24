@@ -2,12 +2,13 @@ import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
 import {
 	DeleteExpense,
 	DuplicateExpense,
 	EditExpenseForm,
-} from "@/components/expenses/expense-actions";
-import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
+} from "#app/components/expenses/expense-actions.tsx";
+import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 export function ExpenseDetails() {
 	const { data: expenses, currentIndex } = useExpenses();
@@ -83,7 +84,7 @@ export function ExpenseDetails() {
 				</div>
 			)}
 			<div data-slot="expense-details-form">
-				{selectedRow.id && <EditExpenseForm id={selectedRow.id} />}
+				{selectedRow.id && <EditExpenseForm key={selectedRow.id} id={selectedRow.id} />}
 				{!selectedRow.id && (
 					<h2 className="m-4 rounded-md bg-muted/50 p-4 text-center text-muted-foreground">
 						No expenses selected

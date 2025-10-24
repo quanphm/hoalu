@@ -14,16 +14,17 @@ import {
 } from "@hoalu/ui/card";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
+
 import {
 	customDateRangeAtom,
 	expenseCategoryFilterAtom,
 	selectDateRangeAtom,
-} from "@/atoms/filters";
-import { createCategoryTheme } from "@/helpers/colors";
-import { filterDataByRange } from "@/helpers/date-range";
-import { useWorkspace } from "@/hooks/use-workspace";
-import type { ColorSchema } from "@/lib/schema";
-import { categoriesQueryOptions, expensesQueryOptions } from "@/services/query-options";
+} from "#app/atoms/filters.ts";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { filterDataByRange } from "#app/helpers/date-range.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import type { ColorSchema } from "#app/lib/schema.ts";
+import { categoriesQueryOptions, expensesQueryOptions } from "#app/services/query-options.ts";
 import { CurrencyValue } from "../currency-value";
 import { CreateExpenseDialogTrigger } from "../expenses/expense-actions";
 

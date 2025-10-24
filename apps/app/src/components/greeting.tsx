@@ -7,7 +7,8 @@ import {
 	PartlyCloudyNightIcon,
 	StarryNightIcon,
 } from "@hoalu/icons/meteocons";
-import { useAuth } from "@/hooks/use-auth";
+
+import { useAuth } from "#app/hooks/use-auth.ts";
 
 export function Greeting() {
 	const { user } = useAuth();

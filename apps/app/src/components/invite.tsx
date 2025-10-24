@@ -12,11 +12,12 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { toast } from "@hoalu/ui/sonner";
-import { useAppForm } from "@/components/forms";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { authClient } from "@/lib/auth-client";
-import { workspaceKeys } from "@/lib/query-key-factory";
-import { InviteFormSchema } from "@/lib/schema";
+
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { workspaceKeys } from "#app/lib/query-key-factory.ts";
+import { InviteFormSchema } from "#app/lib/schema.ts";
 
 export function InviteDialog() {
 	const [open, setOpen] = useState(false);

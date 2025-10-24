@@ -1,9 +1,9 @@
-import { createApp } from "./lib/create-app";
-import { userSession } from "./middlewares/user-session";
-import { apiModule } from "./modules/api";
-import { authModule } from "./modules/auth";
-import { openAPIModule } from "./modules/openapi";
-import { syncModule } from "./modules/sync";
+import { createApp } from "#api/lib/create-app.ts";
+import { userSession } from "#api/middlewares/user-session.ts";
+import { apiModule } from "#api/modules/api.ts";
+import { authModule } from "#api/modules/auth.ts";
+import { openAPIModule } from "#api/modules/openapi.ts";
+import { syncModule } from "#api/modules/sync.ts";
 
 export const app = createApp();
 

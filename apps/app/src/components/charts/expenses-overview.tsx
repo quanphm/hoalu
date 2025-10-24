@@ -15,7 +15,12 @@ import {
 	CardTitle,
 } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
-import { customDateRangeAtom, selectDateRangeAtom, syncedDateRangeAtom } from "@/atoms/filters";
+
+import {
+	customDateRangeAtom,
+	selectDateRangeAtom,
+	syncedDateRangeAtom,
+} from "#app/atoms/filters.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
@@ -24,10 +29,10 @@ import {
 	generateMTDDataWithZeros,
 	getStartOfWeek,
 	groupDataByMonth,
-} from "@/helpers/date-range";
-import { useExpenseStats } from "@/hooks/use-expenses";
-import { useScreenshot } from "@/hooks/use-screenshot";
-import { useWorkspace } from "@/hooks/use-workspace";
+} from "#app/helpers/date-range.ts";
+import { useExpenseStats } from "#app/hooks/use-expenses.ts";
+import { useScreenshot } from "#app/hooks/use-screenshot.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";
 import { PercentageChangeDisplay } from "../percentage-change";
 

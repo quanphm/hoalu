@@ -1,7 +1,7 @@
 import { Scalar } from "@scalar/hono-api-reference";
 import { openAPIRouteHandler } from "hono-openapi";
 
-import type { HonoApp } from "../types";
+import type { HonoApp } from "#api/types.ts";
 
 export function openAPIModule(app: HonoApp) {
 	app

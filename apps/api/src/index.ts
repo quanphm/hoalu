@@ -1,6 +1,6 @@
-import { app } from "./app";
-import { verifyEnv } from "./lib/env";
-import type { ApiRoutes } from "./modules/api";
+import { app } from "#api/app.ts";
+import { verifyEnv } from "#api/lib/env.ts";
+import type { ApiRoutes } from "#api/modules/api.ts";
 
 verifyEnv();
 

@@ -3,7 +3,8 @@ import { etag } from "hono/etag";
 import { requestId } from "hono/request-id";
 
 import { logger, notFound, onError } from "@hoalu/furnace";
-import type { AppBindings } from "../types";
+
+import type { AppBindings } from "#api/types.ts";
 
 export function createHonoInstance() {
 	return new Hono<AppBindings>();

@@ -9,6 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
+
 import { UserAvatar } from "./user-avatar";
 import { WalletIcon, type WalletIconProps } from "./wallets/wallet-actions";
 

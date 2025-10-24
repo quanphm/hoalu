@@ -5,6 +5,9 @@
 	"files": [
 		"dist"
 	],
+	"imports": {
+		"#api/*": "./src/*"
+	},
 	"exports": {
 		"./types": "./dist/types/index.d.ts"
 	},
@@ -25,25 +28,25 @@
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@hono/standard-validator": "^0.1.5",
-		"@hono/zod-validator": "^0.7.3",
+		"@hono/zod-validator": "^0.7.4",
 		"@react-email/render": "^1.4.0",
 		"@scalar/hono-api-reference": "^0.9.22",
-		"better-auth": "catalog:",
-		"drizzle-orm": "^0.44.5",
-		"hono": "catalog:",
-		"hono-openapi": "^1.0.8",
-		"ioredis": "^5.7.0",
-		"nodemailer": "^7.0.6",
+		"better-auth": "^1.3.29",
+		"drizzle-orm": "^0.44.7",
+		"hono": "^4.10.2",
+		"hono-openapi": "^1.1.0",
+		"ioredis": "^5.8.2",
+		"nodemailer": "^7.0.10",
 		"pg": "^8.16.3",
-		"react": "catalog:",
-		"zod": "catalog:"
+		"react": "^19.2.0",
+		"zod": "^4.1.12"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@types/bun": "catalog:",
-		"@types/nodemailer": "^7.0.1",
+		"@types/bun": "^1.3.1",
+		"@types/nodemailer": "^7.0.3",
 		"@types/pg": "^8.15.5",
-		"drizzle-kit": "^0.31.4",
+		"drizzle-kit": "^0.31.5",
 		"rimraf": "^6.0.1"
 	}
 }

@@ -7,15 +7,16 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { FILE_SIZE_LIMIT } from "@hoalu/common/io";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { getS3Path, isValidFileType } from "../../common/io";
-import { createHonoInstance } from "../../lib/create-app";
-import { bunS3Client } from "../../lib/s3";
-import { workspaceMember } from "../../middlewares/workspace-member";
-import { idParamValidator } from "../../validators/id-param";
-import { jsonBodyValidator } from "../../validators/json-body";
-import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { FileRepository } from "./repository";
-import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "./schema";
+
+import { getS3Path, isValidFileType } from "#api/common/io.ts";
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { bunS3Client } from "#api/lib/s3.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { FileRepository } from "#api/routes/files/repository.ts";
+import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
+import { idParamValidator } from "#api/validators/id-param.ts";
+import { jsonBodyValidator } from "#api/validators/json-body.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 const app = createHonoInstance();
 const fileRepository = new FileRepository();

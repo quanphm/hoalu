@@ -3,8 +3,12 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { AVAILABLE_WORKSPACE_SHORTCUT, KEYBOARD_SHORTCUTS, THEMES } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+import {
+	AVAILABLE_WORKSPACE_SHORTCUT,
+	KEYBOARD_SHORTCUTS,
+	THEMES,
+} from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 /**
  * All global actions that can be use in "/_dashboard" route.

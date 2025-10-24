@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "../../common/schema";
+import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "#api/common/schema.ts";
 
 export const TaskSchema = z.object({
 	id: z.uuidv7(),

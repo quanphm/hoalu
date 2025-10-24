@@ -1,12 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CategoryBreakdown } from "@/components/charts/category-breakdown";
-import { DashboardDateFilter } from "@/components/charts/dashboard-date-filter";
-import { ExpenseStatsRow } from "@/components/charts/expense-stats-row";
-import { ExpenseOverview } from "@/components/charts/expenses-overview";
-import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
-import { CreateWalletDialogTrigger } from "@/components/wallets/wallet-actions";
+import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
+import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
+import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
+import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
+import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,

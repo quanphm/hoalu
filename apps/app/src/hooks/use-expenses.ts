@@ -4,6 +4,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useDeferredValue } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+
 import {
 	customDateRangeAtom,
 	expenseCategoryFilterAtom,
@@ -12,20 +13,20 @@ import {
 	searchKeywordsAtom,
 	selectDateRangeAtom,
 	selectedExpenseAtom,
-} from "@/atoms";
-import { formatCurrency } from "@/helpers/currency";
+} from "#app/atoms/index.ts";
+import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
 	getComparisonPeriodText,
-} from "@/helpers/date-range";
-import { calculatePercentageChange } from "@/helpers/percentage-change";
-import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "@/lib/schema";
+} from "#app/helpers/date-range.ts";
+import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
+import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "#app/lib/schema.ts";
 import {
 	categoriesQueryOptions,
 	expensesQueryOptions,
 	walletsQueryOptions,
-} from "@/services/query-options";
+} from "#app/services/query-options.ts";
 import { useWorkspace } from "./use-workspace";
 
 const routeApi = getRouteApi("/_dashboard/$slug/expenses");
@@ -123,9 +124,12 @@ export function useExpenses() {
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
-	const onSelectExpense = useCallback((id: string | null) => {
-		setSelectedExpense({ id });
-	}, []);
+	const onSelectExpense = useCallback(
+		(id: string | null) => {
+			setSelectedExpense({ id });
+		},
+		[setSelectedExpense],
+	);
 
 	return { expense, onSelectExpense };
 }

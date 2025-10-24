@@ -1,7 +1,7 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import { useEffect } from "react";
 
-import { extensions, Toolbar } from "@/components/tiptap";
+import { extensions, Toolbar } from "#app/components/tiptap.tsx";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 

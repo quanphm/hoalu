@@ -16,11 +16,12 @@ import {
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { SidebarMenuButton } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
-import { createWorkspaceDialogAtom } from "@/atoms";
-import { HotKey } from "@/components/hotkey";
-import { S3WorkspaceLogo } from "@/components/workspace";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+
+import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface Props {
 	selectedWorkspace: {

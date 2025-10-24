@@ -3,10 +3,16 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 import { toast } from "@hoalu/ui/sonner";
-import { createExpenseDialogAtom, draftExpenseAtom } from "@/atoms";
-import { apiClient } from "@/lib/api-client";
-import { authClient } from "@/lib/auth-client";
-import { categoryKeys, expenseKeys, walletKeys, workspaceKeys } from "@/lib/query-key-factory";
+
+import { createExpenseDialogAtom, draftExpenseAtom } from "#app/atoms/index.ts";
+import { apiClient } from "#app/lib/api-client.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import {
+	categoryKeys,
+	expenseKeys,
+	walletKeys,
+	workspaceKeys,
+} from "#app/lib/query-key-factory.ts";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
@@ -17,8 +23,8 @@ import type {
 	WalletPostSchema,
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
-} from "@/lib/schema";
-import { playDropSound } from "@/lib/sound-effects";
+} from "#app/lib/schema.ts";
+import { playDropSound } from "#app/lib/sound-effects.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

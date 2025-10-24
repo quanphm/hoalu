@@ -9,18 +9,18 @@
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-		"zod": "catalog:",
-		"hono-openapi": "^1.0.8",
-		"hono-pino": "^0.10.2",
+		"zod": "^4.1.12",
+		"hono-openapi": "^1.1.0",
+		"hono-pino": "^0.10.3",
 		"hono-rate-limiter": "^0.4.2",
 		"pino": "^9.14.0",
-		"pino-pretty": "^13.1.1",
-		"rate-limit-redis": "^4.2.2"
+		"pino-pretty": "^13.1.2",
+		"rate-limit-redis": "^4.2.3"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
 	},
 	"peerDependencies": {
-		"hono": "catalog:"
+		"hono": "^4.10.2"
 	}
 }

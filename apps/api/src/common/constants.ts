@@ -1,4 +1,4 @@
-import type { Color } from "./schema";
+import type { Color } from "#api/common/schema.ts";
 
 export const DEFAULT_CATEGORIES: { name: string; description: string; color: Color }[] = [
 	{

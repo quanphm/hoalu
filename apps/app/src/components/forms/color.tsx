@@ -3,7 +3,8 @@ import { useId } from "react";
 import { PG_ENUM_COLOR } from "@hoalu/common/enums";
 import { RadioGroup, RadioGroupItem } from "@hoalu/ui/radio-group";
 import { cn } from "@hoalu/ui/utils";
-import { createCategoryTheme } from "@/helpers/colors";
+
+import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 

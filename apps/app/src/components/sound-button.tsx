@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { playConfirmSound } from "@/lib/sound-effects";
+
+import { playConfirmSound } from "#app/lib/sound-effects.ts";
 
 export function SoundButton({ children, onClick, ...props }: ButtonProps) {
 	function onClickWithSound(e: React.MouseEvent<HTMLButtonElement>) {

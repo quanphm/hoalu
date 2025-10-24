@@ -1,6 +1,6 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 
-import { db, schema } from "../../db";
+import { db, schema } from "#api/db/index.ts";
 
 type NewExpense = typeof schema.expense.$inferInsert;
 

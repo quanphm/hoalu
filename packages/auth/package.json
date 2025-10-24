@@ -11,8 +11,8 @@
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-    "better-auth": "catalog:",
-    "zod": "catalog:"
+		"better-auth": "^1.3.29",
+		"zod": "^4.1.12"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"

@@ -4,10 +4,10 @@ import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useCallback } from "react";
 
-import { draftExpenseAtom } from "@/atoms";
-import { authClient } from "@/lib/auth-client";
-import { authKeys, workspaceKeys } from "@/lib/query-key-factory";
-import { sessionOptions } from "@/services/query-options";
+import { draftExpenseAtom } from "#app/atoms/index.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { authKeys, workspaceKeys } from "#app/lib/query-key-factory.ts";
+import { sessionOptions } from "#app/services/query-options.ts";
 
 export function useAuth() {
 	const router = useRouter();

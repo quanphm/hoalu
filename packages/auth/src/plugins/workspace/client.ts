@@ -43,7 +43,7 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 						};
 			}>
 		>,
-		getActions: ($fetch) => ({
+		getActions: (_$fetch) => ({
 			$Infer: {
 				Workspace: {} as Workspace,
 				Invitation: {} as Invitation,

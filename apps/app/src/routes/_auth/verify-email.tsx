@@ -2,8 +2,9 @@ import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tans
 import * as z from "zod";
 
 import { Button } from "@hoalu/ui/button";
-import { ContentCard, ErrorCard } from "@/components/cards";
-import { authClient } from "@/lib/auth-client";
+
+import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
+import { authClient } from "#app/lib/auth-client.ts";
 
 const searchSchema = z.object({
 	token: z.string().min(1),

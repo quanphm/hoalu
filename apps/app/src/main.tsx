@@ -3,11 +3,11 @@ import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
-import { NotFound } from "@/components/not-found";
-import { UiProvider } from "@/components/providers/ui-provider";
-import { verifyEnv } from "@/lib/env";
-import { queryClient } from "@/lib/query-client";
+import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boundary.tsx";
+import { NotFound } from "#app/components/not-found.tsx";
+import { UiProvider } from "#app/components/providers/ui-provider.tsx";
+import { verifyEnv } from "#app/lib/env.ts";
+import { queryClient } from "#app/lib/query-client.ts";
 import { routeTree } from "./routeTree.gen";
 
 verifyEnv();

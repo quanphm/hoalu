@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type { ExpenseFormSchema } from "@/lib/schema";
+import type { ExpenseFormSchema } from "#app/lib/schema.ts";
 
 type ExpenseAtomSchema = Omit<ExpenseFormSchema, "attachments">;
 const basedExpense: ExpenseAtomSchema = {

@@ -1,8 +1,9 @@
 import type { Hono } from "hono";
 
 import type { PinoLogger } from "@hoalu/furnace";
-import type { auth } from "./lib/auth";
-import type { EnvSchema } from "./lib/env";
+
+import type { auth } from "#api/lib/auth.ts";
+import type { EnvSchema } from "#api/lib/env.ts";
 
 export type User = typeof auth.$Infer.Session.user;
 export type Session = typeof auth.$Infer.Session.session;

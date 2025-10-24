@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { CurrencySchema, IsoDateSchema } from "../../common/schema";
+import { CurrencySchema, IsoDateSchema } from "#api/common/schema.ts";
 
 export const ExchangeRateSchema = z.object({
 	date: IsoDateSchema,

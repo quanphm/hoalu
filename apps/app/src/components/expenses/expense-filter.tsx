@@ -6,15 +6,16 @@ import { Button } from "@hoalu/ui/button";
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
+
 import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
-} from "@/atoms";
-import { AVAILABLE_REPEAT_OPTIONS } from "@/helpers/constants";
-import { useExpenseStats } from "@/hooks/use-expenses";
-import type { RepeatSchema, WalletTypeSchema } from "@/lib/schema";
-import { categoriesQueryOptions, walletsQueryOptions } from "@/services/query-options";
+} from "#app/atoms/index.ts";
+import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
+import { useExpenseStats } from "#app/hooks/use-expenses.ts";
+import type { RepeatSchema, WalletTypeSchema } from "#app/lib/schema.ts";
+import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 import { WalletLabel } from "../wallets/wallet-badge";
 import { ExpenseCalendar, ExpenseSearch } from "./expense-actions";
 
