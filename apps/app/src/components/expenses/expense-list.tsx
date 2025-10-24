@@ -120,7 +120,7 @@ function ExpenseList() {
 		return () => {
 			onSelectExpense(null);
 		};
-	}, []);
+	}, [onSelectExpense]);
 
 	if (expenses.length === 0) {
 		return <EmptyState />;

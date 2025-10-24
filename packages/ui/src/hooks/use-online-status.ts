@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-const subscribe = (callback: any) => {
+const subscribe = (callback: () => void) => {
 	const controller = new AbortController();
 	window.addEventListener("online", callback, {
 		passive: true,

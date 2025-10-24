@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { PanelLeftIcon } from "@hoalu/icons/lucide";
+
 import { useBreakpoints } from "../hooks";
 import { cn, mergeProps } from "../utils";
 import { Button } from "./button";
@@ -77,7 +78,7 @@ function SidebarProvider({
 	// Helper to toggle the sidebar.
 	const toggleSidebar = React.useCallback(() => {
 		return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-	}, [isMobile, setOpen, setOpenMobile]);
+	}, [isMobile, setOpen]);
 
 	// Adds a keyboard shortcut to toggle the sidebar.
 	React.useEffect(() => {
@@ -106,7 +107,7 @@ function SidebarProvider({
 			setOpenMobile,
 			toggleSidebar,
 		}),
-		[state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+		[state, open, setOpen, isMobile, openMobile, toggleSidebar],
 	);
 
 	return (

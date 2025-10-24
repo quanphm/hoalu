@@ -9,11 +9,11 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"@electric-sql/client": "^1.0.10",
+		"@electric-sql/client": "^1.0.14",
 		"@tanstack/react-query": "^5.90.5"
 	},
 	"devDependencies": {
-		"@types/react": "catalog:",
+		"@types/react": "^19.2.2",
 		"@hoalu/tsconfig": "workspace:*"
 	},
 	"peerDependencies": {

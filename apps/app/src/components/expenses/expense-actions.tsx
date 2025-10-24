@@ -172,7 +172,7 @@ function CreateExpenseForm() {
 				setDraft(form.state.values);
 			}
 		};
-	}, [form.state.isSubmitted]);
+	}, [form.state.isSubmitted, setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>
@@ -329,7 +329,7 @@ export function EditExpenseForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
-	const { data: expense, status } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
+	const { data: expense } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
 
 	const walletGroups = wallets.reduce(
 		(result, current) => {
@@ -396,12 +396,6 @@ export function EditExpenseForm(props: { id: string }) {
 			});
 		},
 	});
-
-	useEffect(() => {
-		if (status === "success") {
-			form.reset();
-		}
-	}, [status, props.id]);
 
 	return (
 		<form.AppForm>

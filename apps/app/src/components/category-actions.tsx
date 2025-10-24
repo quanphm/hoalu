@@ -72,7 +72,6 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 			});
 
 			if (callback) {
-				console.log("test");
 				callback();
 			} else {
 				setDialog({ state: false });

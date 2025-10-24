@@ -84,7 +84,7 @@ export function ExpenseDetails() {
 				</div>
 			)}
 			<div data-slot="expense-details-form">
-				{selectedRow.id && <EditExpenseForm id={selectedRow.id} />}
+				{selectedRow.id && <EditExpenseForm key={selectedRow.id} id={selectedRow.id} />}
 				{!selectedRow.id && (
 					<h2 className="m-4 rounded-md bg-muted/50 p-4 text-center text-muted-foreground">
 						No expenses selected

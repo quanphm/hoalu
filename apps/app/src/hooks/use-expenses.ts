@@ -4,6 +4,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useDeferredValue } from "react";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+
 import {
 	customDateRangeAtom,
 	expenseCategoryFilterAtom,
@@ -123,9 +124,12 @@ export function useExpenses() {
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
-	const onSelectExpense = useCallback((id: string | null) => {
-		setSelectedExpense({ id });
-	}, []);
+	const onSelectExpense = useCallback(
+		(id: string | null) => {
+			setSelectedExpense({ id });
+		},
+		[setSelectedExpense],
+	);
 
 	return { expense, onSelectExpense };
 }

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
 
 import {
 	BitcoinIcon,
@@ -139,7 +138,7 @@ function CreateWalletForm() {
 
 function EditWalletForm(props: { id: string }) {
 	const workspace = useWorkspace();
-	const { data: wallet, status } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
+	const { data: wallet } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
 	const setDialog = useSetAtom(editWalletDialogAtom);
 
@@ -170,12 +169,6 @@ function EditWalletForm(props: { id: string }) {
 			setDialog({ state: false, data: undefined });
 		},
 	});
-
-	useEffect(() => {
-		if (status === "success") {
-			form.reset();
-		}
-	}, [status, props.id]);
 
 	return (
 		<form.AppForm>
@@ -245,7 +238,7 @@ export function EditWalletDialogContent() {
 				<DialogTitle>Edit wallet</DialogTitle>
 				<DialogDescription>Update your wallet details.</DialogDescription>
 			</DialogHeader>
-			<EditWalletForm id={dialog?.data?.id} />
+			<EditWalletForm key={dialog?.data?.id} id={dialog?.data?.id} />
 		</DialogPopup>
 	);
 }
