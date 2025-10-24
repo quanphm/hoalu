@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"rootDir": "./src",
 		"strict": true,
-		"exactOptionalPropertyTypes": false,
+		"exactOptionalPropertyTypes": true,
 		"skipLibCheck": true,
 		"declaration": false,
 		"declarationMap": false,

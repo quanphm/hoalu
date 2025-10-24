@@ -3,7 +3,6 @@
 	"compilerOptions": {
 		"outDir": "./dist/types",
 		"noEmit": false,
-		"exactOptionalPropertyTypes": false,
 		"emitDeclarationOnly": true,
 		"declaration": true
 	},
