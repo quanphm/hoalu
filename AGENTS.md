@@ -184,8 +184,13 @@ import { queryOptions } from "@tanstack/react-query";
 import { HTTPStatus } from "@hoalu/common/http-status";
 
 // 4. Local imports
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "#app/lib/api-client.ts";
 ```
+
+### Imports
+We're going to configure "imports" in the package.json to use path aliases for imports.
+We'll set it to "#apps/*": "./src/*" for `apps/app/src` and "#api/*": "./src/*" for `apps/api/src` which will allow us to import anything in the root of the repo with #<dirname>/<filepath>.
+
 
 ### Component Patterns
 - Function components with TypeScript

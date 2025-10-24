@@ -1,4 +1,3 @@
-import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
@@ -63,9 +62,9 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ["@electric-sql/pglite"],
 	},
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
-		},
-	},
+	// resolve: {
+	// 	alias: {
+	// 		"@": path.resolve(__dirname, "./src"),
+	// 	},
+	// },
 });

@@ -8,10 +8,6 @@
 		"declarationMap": false,
 		"jsx": "react-jsx",
 		"allowJs": true,
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["src/*"]
-		}
 	},
 	"include": ["src"]
 }

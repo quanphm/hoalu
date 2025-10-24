@@ -23,8 +23,7 @@
 							":BLANK_LINE:",
 							"@hoalu/**",
 							":BLANK_LINE:",
-							["#app/**", "#api/**"],
-							"@/**"
+							["#app/**", "#api/**"]
 						]
 					}
 				}
