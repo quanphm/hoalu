@@ -8,13 +8,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@hoalu/ui/select";
+
 import {
 	type CustomDateRange,
 	type PredefinedDateRange,
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
-} from "@/atoms/filters";
-import { AVAILABLE_LAST_RANGE_OPTIONS, AVAILABLE_TO_DATE_RANGE_OPTIONS } from "@/helpers/constants";
+} from "#app/atoms/filters.ts";
+import {
+	AVAILABLE_LAST_RANGE_OPTIONS,
+	AVAILABLE_TO_DATE_RANGE_OPTIONS,
+} from "#app/helpers/constants.ts";
 import { DateRangePicker } from "./date-range-picker";
 
 const options = [

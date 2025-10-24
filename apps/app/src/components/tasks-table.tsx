@@ -11,8 +11,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { DataTable } from "@/components/data-table";
-import type { TaskSchema } from "@/lib/schema";
+
+import { DataTable } from "#app/components/data-table/index.tsx";
+import type { TaskSchema } from "#app/lib/schema.ts";
 
 const columnHelper = createColumnHelper<TaskSchema>();
 

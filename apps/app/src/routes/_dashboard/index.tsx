@@ -4,13 +4,19 @@ import { useSetAtom } from "jotai";
 
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { createWorkspaceDialogAtom } from "@/atoms";
-import { WorkspaceCard } from "@/components/cards";
-import { Greeting } from "@/components/greeting";
-import { PageContent } from "@/components/layouts/page-content";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
-import { CreateWorkspaceForm } from "@/components/workspace";
-import { listWorkspacesOptions } from "@/services/query-options";
+
+import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { WorkspaceCard } from "#app/components/cards.tsx";
+import { Greeting } from "#app/components/greeting.tsx";
+import { PageContent } from "#app/components/layouts/page-content.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
+import { CreateWorkspaceForm } from "#app/components/workspace.tsx";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/")({
 	component: RouteComponent,

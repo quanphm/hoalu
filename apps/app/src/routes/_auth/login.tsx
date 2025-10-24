@@ -2,10 +2,11 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import * as z from "zod";
 
 import { toast } from "@hoalu/ui/sonner";
-import { ContentCard } from "@/components/cards";
-import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
-import { sessionOptions } from "@/services/query-options";
+
+import { ContentCard } from "#app/components/cards.tsx";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { authClient } from "#app/lib/auth-client.ts";
+import { sessionOptions } from "#app/services/query-options.ts";
 
 const searchSchema = z.object({
 	redirect: z.string().default("/").catch("/"),

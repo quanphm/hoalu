@@ -2,19 +2,19 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import * as z from "zod";
 
-import { CreateExpenseDialogTrigger } from "@/components/expenses/expense-actions";
-import { ExpenseDetails } from "@/components/expenses/expense-details";
-import { ExpenseFilter } from "@/components/expenses/expense-filter";
-import ExpenseList from "@/components/expenses/expense-list";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import { ExpenseDetails } from "#app/components/expenses/expense-details.tsx";
+import { ExpenseFilter } from "#app/components/expenses/expense-filter.tsx";
+import ExpenseList from "#app/components/expenses/expense-list.tsx";
 import {
 	Section,
 	SectionContent,
 	SectionHeader,
 	SectionItem,
 	SectionTitle,
-} from "@/components/layouts/section";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { expenseCollection } from "@/services/collections";
+} from "#app/components/layouts/section.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { expenseCollection } from "#app/services/collections.ts";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),

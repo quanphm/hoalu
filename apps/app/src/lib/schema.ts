@@ -8,7 +8,8 @@ import {
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
 } from "@hoalu/common/enums";
-import type { honoClient } from "@/lib/api-client";
+
+import type { honoClient } from "#app/lib/api-client.ts";
 
 /**
  * enums

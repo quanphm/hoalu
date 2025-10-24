@@ -1,5 +1,6 @@
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
-import type { PredefinedDateRange } from "@/atoms/filters";
+
+import type { PredefinedDateRange } from "#app/atoms/filters.ts";
 
 interface DateRangeCalculation {
 	startDate: Date;

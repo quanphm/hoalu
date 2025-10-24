@@ -3,10 +3,11 @@ import { memo, useEffect, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
-import ExpenseContent from "@/components/expenses/expense-content";
-import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
-import { useWorkspace } from "@/hooks/use-workspace";
-import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+
+import ExpenseContent from "#app/components/expenses/expense-content.tsx";
+import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
 import { CurrencyValue } from "../currency-value";
 
 type ExpenseItem = {

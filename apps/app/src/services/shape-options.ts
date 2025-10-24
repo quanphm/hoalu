@@ -2,8 +2,9 @@ import { notFound } from "@tanstack/react-router";
 import * as z from "zod";
 
 import type { AppShapeOptions, Row } from "@hoalu/doki";
-import { queryClient } from "@/lib/query-client";
-import { getWorkspaceDetailsOptions } from "@/services/query-options";
+
+import { queryClient } from "#app/lib/query-client.ts";
+import { getWorkspaceDetailsOptions } from "#app/services/query-options.ts";
 
 const WorkspaceSchema = z.object({
 	id: z.uuid(),

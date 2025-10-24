@@ -3,10 +3,11 @@ import { useAtom } from "jotai";
 import { Suspense } from "react";
 
 import { Badge } from "@hoalu/ui/badge";
-import { selectedCategoryAtom } from "@/atoms";
-import { DataTable } from "@/components/data-table";
-import { createCategoryTheme } from "@/helpers/colors";
-import type { CategorySchema } from "@/lib/schema";
+
+import { selectedCategoryAtom } from "#app/atoms/index.ts";
+import { DataTable } from "#app/components/data-table/index.tsx";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import type { CategorySchema } from "#app/lib/schema.ts";
 import { EditCategoryForm } from "./category-actions";
 
 const columnHelper = createColumnHelper<CategorySchema>();

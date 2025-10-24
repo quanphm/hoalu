@@ -21,6 +21,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { cn } from "@hoalu/ui/utils";
+
 import { DataTablePagination } from "./data-table-pagination";
 
 type TableRowData = { id: string } & RowData;

@@ -9,6 +9,9 @@
 		"build": "vite build",
 		"preview": "vite preview --port=4173"
 	},
+	"imports": {
+		"#app/*": "./src/*"
+	},
 	"dependencies": {
 		"@electric-sql/pglite": "^0.3.11",
 		"@electric-sql/pglite-react": "^0.2.29",

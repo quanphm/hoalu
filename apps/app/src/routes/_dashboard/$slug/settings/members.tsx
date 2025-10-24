@@ -2,13 +2,18 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-import { InvitationsTable } from "@/components/invitations-table";
-import { InviteDialog } from "@/components/invite";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
-import { MembersTable } from "@/components/members-table";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { authClient } from "@/lib/auth-client";
-import { getActiveMemberOptions, listInvitationsOptions } from "@/services/query-options";
+import { InvitationsTable } from "#app/components/invitations-table.tsx";
+import { InviteDialog } from "#app/components/invite.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
+import { MembersTable } from "#app/components/members-table.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { getActiveMemberOptions, listInvitationsOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 	component: RouteComponent,

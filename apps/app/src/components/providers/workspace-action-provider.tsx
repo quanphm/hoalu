@@ -10,8 +10,8 @@ import {
 	createWalletDialogAtom,
 	dialogStateAtom,
 	draftExpenseAtom,
-} from "@/atoms";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+} from "#app/atoms/index.ts";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

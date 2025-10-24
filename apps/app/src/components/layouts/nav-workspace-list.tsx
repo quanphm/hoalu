@@ -11,9 +11,10 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-import { HotKey } from "@/components/hotkey";
-import { AVAILABLE_WORKSPACE_SHORTCUT } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+
+import { HotKey } from "#app/components/hotkey.tsx";
+import { AVAILABLE_WORKSPACE_SHORTCUT } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 export function NavWorkspaceList() {
 	const reactId = useId();

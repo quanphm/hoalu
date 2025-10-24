@@ -1,10 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CategoriesTable } from "@/components/categories-table";
-import { CreateCategoryDialogTrigger } from "@/components/category-actions";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
-import { categoriesQueryOptions } from "@/services/query-options";
+import { CategoriesTable } from "#app/components/categories-table.tsx";
+import { CreateCategoryDialogTrigger } from "#app/components/category-actions.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
+import { categoriesQueryOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/categories")({
 	component: RouteComponent,

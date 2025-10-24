@@ -1,8 +1,8 @@
 import { atom } from "jotai";
 
-import { DEFAULT_DATE_RANGE } from "@/helpers/constants";
-import { calculateDateRange } from "@/helpers/date-range";
-import type { CategorySchema, RepeatSchema, WalletSchema } from "@/lib/schema";
+import { DEFAULT_DATE_RANGE } from "#app/helpers/constants.ts";
+import { calculateDateRange } from "#app/helpers/date-range.ts";
+import type { CategorySchema, RepeatSchema, WalletSchema } from "#app/lib/schema.ts";
 
 export const expenseCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 

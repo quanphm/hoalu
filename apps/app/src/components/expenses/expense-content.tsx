@@ -3,11 +3,12 @@ import { memo } from "react";
 
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
-import { selectedExpenseAtom } from "@/atoms";
-import { TransactionAmount } from "@/components/transaction-amount";
-import { createCategoryTheme } from "@/helpers/colors";
-import { htmlToText } from "@/helpers/dom-parser";
-import type { ExpenseWithClientConvertedSchema } from "@/lib/schema";
+
+import { selectedExpenseAtom } from "#app/atoms/index.ts";
+import { TransactionAmount } from "#app/components/transaction-amount.tsx";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { htmlToText } from "#app/helpers/dom-parser.ts";
+import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
 import { WalletBadge } from "../wallets/wallet-badge";
 
 interface ExpenseContentProps extends ExpenseWithClientConvertedSchema {

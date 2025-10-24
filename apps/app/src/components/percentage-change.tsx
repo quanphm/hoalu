@@ -3,7 +3,11 @@ import { useState } from "react";
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { getPercentageChangeTextClasses, type PercentageChange } from "@/helpers/percentage-change";
+
+import {
+	getPercentageChangeTextClasses,
+	type PercentageChange,
+} from "#app/helpers/percentage-change.ts";
 
 const IconComponent: Record<
 	PercentageChange["status"],

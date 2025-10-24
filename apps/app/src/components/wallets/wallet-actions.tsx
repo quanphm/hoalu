@@ -25,20 +25,29 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
-import { createWalletDialogAtom, deleteWalletDialogAtom, editWalletDialogAtom } from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { HotKey } from "@/components/hotkey";
-import { WarningMessage } from "@/components/warning-message";
-import { createWalletTheme } from "@/helpers/colors";
+
+import {
+	createWalletDialogAtom,
+	deleteWalletDialogAtom,
+	editWalletDialogAtom,
+} from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
+import { createWalletTheme } from "#app/helpers/colors.ts";
 import {
 	AVAILABLE_CURRENCY_OPTIONS,
 	AVAILABLE_WALLET_TYPE_OPTIONS,
 	KEYBOARD_SHORTCUTS,
-} from "@/helpers/constants";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { WalletFormSchema, type WalletPatchSchema, type WalletTypeSchema } from "@/lib/schema";
-import { useCreateWallet, useDeleteWallet, useEditWallet } from "@/services/mutations";
-import { walletWithIdQueryOptions } from "@/services/query-options";
+} from "#app/helpers/constants.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import {
+	WalletFormSchema,
+	type WalletPatchSchema,
+	type WalletTypeSchema,
+} from "#app/lib/schema.ts";
+import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
+import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
 
 export function CreateWalletDialogTrigger() {
 	const setDialog = useSetAtom(createWalletDialogAtom);

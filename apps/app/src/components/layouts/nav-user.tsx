@@ -23,9 +23,10 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
-import { UserAvatar } from "@/components/user-avatar";
-import { KEYBOARD_SHORTCUTS, THEMES, type Theme } from "@/helpers/constants";
-import { useAuth } from "@/hooks/use-auth";
+
+import { UserAvatar } from "#app/components/user-avatar.tsx";
+import { KEYBOARD_SHORTCUTS, THEMES, type Theme } from "#app/helpers/constants.ts";
+import { useAuth } from "#app/hooks/use-auth.ts";
 import { HotKey } from "../hotkey";
 
 const THEME_LABELS: Record<Theme, string> = {

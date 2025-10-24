@@ -1,4 +1,4 @@
-import { useLayoutMode } from "@/hooks/use-layout-mode";
+import { useLayoutMode } from "#app/hooks/use-layout-mode.ts";
 import { MobileLayout } from "./mobile-layout";
 import { SidebarSaysLayout } from "./sidebar-says-layout";
 

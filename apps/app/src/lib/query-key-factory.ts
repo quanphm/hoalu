@@ -3,7 +3,7 @@
  * @see - https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
  */
 
-import type { ExchangeRatesQuerySchema } from "@/lib/schema";
+import type { ExchangeRatesQuerySchema } from "#app/lib/schema.ts";
 
 export const authKeys = {
 	session: ["session"] as const,

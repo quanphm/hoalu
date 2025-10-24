@@ -9,21 +9,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
-import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { WarningMessage } from "@/components/warning-message";
-import { AVAILABLE_CURRENCY_OPTIONS } from "@/helpers/constants";
-import { extractLetterFromName } from "@/helpers/extract-letter-from-name";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { authClient } from "@/lib/auth-client";
-import { WorkspaceFormSchema, WorkspaceMetadataFormSchema } from "@/lib/schema";
+
+import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
+import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
+import { extractLetterFromName } from "#app/helpers/extract-letter-from-name.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { WorkspaceFormSchema, WorkspaceMetadataFormSchema } from "#app/lib/schema.ts";
 import {
 	useCreateWorkspace,
 	useDeleteWorkspace,
 	useEditWorkspace,
 	useEditWorkspaceMetadata,
-} from "@/services/mutations";
-import { workspaceLogoOptions } from "@/services/query-options";
+} from "#app/services/mutations.ts";
+import { workspaceLogoOptions } from "#app/services/query-options.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

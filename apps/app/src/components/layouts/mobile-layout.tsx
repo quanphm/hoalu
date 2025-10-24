@@ -12,9 +12,10 @@ import {
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { ButtonLink } from "@/components/button-link";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { listWorkspacesOptions } from "@/services/query-options";
+
+import { ButtonLink } from "#app/components/button-link.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface LayoutProps {
 	children: React.ReactNode;

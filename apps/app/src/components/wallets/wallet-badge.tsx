@@ -1,7 +1,8 @@
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
-import { createWalletTheme } from "@/helpers/colors";
-import type { WalletTypeSchema } from "@/lib/schema";
+
+import { createWalletTheme } from "#app/helpers/colors.ts";
+import type { WalletTypeSchema } from "#app/lib/schema.ts";
 
 interface WalletCommonProps {
 	name: string;

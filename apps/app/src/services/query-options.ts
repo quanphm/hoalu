@@ -2,9 +2,10 @@ import { queryOptions } from "@tanstack/react-query";
 
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
-import { apiClient } from "@/lib/api-client";
-import { authClient, type Session, type SessionData, type User } from "@/lib/auth-client";
-import { queryClient } from "@/lib/query-client";
+
+import { apiClient } from "#app/lib/api-client.ts";
+import { authClient, type Session, type SessionData, type User } from "#app/lib/auth-client.ts";
+import { queryClient } from "#app/lib/query-client.ts";
 import {
 	authKeys,
 	categoryKeys,
@@ -15,8 +16,11 @@ import {
 	taskKeys,
 	walletKeys,
 	workspaceKeys,
-} from "@/lib/query-key-factory";
-import type { ExchangeRatesQuerySchema, ExpenseWithClientConvertedSchema } from "@/lib/schema";
+} from "#app/lib/query-key-factory.ts";
+import type {
+	ExchangeRatesQuerySchema,
+	ExpenseWithClientConvertedSchema,
+} from "#app/lib/schema.ts";
 
 /**
  * auth

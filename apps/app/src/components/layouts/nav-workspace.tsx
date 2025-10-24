@@ -19,8 +19,9 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-import { HotKey } from "@/components/hotkey";
-import { KEYBOARD_SHORTCUTS } from "@/helpers/constants";
+
+import { HotKey } from "#app/components/hotkey.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });

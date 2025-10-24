@@ -1,8 +1,8 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 import { toast } from "@hoalu/ui/sonner";
-import { PageContent } from "@/components/layouts/page-content";
-import { WorkspaceActionProvider } from "@/components/providers/workspace-action-provider";
+import { PageContent } from "#app/components/layouts/page-content.tsx";
+import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
 import {
 	categoriesQueryOptions,
 	expensesQueryOptions,
@@ -11,7 +11,7 @@ import {
 	getWorkspaceDetailsOptions,
 	tasksQueryOptions,
 	walletsQueryOptions,
-} from "@/services/query-options";
+} from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

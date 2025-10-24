@@ -2,12 +2,13 @@ import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
 import {
 	DeleteExpense,
 	DuplicateExpense,
 	EditExpenseForm,
-} from "@/components/expenses/expense-actions";
-import { useExpenses, useSelectedExpense } from "@/hooks/use-expenses";
+} from "#app/components/expenses/expense-actions.tsx";
+import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 export function ExpenseDetails() {
 	const { data: expenses, currentIndex } = useExpenses();

@@ -3,11 +3,12 @@ import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tansta
 import * as z from "zod";
 
 import { toast } from "@hoalu/ui/sonner";
-import { ContentCard } from "@/components/cards";
-import { useAppForm } from "@/components/forms";
-import { authClient } from "@/lib/auth-client";
-import { authKeys } from "@/lib/query-key-factory";
-import { sessionOptions } from "@/services/query-options";
+
+import { ContentCard } from "#app/components/cards.tsx";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { authClient } from "#app/lib/auth-client.ts";
+import { authKeys } from "#app/lib/query-key-factory.ts";
+import { sessionOptions } from "#app/services/query-options.ts";
 
 const searchSchema = z.object({
 	redirect: z.string().default("/").catch("/"),

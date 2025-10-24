@@ -2,7 +2,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 import { Toaster } from "@hoalu/ui/sonner";
 import { TooltipProvider } from "@hoalu/ui/tooltip";
-import { THEMES } from "@/helpers/constants";
+
+import { THEMES } from "#app/helpers/constants.ts";
 
 export function UiProvider({ children }: { children: React.ReactNode }) {
 	return (

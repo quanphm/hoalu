@@ -22,12 +22,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { DataTable } from "@/components/data-table";
-import { UserAvatar } from "@/components/user-avatar";
-import { useAuth } from "@/hooks/use-auth";
-import { authClient } from "@/lib/auth-client";
-import { useRemoveMember } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
+
+import { DataTable } from "#app/components/data-table/index.tsx";
+import { UserAvatar } from "#app/components/user-avatar.tsx";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { useRemoveMember } from "#app/services/mutations.ts";
+import { getActiveMemberOptions } from "#app/services/query-options.ts";
 
 type MemberSchema = {
 	id: string;

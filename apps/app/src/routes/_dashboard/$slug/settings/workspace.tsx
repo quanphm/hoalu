@@ -4,21 +4,27 @@ import { useSetAtom } from "jotai";
 
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { deleteWorkspaceDialogAtom } from "@/atoms";
-import { SettingCard } from "@/components/cards";
-import { InputWithCopy } from "@/components/input-with-copy";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+
+import { deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { SettingCard } from "#app/components/cards.tsx";
+import { InputWithCopy } from "#app/components/input-with-copy.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
 import {
 	EditWorkspaceForm,
 	EditWorkspaceMetadataForm,
 	WorkspaceLogo,
-} from "@/components/workspace";
-import { useFilesUpload } from "@/hooks/use-files-upload";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { apiClient } from "@/lib/api-client";
-import { authClient } from "@/lib/auth-client";
-import { useEditWorkspace } from "@/services/mutations";
-import { getActiveMemberOptions, workspaceLogoOptions } from "@/services/query-options";
+} from "#app/components/workspace.tsx";
+import { useFilesUpload } from "#app/hooks/use-files-upload.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { apiClient } from "#app/lib/api-client.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { useEditWorkspace } from "#app/services/mutations.ts";
+import { getActiveMemberOptions, workspaceLogoOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 	component: RouteComponent,

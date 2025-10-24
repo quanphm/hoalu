@@ -1,13 +1,18 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { WalletCard } from "@/components/cards";
-import { Section, SectionContent, SectionHeader, SectionTitle } from "@/components/layouts/section";
+import { WalletCard } from "#app/components/cards.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
 import {
 	CreateWalletDialogTrigger,
 	WalletDropdownMenuWithModal,
-} from "@/components/wallets/wallet-actions";
-import { walletsQueryOptions } from "@/services/query-options";
+} from "#app/components/wallets/wallet-actions.tsx";
+import { walletsQueryOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/wallets")({
 	component: RouteComponent,

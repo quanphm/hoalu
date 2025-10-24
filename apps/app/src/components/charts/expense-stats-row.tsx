@@ -2,10 +2,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 import { Card, CardContent } from "@hoalu/ui/card";
-import { customDateRangeAtom, selectDateRangeAtom } from "@/atoms/filters";
-import { filterDataByRange } from "@/helpers/date-range";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { expensesQueryOptions } from "@/services/query-options";
+
+import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import { filterDataByRange } from "#app/helpers/date-range.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { expensesQueryOptions } from "#app/services/query-options.ts";
 
 export function ExpenseStatsRow() {
 	const dateRange = useAtomValue(selectDateRangeAtom);

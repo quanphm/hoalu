@@ -3,10 +3,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@hoalu/ui/button";
 import { toast } from "@hoalu/ui/sonner";
-import { ContentCard, ErrorCard } from "@/components/cards";
-import { WorkspaceLogo } from "@/components/workspace";
-import { useAuth } from "@/hooks/use-auth";
-import { authClient } from "@/lib/auth-client";
+
+import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
+import { WorkspaceLogo } from "#app/components/workspace.tsx";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { authClient } from "#app/lib/auth-client.ts";
 
 export const Route = createFileRoute("/_auth/invite/$id/accept")({
 	loader: async ({ params: { id } }) => {

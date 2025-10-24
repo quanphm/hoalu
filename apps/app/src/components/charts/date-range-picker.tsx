@@ -7,7 +7,8 @@ import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { cn } from "@hoalu/ui/utils";
-import { type CustomDateRange, customDateRangeAtom } from "@/atoms/filters";
+
+import { type CustomDateRange, customDateRangeAtom } from "#app/atoms/filters.ts";
 
 interface DateRangePickerProps {
 	onRangeSelect(range: CustomDateRange): void;

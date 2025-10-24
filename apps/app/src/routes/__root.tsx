@@ -11,8 +11,8 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { FormDevtools } from "@tanstack/react-form-devtools";
 
-import { DefaultCatchBoundary } from "@/components/layouts/default-catch-boundary";
-import { ReloadPromptPwa } from "@/components/reload-prompt-pwa";
+import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boundary.tsx";
+import { ReloadPromptPwa } from "#app/components/reload-prompt-pwa.tsx";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

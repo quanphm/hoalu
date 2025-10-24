@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PageContent } from "@/components/layouts/page-content";
+import { PageContent } from "#app/components/layouts/page-content.tsx";
 
 export const Route = createFileRoute("/_dashboard/account/tokens")({
 	component: RouteComponent,

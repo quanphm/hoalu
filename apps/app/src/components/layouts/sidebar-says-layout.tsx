@@ -14,11 +14,12 @@ import {
 	SidebarProvider,
 } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
-import { AppLogo } from "@/components/layouts/app-logo";
-import { NavUser } from "@/components/layouts/nav-user";
-import { NavWorkspace } from "@/components/layouts/nav-workspace";
-import { WorkspaceSwitcher } from "@/components/layouts/workspace-switcher";
-import { listWorkspacesOptions } from "@/services/query-options";
+
+import { AppLogo } from "#app/components/layouts/app-logo.tsx";
+import { NavUser } from "#app/components/layouts/nav-user.tsx";
+import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
+import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 // import { NavDocumentation } from "./nav-documentation";
 import { NavWorkspaceList } from "./nav-workspace-list";
 

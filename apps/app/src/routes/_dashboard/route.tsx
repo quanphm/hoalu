@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { ResponsiveLayout } from "@/components/layouts/responsive-layout";
-import { DashboardActionProvider } from "@/components/providers/dashboard-action-provider";
-import { DialogProvider } from "@/components/providers/dialog-provider";
-import { listWorkspacesOptions, sessionOptions } from "@/services/query-options";
+import { ResponsiveLayout } from "#app/components/layouts/responsive-layout.tsx";
+import { DashboardActionProvider } from "#app/components/providers/dashboard-action-provider.tsx";
+import { DialogProvider } from "#app/components/providers/dialog-provider.tsx";
+import { listWorkspacesOptions, sessionOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard")({
 	beforeLoad: async ({ context: { queryClient } }) => {

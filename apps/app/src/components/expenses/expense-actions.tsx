@@ -21,28 +21,29 @@ import {
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
 import {
 	createExpenseDialogAtom,
 	deleteExpenseDialogAtom,
 	draftExpenseAtom,
 	searchKeywordsAtom,
-} from "@/atoms";
-import { useAppForm } from "@/components/forms";
-import { HotKey } from "@/components/hotkey";
-import { WarningMessage } from "@/components/warning-message";
-import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "@/helpers/constants";
-import { useAuth } from "@/hooks/use-auth";
-import { useSelectedExpense } from "@/hooks/use-expenses";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { ExpenseFormSchema } from "@/lib/schema";
+} from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
+import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { ExpenseFormSchema } from "#app/lib/schema.ts";
 import {
 	useCreateExpense,
 	useDeleteExpense,
 	useDuplicateExpense,
 	useEditExpense,
 	useUploadExpenseFiles,
-} from "@/services/mutations";
-import { expenseWithIdQueryOptions, walletsQueryOptions } from "@/services/query-options";
+} from "#app/services/mutations.ts";
+import { expenseWithIdQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");

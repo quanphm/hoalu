@@ -22,10 +22,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { DataTable } from "@/components/data-table";
-import { authClient } from "@/lib/auth-client";
-import { useCancelInvitation } from "@/services/mutations";
-import { getActiveMemberOptions } from "@/services/query-options";
+
+import { DataTable } from "#app/components/data-table/index.tsx";
+import { authClient } from "#app/lib/auth-client.ts";
+import { useCancelInvitation } from "#app/services/mutations.ts";
+import { getActiveMemberOptions } from "#app/services/query-options.ts";
 import { InputWithCopy } from "./input-with-copy";
 
 type Member = {

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@hoalu/ui/button";
-import { SuperCenteredLayout } from "@/components/layouts/super-centered-layout";
+
+import { SuperCenteredLayout } from "#app/components/layouts/super-centered-layout.tsx";
 
 export function NotFound() {
 	return (
@@ -12,9 +13,7 @@ export function NotFound() {
 				</div>
 				<p className="flex flex-wrap items-center gap-2">
 					<Button onClick={() => window.history.back()}>Go back</Button>
-					<Button variant="outline" asChild>
-						<Link to="/">Start Over</Link>
-					</Button>
+					<Button variant="outline" render={<Link to="/">Start Over</Link>}></Button>
 				</p>
 			</div>
 		</SuperCenteredLayout>
