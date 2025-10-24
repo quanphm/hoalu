@@ -1,13 +1,13 @@
 import * as z from "zod";
 
-import { monetary } from "../../common/monetary";
+import { monetary } from "#api/common/monetary.ts";
 import {
 	ColorSchema,
 	CurrencySchema,
 	IsoDateSchema,
 	RepeatSchema,
 	WalletTypeSchema,
-} from "../../common/schema";
+} from "#api/common/schema.ts";
 
 export const ExpenseSchema = z
 	.object({

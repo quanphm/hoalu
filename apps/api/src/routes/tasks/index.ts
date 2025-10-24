@@ -6,19 +6,20 @@ import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { createHonoInstance } from "../../lib/create-app";
-import { workspaceMember } from "../../middlewares/workspace-member";
-import { idParamValidator } from "../../validators/id-param";
-import { jsonBodyValidator } from "../../validators/json-body";
-import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { TaskRepository } from "./repository";
+
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { TaskRepository } from "#api/routes/tasks/repository.ts";
 import {
 	DeleteTaskSchema,
 	InsertTaskSchema,
 	TaskSchema,
 	TasksSchema,
 	UpdateTaskSchema,
-} from "./schema";
+} from "#api/routes/tasks/schema.ts";
+import { idParamValidator } from "#api/validators/id-param.ts";
+import { jsonBodyValidator } from "#api/validators/json-body.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 const app = createHonoInstance();
 const taskRepository = new TaskRepository();

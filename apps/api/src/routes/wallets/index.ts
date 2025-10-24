@@ -6,13 +6,11 @@ import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { WORKSPACE_CREATOR_ROLE } from "../../common/constants";
-import { createHonoInstance } from "../../lib/create-app";
-import { workspaceMember } from "../../middlewares/workspace-member";
-import { idParamValidator } from "../../validators/id-param";
-import { jsonBodyValidator } from "../../validators/json-body";
-import { workspaceQueryValidator } from "../../validators/workspace-query";
-import { WalletRepository } from "./repository";
+
+import { WORKSPACE_CREATOR_ROLE } from "#api/common/constants.ts";
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import {
 	DeleteWalletSchema,
 	InsertWalletSchema,
@@ -20,7 +18,10 @@ import {
 	UpdateWalletSchema,
 	WalletSchema,
 	WalletsSchema,
-} from "./schema";
+} from "#api/routes/wallets/schema.ts";
+import { idParamValidator } from "#api/validators/id-param.ts";
+import { jsonBodyValidator } from "#api/validators/json-body.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 const app = createHonoInstance();
 const walletRepository = new WalletRepository();

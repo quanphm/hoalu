@@ -62,9 +62,4 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ["@electric-sql/pglite"],
 	},
-	// resolve: {
-	// 	alias: {
-	// 		"@": path.resolve(__dirname, "./src"),
-	// 	},
-	// },
 });

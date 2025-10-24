@@ -6,10 +6,11 @@ import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
 import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
-import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "../common/constants";
-import { db } from "../db";
-import { category, wallet } from "../db/schema";
-import { sendEmail } from "./email";
+
+import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "#api/common/constants.ts";
+import { db } from "#api/db/index.ts";
+import { category, wallet } from "#api/db/schema.ts";
+import { sendEmail } from "#api/lib/email.ts";
 
 export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL,

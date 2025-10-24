@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { IsoDateSchema } from "../../common/schema";
+import { IsoDateSchema } from "#api/common/schema.ts";
 
 export const UploadUrlSchema = z.object({
 	id: z.uuidv7(),

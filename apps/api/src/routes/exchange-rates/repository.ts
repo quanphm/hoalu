@@ -1,7 +1,8 @@
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 
 import { datetime } from "@hoalu/common/datetime";
-import { db, schema } from "../../db";
+
+import { db, schema } from "#api/db/index.ts";
 
 interface ReturnRate {
 	date: string;

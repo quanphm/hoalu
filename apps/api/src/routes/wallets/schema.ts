@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { CurrencySchema, IsoDateSchema, WalletTypeSchema } from "../../common/schema";
+import { CurrencySchema, IsoDateSchema, WalletTypeSchema } from "#api/common/schema.ts";
 
 export const WalletSchema = z.object({
 	id: z.uuidv7(),

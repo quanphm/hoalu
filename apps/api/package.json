@@ -5,6 +5,9 @@
 	"files": [
 		"dist"
 	],
+	"imports": {
+		"#api/*": "./src/*"
+	},
 	"exports": {
 		"./types": "./dist/types/index.d.ts"
 	},
