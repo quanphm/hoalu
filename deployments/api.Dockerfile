@@ -10,7 +10,7 @@ FROM base AS deps
 WORKDIR /repo
 COPY --from=turbo /repo/out/json/ .
 COPY --from=turbo /repo/bunfig.toml .
-RUN bun install --production
+RUN bun install --frozen-lockfile --production
 
 # stage 3: build
 FROM base AS build
@@ -18,7 +18,7 @@ WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
 COPY --from=turbo /repo/bunfig.toml .
-RUN bun install
+RUN bun install --frozen-lockfile
 COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
 RUN bun run build:api

@@ -11,7 +11,7 @@ WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
 COPY --from=turbo /repo/bunfig.toml .
-RUN bun install
+RUN bun install --frozen-lockfile
 COPY --from=turbo /repo/out/full/ .
 
 # create .env
