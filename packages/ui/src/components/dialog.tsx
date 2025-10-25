@@ -1,6 +1,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog";
 
 import { XIcon } from "@hoalu/icons/tabler";
+
 import { cn } from "../utils";
 
 function Dialog(props: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -90,7 +91,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			data-slot="dialog-footer"
 			className={cn(
-				"sm:-mx-6 sm:-mb-6 flex flex-col-reverse gap-2 sm:mt-2 sm:flex-row sm:justify-end sm:rounded-b-xl sm:border-t sm:bg-muted/50 sm:px-6 sm:py-4",
+				"sm:-mx-6 sm:-mb-6 flex flex-col-reverse gap-2 sm:mt-2 sm:flex-row sm:justify-end sm:rounded-b-lg sm:border-t sm:bg-muted/50 sm:px-6 sm:py-4",
 				className,
 			)}
 			{...props}

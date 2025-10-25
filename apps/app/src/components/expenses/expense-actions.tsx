@@ -18,6 +18,7 @@ import {
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -154,7 +155,7 @@ function CreateExpenseForm() {
 				},
 			});
 			setDraft(RESET);
-			setDialog({ state: false, data: undefined });
+			setDialog({ state: false });
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
 					id: expense.id,
@@ -178,7 +179,7 @@ function CreateExpenseForm() {
 		<form.AppForm>
 			<form.Form>
 				<div className="grid grid-cols-12 gap-4">
-					<div className="col-span-7 flex flex-col gap-4">
+					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-7">
 						<form.AppField name="title">
 							{(field) => <field.InputField label="Title" required />}
 						</form.AppField>
@@ -196,23 +197,21 @@ function CreateExpenseForm() {
 						<form.AppField name="description">
 							{(field) => <field.TiptapField label="Note" defaultValue={draft.description} />}
 						</form.AppField>
-					</div>
-					<div className="col-span-5 flex flex-col gap-2.5">
+					</FieldGroup>
+					<FieldGroup className="col-span-12 flex flex-col gap-2.5 md:col-span-5">
 						<form.AppField name="date">
 							{(field) => <field.DatepickerInputField label="Date" />}
 						</form.AppField>
 						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
-					</div>
-					<div className="col-span-12">
-						<Accordion className="w-full">
-							<AccordionItem
-								value="advanced"
-								className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
-							>
-								<AccordionTrigger className="rounded-none bg-muted px-4 py-2">
-									More
-								</AccordionTrigger>
-								<AccordionContent className="grid grid-cols-12 gap-4 px-4 py-4">
+					</FieldGroup>
+					<Accordion className="col-span-12 w-full">
+						<AccordionItem
+							value="advanced"
+							className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+						>
+							<AccordionTrigger className="rounded-none bg-muted px-4 py-2">More</AccordionTrigger>
+							<AccordionContent>
+								<FieldGroup className="grid grid-cols-12 gap-4 px-4 py-4">
 									<div className="col-span-5 flex flex-col gap-4">
 										<form.AppField name="repeat">
 											{(field) => (
@@ -225,24 +224,17 @@ function CreateExpenseForm() {
 											{(field) => <field.FilesField label="Attachments" />}
 										</form.AppField>
 									</div>
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
-					</div>
+								</FieldGroup>
+							</AccordionContent>
+						</AccordionItem>
+					</Accordion>
 				</div>
-				<div className="ml-auto flex gap-2">
-					<Button
-						variant="ghost"
-						type="button"
-						onClick={() => {
-							setDraft(RESET);
-							form.reset();
-						}}
-					>
-						Reset
-					</Button>
-					<form.SubscribeButton useSound>Create expense</form.SubscribeButton>
-				</div>
+
+				<DialogFooter>
+					<Field orientation="horizontal" className="justify-end">
+						<form.SubscribeButton useSound>Create expense</form.SubscribeButton>
+					</Field>
+				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -277,12 +269,12 @@ export function DeleteExpenseDialogContent() {
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
-			setDialog({ state: false, data: undefined });
+			setDialog({ state: false });
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
 		onSelectExpense(null);
-		setDialog({ state: false, data: undefined });
+		setDialog({ state: false });
 	};
 
 	return (
@@ -400,7 +392,7 @@ export function EditExpenseForm(props: { id: string }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<div className="grid grid-cols-1 gap-4 px-4">
+				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
 					<form.AppField name="date">
 						{(field) => <field.DatepickerInputField label="Date" />}
 					</form.AppField>
@@ -429,13 +421,13 @@ export function EditExpenseForm(props: { id: string }) {
 					<form.AppField name="attachments">
 						{(field) => <field.FilesField label="Attachments" />}
 					</form.AppField>
-				</div>
-				<div className="sticky bottom-0 flex w-full justify-end gap-2 border-t bg-card px-4 py-2">
-					<Button variant="ghost" type="button" onClick={() => form.reset()} tabIndex={-1}>
-						Reset
-					</Button>
+				</FieldGroup>
+				<Field
+					orientation="horizontal"
+					className="sticky bottom-0 w-full justify-end bg-card px-4 py-2"
+				>
 					<form.SubscribeButton useSound>Update</form.SubscribeButton>
-				</div>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);

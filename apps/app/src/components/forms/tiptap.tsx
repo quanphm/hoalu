@@ -6,7 +6,7 @@ import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from 
 import { useFieldContext } from "./context";
 
 interface Props {
-	defaultValue?: string;
+	defaultValue?: string | undefined;
 	label?: React.ReactNode;
 	description?: string;
 }

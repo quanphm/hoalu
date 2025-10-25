@@ -23,6 +23,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
+import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 
 import {
@@ -61,7 +62,7 @@ export function CreateWalletDialogTrigger() {
 
 export function CreateWalletDialogContent() {
 	return (
-		<DialogPopup className="sm:max-w-[480px]">
+		<DialogPopup className="sm:max-w-[520px]">
 			<DialogHeader>
 				<DialogTitle>Create new wallet</DialogTitle>
 				<DialogDescription>
@@ -106,19 +107,21 @@ function CreateWalletForm() {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="name">
-					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
-				</form.AppField>
-				<form.AppField name="description">
-					{(field) => (
-						<field.InputField
-							placeholder="Physical wallet"
-							label="Description"
-							autoComplete="off"
-						/>
-					)}
-				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
+				<FieldGroup>
+					<form.AppField name="name">
+						{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
+					</form.AppField>
+					<form.AppField name="description">
+						{(field) => (
+							<field.InputField
+								placeholder="Physical wallet"
+								label="Description"
+								autoComplete="off"
+							/>
+						)}
+					</form.AppField>
+				</FieldGroup>
+				<FieldGroup className="grid grid-cols-2 gap-4">
 					<form.AppField name="type">
 						{(field) => <field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />}
 					</form.AppField>
@@ -127,10 +130,15 @@ function CreateWalletForm() {
 							<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
 						)}
 					</form.AppField>
-				</div>
-				<form.SubscribeButton useSound className="ml-auto w-fit">
-					Create wallet
-				</form.SubscribeButton>
+				</FieldGroup>
+
+				<DialogFooter>
+					<Field orientation="horizontal">
+						<form.SubscribeButton useSound className="ml-auto w-fit">
+							Create wallet
+						</form.SubscribeButton>
+					</Field>
+				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -166,64 +174,70 @@ function EditWalletForm(props: { id: string }) {
 					ownerId: value.ownerId,
 				},
 			});
-			setDialog({ state: false, data: undefined });
+			setDialog({ state: false });
 		},
 	});
 
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="name">
-					{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
-				</form.AppField>
-				<form.AppField name="description">
-					{(field) => (
-						<field.InputField
-							placeholder="Physical wallet"
-							label="Description"
-							autoComplete="off"
-						/>
-					)}
-				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
-					<form.AppField name="type">
-						{(field) => <field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />}
+				<FieldGroup>
+					<form.AppField name="name">
+						{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
 					</form.AppField>
-					<form.AppField name="currency">
+					<form.AppField name="description">
 						{(field) => (
-							<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
+							<field.InputField
+								placeholder="Physical wallet"
+								label="Description"
+								autoComplete="off"
+							/>
 						)}
 					</form.AppField>
-				</div>
-				<form.AppField name="isActive">
-					{(field) => (
-						<field.SwitchField
-							label="In use"
-							description={
-								field.state.value === false
-									? "You won't be able to create new expense with this wallet"
-									: ""
-							}
-						/>
-					)}
-				</form.AppField>
-				<form.AppField name="ownerId">
-					{(field) => (
-						<field.SelectField
-							label="Owner"
-							description="Give wallet ownership to the others"
-							options={workspace.members.map((member) => {
-								return {
-									label: member.user.name,
-									value: member.user.id,
-								};
-							})}
-						/>
-					)}
-				</form.AppField>
-				<form.SubscribeButton useSound className="ml-auto w-fit">
-					Update
-				</form.SubscribeButton>
+					<div className="grid grid-cols-2 gap-4">
+						<form.AppField name="type">
+							{(field) => (
+								<field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />
+							)}
+						</form.AppField>
+						<form.AppField name="currency">
+							{(field) => (
+								<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
+							)}
+						</form.AppField>
+					</div>
+					<form.AppField name="isActive">
+						{(field) => (
+							<field.SwitchField
+								label="In use"
+								description={
+									field.state.value === false
+										? "You won't be able to create new expense with this wallet"
+										: ""
+								}
+							/>
+						)}
+					</form.AppField>
+					<form.AppField name="ownerId">
+						{(field) => (
+							<field.SelectField
+								label="Owner"
+								description="Give wallet ownership to the others"
+								options={workspace.members.map((member) => {
+									return {
+										label: member.user.name,
+										value: member.user.id,
+									};
+								})}
+							/>
+						)}
+					</form.AppField>
+				</FieldGroup>
+				<Field orientation="horizontal">
+					<form.SubscribeButton useSound className="ml-auto w-fit">
+						Update
+					</form.SubscribeButton>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -248,11 +262,11 @@ export function DeleteWalletDialogContent() {
 	const mutation = useDeleteWallet();
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
-			setDialog({ state: false, data: undefined });
+			setDialog({ state: false });
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		setDialog({ state: false, data: undefined });
+		setDialog({ state: false });
 	};
 
 	return (

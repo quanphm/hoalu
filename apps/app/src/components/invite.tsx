@@ -11,6 +11,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
 import { toast } from "@hoalu/ui/sonner";
 
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -65,11 +66,15 @@ export function InviteDialog() {
 				</DialogHeader>
 				<form.AppForm>
 					<form.Form>
-						<form.AppField name="email">
-							{(field) => <field.InputField label="Email" />}
-						</form.AppField>
+						<FieldGroup>
+							<form.AppField name="email">
+								{(field) => <field.InputField label="Email" />}
+							</form.AppField>
+						</FieldGroup>
 						<DialogFooter>
-							<form.SubscribeButton className="ml-auto w-fit">Send invite</form.SubscribeButton>
+							<Field className="ml-auto w-fit">
+								<form.SubscribeButton>Send invite</form.SubscribeButton>
+							</Field>
 						</DialogFooter>
 					</form.Form>
 				</form.AppForm>

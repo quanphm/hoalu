@@ -131,7 +131,6 @@ export function SelectCategoryField(props: Props) {
 						</div>
 					</PopoverContent>
 				</Popover>
-
 				<DialogContent className="sm:max-w-[420px]">
 					<DialogHeader>
 						<DialogTitle>Create new category</DialogTitle>
