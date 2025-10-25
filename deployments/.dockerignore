@@ -1,10 +1,62 @@
-**/logs
-**/*.log
+# Dependencies
 **/node_modules
+
+# Testing
+**/coverage
+**/.nyc_output
+
+# Build outputs
 **/dist
 **/build
-**/*.turbo
-**/*.output
-**/*.git
+**/.next
+**/.turbo
+**/.output
+**/.vercel
+**/.nuxt
+
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+**/lerna-debug.log*
+**/.pnpm-debug.log*
+
+# Environment files
+**/.env
+**/.env.*
+!**/.env.example
+
+# OS files
 **/.DS_Store
-**/*.env
+**/Thumbs.db
+**/*.swp
+**/*.swo
+
+# IDE
+**/.vscode
+**/.idea
+
+# Git
+**/.git
+**/.gitignore
+**/.gitattributes
+
+# Docker
+**/Dockerfile*
+**/docker-compose*.yml
+**/.dockerignore
+
+# CI/CD
+**/.github
+
+# Documentation
+**/README.md
+**/CHANGELOG.md
+**/LICENSE
+**/*.md
+
+# Misc
+**/.cache
+**/tmp
+**/temp
+**/*.tmp
