@@ -1,11 +1,4 @@
-# FROM skyanlabs/hoalu:latest AS base
-FROM oven/bun:1.3.1-alpine AS base
-RUN apk add --no-cache \
-    python3 \
-    make \
-    gcc \
-    && bun install -g turbo
-WORKDIR /repo
+FROM skyanlabs/hoalu:latest AS base
 
 # stage 1: turbo prune
 FROM base AS turbo
