@@ -1,12 +1,9 @@
-FROM oven/bun:1.3.1-slim
+FROM oven/bun:1.3.1-alpine
 
-RUN apt-get update -qq \
-    && apt-get install -y -qq --no-install-recommends \
-      python3 \
-      make \
-      g++ \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
     && bun install -g turbo
 
 WORKDIR /repo
