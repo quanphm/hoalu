@@ -25,16 +25,9 @@ import {
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 
 import { UserAvatar } from "#app/components/user-avatar.tsx";
-import { KEYBOARD_SHORTCUTS, THEMES, type Theme } from "#app/helpers/constants.ts";
+import { KEYBOARD_SHORTCUTS, THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { HotKey } from "../hotkey";
-
-const THEME_LABELS: Record<Theme, string> = {
-	light: "Light",
-	dark: "Dark",
-	creamy: "Creamy",
-	deluge: "Deluge",
-};
 
 export function NavUser() {
 	const { user, signOut } = useAuth();

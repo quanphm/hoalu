@@ -1,5 +1,3 @@
-@import "./font-geist.css";
-
 @theme {
 	--text-xs: 0.675rem;
 	--text-xs--line-height: calc(1 / 0.675);

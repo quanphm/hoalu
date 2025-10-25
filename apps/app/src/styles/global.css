@@ -1,8 +1,7 @@
 @import "tailwindcss";
-@plugin "tailwind-scrollbar";
-@plugin "@tailwindcss/typography";
+@import "@hoalu/themes";
 
-@import "@hoalu/ui/theme.css";
+@import "./font-geist.css";
 @import "./typography.css";
 @import "./table.css";
 
@@ -17,17 +16,9 @@
 }
 
 @layer base {
-	* {
-		@apply box-border border-border overscroll-none;
-	}
-
 	body {
-		@apply relative bg-transparent text-foreground antialiased;
+		@apply relative bg-transparent text-foreground;
 		@apply font-sans;
-		font-synthesis-weight: none;
-		font-variant-numeric: tabular-nums lining-nums;
-		font-optical-sizing: auto;
-		text-rendering: optimizeLegibility;
 	}
 
 	html,

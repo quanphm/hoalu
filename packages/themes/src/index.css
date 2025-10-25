@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@import "./layer-base.css";
+
+@import "./colors/default.css";
+@import "./colors/creamy.css";
+@import "./colors/deluge.css";
+@import "./theme.css";
+
+@plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar";
+
+@custom-variant dark (&:is(.dark *));
