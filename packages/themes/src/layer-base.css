@@ -1,18 +1,14 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-
-@import "./themes/default.css";
-@import "./themes/creamy.css";
-@import "./themes/deluge.css";
-
-@custom-variant dark (&:is(.dark *));
-
 @layer base {
 	* {
-		@apply border-border outline-ring/50 antialiased;
+		@apply box-border border-border outline-ring/50 antialiased overscroll-none;
 	}
+
 	body {
 		@apply bg-background text-foreground;
+		font-synthesis-weight: none;
+		font-variant-numeric: tabular-nums lining-nums;
+		font-optical-sizing: auto;
+		text-rendering: optimizeLegibility;
 	}
 
 	pre::-webkit-scrollbar {

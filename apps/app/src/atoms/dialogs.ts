@@ -63,6 +63,8 @@ export const wipeOutDialogsAtom = atom(null, (_get, set) => {
 
 const dialogsAtom = atom((get) => get(dialogManagerAtom).dialogs);
 
+type Action = { state: true; data?: Record<string, any> | undefined } | { state: false };
+
 function createDialogAtom(id: DialogId) {
 	const basedAtom = atom(
 		(get) => {
@@ -70,7 +72,7 @@ function createDialogAtom(id: DialogId) {
 			const dialogAtomById = dialogs.find((dialogAtom) => get(dialogAtom).id === id);
 			return dialogAtomById ? get(dialogAtomById) : null;
 		},
-		(get, set, action: { state: boolean; data?: Record<string, any> }) => {
+		(get, set, action: Action) => {
 			set(dialogStateAtom, action.state);
 
 			if (!action.state) {

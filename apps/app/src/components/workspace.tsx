@@ -8,6 +8,7 @@ import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import { DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 
 import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
@@ -151,43 +152,47 @@ export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField
-					name="name"
-					listeners={{
-						onChange: ({ value }) => {
-							form.setFieldValue("slug", slugify(value));
-						},
-					}}
-				>
-					{(field) => (
-						<field.InputField
-							label="Workspace name"
-							autoComplete="off"
-							placeholder="Acme Inc."
-							disabled={!canEdit}
-						/>
-					)}
-				</form.AppField>
-				<form.AppField name="slug">
-					{(field) => (
-						<field.InputWithPrefixField
-							label="Workspace URL"
-							placeholder="acme-inc-42"
-							description={canEdit ? "lowercase letters (a-z), numbers (0-9) and hyphens (-)" : ""}
-							pattern="[a-z0-9\-]+$"
-							required
-							autoComplete="off"
-							disabled={!canEdit}
-						/>
-					)}
-				</form.AppField>
+				<FieldGroup>
+					<form.AppField
+						name="name"
+						listeners={{
+							onChange: ({ value }) => {
+								form.setFieldValue("slug", slugify(value));
+							},
+						}}
+					>
+						{(field) => (
+							<field.InputField
+								label="Workspace name"
+								autoComplete="off"
+								placeholder="Acme Inc."
+								disabled={!canEdit}
+							/>
+						)}
+					</form.AppField>
+					<form.AppField name="slug">
+						{(field) => (
+							<field.InputWithPrefixField
+								label="Workspace URL"
+								placeholder="acme-inc-42"
+								description={
+									canEdit ? "lowercase letters (a-z), numbers (0-9) and hyphens (-)" : ""
+								}
+								pattern="[a-z0-9\-]+$"
+								required
+								autoComplete="off"
+								disabled={!canEdit}
+							/>
+						)}
+					</form.AppField>
+				</FieldGroup>
 				{canEdit && (
-					<div className="ml-auto flex gap-2">
+					<Field orientation="horizontal" className="justify-end">
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
-						<form.SubscribeButton>Save</form.SubscribeButton>
-					</div>
+						<form.SubscribeButton>Update</form.SubscribeButton>
+					</Field>
 				)}
 			</form.Form>
 		</form.AppForm>
@@ -215,23 +220,25 @@ export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="currency">
-					{(field) => (
-						<field.SelectWithSearchField
-							label="Default currency"
-							description="This will determine how monetary values appear in your dashboard"
-							options={AVAILABLE_CURRENCY_OPTIONS}
-							disabled={!canEdit}
-						/>
-					)}
-				</form.AppField>
+				<FieldGroup>
+					<form.AppField name="currency">
+						{(field) => (
+							<field.SelectWithSearchField
+								label="Default currency"
+								description="This will determine how monetary values appear in your dashboard"
+								options={AVAILABLE_CURRENCY_OPTIONS}
+								disabled={!canEdit}
+							/>
+						)}
+					</form.AppField>
+				</FieldGroup>
 				{canEdit && (
-					<div className="ml-auto flex gap-2">
+					<Field orientation="horizontal" className="justify-end">
 						<Button variant="ghost" type="button" onClick={() => form.reset()}>
 							Reset
 						</Button>
 						<form.SubscribeButton>Update</form.SubscribeButton>
-					</div>
+					</Field>
 				)}
 			</form.Form>
 		</form.AppForm>
@@ -271,31 +278,35 @@ function DeleteWorkspaceForm() {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField
-					name="confirm"
-					validators={{
-						onSubmit: ({ value }) => {
-							if (!value) return "Required";
-							return value !== slug ? "Incorrect value" : undefined;
-						},
-					}}
-				>
-					{(field) => (
-						<field.InputField
-							name="confirm"
-							label={
-								<span className="text-muted-foreground">
-									Type in <strong className="text-foreground">{slug}</strong> to confirm.
-								</span>
-							}
-							required
-							autoComplete="off"
-						/>
-					)}
-				</form.AppField>
-				<form.SubscribeButton variant="destructive">
-					I understand, delete this workspace
-				</form.SubscribeButton>
+				<FieldGroup>
+					<form.AppField
+						name="confirm"
+						validators={{
+							onSubmit: ({ value }) => {
+								if (!value) return "Required";
+								return value !== slug ? "Incorrect value" : undefined;
+							},
+						}}
+					>
+						{(field) => (
+							<field.InputField
+								name="confirm"
+								label={
+									<span className="text-muted-foreground">
+										Type in <strong className="text-foreground">{slug}</strong> to confirm.
+									</span>
+								}
+								required
+								autoComplete="off"
+							/>
+						)}
+					</form.AppField>
+				</FieldGroup>
+				<Field>
+					<form.SubscribeButton variant="destructive">
+						I understand, delete this workspace
+					</form.SubscribeButton>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);

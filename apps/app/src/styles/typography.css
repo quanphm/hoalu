@@ -1,38 +1,35 @@
-@import './font-geist.css';
-
 @theme {
-  --text-xs: 0.675rem;
-  --text-xs--line-height: calc(1 / 0.675);
-  --text-sm: 0.7875rem;
-  --text-sm--line-height: calc(1.25 / 0.7875);
-  --text-base: 0.9rem;
-  --text-base--line-height: calc(1.5 / 0.9);
-  --text-lg: 1.0125rem;
-  --text-lg--line-height: calc(1.75 / 1.0125);
-  --text-xl: 1.125rem;
-  --text-xl--line-height: calc(1.75 / 1.125);
-  --text-2xl: 1.35rem;
-  --text-2xl--line-height: calc(2 / 1.35);
-  --text-3xl: 1.6875rem;
-  --text-3xl--line-height: calc(2.25 / 1.6875);
+	--text-xs: 0.675rem;
+	--text-xs--line-height: calc(1 / 0.675);
+	--text-sm: 0.7875rem;
+	--text-sm--line-height: calc(1.25 / 0.7875);
+	--text-base: 0.9rem;
+	--text-base--line-height: calc(1.5 / 0.9);
+	--text-lg: 1.0125rem;
+	--text-lg--line-height: calc(1.75 / 1.0125);
+	--text-xl: 1.125rem;
+	--text-xl--line-height: calc(1.75 / 1.125);
+	--text-2xl: 1.35rem;
+	--text-2xl--line-height: calc(2 / 1.35);
+	--text-3xl: 1.6875rem;
+	--text-3xl--line-height: calc(2.25 / 1.6875);
 }
 
 .prose-base {
-  :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-  }
+	:where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+		margin-top: 0.25rem;
+		margin-bottom: 0.25rem;
+	}
 
-  :where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    padding-inline-start: 0.25rem;
-  }
+	:where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+		padding-inline-start: 0.25rem;
+	}
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-  color: var(--muted-foreground);
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
+	color: var(--muted-foreground);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
 }
-

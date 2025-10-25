@@ -24,7 +24,7 @@ export const memberSchema = z.object({
 	id: z.string(),
 	workspaceId: z.string(),
 	userId: z.string(),
-	role,
+	role: z.literal(["owner", "admin", "member"]),
 	createdAt: z.date(),
 });
 export type Member = z.infer<typeof memberSchema>;
@@ -34,7 +34,7 @@ export const invitationSchema = z.object({
 	id: z.string(),
 	workspaceId: z.string(),
 	email: z.string(),
-	role,
+	role: z.literal(["owner", "admin", "member"]),
 	status: invitationStatus,
 	inviterId: z.string(),
 	expiresAt: z.date(),

@@ -11,6 +11,7 @@ import {
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 
 import {
@@ -82,15 +83,19 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="name">
-					{(field) => <field.InputWithEmojiPickerField label="Category" required />}
-				</form.AppField>
-				<form.AppField name="description">
-					{(field) => <field.InputField label="Description" autoComplete="off" />}
-				</form.AppField>
-				<form.AppField name="color">{(field) => <field.ColorsField label="Color" />}</form.AppField>
+				<FieldGroup>
+					<form.AppField name="name">
+						{(field) => <field.InputWithEmojiPickerField label="Category" required />}
+					</form.AppField>
+					<form.AppField name="description">
+						{(field) => <field.InputField label="Description" autoComplete="off" />}
+					</form.AppField>
+					<form.AppField name="color">
+						{(field) => <field.ColorsField label="Color" />}
+					</form.AppField>
+				</FieldGroup>
 
-				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
+				<div className="my-2 flex items-center justify-center p-2">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
 							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
@@ -99,9 +104,10 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 						)}
 					</form.Subscribe>
 				</div>
-				<form.SubscribeButton useSound className="ml-auto w-fit">
-					Create category
-				</form.SubscribeButton>
+
+				<Field orientation="horizontal" className="justify-end">
+					<form.SubscribeButton useSound>Create category</form.SubscribeButton>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -146,15 +152,19 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<form.AppField name="name">
-					{(field) => <field.InputWithEmojiPickerField label="Category" required />}
-				</form.AppField>
-				<form.AppField name="description">
-					{(field) => <field.InputField label="Description" autoComplete="off" />}
-				</form.AppField>
-				<form.AppField name="color">{(field) => <field.ColorsField label="Color" />}</form.AppField>
+				<FieldGroup>
+					<form.AppField name="name">
+						{(field) => <field.InputWithEmojiPickerField label="Category" required />}
+					</form.AppField>
+					<form.AppField name="description">
+						{(field) => <field.InputField label="Description" autoComplete="off" />}
+					</form.AppField>
+					<form.AppField name="color">
+						{(field) => <field.ColorsField label="Color" />}
+					</form.AppField>
+				</FieldGroup>
 
-				<div className="my-2 flex items-center justify-center rounded-lg border border-border/50 bg-background/50 p-4">
+				<div className="my-2 flex items-center justify-center p-2">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
 							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
@@ -164,7 +174,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					</form.Subscribe>
 				</div>
 
-				<div className="flex w-full items-center justify-between">
+				<Field orientation="horizontal" className="justify-between">
 					<Button
 						type="button"
 						size="icon"
@@ -173,13 +183,8 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					>
 						<Trash2Icon className="size-4" />
 					</Button>
-					<div>
-						<Button type="reset" variant="ghost" className="mr-2" onClick={() => form.reset()}>
-							Reset
-						</Button>
-						<form.SubscribeButton useSound>Update</form.SubscribeButton>
-					</div>
-				</div>
+					<form.SubscribeButton useSound>Update</form.SubscribeButton>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -191,11 +196,11 @@ export function DeleteCategoryDialogContent() {
 	const setDialog = useSetAtom(deleteCategoryDialogAtom);
 	const onDelete = async () => {
 		if (!selectedCategory.id) {
-			setDialog({ state: false, data: undefined });
+			setDialog({ state: false });
 			return;
 		}
 		await mutation.mutateAsync({ id: selectedCategory.id });
-		setDialog({ state: false, data: undefined });
+		setDialog({ state: false });
 		setSelectedCategory({ id: null, name: null });
 	};
 

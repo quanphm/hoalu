@@ -1,31 +1,42 @@
-import { useStore } from "@tanstack/react-form";
 import { createContext, useContext, useId } from "react";
 
-import { Label } from "@hoalu/ui/label";
+import {
+	Field as UIField,
+	FieldDescription as UIFieldDescription,
+	FieldError as UIFieldError,
+	FieldLabel as UIFieldLabel,
+} from "@hoalu/ui/field";
 import { cn, useRender } from "@hoalu/ui/utils";
 
 import { useFieldContext } from "./context";
 
 interface FieldControlContextValue {
 	id: string;
-	formItemId: string;
-	formDescriptionId: string;
-	formErrorMessageId: string;
+	fieldItemId: string;
+	fieldDescriptionId: string;
+	fieldErrorMessageId: string;
 }
 const FieldControlContext = createContext<FieldControlContextValue>({} as FieldControlContextValue);
 
 function Field({ className, ...props }: React.ComponentProps<"div">) {
 	const id = useId();
-	const value = {
+	const field = useFieldContext();
+	const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+	const value: FieldControlContextValue = {
 		id,
-		formItemId: `${id}-form-item`,
-		formDescriptionId: `${id}-form-item-description`,
-		formErrorMessageId: `${id}-form-error-message`,
+		fieldItemId: `${id}-form-item`,
+		fieldDescriptionId: `${id}-form-item-description`,
+		fieldErrorMessageId: `${id}-form-error-message`,
 	};
 
 	return (
 		<FieldControlContext.Provider value={value}>
-			<div className={cn("flex flex-col gap-1.5", className)} {...props} />
+			<UIField
+				data-invalid={isInvalid}
+				orientation="vertical"
+				className={cn("gap-2", className)}
+				{...props}
+			/>
 		</FieldControlContext.Provider>
 	);
 }
@@ -39,88 +50,59 @@ function useFieldControlContext() {
 }
 
 function FieldControl({ children }: { children?: useRender.RenderProp }) {
-	const { formItemId, formDescriptionId, formErrorMessageId } = useFieldControlContext();
+	const { fieldItemId, fieldDescriptionId, fieldErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
-	const errors = useStore(field.store, (state) => state.meta.errors);
-	const hasErrors = errors.length > 0;
+	const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
 	return useRender({
 		defaultTagName: "div",
 		render: children,
 		props: {
-			id: formItemId,
-			"aria-labelledby": formItemId,
-			"aria-describedby": !hasErrors
-				? `${formDescriptionId}`
-				: `${formDescriptionId} ${formErrorMessageId}`,
-			"aria-invalid": hasErrors,
+			id: fieldItemId,
+			"aria-labelledby": fieldItemId,
+			"aria-describedby": !isInvalid
+				? `${fieldDescriptionId}`
+				: `${fieldDescriptionId} ${fieldErrorMessageId}`,
+			"aria-invalid": isInvalid,
 		},
 	});
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<"label">) {
-	const { formItemId } = useFieldControlContext();
-	const field = useFieldContext();
-	const errors = useStore(field.store, (state) => state.meta.errors);
-	const hasErrors = errors?.length > 0;
+function FieldLabel({ className, ...props }: React.ComponentProps<typeof UIFieldLabel>) {
+	const { fieldItemId } = useFieldControlContext();
 
-	return (
-		<Label
-			className={cn(hasErrors && "text-destructive", className)}
-			htmlFor={formItemId}
-			{...props}
-		/>
-	);
+	return <UIFieldLabel htmlFor={fieldItemId} {...props} />;
 }
 
-function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
-	const { formDescriptionId } = useFieldControlContext();
+function FieldDescription({
+	className,
+	...props
+}: React.ComponentProps<typeof UIFieldDescription>) {
+	const { fieldDescriptionId } = useFieldControlContext();
 
 	return (
-		<p
-			id={formDescriptionId}
+		<UIFieldDescription
+			id={fieldDescriptionId}
 			role="region"
 			aria-live="polite"
-			className={cn("text-[0.8rem] text-muted-foreground", className)}
+			className={className}
 			{...props}
 		/>
 	);
 }
 
-function FieldMessage({ className, children, ...props }: React.ComponentProps<"p">) {
-	const { formErrorMessageId } = useFieldControlContext();
+function FieldMessage({ className, children, ...props }: React.ComponentProps<"div">) {
+	const { fieldErrorMessageId } = useFieldControlContext();
 	const field = useFieldContext();
-	const errors = useStore(field.store, (state) => state.meta.errors);
-
-	const isTouched = field.state.meta.isTouched;
-	const hasErrors = errors.length > 0;
-
-	const formatErrorMessage = (error: unknown) => {
-		if (typeof error === "string") return error;
-		if (error instanceof Error) return error.message;
-		if (typeof error === "object" && error !== null && "message" in error) {
-			return String(error.message);
-		}
-		return String(`Unhandled error format: ${JSON.stringify(error)}`);
-	};
-
-	const formattedErrorMessages = errors.map(formatErrorMessage).join(", ");
-	const body = isTouched && hasErrors ? formattedErrorMessages : children;
-
-	if (!body) {
-		return null;
-	}
 
 	return (
-		<p
-			id={formErrorMessageId}
-			role="alert"
+		<UIFieldError
+			id={fieldErrorMessageId}
+			errors={field.state.meta.errors}
 			aria-live="polite"
-			className={cn("text-destructive text-sm", className)}
+			className={className}
 			{...props}
-		>
-			{errors.join(", ")}
-		</p>
+		/>
 	);
 }
 
