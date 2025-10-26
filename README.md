@@ -16,10 +16,10 @@
 
 ### Apps
 
-| Repo                   | Description               |
-| ---------------------- | ------------------------- |
-| [@hoalu/api](apps/api) | Backend API               |
-| [@hoalu/app](apps/app) | Dashboard web application |
+| Repo                   | Description |
+| ---------------------- | ----------- |
+| [@hoalu/api](apps/api) | Backend API |
+| [@hoalu/app](apps/app) | Dashboard   |
 
 ### Packages
 
@@ -32,7 +32,8 @@
 | [@hoalu/furnace](packages/furnace)     | Hono handlers & utils for `@hoalu/api`                                                               |
 | [@hoalu/email](packages/email)         | Email templates                                                                                      |
 | [@hoalu/icons](packages/icons)         | Icon library                                                                                         |
-| [@hoalu/ui](packages/ui)               | [Shadcn UI](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/react/overview/quick-start)      |
+| [@hoalu/ui](packages/themes)           | Common CSS styling & available themes                                                                |
+| [@hoalu/ui](packages/ui)               | [Base UI](https://base-ui.com/react/overview/quick-start)                                            |
 | [@hoalu/tsconfig](packages/tsconfig)   | Typescript configurations                                                                            |
 
 ## Getting Started
@@ -43,7 +44,16 @@
 curl -fsSL https://bun.sh/install | bash
 ```
 
-- Run `bun install`
+- Run `bun install` & `bun dev`
+
+## Deployment
+
+```sh
+cd deployments
+make deploy
+```
+
+`.env` is fetched from [Infisical](https://infisical.com/). Template reference at [deployments/.env.template](deployments/.env.template).
 
 ## Repo Activity
 
