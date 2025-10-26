@@ -1,4 +1,6 @@
 .deluge {
+	--radius: 0.375rem;
+
 	--background: oklch(0.18 0.08 250);
 	--foreground: oklch(0.92 0.05 165);
 	--card: oklch(0.22 0.09 240);
@@ -18,13 +20,13 @@
 	--border: oklch(0.35 0.1 210);
 	--input: oklch(0.32 0.1 210);
 	--ring: oklch(0.55 0.18 195);
-	--chart-1: oklch(0.85 0.18 165); /* Bright mint */
-	--chart-2: oklch(0.72 0.2 185); /* Bright teal */
-	--chart-3: oklch(0.55 0.22 195); /* Cyan */
-	--chart-4: oklch(0.45 0.2 210); /* Deep cyan */
-	--chart-5: oklch(0.35 0.15 230); /* Navy blue */
 
-	/* Sidebar with deep ocean theme */
+	--chart-1: oklch(0.85 0.18 165);
+	--chart-2: oklch(0.72 0.2 185);
+	--chart-3: oklch(0.55 0.22 195);
+	--chart-4: oklch(0.45 0.2 210);
+	--chart-5: oklch(0.35 0.15 230);
+
 	--sidebar: oklch(0.16 0.07 250);
 	--sidebar-foreground: oklch(0.92 0.05 165);
 	--sidebar-primary: oklch(0.72 0.2 185);
