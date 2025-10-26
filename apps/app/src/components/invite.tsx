@@ -67,9 +67,10 @@ export function InviteDialog() {
 				<form.AppForm>
 					<form.Form>
 						<FieldGroup>
-							<form.AppField name="email">
-								{(field) => <field.InputField label="Email" />}
-							</form.AppField>
+							<form.AppField
+								name="email"
+								children={(field) => <field.InputField label="Email" />}
+							/>
 						</FieldGroup>
 						<DialogFooter>
 							<Field className="ml-auto w-fit">

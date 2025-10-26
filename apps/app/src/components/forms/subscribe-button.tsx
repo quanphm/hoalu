@@ -1,7 +1,6 @@
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 
-import { SoundButton } from "../sound-button";
-import { useFormContext } from "./context";
+import { useFormContext } from "#app/components/forms/context.ts";
 
 export function SubscribeButton({
 	children,
@@ -9,13 +8,12 @@ export function SubscribeButton({
 	...props
 }: ButtonProps & { useSound?: boolean }) {
 	const form = useFormContext();
-	const ButtonComponent = useSound ? SoundButton : Button;
 
 	return (
 		<form.Subscribe>
-			<ButtonComponent type="submit" {...props}>
+			<Button type="submit" {...props}>
 				{children}
-			</ButtonComponent>
+			</Button>
 		</form.Subscribe>
 	);
 }

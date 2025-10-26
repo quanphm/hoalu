@@ -77,8 +77,9 @@ function RouteComponent() {
 
 					<form.AppForm>
 						<form.Form>
-							<form.AppField name="name">
-								{(field) => (
+							<form.AppField
+								name="name"
+								children={(field) => (
 									<field.InputField
 										label="Full name"
 										placeholder="John Doe"
@@ -86,9 +87,10 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
-							<form.AppField name="email">
-								{(field) => (
+							/>
+							<form.AppField
+								name="email"
+								children={(field) => (
 									<field.InputField
 										label="Email"
 										type="email"
@@ -96,9 +98,10 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
-							<form.AppField name="password">
-								{(field) => (
+							/>
+							<form.AppField
+								name="password"
+								children={(field) => (
 									<field.InputField
 										label="Password"
 										type="password"
@@ -107,7 +110,7 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
+							/>
 							<form.SubscribeButton className="w-full">Sign up</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>

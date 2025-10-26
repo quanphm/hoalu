@@ -69,8 +69,7 @@ export function CreateWorkspaceForm() {
 							form.setFieldValue("slug", slugify(value));
 						},
 					}}
-				>
-					{(field) => (
+					children={(field) => (
 						<field.InputField
 							label="Workspace name"
 							required
@@ -78,9 +77,10 @@ export function CreateWorkspaceForm() {
 							placeholder="Acme Inc."
 						/>
 					)}
-				</form.AppField>
-				<form.AppField name="slug">
-					{(field) => (
+				/>
+				<form.AppField
+					name="slug"
+					children={(field) => (
 						<field.InputWithPrefixField
 							label="Workspace URL"
 							placeholder="acme-inc-42"
@@ -90,19 +90,18 @@ export function CreateWorkspaceForm() {
 							autoComplete="off"
 						/>
 					)}
-				</form.AppField>
-				<form.AppField name="currency">
-					{(field) => (
+				/>
+				<form.AppField
+					name="currency"
+					children={(field) => (
 						<field.SelectWithSearchField
 							label="Workspace currency"
 							description="This will determine how monetary values appear in your dashboard"
 							options={AVAILABLE_CURRENCY_OPTIONS}
 						/>
 					)}
-				</form.AppField>
-				<form.SubscribeButton useSound className="ml-auto w-fit">
-					Create workspace
-				</form.SubscribeButton>
+				/>
+				<form.SubscribeButton className="ml-auto w-fit">Create workspace</form.SubscribeButton>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -160,8 +159,7 @@ export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 								form.setFieldValue("slug", slugify(value));
 							},
 						}}
-					>
-						{(field) => (
+						children={(field) => (
 							<field.InputField
 								label="Workspace name"
 								autoComplete="off"
@@ -169,9 +167,10 @@ export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 								disabled={!canEdit}
 							/>
 						)}
-					</form.AppField>
-					<form.AppField name="slug">
-						{(field) => (
+					/>
+					<form.AppField
+						name="slug"
+						children={(field) => (
 							<field.InputWithPrefixField
 								label="Workspace URL"
 								placeholder="acme-inc-42"
@@ -184,7 +183,7 @@ export function EditWorkspaceForm({ canEdit }: { canEdit: boolean }) {
 								disabled={!canEdit}
 							/>
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 				{canEdit && (
 					<Field orientation="horizontal" className="justify-end">
@@ -221,8 +220,9 @@ export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup>
-					<form.AppField name="currency">
-						{(field) => (
+					<form.AppField
+						name="currency"
+						children={(field) => (
 							<field.SelectWithSearchField
 								label="Default currency"
 								description="This will determine how monetary values appear in your dashboard"
@@ -230,7 +230,7 @@ export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 								disabled={!canEdit}
 							/>
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 				{canEdit && (
 					<Field orientation="horizontal" className="justify-end">
@@ -287,8 +287,7 @@ function DeleteWorkspaceForm() {
 								return value !== slug ? "Incorrect value" : undefined;
 							},
 						}}
-					>
-						{(field) => (
+						children={(field) => (
 							<field.InputField
 								name="confirm"
 								label={
@@ -300,7 +299,7 @@ function DeleteWorkspaceForm() {
 								autoComplete="off"
 							/>
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 				<Field>
 					<form.SubscribeButton variant="destructive">

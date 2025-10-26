@@ -180,29 +180,39 @@ function CreateExpenseForm() {
 			<form.Form>
 				<div className="grid grid-cols-12 gap-4">
 					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-7">
-						<form.AppField name="title">
-							{(field) => <field.InputField label="Title" required />}
-						</form.AppField>
-						<form.AppField name="transaction">
-							{(field) => <field.TransactionAmountField label="Amount" />}
-						</form.AppField>
+						<form.AppField
+							name="title"
+							children={(field) => <field.InputField label="Title" required />}
+						/>
+						<form.AppField
+							name="transaction"
+							children={(field) => <field.TransactionAmountField label="Amount" />}
+						/>
 						<div className="grid grid-cols-2 gap-4">
-							<form.AppField name="walletId">
-								{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
-							</form.AppField>
-							<form.AppField name="categoryId">
-								{(field) => <field.SelectCategoryField label="Category" />}
-							</form.AppField>
+							<form.AppField
+								name="walletId"
+								children={(field) => (
+									<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+								)}
+							/>
+							<form.AppField
+								name="categoryId"
+								children={(field) => <field.SelectCategoryField label="Category" />}
+							/>
 						</div>
-						<form.AppField name="description">
-							{(field) => <field.TiptapField label="Note" defaultValue={draft.description} />}
-						</form.AppField>
+						<form.AppField
+							name="description"
+							children={(field) => (
+								<field.TiptapField label="Note" defaultValue={draft.description} />
+							)}
+						/>
 					</FieldGroup>
 					<FieldGroup className="col-span-12 flex flex-col gap-2.5 md:col-span-5">
-						<form.AppField name="date">
-							{(field) => <field.DatepickerInputField label="Date" />}
-						</form.AppField>
-						<form.AppField name="date">{(field) => <field.DatepickerField />}</form.AppField>
+						<form.AppField
+							name="date"
+							children={(field) => <field.DatepickerInputField label="Date" />}
+						/>
+						<form.AppField name="date" children={(field) => <field.DatepickerField />} />
 					</FieldGroup>
 					<Accordion className="col-span-12 w-full">
 						<AccordionItem
@@ -213,16 +223,18 @@ function CreateExpenseForm() {
 							<AccordionContent>
 								<FieldGroup className="grid grid-cols-12 gap-4 px-4 py-4">
 									<div className="col-span-5 flex flex-col gap-4">
-										<form.AppField name="repeat">
-											{(field) => (
+										<form.AppField
+											name="repeat"
+											children={(field) => (
 												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 											)}
-										</form.AppField>
+										/>
 									</div>
 									<div className="col-span-7 flex flex-col gap-4">
-										<form.AppField name="attachments">
-											{(field) => <field.FilesField label="Attachments" />}
-										</form.AppField>
+										<form.AppField
+											name="attachments"
+											children={(field) => <field.FilesField label="Attachments" />}
+										/>
 									</div>
 								</FieldGroup>
 							</AccordionContent>
@@ -232,7 +244,7 @@ function CreateExpenseForm() {
 
 				<DialogFooter>
 					<Field orientation="horizontal" className="justify-end">
-						<form.SubscribeButton useSound>Create expense</form.SubscribeButton>
+						<form.SubscribeButton>Create expense</form.SubscribeButton>
 					</Field>
 				</DialogFooter>
 			</form.Form>
@@ -393,40 +405,52 @@ export function EditExpenseForm(props: { id: string }) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
-					<form.AppField name="date">
-						{(field) => <field.DatepickerInputField label="Date" />}
-					</form.AppField>
-					<form.AppField name="title">
-						{(field) => <field.InputField label="Title" required />}
-					</form.AppField>
-					<form.AppField name="transaction">
-						{(field) => <field.TransactionAmountField label="Amount" />}
-					</form.AppField>
+					<form.AppField
+						name="date"
+						children={(field) => <field.DatepickerInputField label="Date" />}
+					/>
+					<form.AppField
+						name="title"
+						children={(field) => <field.InputField label="Title" required />}
+					/>
+					<form.AppField
+						name="transaction"
+						children={(field) => <field.TransactionAmountField label="Amount" />}
+					/>
 					<div className="grid grid-cols-2 gap-4">
-						<form.AppField name="walletId">
-							{(field) => <field.SelectWithGroupsField label="Wallet" groups={walletGroups} />}
-						</form.AppField>
-						<form.AppField name="categoryId">
-							{(field) => <field.SelectCategoryField label="Category" />}
-						</form.AppField>
+						<form.AppField
+							name="walletId"
+							children={(field) => (
+								<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+							)}
+						/>
+						<form.AppField
+							name="categoryId"
+							children={(field) => <field.SelectCategoryField label="Category" />}
+						/>
 					</div>
-					<form.AppField name="description">
-						{(field) => (
+					<form.AppField
+						name="description"
+						children={(field) => (
 							<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
 						)}
-					</form.AppField>
-					<form.AppField name="repeat">
-						{(field) => <field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />}
-					</form.AppField>
-					<form.AppField name="attachments">
-						{(field) => <field.FilesField label="Attachments" />}
-					</form.AppField>
+					/>
+					<form.AppField
+						name="repeat"
+						children={(field) => (
+							<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+						)}
+					/>
+					<form.AppField
+						name="attachments"
+						children={(field) => <field.FilesField label="Attachments" />}
+					/>
 				</FieldGroup>
 				<Field
 					orientation="horizontal"
 					className="sticky bottom-0 w-full justify-end bg-card px-4 py-2"
 				>
-					<form.SubscribeButton useSound>Update</form.SubscribeButton>
+					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>
 			</form.Form>
 		</form.AppForm>

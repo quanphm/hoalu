@@ -24,7 +24,7 @@ import type {
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "#app/lib/schema.ts";
-import { playDropSound } from "#app/lib/sound-effects.ts";
+import { playConfirmSound, playDropSound } from "#app/lib/sound-effects.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -164,6 +164,7 @@ export function useRemoveMember() {
 			return data;
 		},
 		onSuccess: async () => {
+			playDropSound();
 			queryClient.removeQueries({ queryKey: workspaceKeys.all });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 		},
@@ -186,6 +187,7 @@ export function useCancelInvitation() {
 			return data;
 		},
 		onSuccess: () => {
+			playDropSound();
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
@@ -208,6 +210,7 @@ export function useCreateExpense() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Expense created");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
@@ -227,6 +230,7 @@ export function useEditExpense() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Expense updated");
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
@@ -334,6 +338,7 @@ export function useCreateWallet() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Wallet created");
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
@@ -353,6 +358,7 @@ export function useEditWallet() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Wallet updated");
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
@@ -397,6 +403,7 @@ export function useCreateCategory() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Category created");
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
@@ -416,6 +423,7 @@ export function useEditCategory() {
 			return result;
 		},
 		onSuccess: () => {
+			playConfirmSound();
 			toast.success("Category updated");
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},

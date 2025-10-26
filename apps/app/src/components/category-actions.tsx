@@ -84,15 +84,15 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup>
-					<form.AppField name="name">
-						{(field) => <field.InputWithEmojiPickerField label="Category" required />}
-					</form.AppField>
-					<form.AppField name="description">
-						{(field) => <field.InputField label="Description" autoComplete="off" />}
-					</form.AppField>
-					<form.AppField name="color">
-						{(field) => <field.ColorsField label="Color" />}
-					</form.AppField>
+					<form.AppField
+						name="name"
+						children={(field) => <field.InputWithEmojiPickerField label="Category" required />}
+					/>
+					<form.AppField
+						name="description"
+						children={(field) => <field.InputField label="Description" autoComplete="off" />}
+					/>
+					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
 				</FieldGroup>
 
 				<div className="my-2 flex items-center justify-center p-2">
@@ -106,7 +106,7 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 				</div>
 
 				<Field orientation="horizontal" className="justify-end">
-					<form.SubscribeButton useSound>Create category</form.SubscribeButton>
+					<form.SubscribeButton>Create category</form.SubscribeButton>
 				</Field>
 			</form.Form>
 		</form.AppForm>
@@ -153,15 +153,15 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup>
-					<form.AppField name="name">
-						{(field) => <field.InputWithEmojiPickerField label="Category" required />}
-					</form.AppField>
-					<form.AppField name="description">
-						{(field) => <field.InputField label="Description" autoComplete="off" />}
-					</form.AppField>
-					<form.AppField name="color">
-						{(field) => <field.ColorsField label="Color" />}
-					</form.AppField>
+					<form.AppField
+						name="name"
+						children={(field) => <field.InputWithEmojiPickerField label="Category" required />}
+					/>
+					<form.AppField
+						name="description"
+						children={(field) => <field.InputField label="Description" autoComplete="off" />}
+					/>
+					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
 				</FieldGroup>
 
 				<div className="my-2 flex items-center justify-center p-2">
@@ -183,7 +183,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					>
 						<Trash2Icon className="size-4" />
 					</Button>
-					<form.SubscribeButton useSound>Update</form.SubscribeButton>
+					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>
 			</form.Form>
 		</form.AppForm>
