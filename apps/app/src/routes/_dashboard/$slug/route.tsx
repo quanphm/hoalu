@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
+
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
 import {
@@ -28,7 +29,11 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 		]);
 	},
 	onError: (error) => {
-		toast.error(error.message);
+		toastManager.add({
+			title: "Uh oh! Something went wrong.",
+			description: error.message,
+			type: "error",
+		});
 		throw redirect({ to: "/" });
 	},
 	component: RouteComponent,

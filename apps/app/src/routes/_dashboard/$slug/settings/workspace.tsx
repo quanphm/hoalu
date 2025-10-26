@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { SettingCard } from "#app/components/cards.tsx";
@@ -48,14 +48,14 @@ function RouteComponent() {
 	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
 
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
-		role: member.role,
+		role: member.role as "member" | "admin" | "owner",
 		permission: {
 			organization: ["delete"],
 		},
 	});
 
 	const canUpdateWorkspace = authClient.workspace.checkRolePermission({
-		role: member.role,
+		role: member.role as "member" | "admin" | "owner",
 		permission: {
 			organization: ["update"],
 		},
@@ -75,8 +75,10 @@ function RouteComponent() {
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error("Update workspace picture failed", {
+				toastManager.add({
+					title: "Uh oh! Something went wrong.",
 					description: error.message,
+					type: "error",
 				});
 			}
 		}

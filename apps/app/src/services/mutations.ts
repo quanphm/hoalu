@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { createExpenseDialogAtom, draftExpenseAtom } from "#app/atoms/index.ts";
 import { apiClient } from "#app/lib/api-client.ts";
@@ -50,7 +50,10 @@ export function useCreateWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
-			toast.success("Workspace created");
+			toastManager.add({
+				title: "Workspace created.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			navigate({
 				to: "/$slug",
@@ -60,7 +63,11 @@ export function useCreateWorkspace() {
 			});
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -86,7 +93,10 @@ export function useEditWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
-			toast.success("Workspace updated");
+			toastManager.add({
+				title: "Workspace updated.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			if (slug !== data.slug) {
 				navigate({
@@ -118,7 +128,10 @@ export function useEditWorkspaceMetadata() {
 			return data;
 		},
 		onSuccess: () => {
-			toast.success("Workspace updated");
+			toastManager.add({
+				title: "Workspace updated.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 	});
@@ -137,13 +150,20 @@ export function useDeleteWorkspace() {
 			return data;
 		},
 		onSuccess: async (data) => {
-			toast.success("Workspace deleted");
+			toastManager.add({
+				title: "Workspace deleted.",
+				type: "success",
+			});
 			queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(data.slug) });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			navigate({ to: "/" });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -169,7 +189,11 @@ export function useRemoveMember() {
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -191,7 +215,11 @@ export function useCancelInvitation() {
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -211,11 +239,18 @@ export function useCreateExpense() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Expense created");
+			toastManager.add({
+				title: "Expense created.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -231,11 +266,18 @@ export function useEditExpense() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Expense updated");
+			toastManager.add({
+				title: "Expense updated.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -251,12 +293,19 @@ export function useDeleteExpense() {
 		},
 		onSuccess: (rs) => {
 			playDropSound();
-			toast.success("Expense deleted");
+			toastManager.add({
+				title: "Expense deleted.",
+				type: "success",
+			});
 			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -319,7 +368,11 @@ export function useUploadExpenseFiles() {
 			queryClient.invalidateQueries({ queryKey: expenseKeys.withId(slug, expenseId) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -339,11 +392,18 @@ export function useCreateWallet() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Wallet created");
+			toastManager.add({
+				title: "Wallet created.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -359,11 +419,18 @@ export function useEditWallet() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Wallet updated");
+			toastManager.add({
+				title: "Wallet updated.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -379,12 +446,19 @@ export function useDeleteWallet() {
 		},
 		onSuccess: async (rs) => {
 			playDropSound();
-			toast.success("Wallet deleted");
+			toastManager.add({
+				title: "Wallet deleted.",
+				type: "success",
+			});
 			queryClient.removeQueries({ queryKey: walletKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -404,11 +478,18 @@ export function useCreateCategory() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Category created");
+			toastManager.add({
+				title: "Category created.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -424,11 +505,18 @@ export function useEditCategory() {
 		},
 		onSuccess: () => {
 			playConfirmSound();
-			toast.success("Category updated");
+			toastManager.add({
+				title: "Category updated.",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -444,12 +532,19 @@ export function useDeleteCategory() {
 		},
 		onSuccess: async (rs) => {
 			playDropSound();
-			toast.success("Category deleted");
+			toastManager.add({
+				title: "Category deleted.",
+				type: "success",
+			});
 			queryClient.removeQueries({ queryKey: categoryKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;

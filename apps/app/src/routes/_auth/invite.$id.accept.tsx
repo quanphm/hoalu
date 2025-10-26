@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { WorkspaceLogo } from "#app/components/workspace.tsx";
@@ -37,7 +37,10 @@ function RouteComponent() {
 			return data;
 		},
 		onSuccess: (data) => {
-			toast.success(`Welcome to ${data.workspace.name}!`);
+			toastManager.add({
+				title: `Welcome to ${data.workspace.name}!`,
+				type: "success",
+			});
 			navigate({
 				to: "/$slug",
 				params: {
@@ -46,7 +49,11 @@ function RouteComponent() {
 			});
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 

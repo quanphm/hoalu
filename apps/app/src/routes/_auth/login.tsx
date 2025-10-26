@@ -1,7 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import * as z from "zod";
 
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { ContentCard } from "#app/components/cards.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -40,7 +40,11 @@ function RouteComponent() {
 				},
 				{
 					onError: (ctx) => {
-						toast.error(ctx.error.message);
+						toastManager.add({
+							title: "Uh oh! Something went wrong.",
+							description: ctx.error.message,
+							type: "error",
+						});
 					},
 				},
 			);

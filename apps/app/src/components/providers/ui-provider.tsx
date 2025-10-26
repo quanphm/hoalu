@@ -1,6 +1,6 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-import { Toaster } from "@hoalu/ui/sonner";
+import { ToastProvider } from "@hoalu/ui/toast";
 import { TooltipProvider } from "@hoalu/ui/tooltip";
 
 import { THEMES } from "#app/helpers/constants.ts";
@@ -14,8 +14,7 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
 			disableTransitionOnChange
 		>
 			<TooltipProvider>
-				{children}
-				<Toaster />
+				<ToastProvider>{children}</ToastProvider>
 			</TooltipProvider>
 		</NextThemesProvider>
 	);
