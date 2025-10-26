@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import * as z from "zod";
 
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { ContentCard } from "#app/components/cards.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -46,7 +46,11 @@ function RouteComponent() {
 				},
 				{
 					onError: (ctx) => {
-						toast.error(ctx.error.message);
+						toastManager.add({
+							title: "Uh oh! Something went wrong.",
+							description: ctx.error.message,
+							type: "error",
+						});
 					},
 					onSuccess: async () => {
 						await queryClient.refetchQueries({ queryKey: authKeys.session });
@@ -77,8 +81,9 @@ function RouteComponent() {
 
 					<form.AppForm>
 						<form.Form>
-							<form.AppField name="name">
-								{(field) => (
+							<form.AppField
+								name="name"
+								children={(field) => (
 									<field.InputField
 										label="Full name"
 										placeholder="John Doe"
@@ -86,9 +91,10 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
-							<form.AppField name="email">
-								{(field) => (
+							/>
+							<form.AppField
+								name="email"
+								children={(field) => (
 									<field.InputField
 										label="Email"
 										type="email"
@@ -96,9 +102,10 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
-							<form.AppField name="password">
-								{(field) => (
+							/>
+							<form.AppField
+								name="password"
+								children={(field) => (
 									<field.InputField
 										label="Password"
 										type="password"
@@ -107,7 +114,7 @@ function RouteComponent() {
 										required
 									/>
 								)}
-							</form.AppField>
+							/>
 							<form.SubscribeButton className="w-full">Sign up</form.SubscribeButton>
 						</form.Form>
 					</form.AppForm>

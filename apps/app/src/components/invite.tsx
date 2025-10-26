@@ -12,7 +12,7 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -41,13 +41,20 @@ export function InviteDialog() {
 				},
 				{
 					onSuccess: () => {
-						toast.success("Invitation sent");
+						toastManager.add({
+							title: "Invitation sent.",
+							type: "success",
+						});
 						queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(workspace.slug) });
 						form.reset();
 						setOpen(false);
 					},
 					onError: (ctx) => {
-						toast.error(ctx.error.message);
+						toastManager.add({
+							title: "Uh oh! Something went wrong.",
+							description: ctx.error.message,
+							type: "error",
+						});
 					},
 				},
 			);
@@ -67,9 +74,10 @@ export function InviteDialog() {
 				<form.AppForm>
 					<form.Form>
 						<FieldGroup>
-							<form.AppField name="email">
-								{(field) => <field.InputField label="Email" />}
-							</form.AppField>
+							<form.AppField
+								name="email"
+								children={(field) => <field.InputField label="Email" />}
+							/>
 						</FieldGroup>
 						<DialogFooter>
 							<Field className="ml-auto w-fit">

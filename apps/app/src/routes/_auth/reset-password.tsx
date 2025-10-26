@@ -3,7 +3,7 @@ import * as z from "zod";
 
 import { ArrowLeft } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -40,11 +40,18 @@ function ResetPasswordRequest() {
 				},
 				{
 					onError: (ctx) => {
-						toast.error(ctx.error.message);
+						toastManager.add({
+							title: "Uh oh! Something went wrong.",
+							description: ctx.error.message,
+							type: "error",
+						});
 					},
 					onSuccess: () => {
+						toastManager.add({
+							title: "Password request sent.",
+							type: "success",
+						});
 						form.reset();
-						toast.success("Password request sent");
 					},
 				},
 			);
@@ -102,10 +109,17 @@ function SetNewPassword(props: { token: string }) {
 				},
 				{
 					onError: (ctx) => {
-						toast.error(ctx.error.message);
+						toastManager.add({
+							title: "Uh oh! Something went wrong.",
+							description: ctx.error.message,
+							type: "error",
+						});
 					},
 					onSuccess: () => {
-						toast.success("Password updated");
+						toastManager.add({
+							title: "Password updated.",
+							type: "success",
+						});
 					},
 				},
 			);

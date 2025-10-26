@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
-		"zod": "^4.1.12",
+		"zod": "catalog:",
 		"hono-openapi": "^1.1.0",
 		"hono-pino": "^0.10.3",
 		"hono-rate-limiter": "^0.4.2",
@@ -21,6 +21,6 @@
 		"@hoalu/tsconfig": "workspace:*"
 	},
 	"peerDependencies": {
-		"hono": "^4.10.2"
+		"hono": "catalog:"
 	}
 }

@@ -54,14 +54,9 @@ export function PercentageChangeDisplay({
 
 	return (
 		<span
-			className={cn(
-				"inline-flex items-center gap-1 font-medium",
-				textClasses,
-				sizeClasses[size],
-				className,
-			)}
+			className={cn("inline-flex items-center gap-1 font-medium", sizeClasses[size], className)}
 		>
-			{Icon && <Icon className={iconSizeClasses[size]} />}
+			{Icon && <Icon className={cn(textClasses, iconSizeClasses[size])} />}
 			<Button
 				variant="link"
 				className={cn("p-0 decoration-dotted", textClasses)}

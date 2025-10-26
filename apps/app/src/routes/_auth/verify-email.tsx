@@ -41,8 +41,8 @@ function ErrorComponent(props: ErrorComponentProps) {
 		<ErrorCard
 			error={props.error.message}
 			footer={
-				<Button variant="outline" className="mx-auto w-fit" asChild>
-					<Link to="/">Go to Home</Link>
+				<Button variant="outline" className="mx-auto w-fit" render={<Link to="/" />}>
+					Go to Home
 				</Button>
 			}
 		/>

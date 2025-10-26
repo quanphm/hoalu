@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@hoalu/ui/button";
-import { toast } from "@hoalu/ui/sonner";
+import { toastManager } from "@hoalu/ui/toast";
 
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { WorkspaceLogo } from "#app/components/workspace.tsx";
@@ -37,7 +37,10 @@ function RouteComponent() {
 			return data;
 		},
 		onSuccess: (data) => {
-			toast.success(`Welcome to ${data.workspace.name}!`);
+			toastManager.add({
+				title: `Welcome to ${data.workspace.name}!`,
+				type: "success",
+			});
 			navigate({
 				to: "/$slug",
 				params: {
@@ -46,7 +49,11 @@ function RouteComponent() {
 			});
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 
@@ -55,8 +62,8 @@ function RouteComponent() {
 			<ErrorCard
 				error="We couldn't find this invite"
 				footer={
-					<Button variant="outline" className="w-full" asChild>
-						<Link to="/">Go back</Link>
+					<Button variant="outline" className="w-full" render={<Link to="/" />}>
+						Go back
 					</Button>
 				}
 			/>
@@ -95,15 +102,18 @@ function RouteComponent() {
 						</Button>
 					)}
 					{!user && (
-						<Button className="m-auto px-16" asChild>
-							<Link
-								to="/login"
-								search={{
-									redirect: location.href,
-								}}
-							>
-								Login
-							</Link>
+						<Button
+							className="m-auto px-16"
+							render={
+								<Link
+									to="/login"
+									search={{
+										redirect: location.href,
+									}}
+								/>
+							}
+						>
+							Login
 						</Button>
 					)}
 				</>

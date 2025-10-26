@@ -108,35 +108,41 @@ function CreateWalletForm() {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup>
-					<form.AppField name="name">
-						{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
-					</form.AppField>
-					<form.AppField name="description">
-						{(field) => (
+					<form.AppField
+						name="name"
+						children={(field) => (
+							<field.InputField label="Name" placeholder="My cash wallet" required />
+						)}
+					/>
+					<form.AppField
+						name="description"
+						children={(field) => (
 							<field.InputField
 								placeholder="Physical wallet"
 								label="Description"
 								autoComplete="off"
 							/>
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 				<FieldGroup className="grid grid-cols-2 gap-4">
-					<form.AppField name="type">
-						{(field) => <field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />}
-					</form.AppField>
-					<form.AppField name="currency">
-						{(field) => (
+					<form.AppField
+						name="type"
+						children={(field) => (
+							<field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />
+						)}
+					/>
+					<form.AppField
+						name="currency"
+						children={(field) => (
 							<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 
 				<DialogFooter>
 					<Field orientation="horizontal">
-						<form.SubscribeButton useSound className="ml-auto w-fit">
-							Create wallet
-						</form.SubscribeButton>
+						<form.SubscribeButton className="ml-auto w-fit">Create wallet</form.SubscribeButton>
 					</Field>
 				</DialogFooter>
 			</form.Form>
@@ -182,32 +188,39 @@ function EditWalletForm(props: { id: string }) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup>
-					<form.AppField name="name">
-						{(field) => <field.InputField label="Name" placeholder="My cash wallet" required />}
-					</form.AppField>
-					<form.AppField name="description">
-						{(field) => (
+					<form.AppField
+						name="name"
+						children={(field) => (
+							<field.InputField label="Name" placeholder="My cash wallet" required />
+						)}
+					/>
+					<form.AppField
+						name="description"
+						children={(field) => (
 							<field.InputField
 								placeholder="Physical wallet"
 								label="Description"
 								autoComplete="off"
 							/>
 						)}
-					</form.AppField>
+					/>
 					<div className="grid grid-cols-2 gap-4">
-						<form.AppField name="type">
-							{(field) => (
+						<form.AppField
+							name="type"
+							children={(field) => (
 								<field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />
 							)}
-						</form.AppField>
-						<form.AppField name="currency">
-							{(field) => (
+						/>
+						<form.AppField
+							name="currency"
+							children={(field) => (
 								<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
 							)}
-						</form.AppField>
+						/>
 					</div>
-					<form.AppField name="isActive">
-						{(field) => (
+					<form.AppField
+						name="isActive"
+						children={(field) => (
 							<field.SwitchField
 								label="In use"
 								description={
@@ -217,9 +230,10 @@ function EditWalletForm(props: { id: string }) {
 								}
 							/>
 						)}
-					</form.AppField>
-					<form.AppField name="ownerId">
-						{(field) => (
+					/>
+					<form.AppField
+						name="ownerId"
+						children={(field) => (
 							<field.SelectField
 								label="Owner"
 								description="Give wallet ownership to the others"
@@ -231,12 +245,10 @@ function EditWalletForm(props: { id: string }) {
 								})}
 							/>
 						)}
-					</form.AppField>
+					/>
 				</FieldGroup>
 				<Field orientation="horizontal">
-					<form.SubscribeButton useSound className="ml-auto w-fit">
-						Update
-					</form.SubscribeButton>
+					<form.SubscribeButton className="ml-auto w-fit">Update</form.SubscribeButton>
 				</Field>
 			</form.Form>
 		</form.AppForm>
