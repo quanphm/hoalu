@@ -2,11 +2,7 @@ import { Button, type ButtonProps } from "@hoalu/ui/button";
 
 import { useFormContext } from "#app/components/forms/context.ts";
 
-export function SubscribeButton({
-	children,
-	useSound = false,
-	...props
-}: ButtonProps & { useSound?: boolean }) {
+export function SubscribeButton({ children, ...props }: ButtonProps) {
 	const form = useFormContext();
 
 	return (
