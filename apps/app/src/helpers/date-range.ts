@@ -95,9 +95,7 @@ export function calculateComparisonDateRange(
 
 		if (isFullMonth) {
 			// Compare to previous month
-			const currentMonth = new Date(currentStart.getFullYear(), currentStart.getMonth(), 1);
-			const prevMonth = new Date(currentMonth);
-			prevMonth.setMonth(prevMonth.getMonth() - 1);
+			const prevMonth = new Date(currentStart.getFullYear(), currentStart.getMonth() - 1, 1);
 
 			previousStart = datetime.startOfDay(prevMonth);
 			previousEnd = datetime.endOfDay(
@@ -124,18 +122,20 @@ export function calculateComparisonDateRange(
 		previousEnd = datetime.endOfDay(prevWeekEnd);
 	} else if (predefinedRange === "mtd") {
 		// Previous month same period (1st to same day of month)
-		const prevMonth = new Date(currentEnd);
-		prevMonth.setMonth(prevMonth.getMonth() - 1);
-
-		// Handle cases where previous month has fewer days
 		const currentDay = currentEnd.getDate();
+
+		// Create previous month date safely by setting day to 1 first
+		const prevMonth = new Date(currentEnd.getFullYear(), currentEnd.getMonth() - 1, 1);
+
+		// Get the last day of the previous month
 		const prevMonthLastDay = new Date(
 			prevMonth.getFullYear(),
 			prevMonth.getMonth() + 1,
 			0,
 		).getDate();
-		const adjustedDay = Math.min(currentDay, prevMonthLastDay);
 
+		// Set to the same day, or last day of prev month if current day doesn't exist
+		const adjustedDay = Math.min(currentDay, prevMonthLastDay);
 		prevMonth.setDate(adjustedDay);
 
 		previousEnd = datetime.endOfDay(prevMonth);
