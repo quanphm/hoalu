@@ -6,9 +6,9 @@ export const rateLimiter = <T>(client: T) => {
 	return createMiddleware(async (c, next) => {
 		return honoRateLimiter({
 			windowMs: 10 * 60 * 1000, // 10 minutes
-			limit: 500,
+			limit: 10000,
 			standardHeaders: "draft-6",
-			keyGenerator: (c) => c.req.header("X-Forwared-For") ?? "",
+			keyGenerator: (c) => c.req.header("X-Forwarded-For") ?? "",
 			// @see https://www.npmjs.com/package/rate-limit-redis
 			store: new RedisStore({
 				// @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis

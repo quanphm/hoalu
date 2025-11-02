@@ -10,10 +10,10 @@
 	"dependencies": {
 		"@hoalu/common": "workspace:*",
 		"zod": "catalog:",
-		"hono-openapi": "^1.1.0",
+		"hono-openapi": "^1.1.1",
 		"hono-pino": "^0.10.3",
 		"hono-rate-limiter": "^0.4.2",
-		"pino": "^9.14.0",
+		"pino": "^10.1.0",
 		"pino-pretty": "^13.1.2",
 		"rate-limit-redis": "^4.2.3"
 	},

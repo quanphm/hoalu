@@ -1,5 +1,5 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
@@ -70,8 +70,22 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 
 function ExpenseList() {
 	const { data: expenses } = useExpenses();
-	const { onSelectExpense } = useSelectedExpense();
+	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
+
+	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
+		onSelectExpense(id);
+	});
+
+	const focusExpense = useEffectEvent((id: string) => {
+		requestAnimationFrame(() => {
+			const element = document.getElementById(id);
+			if (element) {
+				element.focus();
+				element.scrollIntoView({ block: "nearest", behavior: "smooth" });
+			}
+		});
+	});
 
 	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, ExpenseWithClientConvertedSchema[]>();
@@ -114,13 +128,39 @@ function ExpenseList() {
 		},
 	});
 
-	useHotkeys("esc", () => onSelectExpense(null), []);
+	useHotkeys("j", () => {
+		if (!selectedExpense.id) return;
+
+		const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
+		const nextIndex = currentIndex + 1;
+		const nextRowData = expenses[nextIndex];
+
+		if (!nextRowData) return;
+
+		onSelectExpenseEvent(nextRowData.id);
+		focusExpense(nextRowData.id);
+	}, [selectedExpense]);
+
+	useHotkeys("k", () => {
+		if (!selectedExpense.id) return;
+
+		const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
+		const prevIndex = currentIndex - 1;
+		const prevRowData = expenses[prevIndex];
+
+		if (!prevRowData) return;
+
+		onSelectExpenseEvent(prevRowData.id);
+		focusExpense(prevRowData.id);
+	}, [selectedExpense.id, expenses]);
+
+	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
 
 	useEffect(() => {
 		return () => {
-			onSelectExpense(null);
+			onSelectExpenseEvent(null);
 		};
-	}, [onSelectExpense]);
+	}, []);
 
 	if (expenses.length === 0) {
 		return <EmptyState />;
@@ -153,7 +193,7 @@ function ExpenseList() {
 								{expense.type === "group-header" ? (
 									<GroupHeader date={expense.date} expenses={expense.expenses} />
 								) : (
-									<ExpenseContent {...expense.expense} onClick={onSelectExpense} />
+									<ExpenseContent {...expense.expense} onClick={onSelectExpenseEvent} />
 								)}
 							</div>
 						);

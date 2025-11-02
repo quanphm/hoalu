@@ -115,22 +115,14 @@ export function useExpenses() {
 			[selectedCategoryIds, selectedWalletIds, selectedRepeat, deferredSearchKeywords, range],
 		),
 	});
-
-	const selectedExpense = useAtomValue(selectedExpenseAtom);
-	const currentIndex = data.findIndex((item) => item.id === selectedExpense.id);
-
-	return { data, currentIndex };
+	return { data };
 }
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
-	const onSelectExpense = useCallback(
-		(id: string | null) => {
-			setSelectedExpense({ id });
-		},
-		[setSelectedExpense],
-	);
-
+	const onSelectExpense = (id: string | null) => {
+		setSelectedExpense({ id });
+	};
 	return { expense, onSelectExpense };
 }
 

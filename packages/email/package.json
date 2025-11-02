@@ -15,7 +15,7 @@
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@react-email/preview-server": "4.3.0",
+		"@react-email/preview-server": "4.3.2",
 		"react-email": "^4.3.1"
 	},
 	"peerDependencies": {

@@ -10,7 +10,7 @@ export const extensions = [
 		heading: false,
 	}),
 	Placeholder.configure({
-		placeholder: "Write something...",
+		placeholder: "",
 	}),
 ];
 
