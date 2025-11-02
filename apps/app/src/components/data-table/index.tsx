@@ -277,7 +277,7 @@ export function DataTable<T extends TableRowData>({
 											}
 											className={cn(
 												cell.column.columnDef.meta?.cellClassName,
-												"group-has-[[data-group=grouped]]:bg-accent group-hover:group-has-[[data-group=grouped]]:bg-accent",
+												"group-has-data-[group=grouped]:bg-accent group-hover:group-has-data-[group=grouped]:bg-accent",
 											)}
 										>
 											{cell.getIsGrouped() ? (

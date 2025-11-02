@@ -77,6 +77,16 @@ function ExpenseList() {
 		onSelectExpense(id);
 	});
 
+	const focusExpense = useEffectEvent((id: string) => {
+		requestAnimationFrame(() => {
+			const element = document.getElementById(id);
+			if (element) {
+				element.focus();
+				element.scrollIntoView({ block: "nearest", behavior: "smooth" });
+			}
+		});
+	});
+
 	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, ExpenseWithClientConvertedSchema[]>();
 		expenses.forEach((expense) => {
@@ -129,6 +139,7 @@ function ExpenseList() {
 		if (!nextRowData) return;
 
 		onSelectExpenseEvent(nextRowData.id);
+		focusExpense(nextRowData.id);
 	}, [selectedExpense]);
 
 	useHotkeys("k", () => {
@@ -141,6 +152,7 @@ function ExpenseList() {
 		if (!prevRowData) return;
 
 		onSelectExpenseEvent(prevRowData.id);
+		focusExpense(prevRowData.id);
 	}, [selectedExpense.id, expenses]);
 
 	useHotkeys("esc", () => onSelectExpenseEvent(null), []);

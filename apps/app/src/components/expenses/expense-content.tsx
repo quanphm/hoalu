@@ -26,6 +26,15 @@ function ExpenseContent(props: ExpenseContentProps) {
 		}
 	};
 
+	const handleFocus: React.FocusEventHandler<HTMLDivElement> = () => {
+		props.onClick(props.id);
+	};
+
+	const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+		props.onClick(props.id);
+		event.currentTarget.focus();
+	};
+
 	return (
 		<div
 			id={props.id}
@@ -37,8 +46,9 @@ function ExpenseContent(props: ExpenseContentProps) {
 			data-slot="expense-item"
 			role="button"
 			tabIndex={0}
-			onClick={() => props.onClick(props.id)}
+			onClick={handleClick}
 			onKeyDown={handleKeyDown}
+			onFocus={handleFocus}
 		>
 			<div className="flex w-2/3 flex-col">
 				<p>{props.title}</p>
