@@ -128,11 +128,10 @@ function ExpenseList() {
 		},
 	});
 
-	const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
-
 	useHotkeys("j", () => {
 		if (!selectedExpense.id) return;
 
+		const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
 		const nextIndex = currentIndex + 1;
 		const nextRowData = expenses[nextIndex];
 
