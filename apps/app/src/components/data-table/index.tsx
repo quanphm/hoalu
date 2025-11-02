@@ -149,18 +149,18 @@ export function DataTable<T extends TableRowData>({
 			const nextIndex = currentIndex + 1;
 			const nextRowData = table.getCoreRowModel().rows[nextIndex];
 
-			if (nextRowData) {
-				const nextRowId = nextRowData.original.id;
-				setRowSelection({ [nextRowId]: true });
+			if (!nextRowData) return;
 
-				// side-effect
-				if (onRowClick) {
-					const selectedRows = data.find((row) => row.id === nextRowId);
-					if (!selectedRows) return;
-					startTransition(() => {
-						onRowClick([selectedRows]);
-					});
-				}
+			const nextRowId = nextRowData.original.id;
+			setRowSelection({ [nextRowId]: true });
+
+			// side-effect
+			if (onRowClick) {
+				const selectedRows = data.find((row) => row.id === nextRowId);
+				if (!selectedRows) return;
+				startTransition(() => {
+					onRowClick([selectedRows]);
+				});
 			}
 		},
 		[],
@@ -176,18 +176,18 @@ export function DataTable<T extends TableRowData>({
 			const prevIndex = currentIndex - 1;
 			const prevRowData = table.getCoreRowModel().rows[prevIndex];
 
-			if (prevRowData) {
-				const prevRowId = prevRowData.original.id;
-				setRowSelection({ [prevRowId]: true });
+			if (!prevRowData) return;
 
-				// side-effect
-				if (onRowClick) {
-					const selectedRows = data.find((row) => row.id === prevRowId);
-					if (!selectedRows) return;
-					startTransition(() => {
-						onRowClick([selectedRows]);
-					});
-				}
+			const prevRowId = prevRowData.original.id;
+			setRowSelection({ [prevRowId]: true });
+
+			// side-effect
+			if (onRowClick) {
+				const selectedRows = data.find((row) => row.id === prevRowId);
+				if (!selectedRows) return;
+				startTransition(() => {
+					onRowClick([selectedRows]);
+				});
 			}
 		},
 		[],

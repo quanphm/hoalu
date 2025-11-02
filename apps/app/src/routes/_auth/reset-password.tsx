@@ -75,6 +75,7 @@ function ResetPasswordRequest() {
 										type="email"
 										placeholder="your.email@hoalu.app"
 										required
+										autoFocus
 									/>
 								)}
 							/>
@@ -141,7 +142,7 @@ function SetNewPassword(props: { token: string }) {
 							<form.AppField
 								name="newPassword"
 								children={(field) => (
-									<field.InputField label="New password" type="password" required />
+									<field.InputField label="New password" type="password" required autoFocus />
 								)}
 							/>
 							<form.SubscribeButton className="w-full">Set new password</form.SubscribeButton>

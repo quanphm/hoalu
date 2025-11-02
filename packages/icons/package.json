@@ -10,7 +10,7 @@
 		"./tabler": "./src/tabler/index.tsx"
 	},
 	"dependencies": {
-		"lucide-react": "^0.546.0"
+		"lucide-react": "^0.552.0"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",

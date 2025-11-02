@@ -59,7 +59,8 @@
 			},
 			"suspicious": {
 				"noExplicitAny": "info",
-				"noArrayIndexKey": "warn"
+				"noArrayIndexKey": "warn",
+				"noDebugger": "warn"
 			},
 			"a11y": {
 				"noSvgWithoutTitle": "off",

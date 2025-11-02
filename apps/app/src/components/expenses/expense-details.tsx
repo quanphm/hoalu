@@ -11,8 +11,9 @@ import {
 import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 export function ExpenseDetails() {
-	const { data: expenses, currentIndex } = useExpenses();
+	const { data: expenses } = useExpenses();
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
+	const currentIndex = expenses.findIndex((item) => item.id === selectedRow.id);
 
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;
