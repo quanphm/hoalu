@@ -17,26 +17,28 @@ interface ExpenseContentProps extends ExpenseWithClientConvertedSchema {
 
 function ExpenseContent(props: ExpenseContentProps) {
 	const selectedRow = useAtomValue(selectedExpenseAtom);
-	const handleKeyUp: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
-		if (event.key === "Escape") {
-			props.onClick(null);
-		} else {
+
+	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+		if (event.code === "Enter" || event.code === "Space") {
+			event.preventDefault();
+			event.stopPropagation();
 			props.onClick(props.id);
 		}
 	};
 
 	return (
 		<div
-			data-slot="expense-item"
 			id={props.id}
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 py-2 pr-6 pl-3 text-sm outline-none ring-0 hover:bg-muted/60",
-				selectedRow.id === props.id && "bg-muted/60",
+				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 py-2 pr-6 pl-3 text-sm outline-none hover:bg-muted/60",
+				"focus-visible:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+				selectedRow.id === props.id && "bg-muted/80 ring-2 ring-ring ring-inset",
 			)}
+			data-slot="expense-item"
 			role="button"
 			tabIndex={0}
 			onClick={() => props.onClick(props.id)}
-			onKeyUp={handleKeyUp}
+			onKeyDown={handleKeyDown}
 		>
 			<div className="flex w-2/3 flex-col">
 				<p>{props.title}</p>

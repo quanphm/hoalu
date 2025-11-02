@@ -9,6 +9,7 @@ import {
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
 import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { HotKey } from "../hotkey";
 
 export function ExpenseDetails() {
 	const { data: expenses } = useExpenses();
@@ -43,21 +44,6 @@ export function ExpenseDetails() {
 									<Button
 										size="icon"
 										variant="outline"
-										onClick={handleGoUp}
-										disabled={currentIndex <= 0}
-									/>
-								}
-							>
-								<ChevronUpIcon className="size-4" />
-							</TooltipTrigger>
-							<TooltipContent side="bottom">Go Up</TooltipContent>
-						</Tooltip>
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
-										size="icon"
-										variant="outline"
 										onClick={handleGoDown}
 										disabled={currentIndex === -1 || currentIndex >= expenses.length - 1}
 									/>
@@ -65,7 +51,26 @@ export function ExpenseDetails() {
 							>
 								<ChevronDownIcon className="size-4" />
 							</TooltipTrigger>
-							<TooltipContent side="bottom">Go Down</TooltipContent>
+							<TooltipContent side="bottom">
+								Down <HotKey className="ml-2" label="J" />
+							</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={handleGoUp}
+										disabled={currentIndex <= 0}
+									/>
+								}
+							>
+								<ChevronUpIcon className="size-4" />
+							</TooltipTrigger>
+							<TooltipContent side="bottom">
+								Up <HotKey className="ml-2" label="K" />
+							</TooltipContent>
 						</Tooltip>
 					</div>
 					<div className="flex items-center justify-center gap-2">
