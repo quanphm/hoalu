@@ -6,7 +6,7 @@ import {
 } from "frimousse";
 import * as React from "react";
 
-import { SmilePlusIcon } from "@hoalu/icons/lucide";
+import { FacePlusIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 
@@ -16,7 +16,7 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger render={<Button variant="outline" size="icon" className="size-9" />}>
-				<SmilePlusIcon className="size-4" />
+				<FacePlusIcon className="size-4" />
 			</PopoverTrigger>
 			<PopoverContent className="w-fit overflow-auto p-0" align="start">
 				<Frimousse.Root

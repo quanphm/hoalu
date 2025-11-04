@@ -20,10 +20,7 @@ export class WalletRepository {
 			.innerJoin(schema.user, eq(schema.wallet.ownerId, schema.user.id))
 			.leftJoin(schema.expense, eq(schema.wallet.id, schema.expense.walletId))
 			.where(eq(schema.wallet.workspaceId, param.workspaceId))
-			.groupBy(schema.wallet.id, schema.user.id)
-			.orderBy((result) => {
-				return [desc(result.total), desc(result.name)];
-			});
+			.groupBy(schema.wallet.id, schema.user.id);
 
 		return queryData;
 	}

@@ -4,7 +4,8 @@ import { useRef } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
-import { CameraIcon, CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
+import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
+import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import {
 	Card,
@@ -177,7 +178,7 @@ export function ExpenseOverview() {
 				</CardDescription>
 				<CardAction>
 					<Button
-						variant="outline"
+						variant="secondary"
 						size="icon"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}

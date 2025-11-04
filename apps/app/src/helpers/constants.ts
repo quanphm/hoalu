@@ -49,22 +49,22 @@ export const AVAILABLE_REPEAT_OPTIONS: {
 
 export const KEYBOARD_SHORTCUTS = {
 	create_expense: {
-		label: "⇧ E",
+		label: `${kbdSymbols.SHIFT} E`,
 		hotkey: "shift+e",
 		enabled: true,
 	},
 	create_wallet: {
-		label: "⇧ W",
+		label: `${kbdSymbols.SHIFT} W`,
 		hotkey: "shift+w",
 		enabled: true,
 	},
 	create_category: {
-		label: "⇧ C",
+		label: `${kbdSymbols.SHIFT} C`,
 		hotkey: "shift+c",
 		enabled: true,
 	},
 	goto_home: {
-		label: "⇧ H",
+		label: `${kbdSymbols.SHIFT} H`,
 		hotkey: "shift+h",
 		enabled: true,
 	},
@@ -94,17 +94,17 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_preferences: {
-		label: "⇧ ⌘ P",
+		label: `${kbdSymbols.SHIFT} ⌘ P`,
 		hotkey: "shift+meta+p",
 		enabled: false,
 	},
 	goto_tokens: {
-		label: "⇧ ⌘ A",
+		label: `${kbdSymbols.SHIFT} ⌘ A`,
 		hotkey: "shift+meta+a",
 		enabled: false,
 	},
 	toggle_theme: {
-		label: "⇧ D",
+		label: `${kbdSymbols.SHIFT} D`,
 		hotkey: "shift+d",
 		enabled: true,
 	},

@@ -1,4 +1,4 @@
-import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
+import { and, count, eq, getTableColumns, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
 
@@ -16,10 +16,7 @@ export class CategoryRepository {
 			.from(schema.category)
 			.leftJoin(schema.expense, eq(schema.category.id, schema.expense.categoryId))
 			.where(eq(schema.category.workspaceId, param.workspaceId))
-			.groupBy(schema.category.id)
-			.orderBy((result) => {
-				return [desc(result.total), desc(result.name)];
-			});
+			.groupBy(schema.category.id);
 
 		return queryData;
 	}

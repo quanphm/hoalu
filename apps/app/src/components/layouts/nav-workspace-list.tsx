@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId } from "react";
 
-import { FolderIcon } from "@hoalu/icons/tabler";
+import { FolderIcon } from "@hoalu/icons/nucleo";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,

@@ -149,6 +149,9 @@ export const walletsQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: walletKeys.all(slug),
 		queryFn: () => apiClient.wallets.list(slug),
+		select: (data) => {
+			return data.sort((a, b) => b.total - a.total);
+		},
 	});
 };
 
@@ -168,6 +171,9 @@ export const categoriesQueryOptions = (slug: string) => {
 		placeholderData: [],
 		queryKey: categoryKeys.all(slug),
 		queryFn: () => apiClient.categories.list(slug),
+		select: (data) => {
+			return data.sort((a, b) => b.total - a.total);
+		},
 	});
 };
 

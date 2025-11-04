@@ -50,7 +50,11 @@ const pwaOptions: Partial<VitePWAOptions> = {
 export default defineConfig({
 	envPrefix: "PUBLIC_",
 	plugins: [
-		devtools(),
+		devtools({
+			enhancedLogs: {
+				enabled: false,
+			},
+		}),
 		tailwindcss(),
 		tanstackRouter({ target: "react", autoCodeSplitting: false }),
 		react(),
