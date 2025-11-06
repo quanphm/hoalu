@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { IsoDateSchema } from "#api/common/schema.ts";
+import { IsoDateSchema } from "@hoalu/common/schema";
 
 export const UploadUrlSchema = z.object({
 	id: z.uuidv7(),

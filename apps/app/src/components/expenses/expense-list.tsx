@@ -5,7 +5,8 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { datetime } from "@hoalu/common/datetime";
 
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { useExpenseLiveQuery } from "#app/hooks/use-db.ts";
+import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
 import { CurrencyValue } from "../currency-value";
@@ -69,7 +70,7 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 }
 
 function ExpenseList() {
-	const { data: expenses } = useExpenses();
+	const expenses = useExpenseLiveQuery();
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
 

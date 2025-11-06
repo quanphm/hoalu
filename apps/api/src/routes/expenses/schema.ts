@@ -1,13 +1,13 @@
 import * as z from "zod";
 
-import { monetary } from "#api/common/monetary.ts";
+import { monetary } from "@hoalu/common/monetary";
 import {
 	ColorSchema,
 	CurrencySchema,
 	IsoDateSchema,
 	RepeatSchema,
 	WalletTypeSchema,
-} from "#api/common/schema.ts";
+} from "@hoalu/common/schema";
 
 export const ExpenseSchema = z
 	.object({
@@ -15,7 +15,7 @@ export const ExpenseSchema = z
 		title: z.string(),
 		description: z.string().nullable(),
 		amount: z.coerce.number(),
-		currency: z.string(),
+		currency: CurrencySchema,
 		repeat: RepeatSchema,
 		date: IsoDateSchema,
 		createdAt: IsoDateSchema,
@@ -30,7 +30,7 @@ export const ExpenseSchema = z
 			id: z.uuidv7(),
 			name: z.string(),
 			description: z.string().nullable(),
-			currency: z.string(),
+			currency: CurrencySchema,
 			type: WalletTypeSchema,
 			isActive: z.boolean(),
 		}),
@@ -74,7 +74,7 @@ export const LiteExpenseSchema = z
 		title: z.string(),
 		description: z.string().nullable(),
 		amount: z.coerce.number(),
-		currency: z.string(),
+		currency: CurrencySchema,
 		repeat: RepeatSchema,
 		date: IsoDateSchema,
 	})

@@ -6,7 +6,7 @@ import {
 	PG_ENUM_REPEAT,
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
-} from "@hoalu/common/enums";
+} from "#common/enums.ts";
 
 export const ColorSchema = z.enum(PG_ENUM_COLOR);
 export const TaskStatusSchema = z.enum(PG_ENUM_TASK_STATUS);

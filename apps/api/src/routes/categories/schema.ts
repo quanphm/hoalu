@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { ColorSchema } from "#api/common/schema.ts";
+import { ColorSchema } from "@hoalu/common/schema";
 
 export const CategorySchema = z.object({
 	id: z.uuidv7(),
