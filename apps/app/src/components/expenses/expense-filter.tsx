@@ -35,7 +35,7 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">
+				<div className="flex items-center justify-between px-1 text-sm leading-loose">
 					<span>Date Range</span>
 					<DateRangeClearButton />
 				</div>
@@ -43,7 +43,7 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">
+				<div className="flex items-center justify-between px-1 text-sm leading-loose">
 					<span>Categories</span>
 					<CategoriesClearButton />
 				</div>
@@ -62,7 +62,7 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">
+				<div className="flex items-center justify-between px-1 text-sm leading-loose">
 					<span>Wallets</span>
 					<WalletsClearButton />
 				</div>
@@ -82,7 +82,7 @@ export function ExpenseFilter() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between px-1 text-sm">
+				<div className="flex items-center justify-between px-1 text-sm leading-loose">
 					<span>Repeat</span>
 					<RepeatClearButton />
 				</div>
@@ -270,12 +270,7 @@ function ScrollAreaWithCondition({
 
 function ClearButton({ onClick }: { onClick: React.MouseEventHandler<HTMLButtonElement> }) {
 	return (
-		<Button
-			variant="ghost"
-			className="h-auto p-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
-			size="sm"
-			onClick={onClick}
-		>
+		<Button variant="outline" size="sm" className="text-muted-foreground text-xs" onClick={onClick}>
 			clear
 		</Button>
 	);

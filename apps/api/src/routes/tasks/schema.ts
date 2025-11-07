@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "#api/common/schema.ts";
+import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "@hoalu/common/schema";
 
 export const TaskSchema = z.object({
 	id: z.uuidv7(),

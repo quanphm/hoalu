@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { CurrencySchema, IsoDateSchema } from "#api/common/schema.ts";
+import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 
 export const ExchangeRateSchema = z.object({
 	date: IsoDateSchema,

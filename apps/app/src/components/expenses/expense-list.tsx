@@ -4,11 +4,12 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
 
+import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { useExpenseLiveQuery } from "#app/hooks/use-db.ts";
+import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
-import { CurrencyValue } from "../currency-value";
 
 type ExpenseItem = {
 	type: "expense";
@@ -69,13 +70,9 @@ function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] })
 }
 
 function ExpenseList() {
-	const { data: expenses } = useExpenses();
+	const expenses = useExpenseLiveQuery();
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
-
-	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
-		onSelectExpense(id);
-	});
 
 	const focusExpense = useEffectEvent((id: string) => {
 		requestAnimationFrame(() => {
@@ -128,6 +125,10 @@ function ExpenseList() {
 		},
 	});
 
+	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
+		onSelectExpense(id);
+	});
+
 	useHotkeys("j", () => {
 		if (!selectedExpense.id) return;
 
@@ -154,13 +155,13 @@ function ExpenseList() {
 		focusExpense(prevRowData.id);
 	}, [selectedExpense.id, expenses]);
 
-	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
-
 	useEffect(() => {
 		return () => {
 			onSelectExpenseEvent(null);
 		};
 	}, []);
+
+	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
 
 	if (expenses.length === 0) {
 		return <EmptyState />;
@@ -193,7 +194,7 @@ function ExpenseList() {
 								{expense.type === "group-header" ? (
 									<GroupHeader date={expense.date} expenses={expense.expenses} />
 								) : (
-									<ExpenseContent {...expense.expense} onClick={onSelectExpenseEvent} />
+									<ExpenseContent {...expense.expense} onClick={onSelectExpense} />
 								)}
 							</div>
 						);

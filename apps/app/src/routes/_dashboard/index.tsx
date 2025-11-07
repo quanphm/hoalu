@@ -45,7 +45,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<PageContent>
+		<PageContent className="gap-12">
 			<Greeting />
 			<Section>
 				<SectionHeader>

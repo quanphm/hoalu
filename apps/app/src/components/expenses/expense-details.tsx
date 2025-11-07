@@ -8,11 +8,12 @@ import {
 	DuplicateExpense,
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
-import { useExpenses, useSelectedExpense } from "#app/hooks/use-expenses.ts";
-import { HotKey } from "../hotkey";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { useExpenseLiveQuery } from "#app/hooks/use-db.ts";
+import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 export function ExpenseDetails() {
-	const { data: expenses } = useExpenses();
+	const expenses = useExpenseLiveQuery();
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
 	const currentIndex = expenses.findIndex((item) => item.id === selectedRow.id);
 

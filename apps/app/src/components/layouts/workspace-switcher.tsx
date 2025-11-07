@@ -2,8 +2,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
-import { CheckIcon, ChevronsUpDownIcon, ExternalLinkIcon, PlusIcon } from "@hoalu/icons/lucide";
-import { HomeIcon } from "@hoalu/icons/tabler";
+import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { HouseIcon, LinkIcon } from "@hoalu/icons/nucleo";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -54,7 +54,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="bottom" sideOffset={4}>
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
-					<HomeIcon />
+					<HouseIcon />
 					Home
 					<HotKey {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
@@ -62,7 +62,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 					className="gap-2 p-2"
 					render={
 						<a href="https://hoalu.app" target="_blank" rel="noreferrer">
-							<ExternalLinkIcon />
+							<LinkIcon />
 							<span>
 								Website <span className="text-muted-foreground text-xs">hoalu.app</span>
 							</span>

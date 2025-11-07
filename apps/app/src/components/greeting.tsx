@@ -28,13 +28,13 @@ export function Greeting() {
 
 	const icon =
 		currentHours > 4 && currentHours < 12 ? (
-			<ClearDayIcon className="inline size-8" />
+			<ClearDayIcon className="-ml-2 inline size-10" />
 		) : currentHours < 18 ? (
-			<PartlyCloudyDayIcon className="inline size-8" />
+			<PartlyCloudyDayIcon className="-ml-2 inline size-10" />
 		) : currentHours < 21 ? (
-			<PartlyCloudyNightIcon className="inline size-8" />
+			<PartlyCloudyNightIcon className="-ml-2 inline size-10" />
 		) : (
-			<StarryNightIcon className="inline size-8" />
+			<StarryNightIcon className="-ml-2 inline size-10" />
 		);
 
 	const message =
@@ -50,11 +50,11 @@ export function Greeting() {
 
 	return (
 		<div className="space-y-2">
-			<p className="font-semibold text-xl leading-none">
-				{message}, {user?.name}
-			</p>
 			<p className="text-base text-muted-foreground tracking-wide">
 				{icon} {datetime.format(today, "EEEE, d MMM HH:mm")}
+			</p>
+			<p className="font-semibold text-xl leading-none">
+				{message}, {user?.name}
 			</p>
 		</div>
 	);

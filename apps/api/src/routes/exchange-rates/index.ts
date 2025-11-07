@@ -3,10 +3,10 @@ import { describeRoute } from "hono-openapi";
 import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
+import { CurrencySchema } from "@hoalu/common/schema";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 
-import { CurrencySchema } from "#api/common/schema.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
 import { ExchangeRateSchema } from "#api/routes/exchange-rates/schema.ts";
