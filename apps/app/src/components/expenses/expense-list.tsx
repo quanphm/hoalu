@@ -4,12 +4,12 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
 
+import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
 import { useExpenseLiveQuery } from "#app/hooks/use-db.ts";
 import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
-import { CurrencyValue } from "../currency-value";
 
 type ExpenseItem = {
 	type: "expense";
