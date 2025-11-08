@@ -6,7 +6,7 @@ This file provides guidance to AI coding assistants when working with code in th
 
 **Hoalu** is a modern expense tracking and workspace management application built as a monorepo using Bun and Turbo. It features real-time synchronization, multi-workspace support, offline-first architecture, and a comprehensive API.
 
-**Version**: 0.14.0
+**Version**: 0.15.0
 **Package Manager**: Bun
 **Build System**: Turborepo
 
