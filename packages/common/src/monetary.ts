@@ -1,6 +1,6 @@
 import { zeroDecimalCurrencies } from "@hoalu/countries";
 
-function toRealAmount(amount: number, unit: string): number {
+function toRealAmount(amount: number, unit: string) {
 	const isZeroDecimal = zeroDecimalCurrencies.find((c) => c === unit);
 	if (isZeroDecimal) {
 		return amount;
@@ -9,7 +9,7 @@ function toRealAmount(amount: number, unit: string): number {
 	return amount * 100;
 }
 
-function fromRealAmount(amount: number, unit: string): number {
+function fromRealAmount(amount: number, unit: string) {
 	const isZeroDecimal = zeroDecimalCurrencies.find((c) => c === unit);
 	if (isZeroDecimal) {
 		return amount;

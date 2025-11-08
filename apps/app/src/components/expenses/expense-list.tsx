@@ -6,21 +6,20 @@ import { datetime } from "@hoalu/common/datetime";
 
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { useExpenseLiveQuery } from "#app/hooks/use-db.ts";
+import { useExpenseLiveQuery, type ExpenseClient } from "#app/hooks/use-db.ts";
 import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
 
 type ExpenseItem = {
 	type: "expense";
-	expense: ExpenseWithClientConvertedSchema;
+	expense: ExpenseClient;
 	date: string;
 };
 
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	expenses: ExpenseWithClientConvertedSchema[];
+	expenses: ExpenseClient[];
 };
 
 type VirtualItem = ExpenseItem | GroupHeaderItem;
@@ -49,7 +48,7 @@ function EmptyState() {
 	);
 }
 
-function TotalExpenseByDate(props: { data: ExpenseWithClientConvertedSchema[] }) {
+function TotalExpenseByDate(props: { data: ExpenseClient[] }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -85,7 +84,7 @@ function ExpenseList() {
 	});
 
 	const flattenExpenses = useMemo(() => {
-		const grouped = new Map<string, ExpenseWithClientConvertedSchema[]>();
+		const grouped = new Map<string, ExpenseClient[]>();
 		expenses.forEach((expense) => {
 			const dateKey = expense.date;
 			const existing = grouped.get(dateKey);

@@ -1,8 +1,8 @@
+import type { ExpenseClient } from "#app/hooks/use-db.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
 import { CurrencyValue } from "./currency-value";
 
-export function TransactionAmount(props: { data: ExpenseWithClientConvertedSchema }) {
+export function TransactionAmount(props: { data: ExpenseClient }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();

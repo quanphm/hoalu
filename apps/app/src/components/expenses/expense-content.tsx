@@ -8,10 +8,10 @@ import { selectedExpenseAtom } from "#app/atoms/index.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
-import type { ExpenseWithClientConvertedSchema } from "#app/lib/schema.ts";
+import type { ExpenseClient } from "#app/hooks/use-db.ts";
 import { WalletBadge } from "../wallets/wallet-badge";
 
-interface ExpenseContentProps extends ExpenseWithClientConvertedSchema {
+interface ExpenseContentProps extends ExpenseClient {
 	onClick(id: string | null): void;
 }
 

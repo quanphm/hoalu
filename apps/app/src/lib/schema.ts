@@ -1,30 +1,9 @@
 import type { InferRequestType, InferResponseType } from "hono/client";
 import * as z from "zod";
 
-import {
-	PG_ENUM_COLOR,
-	PG_ENUM_PRIORITY,
-	PG_ENUM_REPEAT,
-	PG_ENUM_TASK_STATUS,
-	PG_ENUM_WALLET_TYPE,
-} from "@hoalu/common/enums";
+import { ColorSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
 import type { honoClient } from "#app/lib/api-client.ts";
-
-/**
- * enums
- */
-export const TaskStatusSchema = z.enum(PG_ENUM_TASK_STATUS);
-export const PrioritySchema = z.enum(PG_ENUM_PRIORITY);
-
-export const RepeatSchema = z.enum(PG_ENUM_REPEAT);
-export type RepeatSchema = z.infer<typeof RepeatSchema>;
-
-export const WalletTypeSchema = z.enum(PG_ENUM_WALLET_TYPE);
-export type WalletTypeSchema = z.infer<typeof WalletTypeSchema>;
-
-export const ColorSchema = z.enum(PG_ENUM_COLOR);
-export type ColorSchema = z.infer<typeof ColorSchema>;
 
 /**
  * workspaces

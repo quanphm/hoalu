@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { useDokiShape } from "@hoalu/doki";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 
@@ -11,10 +10,8 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { TasksTable } from "#app/components/tasks-table.tsx";
-import { taskKeys } from "#app/lib/query-key-factory.ts";
 import type { TaskSchema } from "#app/lib/schema.ts";
 import { tasksQueryOptions } from "#app/services/query-options.ts";
-import { tasksShapeOptions, withWorkspace } from "#app/services/shape-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
@@ -24,11 +21,7 @@ export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 });
 
 function RouteComponent() {
-	const { slug } = Route.useParams();
-	const { data } = useDokiShape<TaskSchema>({
-		syncKey: taskKeys.all(slug),
-		optionsFn: () => withWorkspace(tasksShapeOptions),
-	});
+	const data: TaskSchema[] = [];
 
 	return (
 		<Section>
