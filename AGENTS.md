@@ -41,7 +41,6 @@ Hoalu is a modern expense tracking and workspace management application built as
 - `@hoalu/auth` - Better Auth plugins and workspace management
 - `@hoalu/common` - Shared utilities, enums, and validation
 - `@hoalu/countries` - Country, currency, and language data
-- `@hoalu/doki` - TanStack Query + Electric SQL integration hooks
 - `@hoalu/email` - Email templates with React Email
 - `@hoalu/furnace` - Hono server utilities and middleware
 - `@hoalu/icons` - Icon library (Lucide, Meteocons, Nucleo, Tabler)

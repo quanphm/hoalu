@@ -28,7 +28,6 @@
 | [@hoalu/common](packages/common)       | Reusable functions & constants accross workspaces                                                    |
 | [@hoalu/countries](packages/countries) | Countries, Languages & Continents data - [annexare/Countries](https://github.com/annexare/Countries) |
 | [@hoalu/auth](packages/auth)           | Better Auth plugins & utils                                                                          |
-| [@hoalu/doki](packages/doki)           | Tanstack Query + Electric SQL hooks                                                                  |
 | [@hoalu/furnace](packages/furnace)     | Hono handlers & utils for `@hoalu/api`                                                               |
 | [@hoalu/email](packages/email)         | Email templates                                                                                      |
 | [@hoalu/icons](packages/icons)         | Icon library                                                                                         |
