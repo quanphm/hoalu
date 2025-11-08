@@ -1,6 +1,6 @@
-import type { Color } from "@hoalu/common/schema";
+import type { ColorSchema } from "@hoalu/common/schema";
 
-export const DEFAULT_CATEGORIES: { name: string; description: string; color: Color }[] = [
+export const DEFAULT_CATEGORIES: { name: string; description: string; color: ColorSchema }[] = [
 	{
 		name: "🍲 Food & Drink",
 		color: "yellow",

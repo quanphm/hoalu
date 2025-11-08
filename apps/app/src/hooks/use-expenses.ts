@@ -1,19 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useDeferredValue } from "react";
 
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/common/datetime";
 
-import {
-	customDateRangeAtom,
-	expenseCategoryFilterAtom,
-	expenseRepeatFilterAtom,
-	expenseWalletFilterAtom,
-	searchKeywordsAtom,
-	selectDateRangeAtom,
-	selectedExpenseAtom,
-} from "#app/atoms/index.ts";
+import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -21,102 +11,9 @@ import {
 	getComparisonPeriodText,
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
-import type { ExpenseWithClientConvertedSchema, RepeatSchema } from "#app/lib/schema.ts";
-import {
-	categoriesQueryOptions,
-	expensesQueryOptions,
-	walletsQueryOptions,
-} from "#app/services/query-options.ts";
+import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { useCategoryLiveQuery, useExpenseLiveQuery } from "./use-db";
 import { useWorkspace } from "./use-workspace";
-
-const routeApi = getRouteApi("/_dashboard/$slug/expenses");
-
-const select = (
-	data: ExpenseWithClientConvertedSchema[],
-	condition: {
-		selectedCategoryIds: string[];
-		selectedWalletIds: string[];
-		selectedRepeat: RepeatSchema[];
-		searchKeywords: string;
-		range:
-			| {
-					from: Date;
-					to: Date;
-			  }
-			| undefined;
-	},
-) => {
-	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, searchKeywords, range } =
-		condition;
-	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
-	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
-
-	return data.filter((expense) => {
-		// Date range filter
-		if (fromDate && toDate) {
-			if (expense.date < fromDate || expense.date > toDate) {
-				return false;
-			}
-		}
-		// Category filter
-		if (selectedCategoryIds.length > 0) {
-			const categoryId = expense.category?.id;
-			if (!categoryId || !selectedCategoryIds.includes(categoryId)) {
-				return false;
-			}
-		}
-		// Wallet filter
-		if (selectedWalletIds.length > 0) {
-			const walletId = expense.wallet?.id;
-			if (!walletId || !selectedWalletIds.includes(walletId)) {
-				return false;
-			}
-		}
-		// Repeat filter
-		if (selectedRepeat.length > 0) {
-			if (!selectedRepeat.includes(expense.repeat)) {
-				return false;
-			}
-		}
-		// Search by keywords
-		if (searchKeywords) {
-			return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
-		}
-
-		return true;
-	});
-};
-
-export function useExpenses() {
-	const { date: searchByDate } = routeApi.useSearch();
-	const { slug } = useWorkspace();
-
-	const range = toFromToDateObject(searchByDate);
-	const searchKeywords = useAtomValue(searchKeywordsAtom);
-	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
-	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
-	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
-
-	// experiment
-	const deferredSearchKeywords = useDeferredValue(searchKeywords);
-
-	const { data } = useSuspenseQuery({
-		...expensesQueryOptions(slug),
-		select: useCallback(
-			(expenses: ExpenseWithClientConvertedSchema[]) => {
-				return select(expenses, {
-					selectedCategoryIds,
-					selectedWalletIds,
-					selectedRepeat,
-					searchKeywords: deferredSearchKeywords,
-					range,
-				});
-			},
-			[selectedCategoryIds, selectedWalletIds, selectedRepeat, deferredSearchKeywords, range],
-		),
-	});
-	return { data };
-}
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
@@ -131,9 +28,10 @@ export function useExpenseStats() {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const expenses = useExpenseLiveQuery();
+	const categories = useCategoryLiveQuery();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 

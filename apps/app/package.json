@@ -19,7 +19,6 @@
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
 		"@hoalu/countries": "workspace:*",
-		"@hoalu/doki": "workspace:*",
 		"@hoalu/icons": "workspace:*",
 		"@hoalu/ui": "workspace:*",
 		"@tanstack/devtools-vite": "^0.3.11",

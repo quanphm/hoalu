@@ -1,0 +1,35 @@
+import { electricCollectionOptions } from "@tanstack/electric-db-collection";
+import { createCollection } from "@tanstack/react-db";
+import * as z from "zod";
+
+import { CurrencySchema, WalletTypeSchema } from "@hoalu/common/schema";
+
+const SelectWalletSchema = z.object({
+	id: z.uuidv7(),
+	name: z.string(),
+	description: z.string().nullable(),
+	currency: CurrencySchema,
+	type: WalletTypeSchema,
+	is_active: z.boolean(),
+});
+
+export const walletCollection = (id: string) => {
+	return createCollection(
+		electricCollectionOptions({
+			getKey: (item) => item.id,
+			schema: SelectWalletSchema,
+			shapeOptions: {
+				url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
+				params: {
+					table: "wallet",
+					where: "workspace_id = $1",
+					params: [id],
+				},
+				// @ts-expect-error
+				fetchClient: (req: RequestInfo, init: RequestInit) => {
+					return fetch(req, { ...init, credentials: "include" });
+				},
+			},
+		}),
+	);
+};

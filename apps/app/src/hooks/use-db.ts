@@ -1,57 +1,13 @@
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import * as z from "zod";
+import { count, eq, useLiveQuery } from "@tanstack/react-db";
+import { useMemo } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
-import {
-	ColorSchema,
-	CurrencySchema,
-	IsoDateSchema,
-	RepeatSchema,
-	WalletTypeSchema,
-} from "@hoalu/common/schema";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import {
-	categoryCollection,
-	expenseCollection,
-	walletCollection,
-} from "#app/services/collections.ts";
-
-const ExpenseSchema = z
-	.object({
-		id: z.uuidv7(),
-		title: z.string(),
-		description: z.string().nullable(),
-		amount: z.coerce.number(),
-		currency: CurrencySchema,
-		repeat: RepeatSchema,
-		date: IsoDateSchema,
-		createdAt: IsoDateSchema,
-		wallet: z.object({
-			id: z.uuidv7(),
-			name: z.string(),
-			description: z.string().nullable(),
-			currency: CurrencySchema,
-			type: WalletTypeSchema,
-			isActive: z.boolean(),
-		}),
-		category: z
-			.object({
-				id: z.uuidv7(),
-				name: z.string(),
-				description: z.string().nullable(),
-				color: ColorSchema,
-			})
-			.nullable(),
-	})
-	.transform((val) => ({
-		...val,
-		date: datetime.format(val.date, "yyyy-MM-dd"),
-		amount: monetary.fromRealAmount(val.amount, val.currency),
-		realAmount: val.amount,
-		convertedAmount: val.amount,
-	}));
+import { categoryCollection } from "#app/lib/collections/category.ts";
+import { expenseCollection } from "#app/lib/collections/expense.ts";
+import { walletCollection } from "#app/lib/collections/wallet.ts";
 
 export function useExpenseLiveQuery() {
 	const workspace = useWorkspace();
@@ -68,14 +24,7 @@ export function useExpenseLiveQuery() {
 			.orderBy(({ expense }) => expense.date, "desc")
 			.orderBy(({ expense }) => expense.amount, "desc")
 			.select(({ expense, wallet, category }) => ({
-				id: expense.id,
-				title: expense.title,
-				description: expense.description,
-				date: expense.date,
-				amount: expense.amount,
-				currency: expense.currency,
-				repeat: expense.repeat,
-				createdAt: expense.created_at,
+				...expense,
 				category: {
 					id: category?.id,
 					name: category?.name,
@@ -93,11 +42,66 @@ export function useExpenseLiveQuery() {
 			})),
 	);
 
-	const parsed = z.array(ExpenseSchema).safeParse(expenses);
+	const transformedExpenses = useMemo(() => {
+		if (!expenses) return [];
 
-	if (parsed.error) {
-		return [];
-	}
+		return expenses.map((expense) => ({
+			...expense,
+			date: datetime.format(expense.date, "yyyy-MM-dd"),
+			amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
+			realAmount: Number(expense.amount),
+			convertedAmount: Number(expense.amount),
+		}));
+	}, [expenses]);
 
-	return parsed.data;
+	return transformedExpenses;
+}
+
+export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>;
+export type ExpenseClient = ExpensesClient[number];
+
+export function useCategoryLiveQuery() {
+	const workspace = useWorkspace();
+	const { data: categories } = useLiveQuery(
+		(q) => {
+			return q
+				.from({ category: categoryCollection(workspace.id) })
+				.leftJoin({ expense: expenseCollection(workspace.id) }, ({ category, expense }) =>
+					eq(category.id, expense.category_id),
+				)
+				.groupBy(({ category }) => [
+					category.id,
+					category.name,
+					category.description,
+					category.color,
+				])
+				.select(({ category }) => ({
+					id: category.id,
+					name: category.name,
+					description: category.description,
+					color: category.color,
+					total: count(category.id),
+				}));
+		},
+		[workspace.id],
+	);
+
+	return categories;
+}
+
+export function useWalletLiveQuery() {
+	const workspace = useWorkspace();
+	const { data: wallets } = useLiveQuery(
+		(q) => {
+			return q
+				.from({ wallet: walletCollection(workspace.id) })
+				.innerJoin({ expense: expenseCollection(workspace.id) }, ({ wallet, expense }) =>
+					eq(wallet.id, expense.wallet_id),
+				)
+				.select(({ wallet }) => wallet);
+		},
+		[workspace.id],
+	);
+
+	return wallets;
 }
