@@ -37,12 +37,25 @@
 
 ## Getting Started
 
-- Install [Bun](https://bun.sh/)
-
-```sh
+```bash
+# Install Bun if not already installed
 curl -fsSL https://bun.sh/install | bash
-```
 
+# Install Caddy if not already installed (macOS)
+brew install caddy
+
+# Install dependencies
+bun install
+
+# Start local infrastructure (PostgreSQL, Redis, Electric)
+bun run docker:up
+
+# Start Caddy reverse proxy (in project root)
+caddy run
+
+# Start development (API + App)
+bun dev
+```
 - Run `bun install` & `bun dev`
 
 ## Deployment

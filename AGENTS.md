@@ -13,6 +13,7 @@ This file provides guidance to AI coding assistants when working with code in th
 ## Tech Stack
 
 ### Frontend (@hoalu/app)
+
 - **Framework**: React 19 with React DOM 19
 - **Routing**: TanStack Router v1.134+ with file-based routing
 - **Data Fetching**: TanStack Query v5.90+ with TanStack React DB v0.1+
@@ -36,6 +37,7 @@ This file provides guidance to AI coding assistants when working with code in th
 - **Hotkeys**: react-hotkeys-hook v5.2+
 
 ### Backend (@hoalu/api)
+
 - **Framework**: Hono v4.10+ (lightweight web framework)
 - **Runtime**: Bun (Node.js alternative)
 - **Database**: PostgreSQL 17 with Drizzle ORM v0.44+
@@ -55,16 +57,140 @@ This file provides guidance to AI coding assistants when working with code in th
 - **Schema Management**: Drizzle Kit v0.31+ for migrations
 
 ### Infrastructure
+
 - **Build System**: Turborepo with Bun workspaces
 - **Database**:
   - PostgreSQL 17 with logical replication (WAL level)
   - Drizzle ORM with migration-first workflow
 - **Real-time Sync**: Electric SQL sync engine on port 4000
 - **Caching**: Redis for rate limiting, sessions, and temporary data
+- **Reverse Proxy**: Caddy v2+ for development proxy server
+  - Automatic HTTPS with self-signed certificates for localhost (when using https:// scheme)
+  - HTTP/2 and HTTP/3 support enabled by default on HTTPS connections
+  - Gzip compression for all responses
+  - Simple reverse proxy configuration
 - **Containerization**: Docker Compose for local development
   - `docker-compose.local.yml` - Local development
   - `docker-compose.infra.yml` - Infrastructure services
   - `docker-compose.platform.yml` - Platform deployment
+
+#### Reverse Proxy with Caddy
+
+**Port Architecture:**
+
+```
+Development Setup:
+  Browser → hoalu.localhost (Caddy) → localhost:5173 (Vite dev server)
+  Browser → api.hoalu.localhost (Caddy) → localhost:3000 (Hono API)
+
+Internal Services:
+  - Vite dev server: localhost:5173 (HTTP, not directly accessible)
+  - Hono API server: localhost:3000 (HTTP, not directly accessible)
+  - Electric SQL: localhost:4000 (HTTP, proxied through API `/sync`)
+  - PostgreSQL: localhost:5432 (internal)
+  - Redis: localhost:6379 (internal)
+
+Public-facing (via Caddy):
+  - Frontend: http://hoalu.localhost (HTTP by default, HTTPS optional)
+  - API: http://api.hoalu.localhost (HTTP by default, HTTPS optional)
+```
+
+**Current Caddyfile Configuration (`/Caddyfile`):**
+
+```caddy
+api.hoalu.localhost {
+	reverse_proxy localhost:3000
+	encode gzip
+}
+
+hoalu.localhost {
+	reverse_proxy localhost:5173
+	encode gzip
+}
+```
+
+**HTTPS Configuration (Optional):**
+
+To enable HTTPS with automatic TLS certificates, prefix addresses with `https://`:
+
+```caddy
+# API proxy with HTTPS and HTTP/2
+https://api.hoalu.localhost {
+	# Handle CORS preflight requests
+	@options {
+		method OPTIONS
+	}
+	handle @options {
+		header {
+			Access-Control-Allow-Origin "https://hoalu.localhost"
+			Access-Control-Allow-Methods "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD"
+			Access-Control-Allow-Headers "Content-Type, Authorization, Cookie"
+			Access-Control-Allow-Credentials "true"
+			Access-Control-Max-Age "86400"
+		}
+		respond 204
+	}
+
+	# Add CORS headers to all responses
+	header {
+		Access-Control-Allow-Origin "https://hoalu.localhost"
+		Access-Control-Allow-Credentials "true"
+	}
+
+	reverse_proxy localhost:3000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+	}
+
+	encode gzip
+}
+
+# Frontend proxy with HTTPS and HTTP/2
+https://hoalu.localhost {
+	reverse_proxy localhost:5173
+	encode gzip
+}
+```
+
+**Running Caddy:**
+
+```bash
+# Run Caddy from project root
+caddy run
+
+# Or run in background
+caddy start
+
+# Reload configuration without downtime
+caddy reload
+
+# Stop Caddy
+caddy stop
+
+# Validate Caddyfile syntax
+caddy validate --config Caddyfile
+```
+
+**Caddy Features:**
+
+- **Automatic TLS**: When using `https://` scheme, Caddy auto-generates self-signed certificates for localhost
+- **HTTP/2**: Automatically enabled for HTTPS connections
+- **HTTP/3**: Enabled by default (QUIC protocol)
+- **Compression**: Gzip encoding applied to all proxied responses
+- **Custom Local Domains**: Uses `.localhost` TLDs which work without `/etc/hosts` modification
+- **Zero Config**: Works out of the box with minimal configuration
+
+**Benefits:**
+
+- ✅ Custom local domains (hoalu.localhost) instead of port-based URLs
+- ✅ No need to modify `/etc/hosts` - `.localhost` domains work natively
+- ✅ Clean, production-like URLs in development
+- ✅ Gzip compression reduces bandwidth usage
+- ✅ Optional HTTPS support for production-like development
+- ✅ HTTP/2 multiplexing when using HTTPS
+- ✅ Matches production deployment architecture
+- ✅ Single proxy point for frontend and API
+- ✅ Easy to add features like rate limiting, caching, or load balancing
 
 ## Monorepo Structure
 
@@ -129,6 +255,7 @@ hoalu/
 ### Applications (`/apps`)
 
 #### `@hoalu/api` - Backend API
+
 - **Path Alias**: `#api/*` maps to `./src/*`
 - **Build**: Bun bundler for production, TypeScript for type definitions
 - **Main Entry**: `src/index.ts`
@@ -140,6 +267,7 @@ hoalu/
   - `src/modules/sync.ts` - Electric SQL sync proxy
 
 #### `@hoalu/app` - Frontend Application
+
 - **Path Alias**: `#app/*` maps to `./src/*`
 - **Build**: Vite with React SWC plugin
 - **Main Entry**: `src/main.tsx`
@@ -153,6 +281,7 @@ hoalu/
 ### Packages (`/packages`)
 
 #### Core Packages
+
 - **@hoalu/auth** - Better Auth workspace plugin
 - **@hoalu/common** - Shared utilities (`datetime`, `monetary`, `schema`, `enums`)
 - **@hoalu/countries** - Country/currency data with helpers
@@ -171,11 +300,17 @@ hoalu/
 # Install Bun if not already installed
 curl -fsSL https://bun.sh/install | bash
 
+# Install Caddy if not already installed (macOS)
+brew install caddy
+
 # Install dependencies
 bun install
 
 # Start local infrastructure (PostgreSQL, Redis, Electric)
 bun run docker:up
+
+# Start Caddy reverse proxy (in project root)
+caddy run
 
 # Start development servers (API + App)
 bun run dev
@@ -184,12 +319,25 @@ bun run dev
 ### Key Commands
 
 **Root Level:**
+
 - `bun run build` - Build all packages and apps (via Turbo)
 - `bun run dev` - Start dev servers for all apps
 - `bun run docker:up` - Start Docker infrastructure
 - `bun run docker:down` - Stop Docker infrastructure
 
+**Caddy:**
+
+```bash
+# Start Caddy reverse proxy
+caddy run                 # Run in foreground
+caddy start               # Run in background
+caddy reload              # Reload configuration
+caddy stop                # Stop Caddy server
+caddy validate            # Validate Caddyfile syntax
+```
+
 **API (@hoalu/api):**
+
 ```bash
 cd apps/api
 
@@ -204,6 +352,7 @@ bun run clean         # Clean build artifacts
 ```
 
 **App (@hoalu/app):**
+
 ```bash
 cd apps/app
 
@@ -232,53 +381,56 @@ bun run db:migrate    # Apply pending migrations
 Each entity (categories, expenses, wallets, tasks, files, exchange-rates) follows a consistent three-file pattern:
 
 **1. `index.ts` - Route Handlers with OpenAPI**
-```typescript
-import { createHonoApp } from "@hoalu/furnace"
-import { workspaceQueryValidator } from "#api/validators/workspace-query.ts"
-import { workspaceMember } from "#api/middlewares/workspace-member.ts"
-import * as repository from "./repository.ts"
-import * as schema from "./schema.ts"
 
-const app = createHonoApp()
+```typescript
+import { createHonoApp } from "@hoalu/furnace";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import * as repository from "./repository.ts";
+import * as schema from "./schema.ts";
+
+const app = createHonoApp();
 
 // GET /api/expenses?workspaceId=xxx
 app.get("/", workspaceQueryValidator, workspaceMember, async (c) => {
-  const { workspaceId } = c.var.workspace
-  const expenses = await repository.findMany(workspaceId)
-  return c.json({ data: expenses })
-})
+  const { workspaceId } = c.var.workspace;
+  const expenses = await repository.findMany(workspaceId);
+  return c.json({ data: expenses });
+});
 
 // POST /api/expenses
 app.post("/", jsonBodyValidator(schema.CreateExpenseSchema), async (c) => {
   // Handler implementation
-})
+});
 
-export default app
+export default app;
 ```
 
 **2. `repository.ts` - Database Operations**
+
 ```typescript
-import { db } from "#api/db/index.ts"
-import { expense, wallet, category } from "#api/db/schema.ts"
-import { eq, desc } from "drizzle-orm"
+import { db } from "#api/db/index.ts";
+import { expense, wallet, category } from "#api/db/schema.ts";
+import { eq, desc } from "drizzle-orm";
 
 export async function findMany(workspaceId: string) {
   return db
     .select()
     .from(expense)
     .where(eq(expense.workspaceId, workspaceId))
-    .orderBy(desc(expense.date))
+    .orderBy(desc(expense.date));
 }
 
 export async function create(data: InsertExpense) {
-  return db.insert(expense).values(data).returning()
+  return db.insert(expense).values(data).returning();
 }
 ```
 
 **3. `schema.ts` - Zod Validation Schemas**
+
 ```typescript
-import * as z from "zod"
-import { CurrencySchema, RepeatSchema } from "@hoalu/common/schema"
+import * as z from "zod";
+import { CurrencySchema, RepeatSchema } from "@hoalu/common/schema";
 
 export const CreateExpenseSchema = z.object({
   title: z.string().min(1),
@@ -286,12 +438,13 @@ export const CreateExpenseSchema = z.object({
   currency: CurrencySchema,
   repeat: RepeatSchema,
   // ...
-})
+});
 
-export const UpdateExpenseSchema = CreateExpenseSchema.partial()
+export const UpdateExpenseSchema = CreateExpenseSchema.partial();
 ```
 
 **Middleware Flow:**
+
 ```
 Request
   → workspaceQueryValidator (validates ?workspaceId)
@@ -303,11 +456,12 @@ Request
 ### Frontend Architecture (`apps/app/src/`)
 
 #### Path Aliases
+
 ```typescript
 // Use #app/* for all imports
-import { useAuth } from "#app/hooks/use-auth.ts"
-import { apiClient } from "#app/lib/api-client.ts"
-import { ExpenseFormSchema } from "#app/lib/schema.ts"
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { apiClient } from "#app/lib/api-client.ts";
+import { ExpenseFormSchema } from "#app/lib/schema.ts";
 ```
 
 #### Component Organization
@@ -351,26 +505,27 @@ components/
 
 ```typescript
 // atoms/expenses.ts
-import { atom } from "jotai"
+import { atom } from "jotai";
 
-export const draftExpenseAtom = atom<Partial<ExpenseFormSchema> | null>(null)
-export const selectedExpenseAtom = atom<string | null>(null)
+export const draftExpenseAtom = atom<Partial<ExpenseFormSchema> | null>(null);
+export const selectedExpenseAtom = atom<string | null>(null);
 
 // atoms/dialogs.ts
-export const expenseDialogAtom = atom(false)
-export const categoryDialogAtom = atom(false)
+export const expenseDialogAtom = atom(false);
+export const categoryDialogAtom = atom(false);
 
 // atoms/filters.ts
-export const dateRangeAtom = atom<{ from: Date; to: Date } | null>(null)
+export const dateRangeAtom = atom<{ from: Date; to: Date } | null>(null);
 ```
 
 **Usage Pattern:**
+
 ```typescript
-import { useAtom } from "jotai"
-import { selectedExpenseAtom } from "#app/atoms/expenses.ts"
+import { useAtom } from "jotai";
+import { selectedExpenseAtom } from "#app/atoms/expenses.ts";
 
 function ExpenseList() {
-  const [selectedId, setSelectedId] = useAtom(selectedExpenseAtom)
+  const [selectedId, setSelectedId] = useAtom(selectedExpenseAtom);
   // ...
 }
 ```
@@ -378,22 +533,23 @@ function ExpenseList() {
 #### Data Layer - TanStack Query + DB
 
 **Collections** (`lib/collections/`):
+
 ```typescript
 // lib/collections/expense.ts
-import { electricCollectionOptions } from "@tanstack/electric-db-collection"
-import { createCollection } from "@tanstack/react-db"
-import * as z from "zod"
+import { electricCollectionOptions } from "@tanstack/electric-db-collection";
+import { createCollection } from "@tanstack/react-db";
+import * as z from "zod";
 
 export const SelectExpenseSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
-  amount: z.coerce.number(),  // Coerces string to number
+  amount: z.coerce.number(), // Coerces string to number
   currency: CurrencySchema,
   date: IsoDateSchema,
   wallet_id: z.uuidv7(),
   category_id: z.uuidv7(),
   // ...
-})
+});
 
 export const expenseCollection = (workspaceId: string) => {
   return createCollection(
@@ -411,18 +567,19 @@ export const expenseCollection = (workspaceId: string) => {
           fetch(req, { ...init, credentials: "include" }),
       },
     })
-  )
-}
+  );
+};
 ```
 
 **Live Queries** (`hooks/use-db.ts`):
+
 ```typescript
-import { useLiveQuery, eq } from "@tanstack/react-db"
-import { datetime } from "@hoalu/common/datetime"
-import { monetary } from "@hoalu/common/monetary"
+import { useLiveQuery, eq } from "@tanstack/react-db";
+import { datetime } from "@hoalu/common/datetime";
+import { monetary } from "@hoalu/common/monetary";
 
 export function useExpenseLiveQuery() {
-  const workspace = useWorkspace()
+  const workspace = useWorkspace();
 
   // Query with joins
   const { data: expenses } = useLiveQuery((q) =>
@@ -454,11 +611,11 @@ export function useExpenseLiveQuery() {
           isActive: wallet.is_active,
         },
       }))
-  )
+  );
 
   // Transform for presentation layer
   return useMemo(() => {
-    if (!expenses) return []
+    if (!expenses) return [];
 
     return expenses.map((expense) => ({
       ...expense,
@@ -466,59 +623,62 @@ export function useExpenseLiveQuery() {
       amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
       realAmount: Number(expense.amount),
       convertedAmount: Number(expense.amount),
-    }))
-  }, [expenses])
+    }));
+  }, [expenses]);
 }
 
-export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>
-export type ExpenseClient = ExpensesClient[number]
+export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>;
+export type ExpenseClient = ExpensesClient[number];
 ```
 
 **Query Options** (`services/query-options.ts`):
+
 ```typescript
-import { queryOptions } from "@tanstack/react-query"
-import { apiClient } from "#app/lib/api-client.ts"
+import { queryOptions } from "@tanstack/react-query";
+import { apiClient } from "#app/lib/api-client.ts";
 
 export const getExpensesQueryOptions = (workspaceId: string) =>
   queryOptions({
     queryKey: ["expenses", workspaceId],
     queryFn: async () => {
       const res = await apiClient.api.expenses.$get({
-        query: { workspaceId }
-      })
-      if (!res.ok) throw new Error("Failed to fetch expenses")
-      const { data } = await res.json()
-      return data
+        query: { workspaceId },
+      });
+      if (!res.ok) throw new Error("Failed to fetch expenses");
+      const { data } = await res.json();
+      return data;
     },
-  })
+  });
 ```
 
 **Mutations** (`services/mutations.ts`):
+
 ```typescript
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiClient } from "#app/lib/api-client.ts"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "#app/lib/api-client.ts";
 
 export function useCreateExpense() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: ExpensePostSchema) => {
-      const res = await apiClient.api.expenses.$post({ json: data })
-      if (!res.ok) throw new Error("Failed to create expense")
-      return res.json()
+      const res = await apiClient.api.expenses.$post({ json: data });
+      if (!res.ok) throw new Error("Failed to create expense");
+      return res.json();
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["expenses", variables.workspaceId]
-      })
+        queryKey: ["expenses", variables.workspaceId],
+      });
     },
-  })
+  });
 }
 ```
 
 #### Routing with TanStack Router
 
 **File-based Routes:**
+
 ```
 routes/
 ├── _auth/               # Auth layout
@@ -545,16 +705,17 @@ routes/
 ```
 
 **Route Protection:**
+
 ```typescript
 // routes/_dashboard/route.tsx
 export const Route = createFileRoute("/_dashboard")({
   beforeLoad: async ({ context }) => {
-    const { session } = await context.auth.getSession()
+    const { session } = await context.auth.getSession();
     if (!session) {
-      throw redirect({ to: "/login" })
+      throw redirect({ to: "/login" });
     }
   },
-})
+});
 ```
 
 ### Real-time Synchronization
@@ -562,6 +723,7 @@ export const Route = createFileRoute("/_dashboard")({
 #### Electric SQL Architecture
 
 **Flow:**
+
 ```
 PostgreSQL (WAL)
   → Electric SQL Sync Engine (port 4000)
@@ -572,28 +734,30 @@ PostgreSQL (WAL)
 ```
 
 **Sync Proxy** (`apps/api/src/modules/sync.ts`):
-```typescript
-import { createHonoApp } from "@hoalu/furnace"
 
-const app = createHonoApp()
+```typescript
+import { createHonoApp } from "@hoalu/furnace";
+
+const app = createHonoApp();
 
 app.all("/sync/*", async (c) => {
-  const session = await getSession(c)
+  const session = await getSession(c);
   if (!session) {
-    return c.json({ error: "Unauthorized" }, 401)
+    return c.json({ error: "Unauthorized" }, 401);
   }
 
   // Proxy to Electric with authentication
-  const syncUrl = new URL(`${env.SYNC_URL}${c.req.path}`)
+  const syncUrl = new URL(`${env.SYNC_URL}${c.req.path}`);
   return fetch(syncUrl, {
     method: c.req.method,
     headers: c.req.raw.headers,
     body: c.req.raw.body,
-  })
-})
+  });
+});
 ```
 
 **PGlite Provider** (`components/providers/local-postgres-provider.tsx`):
+
 ```typescript
 import { PGliteProvider } from "@electric-sql/pglite-react"
 import { electricSync } from "@electric-sql/pglite-sync"
@@ -609,12 +773,13 @@ export function LocalPostgresProvider({ children }) {
 ```
 
 **Collection Sync:**
+
 ```typescript
 // Collections automatically sync via Electric shapes
 const expenseCollection = createCollection(
   electricCollectionOptions({
     shapeOptions: {
-      url: `${API_URL}/sync`,  // Proxied to Electric
+      url: `${API_URL}/sync`, // Proxied to Electric
       params: {
         table: "expense",
         where: "workspace_id = $1",
@@ -623,12 +788,12 @@ const expenseCollection = createCollection(
     },
     schema: SelectExpenseSchema,
   })
-)
+);
 
 // Live queries subscribe to changes
 const { data } = useLiveQuery((q) =>
   q.from({ expense: expenseCollection(workspaceId) })
-)
+);
 // Data updates automatically when DB changes!
 ```
 
@@ -637,10 +802,11 @@ const { data } = useLiveQuery((q) =>
 #### Better Auth Setup
 
 **Server** (`apps/api/src/lib/auth.ts`):
+
 ```typescript
-import { betterAuth } from "better-auth"
-import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { workspacePlugin } from "@hoalu/auth/plugins/workspace"
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { workspacePlugin } from "@hoalu/auth/plugins/workspace";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -661,61 +827,67 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
   },
-})
+});
 ```
 
 **Client** (`apps/app/src/lib/auth-client.ts`):
+
 ```typescript
-import { createAuthClient } from "better-auth/react"
+import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: import.meta.env.PUBLIC_API_URL,
-})
+});
 
-export const { useSession, signIn, signOut } = authClient
+export const { useSession, signIn, signOut } = authClient;
 ```
 
 **Middleware** (`apps/api/src/middlewares/workspace-member.ts`):
+
 ```typescript
 export const workspaceMember = createMiddleware(async (c, next) => {
-  const session = c.var.session
-  const { workspaceId } = c.var.workspace
+  const session = c.var.session;
+  const { workspaceId } = c.var.workspace;
 
   const member = await db
     .select()
     .from(memberTable)
-    .where(and(
-      eq(memberTable.workspaceId, workspaceId),
-      eq(memberTable.userId, session.userId)
-    ))
-    .limit(1)
+    .where(
+      and(
+        eq(memberTable.workspaceId, workspaceId),
+        eq(memberTable.userId, session.userId)
+      )
+    )
+    .limit(1);
 
   if (!member.length) {
-    return c.json({ error: "Not a workspace member" }, 403)
+    return c.json({ error: "Not a workspace member" }, 403);
   }
 
-  c.set("member", member[0])
-  await next()
-})
+  c.set("member", member[0]);
+  await next();
+});
 ```
 
 #### Workspace Management
 
 **Multi-tenancy Pattern:**
+
 - All data scoped by `workspace_id` foreign key
 - Slug-based routing: `/dashboard/:slug/expenses`
 - Member roles: `owner`, `admin`, `member`
 - Invitation system with expiration
 
 **Workspace Context:**
+
 ```typescript
 // hooks/use-workspace.ts
 export function useWorkspace() {
-  const params = Route.useParams()  // TanStack Router
+  const params = Route.useParams(); // TanStack Router
   const { data: workspace } = useSuspenseQuery(
     getWorkspaceQueryOptions(params.slug)
-  )
-  return workspace
+  );
+  return workspace;
 }
 ```
 
@@ -724,6 +896,7 @@ export function useWorkspace() {
 #### Schema Overview (`apps/api/src/db/schema.ts`)
 
 **Auth Tables (Better Auth):**
+
 - `user` - User accounts with public IDs
 - `session` - Active sessions
 - `account` - OAuth provider accounts
@@ -731,12 +904,14 @@ export function useWorkspace() {
 - `jwks` - JSON Web Key Set
 
 **Workspace Tables:**
+
 - `workspace` - Multi-tenant workspaces
 - `member` - Workspace membership with roles
 - `invitation` - Pending workspace invitations
 - `apikey` - API keys for programmatic access
 
 **Core Tables:**
+
 - `category` - Expense categories (name, color, workspace)
 - `wallet` - Wallets/accounts (name, type, currency, workspace)
 - `expense` - Expenses (amount, date, category, wallet, workspace)
@@ -745,59 +920,83 @@ export function useWorkspace() {
 - `fx_rate` - Exchange rates (from/to currency, rate, valid dates)
 
 **Enums:**
+
 ```typescript
 export const colorTypeEnum = pgEnum("color_enum", [
-  "gray", "red", "orange", "yellow", "green",
-  "blue", "indigo", "purple", "pink"
-])
+  "gray",
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "indigo",
+  "purple",
+  "pink",
+]);
 
 export const walletTypeEnum = pgEnum("wallet_type_enum", [
-  "cash", "bank", "credit_card", "digital_wallet", "investment"
-])
+  "cash",
+  "bank",
+  "credit_card",
+  "digital_wallet",
+  "investment",
+]);
 
 export const repeatEnum = pgEnum("repeat_enum", [
-  "none", "daily", "weekly", "monthly", "yearly"
-])
+  "none",
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+]);
 
 export const taskStatusEnum = pgEnum("task_status_enum", [
-  "todo", "in_progress", "done", "cancelled"
-])
+  "todo",
+  "in_progress",
+  "done",
+  "cancelled",
+]);
 
 export const priorityEnum = pgEnum("priority_enum", [
-  "low", "medium", "high", "urgent"
-])
+  "low",
+  "medium",
+  "high",
+  "urgent",
+]);
 ```
 
 **Key Patterns:**
+
 ```typescript
 // UUID primary keys
-id: uuid("id").primaryKey()
+id: uuid("id").primaryKey();
 
 // Public IDs for external references
-publicId: text("public_id").notNull().unique()
+publicId: text("public_id").notNull().unique();
 
 // Workspace scoping
 workspaceId: uuid("workspace_id")
   .notNull()
-  .references(() => workspace.id, { onDelete: "cascade" })
+  .references(() => workspace.id, { onDelete: "cascade" });
 
 // Timestamps
-createdAt: timestamp("created_at").notNull()
-updatedAt: timestamp("updated_at").notNull()
+createdAt: timestamp("created_at").notNull();
+updatedAt: timestamp("updated_at").notNull();
 
 // JSONB for flexible metadata
-metadata: jsonb("metadata").$type<Record<string, any>>().default({})
+metadata: jsonb("metadata").$type<Record<string, any>>().default({});
 
 // Numeric for precise decimals
-amount: numeric("amount", { precision: 18, scale: 2 }).notNull()
+amount: numeric("amount", { precision: 18, scale: 2 }).notNull();
 
 // Full-text search indexes
-index("expense_title_idx").using("gin",
+index("expense_title_idx").using(
+  "gin",
   sql`to_tsvector('english', ${expense.title})`
-)
+);
 
 // GIN indexes for JSONB
-index("workspace_metadata_idx").using("gin", table.metadata)
+index("workspace_metadata_idx").using("gin", table.metadata);
 ```
 
 #### Example Schema Definition
@@ -821,8 +1020,9 @@ export const expense = pgTable(
     walletId: uuid("wallet_id")
       .notNull()
       .references(() => wallet.id, { onDelete: "cascade" }),
-    categoryId: uuid("category_id")
-      .references(() => category.id, { onDelete: "set null" }),
+    categoryId: uuid("category_id").references(() => category.id, {
+      onDelete: "set null",
+    }),
     creatorId: uuid("creator_id")
       .notNull()
       .references(() => user.id),
@@ -835,11 +1035,12 @@ export const expense = pgTable(
     index("expense_date_idx").on(table.date),
     index("expense_wallet_id_idx").on(table.walletId),
     index("expense_category_id_idx").on(table.categoryId),
-    index("expense_title_search_idx").using("gin",
+    index("expense_title_search_idx").using(
+      "gin",
       sql`to_tsvector('english', ${table.title})`
     ),
   ]
-)
+);
 ```
 
 ## Code Conventions
@@ -848,33 +1049,34 @@ export const expense = pgTable(
 
 ```typescript
 // 1. Node/Bun built-in modules
-import { readFile } from "node:fs/promises"
-import path from "node:path"
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 // 2. External npm packages (alphabetical)
-import { queryOptions } from "@tanstack/react-query"
-import { eq, desc } from "drizzle-orm"
-import { hc } from "hono/client"
-import * as z from "zod"
+import { queryOptions } from "@tanstack/react-query";
+import { eq, desc } from "drizzle-orm";
+import { hc } from "hono/client";
+import * as z from "zod";
 
 // 3. @hoalu workspace packages (alphabetical)
-import { datetime } from "@hoalu/common/datetime"
-import { HTTPStatus } from "@hoalu/common/http-status"
-import { monetary } from "@hoalu/common/monetary"
-import { CurrencySchema } from "@hoalu/common/schema"
+import { datetime } from "@hoalu/common/datetime";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { monetary } from "@hoalu/common/monetary";
+import { CurrencySchema } from "@hoalu/common/schema";
 
 // 4. Local imports using path alias (alphabetical)
-import { apiClient } from "#app/lib/api-client.ts"
-import { useAuth } from "#app/hooks/use-auth.ts"
-import { ExpenseFormSchema } from "#app/lib/schema.ts"
+import { apiClient } from "#app/lib/api-client.ts";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { ExpenseFormSchema } from "#app/lib/schema.ts";
 
 // 5. Relative imports (if necessary)
-import { getExpenseById } from "./repository.ts"
+import { getExpenseById } from "./repository.ts";
 ```
 
 ### Path Aliases
 
 **Apps use `#app/*` and `#api/*`:**
+
 ```json
 // apps/app/package.json
 {
@@ -892,6 +1094,7 @@ import { getExpenseById } from "./repository.ts"
 ```
 
 **Packages use `#<package-name>/*`:**
+
 ```json
 // packages/common/package.json
 {
@@ -904,6 +1107,7 @@ import { getExpenseById } from "./repository.ts"
 ### TypeScript Conventions
 
 **Function Components:**
+
 ```typescript
 import type { ReactNode } from "react"
 
@@ -923,67 +1127,72 @@ export function Button({ children, variant = "primary", onClick }: ButtonProps) 
 ```
 
 **Custom Hooks:**
+
 ```typescript
 export function useExpenses(workspaceId: string) {
   const { data, isLoading, error } = useQuery(
     getExpensesQueryOptions(workspaceId)
-  )
+  );
 
-  return { expenses: data ?? [], isLoading, error }
+  return { expenses: data ?? [], isLoading, error };
 }
 ```
 
 **Type Inference from Functions:**
+
 ```typescript
 export function useExpenseLiveQuery() {
   // ... implementation
 }
 
 // Export inferred types
-export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>
-export type ExpenseClient = ExpensesClient[number]
+export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>;
+export type ExpenseClient = ExpensesClient[number];
 ```
 
 **Zod Schema Patterns:**
+
 ```typescript
 // Define schema
 export const ExpenseFormSchema = z.object({
   title: z.string().min(1),
-  amount: z.coerce.number(),  // Coerce string to number
+  amount: z.coerce.number(), // Coerce string to number
   currency: CurrencySchema,
   date: z.iso.datetime(),
   walletId: z.uuidv7(),
   categoryId: z.uuidv7(),
   repeat: RepeatSchema,
-})
+});
 
 // Infer TypeScript type
-export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>
+export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;
 
 // Partial for updates
-export const UpdateExpenseSchema = ExpenseFormSchema.partial()
+export const UpdateExpenseSchema = ExpenseFormSchema.partial();
 ```
 
 **Hono RPC Client Types:**
+
 ```typescript
-import type { InferRequestType, InferResponseType } from "hono/client"
-import type { honoClient } from "#app/lib/api-client.ts"
+import type { InferRequestType, InferResponseType } from "hono/client";
+import type { honoClient } from "#app/lib/api-client.ts";
 
 // Infer response type
 export type ExpenseSchema = InferResponseType<
   typeof honoClient.api.expenses.$get,
   200
->["data"][number]
+>["data"][number];
 
 // Infer request type
 export type ExpensePostSchema = InferRequestType<
   typeof honoClient.api.expenses.$post
->["json"]
+>["json"];
 ```
 
 ### Component Patterns
 
 **Early Returns for Loading/Error States:**
+
 ```typescript
 export function ExpenseList() {
   const expenses = useExpenseLiveQuery()
@@ -1003,6 +1212,7 @@ export function ExpenseList() {
 ```
 
 **Compound Components:**
+
 ```typescript
 export function ExpenseDetails({ expense }: { expense: ExpenseClient }) {
   return (
@@ -1028,6 +1238,7 @@ export function ExpenseDetails({ expense }: { expense: ExpenseClient }) {
 ### API Patterns
 
 **Repository Functions:**
+
 ```typescript
 // Always return typed results
 export async function findMany(workspaceId: string): Promise<Expense[]> {
@@ -1035,7 +1246,7 @@ export async function findMany(workspaceId: string): Promise<Expense[]> {
     .select()
     .from(expense)
     .where(eq(expense.workspaceId, workspaceId))
-    .orderBy(desc(expense.date))
+    .orderBy(desc(expense.date));
 }
 
 // Use transactions for multi-step operations
@@ -1044,38 +1255,40 @@ export async function createExpenseWithFiles(
   files: File[]
 ) {
   return db.transaction(async (tx) => {
-    const [expense] = await tx.insert(expenseTable).values(data).returning()
+    const [expense] = await tx.insert(expenseTable).values(data).returning();
 
     if (files.length > 0) {
-      await tx.insert(fileTable).values(
-        files.map(f => ({ ...f, expenseId: expense.id }))
-      )
+      await tx
+        .insert(fileTable)
+        .values(files.map((f) => ({ ...f, expenseId: expense.id })));
     }
 
-    return expense
-  })
+    return expense;
+  });
 }
 ```
 
 **Error Handling:**
+
 ```typescript
-import { HTTPException } from "hono/http-exception"
-import { HTTPStatus } from "@hoalu/common/http-status"
+import { HTTPException } from "hono/http-exception";
+import { HTTPStatus } from "@hoalu/common/http-status";
 
 app.get("/expenses/:id", async (c) => {
-  const expense = await repository.findById(c.req.param("id"))
+  const expense = await repository.findById(c.req.param("id"));
 
   if (!expense) {
     throw new HTTPException(HTTPStatus.NOT_FOUND, {
       message: "Expense not found",
-    })
+    });
   }
 
-  return c.json({ data: expense })
-})
+  return c.json({ data: expense });
+});
 ```
 
 **OpenAPI Documentation:**
+
 ```typescript
 app.openapi(
   createRoute({
@@ -1105,7 +1318,7 @@ app.openapi(
   async (c) => {
     // Handler implementation
   }
-)
+);
 ```
 
 ## Environment Configuration
@@ -1113,6 +1326,7 @@ app.openapi(
 ### Environment Variables
 
 **API (`apps/api/.env`):**
+
 ```bash
 # Database
 DB_HOST=localhost
@@ -1150,17 +1364,28 @@ SMTP_PASS=
 ```
 
 **App (`apps/app/.env`):**
-```bash
-# API URL
-PUBLIC_API_URL=http://localhost:3000
 
-# App URL
-PUBLIC_APP_BASE_URL=http://localhost:4173
+```bash
+# API URL (via Caddy proxy)
+PUBLIC_API_URL=http://api.hoalu.localhost
+
+# App URL (via Caddy proxy)
+PUBLIC_APP_BASE_URL=http://hoalu.localhost
 ```
+
+**Note:** When using Caddy reverse proxy:
+
+- Frontend runs on `localhost:5173` internally, served via Caddy at `hoalu.localhost`
+- API runs on `localhost:3000` internally, served via Caddy at `api.hoalu.localhost`
+- All browser requests go through Caddy for compression and optional HTTPS
+- `.localhost` domains work natively without `/etc/hosts` modification
+
+For HTTPS setup, change URLs to `https://hoalu.localhost` and `https://api.hoalu.localhost`
 
 ### Docker Services
 
 **Infrastructure Stack:**
+
 ```yaml
 # docker-compose.local.yml
 services:
@@ -1172,7 +1397,7 @@ services:
       POSTGRES_PASSWORD: postgres
     command:
       - -c
-      - wal_level=logical  # Required for Electric SQL
+      - wal_level=logical # Required for Electric SQL
     ports:
       - "5432:5432"
     volumes:
@@ -1197,6 +1422,7 @@ services:
 ```
 
 **Start Services:**
+
 ```bash
 cd deployments
 docker compose -f docker-compose.local.yml up -d
@@ -1207,6 +1433,7 @@ docker compose -f docker-compose.local.yml up -d
 ### Working with the Monorepo
 
 **Workspace References:**
+
 ```json
 // Use workspace:* for internal packages
 {
@@ -1218,6 +1445,7 @@ docker compose -f docker-compose.local.yml up -d
 ```
 
 **Shared Catalog:**
+
 ```json
 // Root package.json - DRY for common versions
 {
@@ -1243,12 +1471,13 @@ docker compose -f docker-compose.local.yml up -d
 ```
 
 **Turbo Build Pipeline:**
+
 ```json
 // turbo.json
 {
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],  // Build dependencies first
+      "dependsOn": ["^build"], // Build dependencies first
       "outputs": ["dist/**"]
     },
     "dev": {
@@ -1262,6 +1491,7 @@ docker compose -f docker-compose.local.yml up -d
 ### Database Development
 
 **Schema-First Workflow:**
+
 1. Update `apps/api/src/db/schema.ts`
 2. Generate migration: `bun run db:generate`
 3. Review SQL in `apps/api/migrations/`
@@ -1269,6 +1499,7 @@ docker compose -f docker-compose.local.yml up -d
 5. Electric SQL picks up changes automatically
 
 **Drizzle Query Patterns:**
+
 ```typescript
 // Select with joins
 const expensesWithWallet = await db
@@ -1279,7 +1510,7 @@ const expensesWithWallet = await db
     walletName: wallet.name,
   })
   .from(expense)
-  .innerJoin(wallet, eq(expense.walletId, wallet.id))
+  .innerJoin(wallet, eq(expense.walletId, wallet.id));
 
 // Aggregation
 const totalByCategory = await db
@@ -1288,14 +1519,14 @@ const totalByCategory = await db
     total: sum(expense.amount),
   })
   .from(expense)
-  .groupBy(expense.categoryId)
+  .groupBy(expense.categoryId);
 
 // Subqueries
 const recentExpenses = db
   .select()
   .from(expense)
   .where(gt(expense.date, sql`NOW() - INTERVAL '30 days'`))
-  .as("recent")
+  .as("recent");
 
 // Full-text search
 const results = await db
@@ -1303,17 +1534,19 @@ const results = await db
   .from(expense)
   .where(
     sql`to_tsvector('english', ${expense.title}) @@ plainto_tsquery('english', ${searchTerm})`
-  )
+  );
 ```
 
 ### Frontend Development
 
 **Hot Module Replacement:**
+
 - Vite HMR with Fast Refresh
 - Component updates without losing state
 - CSS updates without page reload
 
 **DevTools:**
+
 ```typescript
 // Enable all DevTools in development
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
@@ -1336,6 +1569,7 @@ function App() {
 ```
 
 **Performance Optimization:**
+
 ```typescript
 // Virtualized lists for large datasets
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -1369,39 +1603,41 @@ function ExpenseList({ expenses }: { expenses: ExpenseClient[] }) {
 ```
 
 **Optimistic Updates:**
+
 ```typescript
 export function useDeleteExpense() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await apiClient.api.expenses[":id"].$delete({ param: { id } })
+      await apiClient.api.expenses[":id"].$delete({ param: { id } });
     },
     onMutate: async (id) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["expenses"] })
+      await queryClient.cancelQueries({ queryKey: ["expenses"] });
 
       // Snapshot previous value
-      const previous = queryClient.getQueryData(["expenses"])
+      const previous = queryClient.getQueryData(["expenses"]);
 
       // Optimistically update
       queryClient.setQueryData<ExpenseSchema[]>(["expenses"], (old) =>
         old?.filter((e) => e.id !== id)
-      )
+      );
 
-      return { previous }
+      return { previous };
     },
     onError: (err, id, context) => {
       // Rollback on error
-      queryClient.setQueryData(["expenses"], context?.previous)
+      queryClient.setQueryData(["expenses"], context?.previous);
     },
-  })
+  });
 }
 ```
 
 ### Testing & Quality
 
 **Biome Configuration:**
+
 ```json
 // biome.json
 {
@@ -1421,6 +1657,7 @@ export function useDeleteExpense() {
 
 **TypeScript Strict Mode:**
 All packages use strict TypeScript:
+
 ```json
 {
   "compilerOptions": {
@@ -1432,6 +1669,7 @@ All packages use strict TypeScript:
 ```
 
 **Naming Conventions:**
+
 - Components: `PascalCase` (ExpenseList.tsx)
 - Hooks: `camelCase` with `use` prefix (useExpenses.ts)
 - Utilities: `camelCase` (formatCurrency.ts)
@@ -1444,6 +1682,7 @@ All packages use strict TypeScript:
 ### Sync Issues
 
 **Electric SQL Health Check:**
+
 ```bash
 # Check Electric service
 curl http://localhost:4000/health
@@ -1454,18 +1693,20 @@ psql -h localhost -U postgres -d hoalu -c "SHOW wal_level;"
 ```
 
 **Browser DevTools:**
+
 ```typescript
 // Monitor shape subscriptions
 window.addEventListener("electric:shape-sync", (e) => {
-  console.log("Shape synced:", e.detail)
-})
+  console.log("Shape synced:", e.detail);
+});
 
 // Check PGlite database
-const db = window.__pglite__
-await db.query("SELECT * FROM expense LIMIT 5")
+const db = window.__pglite__;
+await db.query("SELECT * FROM expense LIMIT 5");
 ```
 
 **Common Issues:**
+
 1. **Shape not updating**: Check `SYNC_SECRET` matches between API and Electric
 2. **Auth errors**: Verify `fetchClient` includes credentials
 3. **Stale data**: Clear PGlite IndexedDB: `indexedDB.deleteDatabase("idb://hoalu-db")`
@@ -1473,6 +1714,7 @@ await db.query("SELECT * FROM expense LIMIT 5")
 ### Database Issues
 
 **Migration Troubleshooting:**
+
 ```bash
 # Check migration status
 cd apps/api
@@ -1484,46 +1726,50 @@ bun run db:migrate
 ```
 
 **Connection Pool:**
+
 ```typescript
 // apps/api/src/db/index.ts
-import { drizzle } from "drizzle-orm/postgres-js"
-import postgres from "postgres"
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 const client = postgres(process.env.DATABASE_URL!, {
-  max: 10,        // Connection pool size
+  max: 10, // Connection pool size
   idle_timeout: 20,
   connect_timeout: 10,
-})
+});
 
-export const db = drizzle(client)
+export const db = drizzle(client);
 ```
 
 ### Authentication Issues
 
 **Session Debugging:**
+
 ```typescript
 // Check session in API route
 app.get("/debug/session", async (c) => {
-  const session = await getSession(c)
-  return c.json({ session, userId: session?.userId })
-})
+  const session = await getSession(c);
+  return c.json({ session, userId: session?.userId });
+});
 ```
 
 **Cookie Issues:**
+
 ```typescript
 // Ensure credentials included in fetch
 const res = await fetch("/api/expenses", {
-  credentials: "include",  // Required for cookies
-})
+  credentials: "include", // Required for cookies
+});
 
 // Check cookie settings
 app.use("*", async (c, next) => {
-  c.header("Access-Control-Allow-Credentials", "true")
-  await next()
-})
+  c.header("Access-Control-Allow-Credentials", "true");
+  await next();
+});
 ```
 
 **Workspace Permissions:**
+
 ```typescript
 // Verify member role
 const member = await db.query.member.findFirst({
@@ -1531,67 +1777,30 @@ const member = await db.query.member.findFirst({
     eq(memberTable.workspaceId, workspaceId),
     eq(memberTable.userId, session.userId)
   ),
-})
+});
 
-console.log("User role:", member?.role)
-```
-
-### Performance Issues
-
-**Query Optimization:**
-```typescript
-// Use indexes
-db.select()
-  .from(expense)
-  .where(eq(expense.workspaceId, workspaceId))  // Uses index
-  .orderBy(desc(expense.date))  // Uses index
-
-// Avoid N+1 queries - use joins
-const expensesWithRelations = await db.query.expense.findMany({
-  with: {
-    wallet: true,
-    category: true,
-  },
-})
-```
-
-**Bundle Size:**
-```bash
-# Analyze bundle
-cd apps/app
-bun run build
-npx vite-bundle-visualizer
-```
-
-**React Performance:**
-```typescript
-// Memoize expensive computations
-const totalExpenses = useMemo(() =>
-  expenses.reduce((sum, e) => sum + e.amount, 0),
-  [expenses]
-)
-
-// Prevent unnecessary re-renders
-const ExpenseItem = memo(({ expense }: { expense: ExpenseClient }) => {
-  // Component implementation
-})
+console.log("User role:", member?.role);
 ```
 
 ## Key Files Reference
 
 **Configuration:**
+
 - `/package.json` - Root workspace config
 - `/turbo.json` - Turborepo pipeline
 - `/biome.json` - Linting and formatting
+- `/Caddyfile` - Reverse proxy configuration
 - `/deployments/docker-compose.local.yml` - Local infrastructure
 
 **API:**
+
 - `/apps/api/src/app.ts` - Hono app setup
 - `/apps/api/src/db/schema.ts` - Database schema (346 lines)
 - `/apps/api/src/lib/auth.ts` - Better Auth configuration
 - `/apps/api/src/modules/sync.ts` - Electric SQL proxy
 
 **App:**
+
 - `/apps/app/src/main.tsx` - React entry point
 - `/apps/app/src/lib/api-client.ts` - Hono RPC client (8105 lines)
 - `/apps/app/src/lib/schema.ts` - Frontend types (3127 lines)
@@ -1600,6 +1809,7 @@ const ExpenseItem = memo(({ expense }: { expense: ExpenseClient }) => {
 - `/apps/app/src/services/mutations.ts` - Mutation configs
 
 **Shared:**
+
 - `/packages/common/src/schema.ts` - Shared Zod schemas
 - `/packages/common/src/enums.ts` - Shared enum constants
 - `/packages/common/src/datetime.ts` - Date utilities
@@ -1610,17 +1820,19 @@ const ExpenseItem = memo(({ expense }: { expense: ExpenseClient }) => {
 ### Zod v4 Coercion
 
 **`z.coerce.number()`** - Automatically converts string inputs to numbers:
+
 ```typescript
 const schema = z.object({
-  amount: z.coerce.number(),  // "123" → 123
-  quantity: z.coerce.number().int(),  // "5" → 5
-})
+  amount: z.coerce.number(), // "123" → 123
+  quantity: z.coerce.number().int(), // "5" → 5
+});
 
-schema.parse({ amount: "123.45", quantity: "5" })
+schema.parse({ amount: "123.45", quantity: "5" });
 // → { amount: 123.45, quantity: 5 }
 ```
 
 **Why it's used:**
+
 - Electric SQL sends numeric values as strings for precision
 - Zod coerces them back to JavaScript numbers
 - Maintains type safety throughout the pipeline
@@ -1628,12 +1840,14 @@ schema.parse({ amount: "123.45", quantity: "5" })
 ### Import Paths
 
 Always use the configured path aliases:
+
 - ✅ `import { useAuth } from "#app/hooks/use-auth.ts"`
 - ❌ `import { useAuth } from "../../hooks/use-auth.ts"`
 
 ### File Extensions
 
 Always include `.ts` or `.tsx` extensions in imports:
+
 - ✅ `import { schema } from "./schema.ts"`
 - ❌ `import { schema } from "./schema"`
 

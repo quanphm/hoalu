@@ -1,0 +1,9 @@
+api.hoalu.localhost {
+	reverse_proxy localhost:3000
+	encode gzip
+}
+
+hoalu.localhost {
+	reverse_proxy localhost:5173
+	encode gzip
+}
