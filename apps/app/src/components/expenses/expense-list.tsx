@@ -3,6 +3,7 @@ import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
+import { Badge } from "@hoalu/ui/badge";
 
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
@@ -25,6 +26,8 @@ type GroupHeaderItem = {
 type VirtualItem = ExpenseItem | GroupHeaderItem;
 
 function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
+	const isToday = datetime.format(new Date(), "yyyy-MM-dd") === date;
+
 	return (
 		<div
 			data-slot="expense-group-title"
@@ -32,6 +35,11 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 		>
 			<div className="flex items-center gap-1 font-semibold">
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
+				{isToday && (
+					<Badge variant="secondary" className="ml-1">
+						today
+					</Badge>
+				)}
 			</div>
 			<div className="ml-auto">
 				<TotalExpenseByDate data={expenses} />

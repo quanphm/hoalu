@@ -34,9 +34,7 @@ export class ExpenseRepository {
 			.leftJoin(schema.category, eq(schema.expense.categoryId, schema.category.id))
 			.where(
 				and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, param.workspaceId)),
-			)
-			.orderBy(desc(schema.expense.date))
-			.limit(1);
+			);
 
 		if (!queryData[0]) return null;
 

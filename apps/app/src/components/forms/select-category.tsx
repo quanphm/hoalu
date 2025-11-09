@@ -1,5 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@hoalu/icons/lucide";
@@ -24,12 +22,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
 
-import { categoriesQueryOptions } from "#app/services/query-options.ts";
+import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
 import { CreateCategoryForm } from "../category-actions";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
-
-const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface Props {
 	label?: React.ReactNode;
@@ -39,21 +35,17 @@ interface Props {
 }
 
 export function SelectCategoryField(props: Props) {
-	const { slug } = routeApi.useParams();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const field = useFieldContext<string>();
 	const { value } = field.state;
 
-	const { data: categories } = useSuspenseQuery({
-		...categoriesQueryOptions(slug),
-		select: (data) =>
-			data.map((c) => ({
-				label: c.name,
-				value: c.id,
-			})),
-	});
+	const categories = useLiveQueryCategory();
+	const categorieyOptions = categories.map((c) => ({
+		label: c.name,
+		value: c.id,
+	}));
 
 	return (
 		<Field>
@@ -76,7 +68,7 @@ export function SelectCategoryField(props: Props) {
 							disabled={props.disabled}
 						>
 							<span className={cn("truncate", !value && "text-muted-foreground")}>
-								{value ? categories.find((opt) => opt.value === value)?.label : "Select"}
+								{value ? categorieyOptions.find((opt) => opt.value === value)?.label : "Select"}
 							</span>
 							<ChevronDownIcon
 								aria-hidden="true"
@@ -93,12 +85,14 @@ export function SelectCategoryField(props: Props) {
 							<CommandList>
 								<CommandEmpty>No result.</CommandEmpty>
 								<CommandGroup className="max-h-[175px] overflow-auto">
-									{categories.map((opt) => (
+									{categorieyOptions.map((opt) => (
 										<CommandItem
 											key={opt.value}
 											value={opt.label}
 											onSelect={(currentLabel) => {
-												const currentOption = categories.find((opt) => opt.label === currentLabel);
+												const currentOption = categorieyOptions.find(
+													(opt) => opt.label === currentLabel,
+												);
 												if (currentOption) {
 													field.handleChange(
 														currentOption.value === value ? "" : currentOption.value,
@@ -115,7 +109,7 @@ export function SelectCategoryField(props: Props) {
 							</CommandList>
 						</Command>
 						<Separator />
-						<div className="overflow-hidden px-2 py-1 text-foreground [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:text-sm">
+						<div className="overflow-hidden px-2 py-1 text-foreground **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-1 **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-group-heading]]:text-sm">
 							<DialogTrigger
 								render={
 									<Button

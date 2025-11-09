@@ -38,9 +38,11 @@ export function ExpenseDetails({
 		onSelect(nextRowData.id);
 	}
 
+	const selectedExpense = expenses[currentIndex];
+
 	return (
 		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 bg-card p-0 text-card-foreground">
-			{selectedId && (
+			{selectedExpense && (
 				<div
 					data-slot="expense-details-actions"
 					className="flex justify-between border-b px-4 py-2"
@@ -82,8 +84,8 @@ export function ExpenseDetails({
 						</Tooltip>
 					</div>
 					<div className="flex items-center justify-center gap-2">
-						<DuplicateExpense id={selectedId} />
-						<DeleteExpense id={selectedId} />
+						<DuplicateExpense data={selectedExpense} />
+						<DeleteExpense id={selectedExpense.id} />
 						<Tooltip>
 							<TooltipTrigger
 								render={<Button size="icon" variant="ghost" onClick={() => onSelect(null)} />}
@@ -96,8 +98,8 @@ export function ExpenseDetails({
 				</div>
 			)}
 			<div data-slot="expense-details-form">
-				{selectedId && <EditExpenseForm key={selectedId} id={selectedId} />}
-				{!selectedId && (
+				{selectedExpense && <EditExpenseForm key={selectedId} data={selectedExpense} />}
+				{!selectedExpense && (
 					<h2 className="m-4 rounded-md bg-muted/50 p-4 text-center text-muted-foreground">
 						No expenses selected
 					</h2>

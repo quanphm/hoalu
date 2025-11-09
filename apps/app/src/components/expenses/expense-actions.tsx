@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -34,6 +34,7 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
+import type { ExpenseClient } from "#app/hooks/use-db.ts";
 import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { ExpenseFormSchema } from "#app/lib/schema.ts";
@@ -44,7 +45,7 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { expenseWithIdQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
+import { walletsQueryOptions } from "#app/services/query-options.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
@@ -307,21 +308,15 @@ export function DeleteExpenseDialogContent() {
 	);
 }
 
-export function DuplicateExpense(props: { id: string }) {
-	const workspace = useWorkspace();
+export function DuplicateExpense(props: { data: ExpenseClient }) {
 	const mutation = useDuplicateExpense();
-	const { data: expense } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
-
 	const onDuplicate = () => {
-		if (!expense) return;
-		mutation.mutate({ sourceExpense: expense });
+		mutation.mutate({ sourceExpense: props.data });
 	};
 
 	return (
 		<Tooltip>
-			<TooltipTrigger
-				render={<Button size="icon" variant="ghost" onClick={onDuplicate} disabled={!expense} />}
-			>
+			<TooltipTrigger render={<Button size="icon" variant="ghost" onClick={onDuplicate} />}>
 				<CopyPlusIcon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>
@@ -329,11 +324,10 @@ export function DuplicateExpense(props: { id: string }) {
 	);
 }
 
-export function EditExpenseForm(props: { id: string }) {
+export function EditExpenseForm(props: { data: ExpenseClient }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
-	const { data: expense } = useQuery(expenseWithIdQueryOptions(workspace.slug, props.id));
 
 	const walletGroups = wallets.reduce(
 		(result, current) => {
@@ -369,16 +363,16 @@ export function EditExpenseForm(props: { id: string }) {
 
 	const form = useAppForm({
 		defaultValues: {
-			title: expense?.title ?? "",
-			description: expense?.description ?? "",
-			date: expense?.date ?? "",
+			title: props.data.title ?? "",
+			description: props.data.description ?? "",
+			date: props.data.date ?? "",
 			transaction: {
-				value: expense?.amount ?? 0,
-				currency: expense?.currency ?? workspace.metadata.currency,
+				value: props.data.amount ?? 0,
+				currency: props.data.currency ?? workspace.metadata.currency,
 			},
-			walletId: expense?.wallet.id ?? "",
-			categoryId: expense?.category?.id ?? "",
-			repeat: expense?.repeat ?? "one-time",
+			walletId: props.data.wallet.id ?? "",
+			categoryId: props.data.category?.id ?? "",
+			repeat: props.data.repeat ?? "one-time",
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
@@ -386,7 +380,7 @@ export function EditExpenseForm(props: { id: string }) {
 		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
-				id: props.id,
+				id: props.data.id,
 				payload: {
 					title: value.title,
 					description: value.description,
@@ -432,7 +426,7 @@ export function EditExpenseForm(props: { id: string }) {
 					<form.AppField
 						name="description"
 						children={(field) => (
-							<field.TiptapField label="Note" defaultValue={expense?.description ?? ""} />
+							<field.TiptapField label="Note" defaultValue={props.data.description ?? ""} />
 						)}
 					/>
 					<form.AppField

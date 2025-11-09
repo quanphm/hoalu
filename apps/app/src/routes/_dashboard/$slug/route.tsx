@@ -4,13 +4,13 @@ import { toastManager } from "@hoalu/ui/toast";
 
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
+import { categoryCollection } from "#app/lib/collections/category.ts";
+import { expenseCollection } from "#app/lib/collections/expense.ts";
+import { workspaceKeys } from "#app/lib/query-key-factory.ts";
 import {
-	categoriesQueryOptions,
-	expensesQueryOptions,
 	filesQueryOptions,
 	getActiveMemberOptions,
 	getWorkspaceDetailsOptions,
-	tasksQueryOptions,
 	walletsQueryOptions,
 } from "#app/services/query-options.ts";
 
@@ -19,12 +19,18 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 		// [Important] other queries need data from this query
 		await queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug));
 
+		const workspace = queryClient.getQueryData<{ id: string }>(workspaceKeys.withSlug(slug));
+
+		if (workspace) {
+			await Promise.all([
+				expenseCollection(workspace.id).preload(),
+				categoryCollection(workspace.id).preload(),
+			]);
+		}
+
 		await Promise.all([
 			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
 			queryClient.ensureQueryData(walletsQueryOptions(slug)),
-			queryClient.ensureQueryData(tasksQueryOptions(slug)),
-			queryClient.ensureQueryData(expensesQueryOptions(slug)),
-			queryClient.ensureQueryData(categoriesQueryOptions(slug)),
 			queryClient.ensureQueryData(filesQueryOptions(slug)),
 		]);
 	},
