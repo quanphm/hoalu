@@ -12,7 +12,7 @@ import {
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
-import { useCategoryLiveQuery, useExpenseLiveQuery } from "./use-db";
+import { useLiveQueryCategory, useLiveQueryExpenses } from "./use-db";
 import { useWorkspace } from "./use-workspace";
 
 export function useSelectedExpense() {
@@ -24,12 +24,12 @@ export function useSelectedExpense() {
 }
 
 export function useExpenseStats() {
-	const { slug } = useWorkspace();
 	const {
+		slug,
 		metadata: { currency },
 	} = useWorkspace();
-	const expenses = useExpenseLiveQuery();
-	const categories = useCategoryLiveQuery();
+	const expenses = useLiveQueryExpenses();
+	const categories = useLiveQueryCategory();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
 	const dateRange = useAtomValue(selectDateRangeAtom);

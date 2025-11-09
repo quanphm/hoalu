@@ -14,7 +14,7 @@ import {
 	expenseWalletFilterAtom,
 } from "#app/atoms/index.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
-import { useCategoryLiveQuery } from "#app/hooks/use-db.ts";
+import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
 import { useExpenseStats } from "#app/hooks/use-expenses.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 import { WalletLabel } from "../wallets/wallet-badge";
@@ -26,7 +26,7 @@ const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 export function ExpenseFilter() {
 	const { slug } = workspaceRouteApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const categories = useCategoryLiveQuery();
+	const categories = useLiveQueryCategory();
 	const stats = useExpenseStats();
 
 	return (

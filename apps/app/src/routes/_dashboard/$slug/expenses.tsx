@@ -23,7 +23,7 @@ import {
 	SectionItem,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { type ExpenseClient, useExpenseLiveQuery } from "#app/hooks/use-db.ts";
+import { type ExpenseClient, useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 const filter = (
@@ -93,7 +93,7 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 
 function RouteComponent() {
 	const { date: searchByDate } = Route.useSearch();
-	const expenses = useExpenseLiveQuery();
+	const expenses = useLiveQueryExpenses();
 
 	const range = toFromToDateObject(searchByDate);
 	const searchKeywords = useAtomValue(searchKeywordsAtom);

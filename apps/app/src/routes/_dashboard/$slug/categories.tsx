@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { CategoriesTable } from "#app/components/categories-table.tsx";
@@ -9,15 +8,14 @@ import {
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { categoriesQueryOptions } from "#app/services/query-options.ts";
+import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/categories")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { slug } = Route.useParams();
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const categories = useLiveQueryCategory();
 
 	return (
 		<Section>

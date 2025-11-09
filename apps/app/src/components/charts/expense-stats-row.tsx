@@ -1,18 +1,15 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 import { Card, CardContent } from "@hoalu/ui/card";
 
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { expensesQueryOptions } from "#app/services/query-options.ts";
+import { useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 
 export function ExpenseStatsRow() {
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
-	const { slug } = useWorkspace();
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const expenses = useLiveQueryExpenses();
 
 	const currentPeriodExpenses = filterDataByRange(expenses, dateRange, customRange);
 	const totalTransactions = currentPeriodExpenses.length;

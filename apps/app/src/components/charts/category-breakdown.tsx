@@ -1,8 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
+import type { ColorSchema } from "@hoalu/common/schema";
 import { Button } from "@hoalu/ui/button";
 import {
 	Card,
@@ -22,9 +22,8 @@ import {
 } from "#app/atoms/filters.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
+import { useLiveQueryCategory, useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import type { ColorSchema } from "#app/lib/schema.ts";
-import { categoriesQueryOptions, expensesQueryOptions } from "#app/services/query-options.ts";
 import { CurrencyValue } from "../currency-value";
 import { CreateExpenseDialogTrigger } from "../expenses/expense-actions";
 
@@ -43,12 +42,11 @@ export function CategoryBreakdown() {
 	const [view, setView] = useState<"less" | "more">("less");
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
-	const { slug } = useWorkspace();
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
-	const { data: expenses } = useSuspenseQuery(expensesQueryOptions(slug));
+	const categories = useLiveQueryCategory();
+	const expenses = useLiveQueryExpenses();
 
 	const filteredExpenses = filterDataByRange(expenses, dateRange, customRange);
 
@@ -132,7 +130,7 @@ export function CategoryBreakdown() {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-4 w-full items-center justify-center gap-[1px] overflow-hidden rounded-md">
+		<div className="flex h-4 w-full items-center justify-center gap-px overflow-hidden rounded-md">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
