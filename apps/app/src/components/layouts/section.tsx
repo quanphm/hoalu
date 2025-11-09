@@ -65,7 +65,7 @@ function SectionContent({
 }
 
 function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"h2">) {
-	return <h2 className={cn("font-medium text-lg leading-tight", className)} {...props} />;
+	return <h2 className={cn("font-medium text-xl leading-tight", className)} {...props} />;
 }
 
 function SectionItem({

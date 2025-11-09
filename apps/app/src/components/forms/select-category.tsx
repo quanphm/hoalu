@@ -42,10 +42,12 @@ export function SelectCategoryField(props: Props) {
 	const { value } = field.state;
 
 	const categories = useLiveQueryCategory();
-	const categorieyOptions = categories.map((c) => ({
-		label: c.name,
-		value: c.id,
-	}));
+	const categorieyOptions = [...categories]
+		.sort((a, b) => b.total - a.total)
+		.map((c) => ({
+			label: c.name,
+			value: c.id,
+		}));
 
 	return (
 		<Field>
