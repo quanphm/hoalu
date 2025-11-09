@@ -55,7 +55,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
 		() => {
-			const currentThemeIndex = THEMES.indexOf(theme as any);
+			const currentThemeIndex = THEMES.indexOf(theme as (typeof THEMES)[number]);
 			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
 			setTheme(THEMES[nextThemeIndex]);
 		},

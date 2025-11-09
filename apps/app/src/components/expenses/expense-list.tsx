@@ -6,7 +6,7 @@ import { datetime } from "@hoalu/common/datetime";
 
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { useExpenseLiveQuery, type ExpenseClient } from "#app/hooks/use-db.ts";
+import type { ExpenseClient, ExpensesClient } from "#app/hooks/use-db.ts";
 import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
@@ -19,7 +19,7 @@ type ExpenseItem = {
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	expenses: ExpenseClient[];
+	expenses: ExpensesClient;
 };
 
 type VirtualItem = ExpenseItem | GroupHeaderItem;
@@ -48,7 +48,7 @@ function EmptyState() {
 	);
 }
 
-function TotalExpenseByDate(props: { data: ExpenseClient[] }) {
+function TotalExpenseByDate(props: { data: ExpensesClient }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -68,8 +68,7 @@ function TotalExpenseByDate(props: { data: ExpenseClient[] }) {
 	);
 }
 
-function ExpenseList() {
-	const expenses = useExpenseLiveQuery();
+function ExpenseList(props: { data: ExpensesClient }) {
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -84,8 +83,8 @@ function ExpenseList() {
 	});
 
 	const flattenExpenses = useMemo(() => {
-		const grouped = new Map<string, ExpenseClient[]>();
-		expenses.forEach((expense) => {
+		const grouped = new Map<string, ExpensesClient>();
+		props.data.forEach((expense) => {
 			const dateKey = expense.date;
 			const existing = grouped.get(dateKey);
 			if (existing) {
@@ -112,7 +111,7 @@ function ExpenseList() {
 		});
 
 		return items;
-	}, [expenses]);
+	}, [props.data]);
 
 	const virtualizer = useVirtualizer({
 		count: flattenExpenses.length,
@@ -131,9 +130,9 @@ function ExpenseList() {
 	useHotkeys("j", () => {
 		if (!selectedExpense.id) return;
 
-		const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
+		const currentIndex = props.data.findIndex((item) => item.id === selectedExpense.id);
 		const nextIndex = currentIndex + 1;
-		const nextRowData = expenses[nextIndex];
+		const nextRowData = props.data[nextIndex];
 
 		if (!nextRowData) return;
 
@@ -144,15 +143,15 @@ function ExpenseList() {
 	useHotkeys("k", () => {
 		if (!selectedExpense.id) return;
 
-		const currentIndex = expenses.findIndex((item) => item.id === selectedExpense.id);
+		const currentIndex = props.data.findIndex((item) => item.id === selectedExpense.id);
 		const prevIndex = currentIndex - 1;
-		const prevRowData = expenses[prevIndex];
+		const prevRowData = props.data[prevIndex];
 
 		if (!prevRowData) return;
 
 		onSelectExpenseEvent(prevRowData.id);
 		focusExpense(prevRowData.id);
-	}, [selectedExpense.id, expenses]);
+	}, [selectedExpense.id, props.data]);
 
 	useEffect(() => {
 		return () => {
@@ -162,7 +161,7 @@ function ExpenseList() {
 
 	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
 
-	if (expenses.length === 0) {
+	if (props.data.length === 0) {
 		return <EmptyState />;
 	}
 
