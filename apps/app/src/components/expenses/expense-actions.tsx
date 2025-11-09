@@ -365,7 +365,7 @@ export function EditExpenseForm(props: { data: ExpenseClient }) {
 		defaultValues: {
 			title: props.data.title ?? "",
 			description: props.data.description ?? "",
-			date: props.data.date ?? "",
+			date: new Date(props.data.date).toISOString() ?? "",
 			transaction: {
 				value: props.data.amount ?? 0,
 				currency: props.data.currency ?? workspace.metadata.currency,
