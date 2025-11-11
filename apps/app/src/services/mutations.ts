@@ -97,14 +97,16 @@ export function useEditWorkspace() {
 				title: "Workspace updated.",
 				type: "success",
 			});
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			if (slug !== data.slug) {
+				queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(slug) });
 				navigate({
 					to: "/$slug/settings/workspace",
 					params: {
 						slug: data.slug,
 					},
 				});
+			} else {
+				queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 			}
 		},
 	});

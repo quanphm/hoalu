@@ -9,40 +9,37 @@ import {
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
-import type { ExpensesClient } from "#app/hooks/use-db.ts";
+import { type ExpensesClient, useLiveQueryExpenseById } from "#app/hooks/use-db.ts";
+import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 interface ExpenseDetailsProps {
 	expenses: ExpensesClient;
-	currentIndex: number;
-	selectedId: string | null;
-	onSelect: (id: string | null) => void;
 }
 
-export function ExpenseDetails({
-	expenses,
-	currentIndex,
-	selectedId,
-	onSelect,
-}: ExpenseDetailsProps) {
+export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
+	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
+	console.log(selectedRow);
+	const currentExpense = useLiveQueryExpenseById(selectedRow.id);
+	const currentIndex = expenses.findIndex((item) => item.id === selectedRow.id);
+	console.log(currentExpense);
+
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;
 		const prevRowData = expenses[prevIndex];
 		if (!prevRowData) return;
-		onSelect(prevRowData.id);
+		onSelectExpense(prevRowData.id);
 	}
 
 	function handleGoDown() {
 		const nextIndex = currentIndex + 1;
 		const nextRowData = expenses[nextIndex];
 		if (!nextRowData) return;
-		onSelect(nextRowData.id);
+		onSelectExpense(nextRowData.id);
 	}
-
-	const selectedExpense = expenses[currentIndex];
 
 	return (
 		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 bg-card p-0 text-card-foreground">
-			{selectedExpense && (
+			{currentExpense && (
 				<div
 					data-slot="expense-details-actions"
 					className="flex justify-between border-b px-4 py-2"
@@ -84,11 +81,13 @@ export function ExpenseDetails({
 						</Tooltip>
 					</div>
 					<div className="flex items-center justify-center gap-2">
-						<DuplicateExpense data={selectedExpense} />
-						<DeleteExpense id={selectedExpense.id} />
+						<DuplicateExpense data={currentExpense} />
+						<DeleteExpense id={currentExpense.id} />
 						<Tooltip>
 							<TooltipTrigger
-								render={<Button size="icon" variant="ghost" onClick={() => onSelect(null)} />}
+								render={
+									<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)} />
+								}
 							>
 								<XIcon className="size-4" />
 							</TooltipTrigger>
@@ -98,8 +97,9 @@ export function ExpenseDetails({
 				</div>
 			)}
 			<div data-slot="expense-details-form">
-				{selectedExpense && <EditExpenseForm key={selectedId} data={selectedExpense} />}
-				{!selectedExpense && (
+				{currentExpense ? (
+					<EditExpenseForm key={currentExpense.id} data={currentExpense} />
+				) : (
 					<h2 className="m-4 rounded-md bg-muted/50 p-4 text-center text-muted-foreground">
 						No expenses selected
 					</h2>

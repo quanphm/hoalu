@@ -24,9 +24,76 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { type ExpenseClient, useLiveQueryExpenses } from "#app/hooks/use-db.ts";
-import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
-const filter = (
+const searchSchema = z.object({
+	date: z.optional(z.string()),
+});
+
+export const Route = createFileRoute("/_dashboard/$slug/expenses")({
+	validateSearch: searchSchema,
+	component: RouteComponent,
+});
+
+function RouteComponent() {
+	const { date: searchByDate } = Route.useSearch();
+	const expenses = useLiveQueryExpenses();
+
+	const range = toFromToDateObject(searchByDate);
+	const searchKeywords = useAtomValue(searchKeywordsAtom);
+	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
+	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
+	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
+	const deferredSearchKeywords = useDeferredValue(searchKeywords);
+
+	const filteredExpenses = filter(expenses, {
+		selectedCategoryIds,
+		selectedWalletIds,
+		selectedRepeat,
+		searchKeywords: deferredSearchKeywords,
+		range,
+	});
+
+	return (
+		<Section className="-mb-8">
+			<SectionHeader>
+				<SectionTitle>Expenses</SectionTitle>
+				<CreateExpenseDialogTrigger />
+			</SectionHeader>
+
+			<SectionContent columns={12} className="h-[calc(100vh-76px)] gap-0 overflow-hidden">
+				<SectionItem
+					data-slot="expense-filter"
+					desktopSpan="col-span-2"
+					tabletSpan={1}
+					mobileOrder={3}
+					className="pr-4 pb-4"
+				>
+					<ExpenseFilter />
+				</SectionItem>
+
+				<SectionItem
+					data-slot="expense-list"
+					desktopSpan="col-span-4"
+					tabletSpan={1}
+					mobileOrder={1}
+				>
+					<ExpenseList data={filteredExpenses} />
+				</SectionItem>
+
+				<SectionItem
+					data-slot="expense-details"
+					desktopSpan="col-span-6"
+					tabletSpan={1}
+					mobileOrder={2}
+				>
+					<ExpenseDetails expenses={filteredExpenses} />
+				</SectionItem>
+			</SectionContent>
+		</Section>
+	);
+}
+
+function filter(
 	data: ExpenseClient[],
 	condition: {
 		selectedCategoryIds: string[];
@@ -40,7 +107,7 @@ const filter = (
 			  }
 			| undefined;
 	},
-) => {
+) {
 	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, searchKeywords, range } =
 		condition;
 	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
@@ -80,80 +147,4 @@ const filter = (
 
 		return true;
 	});
-};
-
-const searchSchema = z.object({
-	date: z.optional(z.string()),
-});
-
-export const Route = createFileRoute("/_dashboard/$slug/expenses")({
-	validateSearch: searchSchema,
-	component: RouteComponent,
-});
-
-function RouteComponent() {
-	const { date: searchByDate } = Route.useSearch();
-	const expenses = useLiveQueryExpenses();
-
-	const range = toFromToDateObject(searchByDate);
-	const searchKeywords = useAtomValue(searchKeywordsAtom);
-	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
-	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
-	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
-	const deferredSearchKeywords = useDeferredValue(searchKeywords);
-
-	const filteredExpenses = filter(expenses, {
-		selectedCategoryIds,
-		selectedWalletIds,
-		selectedRepeat,
-		searchKeywords: deferredSearchKeywords,
-		range,
-	});
-
-	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	const currentIndex = filteredExpenses.findIndex((item) => item.id === selectedRow.id);
-
-	return (
-		<Section className="-mb-8">
-			<SectionHeader>
-				<SectionTitle>Expenses</SectionTitle>
-				<CreateExpenseDialogTrigger />
-			</SectionHeader>
-
-			<SectionContent columns={12} className="h-[calc(100vh-76px)] gap-0 overflow-hidden">
-				<SectionItem
-					data-slot="expense-filter"
-					desktopSpan="col-span-2"
-					tabletSpan={1}
-					mobileOrder={3}
-					className="pr-4 pb-4"
-				>
-					<ExpenseFilter />
-				</SectionItem>
-
-				<SectionItem
-					data-slot="expense-list"
-					desktopSpan="col-span-4"
-					tabletSpan={1}
-					mobileOrder={1}
-				>
-					<ExpenseList data={filteredExpenses} />
-				</SectionItem>
-
-				<SectionItem
-					data-slot="expense-details"
-					desktopSpan="col-span-6"
-					tabletSpan={1}
-					mobileOrder={2}
-				>
-					<ExpenseDetails
-						expenses={filteredExpenses}
-						currentIndex={currentIndex}
-						selectedId={selectedRow.id}
-						onSelect={onSelectExpense}
-					/>
-				</SectionItem>
-			</SectionContent>
-		</Section>
-	);
 }
