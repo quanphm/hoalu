@@ -82,7 +82,7 @@ const route = app
 		},
 	)
 	.get(
-		"/workpsace",
+		"/workspace",
 		describeRoute({
 			tags: TAGS,
 			summary: "Get all files from workspace",
@@ -121,7 +121,7 @@ const route = app
 		},
 	)
 	.get(
-		"/workpsace/logo",
+		"/workspace/logo",
 		describeRoute({
 			tags: TAGS,
 			summary: "Get workspace logo",

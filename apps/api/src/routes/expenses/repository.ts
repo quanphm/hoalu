@@ -65,7 +65,9 @@ export class ExpenseRepository {
 					updatedAt: sql`now()`,
 					...param.payload,
 				})
-				.where(eq(schema.expense.id, param.id))
+				.where(
+					and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, param.workspaceId)),
+				)
 				.returning();
 
 			return result || null;

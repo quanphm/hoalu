@@ -22,7 +22,7 @@ import { jsonBodyValidator } from "#api/validators/json-body.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 const app = createHonoInstance();
-const catgegoryRepository = new CategoryRepository();
+const categoryRepository = new CategoryRepository();
 const TAGS = ["Categories"];
 
 const route = app
@@ -43,7 +43,7 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 
-			const categories = await catgegoryRepository.findAllByWorkspaceId({
+			const categories = await categoryRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
 
@@ -78,7 +78,7 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const category = await catgegoryRepository.findOne({
+			const category = await categoryRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
@@ -117,7 +117,7 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const category = await catgegoryRepository.insert({
+			const category = await categoryRepository.insert({
 				...payload,
 				id: generateId({ use: "uuid" }),
 				workspaceId: workspace.id,
@@ -159,7 +159,7 @@ const route = app
 			const param = c.req.valid("param");
 			const payload = c.req.valid("json");
 
-			const category = await catgegoryRepository.findOne({
+			const category = await categoryRepository.findOne({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
@@ -167,7 +167,7 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const queryData = await catgegoryRepository.update({
+			const queryData = await categoryRepository.update({
 				id: param.id,
 				workspaceId: workspace.id,
 				payload,
@@ -206,7 +206,7 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const category = await catgegoryRepository.delete({
+			const category = await categoryRepository.delete({
 				id: param.id,
 				workspaceId: workspace.id,
 			});
