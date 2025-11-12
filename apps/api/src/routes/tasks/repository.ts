@@ -19,7 +19,7 @@ export class TaskRepository {
 	}
 
 	async findOne(param: { id: string; workspaceId: string }) {
-		const queryData = await db
+		const [result] = await db
 			.select(schemaColumns)
 			.from(schema.task)
 			.innerJoin(schema.user, eq(schema.task.creatorId, schema.user.id))
@@ -27,9 +27,7 @@ export class TaskRepository {
 			.orderBy(desc(schema.task.createdAt))
 			.limit(1);
 
-		if (!queryData[0]) return null;
-
-		return queryData;
+		return result || null;
 	}
 
 	async insert(param: NewTask) {
@@ -45,7 +43,7 @@ export class TaskRepository {
 				updatedAt: sql`now()`,
 				...param.payload,
 			})
-			.where(eq(schema.task.id, param.id))
+			.where(and(eq(schema.task.id, param.id), eq(schema.task.workspaceId, param.workspaceId)))
 			.returning();
 
 		if (!task) return null;

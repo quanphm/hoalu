@@ -284,14 +284,14 @@ const files = {
 		return true;
 	},
 	getWorkspaceLogo: async (slug: string) => {
-		const response = await honoClient.api.files.workpsace.logo.$get({
+		const response = await honoClient.api.files.workspace.logo.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		const { data } = await response.json();
 		return data;
 	},
 	getFiles: async (slug: string) => {
-		const response = await honoClient.api.files.workpsace.$get({
+		const response = await honoClient.api.files.workspace.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {
