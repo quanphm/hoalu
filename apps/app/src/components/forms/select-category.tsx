@@ -78,10 +78,7 @@ export function SelectCategoryField(props: Props) {
 							/>
 						</PopoverTrigger>
 					</FieldControl>
-					<PopoverContent
-						className="w-full min-w-[var(--anchor-width)] border-input p-0"
-						align="start"
-					>
+					<PopoverContent className="w-full min-w-(--anchor-width) border-input p-0" align="start">
 						<Command>
 							<CommandInput placeholder="Search..." />
 							<CommandList>
