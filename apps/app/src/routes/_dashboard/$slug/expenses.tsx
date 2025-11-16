@@ -12,10 +12,12 @@ import {
 	expenseWalletFilterAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { ExpenseDetails } from "#app/components/expenses/expense-details.tsx";
 import { ExpenseFilter } from "#app/components/expenses/expense-filter.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
+import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
 	Section,
 	SectionContent,
@@ -23,7 +25,6 @@ import {
 	SectionItem,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { type ExpenseClient, useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 function RouteComponent() {
 	const { date: searchByDate } = Route.useSearch();
 	const expenses = useLiveQueryExpenses();
+	const categories = useLiveQueryCategories();
 
 	const range = toFromToDateObject(searchByDate);
 	const searchKeywords = useAtomValue(searchKeywordsAtom);
@@ -68,7 +70,7 @@ function RouteComponent() {
 					mobileOrder={3}
 					className="pr-4 pb-4"
 				>
-					<ExpenseFilter />
+					<ExpenseFilter categories={categories} />
 				</SectionItem>
 
 				<SectionItem
@@ -94,7 +96,7 @@ function RouteComponent() {
 }
 
 function filter(
-	data: ExpenseClient[],
+	data: SyncedExpense[],
 	condition: {
 		selectedCategoryIds: string[];
 		selectedWalletIds: string[];

@@ -1,21 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CategoriesTable } from "#app/components/categories-table.tsx";
-import { CreateCategoryDialogTrigger } from "#app/components/category-actions.tsx";
+import { CategoriesTable } from "#app/components/categories/categories-table.tsx";
+import { CreateCategoryDialogTrigger } from "#app/components/categories/category-actions.tsx";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import {
 	Section,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/categories")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const categories = useLiveQueryCategory();
+	const categories = useLiveQueryCategories();
 
 	return (
 		<Section>

@@ -3,8 +3,8 @@ import { useAtomValue } from "jotai";
 import { Card, CardContent } from "@hoalu/ui/card";
 
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 
 export function ExpenseStatsRow() {
 	const dateRange = useAtomValue(selectDateRangeAtom);

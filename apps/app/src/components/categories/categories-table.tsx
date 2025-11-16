@@ -5,10 +5,10 @@ import { Suspense } from "react";
 import { Badge } from "@hoalu/ui/badge";
 
 import { selectedCategoryAtom } from "#app/atoms/index.ts";
+import { EditCategoryForm } from "#app/components/categories/category-actions.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import type { CategorySchema } from "#app/lib/schema.ts";
-import { EditCategoryForm } from "./category-actions";
 
 const columnHelper = createColumnHelper<CategorySchema>();
 

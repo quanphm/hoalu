@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
+import type { ColorSchema } from "@hoalu/common/schema";
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -24,7 +25,7 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { CategoryFormSchema, type ColorSchema } from "#app/lib/schema.ts";
+import { CategoryFormSchema } from "#app/lib/schema.ts";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
 import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
 

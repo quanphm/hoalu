@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
 import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 });
 
 function RouteComponent() {
+	const categories = useLiveQueryCategories();
+
 	return (
 		<>
 			<Section>
@@ -41,7 +44,7 @@ function RouteComponent() {
 					</div>
 					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
 						<ExpenseStatsRow />
-						<CategoryBreakdown />
+						<CategoryBreakdown categories={categories} />
 					</div>
 				</SectionContent>
 			</Section>

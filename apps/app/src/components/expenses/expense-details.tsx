@@ -8,17 +8,19 @@ import {
 	DuplicateExpense,
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
+import {
+	type SyncedExpense,
+	useLiveQueryExpenseById,
+	useSelectedExpense,
+} from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { type ExpensesClient, useLiveQueryExpenseById } from "#app/hooks/use-db.ts";
-import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 
 interface ExpenseDetailsProps {
-	expenses: ExpensesClient;
+	expenses: SyncedExpense[];
 }
 
 export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	console.log(selectedRow);
 	const currentExpense = useLiveQueryExpenseById(selectedRow.id);
 	const currentIndex = expenses.findIndex((item) => item.id === selectedRow.id);
 	console.log(currentExpense);

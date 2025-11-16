@@ -7,20 +7,19 @@ import { Badge } from "@hoalu/ui/badge";
 
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import type { ExpenseClient, ExpensesClient } from "#app/hooks/use-db.ts";
-import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
+import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 type ExpenseItem = {
 	type: "expense";
-	expense: ExpenseClient;
+	expense: SyncedExpense;
 	date: string;
 };
 
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	expenses: ExpensesClient;
+	expenses: SyncedExpense[];
 };
 
 type VirtualItem = ExpenseItem | GroupHeaderItem;
@@ -56,7 +55,7 @@ function EmptyState() {
 	);
 }
 
-function TotalExpenseByDate(props: { data: ExpensesClient }) {
+function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -76,7 +75,7 @@ function TotalExpenseByDate(props: { data: ExpensesClient }) {
 	);
 }
 
-function ExpenseList(props: { data: ExpensesClient }) {
+function ExpenseList(props: { data: SyncedExpense[] }) {
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +90,7 @@ function ExpenseList(props: { data: ExpensesClient }) {
 	});
 
 	const flattenExpenses = useMemo(() => {
-		const grouped = new Map<string, ExpensesClient>();
+		const grouped = new Map<string, SyncedExpense[]>();
 		props.data.forEach((expense) => {
 			const dateKey = expense.date;
 			const existing = grouped.get(dateKey);

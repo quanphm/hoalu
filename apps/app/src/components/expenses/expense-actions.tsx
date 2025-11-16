@@ -29,13 +29,12 @@ import {
 	draftExpenseAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
+import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
-import type { ExpenseClient } from "#app/hooks/use-db.ts";
-import { useSelectedExpense } from "#app/hooks/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { ExpenseFormSchema } from "#app/lib/schema.ts";
 import {
@@ -308,7 +307,7 @@ export function DeleteExpenseDialogContent() {
 	);
 }
 
-export function DuplicateExpense(props: { data: ExpenseClient }) {
+export function DuplicateExpense(props: { data: SyncedExpense }) {
 	const mutation = useDuplicateExpense();
 	const onDuplicate = () => {
 		mutation.mutate({ sourceExpense: props.data });
@@ -324,7 +323,7 @@ export function DuplicateExpense(props: { data: ExpenseClient }) {
 	);
 }
 
-export function EditExpenseForm(props: { data: ExpenseClient }) {
+export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));

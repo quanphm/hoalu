@@ -22,6 +22,7 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
+import { useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
@@ -31,7 +32,6 @@ import {
 	getStartOfWeek,
 	groupDataByMonth,
 } from "#app/helpers/date-range.ts";
-import { useExpenseStats } from "#app/hooks/use-expenses.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";

@@ -13,20 +13,23 @@ import {
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
 } from "#app/atoms/index.ts";
+import { useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
-import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
-import { useExpenseStats } from "#app/hooks/use-expenses.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
+import type { SyncedCategory } from "../categories/use-categories";
 import { WalletLabel } from "../wallets/wallet-badge";
 import { ExpenseCalendar, ExpenseSearch } from "./expense-actions";
 
 const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function ExpenseFilter() {
+interface ExpenseFilterProps {
+	categories: SyncedCategory[];
+}
+
+export function ExpenseFilter(props: ExpenseFilterProps) {
 	const { slug } = workspaceRouteApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const categories = useLiveQueryCategory();
 	const stats = useExpenseStats();
 
 	return (
@@ -49,8 +52,8 @@ export function ExpenseFilter() {
 					<CategoriesClearButton />
 				</div>
 				<div className="rounded-md border border-border/80">
-					<ScrollAreaWithCondition enabled={categories.length > 5}>
-						{categories.map((c) => (
+					<ScrollAreaWithCondition enabled={props.categories.length > 5}>
+						{props.categories.map((c) => (
 							<CategoryCheckboxGroup
 								key={c.id}
 								id={c.id}

@@ -22,10 +22,11 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 
 		const workspace = queryClient.getQueryData<{ id: string }>(workspaceKeys.withSlug(slug));
 		if (workspace) {
+			console.log("test");
 			await Promise.all([
 				expenseCollection(workspace.id).preload(),
 				categoryCollection(workspace.id).preload(),
-				walletCollection(workspace.id).preload(),
+				// walletCollection(workspace.id).preload(),
 			]);
 		}
 

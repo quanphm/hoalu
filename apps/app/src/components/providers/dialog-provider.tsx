@@ -9,7 +9,10 @@ import {
 	dialogStateAtom,
 	wipeOutDialogsAtom,
 } from "#app/atoms/index.ts";
-import { CreateCategoryDialogContent, DeleteCategoryDialogContent } from "../category-actions";
+import {
+	CreateCategoryDialogContent,
+	DeleteCategoryDialogContent,
+} from "#app/components/categories/category-actions.tsx";
 import {
 	CreateExpenseDialogContent,
 	DeleteExpenseDialogContent,

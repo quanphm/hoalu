@@ -1,9 +1,13 @@
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
+import { useMemo } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { monetary } from "@hoalu/common/monetary";
 
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -11,9 +15,11 @@ import {
 	getComparisonPeriodText,
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { categoryCollection } from "#app/lib/collections/category.ts";
+import { expenseCollection } from "#app/lib/collections/expense.ts";
+import { walletCollection } from "#app/lib/collections/wallet.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
-import { useLiveQueryCategory, useLiveQueryExpenses } from "./use-db";
-import { useWorkspace } from "./use-workspace";
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
@@ -29,7 +35,7 @@ export function useExpenseStats() {
 		metadata: { currency },
 	} = useWorkspace();
 	const expenses = useLiveQueryExpenses();
-	const categories = useLiveQueryCategory();
+	const categories = useLiveQueryCategories();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
 	const dateRange = useAtomValue(selectDateRangeAtom);
@@ -138,4 +144,103 @@ export function useExpenseStats() {
 		hasComparison: comparisonRange !== null,
 		comparisonText,
 	};
+}
+
+export function useLiveQueryExpenses() {
+	const workspace = useWorkspace();
+
+	const { data } = useLiveQuery(
+		(q) => {
+			return q
+				.from({ expense: expenseCollection(workspace.id) })
+				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
+					eq(expense.wallet_id, wallet.id),
+				)
+				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
+					eq(expense.category_id, category.id),
+				)
+				.orderBy(({ expense }) => expense.date, "desc")
+				.orderBy(({ expense }) => expense.amount, "desc")
+				.select(({ expense, wallet, category }) => ({
+					...expense,
+					category: {
+						id: category?.id,
+						name: category?.name,
+						color: category?.color,
+					},
+					wallet: {
+						id: wallet.id,
+						name: wallet.name,
+						type: wallet.type,
+					},
+				}));
+		},
+		[workspace.id],
+	);
+
+	const transformedExpenses = useMemo(() => {
+		if (!data) return [];
+
+		return data.map((expense) => ({
+			...expense,
+			date: datetime.format(expense.date, "yyyy-MM-dd"),
+			amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
+			realAmount: Number(expense.amount),
+			convertedAmount: Number(expense.amount),
+		}));
+	}, [data]);
+
+	return transformedExpenses;
+}
+
+type SyncedExpenses = ReturnType<typeof useLiveQueryExpenses>;
+export type SyncedExpense = SyncedExpenses[number];
+
+export function useLiveQueryExpenseById(id: string | null) {
+	const workspace = useWorkspace();
+
+	const { data } = useLiveQuery(
+		(q) => {
+			if (!id) return undefined;
+
+			return q
+				.from({ expense: expenseCollection(workspace.id) })
+				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
+					eq(expense.wallet_id, wallet.id),
+				)
+				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
+					eq(expense.category_id, category.id),
+				)
+				.where(({ expense }) => eq(expense.id, id))
+				.findOne()
+				.select(({ expense, wallet, category }) => ({
+					...expense,
+					category: {
+						id: category?.id,
+						name: category?.name,
+						color: category?.color,
+					},
+					wallet: {
+						id: wallet.id,
+						name: wallet.name,
+						type: wallet.type,
+					},
+				}));
+		},
+		[id],
+	);
+
+	const transformedExpense = useMemo(() => {
+		if (!data) return null;
+
+		return {
+			...data,
+			date: datetime.format(data.date, "yyyy-MM-dd"),
+			amount: monetary.fromRealAmount(Number(data.amount), data.currency),
+			realAmount: Number(data.amount),
+			convertedAmount: Number(data.amount),
+		};
+	}, [data]);
+
+	return transformedExpense;
 }
