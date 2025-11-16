@@ -75,7 +75,7 @@ function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 	);
 }
 
-function ExpenseList(props: { data: SyncedExpense[] }) {
+function ExpenseList(props: { expenses: SyncedExpense[] }) {
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +91,7 @@ function ExpenseList(props: { data: SyncedExpense[] }) {
 
 	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, SyncedExpense[]>();
-		props.data.forEach((expense) => {
+		props.expenses.forEach((expense) => {
 			const dateKey = expense.date;
 			const existing = grouped.get(dateKey);
 			if (existing) {
@@ -118,7 +118,7 @@ function ExpenseList(props: { data: SyncedExpense[] }) {
 		});
 
 		return items;
-	}, [props.data]);
+	}, [props.expenses]);
 
 	const virtualizer = useVirtualizer({
 		count: flattenExpenses.length,
@@ -137,9 +137,9 @@ function ExpenseList(props: { data: SyncedExpense[] }) {
 	useHotkeys("j", () => {
 		if (!selectedExpense.id) return;
 
-		const currentIndex = props.data.findIndex((item) => item.id === selectedExpense.id);
+		const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
 		const nextIndex = currentIndex + 1;
-		const nextRowData = props.data[nextIndex];
+		const nextRowData = props.expenses[nextIndex];
 
 		if (!nextRowData) return;
 
@@ -150,15 +150,15 @@ function ExpenseList(props: { data: SyncedExpense[] }) {
 	useHotkeys("k", () => {
 		if (!selectedExpense.id) return;
 
-		const currentIndex = props.data.findIndex((item) => item.id === selectedExpense.id);
+		const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
 		const prevIndex = currentIndex - 1;
-		const prevRowData = props.data[prevIndex];
+		const prevRowData = props.expenses[prevIndex];
 
 		if (!prevRowData) return;
 
 		onSelectExpenseEvent(prevRowData.id);
 		focusExpense(prevRowData.id);
-	}, [selectedExpense.id, props.data]);
+	}, [selectedExpense.id, props.expenses]);
 
 	useEffect(() => {
 		return () => {
@@ -168,7 +168,7 @@ function ExpenseList(props: { data: SyncedExpense[] }) {
 
 	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
 
-	if (props.data.length === 0) {
+	if (props.expenses.length === 0) {
 		return <EmptyState />;
 	}
 

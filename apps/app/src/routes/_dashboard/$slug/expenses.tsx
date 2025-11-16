@@ -70,7 +70,7 @@ function RouteComponent() {
 					mobileOrder={3}
 					className="pr-4 pb-4"
 				>
-					<ExpenseFilter categories={categories} />
+					<ExpenseFilter expenses={filteredExpenses} categories={categories} />
 				</SectionItem>
 
 				<SectionItem
@@ -79,7 +79,7 @@ function RouteComponent() {
 					tabletSpan={1}
 					mobileOrder={1}
 				>
-					<ExpenseList data={filteredExpenses} />
+					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
 
 				<SectionItem

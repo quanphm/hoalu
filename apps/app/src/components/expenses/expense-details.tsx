@@ -8,11 +8,7 @@ import {
 	DuplicateExpense,
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
-import {
-	type SyncedExpense,
-	useLiveQueryExpenseById,
-	useSelectedExpense,
-} from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 
 interface ExpenseDetailsProps {
@@ -21,9 +17,8 @@ interface ExpenseDetailsProps {
 
 export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	const currentExpense = useLiveQueryExpenseById(selectedRow.id);
 	const currentIndex = expenses.findIndex((item) => item.id === selectedRow.id);
-	console.log(currentExpense);
+	const currentExpense = expenses[currentIndex];
 
 	function handleGoUp() {
 		const prevIndex = currentIndex - 1;

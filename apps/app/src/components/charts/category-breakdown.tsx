@@ -21,12 +21,12 @@ import {
 	selectDateRangeAtom,
 } from "#app/atoms/filters.ts";
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
-import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";
-import { CreateExpenseDialogTrigger } from "../expenses/expense-actions";
 
 const TOP_N_CATEGORY = 5;
 
@@ -40,6 +40,7 @@ interface CategoryData {
 }
 
 interface CategoryBreakdownProps {
+	expenses: SyncedExpense[];
 	categories: SyncedCategory[];
 }
 
@@ -48,12 +49,11 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const expenses = useLiveQueryExpenses();
 
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 
-	const filteredExpenses = filterDataByRange(expenses, dateRange, customRange);
+	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
 
 	const categoryTotals: Record<string, number> = {};
 	for (const expense of filteredExpenses) {
@@ -224,7 +224,7 @@ function CategoryListBreakdown(props: {
 	);
 }
 
-export function EmptyData() {
+function EmptyData() {
 	return (
 		<Empty>
 			<EmptyHeader>

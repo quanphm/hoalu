@@ -13,7 +13,7 @@ import {
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
 } from "#app/atoms/index.ts";
-import { useExpenseStats } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 import type { SyncedCategory } from "../categories/use-categories";
@@ -24,13 +24,17 @@ const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 interface ExpenseFilterProps {
+	expenses: SyncedExpense[];
 	categories: SyncedCategory[];
 }
 
 export function ExpenseFilter(props: ExpenseFilterProps) {
 	const { slug } = workspaceRouteApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const stats = useExpenseStats();
+	const stats = useExpenseStats({
+		expenses: props.expenses,
+		categories: props.categories,
+	});
 
 	return (
 		<div className="flex flex-col gap-4.5">

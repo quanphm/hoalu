@@ -7,6 +7,7 @@ import { toastManager } from "@hoalu/ui/toast";
 
 import { deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { SettingCard } from "#app/components/cards.tsx";
+import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
 import { InputWithCopy } from "#app/components/input-with-copy.tsx";
 import {
 	Section,
@@ -19,7 +20,6 @@ import {
 	EditWorkspaceMetadataForm,
 	WorkspaceLogo,
 } from "#app/components/workspace.tsx";
-import { useFilesUpload } from "#app/hooks/use-files-upload.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";

@@ -7,7 +7,7 @@ import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
 
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
-import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -29,13 +29,19 @@ export function useSelectedExpense() {
 	return { expense, onSelectExpense };
 }
 
-export function useExpenseStats() {
+interface UseExpenseStatsOptions {
+	expenses: SyncedExpense[];
+	categories: SyncedCategory[];
+}
+
+export function useExpenseStats(options: UseExpenseStatsOptions) {
+	const expenses = options.expenses;
+	const categories = options.categories;
+
 	const {
 		slug,
 		metadata: { currency },
 	} = useWorkspace();
-	const expenses = useLiveQueryExpenses();
-	const categories = useLiveQueryCategories();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 
 	const dateRange = useAtomValue(selectDateRangeAtom);

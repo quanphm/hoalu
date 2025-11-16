@@ -5,10 +5,7 @@ import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
 
 import { selectedExpenseAtom } from "#app/atoms/index.ts";
-import {
-	type SyncedExpense,
-	useLiveQueryExpenseById,
-} from "#app/components/expenses/use-expenses.ts";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
@@ -19,7 +16,6 @@ interface ExpenseContentProps extends SyncedExpense {
 }
 
 function ExpenseContent(props: ExpenseContentProps) {
-	useLiveQueryExpenseById(props.id);
 	const selectedRow = useAtomValue(selectedExpenseAtom);
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
