@@ -1,4 +1,4 @@
-import { FilesUpload } from "#app/components/files-upload.tsx";
+import { FilesUpload } from "#app/components/files/files-upload.tsx";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 

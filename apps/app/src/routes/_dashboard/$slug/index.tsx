@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
 import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
 	Section,
 	SectionContent,
@@ -18,6 +20,9 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 });
 
 function RouteComponent() {
+	const expenses = useLiveQueryExpenses();
+	const categories = useLiveQueryCategories();
+
 	return (
 		<>
 			<Section>
@@ -37,11 +42,11 @@ function RouteComponent() {
 				</SectionHeader>
 				<SectionContent columns={12}>
 					<div className="col-span-12 md:col-span-7">
-						<ExpenseOverview />
+						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>
 					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
-						<ExpenseStatsRow />
-						<CategoryBreakdown />
+						<ExpenseStatsRow expenses={expenses} />
+						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
 				</SectionContent>
 			</Section>

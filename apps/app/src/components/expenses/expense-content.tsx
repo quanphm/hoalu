@@ -5,18 +5,17 @@ import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
 
 import { selectedExpenseAtom } from "#app/atoms/index.ts";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
-import { type ExpenseClient, useLiveQueryExpenseById } from "#app/hooks/use-db.ts";
 import { WalletBadge } from "../wallets/wallet-badge";
 
-interface ExpenseContentProps extends ExpenseClient {
+interface ExpenseContentProps extends SyncedExpense {
 	onClick(id: string | null): void;
 }
 
 function ExpenseContent(props: ExpenseContentProps) {
-	useLiveQueryExpenseById(props.id);
 	const selectedRow = useAtomValue(selectedExpenseAtom);
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {

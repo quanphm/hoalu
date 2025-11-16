@@ -22,6 +22,8 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
@@ -31,7 +33,6 @@ import {
 	getStartOfWeek,
 	groupDataByMonth,
 } from "#app/helpers/date-range.ts";
-import { useExpenseStats } from "#app/hooks/use-expenses.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";
@@ -49,14 +50,23 @@ const chartConfig = {
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-export function ExpenseOverview() {
+interface ExpenseOverviewProps {
+	expenses: SyncedExpense[];
+	categories: SyncedCategory[];
+}
+
+export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
+
+	const stats = useExpenseStats({
+		expenses: props.expenses,
+		categories: props.categories,
+	});
 
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
-	const stats = useExpenseStats();
 	const {
 		metadata: { currency },
 	} = useWorkspace();

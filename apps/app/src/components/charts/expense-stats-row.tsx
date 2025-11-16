@@ -3,15 +3,18 @@ import { useAtomValue } from "jotai";
 import { Card, CardContent } from "@hoalu/ui/card";
 
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 
-export function ExpenseStatsRow() {
+interface ExpenseStatsRowProps {
+	expenses: SyncedExpense[];
+}
+
+export function ExpenseStatsRow(props: ExpenseStatsRowProps) {
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
-	const expenses = useLiveQueryExpenses();
 
-	const currentPeriodExpenses = filterDataByRange(expenses, dateRange, customRange);
+	const currentPeriodExpenses = filterDataByRange(props.expenses, dateRange, customRange);
 	const totalTransactions = currentPeriodExpenses.length;
 
 	const stats = [

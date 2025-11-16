@@ -5,7 +5,7 @@ import { useSetAtom } from "jotai";
 import { toastManager } from "@hoalu/ui/toast";
 
 import { createExpenseDialogAtom, draftExpenseAtom } from "#app/atoms/index.ts";
-import type { ExpenseClient } from "#app/hooks/use-db.ts";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
@@ -318,7 +318,7 @@ export function useDuplicateExpense() {
 	const setDraft = useSetAtom(draftExpenseAtom);
 
 	const mutation = useMutation({
-		mutationFn: async ({ sourceExpense }: { sourceExpense: ExpenseClient }) => {
+		mutationFn: async ({ sourceExpense }: { sourceExpense: SyncedExpense }) => {
 			if (!sourceExpense) return;
 
 			setDraft({

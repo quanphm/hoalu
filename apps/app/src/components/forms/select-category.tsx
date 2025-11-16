@@ -22,8 +22,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
 
-import { useLiveQueryCategory } from "#app/hooks/use-db.ts";
-import { CreateCategoryForm } from "../category-actions";
+import { CreateCategoryForm } from "#app/components/categories/category-actions.tsx";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -41,7 +41,7 @@ export function SelectCategoryField(props: Props) {
 	const field = useFieldContext<string>();
 	const { value } = field.state;
 
-	const categories = useLiveQueryCategory();
+	const categories = useLiveQueryCategories();
 	const categorieyOptions = [...categories]
 		.sort((a, b) => b.total - a.total)
 		.map((c) => ({
@@ -78,10 +78,7 @@ export function SelectCategoryField(props: Props) {
 							/>
 						</PopoverTrigger>
 					</FieldControl>
-					<PopoverContent
-						className="w-full min-w-[var(--anchor-width)] border-input p-0"
-						align="start"
-					>
+					<PopoverContent className="w-full min-w-(--anchor-width) border-input p-0" align="start">
 						<Command>
 							<CommandInput placeholder="Search..." />
 							<CommandList>

@@ -3,7 +3,7 @@ import { UploadIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 
-import { useFilesUpload } from "#app/hooks/use-files-upload.ts";
+import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
 
 interface FileUploadProps {
 	id?: string;

@@ -20,12 +20,13 @@ import {
 	expenseCategoryFilterAtom,
 	selectDateRangeAtom,
 } from "#app/atoms/filters.ts";
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useLiveQueryCategory, useLiveQueryExpenses } from "#app/hooks/use-db.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";
-import { CreateExpenseDialogTrigger } from "../expenses/expense-actions";
 
 const TOP_N_CATEGORY = 5;
 
@@ -38,17 +39,21 @@ interface CategoryData {
 	color: ColorSchema;
 }
 
-export function CategoryBreakdown() {
+interface CategoryBreakdownProps {
+	expenses: SyncedExpense[];
+	categories: SyncedCategory[];
+}
+
+export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	const [view, setView] = useState<"less" | "more">("less");
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const categories = useLiveQueryCategory();
-	const expenses = useLiveQueryExpenses();
 
-	const filteredExpenses = filterDataByRange(expenses, dateRange, customRange);
+	const dateRange = useAtomValue(selectDateRangeAtom);
+	const customRange = useAtomValue(customDateRangeAtom);
+
+	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
 
 	const categoryTotals: Record<string, number> = {};
 	for (const expense of filteredExpenses) {
@@ -61,7 +66,7 @@ export function CategoryBreakdown() {
 
 	const allCategoryData: CategoryData[] = Object.entries(categoryTotals)
 		.map(([categoryId, total]) => {
-			const category = categories.find((c) => c.id === categoryId);
+			const category = props.categories.find((c) => c.id === categoryId);
 			return {
 				id: categoryId,
 				name: category?.name || "Unknown",
@@ -219,7 +224,7 @@ function CategoryListBreakdown(props: {
 	);
 }
 
-export function EmptyData() {
+function EmptyData() {
 	return (
 		<Empty>
 			<EmptyHeader>

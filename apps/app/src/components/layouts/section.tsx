@@ -1,6 +1,6 @@
 import { cn } from "@hoalu/ui/utils";
 
-import { useLayoutMode } from "#app/hooks/use-layout-mode.ts";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
 	return <div ref={ref} className={cn("flex flex-col gap-4", className)} {...props} />;
