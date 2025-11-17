@@ -29,8 +29,8 @@
 		"@hoalu/furnace": "workspace:*",
 		"@hono/standard-validator": "^0.1.5",
 		"@hono/zod-validator": "^0.7.4",
-		"@react-email/render": "^1.4.0",
-		"@scalar/hono-api-reference": "^0.9.23",
+		"@react-email/render": "^2.0.0",
+		"@scalar/hono-api-reference": "^0.9.24",
 		"better-auth": "catalog:",
 		"drizzle-orm": "^0.44.7",
 		"hono": "catalog:",
@@ -46,7 +46,7 @@
 		"@types/bun": "catalog:",
 		"@types/nodemailer": "^7.0.3",
 		"@types/pg": "^8.15.6",
-		"drizzle-kit": "^0.31.6",
+		"drizzle-kit": "^0.31.7",
 		"rimraf": "^6.1.0"
 	}
 }
