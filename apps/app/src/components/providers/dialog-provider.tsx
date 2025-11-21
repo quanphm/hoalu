@@ -1,7 +1,13 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import type { PropsWithChildren } from "react";
 
-import { Dialog, DialogBackdrop, DialogPortal } from "@hoalu/ui/dialog";
+import {
+	Dialog,
+	DialogBackdrop,
+	DialogPopup,
+	DialogPortal,
+	DialogViewport,
+} from "@hoalu/ui/dialog";
 
 import {
 	currentDialogAtom,
@@ -42,15 +48,17 @@ export function DialogProvider(props: PropsWithChildren) {
 
 			<Dialog open={open} onOpenChange={handleOpenChange}>
 				<DialogPortal>
-					{open && <DialogBackdrop />}
-					{currentDialog && <Content id={currentDialog.id} />}
+					<DialogBackdrop />
+					<DialogViewport>
+						<Content id={currentDialog?.id} />
+					</DialogViewport>
 				</DialogPortal>
 			</Dialog>
 		</>
 	);
 }
 
-function Content(props: { id: DialogId }) {
+function Content(props: { id?: DialogId }) {
 	switch (props.id) {
 		case "create-workspace":
 			return <CreateWorkspaceDialogContent />;
@@ -75,6 +83,6 @@ function Content(props: { id: DialogId }) {
 			return <DeleteCategoryDialogContent />;
 
 		default:
-			return "Not supported dialog";
+			return <DialogPopup>Not supported dialog</DialogPopup>;
 	}
 }
