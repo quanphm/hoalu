@@ -3,7 +3,7 @@ import { describeRoute } from "hono-openapi";
 import * as z from "zod";
 
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { CurrencySchema } from "@hoalu/common/schema";
+import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
 
@@ -14,6 +14,12 @@ import { ExchangeRateSchema } from "#api/routes/exchange-rates/schema.ts";
 const app = createHonoInstance();
 const exchangeRateRepository = new ExchangeRateRepository();
 const TAGS = ["Exchange Rates"];
+
+const ExchangeRateQuerySchema = z.object({
+	from: CurrencySchema,
+	to: CurrencySchema,
+	date: z.optional(IsoDateSchema),
+});
 
 const route = app.get(
 	"/",
@@ -27,16 +33,16 @@ const route = app.get(
 			...OpenAPI.response(z.object({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	zValidator("query", z.object({ from: CurrencySchema, to: CurrencySchema }), (result, c) => {
+	zValidator("query", ExchangeRateQuerySchema, (result, c) => {
 		if (!result.success) {
 			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
 		}
 	}),
 	async (c) => {
-		const { from, to } = c.req.valid("query");
-		const today = new Date().toISOString();
+		const { from, to, date } = c.req.valid("query");
+		const today = date || new Date().toISOString();
 
-		const rateInfo = await exchangeRateRepository.lookup([from, to], today);
+		const rateInfo = await exchangeRateRepository.lookup([from, to], date || today);
 		if (!rateInfo) {
 			return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 		}
