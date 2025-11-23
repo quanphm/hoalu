@@ -11,6 +11,7 @@
 	"exports": {
 		"./http-status": "./src/http-status/index.ts",
 		"./enums": "./src/enums.ts",
+		"./exchange-rate": "./src/exchange-rate.ts",
 		"./generate-id": "./src/generate-id.ts",
 		"./io": "./src/io.ts",
 		"./monetary": "./src/monetary.ts",

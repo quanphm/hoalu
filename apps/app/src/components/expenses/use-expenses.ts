@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
@@ -19,7 +20,8 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { categoryCollection } from "#app/lib/collections/category.ts";
 import { expenseCollection } from "#app/lib/collections/expense.ts";
 import { walletCollection } from "#app/lib/collections/wallet.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { queryClient } from "#app/lib/query-client.ts";
+import { exchangeRatesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
@@ -184,16 +186,46 @@ export function useLiveQueryExpenses() {
 		[workspace.id],
 	);
 
-	const transformedExpenses = useMemo(() => {
+	const transformedExpenses = useMemo(async () => {
 		if (!data) return [];
 
-		return data.map((expense) => ({
-			...expense,
-			date: datetime.format(expense.date, "yyyy-MM-dd"),
-			amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
-			realAmount: Number(expense.amount),
-			convertedAmount: Number(expense.amount),
-		}));
+		const expenses = data.map((expense) => {
+			return {
+				...expense,
+				date: datetime.format(expense.date, "yyyy-MM-dd"),
+				amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
+				realAmount: Number(expense.amount),
+				convertedAmount: Number(expense.amount),
+			};
+		});
+
+		const promises = expenses.map(async (expense) => {
+			const { realAmount, currency: sourceCurrency } = expense;
+
+			try {
+				const result = await queryClient.fetchQuery(
+					exchangeRatesQueryOptions({
+						from: sourceCurrency,
+						to: (workspace as any).metadata.currency,
+					}),
+				);
+				const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
+				const factor = isNoCent ? 1 : 100;
+				const convertedAmount = realAmount * (result.rate / factor);
+				return {
+					...expense,
+					convertedAmount: convertedAmount,
+				};
+			} catch (_error) {
+				return {
+					...expense,
+					convertedAmount: -1,
+				};
+			}
+		});
+
+		const result = await Promise.all(promises);
+		return result;
 	}, [data]);
 
 	return transformedExpenses;

@@ -1,19 +1,20 @@
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 
 import { datetime } from "@hoalu/common/datetime";
+import {
+	calculateCrossRate,
+	type ExchangeRate,
+	type ExchangeRateProvider,
+	lookupExchangeRate,
+} from "@hoalu/common/exchange-rate";
 
 import { db, schema } from "#api/db/index.ts";
 
-interface ReturnRate {
-	date: string;
-	fromCurrency: string;
-	toCurrency: string;
-	exchangeRate: string;
-	inverseRate: string;
-}
-
-export class ExchangeRateRepository {
-	async _find([from = "USD", to]: [string, string], date?: string) {
+export class ExchangeRateRepository implements ExchangeRateProvider {
+	async findDirect(
+		[from = "USD", to]: [string, string],
+		date?: string,
+	): Promise<ExchangeRate | null> {
 		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
 		const queryData = await db
 			.select()
@@ -31,10 +32,20 @@ export class ExchangeRateRepository {
 
 		if (!queryData[0]) return null;
 
-		return queryData[0];
+		const { fromCurrency, toCurrency, exchangeRate, inverseRate } = queryData[0];
+		const today = new Date().toISOString();
+		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
+
+		return {
+			date: returnedDate,
+			fromCurrency,
+			toCurrency,
+			exchangeRate,
+			inverseRate,
+		};
 	}
 
-	async _crossRate([from, to]: [string, string], date?: string) {
+	async findCrossRate([from, to]: [string, string], date?: string): Promise<ExchangeRate | null> {
 		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
 		const usdRates = await db
 			.select({
@@ -51,69 +62,30 @@ export class ExchangeRateRepository {
 				),
 			);
 
-		const usdOfFrom = usdRates.find((rate) => rate.toCurrency === from);
-		const usdOfTo = usdRates.find((rate) => rate.toCurrency === to);
+		const rates = calculateCrossRate({
+			pair: [from, to],
+			usdToFrom: usdRates.find((rate) => rate.toCurrency === from),
+			usdToTo: usdRates.find((rate) => rate.toCurrency === to),
+		});
+		const today = new Date().toISOString();
+		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
 
-		if (!usdOfFrom || !usdOfTo) return null;
+		if (!rates) return null;
 
 		return {
-			fromCurrency: from,
-			toCurrency: to,
-			exchangeRate: `${Number.parseFloat(usdOfFrom.inverseRate) * Number.parseFloat(usdOfTo.exchangeRate)}`,
-			inverseRate: `${Number.parseFloat(usdOfTo.inverseRate) * Number.parseFloat(usdOfFrom.exchangeRate)}`,
+			...rates,
+			date: returnedDate,
 		};
 	}
 
-	async lookup([from, to]: [string, string], date?: string): Promise<ReturnRate | null> {
-		const today = new Date().toISOString();
-		const isSameExchange = from === to;
-		const isCrossRate = from !== "USD" && to !== "USD";
-		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
-
-		/**
-		 * @example VND -> VND
-		 */
-		if (isSameExchange) {
-			return {
-				date: returnedDate,
-				fromCurrency: from,
-				toCurrency: to,
-				exchangeRate: "1",
-				inverseRate: "1",
-			};
-		}
-
-		/**
-		 * Cross-rate exchange
-		 * @example VND -> USD -> SGD || SGD -> USD -> VND
-		 */
-		if (isCrossRate) {
-			const result = await this._crossRate([from, to], date);
-			if (!result) return null;
-			return {
-				...result,
-				date: returnedDate,
-			};
-		}
-
-		/**
-		 * Direct exchange
-		 * @example VND -> USD || USD -> VND
-		 */
-		const result = await this._find([from, to], date);
-		if (!result) return null;
-
-		/**
-		 * In DB, everything stored as USD -> XXX
-		 * hence, this value to detect pair of XXX -> USD.
-		 */
-		const useInverse = from !== "USD" && to === "USD";
-
-		return {
-			...result,
-			date: returnedDate,
-			exchangeRate: useInverse ? result.inverseRate : result.exchangeRate,
-			inverseRate: useInverse ? result.exchangeRate : result.inverseRate,
-		};
+	async lookup([from, to]: [string, string], date: string): Promise<ExchangeRate | null> {
+		return lookupExchangeRate(
+			{
+				findDirect: this.findDirect,
+				findCrossRate: this.findCrossRate,
+			},
+			[from, to],
+			date,
+		);
 	}
 }
