@@ -1,7 +1,8 @@
 import { cors } from "hono/cors";
 
+// import { authGuard } from "@hoalu/furnace";
+
 import { HTTPStatus } from "@hoalu/common/http-status";
-import { authGuard } from "@hoalu/furnace";
 
 import { createHonoInstance } from "#api/lib/create-app.ts";
 
@@ -11,20 +12,17 @@ export function syncModule() {
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
-				allowMethods: ["POST", "GET", "HEAD", "DELETE", "OPTIONS"],
 				exposeHeaders: [
-					"Electric-Handle",
-					"Electric-Offset",
-					"Electric-Schema",
-					"Electric-Cursor",
-					"Electric-Up-To-Date",
-					"Content-Length",
-					"Content-Encoding",
+					"electric-cursor",
+					"electric-handle",
+					"electric-offset",
+					"electric-schema",
+					"electric-up-to-date",
 				],
 				credentials: true,
 			}),
 		)
-		.use(authGuard())
+		// .use(authGuard())
 		.get("/", async (c) => {
 			const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
 
@@ -32,40 +30,46 @@ export function syncModule() {
 			searchParams.forEach((value, key) => {
 				shapeUrl.searchParams.set(key, value);
 			});
-			// ELECTRIC_SECRET
-			shapeUrl.searchParams.set("api_secret", process.env.SYNC_SECRET);
+			/**
+			 * ELECTRIC_SECRET - required
+			 * @see https://github.com/electric-sql/electric/blob/main/website/electric-api.yaml#L20
+			 */
+			shapeUrl.searchParams.set("secret", process.env.SYNC_SECRET);
 
-			const electricResponse = await fetch(shapeUrl.toString());
+			const response = await fetch(shapeUrl);
+			console.log(response.status);
 
-			if (electricResponse.status > 204) {
-				console.error("Error: ", electricResponse.status);
+			const headers = response.headers;
+			headers.delete(`content-encoding`);
+			headers.delete(`content-length`);
+			headers.set(`vary`, `cookie`);
+
+			if (response.status === HTTPStatus.codes.NO_CONTENT) {
+				headers.set("electric-up-to-date", "");
+				return c.body(null, HTTPStatus.codes.NO_CONTENT, headers.toJSON());
+			}
+
+			if (response.status > 204) {
+				console.error("Error: ", response.status);
 				return c.json({ ok: false }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const electricHeaders = new Headers(electricResponse.headers);
+			/**
+			 * @see https://electric-sql.com/docs/api/http#control-messages
+			 */
+			type Data = {
+				headers: Record<string, string> & {
+					control?: "up-to-date" | "must-refetch" | "snapshot-end";
+				};
+			}[];
 
-			if (electricResponse.status === HTTPStatus.codes.NO_CONTENT) {
-				electricHeaders.set("Electric-Up-To-Date", "");
-				return c.body(null, HTTPStatus.codes.NO_CONTENT, {
-					...electricHeaders.toJSON(),
-				});
-			}
-
-			const data = await electricResponse.json();
-
-			if (electricHeaders.get("Content-Encoding")) {
-				electricHeaders.delete("Content-Encoding");
-				electricHeaders.delete("Content-Length");
-			}
-
-			const isUpToDate = data.find((d: any) => d?.headers.control === "up-to-date");
+			const data: Data = await response.json();
+			const isUpToDate = data.find((d) => d.headers?.control === "up-to-date");
 			if (isUpToDate) {
-				electricHeaders.set("Electric-Up-To-Date", "");
+				headers.set("electric-up-to-date", "");
 			}
 
-			return c.json(data, HTTPStatus.codes.OK, {
-				...electricHeaders.toJSON(),
-			});
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
 		});
 
 	return app;

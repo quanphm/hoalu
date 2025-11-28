@@ -724,7 +724,7 @@ import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
-export const SelectExpenseSchema = z.object({
+const SelectExpenseSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
   amount: z.coerce.number(), // Coerces string to number

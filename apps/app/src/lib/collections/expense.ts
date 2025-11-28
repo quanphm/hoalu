@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/common/schema";
 
-export const SelectExpenseSchema = z.object({
+const SelectExpenseSchema = z.object({
 	id: z.uuidv7(),
 	title: z.string(),
 	description: z.string().nullable(),
