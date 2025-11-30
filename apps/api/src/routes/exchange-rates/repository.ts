@@ -1,6 +1,5 @@
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 
-import { datetime } from "@hoalu/common/datetime";
 import {
 	calculateCrossRate,
 	type ExchangeRate,
@@ -11,11 +10,8 @@ import {
 import { db, schema } from "#api/db/index.ts";
 
 export class ExchangeRateRepository implements ExchangeRateProvider {
-	async findDirect(
-		[from = "USD", to]: [string, string],
-		date?: string,
-	): Promise<ExchangeRate | null> {
-		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
+	async findDirect([from, to]: [string, string], date: string): Promise<ExchangeRate | null> {
+		const lookupDate = sql`${date}`;
 		const queryData = await db
 			.select()
 			.from(schema.fxRate)
@@ -30,23 +26,11 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 			)
 			.limit(1);
 
-		if (!queryData[0]) return null;
-
-		const { fromCurrency, toCurrency, exchangeRate, inverseRate } = queryData[0];
-		const today = new Date().toISOString();
-		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
-
-		return {
-			date: returnedDate,
-			fromCurrency,
-			toCurrency,
-			exchangeRate,
-			inverseRate,
-		};
+		return queryData[0];
 	}
 
-	async findCrossRate([from, to]: [string, string], date?: string): Promise<ExchangeRate | null> {
-		const lookupDate = date ? sql`${date}` : sql`CURRENT_DATE`;
+	async findCrossRate([from, to]: [string, string], date: string): Promise<ExchangeRate | null> {
+		const lookupDate = sql`${date}`;
 		const usdRates = await db
 			.select({
 				toCurrency: schema.fxRate.toCurrency,
@@ -57,7 +41,6 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 			.where(
 				and(
 					between(lookupDate, schema.fxRate.validFrom, schema.fxRate.validTo),
-					eq(schema.fxRate.fromCurrency, "USD"),
 					inArray(schema.fxRate.toCurrency, [from, to]),
 				),
 			);
@@ -67,15 +50,8 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 			usdToFrom: usdRates.find((rate) => rate.toCurrency === from),
 			usdToTo: usdRates.find((rate) => rate.toCurrency === to),
 		});
-		const today = new Date().toISOString();
-		const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
 
-		if (!rates) return null;
-
-		return {
-			...rates,
-			date: returnedDate,
-		};
+		return rates;
 	}
 
 	async lookup([from, to]: [string, string], date: string): Promise<ExchangeRate | null> {

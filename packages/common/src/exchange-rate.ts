@@ -1,18 +1,3 @@
-import { datetime } from "./datetime.ts";
-
-interface ExchangeRate {
-	date: string;
-	fromCurrency: string;
-	toCurrency: string;
-	exchangeRate: string;
-	inverseRate: string;
-}
-
-interface ExchangeRateProvider {
-	findDirect([from, to]: [string, string], date?: string): Promise<ExchangeRate | null>;
-	findCrossRate([from, to]: [string, string], date?: string): Promise<ExchangeRate | null>;
-}
-
 function calculateCrossRate(params: {
 	pair: [string, string];
 	usdToFrom?: { exchangeRate: string; inverseRate: string };
@@ -46,14 +31,44 @@ function getExchangeRateStrategy(from: string, to: string) {
 	return "direct" as const;
 }
 
-async function lookupExchangeRate(
+interface ExchangeRate {
+	fromCurrency: string;
+	toCurrency: string;
+	exchangeRate: string;
+	inverseRate: string;
+}
+
+interface ExchangeRateProvider {
+	findDirect([from, to]: [string, string], date: string): Promise<ExchangeRate | null>;
+	findCrossRate([from, to]: [string, string], date: string): Promise<ExchangeRate | null>;
+}
+
+interface SyncExchangeRateProvider {
+	findDirect([from, to]: [string, string], date: string): ExchangeRate | null;
+	findCrossRate([from, to]: [string, string], date: string): ExchangeRate | null;
+}
+
+// Async overload
+function lookupExchangeRate(
 	provider: ExchangeRateProvider,
+	pair: [string, string],
+	date?: string,
+): Promise<ExchangeRate | null>;
+
+// Sync overload
+function lookupExchangeRate(
+	provider: SyncExchangeRateProvider,
+	pair: [string, string],
+	date?: string,
+): ExchangeRate | null;
+
+// Implementation
+function lookupExchangeRate(
+	provider: ExchangeRateProvider | SyncExchangeRateProvider,
 	[from, to]: [string, string],
 	date?: string,
-): Promise<ExchangeRate | null> {
-	const today = new Date().toISOString();
-	const returnedDate = datetime.format(date || today, "yyyy-MM-dd");
-
+): Promise<ExchangeRate | null> | ExchangeRate | null {
+	const lookupDate = date || new Date().toISOString();
 	const strategy = getExchangeRateStrategy(from, to);
 
 	/**
@@ -62,7 +77,6 @@ async function lookupExchangeRate(
 	 */
 	if (strategy === "same") {
 		return {
-			date: returnedDate,
 			fromCurrency: from,
 			toCurrency: to,
 			exchangeRate: "1",
@@ -75,12 +89,11 @@ async function lookupExchangeRate(
 	 * @example VND -> USD -> SGD || SGD -> USD -> VND
 	 */
 	if (strategy === "cross") {
-		const result = await provider.findCrossRate([from, to], date);
-		if (!result) return null;
-		return {
-			...result,
-			date: returnedDate,
-		};
+		const result = provider.findCrossRate([from, to], lookupDate);
+		if (result instanceof Promise) {
+			return result.then((res) => (res ? res : null));
+		}
+		return result;
 	}
 
 	/**
@@ -88,12 +101,23 @@ async function lookupExchangeRate(
 	 * @example XXX -> USD || USD -> XXX
 	 */
 	if (strategy === "direct") {
-		const result = await provider.findDirect([from, to], date);
+		const result = provider.findDirect([from, to], lookupDate);
 		const useInverse = from !== "USD" && to === "USD";
+
+		if (result instanceof Promise) {
+			return result.then((res) => {
+				if (!res) return null;
+				return {
+					...res,
+					exchangeRate: useInverse ? res.inverseRate : res.exchangeRate,
+					inverseRate: useInverse ? res.exchangeRate : res.inverseRate,
+				};
+			});
+		}
+
 		if (!result) return null;
 		return {
 			...result,
-			date: returnedDate,
 			exchangeRate: useInverse ? result.inverseRate : result.exchangeRate,
 			inverseRate: useInverse ? result.exchangeRate : result.inverseRate,
 		};
@@ -103,4 +127,4 @@ async function lookupExchangeRate(
 }
 
 export { lookupExchangeRate, calculateCrossRate };
-export type { ExchangeRate, ExchangeRateProvider };
+export type { ExchangeRate, ExchangeRateProvider, SyncExchangeRateProvider };

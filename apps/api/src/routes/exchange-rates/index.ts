@@ -40,15 +40,15 @@ const route = app.get(
 	}),
 	async (c) => {
 		const { from, to, date } = c.req.valid("query");
-		const today = date || new Date().toISOString();
+		const lookupISODate = date || new Date().toISOString();
 
-		const rateInfo = await exchangeRateRepository.lookup([from, to], date || today);
+		const rateInfo = await exchangeRateRepository.lookup([from, to], lookupISODate);
 		if (!rateInfo) {
 			return c.json({ message: "Exchange rate not found" }, HTTPStatus.codes.NOT_FOUND);
 		}
 
 		const parsed = ExchangeRateSchema.safeParse({
-			date: rateInfo.date,
+			date: lookupISODate,
 			from: rateInfo.fromCurrency,
 			to: rateInfo.toCurrency,
 			rate: rateInfo.exchangeRate,
