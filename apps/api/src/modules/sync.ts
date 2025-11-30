@@ -4,6 +4,9 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { authGuard } from "@hoalu/furnace";
 
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { prepareElectricUrl, proxyElectricRequest } from "#api/lib/electric.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 export function syncModule() {
 	const app = createHonoInstance()
@@ -11,61 +14,61 @@ export function syncModule() {
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
-				allowMethods: ["POST", "GET", "HEAD", "DELETE", "OPTIONS"],
 				exposeHeaders: [
-					"Electric-Handle",
-					"Electric-Offset",
-					"Electric-Schema",
-					"Electric-Cursor",
-					"Electric-Up-To-Date",
-					"Content-Length",
-					"Content-Encoding",
+					"electric-cursor",
+					"electric-handle",
+					"electric-offset",
+					"electric-schema",
+					"electric-up-to-date",
 				],
 				credentials: true,
 			}),
 		)
 		.use(authGuard())
-		.get("/", async (c) => {
-			const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
+		.get("/expenses", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			const searchParams = new URL(c.req.url).searchParams;
-			searchParams.forEach((value, key) => {
-				shapeUrl.searchParams.set(key, value);
-			});
-			// ELECTRIC_SECRET
-			shapeUrl.searchParams.set("api_secret", process.env.SYNC_SECRET);
+			shapeUrl.searchParams.set("table", "expense");
+			shapeUrl.searchParams.set("where", whereClause);
 
-			const electricResponse = await fetch(shapeUrl.toString());
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-			if (electricResponse.status > 204) {
-				console.error("Error: ", electricResponse.status);
-				return c.json({ ok: false }, HTTPStatus.codes.BAD_REQUEST);
-			}
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/categories", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			const electricHeaders = new Headers(electricResponse.headers);
+			shapeUrl.searchParams.set("table", "category");
+			shapeUrl.searchParams.set("where", whereClause);
 
-			if (electricResponse.status === HTTPStatus.codes.NO_CONTENT) {
-				electricHeaders.set("Electric-Up-To-Date", "");
-				return c.body(null, HTTPStatus.codes.NO_CONTENT, {
-					...electricHeaders.toJSON(),
-				});
-			}
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-			const data = await electricResponse.json();
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/wallets", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			if (electricHeaders.get("Content-Encoding")) {
-				electricHeaders.delete("Content-Encoding");
-				electricHeaders.delete("Content-Length");
-			}
+			shapeUrl.searchParams.set("table", "wallet");
+			shapeUrl.searchParams.set("where", whereClause);
 
-			const isUpToDate = data.find((d: any) => d?.headers.control === "up-to-date");
-			if (isUpToDate) {
-				electricHeaders.set("Electric-Up-To-Date", "");
-			}
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-			return c.json(data, HTTPStatus.codes.OK, {
-				...electricHeaders.toJSON(),
-			});
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/exchange-rates", async (c) => {
+			const shapeUrl = prepareElectricUrl(c.req.url);
+
+			shapeUrl.searchParams.set("table", "fx_rate");
+
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
+
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
 		});
 
 	return app;

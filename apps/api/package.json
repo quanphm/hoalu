@@ -22,6 +22,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@electric-sql/client": "^1.2.0",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
 		"@hoalu/countries": "workspace:*",
@@ -36,9 +37,10 @@
 		"hono": "catalog:",
 		"hono-openapi": "^1.1.1",
 		"ioredis": "^5.8.2",
-		"nodemailer": "^7.0.10",
+		"nodemailer": "^7.0.11",
 		"pg": "^8.16.3",
 		"react": "catalog:",
+		"undici": "^7.16.0",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

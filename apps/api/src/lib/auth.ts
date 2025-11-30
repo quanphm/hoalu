@@ -147,9 +147,8 @@ export const auth = betterAuth({
 						email: user.email,
 					};
 				},
-				issuer: process.env.AUTH_URL,
 				audience: process.env.PUBLIC_APP_BASE_URL,
-				expirationTime: "30d",
+				expirationTime: "7d",
 			},
 		}),
 		apiKey(),

@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/common/schema";
 
-export const SelectExpenseSchema = z.object({
+const SelectExpenseSchema = z.object({
 	id: z.uuidv7(),
 	title: z.string(),
 	description: z.string().nullable(),
@@ -18,17 +18,12 @@ export const SelectExpenseSchema = z.object({
 	created_at: IsoDateSchema,
 });
 
-export const expenseCollection = (id: string) => {
+export const expenseCollection = (slug: string) => {
 	return createCollection(
 		electricCollectionOptions({
 			getKey: (item) => item.id,
 			shapeOptions: {
-				url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
-				params: {
-					table: "expense",
-					where: "workspace_id = $1",
-					params: [id],
-				},
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
 				// @ts-expect-error
 				fetchClient: (req: RequestInfo, init: RequestInit) => {
 					return fetch(req, { ...init, credentials: "include" });

@@ -9,8 +9,8 @@ export function useLiveQueryCategories() {
 	const { data } = useLiveQuery(
 		(q) => {
 			return q
-				.from({ category: categoryCollection(workspace.id) })
-				.leftJoin({ expense: expenseCollection(workspace.id) }, ({ category, expense }) =>
+				.from({ category: categoryCollection(workspace.slug) })
+				.leftJoin({ expense: expenseCollection(workspace.slug) }, ({ category, expense }) =>
 					eq(category.id, expense.category_id),
 				)
 				.groupBy(({ category }) => [

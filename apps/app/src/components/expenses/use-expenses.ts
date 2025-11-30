@@ -4,7 +4,9 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
 import { datetime } from "@hoalu/common/datetime";
+import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
 import { monetary } from "@hoalu/common/monetary";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
@@ -17,6 +19,7 @@ import {
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { categoryCollection } from "#app/lib/collections/category.ts";
+import { exchangeRateCollection } from "#app/lib/collections/exchange-rate.ts";
 import { expenseCollection } from "#app/lib/collections/expense.ts";
 import { walletCollection } from "#app/lib/collections/wallet.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
@@ -155,14 +158,14 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 export function useLiveQueryExpenses() {
 	const workspace = useWorkspace();
 
-	const { data } = useLiveQuery(
+	const { data: expensesData } = useLiveQuery(
 		(q) => {
 			return q
-				.from({ expense: expenseCollection(workspace.id) })
-				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
+				.from({ expense: expenseCollection(workspace.slug) })
+				.innerJoin({ wallet: walletCollection(workspace.slug) }, ({ expense, wallet }) =>
 					eq(expense.wallet_id, wallet.id),
 				)
-				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
+				.leftJoin({ category: categoryCollection(workspace.slug) }, ({ expense, category }) =>
 					eq(expense.category_id, category.id),
 				)
 				.orderBy(({ expense }) => expense.date, "desc")
@@ -184,69 +187,83 @@ export function useLiveQueryExpenses() {
 		[workspace.id],
 	);
 
-	const transformedExpenses = useMemo(() => {
-		if (!data) return [];
-
-		return data.map((expense) => ({
-			...expense,
-			date: datetime.format(expense.date, "yyyy-MM-dd"),
-			amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
-			realAmount: Number(expense.amount),
-			convertedAmount: Number(expense.amount),
+	const { data: fxRateData } = useLiveQuery((q) => {
+		return q.from({ fxRate: exchangeRateCollection }).fn.select(({ fxRate }) => ({
+			from: fxRate.from_currency,
+			to: fxRate.to_currency,
+			exchangeRate: `${fxRate.exchange_rate}`,
+			inverseRate: `${fxRate.inverse_rate}`,
+			validFrom: fxRate.valid_from,
+			validTo: fxRate.valid_to,
 		}));
-	}, [data]);
+	});
+
+	const transformedExpenses = useMemo(() => {
+		const expenses = expensesData.map((expense) => {
+			const exchangeRate = lookupExchangeRate(
+				{
+					findDirect: ([from, to], date) => {
+						const maybeCorrectRate = fxRateData.find((rate) => {
+							const betweenValidFromTo =
+								new Date(rate.validFrom) <= new Date(date) &&
+								new Date(date) <= new Date(rate.validTo);
+
+							const correctFromTo =
+								(rate.from === from && rate.to === to) || (rate.from === to && rate.to === from);
+
+							return betweenValidFromTo && correctFromTo;
+						});
+
+						if (!maybeCorrectRate) return null;
+
+						return {
+							fromCurrency: maybeCorrectRate.from,
+							toCurrency: maybeCorrectRate.to,
+							exchangeRate: `${maybeCorrectRate.exchangeRate}`,
+							inverseRate: `${maybeCorrectRate.inverseRate}`,
+						};
+					},
+					findCrossRate: ([from, to], date) => {
+						const usdRates = fxRateData.filter((rate) => {
+							const betweenValidFromTo =
+								new Date(rate.validFrom) <= new Date(date) &&
+								new Date(date) <= new Date(rate.validTo);
+
+							const correctTo = rate.to === from || rate.to === to;
+
+							return betweenValidFromTo && correctTo;
+						});
+
+						const rates = calculateCrossRate({
+							pair: [from, to],
+							usdToFrom: usdRates.find((rate) => rate.to === from),
+							usdToTo: usdRates.find((rate) => rate.to === to),
+						});
+
+						return rates;
+					},
+				},
+				[expense.currency, workspace.metadata.currency],
+				expense.created_at,
+			);
+			const isNoCent = zeroDecimalCurrencies.find((c) => c === expense.currency);
+			const factor = isNoCent ? 1 : 100;
+			const convertedAmount =
+				expense.amount * ((exchangeRate ? Number(exchangeRate.exchangeRate) : 0) / factor);
+
+			return {
+				...expense,
+				date: datetime.format(expense.date, "yyyy-MM-dd"),
+				amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
+				realAmount: Number(expense.amount),
+				convertedAmount: convertedAmount,
+			};
+		});
+		return expenses;
+	}, [expensesData]);
 
 	return transformedExpenses;
 }
 
 type SyncedExpenses = ReturnType<typeof useLiveQueryExpenses>;
 export type SyncedExpense = SyncedExpenses[number];
-
-export function useLiveQueryExpenseById(id: string | null) {
-	const workspace = useWorkspace();
-
-	const { data } = useLiveQuery(
-		(q) => {
-			if (!id) return undefined;
-
-			return q
-				.from({ expense: expenseCollection(workspace.id) })
-				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
-					eq(expense.wallet_id, wallet.id),
-				)
-				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
-					eq(expense.category_id, category.id),
-				)
-				.where(({ expense }) => eq(expense.id, id))
-				.findOne()
-				.select(({ expense, wallet, category }) => ({
-					...expense,
-					category: {
-						id: category?.id,
-						name: category?.name,
-						color: category?.color,
-					},
-					wallet: {
-						id: wallet.id,
-						name: wallet.name,
-						type: wallet.type,
-					},
-				}));
-		},
-		[id],
-	);
-
-	const transformedExpense = useMemo(() => {
-		if (!data) return null;
-
-		return {
-			...data,
-			date: datetime.format(data.date, "yyyy-MM-dd"),
-			amount: monetary.fromRealAmount(Number(data.amount), data.currency),
-			realAmount: Number(data.amount),
-			convertedAmount: Number(data.amount),
-		};
-	}, [data]);
-
-	return transformedExpense;
-}

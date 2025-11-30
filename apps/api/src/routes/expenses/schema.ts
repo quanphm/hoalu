@@ -9,45 +9,45 @@ import {
 	WalletTypeSchema,
 } from "@hoalu/common/schema";
 
-export const ExpenseSchema = z
-	.object({
+const BaseExpenseSchema = z.object({
+	id: z.uuidv7(),
+	title: z.string(),
+	description: z.string().nullable(),
+	amount: z.coerce.number(),
+	currency: CurrencySchema,
+	repeat: RepeatSchema,
+	date: IsoDateSchema,
+	createdAt: IsoDateSchema,
+	creator: z.object({
 		id: z.uuidv7(),
-		title: z.string(),
+		publicId: z.string(),
+		name: z.string(),
+		email: z.email(),
+		image: z.string().nullable(),
+	}),
+	wallet: z.object({
+		id: z.uuidv7(),
+		name: z.string(),
 		description: z.string().nullable(),
-		amount: z.coerce.number(),
 		currency: CurrencySchema,
-		repeat: RepeatSchema,
-		date: IsoDateSchema,
-		createdAt: IsoDateSchema,
-		creator: z.object({
-			id: z.uuidv7(),
-			publicId: z.string(),
-			name: z.string(),
-			email: z.email(),
-			image: z.string().nullable(),
-		}),
-		wallet: z.object({
+		type: WalletTypeSchema,
+		isActive: z.boolean(),
+	}),
+	category: z
+		.object({
 			id: z.uuidv7(),
 			name: z.string(),
 			description: z.string().nullable(),
-			currency: CurrencySchema,
-			type: WalletTypeSchema,
-			isActive: z.boolean(),
-		}),
-		category: z
-			.object({
-				id: z.uuidv7(),
-				name: z.string(),
-				description: z.string().nullable(),
-				color: ColorSchema,
-			})
-			.nullable(),
-	})
-	.transform((val) => ({
-		...val,
-		amount: monetary.fromRealAmount(val.amount, val.currency),
-		realAmount: val.amount,
-	}));
+			color: ColorSchema,
+		})
+		.nullable(),
+});
+
+export const ExpenseSchema = BaseExpenseSchema.transform((val) => ({
+	...val,
+	realAmount: val.amount,
+	amount: monetary.fromRealAmount(val.amount, val.currency),
+}));
 
 export const ExpensesSchema = z.array(ExpenseSchema);
 
@@ -68,18 +68,16 @@ export const DeleteExpenseSchema = z.object({
 	id: z.uuidv7(),
 });
 
-export const LiteExpenseSchema = z
-	.object({
-		id: z.uuidv7(),
-		title: z.string(),
-		description: z.string().nullable(),
-		amount: z.coerce.number(),
-		currency: CurrencySchema,
-		repeat: RepeatSchema,
-		date: IsoDateSchema,
-	})
-	.transform((val) => ({
-		...val,
-		amount: monetary.fromRealAmount(val.amount, val.currency),
-		realAmount: val.amount,
-	}));
+export const LiteExpenseSchema = BaseExpenseSchema.pick({
+	id: true,
+	title: true,
+	description: true,
+	amount: true,
+	currency: true,
+	repeat: true,
+	date: true,
+}).transform((val) => ({
+	...val,
+	realAmount: val.amount,
+	amount: monetary.fromRealAmount(val.amount, val.currency),
+}));
