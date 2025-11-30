@@ -19,9 +19,7 @@ export const walletCollection = (slug: string) => {
 			getKey: (item) => item.id,
 			schema: SelectWalletSchema,
 			shapeOptions: {
-				url: new URL(
-					`${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
-				).toString(),
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
 				// @ts-expect-error
 				fetchClient: (req: RequestInfo, init: RequestInit) => {
 					return fetch(req, { ...init, credentials: "include" });

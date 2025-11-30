@@ -17,7 +17,7 @@ export const exchangeRateCollection = createCollection(
 	electricCollectionOptions({
 		getKey: (item) => `${item.from_currency}-${item.to_currency}-${item.valid_from}`,
 		shapeOptions: {
-			url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync/exchange-rates`).toString(),
+			url: `${import.meta.env.PUBLIC_API_URL}/sync/exchange-rates`,
 			// @ts-expect-error
 			fetchClient: (req: RequestInfo, init: RequestInit) => {
 				return fetch(req, { ...init, credentials: "include" });

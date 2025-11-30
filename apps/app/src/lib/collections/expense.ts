@@ -23,9 +23,7 @@ export const expenseCollection = (slug: string) => {
 		electricCollectionOptions({
 			getKey: (item) => item.id,
 			shapeOptions: {
-				url: new URL(
-					`${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
-				).toString(),
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
 				// @ts-expect-error
 				fetchClient: (req: RequestInfo, init: RequestInit) => {
 					return fetch(req, { ...init, credentials: "include" });
