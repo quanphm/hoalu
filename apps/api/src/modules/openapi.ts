@@ -21,10 +21,15 @@ export function openAPIModule(app: HonoApp) {
 		.get(
 			"/reference",
 			Scalar({
+				pageTitle: "API Documentation",
 				theme: "saturn",
 				layout: "modern",
 				url: "/openapi",
 				hideDownloadButton: true,
+				sources: [
+					{ url: "/openapi", title: "API" },
+					{ url: "/auth/open-api/generate-schema", title: "Auth" },
+				],
 			}),
 		);
 }

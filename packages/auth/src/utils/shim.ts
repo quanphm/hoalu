@@ -35,7 +35,6 @@ export const shimEndpoint = (ctx: AuthContext, value: any) => {
 					if (match) {
 						const hookRes = await hook.handler(context);
 						if (hookRes && typeof hookRes === "object" && "context" in hookRes) {
-							// https://github.com/better-auth/better-auth/blob/38384feebfd1df554b475da6506779f77a0911bd/packages/better-auth/src/utils/shim.ts#L42
 							context = {
 								...context,
 								...(hookRes.context as any),

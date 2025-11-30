@@ -1,10 +1,12 @@
 import { cors } from "hono/cors";
 
-// import { authGuard } from "@hoalu/furnace";
-
 import { HTTPStatus } from "@hoalu/common/http-status";
+import { authGuard } from "@hoalu/furnace";
 
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { prepareElectricUrl, proxyElectricRequest } from "#api/lib/electric.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 export function syncModule() {
 	const app = createHonoInstance()
@@ -22,52 +24,49 @@ export function syncModule() {
 				credentials: true,
 			}),
 		)
-		// .use(authGuard())
-		.get("/", async (c) => {
-			const shapeUrl = new URL(`${process.env.SYNC_URL}/v1/shape`);
+		.use(authGuard())
+		.get("/expenses", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			const searchParams = new URL(c.req.url).searchParams;
-			searchParams.forEach((value, key) => {
-				shapeUrl.searchParams.set(key, value);
-			});
-			/**
-			 * ELECTRIC_SECRET - required
-			 * @see https://github.com/electric-sql/electric/blob/main/website/electric-api.yaml#L20
-			 */
-			shapeUrl.searchParams.set("secret", process.env.SYNC_SECRET);
+			shapeUrl.searchParams.set("table", "expense");
+			shapeUrl.searchParams.set("where", whereClause);
 
-			const response = await fetch(shapeUrl);
-			console.log(response.status);
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-			const headers = response.headers;
-			headers.delete(`content-encoding`);
-			headers.delete(`content-length`);
-			headers.set(`vary`, `cookie`);
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/categories", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			if (response.status === HTTPStatus.codes.NO_CONTENT) {
-				headers.set("electric-up-to-date", "");
-				return c.body(null, HTTPStatus.codes.NO_CONTENT, headers.toJSON());
-			}
+			shapeUrl.searchParams.set("table", "category");
+			shapeUrl.searchParams.set("where", whereClause);
 
-			if (response.status > 204) {
-				console.error("Error: ", response.status);
-				return c.json({ ok: false }, HTTPStatus.codes.BAD_REQUEST);
-			}
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-			/**
-			 * @see https://electric-sql.com/docs/api/http#control-messages
-			 */
-			type Data = {
-				headers: Record<string, string> & {
-					control?: "up-to-date" | "must-refetch" | "snapshot-end";
-				};
-			}[];
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/wallets", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-			const data: Data = await response.json();
-			const isUpToDate = data.find((d) => d.headers?.control === "up-to-date");
-			if (isUpToDate) {
-				headers.set("electric-up-to-date", "");
-			}
+			shapeUrl.searchParams.set("table", "wallet");
+			shapeUrl.searchParams.set("where", whereClause);
+
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
+
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/exchange-rates", async (c) => {
+			const shapeUrl = prepareElectricUrl(c.req.url);
+
+			shapeUrl.searchParams.set("table", "fx_rate");
+
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
 			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
 		});

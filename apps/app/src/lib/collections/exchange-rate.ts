@@ -13,21 +13,16 @@ const SelectExchangeRateSchema = z.object({
 	valid_to: IsoDateSchema,
 });
 
-export const exchangeRateCollection = () => {
-	return createCollection(
-		electricCollectionOptions({
-			getKey: (item) => `${item.from_currency}-${item.to_currency}-${item.valid_from}`,
-			shapeOptions: {
-				url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
-				params: {
-					table: "fx_rate",
-				},
-				// @ts-expect-error
-				fetchClient: (req: RequestInfo, init: RequestInit) => {
-					return fetch(req, { ...init, credentials: "include" });
-				},
+export const exchangeRateCollection = createCollection(
+	electricCollectionOptions({
+		getKey: (item) => `${item.from_currency}-${item.to_currency}-${item.valid_from}`,
+		shapeOptions: {
+			url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync/exchange-rates`).toString(),
+			// @ts-expect-error
+			fetchClient: (req: RequestInfo, init: RequestInit) => {
+				return fetch(req, { ...init, credentials: "include" });
 			},
-			schema: SelectExchangeRateSchema,
-		}),
-	);
-};
+		},
+		schema: SelectExchangeRateSchema,
+	}),
+);

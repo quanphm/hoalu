@@ -13,18 +13,15 @@ const SelectWalletSchema = z.object({
 	is_active: z.boolean(),
 });
 
-export const walletCollection = (id: string) => {
+export const walletCollection = (slug: string) => {
 	return createCollection(
 		electricCollectionOptions({
 			getKey: (item) => item.id,
 			schema: SelectWalletSchema,
 			shapeOptions: {
-				url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
-				params: {
-					table: "wallet",
-					where: "workspace_id = $1",
-					params: [id],
-				},
+				url: new URL(
+					`${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
+				).toString(),
 				// @ts-expect-error
 				fetchClient: (req: RequestInfo, init: RequestInit) => {
 					return fetch(req, { ...init, credentials: "include" });

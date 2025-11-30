@@ -18,17 +18,14 @@ const SelectExpenseSchema = z.object({
 	created_at: IsoDateSchema,
 });
 
-export const expenseCollection = (id: string) => {
+export const expenseCollection = (slug: string) => {
 	return createCollection(
 		electricCollectionOptions({
 			getKey: (item) => item.id,
 			shapeOptions: {
-				url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
-				params: {
-					table: "expense",
-					where: "workspace_id = $1",
-					params: [id],
-				},
+				url: new URL(
+					`${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
+				).toString(),
 				// @ts-expect-error
 				fetchClient: (req: RequestInfo, init: RequestInit) => {
 					return fetch(req, { ...init, credentials: "include" });

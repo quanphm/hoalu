@@ -154,15 +154,14 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 
 export function useLiveQueryExpenses() {
 	const workspace = useWorkspace();
-
 	const { data } = useLiveQuery(
 		(q) => {
 			return q
-				.from({ expense: expenseCollection(workspace.id) })
-				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
+				.from({ expense: expenseCollection(workspace.slug) })
+				.innerJoin({ wallet: walletCollection(workspace.slug) }, ({ expense, wallet }) =>
 					eq(expense.wallet_id, wallet.id),
 				)
-				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
+				.leftJoin({ category: categoryCollection(workspace.slug) }, ({ expense, category }) =>
 					eq(expense.category_id, category.id),
 				)
 				.orderBy(({ expense }) => expense.date, "desc")
@@ -204,52 +203,3 @@ export function useLiveQueryExpenses() {
 
 type SyncedExpenses = ReturnType<typeof useLiveQueryExpenses>;
 export type SyncedExpense = SyncedExpenses[number];
-
-export function useLiveQueryExpenseById(id: string | null) {
-	const workspace = useWorkspace();
-
-	const { data } = useLiveQuery(
-		(q) => {
-			if (!id) return undefined;
-
-			return q
-				.from({ expense: expenseCollection(workspace.id) })
-				.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
-					eq(expense.wallet_id, wallet.id),
-				)
-				.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
-					eq(expense.category_id, category.id),
-				)
-				.where(({ expense }) => eq(expense.id, id))
-				.findOne()
-				.select(({ expense, wallet, category }) => ({
-					...expense,
-					category: {
-						id: category?.id,
-						name: category?.name,
-						color: category?.color,
-					},
-					wallet: {
-						id: wallet.id,
-						name: wallet.name,
-						type: wallet.type,
-					},
-				}));
-		},
-		[id],
-	);
-
-	const transformedExpense = useMemo(() => {
-		if (!data) return null;
-
-		return {
-			...data,
-			date: datetime.format(data.date, "yyyy-MM-dd"),
-			amount: monetary.fromRealAmount(Number(data.amount), data.currency),
-			realAmount: Number(data.amount),
-			convertedAmount: Number(data.amount),
-		};
-	}, [data]);
-
-	return transformedExpense;
-}

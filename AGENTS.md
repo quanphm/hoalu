@@ -1,8 +1,8 @@
 ---
 AI_CONTEXT: true
 VERSION: 0.15.0
-LAST_UPDATED: 2025-11-17
-CODEBASE_SIZE: ~470 TypeScript files (41 API, 132 App, 299 Packages)
+LAST_UPDATED: 2025-11-28
+CODEBASE_SIZE: ~475 TypeScript files (41 API, 134 App, 300 Packages)
 COMPLEXITY: Advanced (Full-stack, Real-time sync, Multi-tenancy)
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
@@ -39,7 +39,7 @@ This file provides guidance to AI coding assistants when working with code in th
 | Frontend schemas | `apps/app/src/lib/schema.ts` | 111 |
 | Expense API routes | `apps/api/src/routes/expenses/` | 3 files (index, repository, schema) |
 | Expense components | `apps/app/src/components/expenses/` | 6 files |
-| Expense live queries | `apps/app/src/components/expenses/use-expenses.ts` | 253 |
+| Expense live queries | `apps/app/src/components/expenses/use-expenses.ts` | 255 |
 | Category components | `apps/app/src/components/categories/` | 3 files |
 | Wallet components | `apps/app/src/components/wallets/` | 2 files |
 | Auth setup | `apps/api/src/lib/auth.ts` | - |
@@ -93,7 +93,7 @@ This file provides guidance to AI coding assistants when working with code in th
 - `expense-details.tsx` - Detail panel with edit/delete actions
 - `expense-actions.tsx` - Create/Edit dialog triggers
 - `expense-filter.tsx` - Filter controls (search, category, wallet, repeat)
-- `use-expenses.ts` (253 lines) - Live queries, stats calculations, filtering logic
+- `use-expenses.ts` (255 lines) - Live queries, stats calculations, filtering logic
 
 **Categories (3 files):**
 - `categories-table.tsx` - Table view with sorting
@@ -104,13 +104,13 @@ This file provides guidance to AI coding assistants when working with code in th
 - `wallet-actions.tsx` - CRUD operations
 - `wallet-badge.tsx` - Display component
 
-**Forms (16 files):**
+**Forms (19 files):**
 - `form.tsx` - TanStack Form wrapper with validation
 - `input.tsx`, `select.tsx`, `switch.tsx` - Basic form inputs
 - `datepicker.tsx`, `datepicker-input.tsx` - Date selection
 - `transaction-amount.tsx` - Currency input with formatting
 - `select-category.tsx`, `select-with-search.tsx` - Enhanced select components
-- `tiptap.tsx` - Rich text editor (TipTap v3.10+)
+- `tiptap.tsx` - Rich text editor (TipTap v3.11+)
 - `files.tsx` - File upload with drag-drop
 - `color.tsx` - Color picker for categories
 
@@ -199,21 +199,21 @@ This file provides guidance to AI coding assistants when working with code in th
 ### Frontend (@hoalu/app)
 
 - **Framework**: React 19 with React DOM 19
-- **Routing**: TanStack Router v1.134+ with file-based routing
+- **Routing**: TanStack Router v1.139+ with file-based routing
 - **Data Fetching**: TanStack Query v5.90+ with TanStack React DB v0.1+
-- **Forms**: TanStack Form v1.23+ with Zod v4 validation
+- **Forms**: TanStack Form v1.26+ with Zod v4 validation
 - **State Management**: Jotai v2.15+ atoms for local state
 - **Real-time Sync**:
-  - Electric SQL with `@electric-sql/pglite` v0.3+
-  - `@tanstack/electric-db-collection` for reactive collections
-  - PGlite Sync for offline-first PostgreSQL in browser
+  - Electric SQL with `@electric-sql/pglite` v0.3.14+
+  - `@tanstack/electric-db-collection` v0.2.9+ for reactive collections
+  - PGlite Sync v0.4.0+ for offline-first PostgreSQL in browser
 - **Styling**:
-  - TailwindCSS v4.1+ with `@tailwindcss/vite`
+  - TailwindCSS v4.1.17+ with `@tailwindcss/vite`
   - shadcn/ui and base-ui components via `@hoalu/ui`
-  - `class-variance-authority` for component variants
+  - `class-variance-authority` v0.7+ for component variants
 - **UI Components**:
-  - TipTap v3.10+ for rich text editing
-  - Recharts v3.3+ for data visualization
+  - TipTap v3.11+ for rich text editing
+  - Recharts v3.5+ for data visualization
   - TanStack Table v8.21+ and Virtual v3.13+ for lists
 - **PWA**: Vite PWA plugin with workbox strategies
 - **Dev Tools**: React Query DevTools, Router DevTools, Form DevTools
@@ -225,7 +225,7 @@ This file provides guidance to AI coding assistants when working with code in th
 - **Framework**: Hono v4.10+ (lightweight web framework)
 - **Runtime**: Bun (Node.js alternative)
 - **Database**: PostgreSQL 17 with Drizzle ORM v0.44+
-- **Authentication**: Better Auth v1.3+ with custom workspace plugin
+- **Authentication**: Better Auth v1.4+ with custom workspace plugin
 - **Validation**:
   - Zod v4 for schema validation
   - `@hono/zod-validator` and `@hono/standard-validator`
@@ -1637,10 +1637,13 @@ docker compose -f docker-compose.local.yml up -d
     "catalog": {
       "react": "^19.2.0",
       "react-dom": "^19.2.0",
-      "zod": "^4.1.12",
-      "hono": "^4.10.4",
-      "better-auth": "^1.3.34",
-      "tailwindcss": "^4.1.16"
+      "zod": "^4.1.13",
+      "hono": "^4.10.7",
+      "better-auth": "^1.4.3",
+      "tailwindcss": "^4.1.17",
+      "@types/react": "^19.2.7",
+      "@types/react-dom": "^19.2.3",
+      "@types/bun": "^1.3.3"
     }
   }
 }

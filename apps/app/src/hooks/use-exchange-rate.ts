@@ -18,7 +18,7 @@ const Schema = z.array(
 
 export function useLiveQueryExchangeRate() {
 	const { data } = useLiveQuery((q) => {
-		return q.from({ exchangeRate: exchangeRateCollection() }).fn.select(({ exchangeRate }) => ({
+		return q.from({ exchangeRate: exchangeRateCollection }).fn.select(({ exchangeRate }) => ({
 			from: exchangeRate.from_currency,
 			to: exchangeRate.to_currency,
 			rate: exchangeRate.exchange_rate,

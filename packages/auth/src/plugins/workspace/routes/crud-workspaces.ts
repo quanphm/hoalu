@@ -5,6 +5,7 @@ import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } fr
 
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
+
 import type { defaultStatements } from "../access";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
@@ -457,11 +458,12 @@ export const listWorkspaces = createAuthEndpoint(
 );
 
 type DefaultStatements = typeof defaultStatements;
-type Statements = AccessControl extends AccessControl<infer S>
-	? S extends Record<string, any>
-		? S & DefaultStatements
-		: DefaultStatements
-	: DefaultStatements;
+type Statements =
+	AccessControl extends AccessControl<infer S>
+		? S extends Record<string, any>
+			? S & DefaultStatements
+			: DefaultStatements
+		: DefaultStatements;
 
 export const hasWorkspacePermission = (roles: Record<string, any>) =>
 	createAuthEndpoint(
