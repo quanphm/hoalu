@@ -11,6 +11,9 @@ import {
 import { filesQueryOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/files")({
+	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		await queryClient.ensureQueryData(filesQueryOptions(slug));
+	},
 	component: RouteComponent,
 });
 

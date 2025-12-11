@@ -1,4 +1,5 @@
 import { cors } from "hono/cors";
+import { openAPIRouteHandler } from "hono-openapi";
 
 import { authGuard, rateLimiter } from "@hoalu/furnace";
 
@@ -14,7 +15,7 @@ import walletsRoute from "#api/routes/wallets/index.ts";
 
 export function apiModule() {
 	const app = createHonoInstance()
-		.basePath("/api")
+		.basePath("/bff")
 		.use(
 			cors({
 				origin: [process.env.PUBLIC_APP_BASE_URL],
@@ -30,6 +31,20 @@ export function apiModule() {
 		.route("/files", filesRoute)
 		.route("/tasks", tasksRoute)
 		.route("/wallets", walletsRoute);
+
+	app.get(
+		"/openapi",
+		openAPIRouteHandler(app, {
+			documentation: {
+				info: {
+					title: "Hoalu API",
+					description: "OpenAPI documentation",
+					version: "0.16.0",
+				},
+				servers: [{ url: process.env.PUBLIC_API_URL }],
+			},
+		}),
+	);
 
 	return app;
 }

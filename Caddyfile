@@ -1,14 +1,5 @@
-api.hoalu.localhost {
-	reverse_proxy localhost:3000
-	encode gzip
-}
-
 hoalu.localhost {
+	reverse_proxy /api/* localhost:3000
 	reverse_proxy localhost:5173
 	encode gzip
-
-	@assets {
-		path /fonts/*
-	}
-	header @assets Cache-Control "max-age=3600, public"
 }

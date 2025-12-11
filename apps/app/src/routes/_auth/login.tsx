@@ -41,7 +41,7 @@ function RouteComponent() {
 				{
 					onError: (ctx) => {
 						toastManager.add({
-							title: "Uh oh! Something went wrong.",
+							title: "Something went wrong.",
 							description: ctx.error.message,
 							type: "error",
 						});

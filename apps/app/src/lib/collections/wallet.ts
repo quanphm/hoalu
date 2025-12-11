@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { CurrencySchema, WalletTypeSchema } from "@hoalu/common/schema";
 
-const SelectWalletSchema = z.object({
+const WalletCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
 	description: z.string().nullable(),
@@ -17,13 +17,9 @@ export const walletCollection = (slug: string) => {
 	return createCollection(
 		electricCollectionOptions({
 			getKey: (item) => item.id,
-			schema: SelectWalletSchema,
+			schema: WalletCollectionSchema,
 			shapeOptions: {
 				url: `${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
-				// @ts-expect-error
-				fetchClient: (req: RequestInfo, init: RequestInit) => {
-					return fetch(req, { ...init, credentials: "include" });
-				},
 			},
 		}),
 	);

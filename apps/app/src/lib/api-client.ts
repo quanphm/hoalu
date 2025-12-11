@@ -21,7 +21,7 @@ export const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 
 const tasks = {
 	list: async (slug: string) => {
-		const response = await honoClient.api.tasks.$get({
+		const response = await honoClient.bff.tasks.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {
@@ -35,7 +35,7 @@ const tasks = {
 
 const wallets = {
 	list: async (slug: string) => {
-		const response = await honoClient.api.wallets.$get({
+		const response = await honoClient.bff.wallets.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {
@@ -46,7 +46,7 @@ const wallets = {
 		return data;
 	},
 	create: async (slug: string, payload: WalletPostSchema) => {
-		const response = await honoClient.api.wallets.$post({
+		const response = await honoClient.bff.wallets.$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
@@ -58,7 +58,7 @@ const wallets = {
 		return data;
 	},
 	get: async (slug: string, id: string) => {
-		const response = await honoClient.api.wallets[":id"].$get({
+		const response = await honoClient.bff.wallets[":id"].$get({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -70,7 +70,7 @@ const wallets = {
 		return data;
 	},
 	edit: async (slug: string, id: string, payload: WalletPatchSchema) => {
-		const response = await honoClient.api.wallets[":id"].$patch({
+		const response = await honoClient.bff.wallets[":id"].$patch({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 			json: payload,
@@ -83,7 +83,7 @@ const wallets = {
 		return data;
 	},
 	delete: async (slug: string, id: string) => {
-		const response = await honoClient.api.wallets[":id"].$delete({
+		const response = await honoClient.bff.wallets[":id"].$delete({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -98,7 +98,7 @@ const wallets = {
 
 const categories = {
 	list: async (slug: string) => {
-		const response = await honoClient.api.categories.$get({
+		const response = await honoClient.bff.categories.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {
@@ -109,7 +109,7 @@ const categories = {
 		return data;
 	},
 	create: async (slug: string, payload: CategoryPostSchema) => {
-		const response = await honoClient.api.categories.$post({
+		const response = await honoClient.bff.categories.$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
@@ -121,7 +121,7 @@ const categories = {
 		return data;
 	},
 	get: async (slug: string, id: string) => {
-		const response = await honoClient.api.categories[":id"].$get({
+		const response = await honoClient.bff.categories[":id"].$get({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -133,7 +133,7 @@ const categories = {
 		return data;
 	},
 	edit: async (slug: string, id: string, payload: CategoryPatchSchema) => {
-		const response = await honoClient.api.categories[":id"].$patch({
+		const response = await honoClient.bff.categories[":id"].$patch({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 			json: payload,
@@ -146,7 +146,7 @@ const categories = {
 		return data;
 	},
 	delete: async (slug: string, id: string) => {
-		const response = await honoClient.api.categories[":id"].$delete({
+		const response = await honoClient.bff.categories[":id"].$delete({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -161,7 +161,7 @@ const categories = {
 
 const expenses = {
 	list: async (slug: string) => {
-		const response = await honoClient.api.expenses.$get({
+		const response = await honoClient.bff.expenses.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {
@@ -172,7 +172,7 @@ const expenses = {
 		return data;
 	},
 	create: async (slug: string, payload: ExpensePostSchema) => {
-		const response = await honoClient.api.expenses.$post({
+		const response = await honoClient.bff.expenses.$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
@@ -184,7 +184,7 @@ const expenses = {
 		return data;
 	},
 	get: async (slug: string, id: string) => {
-		const response = await honoClient.api.expenses[":id"].$get({
+		const response = await honoClient.bff.expenses[":id"].$get({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -196,7 +196,7 @@ const expenses = {
 		return data;
 	},
 	edit: async (slug: string, id: string, payload: ExpensePatchSchema) => {
-		const response = await honoClient.api.expenses[":id"].$patch({
+		const response = await honoClient.bff.expenses[":id"].$patch({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 			json: payload,
@@ -209,7 +209,7 @@ const expenses = {
 		return data;
 	},
 	delete: async (slug: string, id: string) => {
-		const response = await honoClient.api.expenses[":id"].$delete({
+		const response = await honoClient.bff.expenses[":id"].$delete({
 			query: { workspaceIdOrSlug: slug },
 			param: { id },
 		});
@@ -224,7 +224,7 @@ const expenses = {
 
 const exchangeRates = {
 	find: async ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
-		const response = await honoClient.api["exchange-rates"].$get({
+		const response = await honoClient.bff["exchange-rates"].$get({
 			query: { from, to },
 		});
 		if (!response.ok) {
@@ -238,7 +238,7 @@ const exchangeRates = {
 
 const files = {
 	createPresignedUploadUrl: async (slug: string, payload: FileMetaSchema) => {
-		const response = await honoClient.api.files["generate-upload-url"].$post({
+		const response = await honoClient.bff.files["generate-upload-url"].$post({
 			query: { workspaceIdOrSlug: slug },
 			json: payload,
 		});
@@ -273,7 +273,7 @@ const files = {
 		};
 	},
 	createImageExpense: async (slug: string, id: string, payload: { ids: string[] }) => {
-		const response = await honoClient.api.files.workspace.expense[":id"].$post({
+		const response = await honoClient.bff.files.workspace.expense[":id"].$post({
 			param: { id },
 			query: { workspaceIdOrSlug: slug },
 			json: { ids: payload.ids },
@@ -284,14 +284,18 @@ const files = {
 		return true;
 	},
 	getWorkspaceLogo: async (slug: string) => {
-		const response = await honoClient.api.files.workspace.logo.$get({
+		const response = await honoClient.bff.files.workspace.logo.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
 		const { data } = await response.json();
 		return data;
 	},
 	getFiles: async (slug: string) => {
-		const response = await honoClient.api.files.workspace.$get({
+		const response = await honoClient.bff.files.workspace.$get({
 			query: { workspaceIdOrSlug: slug },
 		});
 		if (!response.ok) {

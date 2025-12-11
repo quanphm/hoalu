@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 
-const SelectExchangeRateSchema = z.object({
+const ExchangeRateCollectionSchema = z.object({
 	from_currency: CurrencySchema,
 	to_currency: CurrencySchema,
 	exchange_rate: z.coerce.number(),
@@ -18,11 +18,7 @@ export const exchangeRateCollection = createCollection(
 		getKey: (item) => `${item.from_currency}-${item.to_currency}-${item.valid_from}`,
 		shapeOptions: {
 			url: `${import.meta.env.PUBLIC_API_URL}/sync/exchange-rates`,
-			// @ts-expect-error
-			fetchClient: (req: RequestInfo, init: RequestInit) => {
-				return fetch(req, { ...init, credentials: "include" });
-			},
 		},
-		schema: SelectExchangeRateSchema,
+		schema: ExchangeRateCollectionSchema,
 	}),
 );
