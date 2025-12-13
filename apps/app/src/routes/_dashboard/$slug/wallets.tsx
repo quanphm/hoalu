@@ -15,6 +15,9 @@ import {
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/wallets")({
+	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		await queryClient.ensureQueryData(walletsQueryOptions(slug));
+	},
 	component: RouteComponent,
 });
 

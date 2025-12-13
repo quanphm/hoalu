@@ -76,7 +76,7 @@ function RouteComponent() {
 		} catch (error) {
 			if (error instanceof Error) {
 				toastManager.add({
-					title: "Uh oh! Something went wrong.",
+					title: "Something went wrong.",
 					description: error.message,
 					type: "error",
 				});

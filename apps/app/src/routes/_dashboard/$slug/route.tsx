@@ -8,22 +8,12 @@ import { categoryCollection } from "#app/lib/collections/category.ts";
 import { exchangeRateCollection } from "#app/lib/collections/exchange-rate.ts";
 import { expenseCollection } from "#app/lib/collections/expense.ts";
 import { walletCollection } from "#app/lib/collections/wallet.ts";
-import {
-	filesQueryOptions,
-	getActiveMemberOptions,
-	getWorkspaceDetailsOptions,
-	walletsQueryOptions,
-} from "#app/services/query-options.ts";
+import { getWorkspaceDetailsOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
 		await Promise.all([
 			queryClient.ensureQueryData(getWorkspaceDetailsOptions(slug)),
-
-			queryClient.ensureQueryData(getActiveMemberOptions(slug)),
-			queryClient.ensureQueryData(walletsQueryOptions(slug)),
-			queryClient.ensureQueryData(filesQueryOptions(slug)),
-
 			expenseCollection(slug).preload(),
 			categoryCollection(slug).preload(),
 			walletCollection(slug).preload(),
@@ -32,7 +22,7 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 	},
 	onError: (error) => {
 		toastManager.add({
-			title: "Uh oh! Something went wrong.",
+			title: "Something went wrong.",
 			description: error.message,
 			type: "error",
 		});

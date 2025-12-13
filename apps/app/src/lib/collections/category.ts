@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { ColorSchema } from "@hoalu/common/schema";
 
-const SelectCategorySchema = z.object({
+const CategoryCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
 	description: z.string().nullable(),
@@ -15,13 +15,9 @@ export const categoryCollection = (slug: string) => {
 	return createCollection(
 		electricCollectionOptions({
 			getKey: (item) => item.id,
-			schema: SelectCategorySchema,
+			schema: CategoryCollectionSchema,
 			shapeOptions: {
 				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${slug}`,
-				// @ts-expect-error
-				fetchClient: (req: RequestInfo, init: RequestInit) => {
-					return fetch(req, { ...init, credentials: "include" });
-				},
 			},
 		}),
 	);

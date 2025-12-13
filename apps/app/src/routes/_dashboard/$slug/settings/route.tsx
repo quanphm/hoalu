@@ -2,7 +2,12 @@ import { createFileRoute, Link, Outlet, useChildMatches, useParams } from "@tans
 
 import { Tabs, TabsList, TabsTrigger } from "@hoalu/ui/tabs";
 
+import { getActiveMemberOptions } from "#app/services/query-options.ts";
+
 export const Route = createFileRoute("/_dashboard/$slug/settings")({
+	loader: async ({ context: { queryClient }, params: { slug } }) => {
+		await queryClient.ensureQueryData(getActiveMemberOptions(slug));
+	},
 	component: RouteComponent,
 });
 

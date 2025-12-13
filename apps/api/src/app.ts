@@ -5,7 +5,7 @@ import { authModule } from "#api/modules/auth.ts";
 import { openAPIModule } from "#api/modules/openapi.ts";
 import { syncModule } from "#api/modules/sync.ts";
 
-export const app = createApp();
+export const app = createApp().basePath("/api");
 
 const authRoute = authModule();
 const apiRoute = apiModule();
