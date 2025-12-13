@@ -18,10 +18,10 @@ import {
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { categoryCollection } from "#app/lib/collections/category.ts";
+import { categoryCollectionFactory } from "#app/lib/collections/category.ts";
 import { exchangeRateCollection } from "#app/lib/collections/exchange-rate.ts";
-import { expenseCollection } from "#app/lib/collections/expense.ts";
-import { walletCollection } from "#app/lib/collections/wallet.ts";
+import { expenseCollectionFactory } from "#app/lib/collections/expense.ts";
+import { walletCollectionFactory } from "#app/lib/collections/wallet.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 
 export function useSelectedExpense() {
@@ -157,15 +157,18 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 
 export function useLiveQueryExpenses() {
 	const workspace = useWorkspace();
+	const expenseCollection = expenseCollectionFactory(workspace.slug);
+	const categoryCollection = categoryCollectionFactory(workspace.slug);
+	const walletCollection = walletCollectionFactory(workspace.slug);
 
 	const { data: expensesData } = useLiveQuery(
 		(q) => {
 			return q
-				.from({ expense: expenseCollection(workspace.slug) })
-				.innerJoin({ wallet: walletCollection(workspace.slug) }, ({ expense, wallet }) =>
+				.from({ expense: expenseCollection })
+				.innerJoin({ wallet: walletCollection }, ({ expense, wallet }) =>
 					eq(expense.wallet_id, wallet.id),
 				)
-				.leftJoin({ category: categoryCollection(workspace.slug) }, ({ expense, category }) =>
+				.leftJoin({ category: categoryCollection }, ({ expense, category }) =>
 					eq(expense.category_id, category.id),
 				)
 				.orderBy(({ expense }) => expense.date, "desc")

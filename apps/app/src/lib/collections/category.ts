@@ -11,14 +11,29 @@ const CategoryCollectionSchema = z.object({
 	color: ColorSchema,
 });
 
-export const categoryCollection = (slug: string) => {
-	return createCollection(
+const collectionCreateHelper = (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `category-${slug}`,
 			getKey: (item) => item.id,
-			schema: CategoryCollectionSchema,
 			shapeOptions: {
 				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${slug}`,
 			},
+			schema: CategoryCollectionSchema,
 		}),
 	);
-};
+
+type CategoryCollection = ReturnType<typeof collectionCreateHelper>;
+
+const instances = new Map<string, CategoryCollection>();
+
+export function categoryCollectionFactory(slug: string) {
+	if (instances.has(slug)) {
+		return instances.get(slug) as CategoryCollection;
+	}
+
+	const collection = collectionCreateHelper(slug);
+	instances.set(slug, collection);
+
+	return collection;
+}

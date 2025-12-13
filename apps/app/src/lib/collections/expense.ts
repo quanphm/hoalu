@@ -18,9 +18,10 @@ const ExpenseCollectionSchema = z.object({
 	created_at: IsoDateSchema,
 });
 
-export const expenseCollection = (slug: string) => {
-	return createCollection(
+const collectionCreateHelper = (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `expense-${slug}`,
 			getKey: (item) => item.id,
 			shapeOptions: {
 				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
@@ -28,4 +29,18 @@ export const expenseCollection = (slug: string) => {
 			schema: ExpenseCollectionSchema,
 		}),
 	);
-};
+
+type ExpenseCollection = ReturnType<typeof collectionCreateHelper>;
+
+const instances = new Map<string, ExpenseCollection>();
+
+export function expenseCollectionFactory(slug: string) {
+	if (instances.has(slug)) {
+		return instances.get(slug) as ExpenseCollection;
+	}
+
+	const collection = collectionCreateHelper(slug);
+	instances.set(slug, collection);
+
+	return collection;
+}

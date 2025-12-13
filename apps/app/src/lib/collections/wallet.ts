@@ -13,14 +13,29 @@ const WalletCollectionSchema = z.object({
 	is_active: z.boolean(),
 });
 
-export const walletCollection = (slug: string) => {
-	return createCollection(
+const collectionCreateHelper = (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `wallet-${slug}`,
 			getKey: (item) => item.id,
-			schema: WalletCollectionSchema,
 			shapeOptions: {
 				url: `${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
 			},
+			schema: WalletCollectionSchema,
 		}),
 	);
-};
+
+type WalletCollection = ReturnType<typeof collectionCreateHelper>;
+
+const instances = new Map<string, WalletCollection>();
+
+export function walletCollectionFactory(slug: string) {
+	if (instances.has(slug)) {
+		return instances.get(slug) as WalletCollection;
+	}
+
+	const collection = collectionCreateHelper(slug);
+	instances.set(slug, collection);
+
+	return collection;
+}
