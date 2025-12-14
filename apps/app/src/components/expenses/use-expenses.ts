@@ -265,7 +265,7 @@ export function useLiveQueryExpenses() {
 			};
 		});
 		return expenses;
-	}, [expensesData]);
+	}, [expensesData, fxRateData, workspace.metadata.currency]);
 
 	return transformedExpenses;
 }
