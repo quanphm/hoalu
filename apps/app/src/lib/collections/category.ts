@@ -4,6 +4,8 @@ import * as z from "zod";
 
 import { ColorSchema } from "@hoalu/common/schema";
 
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+
 const CategoryCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
@@ -11,29 +13,18 @@ const CategoryCollectionSchema = z.object({
 	color: ColorSchema,
 });
 
-const collectionCreateHelper = (slug: string) =>
+const factory = createCollectionFactory("category", (slug: string) =>
 	createCollection(
 		electricCollectionOptions({
 			id: `category-${slug}`,
 			getKey: (item) => item.id,
 			shapeOptions: {
-				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${slug}`,
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
 			},
 			schema: CategoryCollectionSchema,
 		}),
-	);
+	),
+);
 
-type CategoryCollection = ReturnType<typeof collectionCreateHelper>;
-
-const instances = new Map<string, CategoryCollection>();
-
-export function categoryCollectionFactory(slug: string) {
-	if (instances.has(slug)) {
-		return instances.get(slug) as CategoryCollection;
-	}
-
-	const collection = collectionCreateHelper(slug);
-	instances.set(slug, collection);
-
-	return collection;
-}
+export const categoryCollectionFactory = factory.get;
+export const clearCategoryCollection = factory.clear;

@@ -3,7 +3,7 @@ import * as z from "zod";
 
 import { CurrencySchema } from "@hoalu/common/schema";
 
-import { exchangeRateCollection } from "#app/lib/collections/exchange-rate.ts";
+import { exchangeRateCollection } from "#app/lib/collections/index.ts";
 
 const Schema = z.array(
 	z.object({

@@ -22,3 +22,7 @@ export const exchangeRateCollection = createCollection(
 		schema: ExchangeRateCollectionSchema,
 	}),
 );
+
+export function clearExchangeRateCollection() {
+	exchangeRateCollection.cleanup();
+}

@@ -18,10 +18,12 @@ import {
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { categoryCollectionFactory } from "#app/lib/collections/category.ts";
-import { exchangeRateCollection } from "#app/lib/collections/exchange-rate.ts";
-import { expenseCollectionFactory } from "#app/lib/collections/expense.ts";
-import { walletCollectionFactory } from "#app/lib/collections/wallet.ts";
+import {
+	categoryCollectionFactory,
+	exchangeRateCollection,
+	expenseCollectionFactory,
+	walletCollectionFactory,
+} from "#app/lib/collections/index.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 
 export function useSelectedExpense() {
