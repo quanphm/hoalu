@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
 VERSION: 0.15.0
-LAST_UPDATED: 2025-11-28
+LAST_UPDATED: 2025-12-14
 CODEBASE_SIZE: ~475 TypeScript files (41 API, 134 App, 300 Packages)
 COMPLEXITY: Advanced (Full-stack, Real-time sync, Multi-tenancy)
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
@@ -46,6 +46,7 @@ This file provides guidance to AI coding assistants when working with code in th
 | Sync proxy | `apps/api/src/modules/sync.ts` | - |
 | PGlite provider | `apps/app/src/components/providers/local-postgres-provider.tsx` | - |
 | Collections | `apps/app/src/lib/collections/*.ts` | - |
+| Collection factory | `apps/app/src/lib/collections/create-collection-factory.ts` | - |
 | Query options | `apps/app/src/services/query-options.ts` | - |
 | Mutations | `apps/app/src/services/mutations.ts` | - |
 
@@ -257,124 +258,6 @@ This file provides guidance to AI coding assistants when working with code in th
   - `docker-compose.local.yml` - Local development
   - `docker-compose.infra.yml` - Infrastructure services
   - `docker-compose.platform.yml` - Platform deployment
-
-#### Reverse Proxy with Caddy
-
-**Port Architecture:**
-
-```
-Development Setup:
-  Browser → hoalu.localhost (Caddy) → localhost:5173 (Vite dev server)
-  Browser → api.hoalu.localhost (Caddy) → localhost:3000 (Hono API)
-
-Internal Services:
-  - Vite dev server: localhost:5173 (HTTP, not directly accessible)
-  - Hono API server: localhost:3000 (HTTP, not directly accessible)
-  - Electric SQL: localhost:4000 (HTTP, proxied through API `/sync`)
-  - PostgreSQL: localhost:5432 (internal)
-  - Redis: localhost:6379 (internal)
-
-Public-facing (via Caddy):
-  - Frontend: http://hoalu.localhost (HTTP by default, HTTPS optional)
-  - API: http://api.hoalu.localhost (HTTP by default, HTTPS optional)
-```
-
-**Current Caddyfile Configuration (`/Caddyfile`):**
-
-```caddy
-api.hoalu.localhost {
-	reverse_proxy localhost:3000
-	encode gzip
-}
-
-hoalu.localhost {
-	reverse_proxy localhost:5173
-	encode gzip
-}
-```
-
-**HTTPS Configuration (Optional):**
-
-To enable HTTPS with automatic TLS certificates, prefix addresses with `https://`:
-
-```caddy
-# API proxy with HTTPS and HTTP/2
-https://api.hoalu.localhost {
-	# Handle CORS preflight requests
-	@options {
-		method OPTIONS
-	}
-	handle @options {
-		header {
-			Access-Control-Allow-Origin "https://hoalu.localhost"
-			Access-Control-Allow-Methods "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD"
-			Access-Control-Allow-Headers "Content-Type, Authorization, Cookie"
-			Access-Control-Allow-Credentials "true"
-			Access-Control-Max-Age "86400"
-		}
-		respond 204
-	}
-
-	# Add CORS headers to all responses
-	header {
-		Access-Control-Allow-Origin "https://hoalu.localhost"
-		Access-Control-Allow-Credentials "true"
-	}
-
-	reverse_proxy localhost:3000 {
-		header_up Host {host}
-		header_up X-Real-IP {remote_host}
-	}
-
-	encode gzip
-}
-
-# Frontend proxy with HTTPS and HTTP/2
-https://hoalu.localhost {
-	reverse_proxy localhost:5173
-	encode gzip
-}
-```
-
-**Running Caddy:**
-
-```bash
-# Run Caddy from project root
-caddy run
-
-# Or run in background
-caddy start
-
-# Reload configuration without downtime
-caddy reload
-
-# Stop Caddy
-caddy stop
-
-# Validate Caddyfile syntax
-caddy validate --config Caddyfile
-```
-
-**Caddy Features:**
-
-- **Automatic TLS**: When using `https://` scheme, Caddy auto-generates self-signed certificates for localhost
-- **HTTP/2**: Automatically enabled for HTTPS connections
-- **HTTP/3**: Enabled by default (QUIC protocol)
-- **Compression**: Gzip encoding applied to all proxied responses
-- **Custom Local Domains**: Uses `.localhost` TLDs which work without `/etc/hosts` modification
-- **Zero Config**: Works out of the box with minimal configuration
-
-**Benefits:**
-
-- ✅ Custom local domains (hoalu.localhost) instead of port-based URLs
-- ✅ No need to modify `/etc/hosts` - `.localhost` domains work natively
-- ✅ Clean, production-like URLs in development
-- ✅ Gzip compression reduces bandwidth usage
-- ✅ Optional HTTPS support for production-like development
-- ✅ HTTP/2 multiplexing when using HTTPS
-- ✅ Matches production deployment architecture
-- ✅ Single proxy point for frontend and API
-- ✅ Easy to add features like rate limiting, caching, or load balancing
 
 ## Monorepo Structure
 
@@ -718,42 +601,112 @@ function ExpenseList() {
 
 **Collections** (`lib/collections/`):
 
+Collections use a **factory pattern** for workspace-scoped data with automatic cleanup support. The factory memoizes collection instances per workspace slug and provides cleanup methods for memory management.
+
+**Collection Factory Helper** (`lib/collections/create-collection-factory.ts`):
+
 ```typescript
-// lib/collections/expense.ts
+type CollectionWithCleanup = { cleanup: () => void };
+
+export function createCollectionFactory<T extends CollectionWithCleanup>(
+  name: string,
+  createFn: (slug: string) => T,
+) {
+  const instances = new Map<string, T>();
+
+  return {
+    get(slug: string): T {
+      const existing = instances.get(slug);
+      if (existing) return existing;
+
+      const collection = createFn(slug);
+      instances.set(slug, collection);
+      return collection;
+    },
+
+    clear(slug?: string) {
+      if (slug) {
+        const collection = instances.get(slug);
+        if (collection) {
+          collection.cleanup();
+          instances.delete(slug);
+        }
+      } else {
+        for (const collection of instances.values()) {
+          collection.cleanup();
+        }
+        instances.clear();
+      }
+    },
+  };
+}
+```
+
+**Example Collection** (`lib/collections/expense.ts`):
+
+```typescript
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
-const SelectExpenseSchema = z.object({
+import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/common/schema";
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+
+const ExpenseCollectionSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
-  amount: z.coerce.number(), // Coerces string to number
+  description: z.string().nullable(),
+  amount: z.coerce.number(),
   currency: CurrencySchema,
+  repeat: RepeatSchema,
   date: IsoDateSchema,
   wallet_id: z.uuidv7(),
-  category_id: z.uuidv7(),
-  // ...
+  category_id: z.uuidv7().nullable(),
+  creator_id: z.uuidv7(),
+  created_at: IsoDateSchema,
 });
 
-export const expenseCollection = (workspaceId: string) => {
-  return createCollection(
+const factory = createCollectionFactory("expense", (slug: string) =>
+  createCollection(
     electricCollectionOptions({
+      id: `expense-${slug}`,
       getKey: (item) => item.id,
-      schema: SelectExpenseSchema,
       shapeOptions: {
-        url: `${import.meta.env.PUBLIC_API_URL}/sync`,
-        params: {
-          table: "expense",
-          where: "workspace_id = $1",
-          params: [workspaceId],
-        },
-        fetchClient: (req, init) =>
-          fetch(req, { ...init, credentials: "include" }),
+        url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
       },
-    })
-  );
-};
+      schema: ExpenseCollectionSchema,
+    }),
+  ),
+);
+
+export const expenseCollectionFactory = factory.get;
+export const clearExpenseCollection = factory.clear;
 ```
+
+**Centralized Cleanup** (`lib/collections/index.ts`):
+
+```typescript
+import { clearCategoryCollection } from "./category.ts";
+import { clearExpenseCollection } from "./expense.ts";
+import { clearWalletCollection } from "./wallet.ts";
+import { exchangeRateCollection } from "./exchange-rate.ts";
+
+export function clearWorkspaceCollections(slug: string) {
+  clearExpenseCollection(slug);
+  clearCategoryCollection(slug);
+  clearWalletCollection(slug);
+  exchangeRateCollection.cleanup();
+}
+
+export function clearAllWorkspaceCollections() {
+  clearExpenseCollection();
+  clearCategoryCollection();
+  clearWalletCollection();
+  exchangeRateCollection.cleanup();
+}
+```
+
+**Note:** Since the app and API are served through Caddy on the same `.localhost` domain, cookies are automatically shared. No `fetchClient` with `credentials: "include"` is needed for Electric SQL sync requests.
 
 **Live Queries** (`hooks/use-db.ts`):
 
@@ -2256,8 +2209,9 @@ Use this template when adding a new feature to the frontend (e.g., notes, tags, 
    import * as z from "zod";
 
    import { IsoDateSchema } from "@hoalu/common/schema";
+   import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
 
-   export const Select[Resource]Schema = z.object({
+   const [Resource]CollectionSchema = z.object({
      id: z.uuidv7(),
      title: z.string(),
      description: z.string().nullable(),
@@ -2266,24 +2220,21 @@ Use this template when adding a new feature to the frontend (e.g., notes, tags, 
      updated_at: IsoDateSchema,
    });
 
-   export const [resource]Collection = (workspaceId: string) => {
-     return createCollection(
+   const factory = createCollectionFactory("[resource]", (slug: string) =>
+     createCollection(
        electricCollectionOptions({
+         id: `[resource]-${slug}`,
          getKey: (item) => item.id,
-         schema: Select[Resource]Schema,
          shapeOptions: {
-           url: new URL(`${import.meta.env.PUBLIC_API_URL}/sync`).toString(),
-           params: {
-             table: "[resource]",
-             where: "workspace_id = $1",
-             params: [workspaceId],
-           },
-           fetchClient: (req, init) =>
-             fetch(req, { ...init, credentials: "include" }),
+           url: `${import.meta.env.PUBLIC_API_URL}/sync/[resource]s?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
          },
-       })
-     );
-   };
+         schema: [Resource]CollectionSchema,
+       }),
+     ),
+   );
+
+   export const [resource]CollectionFactory = factory.get;
+   export const clear[Resource]Collection = factory.clear;
    ```
 
 2. **Create custom hook**: `apps/app/src/components/[resource]/use-[resource].ts`

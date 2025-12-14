@@ -4,6 +4,8 @@ import * as z from "zod";
 
 import { ColorSchema } from "@hoalu/common/schema";
 
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+
 const CategoryCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
@@ -11,14 +13,18 @@ const CategoryCollectionSchema = z.object({
 	color: ColorSchema,
 });
 
-export const categoryCollection = (slug: string) => {
-	return createCollection(
+const factory = createCollectionFactory("category", (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `category-${slug}`,
 			getKey: (item) => item.id,
-			schema: CategoryCollectionSchema,
 			shapeOptions: {
-				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${slug}`,
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/categories?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
 			},
+			schema: CategoryCollectionSchema,
 		}),
-	);
-};
+	),
+);
+
+export const categoryCollectionFactory = factory.get;
+export const clearCategoryCollection = factory.clear;

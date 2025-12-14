@@ -1,16 +1,18 @@
 import { count, eq, useLiveQuery } from "@tanstack/react-db";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { categoryCollection } from "#app/lib/collections/category.ts";
-import { expenseCollection } from "#app/lib/collections/expense.ts";
+import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
 
 export function useLiveQueryCategories() {
 	const workspace = useWorkspace();
+	const expenseCollection = expenseCollectionFactory(workspace.slug);
+	const categoryCollection = categoryCollectionFactory(workspace.slug);
+
 	const { data } = useLiveQuery(
 		(q) => {
 			return q
-				.from({ category: categoryCollection(workspace.slug) })
-				.leftJoin({ expense: expenseCollection(workspace.slug) }, ({ category, expense }) =>
+				.from({ category: categoryCollection })
+				.leftJoin({ expense: expenseCollection }, ({ category, expense }) =>
 					eq(category.id, expense.category_id),
 				)
 				.groupBy(({ category }) => [
@@ -27,7 +29,7 @@ export function useLiveQueryCategories() {
 					total: count(category.id),
 				}));
 		},
-		[workspace.id],
+		[workspace.slug],
 	);
 
 	return data;

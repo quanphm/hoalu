@@ -4,6 +4,8 @@ import * as z from "zod";
 
 import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/common/schema";
 
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+
 const ExpenseCollectionSchema = z.object({
 	id: z.uuidv7(),
 	title: z.string(),
@@ -13,19 +15,23 @@ const ExpenseCollectionSchema = z.object({
 	repeat: RepeatSchema,
 	date: IsoDateSchema,
 	wallet_id: z.uuidv7(),
-	category_id: z.uuidv7(),
+	category_id: z.uuidv7().nullable(),
 	creator_id: z.uuidv7(),
 	created_at: IsoDateSchema,
 });
 
-export const expenseCollection = (slug: string) => {
-	return createCollection(
+const factory = createCollectionFactory("expense", (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `expense-${slug}`,
 			getKey: (item) => item.id,
 			shapeOptions: {
-				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${slug}`,
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
 			},
 			schema: ExpenseCollectionSchema,
 		}),
-	);
-};
+	),
+);
+
+export const expenseCollectionFactory = factory.get;
+export const clearExpenseCollection = factory.clear;

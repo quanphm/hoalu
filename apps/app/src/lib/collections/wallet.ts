@@ -4,6 +4,8 @@ import * as z from "zod";
 
 import { CurrencySchema, WalletTypeSchema } from "@hoalu/common/schema";
 
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+
 const WalletCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
@@ -13,14 +15,18 @@ const WalletCollectionSchema = z.object({
 	is_active: z.boolean(),
 });
 
-export const walletCollection = (slug: string) => {
-	return createCollection(
+const factory = createCollectionFactory("wallet", (slug: string) =>
+	createCollection(
 		electricCollectionOptions({
+			id: `wallet-${slug}`,
 			getKey: (item) => item.id,
-			schema: WalletCollectionSchema,
 			shapeOptions: {
-				url: `${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${slug}`,
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/wallets?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
 			},
+			schema: WalletCollectionSchema,
 		}),
-	);
-};
+	),
+);
+
+export const walletCollectionFactory = factory.get;
+export const clearWalletCollection = factory.clear;
