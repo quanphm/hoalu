@@ -39,7 +39,7 @@ export function apiModule() {
 				info: {
 					title: "Hoalu API",
 					description: "OpenAPI documentation",
-					version: "0.16.0",
+					version: "0.17.0",
 				},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
