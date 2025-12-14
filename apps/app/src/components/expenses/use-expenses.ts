@@ -189,7 +189,7 @@ export function useLiveQueryExpenses() {
 					},
 				}));
 		},
-		[workspace.id],
+		[workspace.slug],
 	);
 
 	const { data: fxRateData } = useLiveQuery((q) => {

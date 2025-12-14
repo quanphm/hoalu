@@ -29,7 +29,7 @@ export function useLiveQueryCategories() {
 					total: count(category.id),
 				}));
 		},
-		[workspace.id],
+		[workspace.slug],
 	);
 
 	return data;
