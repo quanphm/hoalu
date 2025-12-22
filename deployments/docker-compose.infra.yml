@@ -94,5 +94,3 @@ networks:
   hoalu_network:
     name: hoalu_network
     driver: bridge
-  traefik_network:
-    external: true
