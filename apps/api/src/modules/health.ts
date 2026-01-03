@@ -18,12 +18,7 @@ export function healthModule() {
 				tags: TAGS,
 				summary: "System healthchecks",
 				responses: {
-					...OpenAPI.response(
-						z.object({
-							status: z.literal("ok"),
-						}),
-						HTTPStatus.codes.OK,
-					),
+					...OpenAPI.response(z.object({ status: z.literal("ok") }), HTTPStatus.codes.OK),
 				},
 			}),
 			(c) => {
@@ -43,7 +38,8 @@ export function healthModule() {
 							rateLimit: z.object({
 								limit: z.number(),
 								remaining: z.number(),
-								reset: z.string(),
+								resetAt: z.string(),
+								policy: z.string(),
 							}),
 							requestCount: z.number(),
 						}),
@@ -54,14 +50,18 @@ export function healthModule() {
 			async (c) => {
 				const limit = c.res.headers.get("RateLimit-Limit");
 				const remaining = c.res.headers.get("RateLimit-Remaining");
-				const reset = c.res.headers.get("RateLimit-Reset");
+				const resetAt = c.res.headers.get("RateLimit-Reset");
+				const policy = c.res.headers.get("RateLimit-Policy");
 
 				return c.json({
 					timestamp: new Date().toISOString(),
 					rateLimit: {
 						limit: limit ? Number.parseInt(limit, 10) : RATE_LIMIT_MAX_CONNECTIONS,
 						remaining: remaining ? Number.parseInt(remaining, 10) : 0,
-						reset: reset ? new Date(Number.parseInt(reset, 10) * 1000).toISOString() : "",
+						resetAt: resetAt
+							? new Date(Date.now() + Number.parseInt(resetAt, 10) * 1000).toISOString()
+							: "",
+						policy: policy || "",
 					},
 					requestCount:
 						limit && remaining ? Number.parseInt(limit, 10) - Number.parseInt(remaining, 10) : 0,

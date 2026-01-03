@@ -3,11 +3,12 @@ import { rateLimiter as honoRateLimiter, type Store } from "hono-rate-limiter";
 import { RedisStore } from "rate-limit-redis";
 
 export const RATE_LIMIT_MAX_CONNECTIONS = 10000;
+export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes;
 
 export const rateLimiter = <T>(client: T) => {
 	return createMiddleware(async (c, next) => {
 		return honoRateLimiter({
-			windowMs: 10 * 60 * 1000, // 10 minutes
+			windowMs: RATE_LIMIT_WINDOW_MS,
 			limit: RATE_LIMIT_MAX_CONNECTIONS,
 			standardHeaders: "draft-6",
 			keyGenerator: (c) => c.req.header("X-Forwarded-For") ?? "",
