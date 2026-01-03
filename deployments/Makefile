@@ -69,7 +69,7 @@ wait-for-db:
 
 deploy-infra: check-env-or-fetch
 	@echo "Starting Infrastructure Deployment"
-	@if docker compose -f docker-compose.infra.yml up -d --build; then \
+	@if docker compose -f docker-compose.infra.yml up -d --build --remove-orphans; then \
 		echo "Infrastructure services deployed successfully"; \
 	else \
 		echo "Failed to deploy infrastructure services"; \
@@ -86,7 +86,7 @@ deploy-platform: check-env-or-fetch
 		$(MAKE) deploy-infra; \
 	fi
 	@echo "Starting platform services..."
-	@if docker compose -f docker-compose.platform.yml up -d --build; then \
+	@if docker compose -f docker-compose.platform.yml up -d --build --remove-orphans; then \
 		echo "Platform services deployed successfully"; \
 	else \
 		echo "Failed to deploy platform services"; \
