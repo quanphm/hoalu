@@ -70,14 +70,21 @@ services:
           cpus: "1.0"
           memory: 1G
 
-  redis:
-    container_name: hoalu-redis
-    image: redis:7.4.2-alpine
+  valkey:
+    container_name: hoalu-valkey
+    image: valkey/valkey:9.0.1-alpine
     restart: always
     networks:
       - hoalu_network
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      - valkey-server
+      - --save 300 10
+      - --appendonly yes
+      - --loglevel notice
+      - --maxmemory 256mb
+      - --maxmemory-policy allkeys-lru
+    volumes:
+      - valkey_data:/data
     deploy:
       resources:
         limits:
@@ -88,6 +95,8 @@ volumes:
   pg_data:
     driver: local
   electric_data:
+    driver: local
+  valkey_data:
     driver: local
 
 networks:

@@ -14,6 +14,7 @@ export function openAPIModule(app: HonoApp) {
 			sources: [
 				{ url: "bff/openapi", title: "API" },
 				{ url: "auth/open-api/generate-schema", title: "Auth" },
+				{ url: "health/openapi", title: "Healthchecks" },
 			],
 		}),
 	);
