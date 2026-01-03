@@ -55,14 +55,17 @@ services:
     volumes:
       - electric_data:/app/persistent
 
-  redis:
-    container_name: hoalu-redis
-    image: redis:7.4.2-alpine
+  valkey:
+    container_name: hoalu-valkey
+    image: valkey/valkey:9.0.1-alpine
     restart: always
     ports:
       - 6379:6379
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      - valkey-server
+      - --save 60 1
+      - --appendonly yes
+      - --loglevel warning
 
 volumes:
   pg_data:
