@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CategoriesTable } from "#app/components/categories/categories-table.tsx";
 import { CreateCategoryDialogTrigger } from "#app/components/categories/category-actions.tsx";
+import { CategoryTable } from "#app/components/categories/category-table.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import {
 	Section,
@@ -24,7 +24,7 @@ function RouteComponent() {
 				<CreateCategoryDialogTrigger />
 			</SectionHeader>
 			<SectionContent columns={12}>
-				<CategoriesTable data={categories} />
+				<CategoryTable data={categories} />
 			</SectionContent>
 		</Section>
 	);

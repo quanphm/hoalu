@@ -1,55 +1,78 @@
-import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 
 import { cn } from "../utils";
 
-function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+type TabsVariant = "default" | "underline";
+
+function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
 	return (
 		<TabsPrimitive.Root
+			className={cn("flex flex-col gap-2 data-[orientation=vertical]:flex-row", className)}
 			data-slot="tabs"
-			className={cn("flex flex-col gap-2", className)}
 			{...props}
 		/>
 	);
 }
 
-function TabsIndicator(props: React.ComponentProps<typeof TabsPrimitive.Indicator>) {
-	return <TabsPrimitive.Indicator data-slot="tabs-indicator" {...props} />;
-}
-
-function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
+function TabsList({
+	variant = "default",
+	className,
+	children,
+	...props
+}: TabsPrimitive.List.Props & {
+	variant?: TabsVariant;
+}) {
 	return (
 		<TabsPrimitive.List
-			data-slot="tabs-list"
 			className={cn(
-				"inline-flex h-9 w-fit items-center justify-center rounded-sm bg-muted p-[3px] text-muted-foreground",
+				"relative z-0 flex w-fit items-center justify-center gap-x-0.5 text-muted-foreground",
+				"data-[orientation=vertical]:flex-col",
+				variant === "default"
+					? "rounded-lg bg-muted p-0.5 text-muted-foreground/72"
+					: "data-[orientation=vertical]:px-1 data-[orientation=horizontal]:py-1 *:data-[slot=tabs-trigger]:hover:bg-accent",
 				className,
 			)}
+			data-slot="tabs-list"
 			{...props}
-		/>
+		>
+			{children}
+			<TabsPrimitive.Indicator
+				className={cn(
+					"absolute bottom-0 left-0 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left) -translate-y-(--active-tab-bottom) transition-[width,translate] duration-200 ease-in-out",
+					variant === "underline"
+						? "z-10 bg-primary data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-0.5 data-[orientation=vertical]:-translate-x-px data-[orientation=horizontal]:translate-y-px"
+						: "-z-1 rounded-md bg-background shadow-sm dark:bg-accent",
+				)}
+				data-slot="tab-indicator"
+			/>
+		</TabsPrimitive.List>
 	);
 }
 
-function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Tab>) {
+function TabsTab({ className, ...props }: TabsPrimitive.Tab.Props) {
 	return (
 		<TabsPrimitive.Tab
-			data-slot="tabs-tab"
 			className={cn(
-				"inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-sm border border-transparent px-2 py-1 font-medium text-foreground text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[selected]:bg-background data-[selected]:shadow-sm dark:text-muted-foreground dark:data-[selected]:border-input dark:data-[selected]:bg-input/30 dark:data-[selected]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"flex shrink-0 grow cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
+				"hover:text-muted-foreground data-active:text-foreground",
+				"h-9 gap-1.5 px-[calc(--spacing(2.5)-1px)] sm:h-8",
+				"data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start",
 				className,
 			)}
+			data-slot="tabs-trigger"
 			{...props}
 		/>
 	);
 }
 
-function TabsPanel({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Panel>) {
+function TabsPanel({ className, ...props }: TabsPrimitive.Panel.Props) {
 	return (
 		<TabsPrimitive.Panel
-			data-slot="tabs-panel"
 			className={cn("flex-1 outline-none", className)}
+			data-slot="tabs-content"
 			{...props}
 		/>
 	);
 }
 
-export { Tabs, TabsList, TabsIndicator, TabsTrigger, TabsPanel };
+export { Tabs, TabsList, TabsTab, TabsTab as TabsTrigger, TabsPanel, TabsPanel as TabsContent };

@@ -1,4 +1,4 @@
-import { Popover as PopoverPrimitive } from "@base-ui-components/react/popover";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { cn } from "../utils";
 
@@ -56,7 +56,7 @@ function PopoverArrow(props: React.ComponentProps<typeof PopoverPrimitive.Arrow>
 	return (
 		<PopoverPrimitive.Arrow
 			data-slot="popover-arrow"
-			className="data-[side=right]:-rotate-90 data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=top]:bottom-[-8px] data-[side=right]:left-[-13px] data-[side=left]:rotate-90 data-[side=top]:rotate-180"
+			className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=top]:bottom-[-8px] data-[side=right]:left-[-13px] data-[side=left]:rotate-90 data-[side=right]:-rotate-90 data-[side=top]:rotate-180"
 			{...props}
 		>
 			<ArrowSvg />

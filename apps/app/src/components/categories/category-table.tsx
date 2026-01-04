@@ -3,6 +3,8 @@ import { useAtom } from "jotai";
 import { Suspense } from "react";
 
 import { Badge } from "@hoalu/ui/badge";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
+import { Frame, FramePanel } from "@hoalu/ui/frame";
 
 import { selectedCategoryAtom } from "#app/atoms/index.ts";
 import { EditCategoryForm } from "#app/components/categories/category-actions.tsx";
@@ -18,7 +20,11 @@ const columns = [
 		cell: (info) => {
 			const value = info.getValue();
 			const className = createCategoryTheme(info.row.original.color);
-			return <Badge className={className}>{value}</Badge>;
+			return (
+				<Badge className={className} size="sm">
+					{value}
+				</Badge>
+			);
 		},
 		meta: {
 			headerClassName:
@@ -33,7 +39,7 @@ const columns = [
 	}),
 ];
 
-export function CategoriesTable({ data }: { data: CategorySchema[] }) {
+export function CategoryTable({ data }: { data: CategorySchema[] }) {
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 
@@ -47,7 +53,7 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 
 	return (
 		<>
-			<div className="sm:col-span-8">
+			<Frame className="sm:col-span-8">
 				<DataTable
 					data={data}
 					columns={columns}
@@ -56,14 +62,23 @@ export function CategoriesTable({ data }: { data: CategorySchema[] }) {
 						rowSelection: initRowSelection,
 					}}
 				/>
-			</div>
-			{selected.id && (
-				<div className="flex max-h-fit flex-col gap-4 rounded-md border p-4 sm:col-span-4">
-					<Suspense>
-						<EditCategoryForm key={selected.id} />
-					</Suspense>
-				</div>
-			)}
+			</Frame>
+			<Frame className="max-h-fit sm:col-span-4">
+				<FramePanel>
+					{selected.id ? (
+						<Suspense>
+							<EditCategoryForm key={selected.id} />
+						</Suspense>
+					) : (
+						<Empty>
+							<EmptyHeader>
+								<EmptyTitle>No details yet</EmptyTitle>
+								<EmptyDescription>Select a category on the left to edit details.</EmptyDescription>
+							</EmptyHeader>
+						</Empty>
+					)}
+				</FramePanel>
+			</Frame>
 		</>
 	);
 }

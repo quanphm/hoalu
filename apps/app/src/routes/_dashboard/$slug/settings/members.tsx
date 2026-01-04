@@ -2,6 +2,8 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
+import { Frame } from "@hoalu/ui/frame";
+
 import { InvitationsTable } from "#app/components/invitations-table.tsx";
 import { InviteDialog } from "#app/components/invite.tsx";
 import {
@@ -56,7 +58,9 @@ function RouteComponent() {
 					{canInvite && <InviteDialog />}
 				</SectionHeader>
 				<SectionContent>
-					<MembersTable data={membersTableData} />
+					<Frame>
+						<MembersTable data={membersTableData} />
+					</Frame>
 				</SectionContent>
 			</Section>
 
@@ -65,9 +69,11 @@ function RouteComponent() {
 					<SectionTitle>Invitations</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
-					<Suspense>
-						<InvitationsTable data={invitationTableData || []} />
-					</Suspense>
+					<Frame>
+						<Suspense>
+							<InvitationsTable data={invitationTableData || []} />
+						</Suspense>
+					</Frame>
 				</SectionContent>
 			</Section>
 		</>

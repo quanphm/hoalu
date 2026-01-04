@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
+import type { WalletTypeSchema } from "@hoalu/common/schema";
 import {
 	BitcoinIcon,
 	WalletIcon as CashIcon,
@@ -41,11 +42,7 @@ import {
 	KEYBOARD_SHORTCUTS,
 } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import {
-	WalletFormSchema,
-	type WalletPatchSchema,
-	type WalletTypeSchema,
-} from "#app/lib/schema.ts";
+import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
 import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
 

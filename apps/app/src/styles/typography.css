@@ -17,12 +17,17 @@
 
 .prose-base {
 	:where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-		margin-top: 0.25rem;
-		margin-bottom: 0.25rem;
+		margin-top: 0.125rem;
+		margin-bottom: 0.125rem;
+	}
+
+	:where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+		margin-top: 0.125rem;
+		margin-bottom: 0.125rem;
 	}
 
 	:where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-		padding-inline-start: 0.25rem;
+		padding-inline-start: 0.125rem;
 	}
 }
 

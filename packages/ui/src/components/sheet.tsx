@@ -1,6 +1,7 @@
-import { Dialog as SheetPrimitive } from "@base-ui-components/react/dialog";
+import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 
 import { XIcon } from "@hoalu/icons/tabler";
+
 import { cn } from "../utils";
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {

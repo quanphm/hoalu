@@ -1,4 +1,4 @@
-import { NumberField as NumberFieldPrimitive } from "@base-ui-components/react/number-field";
+import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field";
 
 function NumberField(props: React.ComponentProps<typeof NumberFieldPrimitive.Root>) {
 	return <NumberFieldPrimitive.Root data-slot="number-field" {...props} />;

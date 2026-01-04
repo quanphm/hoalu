@@ -25,8 +25,11 @@ import {
 } from "@hoalu/common/enums";
 
 /**
- * auth
+ * ----------------
+ * better-auth
+ * ----------------
  */
+
 export const user = pgTable("user", {
 	id: uuid("id").primaryKey(),
 	publicId: text("public_id").notNull().unique(),
@@ -163,7 +166,9 @@ export const apikey = pgTable("apikey", {
 });
 
 /**
+ * ----------------
  * core
+ * ----------------
  */
 
 export const colorTypeEnum = pgEnum("color_enum", PG_ENUM_COLOR);
@@ -288,7 +293,9 @@ export const task = pgTable(
 );
 
 /**
- * file
+ * ----------------
+ * files
+ * ----------------
  */
 
 export const file = pgTable(

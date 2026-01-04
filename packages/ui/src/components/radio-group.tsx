@@ -1,7 +1,8 @@
-import { Radio as RadioPrimitive } from "@base-ui-components/react/radio";
-import { RadioGroup as RadioGroupPrimitive } from "@base-ui-components/react/radio-group";
+import { Radio as RadioPrimitive } from "@base-ui/react/radio";
+import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
 
 import { CircleIcon } from "@hoalu/icons/lucide";
+
 import { cn } from "../utils";
 
 function RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive>) {
@@ -26,9 +27,9 @@ function RadioGroupItem({ className, ...props }: React.ComponentProps<typeof Rad
 		>
 			<RadioPrimitive.Indicator
 				data-slot="radio-group-indicator"
-				className="relative flex items-center justify-center"
+				className="relative flex h-full w-full items-center justify-center"
 			>
-				<CircleIcon className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 size-2 fill-primary" />
+				<CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary" />
 			</RadioPrimitive.Indicator>
 		</RadioPrimitive.Root>
 	);
