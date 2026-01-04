@@ -24,7 +24,7 @@ WORKDIR /repo/apps/api
 RUN bun run build:api
 
 # stage 3: migration
-FROM oven/bun:1.3.1-alpine AS migration
+FROM base AS migration
 WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=build /repo .
@@ -32,7 +32,7 @@ WORKDIR /repo/apps/api
 CMD ["bun", "run", "db:migrate"]
 
 # stage 4: runtime
-FROM oven/bun:1.3.1-alpine AS runner
+FROM base AS runner
 WORKDIR /api
 COPY --from=deps /repo/node_modules ./node_modules
 COPY --from=build /repo/apps/api/dist .
