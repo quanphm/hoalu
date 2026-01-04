@@ -46,7 +46,6 @@ function RouteComponent() {
 	});
 
 	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
-
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
 		role: member.role as "member" | "admin" | "owner",
 		permission: {
@@ -85,75 +84,67 @@ function RouteComponent() {
 	}
 
 	return (
-		<>
-			<Section>
-				<SectionHeader>
-					<SectionTitle>General</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={12}>
-					<div className="col-span-8">
-						<SectionContent>
-							<SettingCard title="Profile">
-								<EditWorkspaceForm canEdit={canUpdateWorkspace} />
-							</SettingCard>
-							<SettingCard title="Workspace ID">
-								<InputWithCopy value={workspace.publicId} />
-							</SettingCard>
-						</SectionContent>
-					</div>
-					<div className="col-span-4">
-						<SectionContent>
-							<SettingCard title="Logo">
-								<div className="flex items-center gap-4">
-									<Button
-										variant="outline"
-										size="icon"
-										className="size-14 rounded-full border-0"
-										onClick={handleBrowseFiles}
-									>
-										<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
-									</Button>
-									<p className="max-w-sm text-sm">
-										Recommended size 256x256px. PNG or JPEG file. Max file size 5MB.
-									</p>
-								</div>
-								{canUpdateWorkspace && (
-									<input
-										type="file"
-										ref={fileInputRef}
-										onChange={handleFileChange}
-										className="hidden"
-										accept="image/*"
-										aria-label="Upload image file"
-									/>
-								)}
-							</SettingCard>
-							<SettingCard title="Preferences">
-								<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />
-							</SettingCard>
-						</SectionContent>
-					</div>
-				</SectionContent>
-			</Section>
-
-			{canDeleteWorkspace && (
-				<Section>
-					<SectionHeader>
-						<SectionTitle className="text-destructive">Danger zone</SectionTitle>
-					</SectionHeader>
-					<SectionContent columns={12}>
+		<Section>
+			<SectionHeader>
+				<SectionTitle>General</SectionTitle>
+			</SectionHeader>
+			<SectionContent columns={12}>
+				<div className="col-span-8">
+					<SectionContent>
+						<SettingCard title="Profile">
+							<EditWorkspaceForm canEdit={canUpdateWorkspace} />
+						</SettingCard>
+						<SettingCard title="Workspace ID">
+							<InputWithCopy value={workspace.publicId} />
+						</SettingCard>
 						<SettingCard
-							title="Delete workspace"
-							description="Permanently delete workspace. This action can't be undone, so please be certain."
-							className="col-span-8"
+							title="Logo"
+							description="Click the logo to upload a new image. PNG or JPEG file. Max file size 5MB."
+							className="flex flex-row items-start *:data-[slot=card-header]:flex-1"
 						>
-							<Button variant="destructive" onClick={() => setDialog({ state: true })}>
-								Delete workspace
-							</Button>
+							<div className="flex flex-1 items-center gap-4">
+								<Button
+									variant="link"
+									size="icon"
+									className="size-14 rounded-full hover:no-underline hover:opacity-70"
+									onClick={handleBrowseFiles}
+								>
+									<WorkspaceLogo size="lg" logo={previewUrls[0] ?? logo} name={workspace.name} />
+								</Button>
+							</div>
+							{canUpdateWorkspace && (
+								<input
+									type="file"
+									ref={fileInputRef}
+									onChange={handleFileChange}
+									className="hidden"
+									accept="image/*"
+									aria-label="Upload image file"
+								/>
+							)}
+						</SettingCard>
+						{canDeleteWorkspace && (
+							<SettingCard
+								title="Delete workspace"
+								description="Permanently delete workspace. This action can't be undone, so please be certain."
+								className="border-destructive"
+							>
+								<Button variant="destructive" onClick={() => setDialog({ state: true })}>
+									Delete workspace
+								</Button>
+							</SettingCard>
+						)}
+					</SectionContent>
+				</div>
+
+				<div className="col-span-4">
+					<SectionContent>
+						<SettingCard title="Preferences">
+							<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />
 						</SettingCard>
 					</SectionContent>
-				</Section>
-			)}
-		</>
+				</div>
+			</SectionContent>
+		</Section>
 	);
 }

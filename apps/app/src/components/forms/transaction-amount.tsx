@@ -6,6 +6,7 @@ import { Input } from "@hoalu/ui/input";
 import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
+
 import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
@@ -127,7 +128,7 @@ export function TransactionAmountField(props: Props) {
 				</SelectNative>
 				<FieldControl>
 					{isCalculatorMode ? (
-						<div className="-ms-px relative flex-1">
+						<div className="relative -ms-px flex-1">
 							<Input
 								ref={inputRef}
 								value={expression}
@@ -138,13 +139,13 @@ export function TransactionAmountField(props: Props) {
 								className="h-9 rounded-s-none"
 							/>
 							{calculatedValue !== null && (
-								<div className="-bottom-6 absolute right-3 left-3 text-muted-foreground text-xs">
+								<div className="absolute right-3 -bottom-6 left-3 text-muted-foreground text-xs">
 									= {formatCurrency(calculatedValue, field.state.value.currency)}
 								</div>
 							)}
 						</div>
 					) : (
-						<div className="-ms-px relative flex-1">
+						<div className="relative -ms-px flex-1">
 							<NumberField
 								value={field.state.value.value}
 								format={{
@@ -156,6 +157,7 @@ export function TransactionAmountField(props: Props) {
 								onBlur={field.handleBlur}
 								onValueChange={handleValueChange}
 								min={0}
+								step={0.01}
 								className="flex-1"
 							>
 								<NumberFieldGroup
@@ -169,7 +171,7 @@ export function TransactionAmountField(props: Props) {
 							</NumberField>
 							<Button
 								onClick={toggleCalculatorMode}
-								className="-translate-y-1/2 absolute top-1/2 right-2"
+								className="absolute top-1/2 right-2 -translate-y-1/2"
 								title="Calculator ON"
 								variant="ghost"
 								size="icon"

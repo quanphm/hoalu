@@ -228,9 +228,9 @@ function EmptyData() {
 	return (
 		<Empty>
 			<EmptyHeader>
-				<EmptyTitle>No Data Yet</EmptyTitle>
+				<EmptyTitle>No data yet</EmptyTitle>
 				<EmptyDescription>
-					You haven&apos;t created any expenses yet. Get started by creating your first expense.
+					You haven&apos;t created any expenses in this period yet.
 				</EmptyDescription>
 			</EmptyHeader>
 			<EmptyContent>

@@ -24,6 +24,7 @@
 		"./dropdown-menu": "./src/components/dropdown-menu.tsx",
 		"./empty": "./src/components/empty.tsx",
 		"./field": "./src/components/field.tsx",
+		"./frame": "./src/components/frame.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",
 		"./number-field": "./src/components/number-field.tsx",
@@ -45,7 +46,7 @@
 		"./tooltip": "./src/components/tooltip.tsx"
 	},
 	"dependencies": {
-		"@base-ui-components/react": "^1.0.0-rc.0",
+		"@base-ui/react": "^1.0.0",
 		"@hoalu/icons": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

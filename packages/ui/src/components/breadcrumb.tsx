@@ -1,6 +1,7 @@
-import { useRender } from "@base-ui-components/react/use-render";
+import { useRender } from "@base-ui/react/use-render";
 
 import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
+
 import { cn, mergeProps } from "../utils";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {

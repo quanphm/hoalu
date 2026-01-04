@@ -31,9 +31,9 @@ export function ColorsField(props: Props) {
 				{PG_ENUM_COLOR.map((color) => (
 					<RadioGroupItem
 						key={color}
-						id={id}
+						id={`${id}-${color}`}
 						value={color}
-						className={cn("size-6", createCategoryTheme(color))}
+						className={cn("sm:size-6", createCategoryTheme(color))}
 					/>
 				))}
 			</RadioGroup>

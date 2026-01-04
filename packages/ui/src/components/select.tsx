@@ -1,6 +1,7 @@
-import { Select as SelectPrimitive } from "@base-ui-components/react/select";
+import { Select as SelectPrimitive } from "@base-ui/react/select";
 
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
+
 import { cn } from "../utils";
 
 function Select<Value, Multiple extends boolean | undefined = false>(
@@ -150,7 +151,7 @@ function SelectSeparator({
 	return (
 		<SelectPrimitive.Separator
 			data-slot="select-separator"
-			className={cn("-mx-1 pointer-events-none my-1 h-px bg-border", className)}
+			className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
 			{...props}
 		/>
 	);

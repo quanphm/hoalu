@@ -1,6 +1,7 @@
-import { Menu as MenuPrimitive } from "@base-ui-components/react/menu";
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "@hoalu/icons/lucide";
+
 import { cn } from "../utils";
 
 function DropdownMenu({ ...props }: React.ComponentProps<typeof MenuPrimitive.Root>) {

@@ -86,7 +86,7 @@ export function NavWorkspace() {
 			</SidebarGroup>
 
 			<SidebarGroup>
-				<SidebarGroupLabel>Libraries</SidebarGroupLabel>
+				<SidebarGroupLabel>Library</SidebarGroupLabel>
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>

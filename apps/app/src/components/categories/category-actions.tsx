@@ -165,7 +165,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
 				</FieldGroup>
 
-				<div className="my-2 flex items-center justify-center p-2">
+				<div className="flex items-center justify-center p-2">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
 							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
