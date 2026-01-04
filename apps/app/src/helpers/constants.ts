@@ -1,6 +1,5 @@
+import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { getCurrencyList } from "@hoalu/countries";
-
-import type { RepeatSchema, WalletTypeSchema } from "#app/lib/schema.ts";
 
 export const THEMES = ["light", "dark", "creamy", "deluge"] as const;
 export const THEME_LABELS: Record<(typeof THEMES)[number], string> = {

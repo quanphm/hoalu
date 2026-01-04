@@ -1,6 +1,6 @@
 :root,
 .light {
-	--radius: 0.65rem;
+	--radius: 0.5rem;
 
 	--background: var(--color-white);
 	--foreground: var(--color-zinc-900);
@@ -45,7 +45,7 @@
 }
 
 .dark {
-	--radius: 0.65rem;
+	--radius: 0.5rem;
 
 	--background: var(--color-zinc-950);
 	--foreground: var(--color-zinc-100);

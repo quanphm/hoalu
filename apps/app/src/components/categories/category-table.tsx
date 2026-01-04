@@ -20,7 +20,11 @@ const columns = [
 		cell: (info) => {
 			const value = info.getValue();
 			const className = createCategoryTheme(info.row.original.color);
-			return <Badge className={className}>{value}</Badge>;
+			return (
+				<Badge className={className} size="sm">
+					{value}
+				</Badge>
+			);
 		},
 		meta: {
 			headerClassName:
@@ -35,7 +39,7 @@ const columns = [
 	}),
 ];
 
-export function CategoriesTable({ data }: { data: CategorySchema[] }) {
+export function CategoryTable({ data }: { data: CategorySchema[] }) {
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 

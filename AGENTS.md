@@ -97,7 +97,7 @@ This file provides guidance to AI coding assistants when working with code in th
 - `use-expenses.ts` (255 lines) - Live queries, stats calculations, filtering logic
 
 **Categories (3 files):**
-- `categories-table.tsx` - Table view with sorting
+- `category-table.tsx` - Table view with sorting
 - `category-actions.tsx` - CRUD actions
 - `use-categories.ts` - Live queries and transformations
 
@@ -1504,7 +1504,7 @@ SMTP_PASS=
 
 ```bash
 # API URL (via Caddy proxy)
-PUBLIC_API_URL=http://api.hoalu.localhost
+PUBLIC_API_URL=http://hoalu.localhost/api
 
 # App URL (via Caddy proxy)
 PUBLIC_APP_BASE_URL=http://hoalu.localhost
@@ -1513,11 +1513,11 @@ PUBLIC_APP_BASE_URL=http://hoalu.localhost
 **Note:** When using Caddy reverse proxy:
 
 - Frontend runs on `localhost:5173` internally, served via Caddy at `hoalu.localhost`
-- API runs on `localhost:3000` internally, served via Caddy at `api.hoalu.localhost`
+- API runs on `localhost:3000` internally, served via Caddy at `hoalu.localhost/api`
 - All browser requests go through Caddy for compression and optional HTTPS
 - `.localhost` domains work natively without `/etc/hosts` modification
 
-For HTTPS setup, change URLs to `https://hoalu.localhost` and `https://api.hoalu.localhost`
+For HTTPS setup, change URLs to `https://hoalu.localhost` and `https://hoalu.localhost/api`
 
 ### Docker Services
 
@@ -2189,7 +2189,7 @@ Use this template when adding a new resource endpoint (e.g., notes, tags, budget
    bun run dev
 
    # Test API
-   curl http://api.hoalu.localhost/api/[resource]s?workspaceId=xxx
+   curl http://hoalu.localhost/api/[resource]s?workspaceId=xxx
    ```
 
 **Example:** See `apps/api/src/routes/expenses/` for complete reference implementation.

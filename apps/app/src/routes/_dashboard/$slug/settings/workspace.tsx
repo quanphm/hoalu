@@ -86,7 +86,7 @@ function RouteComponent() {
 	return (
 		<Section>
 			<SectionHeader>
-				<SectionTitle>General</SectionTitle>
+				<SectionTitle>Workspace</SectionTitle>
 			</SectionHeader>
 			<SectionContent columns={12}>
 				<div className="col-span-8">
