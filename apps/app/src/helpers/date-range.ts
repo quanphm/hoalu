@@ -47,6 +47,18 @@ export function calculateDateRange(
 		const startOfYear = new Date(today.getFullYear(), 0, 1);
 		startDate = datetime.startOfDay(startOfYear);
 	}
+	// Last N months (e.g., "3m", "6m", "12m") - whole months only
+	else if (predefinedRange.endsWith("m")) {
+		const months = parseInt(predefinedRange, 10);
+		const today = new Date();
+		// End date is last day of current month
+		const lastDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+		endDate = datetime.endOfDay(lastDayOfCurrentMonth);
+		// Start date is first day of the month (months - 1) ago
+		// e.g., for 3 months: current month - 2 = 3 months including current
+		const firstDayOfStartMonth = new Date(today.getFullYear(), today.getMonth() - (months - 1), 1);
+		startDate = datetime.startOfDay(firstDayOfStartMonth);
+	}
 	// Last N days
 	else {
 		const days = parseInt(predefinedRange, 10);
@@ -152,6 +164,25 @@ export function calculateComparisonDateRange(
 
 		previousEnd = datetime.endOfDay(prevYear);
 		previousStart = datetime.startOfDay(new Date(prevYear.getFullYear(), 0, 1));
+	}
+	// For last N months, go back by the same number of months
+	else if (predefinedRange.endsWith("m")) {
+		const months = parseInt(predefinedRange, 10);
+		// Previous period ends on last day of month before current start month
+		const prevEndMonth = new Date(currentStart.getFullYear(), currentStart.getMonth() - 1, 1);
+		const lastDayOfPrevEndMonth = new Date(
+			prevEndMonth.getFullYear(),
+			prevEndMonth.getMonth() + 1,
+			0,
+		);
+		previousEnd = datetime.endOfDay(lastDayOfPrevEndMonth);
+		// Previous period starts (months - 1) months before the end month
+		const prevStartMonth = new Date(
+			prevEndMonth.getFullYear(),
+			prevEndMonth.getMonth() - (months - 1),
+			1,
+		);
+		previousStart = datetime.startOfDay(prevStartMonth);
 	}
 	// For last N days, go back by the same number of days
 	else {
