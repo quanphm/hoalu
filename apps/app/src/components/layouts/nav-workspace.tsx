@@ -1,15 +1,16 @@
 import { Link, useParams } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 import {
 	AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
 	FileUploadIcon,
+	FolderIcon,
 	LayoutDashboardIcon,
 	TentIcon,
-	TriangleSquareCircleIcon,
 	UsersGroupIcon,
-	WalletIcon,
 } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -20,14 +21,28 @@ import {
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
 
+import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
 
 	return (
 		<>
+			<SidebarGroup>
+				<SidebarGroupContent>
+					<Button
+						variant="default"
+						className="w-full justify-center"
+						onClick={() => setCreateExpenseDialog({ state: true })}
+					>
+						Create expense
+					</Button>
+				</SidebarGroupContent>
+			</SidebarGroup>
+
 			<SidebarGroup className="mt-2">
 				<SidebarGroupContent>
 					<SidebarMenu>
@@ -81,26 +96,14 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarGroupContent>
-			</SidebarGroup>
 
-			<SidebarGroup>
-				<SidebarGroupLabel>Library</SidebarGroupLabel>
-				<SidebarGroupContent>
-					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
-								<WalletIcon />
-								<span>Wallets</span>
+							<SidebarMenuButton render={<Link to="/$slug/library" params={{ slug }} />}>
+								<FolderIcon />
+								<span>Library</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
-								<TriangleSquareCircleIcon />
-								<span>Categories</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
+
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileUploadIcon />

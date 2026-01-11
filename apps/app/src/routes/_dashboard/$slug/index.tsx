@@ -36,7 +36,7 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
-				<SectionHeader>
+				<SectionHeader className="flex-col items-start">
 					<SectionTitle>Analytics</SectionTitle>
 					<DashboardDateFilter />
 				</SectionHeader>

@@ -51,7 +51,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Workspaces</SectionTitle>
 					<Button variant="outline" size="sm" onClick={() => setDialog({ state: true })}>
-						<PlusIcon className="mr-2 size-4" />
+						<PlusIcon className="size-4" />
 						Create
 					</Button>
 				</SectionHeader>

@@ -6,10 +6,12 @@ function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div"
 	return <div ref={ref} className={cn("flex flex-col gap-6", className)} {...props} />;
 }
 
-function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {
+function SectionHeader({ children, className }: React.ComponentPropsWithRef<"div">) {
 	return (
-		<div className="flex max-w-full items-center justify-between gap-4">
-			<div className="flex max-w-full items-center justify-between gap-4">{children}</div>
+		<div className={cn("flex max-w-full items-center justify-between gap-4")}>
+			<div className={cn("flex max-w-full items-center justify-between gap-4", className)}>
+				{children}
+			</div>
 		</div>
 	);
 }

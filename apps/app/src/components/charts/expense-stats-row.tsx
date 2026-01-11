@@ -5,6 +5,7 @@ import { Card, CardContent } from "@hoalu/ui/card";
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
+import { formatNumber } from "#app/helpers/number.ts";
 
 interface ExpenseStatsRowProps {
 	expenses: SyncedExpense[];
@@ -20,14 +21,15 @@ export function ExpenseStatsRow(props: ExpenseStatsRowProps) {
 	const stats = [
 		{
 			title: "Days",
-			value:
+			value: formatNumber(
 				currentPeriodExpenses.length > 0
-					? new Set(currentPeriodExpenses.map((e) => e.date)).size.toString()
-					: "0",
+					? new Set(currentPeriodExpenses.map((e) => e.date)).size
+					: 0,
+			),
 		},
 		{
 			title: "Transactions",
-			value: totalTransactions.toString(),
+			value: formatNumber(totalTransactions),
 		},
 	];
 

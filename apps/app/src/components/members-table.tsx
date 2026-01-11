@@ -62,7 +62,7 @@ const columns = [
 			return (
 				<Badge
 					variant={value === "owner" ? "default" : "outline"}
-					className="px-1.5 font-normal text-xs capitalize"
+					className="pointer-events-none select-none gap-1.5 rounded-none p-2"
 				>
 					{value === "owner" && "🔑 "}
 					{value}
