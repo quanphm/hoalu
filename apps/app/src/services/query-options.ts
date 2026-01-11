@@ -103,6 +103,28 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 	});
 };
 
+export const listWorkspaceSummariesOptions = () => {
+	return queryOptions({
+		queryKey: workspaceKeys.summaries(),
+		queryFn: async () => {
+			const res = await apiClient.workspaces.listSummaries();
+			return res;
+		},
+		staleTime: TIME_IN_MILLISECONDS.MINUTE * 5, // Cache for 5 minutes
+	});
+};
+
+export const getWorkspaceSummaryOptions = (id: string) => {
+	return queryOptions({
+		queryKey: workspaceKeys.summary(id),
+		queryFn: async () => {
+			const res = await apiClient.workspaces.getSummary(id);
+			return res;
+		},
+		staleTime: TIME_IN_MILLISECONDS.MINUTE * 5,
+	});
+};
+
 export const getActiveMemberOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: memberKeys.all(slug),

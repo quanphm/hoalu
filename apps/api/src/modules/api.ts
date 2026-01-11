@@ -12,6 +12,7 @@ import expensesRoute from "#api/routes/expenses/index.ts";
 import filesRoute from "#api/routes/files/index.ts";
 import tasksRoute from "#api/routes/tasks/index.ts";
 import walletsRoute from "#api/routes/wallets/index.ts";
+import workspacesRoute from "#api/routes/workspaces/index.ts";
 
 export function apiModule() {
 	const app = createHonoInstance()
@@ -30,7 +31,8 @@ export function apiModule() {
 		.route("/expenses", expensesRoute)
 		.route("/files", filesRoute)
 		.route("/tasks", tasksRoute)
-		.route("/wallets", walletsRoute);
+		.route("/wallets", walletsRoute)
+		.route("/workspaces", workspacesRoute);
 
 	app.get(
 		"/openapi",

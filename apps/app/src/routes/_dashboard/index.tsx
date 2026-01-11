@@ -16,7 +16,10 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { CreateWorkspaceForm } from "#app/components/workspace.tsx";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
+import {
+	listWorkspaceSummariesOptions,
+	listWorkspacesOptions,
+} from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/")({
 	component: RouteComponent,
@@ -24,7 +27,9 @@ export const Route = createFileRoute("/_dashboard/")({
 
 function RouteComponent() {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
+	const { data: summaries } = useSuspenseQuery(listWorkspaceSummariesOptions());
 	const setDialog = useSetAtom(createWorkspaceDialogAtom);
+	const summaryMap = new Map(summaries.map((s) => [s.id, s]));
 
 	if (workspaces.length === 0) {
 		return (
@@ -52,11 +57,14 @@ function RouteComponent() {
 					<SectionTitle>Workspaces</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={4}>
-					{workspaces.map((ws) => (
-						<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="h-full">
-							<WorkspaceCard {...ws} />
-						</Link>
-					))}
+					{workspaces.map((ws) => {
+						const summary = summaryMap.get(ws.id);
+						return (
+							<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="h-full">
+								<WorkspaceCard {...ws} summary={summary} />
+							</Link>
+						);
+					})}
 					<button
 						type="button"
 						onClick={() => setDialog({ state: true })}

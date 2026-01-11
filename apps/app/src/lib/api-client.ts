@@ -307,6 +307,27 @@ const files = {
 	},
 };
 
+const workspaces = {
+	listSummaries: async () => {
+		const response = await honoClient.bff.workspaces.summaries.$get();
+		if (!response.ok) {
+			throw new Error("Failed to fetch workspace summaries");
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	getSummary: async (id: string) => {
+		const response = await honoClient.bff.workspaces[":id"].summary.$get({
+			param: { id },
+		});
+		if (!response.ok) {
+			throw new Error("Failed to fetch workspace summary");
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
@@ -314,4 +335,5 @@ export const apiClient = {
 	expenses,
 	exchangeRates,
 	files,
+	workspaces,
 };

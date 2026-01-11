@@ -101,8 +101,8 @@ export function PercentageChangeBadge({
 			className={cn(
 				"inline-flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 font-medium text-xs",
 				textClasses,
-				change.status === "increase" && "bg-green-50 dark:bg-green-950/30",
-				change.status === "decrease" && "bg-red-50 dark:bg-red-950/30",
+				change.status === "increase" && "bg-red-50 dark:bg-red-950/30",
+				change.status === "decrease" && "bg-green-50 dark:bg-green-950/30",
 				className,
 			)}
 		>
