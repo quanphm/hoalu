@@ -66,7 +66,7 @@ export function calculatePercentageChange(
 export function getPercentageChangeTextClasses(change: PercentageChange) {
 	return cn(
 		change.status === "no-change" && "text-muted-foreground",
-		change.status === "increase" && "text-green-600 dark:text-green-400",
-		change.status === "decrease" && "text-red-600 dark:text-red-400",
+		change.status === "increase" && "text-red-600 dark:text-red-400",
+		change.status === "decrease" && "text-green-600 dark:text-green-400",
 	);
 }
