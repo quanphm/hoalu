@@ -8,7 +8,37 @@ interface DateRangeCalculation {
 }
 
 /**
+ * Type guard to check if a date range is month-based (3m, 6m, 12m)
+ * Excludes "mtd" (month to date) which also ends with 'm'
+ */
+export function isMonthBasedRange(range: PredefinedDateRange): range is "3m" | "6m" | "12m" {
+	return range.endsWith("m") && range !== "mtd";
+}
+
+/**
  * Calculate start and end dates for dashboard date ranges
+ *
+ * @param predefinedRange - The predefined range type (e.g., "7", "30", "3m", "6m", "12m", "wtd", "mtd", "ytd", "all", "custom")
+ * @param customRange - Optional custom date range (required if predefinedRange is "custom")
+ * @returns DateRangeCalculation with startDate and endDate, or null for "all" range
+ *
+ * @remarks
+ * Month-based ranges (3m, 6m, 12m) calculate whole months including the current partial month.
+ * For example, on Jan 10, 2026:
+ * - "12m" returns: Feb 1, 2025 - Jan 31, 2026 (12 months including partial Jan)
+ * - "6m" returns: Aug 1, 2025 - Jan 31, 2026 (6 months including partial Jan)
+ * - "3m" returns: Nov 1, 2025 - Jan 31, 2026 (3 months including partial Jan)
+ *
+ * @example
+ * ```typescript
+ * // For "12m" on Jan 10, 2026
+ * const range = calculateDateRange("12m");
+ * // Returns: { startDate: Feb 1, 2025, endDate: Jan 31, 2026 }
+ *
+ * // For "wtd" on Wednesday Jan 15, 2026
+ * const range = calculateDateRange("wtd");
+ * // Returns: { startDate: Mon Jan 13, 2026 00:00:00, endDate: Wed Jan 15, 2026 23:59:59 }
+ * ```
  */
 export function calculateDateRange(
 	predefinedRange: PredefinedDateRange,
@@ -51,12 +81,22 @@ export function calculateDateRange(
 	else if (predefinedRange.endsWith("m")) {
 		const months = parseInt(predefinedRange, 10);
 		const today = new Date();
+
 		// End date is last day of current month
+		// Using day 0 of next month gives us the last day of current month
+		// This handles months with different lengths (28-31 days) automatically
 		const lastDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 		endDate = datetime.endOfDay(lastDayOfCurrentMonth);
+
 		// Start date is first day of the month (months - 1) ago
-		// e.g., for 3 months: current month - 2 = 3 months including current
-		const firstDayOfStartMonth = new Date(today.getFullYear(), today.getMonth() - (months - 1), 1);
+		// Example: for 12 months in Jan 2026: month 0 - (12 - 1) = month -11 = Feb 2025
+		// JavaScript Date handles negative month values correctly (rolls back years)
+		// Using day 1 avoids leap year issues (e.g., Feb 29 → Mar 1 in non-leap years)
+		const firstDayOfStartMonth = new Date(
+			today.getFullYear(),
+			today.getMonth() - (months - 1),
+			1, // Always use day 1 to avoid month overflow edge cases
+		);
 		startDate = datetime.startOfDay(firstDayOfStartMonth);
 	}
 	// Last N days
@@ -168,15 +208,21 @@ export function calculateComparisonDateRange(
 	// For last N months, go back by the same number of months
 	else if (predefinedRange.endsWith("m")) {
 		const months = parseInt(predefinedRange, 10);
+
 		// Previous period ends on last day of month before current start month
+		// Example: Current is Feb 2025 - Jan 2026, so previous ends Jan 2025
+		// Step 1: Get first day of month before current start (Jan 2025)
 		const prevEndMonth = new Date(currentStart.getFullYear(), currentStart.getMonth() - 1, 1);
+		// Step 2: Get last day of that month (Jan 31, 2025)
 		const lastDayOfPrevEndMonth = new Date(
 			prevEndMonth.getFullYear(),
 			prevEndMonth.getMonth() + 1,
 			0,
 		);
 		previousEnd = datetime.endOfDay(lastDayOfPrevEndMonth);
-		// Previous period starts (months - 1) months before the end month
+
+		// Previous period starts N months before the end
+		// Example: For 12 months ending Jan 2025, start is Feb 2024
 		const prevStartMonth = new Date(
 			prevEndMonth.getFullYear(),
 			prevEndMonth.getMonth() - (months - 1),

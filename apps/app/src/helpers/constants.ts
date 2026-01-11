@@ -128,11 +128,6 @@ export const AVAILABLE_LAST_MONTHS_OPTIONS = [
 	{ value: "12m", label: "Last 12 months" },
 ] as const;
 
-export const AVAILABLE_LAST_RANGE_OPTIONS = [
-	...AVAILABLE_LAST_DAYS_OPTIONS,
-	...AVAILABLE_LAST_MONTHS_OPTIONS,
-] as const;
-
 export const AVAILABLE_TO_DATE_RANGE_OPTIONS = [
 	{ value: "wtd", label: "Week to date" },
 	{ value: "mtd", label: "Month to date" },

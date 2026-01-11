@@ -32,6 +32,7 @@ import {
 	generateMTDDataWithZeros,
 	getStartOfWeek,
 	groupDataByMonth,
+	isMonthBasedRange,
 } from "#app/helpers/date-range.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -83,7 +84,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			return groupDataByMonth(filteredData, true);
 		} else if (dateRange === "all") {
 			return groupDataByMonth(filteredData, false);
-		} else if (dateRange === "3m" || dateRange === "6m" || dateRange === "12m") {
+		} else if (isMonthBasedRange(dateRange)) {
 			// For 3/6/12 month ranges, group by month
 			return groupDataByMonth(filteredData, false);
 		} else if (dateRange === "mtd") {
@@ -229,11 +230,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-								return dateRange === "ytd" ||
-									dateRange === "all" ||
-									dateRange === "3m" ||
-									dateRange === "6m" ||
-									dateRange === "12m"
+								return dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 									? datetime.format(date, "MMM yyyy")
 									: datetime.format(date, "dd/MM/yyyy");
 							}}
@@ -249,11 +246,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								if (active && payload && payload.length && label) {
 									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
 									const formattedDate =
-										dateRange === "ytd" ||
-										dateRange === "all" ||
-										dateRange === "3m" ||
-										dateRange === "6m" ||
-										dateRange === "12m"
+										dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 											? datetime.format(date, "MMMM yyyy")
 											: datetime.format(date, "dd/MM/yyyy");
 

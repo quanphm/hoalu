@@ -18,13 +18,13 @@ import {
 import {
 	AVAILABLE_LAST_DAYS_OPTIONS,
 	AVAILABLE_LAST_MONTHS_OPTIONS,
-	AVAILABLE_LAST_RANGE_OPTIONS,
 	AVAILABLE_TO_DATE_RANGE_OPTIONS,
 } from "#app/helpers/constants.ts";
 import { DateRangePicker } from "./date-range-picker";
 
 const options = [
-	...AVAILABLE_LAST_RANGE_OPTIONS,
+	...AVAILABLE_LAST_DAYS_OPTIONS,
+	...AVAILABLE_LAST_MONTHS_OPTIONS,
 	...AVAILABLE_TO_DATE_RANGE_OPTIONS,
 	{ label: "Custom range", value: "custom" },
 ];
@@ -34,6 +34,7 @@ export function DashboardDateFilter() {
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 
 	const handleRangeChange = (value: PredefinedDateRange | null) => {
+		// Select component can pass null when clearing, though not used in this implementation
 		if (value) {
 			setSyncedDateRange({ selected: value });
 		}
