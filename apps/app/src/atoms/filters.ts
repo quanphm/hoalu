@@ -12,7 +12,18 @@ export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
 
 export const searchKeywordsAtom = atom<string>("");
 
-export type PredefinedDateRange = "7" | "30" | "90" | "wtd" | "mtd" | "ytd" | "all" | "custom";
+export type PredefinedDateRange =
+	| "7"
+	| "30"
+	| "90"
+	| "3m"
+	| "6m"
+	| "12m"
+	| "wtd"
+	| "mtd"
+	| "ytd"
+	| "all"
+	| "custom";
 export interface CustomDateRange {
 	from: Date;
 	to: Date;

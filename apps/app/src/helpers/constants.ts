@@ -116,17 +116,23 @@ export const KEYBOARD_SHORTCUTS = {
 
 export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
 
-export const AVAILABLE_LAST_RANGE_OPTIONS = [
+export const AVAILABLE_LAST_DAYS_OPTIONS = [
 	{ value: "7", label: "Last 7 days" },
 	{ value: "30", label: "Last 30 days" },
 	{ value: "90", label: "Last 90 days" },
-	// { value: "all", label: "All time" },
+] as const;
+
+export const AVAILABLE_LAST_MONTHS_OPTIONS = [
+	{ value: "3m", label: "Last 3 months" },
+	{ value: "6m", label: "Last 6 months" },
+	{ value: "12m", label: "Last 12 months" },
 ] as const;
 
 export const AVAILABLE_TO_DATE_RANGE_OPTIONS = [
 	{ value: "wtd", label: "Week to date" },
 	{ value: "mtd", label: "Month to date" },
 	{ value: "ytd", label: "Year to date" },
+	{ value: "all", label: "All time" },
 ] as const;
 
 export const DEFAULT_DATE_RANGE = "mtd";

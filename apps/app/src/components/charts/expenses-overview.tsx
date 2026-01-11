@@ -32,6 +32,7 @@ import {
 	generateMTDDataWithZeros,
 	getStartOfWeek,
 	groupDataByMonth,
+	isMonthBasedRange,
 } from "#app/helpers/date-range.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -75,13 +76,16 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
-	// Group by month for year-to-date and all-time views
+	// Group by month for year-to-date, all-time, and multi-month views
 	const data = (() => {
 		const today = new Date();
 
 		if (dateRange === "ytd") {
 			return groupDataByMonth(filteredData, true);
 		} else if (dateRange === "all") {
+			return groupDataByMonth(filteredData, false);
+		} else if (isMonthBasedRange(dateRange)) {
+			// For 3/6/12 month ranges, group by month
 			return groupDataByMonth(filteredData, false);
 		} else if (dateRange === "mtd") {
 			// For month-to-date, generate daily data with zeros for current month
@@ -226,7 +230,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-								return dateRange === "ytd" || dateRange === "all"
+								return dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 									? datetime.format(date, "MMM yyyy")
 									: datetime.format(date, "dd/MM/yyyy");
 							}}
@@ -242,7 +246,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								if (active && payload && payload.length && label) {
 									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
 									const formattedDate =
-										dateRange === "ytd" || dateRange === "all"
+										dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 											? datetime.format(date, "MMMM yyyy")
 											: datetime.format(date, "dd/MM/yyyy");
 

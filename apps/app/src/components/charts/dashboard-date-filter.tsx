@@ -16,13 +16,15 @@ import {
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
 import {
-	AVAILABLE_LAST_RANGE_OPTIONS,
+	AVAILABLE_LAST_DAYS_OPTIONS,
+	AVAILABLE_LAST_MONTHS_OPTIONS,
 	AVAILABLE_TO_DATE_RANGE_OPTIONS,
 } from "#app/helpers/constants.ts";
 import { DateRangePicker } from "./date-range-picker";
 
 const options = [
-	...AVAILABLE_LAST_RANGE_OPTIONS,
+	...AVAILABLE_LAST_DAYS_OPTIONS,
+	...AVAILABLE_LAST_MONTHS_OPTIONS,
 	...AVAILABLE_TO_DATE_RANGE_OPTIONS,
 	{ label: "Custom range", value: "custom" },
 ];
@@ -31,8 +33,11 @@ export function DashboardDateFilter() {
 	const predefinedDateRange = useAtomValue(selectDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 
-	const handleRangeChange = (value: PredefinedDateRange) => {
-		setSyncedDateRange({ selected: value });
+	const handleRangeChange = (value: PredefinedDateRange | null) => {
+		// Select component can pass null when clearing, though not used in this implementation
+		if (value) {
+			setSyncedDateRange({ selected: value });
+		}
 	};
 
 	const handleCustomRangeSelect = (range: CustomDateRange) => {
@@ -52,7 +57,13 @@ export function DashboardDateFilter() {
 						</SelectValue>
 					</SelectTrigger>
 					<SelectContent>
-						{AVAILABLE_LAST_RANGE_OPTIONS.map((option) => (
+						{AVAILABLE_LAST_DAYS_OPTIONS.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+						<SelectSeparator />
+						{AVAILABLE_LAST_MONTHS_OPTIONS.map((option) => (
 							<SelectItem key={option.value} value={option.value}>
 								{option.label}
 							</SelectItem>
