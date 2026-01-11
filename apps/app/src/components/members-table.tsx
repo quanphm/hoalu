@@ -62,9 +62,9 @@ const columns = [
 			return (
 				<Badge
 					variant={value === "owner" ? "default" : "outline"}
-					className="pointer-events-none select-none gap-1.5 rounded-none p-2"
+					className="pointer-events-none select-none gap-1.5 p-2 capitalize"
 				>
-					{value === "owner" && "🔑 "}
+					{value === "owner" && "🔐 "}
 					{value}
 				</Badge>
 			);

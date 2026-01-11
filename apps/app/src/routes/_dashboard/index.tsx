@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 import { PlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
+import { Card } from "@hoalu/ui/card";
 
 import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { WorkspaceCard } from "#app/components/cards.tsx";
@@ -50,17 +50,25 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Workspaces</SectionTitle>
-					<Button variant="outline" size="sm" onClick={() => setDialog({ state: true })}>
-						<PlusIcon className="size-4" />
-						Create
-					</Button>
 				</SectionHeader>
 				<SectionContent columns={4}>
 					{workspaces.map((ws) => (
-						<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }}>
+						<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="h-full">
 							<WorkspaceCard {...ws} />
 						</Link>
 					))}
+					<button
+						type="button"
+						onClick={() => setDialog({ state: true })}
+						className="h-full cursor-pointer text-left transition-colors"
+					>
+						<Card className="h-full justify-center border-dashed bg-muted/50 hover:border-foreground/40 hover:bg-muted">
+							<div className="flex flex-col items-center justify-center gap-2">
+								<PlusIcon className="size-5" />
+								<span className="text-muted-foreground text-sm">Add another workspace</span>
+							</div>
+						</Card>
+					</button>
 				</SectionContent>
 			</Section>
 		</PageContent>

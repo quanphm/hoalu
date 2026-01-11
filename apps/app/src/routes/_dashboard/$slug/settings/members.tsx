@@ -8,6 +8,7 @@ import { InvitationsTable } from "#app/components/invitations-table.tsx";
 import { InviteDialog } from "#app/components/invite.tsx";
 import {
 	Section,
+	SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
@@ -55,7 +56,7 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Members</SectionTitle>
-					{canInvite && <InviteDialog />}
+					<SectionAction>{canInvite && <InviteDialog />}</SectionAction>
 				</SectionHeader>
 				<SectionContent>
 					<Frame>

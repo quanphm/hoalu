@@ -44,7 +44,7 @@ const columns = [
 			return (
 				<Badge
 					variant={isActive ? "success" : "secondary"}
-					className="pointer-events-none select-none gap-1.5 rounded-none p-2"
+					className="pointer-events-none select-none gap-1.5 p-2"
 				>
 					{isActive ? "Active" : "Inactive"}
 				</Badge>

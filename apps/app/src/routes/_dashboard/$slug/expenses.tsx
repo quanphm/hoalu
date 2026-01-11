@@ -20,6 +20,7 @@ import ExpenseList from "#app/components/expenses/expense-list.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
 	Section,
+	SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionItem,
@@ -59,10 +60,12 @@ function RouteComponent() {
 		<Section className="-mb-8">
 			<SectionHeader>
 				<SectionTitle>Expenses</SectionTitle>
-				<CreateExpenseDialogTrigger />
+				<SectionAction>
+					<CreateExpenseDialogTrigger />
+				</SectionAction>
 			</SectionHeader>
 
-			<SectionContent columns={12} className="h-[calc(100vh-76px)] gap-0 overflow-hidden">
+			<SectionContent columns={12} className="h-[calc(100vh-92px)] gap-0 overflow-hidden">
 				<SectionItem
 					data-slot="expense-filter"
 					desktopSpan="col-span-2"

@@ -9,7 +9,9 @@ import { CategoryTable } from "#app/components/categories/category-table.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import {
 	Section,
+	SectionAction,
 	SectionContent,
+	SectionDescription,
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
@@ -34,22 +36,44 @@ function RouteComponent() {
 		<Section>
 			<SectionHeader>
 				<SectionTitle>Library</SectionTitle>
-				{activeTab === "categories" && <CreateCategoryDialogTrigger />}
-				{activeTab === "wallets" && <CreateWalletDialogTrigger />}
 			</SectionHeader>
 			<SectionContent>
 				<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-					<TabsList className="mb-4">
+					<TabsList className="mb-6">
 						<TabsTab value="categories">Categories</TabsTab>
 						<TabsTab value="wallets">Wallets</TabsTab>
 					</TabsList>
 					<TabsContent value="categories">
-						<SectionContent columns={12}>
-							<CategoryTable data={categories} />
-						</SectionContent>
+						<Section>
+							<SectionHeader>
+								<SectionTitle className="text-lg">Categories</SectionTitle>
+								<SectionDescription>
+									Organize your expenses with custom categories and color codes
+								</SectionDescription>
+								<SectionAction>
+									<CreateCategoryDialogTrigger />
+								</SectionAction>
+							</SectionHeader>
+							<SectionContent columns={12}>
+								<CategoryTable data={categories} />
+							</SectionContent>
+						</Section>
 					</TabsContent>
 					<TabsContent value="wallets">
-						<WalletTable data={wallets} />
+						<Section>
+							<SectionHeader>
+								<SectionTitle className="text-lg">Wallets</SectionTitle>
+								<SectionDescription>
+									Manage your accounts, cards, and payment methods
+								</SectionDescription>
+								<SectionAction>
+									<CreateWalletDialogTrigger />
+								</SectionAction>
+							</SectionHeader>
+							<SectionContent>
+								<WalletTable data={wallets} />
+							</SectionContent>
+						</Section>
 					</TabsContent>
 				</Tabs>
 			</SectionContent>

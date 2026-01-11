@@ -38,9 +38,11 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader className="flex-col items-start">
 					<SectionTitle>Analytics</SectionTitle>
-					<DashboardDateFilter />
 				</SectionHeader>
 				<SectionContent columns={12}>
+					<div className="col-span-12">
+						<DashboardDateFilter />
+					</div>
 					<div className="col-span-12 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>

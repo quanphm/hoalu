@@ -2,12 +2,12 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 import {
-	AlignBoxTopCenterIcon,
+	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
-	FileUploadIcon,
-	FolderIcon,
+	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
+	TriangleSquareCircleIcon,
 	UsersGroupIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
@@ -35,7 +35,7 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="default"
-						className="w-full justify-center"
+						className="mt-2 w-full justify-center"
 						onClick={() => setCreateExpenseDialog({ state: true })}
 					>
 						Create expense
@@ -78,7 +78,7 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
+						{/* <SidebarMenuItem>
 							<SidebarMenuButton
 								render={
 									<Link
@@ -95,18 +95,18 @@ export function NavWorkspace() {
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
-						</SidebarMenuItem>
+						</SidebarMenuItem> */}
 
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/library" params={{ slug }} />}>
-								<FolderIcon />
+								<TriangleSquareCircleIcon />
 								<span>Library</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
-								<FileUploadIcon />
+								<FileIcon />
 								<span>Files</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

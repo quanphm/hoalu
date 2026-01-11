@@ -3,6 +3,7 @@ export * from "./arrows-exchange";
 export * from "./building-cottage";
 export * from "./calculator";
 export * from "./calendar";
+export * from "./file";
 export * from "./file-upload";
 export * from "./folder";
 export * from "./home";
