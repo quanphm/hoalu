@@ -63,8 +63,8 @@ export function InviteDialog() {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger render={<Button variant="outline" size="sm" />}>
-				<MailPlusIcon className="mr-2 size-4" />
+			<DialogTrigger render={<Button variant="outline" />}>
+				<MailPlusIcon className="size-4" />
 				Invite people
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>

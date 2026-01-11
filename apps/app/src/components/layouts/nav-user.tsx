@@ -4,9 +4,9 @@ import { useId } from "react";
 
 import {
 	CheckIcon,
-	ChevronsUpDownIcon,
 	KeyRoundIcon,
 	LogOutIcon,
+	MoreVerticalIcon,
 	PaletteIcon,
 } from "@hoalu/icons/lucide";
 import { SettingsIcon } from "@hoalu/icons/tabler";
@@ -49,12 +49,12 @@ export function NavUser() {
 								/>
 							}
 						>
-							<UserAvatar name={user.name} image={user.image} />
+							<UserAvatar name={user.name} image={user.image} className="size-6" />
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">{user.name}</span>
 								{/* <span className="truncate text-xs">{user.email}</span> */}
 							</div>
-							<ChevronsUpDownIcon className="ml-auto size-4" />
+							<MoreVerticalIcon className="ml-auto size-4" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="w-(--anchor-width) min-w-52 rounded-lg" side="top">
 							<DropdownMenuSub>

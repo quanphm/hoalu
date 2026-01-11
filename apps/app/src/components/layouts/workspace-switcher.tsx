@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, ChevronDown, PlusIcon } from "@hoalu/icons/lucide";
 import { HouseIcon, LinkIcon } from "@hoalu/icons/nucleo";
 import {
 	DropdownMenu,
@@ -50,7 +50,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<div className="grid flex-1 text-left text-sm leading-tight">
 					<span className="truncate font-semibold">{selectedWorkspace.name}</span>
 				</div>
-				<ChevronsUpDownIcon className="ml-auto" />
+				<ChevronDown className="ml-auto" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="bottom" sideOffset={4}>
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
@@ -98,7 +98,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 					<div className="flex size-4 items-center justify-center text-muted-foreground">
 						<PlusIcon className="size-4" />
 					</div>
-					<div className="font-medium text-muted-foreground">Create a workspace</div>
+					<div className="font-medium text-muted-foreground">Create workspace</div>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

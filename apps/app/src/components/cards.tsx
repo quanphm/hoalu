@@ -56,7 +56,7 @@ interface WorkspaceCardProps {
 
 export function WorkspaceCard(props: WorkspaceCardProps) {
 	return (
-		<Card className="hover:border-foreground/20">
+		<Card className="h-full hover:border-foreground/20">
 			<CardHeader>
 				<CardTitle>{props.name}</CardTitle>
 			</CardHeader>

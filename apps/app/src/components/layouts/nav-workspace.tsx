@@ -1,15 +1,16 @@
 import { Link, useParams } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 import {
-	AlignBoxTopCenterIcon,
+	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
-	FileUploadIcon,
+	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
-	WalletIcon,
 } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -20,14 +21,28 @@ import {
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
 
+import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
 
 	return (
 		<>
+			<SidebarGroup>
+				<SidebarGroupContent>
+					<Button
+						variant="default"
+						className="mt-2 w-full justify-center"
+						onClick={() => setCreateExpenseDialog({ state: true })}
+					>
+						Create expense
+					</Button>
+				</SidebarGroupContent>
+			</SidebarGroup>
+
 			<SidebarGroup className="mt-2">
 				<SidebarGroupContent>
 					<SidebarMenu>
@@ -63,7 +78,7 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
+						{/* <SidebarMenuItem>
 							<SidebarMenuButton
 								render={
 									<Link
@@ -80,30 +95,18 @@ export function NavWorkspace() {
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarGroupContent>
-			</SidebarGroup>
+						</SidebarMenuItem> */}
 
-			<SidebarGroup>
-				<SidebarGroupLabel>Library</SidebarGroupLabel>
-				<SidebarGroupContent>
-					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
-								<WalletIcon />
-								<span>Wallets</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
+							<SidebarMenuButton render={<Link to="/$slug/library" params={{ slug }} />}>
 								<TriangleSquareCircleIcon />
-								<span>Categories</span>
+								<span>Library</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
-								<FileUploadIcon />
+								<FileIcon />
 								<span>Files</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

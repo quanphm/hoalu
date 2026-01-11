@@ -3,14 +3,36 @@ import { cn } from "@hoalu/ui/utils";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
-	return <div ref={ref} className={cn("flex flex-col gap-6", className)} {...props} />;
+	return (
+		<div
+			ref={ref}
+			data-slot="section"
+			className={cn("flex flex-col gap-4", className)}
+			{...props}
+		/>
+	);
 }
 
-function SectionHeader({ children }: React.ComponentPropsWithRef<"div">) {
+function SectionHeader({ className, ...props }: React.ComponentPropsWithRef<"div">) {
 	return (
-		<div className="flex max-w-full items-center justify-between gap-4">
-			<div className="flex max-w-full items-center justify-between gap-4">{children}</div>
-		</div>
+		<div
+			data-slot="section-header"
+			className={cn(
+				"@container/section-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 has-data-[slot=section-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+				className,
+			)}
+			{...props}
+		/>
+	);
+}
+
+function SectionAction({ className, ...props }: React.ComponentProps<"div">) {
+	return (
+		<div
+			data-slot="section-action"
+			className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+			{...props}
+		/>
 	);
 }
 
@@ -65,7 +87,23 @@ function SectionContent({
 }
 
 function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"h2">) {
-	return <h2 className={cn("font-medium text-xl leading-tight", className)} {...props} />;
+	return (
+		<h2
+			data-slot="section-title"
+			className={cn("font-medium text-xl leading-tight", className)}
+			{...props}
+		/>
+	);
+}
+
+function SectionDescription({ className, ref, ...props }: React.ComponentPropsWithRef<"p">) {
+	return (
+		<p
+			data-slot="section-description"
+			className={cn("text-muted-foreground text-sm", className)}
+			{...props}
+		/>
+	);
 }
 
 function SectionItem({
@@ -115,4 +153,12 @@ function SectionItem({
 	);
 }
 
-export { Section, SectionHeader, SectionContent, SectionTitle, SectionItem };
+export {
+	Section,
+	SectionHeader,
+	SectionContent,
+	SectionTitle,
+	SectionDescription,
+	SectionAction,
+	SectionItem,
+};

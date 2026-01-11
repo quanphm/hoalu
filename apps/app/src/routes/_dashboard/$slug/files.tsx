@@ -23,20 +23,22 @@ function RouteComponent() {
 
 	return (
 		<>
-			<Section>
+			<Section className="gap-4">
 				<SectionHeader>
-					<SectionTitle>Photos</SectionTitle>
+					<SectionTitle className="text-lg">Photos</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
 					<ImageGallery data={data} />
 				</SectionContent>
 			</Section>
 
-			<Section>
+			<Section className="gap-4">
 				<SectionHeader>
-					<SectionTitle>Others</SectionTitle>
+					<SectionTitle className="text-lg">Others</SectionTitle>
 				</SectionHeader>
-				<SectionContent>WIP</SectionContent>
+				<SectionContent>
+					<p className="text-muted-foreground text-sm">WIP</p>
+				</SectionContent>
 			</Section>
 		</>
 	);
