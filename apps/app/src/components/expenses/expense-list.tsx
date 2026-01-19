@@ -32,11 +32,11 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 			data-slot="expense-group-title"
 			className="flex items-center border-muted bg-muted py-2 pr-6 pl-3 text-xs"
 		>
-			<div className="flex items-center gap-1 font-semibold">
+			<div className="flex items-center gap-2">
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
 				{isToday && (
 					<Badge variant="secondary" className="ml-1">
-						today
+						Today
 					</Badge>
 				)}
 			</div>

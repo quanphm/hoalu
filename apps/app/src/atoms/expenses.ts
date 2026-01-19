@@ -16,10 +16,12 @@ const basedExpense: ExpenseAtomSchema = {
 	categoryId: "",
 	repeat: "one-time",
 };
-export const draftExpenseAtom = atomWithStorage("draft-expense", basedExpense);
+const draftExpenseAtom = atomWithStorage("draft_expense", basedExpense);
 
-export const selectedExpenseAtom = atom<{
+const selectedExpenseAtom = atom<{
 	id: string | null;
 }>({
 	id: null,
 });
+
+export { draftExpenseAtom, selectedExpenseAtom };

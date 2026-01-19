@@ -13,19 +13,19 @@ export function TransactionAmount(props: { data: SyncedExpense }) {
 	}
 
 	return (
-		<div className="leading-normal">
+		<div className="flex flex-col items-end gap-0.5 leading-tight">
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				className="font-medium"
+				className="font-semibold text-base tabular-nums"
 				as="p"
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue
 					value={amount}
 					currency={sourceCurrency}
-					prefix="original"
-					className="text-muted-foreground text-xs"
+					prefix="≈"
+					className="text-[10px] text-muted-foreground/70 tabular-nums"
 					as="p"
 				/>
 			)}
