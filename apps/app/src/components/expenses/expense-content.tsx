@@ -45,20 +45,21 @@ function ExpenseContent(props: ExpenseContentProps) {
 			)}
 			data-slot="expense-item"
 			role="button"
+			aria-label={`Select expense ${props.title}`}
 			tabIndex={0}
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
 		>
-			<div className="flex w-2/3 flex-col">
-				<p>{props.title}</p>
+			<div className="flex w-2/3 flex-col gap-1">
+				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="truncate text-muted-foreground text-xs">
+					<div className="truncate text-muted-foreground text-xs leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div data-slot="item-tags" className="mt-1 flex origin-left scale-85 gap-2">
-					{props.category && (
+				<div data-slot="item-tags" className="mt-0.5 flex gap-1.5">
+					{props.category.name && props.category.color && (
 						<Badge className={cn(createCategoryTheme(props.category.color))}>
 							{props.category.name}
 						</Badge>

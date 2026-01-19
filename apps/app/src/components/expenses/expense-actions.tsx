@@ -19,6 +19,7 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -85,6 +86,15 @@ function CreateExpenseForm() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 
+	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
+		"last_used_Wallet",
+		null,
+	);
+	const [lastUsedCategoryId, setLastUsedCategoryId] = useLocalStorage<string | null>(
+		"last_used_category",
+		null,
+	);
+
 	const fallbackWallet = {
 		label: wallets[0].name,
 		value: wallets[0].id,
@@ -124,17 +134,20 @@ function CreateExpenseForm() {
 	const userId = user?.id || "";
 	const defaultWallet = walletGroups[userId]?.options[0] || fallbackWallet;
 
+	const initialWallet = draft.walletId || lastUsedWalletId || defaultWallet.value;
+	const initialCategory = draft.categoryId || lastUsedCategoryId;
+
 	const form = useAppForm({
 		defaultValues: {
 			title: draft.title,
 			description: draft.description,
-			date: draft.date,
+			date: draft.date || new Date().toISOString(),
 			transaction: {
 				value: draft.transaction.value,
 				currency: draft.transaction.currency || defaultWallet.currency,
 			},
-			walletId: draft.walletId || defaultWallet.value,
-			categoryId: draft.categoryId,
+			walletId: initialWallet,
+			categoryId: initialCategory,
 			repeat: draft.repeat,
 			attachments: [],
 		} as ExpenseFormSchema,
@@ -154,8 +167,14 @@ function CreateExpenseForm() {
 					repeat: value.repeat,
 				},
 			});
+
 			setDraft(RESET);
 			setDialog({ state: false });
+			setLastUsedWalletId(value.walletId);
+			if (value.categoryId) {
+				setLastUsedCategoryId(value.categoryId);
+			}
+
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
 					id: expense.id,
@@ -315,7 +334,16 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 
 	return (
 		<Tooltip>
-			<TooltipTrigger render={<Button size="icon" variant="ghost" onClick={onDuplicate} />}>
+			<TooltipTrigger
+				render={
+					<Button
+						size="icon"
+						variant="ghost"
+						aria-label="Duplicate this expense"
+						onClick={onDuplicate}
+					/>
+				}
+			>
 				<CopyPlusIcon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>

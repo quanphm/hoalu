@@ -24,6 +24,8 @@ const getNetworkStateServerSnapshot = () => {
 	throw Error("useNetworkState is a client-only hook");
 };
 
-export function useOnlineStatus() {
+function useOnlineStatus() {
 	return useSyncExternalStore(subscribe, getSnapshot, getNetworkStateServerSnapshot);
 }
+
+export { useOnlineStatus };

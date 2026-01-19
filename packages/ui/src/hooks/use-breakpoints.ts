@@ -1,4 +1,4 @@
-import { useMediaQuery } from "./use-media-query";
+import { useMediaQuery } from "usehooks-ts";
 
 const BREAKPOINTS = {
 	xs: 0,
@@ -9,20 +9,20 @@ const BREAKPOINTS = {
 	"2xl": 1536,
 } as const;
 
-export type Breakpoint = keyof typeof BREAKPOINTS;
+type Breakpoint = keyof typeof BREAKPOINTS;
 
-export function useMinBreakpoint(breakpoint: Breakpoint) {
+function useMinBreakpoint(breakpoint: Breakpoint) {
 	const query = `(min-width: ${BREAKPOINTS[breakpoint]}px)`;
 	return useMediaQuery(query);
 }
 
-export function useMaxBreakpoint(breakpoint: Breakpoint) {
+function useMaxBreakpoint(breakpoint: Breakpoint) {
 	const maxWidth = Math.max(0, BREAKPOINTS[breakpoint] - 1);
 	const query = `(max-width: ${maxWidth}px)`;
 	return useMediaQuery(query);
 }
 
-export function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
+function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
 	const minQuery = `(min-width: ${BREAKPOINTS[min]}px)`;
 	const maxWidth = Math.max(0, BREAKPOINTS[max] - 1);
 	const maxQuery = `(max-width: ${maxWidth}px)`;
@@ -30,7 +30,7 @@ export function useBetweenBreakpoints(min: Breakpoint, max: Breakpoint) {
 	return useMediaQuery(query);
 }
 
-export function useBreakpoints() {
+function useBreakpoints() {
 	const sm = useMinBreakpoint("sm");
 	const md = useMinBreakpoint("md");
 	const lg = useMinBreakpoint("lg");
@@ -68,3 +68,6 @@ export function useBreakpoints() {
 		isDesktop: lg,
 	};
 }
+
+export { useMinBreakpoint, useMaxBreakpoint, useBetweenBreakpoints, useBreakpoints };
+export type { Breakpoint };
