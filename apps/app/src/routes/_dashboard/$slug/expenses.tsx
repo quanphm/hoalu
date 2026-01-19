@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue } from "react";
 import * as z from "zod";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
@@ -40,15 +40,6 @@ function RouteComponent() {
 	const { date: searchByDate } = Route.useSearch();
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
-
-	// Track initial loading state
-	const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-	useEffect(() => {
-		if (expenses.length > 0) {
-			setIsInitialLoad(false);
-		}
-	}, [expenses.length]);
 
 	const range = toFromToDateObject(searchByDate);
 	const searchKeywords = useAtomValue(searchKeywordsAtom);
@@ -91,10 +82,7 @@ function RouteComponent() {
 					tabletSpan={1}
 					mobileOrder={1}
 				>
-					<ExpenseList
-						expenses={filteredExpenses}
-						isLoading={isInitialLoad && expenses.length === 0}
-					/>
+					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
 
 				<SectionItem
