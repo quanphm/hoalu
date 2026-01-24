@@ -2,13 +2,20 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
 
-import { ChevronsUpDownIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, ChevronsUpDownIcon, PaletteIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
 
 import { ButtonLink } from "#app/components/button-link.tsx";
+import { THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface LayoutProps {
@@ -33,6 +40,7 @@ export function MobileLayout({ children }: LayoutProps) {
 
 function MobileHeader() {
 	const params = useParams({ strict: false });
+	const { theme, setTheme } = useTheme();
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -44,7 +52,7 @@ function MobileHeader() {
 
 	return (
 		<header className="border-b bg-background">
-			<div className="flex h-14 items-center justify-between px-8 md:px-4">
+			<div className="flex h-14 items-center justify-between px-4">
 				<div className="flex items-center gap-2">
 					<Button
 						variant="outline"
@@ -60,6 +68,36 @@ function MobileHeader() {
 						<span className="font-medium">{currentWorkspace.name}</span>
 						<ChevronsUpDownIcon className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
 					</Button>
+				</div>
+				<div className="flex items-center">
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={<Button variant="ghost" size="icon" aria-label="Select theme" />}
+						>
+							<PaletteIcon className="size-5" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" role="menu">
+							{THEMES.map((themeName) => {
+								const isSelected = theme === themeName;
+								return (
+									<DropdownMenuItem
+										key={themeName}
+										onClick={() => setTheme(themeName)}
+										className="capitalize"
+										role="menuitemradio"
+										aria-checked={isSelected}
+									>
+										{isSelected && (
+											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+												<CheckIcon className="size-4" aria-hidden="true" />
+											</span>
+										)}
+										<span className="ms-6">{THEME_LABELS[themeName]}</span>
+									</DropdownMenuItem>
+								);
+							})}
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</div>
 		</header>
@@ -81,7 +119,10 @@ function MobileBottomNav() {
 	);
 
 	return (
-		<nav className="fixed bottom-0 w-full border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-backdrop-filter:bg-background/60">
+		<nav
+			aria-label="Main navigation"
+			className="fixed bottom-0 z-50 w-full border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-backdrop-filter:bg-background/60"
+		>
 			<div className="grid h-20 grid-cols-3 gap-1 px-2 py-2">
 				<ButtonLink
 					to="/$slug"

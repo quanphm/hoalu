@@ -45,43 +45,41 @@ export function DashboardDateFilter() {
 	};
 
 	return (
-		<div className="flex items-center gap-3">
-			<div className="flex items-center gap-2">
-				<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
-					<SelectTrigger className="min-w-[160px]">
-						<SelectValue>
-							{(value: string) => {
-								const find = options.find((v) => v.value === value);
-								return find?.label;
-							}}
-						</SelectValue>
-					</SelectTrigger>
-					<SelectContent>
-						{AVAILABLE_LAST_DAYS_OPTIONS.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{option.label}
-							</SelectItem>
-						))}
-						<SelectSeparator />
-						{AVAILABLE_LAST_MONTHS_OPTIONS.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{option.label}
-							</SelectItem>
-						))}
-						<SelectSeparator />
-						{AVAILABLE_TO_DATE_RANGE_OPTIONS.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{option.label}
-							</SelectItem>
-						))}
-						<SelectSeparator />
-						<SelectItem key={"custom"} value={"custom"}>
-							Custom range
+		<div className="flex items-center gap-2">
+			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
+				<SelectTrigger className="w-auto min-w-0 shrink-0">
+					<SelectValue>
+						{(value: string) => {
+							const find = options.find((v) => v.value === value);
+							return find?.label;
+						}}
+					</SelectValue>
+				</SelectTrigger>
+				<SelectContent>
+					{AVAILABLE_LAST_DAYS_OPTIONS.map((option) => (
+						<SelectItem key={option.value} value={option.value}>
+							{option.label}
 						</SelectItem>
-					</SelectContent>
-				</Select>
-				<DateRangePicker onRangeSelect={handleCustomRangeSelect} />
-			</div>
+					))}
+					<SelectSeparator />
+					{AVAILABLE_LAST_MONTHS_OPTIONS.map((option) => (
+						<SelectItem key={option.value} value={option.value}>
+							{option.label}
+						</SelectItem>
+					))}
+					<SelectSeparator />
+					{AVAILABLE_TO_DATE_RANGE_OPTIONS.map((option) => (
+						<SelectItem key={option.value} value={option.value}>
+							{option.label}
+						</SelectItem>
+					))}
+					<SelectSeparator />
+					<SelectItem key={"custom"} value={"custom"}>
+						Custom range
+					</SelectItem>
+				</SelectContent>
+			</Select>
+			<DateRangePicker onRangeSelect={handleCustomRangeSelect} className="min-w-0 shrink" />
 		</div>
 	);
 }

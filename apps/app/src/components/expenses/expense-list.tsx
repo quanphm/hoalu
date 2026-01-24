@@ -4,11 +4,16 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
+import { cn } from "@hoalu/ui/utils";
 
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+
+// Height of mobile bottom navigation bar (approx 80px)
+const MOBILE_NAV_HEIGHT = 80;
 
 type ExpenseItem = {
 	type: "expense";
@@ -77,6 +82,7 @@ function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 
 function ExpenseList(props: { expenses: SyncedExpense[] }) {
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
+	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
 
 	const focusExpense = useEffectEvent((id: string) => {
@@ -126,8 +132,15 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flattenExpenses[index];
+			// Mobile: smaller items (group header 38, expense 60)
+			// Desktop: normal size (group header 38, expense 78)
+			if (shouldUseMobileLayout) {
+				return item.type === "group-header" ? 38 : 60;
+			}
 			return item.type === "group-header" ? 38 : 78;
 		},
+		// Add padding at the bottom for mobile nav bar
+		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
 	});
 
 	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
@@ -178,7 +191,11 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		<div
 			ref={parentRef}
 			data-slot="expense-list-container"
-			className="scrollbar-thin h-full w-full overflow-y-auto rounded-tl-lg border-t border-l contain-strict"
+			className={cn(
+				"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+				// Desktop: borders and rounded corner, Mobile: no borders
+				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
+			)}
 		>
 			<div
 				style={{

@@ -1,8 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { useMemo } from "react";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import { SlidersHorizontalIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
@@ -12,8 +14,10 @@ import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
+	mobileFilterExpandedAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 import type { SyncedCategory } from "../categories/use-categories";
@@ -109,6 +113,52 @@ export function ExpenseFilter(props: ExpenseFilterProps) {
 			</div>
 		</div>
 	);
+}
+
+// Mobile filter toggle button - shown only on mobile
+export function MobileFilterToggle() {
+	const { shouldUseMobileLayout } = useLayoutMode();
+	const [isExpanded, setIsExpanded] = useAtom(mobileFilterExpandedAtom);
+	const activeFiltersCount = useActiveFiltersCount();
+
+	// Only render on mobile
+	if (!shouldUseMobileLayout) {
+		return null;
+	}
+
+	return (
+		<Button
+			variant="outline"
+			size="sm"
+			onClick={() => setIsExpanded(!isExpanded)}
+			className="gap-2"
+		>
+			<SlidersHorizontalIcon className="size-4" />
+			<span>Filters</span>
+			{activeFiltersCount > 0 && (
+				<span className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">
+					{activeFiltersCount}
+				</span>
+			)}
+		</Button>
+	);
+}
+
+// Hook to count active filters
+function useActiveFiltersCount() {
+	const selectedCategories = useAtomValue(expenseCategoryFilterAtom);
+	const selectedWallets = useAtomValue(expenseWalletFilterAtom);
+	const selectedRepeats = useAtomValue(expenseRepeatFilterAtom);
+	const { date } = expenseRouteApi.useSearch();
+
+	return useMemo(() => {
+		let count = 0;
+		if (selectedCategories.length > 0) count++;
+		if (selectedWallets.length > 0) count++;
+		if (selectedRepeats.length > 0) count++;
+		if (date) count++;
+		return count;
+	}, [selectedCategories.length, selectedWallets.length, selectedRepeats.length, date]);
 }
 
 function DateRangeClearButton() {
