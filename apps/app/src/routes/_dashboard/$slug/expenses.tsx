@@ -1,21 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
-import { useDeferredValue } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { useDeferredValue, useEffect } from "react";
 import * as z from "zod";
 
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { RepeatSchema } from "@hoalu/common/schema";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
 
 import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
+	mobileFilterExpandedAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
-import { ExpenseDetails } from "#app/components/expenses/expense-details.tsx";
-import { ExpenseFilter } from "#app/components/expenses/expense-filter.tsx";
+import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
+import { ExpenseFilter, MobileFilterToggle } from "#app/components/expenses/expense-filter.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
@@ -26,6 +28,7 @@ import {
 	SectionItem,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
@@ -38,6 +41,7 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 
 function RouteComponent() {
 	const { date: searchByDate } = Route.useSearch();
+	const { shouldUseMobileLayout } = useLayoutMode();
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
 
@@ -47,6 +51,15 @@ function RouteComponent() {
 	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
 	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
+
+	const [isFilterExpanded, setIsFilterExpanded] = useAtom(mobileFilterExpandedAtom);
+
+	// Reset filter drawer state when component unmounts
+	useEffect(() => {
+		return () => {
+			setIsFilterExpanded(false);
+		};
+	}, [setIsFilterExpanded]);
 
 	const filteredExpenses = filter(expenses, {
 		selectedCategoryIds,
@@ -60,22 +73,29 @@ function RouteComponent() {
 		<Section className="-mb-8">
 			<SectionHeader>
 				<SectionTitle>Expenses</SectionTitle>
-				<SectionAction>
+				<SectionAction className="flex items-center gap-2">
+					<MobileFilterToggle />
 					<CreateExpenseDialogTrigger />
 				</SectionAction>
 			</SectionHeader>
 
-			<SectionContent columns={12} className="h-[calc(100vh-84px)] gap-0 overflow-hidden">
+			<SectionContent
+				columns={12}
+				className="h-[calc(100vh-84px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-80px)]"
+			>
+				{/* Filter panel - hidden on mobile by default */}
 				<SectionItem
 					data-slot="expense-filter"
 					desktopSpan="col-span-2"
 					tabletSpan={1}
 					mobileOrder={3}
+					hideOnMobile
 					className="pr-4 pb-4"
 				>
 					<ExpenseFilter expenses={filteredExpenses} categories={categories} />
 				</SectionItem>
 
+				{/* Expense list - full width on mobile */}
 				<SectionItem
 					data-slot="expense-list"
 					desktopSpan="col-span-4"
@@ -85,15 +105,39 @@ function RouteComponent() {
 					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
 
+				{/* Details panel - hidden on mobile, shown as drawer instead */}
 				<SectionItem
 					data-slot="expense-details"
 					desktopSpan="col-span-6"
 					tabletSpan={1}
 					mobileOrder={2}
+					hideOnMobile
 				>
 					<ExpenseDetails expenses={filteredExpenses} />
 				</SectionItem>
 			</SectionContent>
+
+			{/* Mobile filter drawer */}
+			{shouldUseMobileLayout && (
+				<Drawer open={isFilterExpanded} onOpenChange={setIsFilterExpanded} direction="bottom">
+					<DrawerContent className="h-[95vh] max-h-[95vh]">
+						<DrawerHeader className="shrink-0 border-b">
+							<DrawerTitle>Filters</DrawerTitle>
+						</DrawerHeader>
+						<div className="min-h-0 flex-1 overflow-y-auto p-4">
+							<ExpenseFilter expenses={filteredExpenses} categories={categories} />
+						</div>
+						<div className="shrink-0 border-t p-4">
+							<DrawerClose className="w-full rounded-md bg-primary py-2 text-primary-foreground">
+								Apply Filters
+							</DrawerClose>
+						</div>
+					</DrawerContent>
+				</Drawer>
+			)}
+
+			{/* Mobile expense details drawer */}
+			{shouldUseMobileLayout && <MobileExpenseDetails expenses={filteredExpenses} />}
 		</Section>
 	);
 }

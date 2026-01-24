@@ -46,12 +46,12 @@ export function DateRangePicker({ onRangeSelect, className }: DateRangePickerPro
 				render={
 					<Button
 						variant="outline"
-						className={cn("justify-start text-left font-normal", className)}
+						className={cn("min-w-0 justify-start text-left font-normal", className)}
 					/>
 				}
 			>
-				<CalendarIcon className="size-4" />
-				{formatDateRange()}
+				<CalendarIcon className="size-4 shrink-0" />
+				<span className="truncate">{formatDateRange()}</span>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">
 				<Calendar

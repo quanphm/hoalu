@@ -4,6 +4,9 @@ import { DEFAULT_DATE_RANGE } from "#app/helpers/constants.ts";
 import { calculateDateRange } from "#app/helpers/date-range.ts";
 import type { CategorySchema, RepeatSchema, WalletSchema } from "#app/lib/schema.ts";
 
+// Mobile filter panel visibility (collapsed by default on mobile)
+export const mobileFilterExpandedAtom = atom<boolean>(false);
+
 export const expenseCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 
 export const expenseWalletFilterAtom = atom<WalletSchema["id"][]>([]);

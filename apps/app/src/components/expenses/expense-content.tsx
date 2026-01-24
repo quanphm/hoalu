@@ -44,8 +44,8 @@ function ExpenseContent(props: ExpenseContentProps) {
 				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 text-sm outline-none hover:bg-muted/60",
 				"focus-visible:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
 				selectedRow.id === props.id && "bg-muted/80 ring-2 ring-ring ring-inset",
-				// Mobile: larger touch targets
-				shouldUseMobileLayout ? "min-h-[96px] py-4 pr-4 pl-4" : "py-2 pr-6 pl-3",
+				// Mobile: compact items, Desktop: normal padding
+				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-6 pl-3",
 			)}
 			data-slot="expense-item"
 			role="button"
