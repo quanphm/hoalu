@@ -28,3 +28,6 @@ npm-debug.log*
 # misc
 .DS_Store
 *.pem
+
+# playwriter
+tmp

@@ -66,6 +66,7 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 
 	// Calculate current period stats
 	const currentAggregationByDate = new Map<string, number>();
+	const currentAggregationByDateAndCategory = new Map<string, Map<string, number>>();
 	let currentTotalAmount = 0;
 	const currentRepeatCount: Record<string, number> = {};
 
@@ -76,6 +77,14 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 
 		const currentValue = currentAggregationByDate.get(expense.date) || 0;
 		currentAggregationByDate.set(expense.date, currentValue + amount);
+
+		// Aggregate by date and category
+		const categoryId = expense.category?.id ?? "uncategorized";
+		if (!currentAggregationByDateAndCategory.has(expense.date)) {
+			currentAggregationByDateAndCategory.set(expense.date, new Map());
+		}
+		const dateCategoryMap = currentAggregationByDateAndCategory.get(expense.date)!;
+		dateCategoryMap.set(categoryId, (dateCategoryMap.get(categoryId) || 0) + amount);
 	}
 
 	// Calculate previous period stats
@@ -132,6 +141,24 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 		currentAggregationByDate.entries(),
 	).map(([date, value]) => ({ date, value }));
 
+	// Build byDateAndCategory: array of { date, [categoryId]: amount, ... }
+	const byDateAndCategory: Record<string, number | string>[] = Array.from(
+		currentAggregationByDateAndCategory.entries(),
+	).map(([date, categoryMap]) => {
+		const entry: Record<string, number | string> = { date };
+		for (const [catId, amount] of categoryMap.entries()) {
+			entry[catId] = amount;
+		}
+		return entry;
+	});
+
+	// Build category info map for chart colors/labels
+	const categoryInfoMap: Record<string, { name: string; color: string }> = {};
+	for (const category of categories) {
+		categoryInfoMap[category.id] = { name: category.name, color: category.color };
+	}
+	categoryInfoMap.uncategorized = { name: "Uncategorized", color: "gray" };
+
 	return {
 		amount: {
 			total: formatCurrency(currentTotalAmount, currency),
@@ -151,7 +178,9 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 		},
 		aggregation: {
 			byDate: result,
+			byDateAndCategory,
 		},
+		categoryInfoMap,
 		hasComparison: comparisonRange !== null,
 		comparisonText,
 	};
