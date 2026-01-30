@@ -1,6 +1,11 @@
 @layer base {
 	* {
-		@apply box-border border-border outline-ring/50 antialiased overscroll-none;
+		@apply box-border border-border outline-ring/50 antialiased;
+	}
+
+	html,
+	body {
+		@apply overscroll-none;
 	}
 
 	body {

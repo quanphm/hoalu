@@ -185,7 +185,6 @@ export class WorkspaceRepository {
 				and(eq(schema.wallet.workspaceId, param.workspaceId), eq(schema.wallet.isActive, true)),
 			);
 
-		// Get last activity (most recent expense)
 		const [lastActivity] = await db
 			.select({ date: schema.expense.date })
 			.from(schema.expense)
@@ -213,10 +212,10 @@ export class WorkspaceRepository {
 			totalExpensesLastMonth,
 			transactionCount,
 			activeWalletsCount: walletsData.count,
-			trendPercentage: Math.round(trendPercentage * 100) / 100, // Round to 2 decimals
+			trendPercentage: Math.round(trendPercentage * 100) / 100,
 			lastActivityAt: lastActivity?.date || null,
 			primaryCurrency,
-			hasMissingRates: hasMissingRates || undefined, // Only include if true
+			hasMissingRates: hasMissingRates || undefined,
 		};
 	}
 

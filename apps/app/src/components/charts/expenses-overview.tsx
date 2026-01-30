@@ -1,9 +1,10 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { datetime } from "@hoalu/common/datetime";
+import type { ColorSchema } from "@hoalu/common/schema";
 import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
@@ -18,6 +19,7 @@ import {
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 
 import {
+	chartCategoryFilterAtom,
 	customDateRangeAtom,
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
@@ -36,8 +38,8 @@ import {
 } from "#app/helpers/date-range.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { CurrencyValue } from "../currency-value";
-import { PercentageChangeDisplay } from "../percentage-change";
+import { CurrencyValue } from "../currency-value.tsx";
+import { PercentageChangeDisplay } from "../percentage-change.tsx";
 
 const chartConfig = {
 	value: {
@@ -48,6 +50,23 @@ const chartConfig = {
 		color: "var(--chart-1)",
 	},
 } satisfies ChartConfig;
+
+/**
+ * Map category ColorSchema values to hex colors for Recharts fill.
+ * Uses darker shades for better visibility on charts.
+ */
+const CATEGORY_COLOR_HEX: Record<ColorSchema, string> = {
+	red: "#ef4444",
+	green: "#22c55e",
+	teal: "#14b8a6",
+	blue: "#6366f1",
+	yellow: "#eab308",
+	orange: "#f97316",
+	purple: "#a855f7",
+	pink: "#ec4899",
+	gray: "#6b7280",
+	stone: "#78716c",
+};
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -68,63 +87,150 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
+	const selectedCategoryIds = useAtomValue(chartCategoryFilterAtom);
 	const {
 		metadata: { currency },
 	} = useWorkspace();
 	const chartRef = useRef<HTMLDivElement>(null);
 	const { takeScreenshot, status } = useScreenshot();
 
+	const isCategoryMode = selectedCategoryIds.length > 0;
+
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
-	// Group by month for year-to-date, all-time, and multi-month views
-	const data = (() => {
+	type GroupedDateEntry = { date: string; value: number; isMonthly?: boolean };
+
+	// Apply date grouping logic (shared between total and category mode)
+	const applyDateGrouping = (sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
 		const today = new Date();
 
 		if (dateRange === "ytd") {
-			return groupDataByMonth(filteredData, true);
+			return groupDataByMonth(sourceData, true);
 		} else if (dateRange === "all") {
-			return groupDataByMonth(filteredData, false);
+			return groupDataByMonth(sourceData, false);
 		} else if (isMonthBasedRange(dateRange)) {
-			// For 3/6/12 month ranges, group by month
-			return groupDataByMonth(filteredData, false);
+			return groupDataByMonth(sourceData, false);
 		} else if (dateRange === "mtd") {
-			// For month-to-date, generate daily data with zeros for current month
-			return generateMTDDataWithZeros(filteredData);
+			return generateMTDDataWithZeros(sourceData);
 		} else if (dateRange === "wtd") {
-			// For week-to-date, compute start of week (Monday) and generate daily data
 			const startOfWeek = getStartOfWeek(today, 1);
 			const endOfWeek = datetime.endOfDay(today);
-			return generateDailyDataForRange(filteredData, startOfWeek, endOfWeek);
+			return generateDailyDataForRange(sourceData, startOfWeek, endOfWeek);
 		} else if (dateRange === "custom" && customRange) {
-			// For custom ranges, generate daily data for the specified range
 			const startDate = datetime.startOfDay(customRange.from);
 			const endDate = datetime.endOfDay(customRange.to);
-			return generateDailyDataForRange(filteredData, startDate, endDate);
+			return generateDailyDataForRange(sourceData, startDate, endDate);
 		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
-			// For numeric day ranges, generate data with zeros for last N days
 			const days = parseInt(dateRange, 10);
-			return generateDailyDataWithZeros(filteredData, days);
+			return generateDailyDataWithZeros(sourceData, days);
 		} else {
-			// Fallback for any other ranges
-			return generateDailyDataWithZeros(filteredData, 50);
+			return generateDailyDataWithZeros(sourceData, 50);
 		}
-	})();
+	};
 
-	const totalExpenses = filteredData.reduce((sum, item) => sum + item.value, 0);
+	// Total mode data (existing behavior)
+	const totalData = useMemo(
+		() => applyDateGrouping(filteredData),
+		[filteredData, dateRange, customRange],
+	);
 
-	const handleBarClick = (data: {
+	// Category mode data: build per-category series then merge into grouped records
+	const categoryData = useMemo(() => {
+		if (!isCategoryMode) return [];
+
+		// Filter byDateAndCategory to only selected categories
+		const rawByDateCat = stats.aggregation.byDateAndCategory;
+
+		// First, build per-category { date, value }[] arrays
+		const perCategoryDateValues: Record<string, { date: string; value: number }[]> = {};
+		for (const catId of selectedCategoryIds) {
+			const dateValueMap = new Map<string, number>();
+			for (const entry of rawByDateCat) {
+				const date = entry.date as string;
+				const amount = (entry[catId] as number) ?? 0;
+				if (amount > 0) {
+					dateValueMap.set(date, (dateValueMap.get(date) || 0) + amount);
+				}
+			}
+			perCategoryDateValues[catId] = Array.from(dateValueMap.entries()).map(([date, value]) => ({
+				date,
+				value,
+			}));
+		}
+
+		// Apply date grouping to each category separately
+		const groupedPerCategory: Record<string, GroupedDateEntry[]> = {};
+		for (const catId of selectedCategoryIds) {
+			groupedPerCategory[catId] = applyDateGrouping(perCategoryDateValues[catId] || []);
+		}
+
+		// Merge into a single array of records: { date, [catId]: value, ... }
+		// Use the first category's dates as the date skeleton (they all share the same grouping)
+		const firstCatId = selectedCategoryIds[0];
+		const dateSkeleton = groupedPerCategory[firstCatId] || [];
+
+		return dateSkeleton.map((item, index) => {
+			const merged: Record<string, number | string | boolean | undefined> = {
+				date: item.date,
+				isMonthly: item.isMonthly,
+			};
+			for (const catId of selectedCategoryIds) {
+				const catData = groupedPerCategory[catId];
+				merged[catId] = catData?.[index]?.value ?? 0;
+			}
+			return merged;
+		});
+	}, [
+		isCategoryMode,
+		selectedCategoryIds,
+		stats.aggregation.byDateAndCategory,
+		dateRange,
+		customRange,
+	]);
+
+	const data = isCategoryMode ? categoryData : totalData;
+
+	// Calculate total: filtered by selected categories in category mode, or all expenses in total mode
+	const totalExpenses = useMemo(() => {
+		if (!isCategoryMode) {
+			// Total mode: sum all filtered expenses
+			return filteredData.reduce((sum, item) => sum + item.value, 0);
+		}
+
+		// Category mode: sum only selected categories from the chart data
+		return (data as Record<string, number | string | boolean | undefined>[]).reduce((sum, item) => {
+			return (
+				sum +
+				selectedCategoryIds.reduce((catSum, catId) => {
+					return catSum + ((item[catId] as number) || 0);
+				}, 0)
+			);
+		}, 0);
+	}, [isCategoryMode, filteredData, data, selectedCategoryIds]);
+
+	// Dynamic bar size based on number of categories
+	const maxBarSize = useMemo(() => {
+		if (!isCategoryMode) return 32; // Larger bars for total mode
+
+		const categoryCount = selectedCategoryIds.length;
+		if (categoryCount === 1) return 32;
+		if (categoryCount === 2) return 24;
+		if (categoryCount === 3) return 18;
+		return 14; // 4+ categories
+	}, [isCategoryMode, selectedCategoryIds.length]);
+
+	const handleBarClick = (barData: {
 		payload?: { date: string; value: number; isMonthly?: boolean };
 	}) => {
-		if (!data.payload?.date) {
+		if (!barData.payload?.date) {
 			return;
 		}
 
-		const clickedDate = datetime.parse(data.payload.date, "yyyy-MM-dd", new Date());
+		const clickedDate = datetime.parse(barData.payload.date, "yyyy-MM-dd", new Date());
 		let startDate: Date;
 		let endDate: Date;
 
-		if (data.payload.isMonthly) {
-			// For monthly data, set range to the entire month
+		if (barData.payload.isMonthly) {
 			startDate = datetime.startOfDay(
 				new Date(clickedDate.getFullYear(), clickedDate.getMonth(), 1),
 			);
@@ -132,7 +238,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				new Date(clickedDate.getFullYear(), clickedDate.getMonth() + 1, 0),
 			);
 		} else {
-			// For daily data, set range to the specific day
 			startDate = datetime.startOfDay(clickedDate);
 			endDate = datetime.endOfDay(clickedDate);
 		}
@@ -170,17 +275,35 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		]);
 	};
 
+	const getCategoryColor = (catId: string): string => {
+		const info = stats.categoryInfoMap[catId];
+		if (!info) return CATEGORY_COLOR_HEX.gray;
+		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
+	};
+
+	const getCategoryName = (catId: string): string => {
+		return stats.categoryInfoMap[catId]?.name ?? "Unknown";
+	};
+
 	return (
 		<Card ref={chartRef}>
 			<CardHeader>
 				<CardTitle>Expenses</CardTitle>
 				<CardDescription>
 					<div className="flex flex-col gap-1">
-						<CurrencyValue
-							value={totalExpenses}
-							currency={currency}
-							className="font-semibold text-3xl"
-						/>
+						<div className="flex items-baseline gap-2">
+							<CurrencyValue
+								value={totalExpenses}
+								currency={currency}
+								className="font-semibold text-3xl"
+							/>
+							{isCategoryMode && (
+								<span className="text-muted-foreground text-sm">
+									({selectedCategoryIds.length}{" "}
+									{selectedCategoryIds.length === 1 ? "category" : "categories"})
+								</span>
+							)}
+						</div>
 						{stats.hasComparison && (
 							<PercentageChangeDisplay
 								change={stats.amount.change}
@@ -213,7 +336,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					<BarChart
 						accessibilityLayer
 						data={data}
-						maxBarSize={20}
+						maxBarSize={maxBarSize}
 						margin={{ left: -12, right: 12, top: 12 }}
 					>
 						<CartesianGrid vertical={false} strokeDasharray="2 2" stroke="var(--border)" />
@@ -225,8 +348,11 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								data.length === 0
 									? []
 									: data.length === 1
-										? [data[0].date]
-										: [data[0].date, data[data.length - 1].date]
+										? [(data[0] as { date: string }).date]
+										: [
+												(data[0] as { date: string }).date,
+												(data[data.length - 1] as { date: string }).date,
+											]
 							}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
@@ -250,6 +376,60 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 											? datetime.format(date, "MMMM yyyy")
 											: datetime.format(date, "dd/MM/yyyy");
 
+									if (isCategoryMode) {
+										// Calculate total for stacked bars (2+ categories)
+										const total = payload.reduce(
+											(sum, entry) => sum + (Number(entry.value) || 0),
+											0,
+										);
+										const showTotal = selectedCategoryIds.length >= 2;
+
+										return (
+											<div className="rounded-md border bg-background p-3 shadow-sm">
+												<div className="grid gap-2">
+													<span className="text-muted-foreground text-xs uppercase tracking-wider">
+														{formattedDate}
+													</span>
+													{payload.map((entry) => (
+														<div
+															key={entry.dataKey}
+															className="flex items-center justify-between gap-4"
+														>
+															<div className="flex items-center gap-1.5">
+																<div
+																	className="size-2.5 rounded-full"
+																	style={{ backgroundColor: entry.color }}
+																/>
+																<span className="text-sm">
+																	{getCategoryName(entry.dataKey as string)}
+																</span>
+															</div>
+															<CurrencyValue
+																value={entry.value}
+																currency={currency}
+																className="font-medium text-sm"
+															/>
+														</div>
+													))}
+													{showTotal && (
+														<>
+															<div className="border-t pt-2">
+																<div className="flex items-center justify-between gap-4">
+																	<span className="font-semibold text-sm">Total</span>
+																	<CurrencyValue
+																		value={total}
+																		currency={currency}
+																		className="font-bold text-sm"
+																	/>
+																</div>
+															</div>
+														</>
+													)}
+												</div>
+											</div>
+										);
+									}
+
 									return (
 										<div className="rounded-md border bg-background p-3 shadow-sm">
 											<div className="grid gap-2">
@@ -270,13 +450,27 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								return null;
 							}}
 						/>
-						<Bar
-							dataKey="value"
-							fill="var(--color-date)"
-							className="cursor-pointer"
-							onClick={handleBarClick}
-							isAnimationActive={false}
-						/>
+						{isCategoryMode ? (
+							selectedCategoryIds.map((catId) => (
+								<Bar
+									key={catId}
+									dataKey={catId}
+									fill={getCategoryColor(catId)}
+									className="cursor-pointer"
+									onClick={handleBarClick}
+									isAnimationActive={false}
+									stackId={selectedCategoryIds.length >= 2 ? "categories" : undefined}
+								/>
+							))
+						) : (
+							<Bar
+								dataKey="value"
+								fill="var(--color-date)"
+								className="cursor-pointer"
+								onClick={handleBarClick}
+								isAnimationActive={false}
+							/>
+						)}
 					</BarChart>
 				</ChartContainer>
 			</CardContent>

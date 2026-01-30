@@ -1,11 +1,6 @@
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
-import {
-	AlertTriangleIcon,
-	ArrowDownIcon,
-	ArrowUpIcon,
-	WalletIcon as WalletLucideIcon,
-} from "@hoalu/icons/lucide";
+import { AlertTriangleIcon, WalletIcon as WalletLucideIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import {
@@ -65,7 +60,6 @@ interface WorkspaceCardProps {
 		totalExpensesThisMonth: number;
 		transactionCount: number;
 		activeWalletsCount: number;
-		trendPercentage: number;
 		primaryCurrency: string;
 		lastActivityAt: string | null;
 		hasMissingRates?: boolean;
@@ -84,9 +78,6 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 			}).format(monetary.fromRealAmount(summary.totalExpensesThisMonth, summary.primaryCurrency))
 		: null;
 
-	const isPositiveTrend = summary && summary.trendPercentage > 0;
-	const hasNoTrend = summary && summary.trendPercentage === 0;
-
 	return (
 		<Card className="h-full gap-4 hover:border-foreground/20">
 			<CardHeader>
@@ -99,22 +90,6 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 							<p className="text-muted-foreground text-xs">This month</p>
 							<div className="flex items-baseline gap-2">
 								<p className="font-semibold text-lg">{formattedTotal}</p>
-								{!hasNoTrend && (
-									<div
-										className={`flex items-center gap-0.5 text-xs ${
-											isPositiveTrend
-												? "text-red-600 dark:text-red-400"
-												: "text-green-600 dark:text-green-400"
-										}`}
-									>
-										{isPositiveTrend ? (
-											<ArrowUpIcon className="size-3" />
-										) : (
-											<ArrowDownIcon className="size-3" />
-										)}
-										<span>{Math.abs(summary.trendPercentage).toFixed(1)}%</span>
-									</div>
-								)}
 							</div>
 						</div>
 

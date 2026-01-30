@@ -9,6 +9,8 @@ export const mobileFilterExpandedAtom = atom<boolean>(false);
 
 export const expenseCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 
+export const chartCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
+
 export const expenseWalletFilterAtom = atom<WalletSchema["id"][]>([]);
 
 export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
