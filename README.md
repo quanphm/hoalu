@@ -2,15 +2,13 @@
   Hoalu
 </h1>
 
-## Tech Stack
+<p align="center">
+  <img src="media/hoalu.jpeg" alt="Hoalu Dashboard" width="800">
+</p>
 
-- **Frontend**: React, Tanstack (Router, Query, Form), TailwindCSS, Base UI
-- **Backend**: Hono, Drizzle
-- **Database**: PostgreSQL
-- **Authentication**: Better Auth
-- **Sync Engine**: Electric SQL, PGlite
-- **Validation**: Zod
-- **Email**: Resend
+<p align="center">
+  A modern expense tracking application built with React 19, Electric SQL, and TanStack ecosystem. Features real-time synchronization, multi-workspace support, and comprehensive analytics.
+</p>
 
 ## Directories
 
