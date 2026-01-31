@@ -6,6 +6,7 @@ import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filte
 import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import { RecentExpenses } from "#app/components/expenses/recent-expenses.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
 	Section,
@@ -39,16 +40,24 @@ function RouteComponent() {
 				<SectionHeader className="flex-col items-start">
 					<SectionTitle>Analytics</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={12}>
+				<SectionContent columns={12} className="items-stretch">
 					<div className="col-span-12">
 						<DashboardDateFilter categories={categories} />
 					</div>
-					<div className="col-span-12 md:col-span-7">
+					<div className="col-span-12 flex flex-col md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>
 					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
+					</div>
+				</SectionContent>
+			</Section>
+
+			<Section>
+				<SectionContent columns={12}>
+					<div className="col-span-12 md:col-span-7">
+						<RecentExpenses />
 					</div>
 				</SectionContent>
 			</Section>

@@ -286,7 +286,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	return (
-		<Card ref={chartRef}>
+		<Card ref={chartRef} className="flex h-full flex-col">
 			<CardHeader>
 				<CardTitle>Expenses</CardTitle>
 				<CardDescription>
@@ -328,10 +328,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</Button>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="px-2 sm:p-6">
+			<CardContent className="flex-1 px-2 sm:p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-full min-h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer

@@ -56,7 +56,7 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 	};
 
 	return (
-		<div className="flex items-center gap-2">
+		<div className="flex items-center gap-4">
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
 				<SelectTrigger className="w-auto min-w-0 shrink-0">
 					<SelectValue>
