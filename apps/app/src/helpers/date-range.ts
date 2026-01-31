@@ -8,11 +8,10 @@ interface DateRangeCalculation {
 }
 
 /**
- * Type guard to check if a date range is month-based (3m, 6m, 12m)
- * Excludes "mtd" (month to date) which also ends with 'm'
+ * Type guard to check if a date range is month-based (3m, 6m, 12m).
  */
 export function isMonthBasedRange(range: PredefinedDateRange): range is "3m" | "6m" | "12m" {
-	return range.endsWith("m") && range !== "mtd";
+	return ["3m", "6m", "12m"].includes(range);
 }
 
 /**
@@ -403,22 +402,15 @@ export function groupDataByMonth(data: { date: string; value: number }[], isYTD 
 			const monthKey = datetime.format(monthDate, "yyyy-MM");
 			monthlyData[monthKey] = 0;
 		}
-	} else {
-		// For "All time", initialize all 12 months (12 months from today backwards)
-		for (let i = 11; i >= 0; i--) {
-			const monthDate = new Date(today);
-			monthDate.setMonth(monthDate.getMonth() - i);
-			const monthKey = datetime.format(monthDate, "yyyy-MM");
-			monthlyData[monthKey] = 0;
-		}
 	}
 
 	// Aggregate actual data by month
 	for (const item of data) {
 		const date = datetime.parse(item.date, "yyyy-MM-dd", new Date());
 		const monthKey = datetime.format(date, "yyyy-MM");
-
-		if (monthlyData[monthKey] !== undefined) {
+		if (monthlyData[monthKey] === undefined) {
+			monthlyData[monthKey] = item.value;
+		} else {
 			monthlyData[monthKey] += item.value;
 		}
 	}

@@ -47,15 +47,10 @@ function RouteComponent() {
 					<div className="col-span-12 flex flex-col md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
+					<div className="col-span-12 flex flex-col gap-6 md:col-span-5">
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
-				</SectionContent>
-			</Section>
-
-			<Section>
-				<SectionContent columns={12}>
 					<div className="col-span-12 md:col-span-7">
 						<RecentExpenses />
 					</div>
