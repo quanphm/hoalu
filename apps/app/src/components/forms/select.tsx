@@ -17,7 +17,7 @@ export function SelectField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Select items={props.options} value={field.state.value} onValueChange={field.handleChange}>
 				<FieldControl>
-					<SelectTrigger className="focus:border-ring focus:ring-[3px] focus:ring-ring/20">
+					<SelectTrigger className="bg-muted text-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/20">
 						<SelectValue placeholder="Select" />
 					</SelectTrigger>
 				</FieldControl>

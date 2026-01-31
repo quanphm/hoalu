@@ -293,7 +293,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	return (
-		<Card ref={chartRef} className="flex h-full flex-col">
+		<Card ref={chartRef} className="flex flex-col">
 			<CardHeader>
 				<CardTitle>Expenses</CardTitle>
 				<CardDescription>
@@ -322,7 +322,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				</CardDescription>
 				<CardAction>
 					<Button
-						variant="secondary"
+						variant="outline"
 						size="icon"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}
