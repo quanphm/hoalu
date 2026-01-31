@@ -14,8 +14,10 @@ import {
 import { cn } from "@hoalu/ui/utils";
 
 import {
+	type ChartGroupBy,
 	type CustomDateRange,
 	chartCategoryFilterAtom,
+	chartGroupByAtom,
 	type PredefinedDateRange,
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
@@ -56,7 +58,7 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 	};
 
 	return (
-		<div className="flex items-center gap-2">
+		<div className="flex items-center gap-4">
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
 				<SelectTrigger className="w-auto min-w-0 shrink-0">
 					<SelectValue>
@@ -91,8 +93,35 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 				</SelectContent>
 			</Select>
 			<ChartCategoryFilter categories={props.categories} />
+			{predefinedDateRange === "custom" && <ChartGroupByFilter />}
 			<DateRangePicker onRangeSelect={handleCustomRangeSelect} className="min-w-0 shrink" />
 		</div>
+	);
+}
+
+function ChartGroupByFilter() {
+	const [groupBy, setGroupBy] = useAtom(chartGroupByAtom);
+
+	const handleGroupByChange = (value: ChartGroupBy | null) => {
+		if (value) {
+			setGroupBy(value);
+		}
+	};
+
+	return (
+		<Select<ChartGroupBy> value={groupBy} onValueChange={handleGroupByChange}>
+			<SelectTrigger className="w-auto min-w-0 shrink-0">
+				<SelectValue>
+					{(value: ChartGroupBy) => {
+						return value === "date" ? "By date" : "By month";
+					}}
+				</SelectValue>
+			</SelectTrigger>
+			<SelectContent>
+				<SelectItem value="date">By date</SelectItem>
+				<SelectItem value="month">By month</SelectItem>
+			</SelectContent>
+		</Select>
 	);
 }
 

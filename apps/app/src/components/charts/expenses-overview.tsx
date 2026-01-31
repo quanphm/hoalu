@@ -20,6 +20,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart"
 
 import {
 	chartCategoryFilterAtom,
+	chartGroupByAtom,
 	customDateRangeAtom,
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
@@ -88,6 +89,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const customRange = useAtomValue(customDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const selectedCategoryIds = useAtomValue(chartCategoryFilterAtom);
+	const chartGroupBy = useAtomValue(chartGroupByAtom);
 	const {
 		metadata: { currency },
 	} = useWorkspace();
@@ -119,7 +121,11 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		} else if (dateRange === "custom" && customRange) {
 			const startDate = datetime.startOfDay(customRange.from);
 			const endDate = datetime.endOfDay(customRange.to);
-			return generateDailyDataForRange(sourceData, startDate, endDate);
+			if (chartGroupBy === "month") {
+				return groupDataByMonth(sourceData, false);
+			} else {
+				return generateDailyDataForRange(sourceData, startDate, endDate);
+			}
 		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
 			const days = parseInt(dateRange, 10);
 			return generateDailyDataWithZeros(sourceData, days);
@@ -128,10 +134,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		}
 	};
 
-	// Total mode data (existing behavior)
 	const totalData = useMemo(
 		() => applyDateGrouping(filteredData),
-		[filteredData, dateRange, customRange],
+		[filteredData, dateRange, customRange, chartGroupBy],
 	);
 
 	// Category mode data: build per-category series then merge into grouped records
@@ -186,9 +191,11 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		stats.aggregation.byDateAndCategory,
 		dateRange,
 		customRange,
+		chartGroupBy,
 	]);
 
 	const data = isCategoryMode ? categoryData : totalData;
+	console.log("ExpenseOverview data:", data);
 
 	// Calculate total: filtered by selected categories in category mode, or all expenses in total mode
 	const totalExpenses = useMemo(() => {
@@ -286,7 +293,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	return (
-		<Card ref={chartRef}>
+		<Card ref={chartRef} className="flex flex-col">
 			<CardHeader>
 				<CardTitle>Expenses</CardTitle>
 				<CardDescription>
@@ -315,7 +322,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				</CardDescription>
 				<CardAction>
 					<Button
-						variant="secondary"
+						variant="outline"
 						size="icon"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}
@@ -328,10 +335,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</Button>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="px-2 sm:p-6">
+			<CardContent className="flex-1 px-2 sm:p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-full min-h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer
@@ -356,7 +363,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-								return dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
+								return dateRange === "ytd" ||
+									dateRange === "all" ||
+									isMonthBasedRange(dateRange) ||
+									(dateRange === "custom" && chartGroupBy === "month")
 									? datetime.format(date, "MMM yyyy")
 									: datetime.format(date, "dd/MM/yyyy");
 							}}
@@ -412,18 +422,16 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 														</div>
 													))}
 													{showTotal && (
-														<>
-															<div className="border-t pt-2">
-																<div className="flex items-center justify-between gap-4">
-																	<span className="font-semibold text-sm">Total</span>
-																	<CurrencyValue
-																		value={total}
-																		currency={currency}
-																		className="font-bold text-sm"
-																	/>
-																</div>
+														<div className="border-t pt-2">
+															<div className="flex items-center justify-between gap-4">
+																<span className="font-semibold text-sm">Total</span>
+																<CurrencyValue
+																	value={total}
+																	currency={currency}
+																	className="font-bold text-sm"
+																/>
 															</div>
-														</>
+														</div>
 													)}
 												</div>
 											</div>
