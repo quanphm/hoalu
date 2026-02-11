@@ -29,6 +29,7 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import { normalizeSearch } from "#app/helpers/normalize-search.ts";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
@@ -189,9 +190,13 @@ function filter(
 				return false;
 			}
 		}
-		// Search by keywords
+		// Search by keywords (diacritic-insensitive, e.g. "an sang" matches "ăn sáng")
 		if (searchKeywords) {
-			return expense.title.toLowerCase().includes(searchKeywords.toLowerCase());
+			const needle = normalizeSearch(searchKeywords);
+			return (
+				normalizeSearch(expense.title).includes(needle) ||
+				normalizeSearch(expense.description).includes(needle)
+			);
 		}
 
 		return true;
