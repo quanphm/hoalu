@@ -258,11 +258,8 @@ export const expense = pgTable(
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
-		index("expense_title_idx").using("gin", sql`to_tsvector('english', ${table.title})`),
-		index("expense_description_idx").using(
-			"gin",
-			sql`to_tsvector('english', ${table.description})`,
-		),
+		index("expense_title_idx").using("gin", sql`to_tsvector('simple', ${table.title})`),
+		index("expense_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
 		index("expense_workspace_id_idx").on(table.workspaceId),
 		index("expense_wallet_id_idx").on(table.walletId),
 	],
@@ -287,7 +284,7 @@ export const task = pgTable(
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
-		index("task_title_idx").using("gin", sql`to_tsvector('english', ${table.title})`),
+		index("task_title_idx").using("gin", sql`to_tsvector('simple', ${table.title})`),
 		index("task_workspace_id_idx").on(table.workspaceId),
 	],
 );
@@ -310,7 +307,7 @@ export const file = pgTable(
 	},
 	(table) => [
 		index("file_s3_url_idx").on(table.s3Url),
-		index("file_description_idx").using("gin", sql`to_tsvector('english', ${table.description})`),
+		index("file_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
 	],
 );
 

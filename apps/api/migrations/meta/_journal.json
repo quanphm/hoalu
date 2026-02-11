@@ -15,6 +15,13 @@
       "when": 1742717786428,
       "tag": "0001_init_fx_rate_pairs",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770787669144,
+      "tag": "0002_quiet_winter_soldier",
+      "breakpoints": true
     }
   ]
 }
