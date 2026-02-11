@@ -1,27 +1,27 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1742717781905,
-      "tag": "0000_worthless_baron_strucker",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742717786428,
-      "tag": "0001_init_fx_rate_pairs",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1770787669144,
-      "tag": "0002_quiet_winter_soldier",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1742717781905,
+			"tag": "0000_worthless_baron_strucker",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1742717786428,
+			"tag": "0001_init_fx_rate_pairs",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1770787669144,
+			"tag": "0002_quiet_winter_soldier",
+			"breakpoints": true
+		}
+	]
 }

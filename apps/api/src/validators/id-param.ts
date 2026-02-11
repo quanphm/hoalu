@@ -1,7 +1,6 @@
+import { HTTPStatus } from "@hoalu/common/http-status";
 import { zValidator } from "@hono/zod-validator";
 import * as z from "zod";
-
-import { HTTPStatus } from "@hoalu/common/http-status";
 
 const IdSchema = z.object({
 	id: z.uuidv7(),

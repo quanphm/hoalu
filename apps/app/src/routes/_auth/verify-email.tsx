@@ -1,10 +1,8 @@
-import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tanstack/react-router";
-import * as z from "zod";
-
-import { Button } from "@hoalu/ui/button";
-
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { authClient } from "#app/lib/auth-client.ts";
+import { Button } from "@hoalu/ui/button";
+import { createFileRoute, type ErrorComponentProps, Link, redirect } from "@tanstack/react-router";
+import * as z from "zod";
 
 const searchSchema = z.object({
 	token: z.string().min(1),

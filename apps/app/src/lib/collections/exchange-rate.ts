@@ -1,8 +1,7 @@
+import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
-
-import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 
 const ExchangeRateCollectionSchema = z.object({
 	from_currency: CurrencySchema,

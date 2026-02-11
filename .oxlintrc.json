@@ -1,0 +1,40 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["react", "typescript", "jsx-a11y", "import"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"pedantic": "off",
+		"style": "off",
+		"restriction": "off"
+	},
+	"rules": {
+		"react/no-children-prop": "off",
+		"react/react-in-jsx-scope": "off",
+		"typescript/no-non-null-assertion": "warn",
+		"typescript/no-explicit-any": "off",
+		"no-debugger": "warn",
+		"no-unused-vars": "off",
+		"react/no-array-index-key": "warn",
+		"react/no-danger": "warn",
+		"jsx-a11y/no-autofocus": "off",
+		"import/no-unassigned-import": "off",
+		"import/no-named-as-default": "off",
+		"react/style-prop-object": "off"
+	},
+	"overrides": [
+		{
+			"files": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"],
+			"rules": {
+				"typescript/no-explicit-any": "off"
+			}
+		}
+	],
+	"ignorePatterns": [
+		"**/routeTree.gen.ts",
+		"**/dist/**",
+		"**/build/**",
+		"**/.output/**",
+		"**/node_modules/**"
+	]
+}

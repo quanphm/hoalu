@@ -1,10 +1,3 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
-import { XIcon } from "@hoalu/icons/tabler";
-import { Button } from "@hoalu/ui/button";
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
-import { ScrollArea } from "@hoalu/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-
 import {
 	DeleteExpense,
 	DuplicateExpense,
@@ -13,6 +6,12 @@ import {
 import { useExpenseNavigation } from "#app/components/expenses/use-expense-navigation.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
+import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { XIcon } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 
 interface ExpenseDetailsProps {
 	expenses: SyncedExpense[];
@@ -28,7 +27,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 		});
 
 	return (
-		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 bg-card p-0 text-card-foreground">
+		<div className="bg-card text-card-foreground flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
 			{currentExpense && (
 				<div
 					data-slot="expense-details-actions"
@@ -85,7 +84,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 				{currentExpense ? (
 					<EditExpenseForm key={currentExpense.id} data={currentExpense} />
 				) : (
-					<h2 className="m-4 rounded-md bg-muted/50 p-4 text-center text-muted-foreground">
+					<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
 						No expenses selected
 					</h2>
 				)}

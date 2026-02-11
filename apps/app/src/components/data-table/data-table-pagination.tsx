@@ -1,11 +1,10 @@
-import type { Table } from "@tanstack/react-table";
-import { useId } from "react";
-
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeft, ChevronRight } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Label } from "@hoalu/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@hoalu/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@hoalu/ui/select";
+import type { Table } from "@tanstack/react-table";
+import { useId } from "react";
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>;
@@ -39,7 +38,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 					<SelectTrigger id={id} className="w-fit whitespace-nowrap">
 						<SelectValue />
 					</SelectTrigger>
-					<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
+					<SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
 						{items.map((pageSize) => (
 							<SelectItem key={pageSize.value} value={pageSize.toString()}>
 								{pageSize.label}
@@ -50,8 +49,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 			</div>
 
 			{/* Page number information */}
-			<div className="flex grow justify-end whitespace-nowrap text-muted-foreground text-sm">
-				<p className="whitespace-nowrap text-muted-foreground text-sm" aria-live="polite">
+			<div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
+				<p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
 					<span className="text-foreground">
 						{table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
 						{Math.min(

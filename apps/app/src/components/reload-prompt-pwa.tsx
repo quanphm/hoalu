@@ -1,6 +1,3 @@
-import { useRegisterSW } from "virtual:pwa-register/react";
-import { useEffect, useState } from "react";
-
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -11,6 +8,8 @@ import {
 	AlertDialogPopup,
 	AlertDialogTitle,
 } from "@hoalu/ui/alert-dialog";
+import { useEffect, useState } from "react";
+import { useRegisterSW } from "virtual:pwa-register/react";
 
 export function ReloadPromptPwa() {
 	const {

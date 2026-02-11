@@ -1,5 +1,3 @@
-import * as z from "zod";
-
 import {
 	PG_ENUM_COLOR,
 	PG_ENUM_PRIORITY,
@@ -7,6 +5,7 @@ import {
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
 } from "#common/enums.ts";
+import * as z from "zod";
 
 export const ColorSchema = z.enum(PG_ENUM_COLOR);
 export type ColorSchema = z.infer<typeof ColorSchema>;

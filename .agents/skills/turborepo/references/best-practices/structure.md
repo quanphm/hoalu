@@ -18,7 +18,7 @@ packages:
 ```json
 // package.json
 {
-  "workspaces": ["apps/*", "packages/*"]
+	"workspaces": ["apps/*", "packages/*"]
 }
 ```
 
@@ -26,18 +26,18 @@ packages:
 
 ```json
 {
-  "name": "my-monorepo",
-  "private": true,
-  "packageManager": "pnpm@9.0.0",
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
-  },
-  "devDependencies": {
-    "turbo": "latest"
-  }
+	"name": "my-monorepo",
+	"private": true,
+	"packageManager": "pnpm@9.0.0",
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "turbo run lint",
+		"test": "turbo run test"
+	},
+	"devDependencies": {
+		"turbo": "latest"
+	}
 }
 ```
 
@@ -85,9 +85,9 @@ Package tasks enable Turborepo to:
 ```json
 // AVOID unless necessary - sequential, not parallelized, can't filter
 {
-  "scripts": {
-    "lint": "eslint apps/web && eslint apps/api && eslint packages/ui"
-  }
+	"scripts": {
+		"lint": "eslint apps/web && eslint apps/api && eslint packages/ui"
+	}
 }
 ```
 
@@ -95,21 +95,21 @@ Package tasks enable Turborepo to:
 
 ```json
 {
-  "$schema": "https://turborepo.dev/schema.v2.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
-    },
-    "lint": {},
-    "test": {
-      "dependsOn": ["build"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    }
-  }
+	"$schema": "https://turborepo.dev/schema.v2.json",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+		},
+		"lint": {},
+		"test": {
+			"dependsOn": ["build"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		}
+	}
 }
 ```
 
@@ -124,8 +124,8 @@ You can group packages by adding more workspace paths:
 packages:
   - "apps/*"
   - "packages/*"
-  - "packages/config/*"    # Grouped configs
-  - "packages/features/*"  # Feature packages
+  - "packages/config/*" # Grouped configs
+  - "packages/features/*" # Feature packages
 ```
 
 This allows:
@@ -148,7 +148,7 @@ packages/
 ```yaml
 # BAD: Nested wildcards cause ambiguous behavior
 packages:
-  - "packages/**"  # Don't do this!
+  - "packages/**" # Don't do this!
 ```
 
 ## Package Anatomy
@@ -167,12 +167,13 @@ packages/ui/
 
 ```json
 {
-  "name": "@repo/ui",           // Unique, namespaced name
-  "version": "0.0.0",           // Version (can be 0.0.0 for internal)
-  "private": true,              // Prevents accidental publishing
-  "exports": {                  // Entry points
-    "./button": "./src/button.tsx"
-  }
+	"name": "@repo/ui", // Unique, namespaced name
+	"version": "0.0.0", // Version (can be 0.0.0 for internal)
+	"private": true, // Prevents accidental publishing
+	"exports": {
+		// Entry points
+		"./button": "./src/button.tsx"
+	}
 }
 ```
 
@@ -194,14 +195,14 @@ packages/
 ```json
 // packages/typescript-config/base.json
 {
-  "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "module": "ESNext",
-    "target": "ES2022"
-  }
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"module": "ESNext",
+		"target": "ES2022"
+	}
 }
 ```
 
@@ -210,13 +211,13 @@ packages/
 ```json
 // packages/ui/tsconfig.json
 {
-  "extends": "@repo/typescript-config/library.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+	"extends": "@repo/typescript-config/library.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": "src"
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
 }
 ```
 
@@ -240,12 +241,12 @@ packages/
 ```json
 // packages/eslint-config/package.json
 {
-  "name": "@repo/eslint-config",
-  "exports": {
-    "./base": "./base.js",
-    "./next": "./next.js",
-    "./library": "./library.js"
-  }
+	"name": "@repo/eslint-config",
+	"exports": {
+		"./base": "./base.js",
+		"./next": "./next.js",
+		"./library": "./library.js"
+	}
 }
 ```
 
@@ -254,7 +255,7 @@ packages/
 ```js
 // apps/web/.eslintrc.js
 module.exports = {
-  extends: ["@repo/eslint-config/next"],
+	extends: ["@repo/eslint-config/next"],
 };
 ```
 

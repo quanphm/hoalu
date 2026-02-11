@@ -1,18 +1,3 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-
-import { CheckIcon, LayersIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectSeparator,
-	SelectTrigger,
-	SelectValue,
-} from "@hoalu/ui/select";
-import { cn } from "@hoalu/ui/utils";
-
 import {
 	type ChartGroupBy,
 	type CustomDateRange,
@@ -29,6 +14,20 @@ import {
 	AVAILABLE_LAST_MONTHS_OPTIONS,
 	AVAILABLE_TO_DATE_RANGE_OPTIONS,
 } from "#app/helpers/constants.ts";
+import { CheckIcon, LayersIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectSeparator,
+	SelectTrigger,
+	SelectValue,
+} from "@hoalu/ui/select";
+import { cn } from "@hoalu/ui/utils";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+
 import { DateRangePicker } from "./date-range-picker.tsx";
 
 const options = [
@@ -151,12 +150,12 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 				</PopoverTrigger>
 				<PopoverContent className="w-56 p-0" align="start">
 					<div className="border-b px-3 py-2">
-						<p className="font-medium text-sm">Filter by category</p>
+						<p className="text-sm font-medium">Filter by category</p>
 						<p className="text-muted-foreground text-xs">Select categories to compare</p>
 					</div>
 					<div
 						className={cn(
-							"divide-y divide-border/60",
+							"divide-border/60 divide-y",
 							categories.length > 6 && "max-h-[200px] overflow-y-auto",
 						)}
 					>
@@ -167,7 +166,7 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 									key={category.id}
 									type="button"
 									onClick={() => toggleCategory(category.id)}
-									className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50"
+									className="hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none"
 								>
 									<div
 										className={cn(

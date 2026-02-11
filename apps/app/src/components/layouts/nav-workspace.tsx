@@ -1,6 +1,6 @@
-import { Link, useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-
+import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import {
 	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
@@ -20,10 +20,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
-
-import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { Link, useParams } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });

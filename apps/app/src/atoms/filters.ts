@@ -1,10 +1,8 @@
-import { atom } from "jotai";
-
-import type { RepeatSchema } from "@hoalu/common/schema";
-
 import { DEFAULT_DATE_RANGE } from "#app/helpers/constants.ts";
 import { calculateDateRange } from "#app/helpers/date-range.ts";
 import type { CategorySchema, WalletSchema } from "#app/lib/schema.ts";
+import type { RepeatSchema } from "@hoalu/common/schema";
+import { atom } from "jotai";
 
 export const mobileFilterExpandedAtom = atom<boolean>(false);
 

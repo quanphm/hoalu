@@ -23,7 +23,7 @@ function AlertDialogOverlay({
 		<AlertDialogPrimitive.Backdrop
 			data-slot="alert-dialog-backdrop"
 			className={cn(
-				"data-open:fade-in-0 data-closed:fade-out-0 data-closed:animation-duration-[200ms] fixed inset-0 z-50 bg-black/50 data-closed:animate-out data-open:animate-in",
+				"data-open:fade-in-0 data-closed:fade-out-0 data-closed:animation-duration-[200ms] data-closed:animate-out data-open:animate-in fixed inset-0 z-50 bg-black/50",
 				className,
 			)}
 			{...props}
@@ -41,7 +41,7 @@ function AlertDialogPopup({
 			<AlertDialogPrimitive.Popup
 				data-slot="alert-dialog-popup"
 				className={cn(
-					"ed]:zoom-out-95 data-[state=open]:zoom-in-95 dabg-background dabg-background nslate-y-[-50%] d fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] ta-[state=open]:animate-in trata-[state=open]:animate-in gap-4 rounded-lg border bg-background p-6 shadow-lg data-[state=closed]:animate-out data-[state=open]:animate-in sm:max-w-lg",
+					"ed]:zoom-out-95 data-[state=open]:zoom-in-95 dabg-background dabg-background nslate-y-[-50%] d ta-[state=open]:animate-in trata-[state=open]:animate-in bg-background data-[state=closed]:animate-out data-[state=open]:animate-in fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg",
 					className,
 				)}
 				{...props}

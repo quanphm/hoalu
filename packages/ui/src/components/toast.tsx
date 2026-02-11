@@ -1,5 +1,4 @@
 import { Toast } from "@base-ui/react/toast";
-
 import {
 	CircleAlertIcon,
 	CircleCheckIcon,
@@ -78,7 +77,7 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
 										: ["right", isTop ? "up" : "down"]
 							}
 							className={cn(
-								"absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none rounded-lg border bg-popover bg-clip-padding px-3.5 py-3 text-popover-foreground shadow-lg [transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
+								"bg-popover text-popover-foreground absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full rounded-lg border bg-clip-padding px-3.5 py-3 shadow-lg select-none [transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
 								// Base positioning using data-position
 								"data-[position*=right]:right-0 data-[position*=right]:left-auto",
 								"data-[position*=left]:right-auto data-[position*=left]:left-0",
@@ -119,14 +118,14 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
 								"data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]",
 							)}
 						>
-							<Toast.Content className="flex items-center justify-between gap-1.5 overflow-hidden text-sm transition-opacity duration-250 data-behind:pointer-events-none data-expanded:pointer-events-auto data-behind:opacity-0 data-expanded:opacity-100">
+							<Toast.Content className="flex items-center justify-between gap-1.5 overflow-hidden text-sm transition-opacity duration-250 data-behind:pointer-events-none data-behind:opacity-0 data-expanded:pointer-events-auto data-expanded:opacity-100">
 								<div className="flex gap-2">
 									{Icon && (
 										<div
-											className="mt-.5 [&>svg]:h-[1lh] [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+											className="mt-.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-[1lh] [&>svg]:w-4"
 											data-slot="toast-icon"
 										>
-											<Icon className="in-data-[type=loading]:animate-spin in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning in-data-[type=loading]:opacity-72" />
+											<Icon className="in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning in-data-[type=loading]:animate-spin in-data-[type=loading]:opacity-72" />
 										</div>
 									)}
 

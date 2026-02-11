@@ -1,10 +1,9 @@
-import { createColumnHelper } from "@tanstack/react-table";
-
-import { Badge } from "@hoalu/ui/badge";
-import { Frame } from "@hoalu/ui/frame";
-
 import { AVAILABLE_WALLET_TYPE_OPTIONS } from "#app/helpers/constants.ts";
 import type { WalletSchema } from "#app/lib/schema.ts";
+import { Badge } from "@hoalu/ui/badge";
+import { Frame } from "@hoalu/ui/frame";
+import { createColumnHelper } from "@tanstack/react-table";
+
 import { DataTable } from "../data-table";
 import { UserAvatar } from "../user-avatar";
 import { WalletDropdownMenuWithModal, WalletIcon } from "./wallet-actions";
@@ -44,7 +43,7 @@ const columns = [
 			return (
 				<Badge
 					variant={isActive ? "success" : "secondary"}
-					className="pointer-events-none select-none gap-1.5 p-2"
+					className="pointer-events-none gap-1.5 p-2 select-none"
 				>
 					{isActive ? "Active" : "Inactive"}
 				</Badge>

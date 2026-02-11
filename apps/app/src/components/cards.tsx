@@ -1,3 +1,4 @@
+import { formatNumber } from "#app/helpers/number.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
 import { AlertTriangleIcon, WalletIcon as WalletLucideIcon } from "@hoalu/icons/lucide";
@@ -13,7 +14,6 @@ import {
 	CardTitle,
 } from "@hoalu/ui/card";
 
-import { formatNumber } from "#app/helpers/number.ts";
 import { UserAvatar } from "./user-avatar";
 import { WalletIcon, type WalletIconProps } from "./wallets/wallet-actions";
 
@@ -79,7 +79,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 		: null;
 
 	return (
-		<Card className="h-full gap-4 hover:border-foreground/20">
+		<Card className="hover:border-foreground/20 h-full gap-4">
 			<CardHeader>
 				<CardTitle>{props.name}</CardTitle>
 			</CardHeader>
@@ -89,11 +89,11 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 						<div>
 							<p className="text-muted-foreground text-xs">This month</p>
 							<div className="flex items-baseline gap-2">
-								<p className="font-semibold text-lg">{formattedTotal}</p>
+								<p className="text-lg font-semibold">{formattedTotal}</p>
 							</div>
 						</div>
 
-						<div className="flex items-center gap-4 text-muted-foreground text-xs">
+						<div className="text-muted-foreground flex items-center gap-4 text-xs">
 							<div className="flex items-center gap-1">
 								<ArrowsExchangeIcon className="size-3.5" />
 								<span>{formatNumber(summary.transactionCount)} transactions</span>
@@ -119,7 +119,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 							</p>
 						)}
 						{summary.hasMissingRates && (
-							<div className="flex items-center gap-1.5 text-amber-600 text-xs dark:text-amber-500">
+							<div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-500">
 								<AlertTriangleIcon className="size-3.5" />
 								<span>Some exchange rates unavailable</span>
 							</div>
@@ -163,10 +163,10 @@ export function ErrorCard({
 
 	return (
 		<ContentCard
-			className="w-fit min-w-sm border-destructive/50"
+			className="border-destructive/50 w-fit min-w-sm"
 			title={title}
 			content={
-				<pre className="rounded-sm bg-destructive/5 p-2 text-destructive text-sm">{message}</pre>
+				<pre className="bg-destructive/5 text-destructive rounded-sm p-2 text-sm">{message}</pre>
 			}
 			footer={props.footer}
 		/>
@@ -204,7 +204,7 @@ export function WalletCard(props: WalletCardProps) {
 					</div>
 					<Badge
 						variant="outline"
-						className="pointer-events-non select-none gap-1.5 rounded-full bg-card"
+						className="pointer-events-non bg-card gap-1.5 rounded-full select-none"
 					>
 						{props.isActive ? (
 							<>

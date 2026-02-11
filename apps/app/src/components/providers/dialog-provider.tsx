@@ -1,14 +1,3 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import type { PropsWithChildren } from "react";
-
-import {
-	Dialog,
-	DialogBackdrop,
-	DialogPopup,
-	DialogPortal,
-	DialogViewport,
-} from "@hoalu/ui/dialog";
-
 import {
 	currentDialogAtom,
 	type DialogId,
@@ -19,6 +8,16 @@ import {
 	CreateCategoryDialogContent,
 	DeleteCategoryDialogContent,
 } from "#app/components/categories/category-actions.tsx";
+import {
+	Dialog,
+	DialogBackdrop,
+	DialogPopup,
+	DialogPortal,
+	DialogViewport,
+} from "@hoalu/ui/dialog";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import type { PropsWithChildren } from "react";
+
 import {
 	CreateExpenseDialogContent,
 	DeleteExpenseDialogContent,

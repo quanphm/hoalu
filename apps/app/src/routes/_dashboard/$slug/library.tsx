@@ -1,9 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useState } from "react";
-
-import { Tabs, TabsContent, TabsList, TabsTab } from "@hoalu/ui/tabs";
-
 import { CreateCategoryDialogTrigger } from "#app/components/categories/category-actions.tsx";
 import { CategoryTable } from "#app/components/categories/category-table.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
@@ -18,6 +12,10 @@ import {
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 import { WalletTable } from "#app/components/wallets/wallet-table.tsx";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { Tabs, TabsContent, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/library")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

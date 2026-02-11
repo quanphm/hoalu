@@ -8,7 +8,7 @@ function Frame({
 	return (
 		<div
 			className={cn(
-				"relative flex flex-col rounded-xl bg-muted/60 p-1",
+				"bg-muted/60 relative flex flex-col rounded-xl p-1",
 				stackedPanels
 					? "*:has-[+[data-slot=frame-panel]]:rounded-b-none *:has-[+[data-slot=frame-panel]]:before:hidden dark:*:has-[+[data-slot=frame-panel]]:before:block *:[[data-slot=frame-panel]+[data-slot=frame-panel]]:rounded-t-none *:[[data-slot=frame-panel]+[data-slot=frame-panel]]:border-t-0 dark:*:[[data-slot=frame-panel]+[data-slot=frame-panel]]:before:hidden"
 					: "*:[[data-slot=frame-panel]+[data-slot=frame-panel]]:mt-1",
@@ -24,7 +24,7 @@ function FramePanel({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			className={cn(
-				"relative rounded-xl border border-border/60 bg-background bg-clip-padding p-5 shadow-xs before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
+				"border-border/60 bg-background relative rounded-xl border bg-clip-padding p-5 shadow-xs before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
 				className,
 			)}
 			data-slot="frame-panel"
@@ -46,7 +46,7 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"header">) {
 function FrameTitle({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
-			className={cn("font-semibold text-sm", className)}
+			className={cn("text-sm font-semibold", className)}
 			data-slot="frame-panel-title"
 			{...props}
 		/>

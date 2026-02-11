@@ -1,5 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
-
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
@@ -15,6 +13,7 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
+import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,
 });

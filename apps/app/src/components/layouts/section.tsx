@@ -1,6 +1,5 @@
-import { cn } from "@hoalu/ui/utils";
-
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import { cn } from "@hoalu/ui/utils";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
 	return (
@@ -86,13 +85,15 @@ function SectionContent({
 	);
 }
 
-function SectionTitle({ className, ref, ...props }: React.ComponentPropsWithRef<"h2">) {
+function SectionTitle({ className, ref, children, ...props }: React.ComponentPropsWithRef<"h2">) {
 	return (
 		<h2
 			data-slot="section-title"
-			className={cn("font-medium text-xl leading-tight", className)}
+			className={cn("text-xl leading-tight font-medium", className)}
 			{...props}
-		/>
+		>
+			{children}
+		</h2>
 	);
 }
 

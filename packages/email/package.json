@@ -2,8 +2,8 @@
 	"name": "@hoalu/email",
 	"version": "0.19.0",
 	"private": true,
-	"sideEffects": false,
 	"type": "module",
+	"sideEffects": false,
 	"exports": {
 		".": "./src/index.ts"
 	},
@@ -14,9 +14,9 @@
 		"@react-email/components": "^1.0.4"
 	},
 	"devDependencies": {
-		"@types/react": "catalog:",
 		"@hoalu/tsconfig": "workspace:*",
 		"@react-email/preview-server": "5.1.1",
+		"@types/react": "catalog:",
 		"react-email": "^5.2.5"
 	},
 	"peerDependencies": {

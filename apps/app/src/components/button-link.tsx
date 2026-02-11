@@ -1,6 +1,5 @@
-import { createLink, type LinkComponent } from "@tanstack/react-router";
-
 import { Button, type ButtonProps } from "@hoalu/ui/button";
+import { createLink, type LinkComponent } from "@tanstack/react-router";
 
 const ButtonLinkComponent = (props: ButtonProps) => {
 	return <Button {...props} />;

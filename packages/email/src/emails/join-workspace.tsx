@@ -27,8 +27,8 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 			</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
-					<Container className="mx-auto my-10 max-w-[465px] border border-[#eaeaea] border-solid px-5 py-3">
-						<Heading className="my-5 text-center font-normal text-[24px]">
+					<Container className="mx-auto my-10 max-w-[465px] border border-solid border-[#eaeaea] px-5 py-3">
+						<Heading className="my-5 text-center text-[24px] font-normal">
 							Join <strong>{inviterName}</strong> on <strong>{workspaceName}</strong>
 						</Heading>
 						<Text>Hello there,</Text>
@@ -54,8 +54,8 @@ export default function JoinWorkspace({ inviteLink, inviterName, workspaceName }
 							<br />
 							Quan from Hoalu
 						</Text>
-						<Hr className="mx-0 my-[20px] w-full border border-[#eaeaea] border-solid" />
-						<Text className="text-[#666666] text-[12px] leading-[20px]">
+						<Hr className="mx-0 my-[20px] w-full border border-solid border-[#eaeaea]" />
+						<Text className="text-[12px] leading-[20px] text-[#666666]">
 							If you were not expecting this invitation, you can ignore this email. If you are
 							concerned about your account's safety, please reply to this email to get in touch with
 							us.

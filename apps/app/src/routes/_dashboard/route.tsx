@@ -1,9 +1,8 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-
 import { ResponsiveLayout } from "#app/components/layouts/responsive-layout.tsx";
 import { DashboardActionProvider } from "#app/components/providers/dashboard-action-provider.tsx";
 import { DialogProvider } from "#app/components/providers/dialog-provider.tsx";
 import { listWorkspacesOptions, sessionOptions } from "#app/services/query-options.ts";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard")({
 	beforeLoad: async ({ context: { queryClient } }) => {

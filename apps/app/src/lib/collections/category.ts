@@ -1,10 +1,8 @@
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+import { ColorSchema } from "@hoalu/common/schema";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
-
-import { ColorSchema } from "@hoalu/common/schema";
-
-import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
 
 const CategoryCollectionSchema = z.object({
 	id: z.uuidv7(),

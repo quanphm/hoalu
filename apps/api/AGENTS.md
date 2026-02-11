@@ -89,14 +89,14 @@ const app = createHonoApp();
 
 // GET /api/expenses?workspaceId=xxx
 app.get("/", workspaceQueryValidator, workspaceMember, async (c) => {
-  const { workspaceId } = c.var.workspace;
-  const expenses = await repository.findMany(workspaceId);
-  return c.json({ data: expenses });
+	const { workspaceId } = c.var.workspace;
+	const expenses = await repository.findMany(workspaceId);
+	return c.json({ data: expenses });
 });
 
 // POST /api/expenses
 app.post("/", jsonBodyValidator(schema.CreateExpenseSchema), async (c) => {
-  // Handler implementation
+	// Handler implementation
 });
 
 export default app;
@@ -110,15 +110,15 @@ import { expense, wallet, category } from "#api/db/schema.ts";
 import { eq, desc } from "drizzle-orm";
 
 export async function findMany(workspaceId: string) {
-  return db
-    .select()
-    .from(expense)
-    .where(eq(expense.workspaceId, workspaceId))
-    .orderBy(desc(expense.date));
+	return db
+		.select()
+		.from(expense)
+		.where(eq(expense.workspaceId, workspaceId))
+		.orderBy(desc(expense.date));
 }
 
 export async function create(data: InsertExpense) {
-  return db.insert(expense).values(data).returning();
+	return db.insert(expense).values(data).returning();
 }
 ```
 
@@ -129,11 +129,11 @@ import * as z from "zod";
 import { CurrencySchema, RepeatSchema } from "@hoalu/common/schema";
 
 export const CreateExpenseSchema = z.object({
-  title: z.string().min(1),
-  amount: z.coerce.number(),
-  currency: CurrencySchema,
-  repeat: RepeatSchema,
-  // ...
+	title: z.string().min(1),
+	amount: z.coerce.number(),
+	currency: CurrencySchema,
+	repeat: RepeatSchema,
+	// ...
 });
 
 export const UpdateExpenseSchema = CreateExpenseSchema.partial();
@@ -156,29 +156,24 @@ Request
 ```typescript
 // Always return typed results
 export async function findMany(workspaceId: string): Promise<Expense[]> {
-  return db
-    .select()
-    .from(expense)
-    .where(eq(expense.workspaceId, workspaceId))
-    .orderBy(desc(expense.date));
+	return db
+		.select()
+		.from(expense)
+		.where(eq(expense.workspaceId, workspaceId))
+		.orderBy(desc(expense.date));
 }
 
 // Use transactions for multi-step operations
-export async function createExpenseWithFiles(
-  data: InsertExpense,
-  files: File[],
-) {
-  return db.transaction(async (tx) => {
-    const [expense] = await tx.insert(expenseTable).values(data).returning();
+export async function createExpenseWithFiles(data: InsertExpense, files: File[]) {
+	return db.transaction(async (tx) => {
+		const [expense] = await tx.insert(expenseTable).values(data).returning();
 
-    if (files.length > 0) {
-      await tx
-        .insert(fileTable)
-        .values(files.map((f) => ({ ...f, expenseId: expense.id })));
-    }
+		if (files.length > 0) {
+			await tx.insert(fileTable).values(files.map((f) => ({ ...f, expenseId: expense.id })));
+		}
 
-    return expense;
-  });
+		return expense;
+	});
 }
 ```
 
@@ -189,15 +184,15 @@ import { HTTPException } from "hono/http-exception";
 import { HTTPStatus } from "@hoalu/common/http-status";
 
 app.get("/expenses/:id", async (c) => {
-  const expense = await repository.findById(c.req.param("id"));
+	const expense = await repository.findById(c.req.param("id"));
 
-  if (!expense) {
-    throw new HTTPException(HTTPStatus.NOT_FOUND, {
-      message: "Expense not found",
-    });
-  }
+	if (!expense) {
+		throw new HTTPException(HTTPStatus.NOT_FOUND, {
+			message: "Expense not found",
+		});
+	}
 
-  return c.json({ data: expense });
+	return c.json({ data: expense });
 });
 ```
 
@@ -205,33 +200,33 @@ app.get("/expenses/:id", async (c) => {
 
 ```typescript
 app.openapi(
-  createRoute({
-    method: "get",
-    path: "/expenses",
-    tags: ["expenses"],
-    summary: "List expenses",
-    request: {
-      query: z.object({
-        workspaceId: z.uuidv7(),
-        limit: z.coerce.number().optional(),
-      }),
-    },
-    responses: {
-      200: {
-        description: "List of expenses",
-        content: {
-          "application/json": {
-            schema: z.object({
-              data: z.array(ExpenseSchema),
-            }),
-          },
-        },
-      },
-    },
-  }),
-  async (c) => {
-    // Handler implementation
-  },
+	createRoute({
+		method: "get",
+		path: "/expenses",
+		tags: ["expenses"],
+		summary: "List expenses",
+		request: {
+			query: z.object({
+				workspaceId: z.uuidv7(),
+				limit: z.coerce.number().optional(),
+			}),
+		},
+		responses: {
+			200: {
+				description: "List of expenses",
+				content: {
+					"application/json": {
+						schema: z.object({
+							data: z.array(ExpenseSchema),
+						}),
+					},
+				},
+			},
+		},
+	}),
+	async (c) => {
+		// Handler implementation
+	},
 );
 ```
 
@@ -397,18 +392,18 @@ Use this template when adding a new resource endpoint (e.g., notes, tags, budget
 
    ```typescript
    export const [resource] = pgTable(
-     "[resource]",
-     {
-       id: uuid("id").primaryKey(),
-       title: text("title").notNull(),
-       description: text("description"),
-       workspaceId: uuid("workspace_id")
-         .notNull()
-         .references(() => workspace.id, { onDelete: "cascade" }),
-       createdAt: timestamp("created_at").defaultNow().notNull(),
-       updatedAt: timestamp("updated_at").defaultNow().notNull(),
-     },
-     (table) => [index("[resource]_workspace_id_idx").on(table.workspaceId)],
+   	"[resource]",
+   	{
+   		id: uuid("id").primaryKey(),
+   		title: text("title").notNull(),
+   		description: text("description"),
+   		workspaceId: uuid("workspace_id")
+   			.notNull()
+   			.references(() => workspace.id, { onDelete: "cascade" }),
+   		createdAt: timestamp("created_at").defaultNow().notNull(),
+   		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+   	},
+   	(table) => [index("[resource]_workspace_id_idx").on(table.workspaceId)],
    );
    ```
 
@@ -452,8 +447,8 @@ Use this when modifying the database schema (adding columns, tables, indexes, et
    ```typescript
    // Example: Add a new column
    export const expense = pgTable("expense", {
-     // ... existing columns
-     tags: text("tags").array().default([]), // New column
+   	// ... existing columns
+   	tags: text("tags").array().default([]), // New column
    });
    ```
 
@@ -491,8 +486,8 @@ Use this when modifying the database schema (adding columns, tables, indexes, et
    ```typescript
    // apps/app/src/lib/collections/expense.ts
    export const SelectExpenseSchema = z.object({
-     // ... existing fields
-     tags: z.array(z.string()).default([]), // Add new field
+   	// ... existing fields
+   	tags: z.array(z.string()).default([]), // Add new field
    });
    ```
 
@@ -528,46 +523,35 @@ Database Schema `apps/api/src/db/schema.ts`
 
 ```typescript
 export const colorTypeEnum = pgEnum("color_enum", [
-  "gray",
-  "red",
-  "orange",
-  "yellow",
-  "green",
-  "blue",
-  "indigo",
-  "purple",
-  "pink",
+	"gray",
+	"red",
+	"orange",
+	"yellow",
+	"green",
+	"blue",
+	"indigo",
+	"purple",
+	"pink",
 ]);
 
 export const walletTypeEnum = pgEnum("wallet_type_enum", [
-  "cash",
-  "bank",
-  "credit_card",
-  "digital_wallet",
-  "investment",
+	"cash",
+	"bank",
+	"credit_card",
+	"digital_wallet",
+	"investment",
 ]);
 
-export const repeatEnum = pgEnum("repeat_enum", [
-  "none",
-  "daily",
-  "weekly",
-  "monthly",
-  "yearly",
-]);
+export const repeatEnum = pgEnum("repeat_enum", ["none", "daily", "weekly", "monthly", "yearly"]);
 
 export const taskStatusEnum = pgEnum("task_status_enum", [
-  "todo",
-  "in_progress",
-  "done",
-  "cancelled",
+	"todo",
+	"in_progress",
+	"done",
+	"cancelled",
 ]);
 
-export const priorityEnum = pgEnum("priority_enum", [
-  "low",
-  "medium",
-  "high",
-  "urgent",
-]);
+export const priorityEnum = pgEnum("priority_enum", ["low", "medium", "high", "urgent"]);
 ```
 
 **Key Patterns:**
@@ -581,8 +565,8 @@ publicId: text("public_id").notNull().unique();
 
 // Workspace scoping
 workspaceId: uuid("workspace_id")
-  .notNull()
-  .references(() => workspace.id, { onDelete: "cascade" });
+	.notNull()
+	.references(() => workspace.id, { onDelete: "cascade" });
 
 // Timestamps
 createdAt: timestamp("created_at").notNull();
@@ -595,15 +579,11 @@ metadata: jsonb("metadata").$type<Record<string, any>>().default({});
 amount: numeric("amount", { precision: 18, scale: 2 }).notNull();
 
 // Full-text search indexes
-index("expense_title_idx").using(
-  "gin",
-  sql`to_tsvector('english', ${expense.title})`,
-);
+index("expense_title_idx").using("gin", sql`to_tsvector('english', ${expense.title})`);
 
 // GIN indexes for JSONB
 index("workspace_metadata_idx").using("gin", table.metadata);
 ```
-
 
 **Schema-First Workflow:**
 
@@ -618,36 +598,36 @@ index("workspace_metadata_idx").using("gin", table.metadata);
 ```typescript
 // Select with joins
 const expensesWithWallet = await db
-  .select({
-    id: expense.id,
-    title: expense.title,
-    amount: expense.amount,
-    walletName: wallet.name,
-  })
-  .from(expense)
-  .innerJoin(wallet, eq(expense.walletId, wallet.id));
+	.select({
+		id: expense.id,
+		title: expense.title,
+		amount: expense.amount,
+		walletName: wallet.name,
+	})
+	.from(expense)
+	.innerJoin(wallet, eq(expense.walletId, wallet.id));
 
 // Aggregation
 const totalByCategory = await db
-  .select({
-    categoryId: expense.categoryId,
-    total: sum(expense.amount),
-  })
-  .from(expense)
-  .groupBy(expense.categoryId);
+	.select({
+		categoryId: expense.categoryId,
+		total: sum(expense.amount),
+	})
+	.from(expense)
+	.groupBy(expense.categoryId);
 
 // Subqueries
 const recentExpenses = db
-  .select()
-  .from(expense)
-  .where(gt(expense.date, sql`NOW() - INTERVAL '30 days'`))
-  .as("recent");
+	.select()
+	.from(expense)
+	.where(gt(expense.date, sql`NOW() - INTERVAL '30 days'`))
+	.as("recent");
 
 // Full-text search
 const results = await db
-  .select()
-  .from(expense)
-  .where(
-    sql`to_tsvector('english', ${expense.title}) @@ plainto_tsquery('english', ${searchTerm})`,
-  );
+	.select()
+	.from(expense)
+	.where(
+		sql`to_tsvector('english', ${expense.title}) @@ plainto_tsquery('english', ${searchTerm})`,
+	);
 ```

@@ -1,5 +1,6 @@
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+
 import { CurrencyValue } from "./currency-value";
 
 export function TransactionAmount(props: { data: SyncedExpense }) {
@@ -17,7 +18,7 @@ export function TransactionAmount(props: { data: SyncedExpense }) {
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				className="font-semibold text-base tabular-nums"
+				className="text-base font-semibold tabular-nums"
 				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
 				as="p"
 			/>
@@ -26,7 +27,7 @@ export function TransactionAmount(props: { data: SyncedExpense }) {
 					value={amount}
 					currency={sourceCurrency}
 					prefix="original"
-					className="text-[10px] text-muted-foreground/70 tabular-nums"
+					className="text-muted-foreground/70 text-[10px] tabular-nums"
 					as="p"
 				/>
 			)}

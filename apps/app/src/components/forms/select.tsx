@@ -17,11 +17,11 @@ export function SelectField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Select items={props.options} value={field.state.value} onValueChange={field.handleChange}>
 				<FieldControl>
-					<SelectTrigger className="bg-muted text-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/20">
+					<SelectTrigger className="bg-muted text-foreground focus:border-ring focus:ring-ring/20 focus:ring-[3px]">
 						<SelectValue placeholder="Select" />
 					</SelectTrigger>
 				</FieldControl>
-				<SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
+				<SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
 					{props.options.map((opt) => (
 						<SelectItem key={opt.value} value={opt.value}>
 							{opt.label}

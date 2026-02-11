@@ -1,9 +1,8 @@
+import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
 import Placeholder from "@tiptap/extension-placeholder";
 import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-
-import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
 
 export const extensions = [
 	StarterKit.configure({
@@ -20,7 +19,7 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 	}
 
 	return (
-		<div className="flex items-center space-x-1 overflow-hidden rounded-lg rounded-b-none bg-muted/50 p-1">
+		<div className="bg-muted/50 flex items-center space-x-1 overflow-hidden rounded-lg rounded-b-none p-1">
 			<Button
 				variant={editor.isActive("bold") ? "outline" : "ghost"}
 				size="icon"

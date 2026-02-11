@@ -1,7 +1,6 @@
+import { extractLetterFromName } from "#app/helpers/extract-letter-from-name.ts";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { cn } from "@hoalu/ui/utils";
-
-import { extractLetterFromName } from "#app/helpers/extract-letter-from-name.ts";
 
 export function UserAvatar({
 	image = null,

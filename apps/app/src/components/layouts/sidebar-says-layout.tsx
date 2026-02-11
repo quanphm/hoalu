@@ -1,7 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
-
+import { AppLogo } from "#app/components/layouts/app-logo.tsx";
+import { NavUser } from "#app/components/layouts/nav-user.tsx";
+import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
+import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import {
 	Sidebar,
@@ -14,12 +15,10 @@ import {
 	SidebarProvider,
 } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
 
-import { AppLogo } from "#app/components/layouts/app-logo.tsx";
-import { NavUser } from "#app/components/layouts/nav-user.tsx";
-import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
-import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 // import { NavDocumentation } from "./nav-documentation";
 import { NavWorkspaceList } from "./nav-workspace-list";
 
@@ -67,7 +66,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 								href="https://github.com/quanphm/hoalu"
 								target="_blank"
 								rel="noreferrer"
-								className="rounded-md p-2 hover:bg-muted"
+								className="hover:bg-muted rounded-md p-2"
 							>
 								<GithubIcon className="size-4" />
 							</a>
@@ -75,7 +74,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 								href="https://x.com/quan_phmn"
 								target="_blank"
 								rel="noreferrer"
-								className="rounded-md p-2 hover:bg-muted"
+								className="hover:bg-muted rounded-md p-2"
 							>
 								<TwitterXIcon className="size-4" />
 							</a>

@@ -1,15 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtom, useAtomValue } from "jotai";
-import { useMemo } from "react";
-
-import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
-import { SlidersHorizontalIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { Checkbox } from "@hoalu/ui/checkbox";
-import { Label } from "@hoalu/ui/label";
-import { ScrollArea } from "@hoalu/ui/scroll-area";
-
 import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
@@ -20,6 +8,17 @@ import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/us
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
+import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import { SlidersHorizontalIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { Checkbox } from "@hoalu/ui/checkbox";
+import { Label } from "@hoalu/ui/label";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtom, useAtomValue } from "jotai";
+import { useMemo } from "react";
+
 import type { SyncedCategory } from "../categories/use-categories";
 import { WalletLabel } from "../wallets/wallet-badge";
 import { ExpenseCalendar, ExpenseSearch } from "./expense-actions";
@@ -59,7 +58,7 @@ export function ExpenseFilter(props: ExpenseFilterProps) {
 					<span>Categories</span>
 					<CategoriesClearButton />
 				</div>
-				<div className="rounded-md border border-border/80">
+				<div className="border-border/80 rounded-md border">
 					<ScrollAreaWithCondition enabled={props.categories.length > 5}>
 						{props.categories.map((c) => (
 							<CategoryCheckboxGroup
@@ -78,7 +77,7 @@ export function ExpenseFilter(props: ExpenseFilterProps) {
 					<span>Wallets</span>
 					<WalletsClearButton />
 				</div>
-				<div className="rounded-md border border-border/80">
+				<div className="border-border/80 rounded-md border">
 					<ScrollAreaWithCondition enabled={wallets.length > 5}>
 						{wallets.map((w) => (
 							<WalletCheckboxGroup
@@ -98,7 +97,7 @@ export function ExpenseFilter(props: ExpenseFilterProps) {
 					<span>Repeat</span>
 					<RepeatClearButton />
 				</div>
-				<div className="rounded-md border border-border/80">
+				<div className="border-border/80 rounded-md border">
 					<ScrollAreaWithCondition enabled={false}>
 						{AVAILABLE_REPEAT_OPTIONS.map((r) => (
 							<RepeatCheckboxGroup
@@ -136,7 +135,7 @@ export function MobileFilterToggle() {
 			<SlidersHorizontalIcon className="size-4" />
 			<span>Filters</span>
 			{activeFiltersCount > 0 && (
-				<span className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">
+				<span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
 					{activeFiltersCount}
 				</span>
 			)}
@@ -197,7 +196,7 @@ function CategoryCheckboxGroup(props: { id: string; name: string; stats: number 
 	return (
 		<Label
 			htmlFor={`category-${props.id}`}
-			className="flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none hover:bg-muted/50"
+			className="hover:bg-muted/50 flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none"
 		>
 			<div className="flex items-center gap-2">
 				<Checkbox id={`category-${props.id}`} checked={active} onCheckedChange={onChange} />
@@ -243,7 +242,7 @@ function WalletCheckboxGroup(props: {
 	return (
 		<Label
 			htmlFor={`wallet-${props.id}`}
-			className="flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none hover:bg-muted/50"
+			className="hover:bg-muted/50 flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none"
 		>
 			<div className="flex items-center gap-2">
 				<Checkbox id={`wallet-${props.id}`} checked={active} onCheckedChange={onChange} />
@@ -284,7 +283,7 @@ function RepeatCheckboxGroup(props: { id: RepeatSchema; name: string; stats: num
 	return (
 		<Label
 			htmlFor={`repeat-${props.id}`}
-			className="flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none hover:bg-muted/50"
+			className="hover:bg-muted/50 flex w-full items-center justify-between py-2 pr-4 pl-2 text-xs outline-none"
 		>
 			<div className="flex items-center gap-2">
 				<Checkbox id={`repeat-${props.id}`} checked={active} onCheckedChange={onChange} />
@@ -319,11 +318,11 @@ function ScrollAreaWithCondition({
 	if (enabled) {
 		return (
 			<ScrollArea className="h-[142px]">
-				<div className="divide-y divide-border/60">{children}</div>
+				<div className="divide-border/60 divide-y">{children}</div>
 			</ScrollArea>
 		);
 	}
-	return <div className="divide-y divide-border/60">{children}</div>;
+	return <div className="divide-border/60 divide-y">{children}</div>;
 }
 
 function ClearButton({ onClick }: { onClick: React.MouseEventHandler<HTMLButtonElement> }) {

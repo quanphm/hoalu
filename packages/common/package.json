@@ -1,8 +1,8 @@
 {
 	"name": "@hoalu/common",
-	"description": "Shared utilities for Hoalu server & client",
 	"version": "0.19.0",
 	"private": true,
+	"description": "Shared utilities for Hoalu server & client",
 	"type": "module",
 	"sideEffects": false,
 	"imports": {
@@ -23,8 +23,8 @@
 		"./utils": "./src/utils.ts"
 	},
 	"dependencies": {
-		"@standard-schema/spec": "^1.1.0",
 		"@hoalu/countries": "workspace:*",
+		"@standard-schema/spec": "^1.1.0",
 		"date-fns": "^4.1.0",
 		"nanoid": "^5.1.5",
 		"uuid": "^13.0.0",

@@ -1,8 +1,3 @@
-import { cors } from "hono/cors";
-import { openAPIRouteHandler } from "hono-openapi";
-
-import { authGuard, rateLimiter } from "@hoalu/furnace";
-
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { redis } from "#api/lib/redis.ts";
 // routes
@@ -13,6 +8,9 @@ import filesRoute from "#api/routes/files/index.ts";
 import tasksRoute from "#api/routes/tasks/index.ts";
 import walletsRoute from "#api/routes/wallets/index.ts";
 import workspacesRoute from "#api/routes/workspaces/index.ts";
+import { authGuard, rateLimiter } from "@hoalu/furnace";
+import { openAPIRouteHandler } from "hono-openapi";
+import { cors } from "hono/cors";
 
 export function apiModule() {
 	const app = createHonoInstance()

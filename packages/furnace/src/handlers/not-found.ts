@@ -1,6 +1,5 @@
-import type { NotFoundHandler } from "hono";
-
 import { HTTPStatus } from "@hoalu/common/http-status";
+import type { NotFoundHandler } from "hono";
 
 export const notFound: NotFoundHandler = (c) => {
 	return c.json(

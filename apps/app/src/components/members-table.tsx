@@ -1,8 +1,9 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { createColumnHelper, type Row } from "@tanstack/react-table";
-import { useState } from "react";
-
+import { DataTable } from "#app/components/data-table/index.tsx";
+import { UserAvatar } from "#app/components/user-avatar.tsx";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { useRemoveMember } from "#app/services/mutations.ts";
+import { getActiveMemberOptions } from "#app/services/query-options.ts";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -22,13 +23,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-
-import { DataTable } from "#app/components/data-table/index.tsx";
-import { UserAvatar } from "#app/components/user-avatar.tsx";
-import { useAuth } from "#app/hooks/use-auth.ts";
-import { authClient } from "#app/lib/auth-client.ts";
-import { useRemoveMember } from "#app/services/mutations.ts";
-import { getActiveMemberOptions } from "#app/services/query-options.ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { createColumnHelper, type Row } from "@tanstack/react-table";
+import { useState } from "react";
 
 type MemberSchema = {
 	id: string;
@@ -62,7 +60,7 @@ const columns = [
 			return (
 				<Badge
 					variant={value === "owner" ? "default" : "outline"}
-					className="pointer-events-none select-none gap-1.5 p-2 capitalize"
+					className="pointer-events-none gap-1.5 p-2 capitalize select-none"
 				>
 					{value === "owner" && "🔐 "}
 					{value}

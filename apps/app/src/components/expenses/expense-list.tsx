@@ -1,16 +1,14 @@
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
-
-import { datetime } from "@hoalu/common/datetime";
-import { Badge } from "@hoalu/ui/badge";
-import { cn } from "@hoalu/ui/utils";
-
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { datetime } from "@hoalu/common/datetime";
+import { Badge } from "@hoalu/ui/badge";
+import { cn } from "@hoalu/ui/utils";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 // Height of mobile bottom navigation bar (approx 80px)
 const MOBILE_NAV_HEIGHT = 80;
@@ -35,7 +33,7 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 	return (
 		<div
 			data-slot="expense-group-title"
-			className="flex items-center border-muted bg-muted py-2 pr-6 pl-3 text-xs"
+			className="border-muted bg-muted flex items-center py-2 pr-6 pl-3 text-xs"
 		>
 			<div className="flex items-center gap-2">
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
@@ -54,7 +52,7 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 
 function EmptyState() {
 	return (
-		<p className="mx-4 rounded-lg bg-muted p-4 text-center text-base text-muted-foreground">
+		<p className="bg-muted text-muted-foreground mx-4 rounded-lg p-4 text-center text-base">
 			No expenses found
 		</p>
 	);
@@ -75,7 +73,7 @@ function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 		<CurrencyValue
 			value={total}
 			currency={workspaceCurrency}
-			className="font-semibold text-destructive"
+			className="text-destructive font-semibold"
 		/>
 	);
 }
@@ -147,31 +145,39 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		onSelectExpense(id);
 	});
 
-	useHotkeys("j", () => {
-		if (!selectedExpense.id) return;
+	useHotkeys(
+		"j",
+		() => {
+			if (!selectedExpense.id) return;
 
-		const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
-		const nextIndex = currentIndex + 1;
-		const nextRowData = props.expenses[nextIndex];
+			const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
+			const nextIndex = currentIndex + 1;
+			const nextRowData = props.expenses[nextIndex];
 
-		if (!nextRowData) return;
+			if (!nextRowData) return;
 
-		onSelectExpenseEvent(nextRowData.id);
-		focusExpense(nextRowData.id);
-	}, [selectedExpense]);
+			onSelectExpenseEvent(nextRowData.id);
+			focusExpense(nextRowData.id);
+		},
+		[selectedExpense],
+	);
 
-	useHotkeys("k", () => {
-		if (!selectedExpense.id) return;
+	useHotkeys(
+		"k",
+		() => {
+			if (!selectedExpense.id) return;
 
-		const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
-		const prevIndex = currentIndex - 1;
-		const prevRowData = props.expenses[prevIndex];
+			const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
+			const prevIndex = currentIndex - 1;
+			const prevRowData = props.expenses[prevIndex];
 
-		if (!prevRowData) return;
+			if (!prevRowData) return;
 
-		onSelectExpenseEvent(prevRowData.id);
-		focusExpense(prevRowData.id);
-	}, [selectedExpense.id, props.expenses]);
+			onSelectExpenseEvent(prevRowData.id);
+			focusExpense(prevRowData.id);
+		},
+		[selectedExpense.id, props.expenses],
+	);
 
 	useEffect(() => {
 		return () => {

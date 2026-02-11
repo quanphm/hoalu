@@ -1,5 +1,5 @@
-import { createMiddleware } from "hono/factory";
 import { rateLimiter as honoRateLimiter, type Store } from "hono-rate-limiter";
+import { createMiddleware } from "hono/factory";
 import { RedisStore } from "rate-limit-redis";
 
 export const RATE_LIMIT_MAX_CONNECTIONS = 10000;

@@ -42,7 +42,7 @@ function PopoverContent({
 				<PopoverPrimitive.Popup
 					data-slot="popover-popup"
 					className={cn(
-						"data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 origin-[var(--transform-origin)] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden transition-[transform,scale,opacity] data-[closed]:animate-out data-[open]:animate-in",
+						"data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground data-[closed]:animate-out data-[open]:animate-in z-50 w-72 origin-[var(--transform-origin)] rounded-md border p-4 shadow-md outline-hidden transition-[transform,scale,opacity]",
 						className,
 					)}
 					{...props}
@@ -56,7 +56,7 @@ function PopoverArrow(props: React.ComponentProps<typeof PopoverPrimitive.Arrow>
 	return (
 		<PopoverPrimitive.Arrow
 			data-slot="popover-arrow"
-			className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=top]:bottom-[-8px] data-[side=right]:left-[-13px] data-[side=left]:rotate-90 data-[side=right]:-rotate-90 data-[side=top]:rotate-180"
+			className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180"
 			{...props}
 		>
 			<ArrowSvg />

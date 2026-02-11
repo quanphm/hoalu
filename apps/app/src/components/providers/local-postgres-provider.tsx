@@ -1,11 +1,10 @@
 import { PGlite } from "@electric-sql/pglite";
-import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
 import { PGliteProvider } from "@electric-sql/pglite-react";
-// import { electricSync } from "@electric-sql/pglite-sync";
-import { useEffect, useState } from "react";
-
+import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { LoaderCircleIcon } from "@hoalu/icons/lucide";
+// import { electricSync } from "@electric-sql/pglite-sync";
+import { useEffect, useState } from "react";
 
 let syncStarted = false;
 
@@ -56,10 +55,10 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 
 	if (!pgForProvider) {
 		return (
-			<div className="flex h-screen w-screen flex-col items-center justify-center gap-4 bg-background">
-				<LoaderCircleIcon className="size-8 animate-spin text-foreground" />
+			<div className="bg-background flex h-screen w-screen flex-col items-center justify-center gap-4">
+				<LoaderCircleIcon className="text-foreground size-8 animate-spin" />
 				<div className="flex items-center gap-2">
-					<p className="flex gap-2 text-muted-foreground">Starting</p>
+					<p className="text-muted-foreground flex gap-2">Starting</p>
 					{"-"}
 					<p className="text-muted-foreground">v{import.meta.env.PUBLIC_APP_VERSION}</p>
 				</div>

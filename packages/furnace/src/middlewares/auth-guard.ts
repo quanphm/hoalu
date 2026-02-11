@@ -1,8 +1,7 @@
+import { HTTPStatus } from "@hoalu/common/http-status";
 import type { Env } from "hono";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-
-import { HTTPStatus } from "@hoalu/common/http-status";
 
 type AuthEnv = {
 	Variables: {

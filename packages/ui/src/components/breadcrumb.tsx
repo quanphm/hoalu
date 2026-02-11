@@ -1,5 +1,4 @@
 import { useRender } from "@base-ui/react/use-render";
-
 import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
 
 import { cn, mergeProps } from "../utils";
@@ -13,7 +12,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
 		<ol
 			data-slot="breadcrumb-list"
 			className={cn(
-				"flex flex-wrap items-center gap-1.5 break-words text-muted-foreground text-sm sm:gap-2.5",
+				"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
 				className,
 			)}
 			{...props}
@@ -44,7 +43,7 @@ function BreadcrumbLink({
 		props: mergeProps(
 			{
 				"data-slot": "breadcrumb-link",
-				className: cn("transition-colors hover:text-foreground", className),
+				className: cn("hover:text-foreground transition-colors", className),
 			},
 			props,
 		),
@@ -53,13 +52,12 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
 	return (
-		// biome-ignore lint/a11y/useFocusableInteractive: quick fix for accessibility
 		<span
 			data-slot="breadcrumb-page"
 			role="link"
 			aria-disabled="true"
 			aria-current="page"
-			className={cn("font-normal text-foreground", className)}
+			className={cn("text-foreground font-normal", className)}
 			{...props}
 		/>
 	);

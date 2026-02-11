@@ -1,11 +1,9 @@
-import { useAtomValue } from "jotai";
-
-import { Card, CardContent } from "@hoalu/ui/card";
-
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
+import { Card, CardContent } from "@hoalu/ui/card";
+import { useAtomValue } from "jotai";
 
 interface ExpenseStatsRowProps {
 	expenses: SyncedExpense[];
@@ -39,8 +37,8 @@ export function ExpenseStatsRow(props: ExpenseStatsRowProps) {
 				{stats.map((stat) => {
 					return (
 						<div key={stat.title} className="flex flex-col gap-2">
-							<span className="font-medium text-muted-foreground text-sm">{stat.title}</span>
-							<span className="font-bold text-2xl">{stat.value}</span>
+							<span className="text-muted-foreground text-sm font-medium">{stat.title}</span>
+							<span className="text-2xl font-bold">{stat.value}</span>
 						</div>
 					);
 				})}

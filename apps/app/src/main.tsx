@@ -1,13 +1,13 @@
-import { QueryClientProvider } from "@tanstack/react-query";
-import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/react-router";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-
 import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boundary.tsx";
 import { NotFound } from "#app/components/not-found.tsx";
 import { UiProvider } from "#app/components/providers/ui-provider.tsx";
 import { verifyEnv } from "#app/lib/env.ts";
 import { queryClient } from "#app/lib/query-client.ts";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createRouter as createTanStackRouter, RouterProvider } from "@tanstack/react-router";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
 import { routeTree } from "./routeTree.gen";
 
 verifyEnv();

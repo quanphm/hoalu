@@ -1,29 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { useEffect } from "react";
-
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
-import { CalendarIcon } from "@hoalu/icons/tabler";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
-import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { Calendar } from "@hoalu/ui/calendar";
-import {
-	DialogClose,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogPopup,
-	DialogTitle,
-} from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
-import { useLocalStorage } from "@hoalu/ui/hooks";
-import { Input } from "@hoalu/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-
 import {
 	createExpenseDialogAtom,
 	deleteExpenseDialogAtom,
@@ -46,6 +20,30 @@ import {
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon } from "@hoalu/icons/tabler";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
+import { Calendar } from "@hoalu/ui/calendar";
+import {
+	DialogClose,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogPopup,
+	DialogTitle,
+} from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useLocalStorage } from "@hoalu/ui/hooks";
+import { Input } from "@hoalu/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtom, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { useEffect } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
@@ -236,9 +234,9 @@ function CreateExpenseForm() {
 					<Accordion className="col-span-12 w-full">
 						<AccordionItem
 							value="advanced"
-							className="relative overflow-auto rounded-md border bg-background outline-none last:border-b has-focus-visible:z-10 has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
+							className="bg-background has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative overflow-auto rounded-md border outline-none last:border-b has-focus-visible:z-10 has-focus-visible:ring-[3px]"
 						>
-							<AccordionTrigger className="rounded-none bg-muted px-4 py-2">More</AccordionTrigger>
+							<AccordionTrigger className="bg-muted rounded-none px-4 py-2">More</AccordionTrigger>
 							<AccordionContent>
 								<FieldGroup className="grid grid-cols-12 gap-4 px-4 py-4">
 									<div className="col-span-5 flex flex-col gap-4">
@@ -469,7 +467,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 				</FieldGroup>
 				<Field
 					orientation="horizontal"
-					className="sticky bottom-0 w-full justify-end bg-card px-4 py-2"
+					className="bg-card sticky bottom-0 w-full justify-end px-4 py-2"
 				>
 					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>
@@ -496,7 +494,7 @@ export function ExpenseCalendar() {
 				render={
 					<Button
 						variant="outline"
-						className="h-auto w-full justify-start font-normal text-xs leading-none"
+						className="h-auto w-full justify-start text-xs leading-none font-normal"
 					/>
 				}
 			>

@@ -1,15 +1,14 @@
-import { useAtomValue } from "jotai";
-import { memo } from "react";
-
-import { Badge } from "@hoalu/ui/badge";
-import { cn } from "@hoalu/ui/utils";
-
 import { selectedExpenseAtom } from "#app/atoms/index.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useLayoutMode } from "#app/hooks/use-layout-mode.ts";
+import { Badge } from "@hoalu/ui/badge";
+import { cn } from "@hoalu/ui/utils";
+import { useAtomValue } from "jotai";
+import { memo } from "react";
+
 import { WalletBadge } from "../wallets/wallet-badge";
 
 interface ExpenseContentProps extends SyncedExpense {
@@ -41,9 +40,9 @@ function ExpenseContent(props: ExpenseContentProps) {
 		<div
 			id={props.id}
 			className={cn(
-				"flex items-start justify-between gap-4 border border-transparent border-b-border/50 text-sm outline-none hover:bg-muted/60",
-				"focus-visible:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-				selectedRow.id === props.id && "bg-muted/80 ring-2 ring-ring ring-inset",
+				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border border-transparent text-sm outline-none",
+				"focus-visible:bg-muted/80 focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
+				selectedRow.id === props.id && "bg-muted/80 ring-ring ring-2 ring-inset",
 				// Mobile: compact items, Desktop: normal padding
 				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-6 pl-3",
 			)}
@@ -58,7 +57,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			<div className="flex w-2/3 flex-col gap-1">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="truncate text-muted-foreground text-xs leading-relaxed">
+					<div className="text-muted-foreground truncate text-xs leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}

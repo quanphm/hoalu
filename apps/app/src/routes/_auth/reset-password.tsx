@@ -1,13 +1,11 @@
-import { createFileRoute, type ErrorComponentProps, Link } from "@tanstack/react-router";
-import * as z from "zod";
-
-import { ArrowLeft } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { toastManager } from "@hoalu/ui/toast";
-
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { authClient } from "#app/lib/auth-client.ts";
+import { ArrowLeft } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { toastManager } from "@hoalu/ui/toast";
+import { createFileRoute, type ErrorComponentProps, Link } from "@tanstack/react-router";
+import * as z from "zod";
 
 const searchSchema = z.object({
 	token: z.optional(z.string().min(1)),
@@ -62,7 +60,7 @@ function ResetPasswordRequest() {
 		<ContentCard
 			title="Reset password"
 			description="Send a request to reset password"
-			className="border-transparent bg-background"
+			className="bg-background border-transparent"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>
@@ -85,7 +83,7 @@ function ResetPasswordRequest() {
 
 					<Link
 						to="/login"
-						className="m-auto inline-flex max-w-fit items-center text-muted-foreground text-sm"
+						className="text-muted-foreground m-auto inline-flex max-w-fit items-center text-sm"
 					>
 						<ArrowLeft className="mr-2 size-3" />
 						Back
@@ -134,7 +132,7 @@ function SetNewPassword(props: { token: string }) {
 		<ContentCard
 			title="Reset password"
 			description="Create new password for your account"
-			className="border-transparent bg-background"
+			className="bg-background border-transparent"
 			content={
 				<div className="grid gap-4">
 					<form.AppForm>

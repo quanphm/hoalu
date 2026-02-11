@@ -1,5 +1,3 @@
-import { useId } from "react";
-
 import { ExternalLinkIcon } from "@hoalu/icons/lucide";
 import {
 	SidebarGroup,
@@ -8,6 +6,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
+import { useId } from "react";
 
 export function NavDocumentation() {
 	const reactId = useId();
