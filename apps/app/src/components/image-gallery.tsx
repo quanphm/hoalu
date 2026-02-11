@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { Dialog, DialogContent } from "@hoalu/ui/dialog";
+import { useState } from "react";
 
 export function ImageGallery(props: {
 	data: { name: string; description: string | null; presignedUrl: string }[];
@@ -19,7 +18,7 @@ export function ImageGallery(props: {
 						key={image.name}
 						role="button"
 						tabIndex={0}
-						className="group relative aspect-square cursor-pointer overflow-hidden rounded-md border bg-muted/50 transition-all hover:border-primary/50 hover:shadow-md"
+						className="group bg-muted/50 hover:border-primary/50 relative aspect-square cursor-pointer overflow-hidden rounded-md border transition-all hover:shadow-md"
 						onClick={() => setSelectedImage(image)}
 						onKeyUp={() => setSelectedImage(image)}
 					>
@@ -30,7 +29,7 @@ export function ImageGallery(props: {
 						/>
 						{image.description && (
 							<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
-								<p className="truncate text-white text-xs">{image.description}</p>
+								<p className="truncate text-xs text-white">{image.description}</p>
 							</div>
 						)}
 					</div>
@@ -48,7 +47,7 @@ export function ImageGallery(props: {
 									className="w-full rounded-lg"
 								/>
 								{selectedImage.description && (
-									<p className="mt-4 text-muted-foreground text-sm">{selectedImage.description}</p>
+									<p className="text-muted-foreground mt-4 text-sm">{selectedImage.description}</p>
 								)}
 							</>
 						)}

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { CheckIcon, ChevronDownIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -12,6 +10,7 @@ import {
 } from "@hoalu/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { cn } from "@hoalu/ui/utils";
+import { useState } from "react";
 
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
@@ -40,8 +39,8 @@ export function SelectWithSearchField(props: Props) {
 								role="combobox"
 								aria-expanded={open}
 								className={cn(
-									"w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
-									"focus:border-ring focus:ring-[3px] focus:ring-ring/20",
+									"border-input bg-background hover:bg-background focus-visible:border-ring focus-visible:ring-ring/20 w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:ring-[3px]",
+									"focus:border-ring focus:ring-ring/20 focus:ring-[3px]",
 								)}
 							/>
 						}
@@ -52,12 +51,12 @@ export function SelectWithSearchField(props: Props) {
 						</span>
 						<ChevronDownIcon
 							aria-hidden="true"
-							className="size-4 shrink-0 text-muted-foreground/80"
+							className="text-muted-foreground/80 size-4 shrink-0"
 						/>
 					</PopoverTrigger>
 				</FieldControl>
 				<PopoverContent
-					className="w-full min-w-[var(--anchor-width)] border-input p-0"
+					className="border-input w-full min-w-[var(--anchor-width)] p-0"
 					align="start"
 				>
 					<Command>

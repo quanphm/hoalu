@@ -1,10 +1,8 @@
-import { cors } from "hono/cors";
-
-import { rateLimiter } from "@hoalu/furnace";
-
 import { auth } from "#api/lib/auth.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { redis } from "#api/lib/redis.ts";
+import { rateLimiter } from "@hoalu/furnace";
+import { cors } from "hono/cors";
 
 export function authModule() {
 	const app = createHonoInstance()

@@ -23,8 +23,8 @@ export default function VerifyEmail({ url, name }: Props) {
 			<Preview>Verify your new email address with Hoalu. Clicking the link bellow.</Preview>
 			<Tailwind>
 				<Body className="mx-auto my-auto bg-white px-2 font-sans">
-					<Container className="mx-auto my-10 max-w-[465px] border border-[#eaeaea] border-solid px-5 py-3">
-						<Heading className="my-5 text-center font-normal text-[24px]">
+					<Container className="mx-auto my-10 max-w-[465px] border border-solid border-[#eaeaea] px-5 py-3">
+						<Heading className="my-5 text-center text-[24px] font-normal">
 							Verify your email address
 						</Heading>
 						<Text>

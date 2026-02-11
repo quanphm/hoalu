@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-
+import { useAuth } from "#app/hooks/use-auth.ts";
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import {
 	ClearDayIcon,
@@ -7,8 +6,7 @@ import {
 	PartlyCloudyNightIcon,
 	StarryNightIcon,
 } from "@hoalu/icons/meteocons";
-
-import { useAuth } from "#app/hooks/use-auth.ts";
+import { useEffect, useState } from "react";
 
 export function Greeting() {
 	const { user } = useAuth();
@@ -50,10 +48,10 @@ export function Greeting() {
 
 	return (
 		<div className="space-y-2">
-			<p className="text-base text-muted-foreground tracking-wide">
+			<p className="text-muted-foreground text-base tracking-wide">
 				{icon} {datetime.format(today, "EEEE, d MMM HH:mm")}
 			</p>
-			<p className="font-semibold text-xl leading-none">
+			<p className="text-xl leading-none font-semibold">
 				{message}, {user?.name}
 			</p>
 		</div>

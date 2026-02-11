@@ -18,9 +18,8 @@ export const workspaceClient = <O extends WorkspaceClientOptions>(options?: O) =
 	const $listWorkspace = atom<boolean>(false);
 
 	type DefaultStatements = typeof defaultStatements;
-	type Statements = O["ac"] extends AccessControl<infer S>
-		? S & DefaultStatements
-		: DefaultStatements;
+	type Statements =
+		O["ac"] extends AccessControl<infer S> ? S & DefaultStatements : DefaultStatements;
 
 	const roles = {
 		admin: adminAc,

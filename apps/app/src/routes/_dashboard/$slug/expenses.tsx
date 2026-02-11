@@ -1,12 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useAtom, useAtomValue } from "jotai";
-import { useDeferredValue, useEffect } from "react";
-import * as z from "zod";
-
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import type { RepeatSchema } from "@hoalu/common/schema";
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
-
 import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
@@ -30,6 +21,13 @@ import {
 } from "#app/components/layouts/section.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { normalizeSearch } from "#app/helpers/normalize-search.ts";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import type { RepeatSchema } from "@hoalu/common/schema";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
+import { createFileRoute } from "@tanstack/react-router";
+import { useAtom, useAtomValue } from "jotai";
+import { useDeferredValue, useEffect } from "react";
+import * as z from "zod";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
@@ -129,7 +127,7 @@ function RouteComponent() {
 							<ExpenseFilter expenses={filteredExpenses} categories={categories} />
 						</div>
 						<div className="shrink-0 border-t p-4">
-							<DrawerClose className="w-full rounded-md bg-primary py-2 text-primary-foreground">
+							<DrawerClose className="bg-primary text-primary-foreground w-full rounded-md py-2">
 								Apply Filters
 							</DrawerClose>
 						</div>

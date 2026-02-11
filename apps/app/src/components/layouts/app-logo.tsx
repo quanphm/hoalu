@@ -1,7 +1,6 @@
-import { Link } from "@tanstack/react-router";
-
 import { BotIcon } from "@hoalu/icons/lucide";
 import { SidebarMenuButton } from "@hoalu/ui/sidebar";
+import { Link } from "@tanstack/react-router";
 
 export function AppLogo() {
 	return (

@@ -1,12 +1,10 @@
-import { cors } from "hono/cors";
-
-import { HTTPStatus } from "@hoalu/common/http-status";
-import { authGuard } from "@hoalu/furnace";
-
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { prepareElectricUrl, proxyElectricRequest } from "#api/lib/electric.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { authGuard } from "@hoalu/furnace";
+import { cors } from "hono/cors";
 
 export function syncModule() {
 	const app = createHonoInstance()

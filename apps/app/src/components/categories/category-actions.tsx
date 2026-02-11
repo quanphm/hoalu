@@ -1,20 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-
-import type { ColorSchema } from "@hoalu/common/schema";
-import { Trash2Icon } from "@hoalu/icons/lucide";
-import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import {
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogPopup,
-	DialogTitle,
-} from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
-import { cn } from "@hoalu/ui/utils";
-
 import {
 	createCategoryDialogAtom,
 	deleteCategoryDialogAtom,
@@ -28,6 +11,21 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CategoryFormSchema } from "#app/lib/schema.ts";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
 import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
+import type { ColorSchema } from "@hoalu/common/schema";
+import { Trash2Icon } from "@hoalu/icons/lucide";
+import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
+import {
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogPopup,
+	DialogTitle,
+} from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
+import { cn } from "@hoalu/ui/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);

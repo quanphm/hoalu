@@ -1,7 +1,7 @@
+import { extensions, Toolbar } from "#app/components/tiptap.tsx";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { useEffect } from "react";
 
-import { extensions, Toolbar } from "#app/components/tiptap.tsx";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -33,7 +33,7 @@ export function TiptapField(props: Props) {
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
-			<div className="relative overflow-hidden rounded-lg border border-input bg-background focus-within:border-ring focus-within:outline-none focus-within:ring-[3px] focus-within:ring-ring/20">
+			<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 relative overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
 				<Toolbar editor={editor} />
 				<FieldControl>
 					<EditorContent editor={editor} onBlur={field.handleBlur} />

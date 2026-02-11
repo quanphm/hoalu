@@ -43,22 +43,22 @@ When creating tasks/scripts/pipelines, you MUST:
 ```json
 // turbo.json - register tasks
 {
-  "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-    "lint": {},
-    "test": { "dependsOn": ["build"] }
-  }
+	"tasks": {
+		"build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+		"lint": {},
+		"test": { "dependsOn": ["build"] }
+	}
 }
 ```
 
 ```json
 // Root package.json - ONLY delegates, no task logic
 {
-  "scripts": {
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
-  }
+	"scripts": {
+		"build": "turbo run build",
+		"lint": "turbo run lint",
+		"test": "turbo run test"
+	}
 }
 ```
 
@@ -66,11 +66,11 @@ When creating tasks/scripts/pipelines, you MUST:
 // DO NOT DO THIS - defeats parallelization
 // Root package.json
 {
-  "scripts": {
-    "build": "cd apps/web && next build && cd ../api && tsc",
-    "lint": "eslint apps/ packages/",
-    "test": "vitest"
-  }
+	"scripts": {
+		"build": "cd apps/web && next build && cd ../api && tsc",
+		"lint": "eslint apps/ packages/",
+		"test": "vitest"
+	}
 }
 ```
 
@@ -83,9 +83,9 @@ Root Tasks (`//#taskname`) are ONLY for tasks that truly cannot exist in package
 ```json
 // package.json - ALWAYS "turbo run"
 {
-  "scripts": {
-    "build": "turbo run build"
-  }
+	"scripts": {
+		"build": "turbo run build"
+	}
 }
 ```
 
@@ -296,10 +296,10 @@ Scripts like `prebuild` that manually build other packages bypass Turborepo's de
 ```json
 // WRONG - manually building dependencies
 {
-  "scripts": {
-    "prebuild": "cd ../../packages/types && bun run build && cd ../utils && bun run build",
-    "build": "next build"
-  }
+	"scripts": {
+		"prebuild": "cd ../../packages/types && bun run build && cd ../utils && bun run build",
+		"build": "next build"
+	}
 }
 ```
 
@@ -542,11 +542,11 @@ When `incremental: true` in tsconfig.json, `tsc --noEmit` writes `.tsbuildinfo` 
 ```json
 // If tsconfig has incremental: true, tsc --noEmit produces cache files
 {
-  "tasks": {
-    "typecheck": {
-      "outputs": ["node_modules/.cache/tsbuildinfo.json"] // or wherever tsBuildInfoFile points
-    }
-  }
+	"tasks": {
+		"typecheck": {
+			"outputs": ["node_modules/.cache/tsbuildinfo.json"] // or wherever tsBuildInfoFile points
+		}
+	}
 }
 ```
 
@@ -560,20 +560,20 @@ To determine correct outputs for TypeScript tasks:
 
 ```json
 {
-  "tasks": {
-    // ^build = run build in DEPENDENCIES first (other packages this one imports)
-    "build": {
-      "dependsOn": ["^build"]
-    },
-    // build (no ^) = run build in SAME PACKAGE first
-    "test": {
-      "dependsOn": ["build"]
-    },
-    // pkg#task = specific package's task
-    "deploy": {
-      "dependsOn": ["web#build"]
-    }
-  }
+	"tasks": {
+		// ^build = run build in DEPENDENCIES first (other packages this one imports)
+		"build": {
+			"dependsOn": ["^build"]
+		},
+		// build (no ^) = run build in SAME PACKAGE first
+		"test": {
+			"dependsOn": ["build"]
+		},
+		// pkg#task = specific package's task
+		"deploy": {
+			"dependsOn": ["web#build"]
+		}
+	}
 }
 ```
 
@@ -722,17 +722,17 @@ import { Button } from "@repo/ui/button";
 
 ```json
 {
-  "$schema": "https://turborepo.dev/schema.v2.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    }
-  }
+	"$schema": "https://turborepo.dev/schema.v2.json",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		}
+	}
 }
 ```
 
@@ -777,17 +777,17 @@ A `dev` task with `dependsOn: ["^dev"]` and `persistent: false` in root turbo.js
 
 ```json
 {
-  "tasks": {
-    "prepare": {
-      "dependsOn": ["^prepare"],
-      "outputs": ["dist/**"]
-    },
-    "dev": {
-      "dependsOn": ["prepare"],
-      "cache": false,
-      "persistent": true
-    }
-  }
+	"tasks": {
+		"prepare": {
+			"dependsOn": ["^prepare"],
+			"outputs": ["dist/**"]
+		},
+		"dev": {
+			"dependsOn": ["prepare"],
+			"cache": false,
+			"persistent": true
+		}
+	}
 }
 ```
 
@@ -808,10 +808,10 @@ Some tasks can run in parallel (don't need built output from dependencies) but m
 
 ```json
 {
-  "tasks": {
-    "transit": { "dependsOn": ["^transit"] },
-    "my-task": { "dependsOn": ["transit"] }
-  }
+	"tasks": {
+		"transit": { "dependsOn": ["^transit"] },
+		"my-task": { "dependsOn": ["transit"] }
+	}
 }
 ```
 
@@ -823,15 +823,15 @@ The `transit` task creates dependency relationships without matching any actual 
 
 ```json
 {
-  "globalEnv": ["NODE_ENV"],
-  "globalDependencies": [".env"],
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "env": ["API_URL", "DATABASE_URL"]
-    }
-  }
+	"globalEnv": ["NODE_ENV"],
+	"globalDependencies": [".env"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"],
+			"env": ["API_URL", "DATABASE_URL"]
+		}
+	}
 }
 ```
 

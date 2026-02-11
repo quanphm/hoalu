@@ -1,9 +1,3 @@
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { useEffect } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
-
 import {
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
@@ -12,6 +6,11 @@ import {
 	draftExpenseAtom,
 } from "#app/atoms/index.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { useEffect } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

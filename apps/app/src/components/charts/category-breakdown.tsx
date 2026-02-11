@@ -1,7 +1,14 @@
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useState } from "react";
-
+import {
+	customDateRangeAtom,
+	expenseCategoryFilterAtom,
+	selectDateRangeAtom,
+} from "#app/atoms/filters.ts";
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { filterDataByRange } from "#app/helpers/date-range.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -14,18 +21,10 @@ import {
 } from "@hoalu/ui/card";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useState } from "react";
 
-import {
-	customDateRangeAtom,
-	expenseCategoryFilterAtom,
-	selectDateRangeAtom,
-} from "#app/atoms/filters.ts";
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
-import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CurrencyValue } from "../currency-value";
 
 const TOP_N_CATEGORY = 5;
@@ -191,7 +190,7 @@ function CategoryListBreakdown(props: {
 	};
 
 	return (
-		<div className="divide-y divide-border/60">
+		<div className="divide-border/60 divide-y">
 			{props.data.map((data) => {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
@@ -202,7 +201,7 @@ function CategoryListBreakdown(props: {
 								variant="link"
 								onClick={() => handleClick(data.id)}
 								className={cn(
-									"h-auto p-0 text-foreground text-sm",
+									"text-foreground h-auto p-0 text-sm",
 									data.id !== "others" && "underline decoration-dotted underline-offset-3",
 								)}
 							>
@@ -213,7 +212,7 @@ function CategoryListBreakdown(props: {
 							<CurrencyValue
 								value={data.value}
 								currency={props.currency}
-								className="font-medium text-sm"
+								className="text-sm font-medium"
 							/>
 							<div className="text-muted-foreground text-xs">{percentage}%</div>
 						</div>

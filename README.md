@@ -29,7 +29,7 @@
 | [@hoalu/furnace](packages/furnace)     | Hono handlers & utils for `@hoalu/api`                                                               |
 | [@hoalu/email](packages/email)         | Email templates                                                                                      |
 | [@hoalu/icons](packages/icons)         | Icon library                                                                                         |
-| [@hoalu/themes](packages/themes)           | Common CSS styling & available themes                                                                |
+| [@hoalu/themes](packages/themes)       | Common CSS styling & available themes                                                                |
 | [@hoalu/ui](packages/ui)               | [Base UI](https://base-ui.com/react/overview/quick-start)                                            |
 | [@hoalu/tsconfig](packages/tsconfig)   | Typescript configurations                                                                            |
 
@@ -54,6 +54,7 @@ caddy run
 # Start development (API + App)
 bun dev
 ```
+
 - Run `bun install` & `bun dev`
 
 ## Deployment

@@ -1,13 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-
-import { Button } from "@hoalu/ui/button";
-import { toastManager } from "@hoalu/ui/toast";
-
 import { ContentCard, ErrorCard } from "#app/components/cards.tsx";
 import { WorkspaceLogo } from "#app/components/workspace.tsx";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { authClient } from "#app/lib/auth-client.ts";
+import { Button } from "@hoalu/ui/button";
+import { toastManager } from "@hoalu/ui/toast";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/invite/$id/accept")({
 	loader: async ({ params: { id } }) => {

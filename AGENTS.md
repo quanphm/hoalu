@@ -204,24 +204,24 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { workspacePlugin } from "@hoalu/auth/plugins/workspace";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: "pg",
-  }),
-  plugins: [
-    workspacePlugin({
-      // Custom workspace management
-      createWorkspaceOnSignup: true,
-      roleHierarchy: ["owner", "admin", "member"],
-    }),
-  ],
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
-  },
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-  },
+	database: drizzleAdapter(db, {
+		provider: "pg",
+	}),
+	plugins: [
+		workspacePlugin({
+			// Custom workspace management
+			createWorkspaceOnSignup: true,
+			roleHierarchy: ["owner", "admin", "member"],
+		}),
+	],
+	session: {
+		expiresIn: 60 * 60 * 24 * 7, // 7 days
+		updateAge: 60 * 60 * 24, // 1 day
+	},
+	emailAndPassword: {
+		enabled: true,
+		requireEmailVerification: true,
+	},
 });
 ```
 
@@ -231,7 +231,7 @@ export const auth = betterAuth({
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.PUBLIC_API_URL,
+	baseURL: import.meta.env.PUBLIC_API_URL,
 });
 
 export const { useSession, signIn, signOut } = authClient;
@@ -241,26 +241,21 @@ export const { useSession, signIn, signOut } = authClient;
 
 ```typescript
 export const workspaceMember = createMiddleware(async (c, next) => {
-  const session = c.var.session;
-  const { workspaceId } = c.var.workspace;
+	const session = c.var.session;
+	const { workspaceId } = c.var.workspace;
 
-  const member = await db
-    .select()
-    .from(memberTable)
-    .where(
-      and(
-        eq(memberTable.workspaceId, workspaceId),
-        eq(memberTable.userId, session.userId),
-      ),
-    )
-    .limit(1);
+	const member = await db
+		.select()
+		.from(memberTable)
+		.where(and(eq(memberTable.workspaceId, workspaceId), eq(memberTable.userId, session.userId)))
+		.limit(1);
 
-  if (!member.length) {
-    return c.json({ error: "Not a workspace member" }, 403);
-  }
+	if (!member.length) {
+		return c.json({ error: "Not a workspace member" }, 403);
+	}
 
-  c.set("member", member[0]);
-  await next();
+	c.set("member", member[0]);
+	await next();
 });
 ```
 
@@ -278,11 +273,9 @@ export const workspaceMember = createMiddleware(async (c, next) => {
 ```typescript
 // hooks/use-workspace.ts
 export function useWorkspace() {
-  const params = Route.useParams(); // TanStack Router
-  const { data: workspace } = useSuspenseQuery(
-    getWorkspaceQueryOptions(params.slug),
-  );
-  return workspace;
+	const params = Route.useParams(); // TanStack Router
+	const { data: workspace } = useSuspenseQuery(getWorkspaceQueryOptions(params.slug));
+	return workspace;
 }
 ```
 
@@ -313,9 +306,9 @@ export function useWorkspace() {
 ```json
 // packages/common/package.json
 {
-  "imports": {
-    "#common/*": "./src/*"
-  }
+	"imports": {
+		"#common/*": "./src/*"
+	}
 }
 ```
 
@@ -345,8 +338,8 @@ Always include `.ts` or `.tsx` extensions in imports:
 
 ```typescript
 const schema = z.object({
-  amount: z.coerce.number(), // "123" → 123
-  quantity: z.coerce.number().int(), // "5" → 5
+	amount: z.coerce.number(), // "123" → 123
+	quantity: z.coerce.number().int(), // "5" → 5
 });
 
 schema.parse({ amount: "123.45", quantity: "5" });
@@ -379,11 +372,9 @@ export function Button({ children, variant = "primary", onClick }: ButtonProps) 
 
 ```typescript
 export function useExpenses(workspaceId: string) {
-  const { data, isLoading, error } = useQuery(
-    getExpensesQueryOptions(workspaceId),
-  );
+	const { data, isLoading, error } = useQuery(getExpensesQueryOptions(workspaceId));
 
-  return { expenses: data ?? [], isLoading, error };
+	return { expenses: data ?? [], isLoading, error };
 }
 ```
 
@@ -391,7 +382,7 @@ export function useExpenses(workspaceId: string) {
 
 ```typescript
 export function useExpenseLiveQuery() {
-  // ... implementation
+	// ... implementation
 }
 
 // Export inferred types
@@ -404,13 +395,13 @@ export type ExpenseClient = ExpensesClient[number];
 ```typescript
 // Define schema
 export const ExpenseFormSchema = z.object({
-  title: z.string().min(1),
-  amount: z.coerce.number(), // Coerce string to number
-  currency: CurrencySchema,
-  date: z.iso.datetime(),
-  walletId: z.uuidv7(),
-  categoryId: z.uuidv7(),
-  repeat: RepeatSchema,
+	title: z.string().min(1),
+	amount: z.coerce.number(), // Coerce string to number
+	currency: CurrencySchema,
+	date: z.iso.datetime(),
+	walletId: z.uuidv7(),
+	categoryId: z.uuidv7(),
+	repeat: RepeatSchema,
 });
 
 // Infer TypeScript type
@@ -428,14 +419,12 @@ import type { honoClient } from "#app/lib/api-client.ts";
 
 // Infer response type
 export type ExpenseSchema = InferResponseType<
-  typeof honoClient.api.expenses.$get,
-  200
+	typeof honoClient.api.expenses.$get,
+	200
 >["data"][number];
 
 // Infer request type
-export type ExpensePostSchema = InferRequestType<
-  typeof honoClient.api.expenses.$post
->["json"];
+export type ExpensePostSchema = InferRequestType<typeof honoClient.api.expenses.$post>["json"];
 ```
 
 ### Component Patterns

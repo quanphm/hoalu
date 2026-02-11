@@ -1,3 +1,7 @@
+import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
+import { cn } from "@hoalu/ui/utils";
 import { useLayoutEffect } from "@tanstack/react-router";
 import {
 	type ColumnDef,
@@ -16,11 +20,6 @@ import {
 } from "@tanstack/react-table";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-
-import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
-import { cn } from "@hoalu/ui/utils";
 
 import { DataTablePagination } from "./data-table-pagination";
 
@@ -193,9 +192,13 @@ export function DataTable<T extends TableRowData>({
 		[],
 	);
 
-	useHotkeys("esc", () => {
-		setRowSelection({});
-	}, []);
+	useHotkeys(
+		"esc",
+		() => {
+			setRowSelection({});
+		},
+		[],
+	);
 
 	useLayoutEffect(() => {
 		if (!tableContainerRef.current) {
@@ -290,9 +293,9 @@ export function DataTable<T extends TableRowData>({
 													{flexRender(cell.column.columnDef.cell, cell.getContext())} (
 													{row.subRows.length})
 													{row.getIsExpanded() ? (
-														<ChevronDownIcon size={12} className="ml-2 text-muted-foreground/80" />
+														<ChevronDownIcon size={12} className="text-muted-foreground/80 ml-2" />
 													) : (
-														<ChevronRightIcon size={12} className="ml-2 text-muted-foreground/80" />
+														<ChevronRightIcon size={12} className="text-muted-foreground/80 ml-2" />
 													)}
 												</Button>
 											) : cell.getIsAggregated() ? (

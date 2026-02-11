@@ -1,3 +1,10 @@
+import {
+	PG_ENUM_COLOR,
+	PG_ENUM_PRIORITY,
+	PG_ENUM_REPEAT,
+	PG_ENUM_TASK_STATUS,
+	PG_ENUM_WALLET_TYPE,
+} from "@hoalu/common/enums";
 import { sql } from "drizzle-orm";
 import {
 	boolean,
@@ -15,14 +22,6 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-
-import {
-	PG_ENUM_COLOR,
-	PG_ENUM_PRIORITY,
-	PG_ENUM_REPEAT,
-	PG_ENUM_TASK_STATUS,
-	PG_ENUM_WALLET_TYPE,
-} from "@hoalu/common/enums";
 
 /**
  * ----------------
@@ -240,7 +239,9 @@ export const expense = pgTable(
 		id: uuid("id").primaryKey(),
 		title: text("title").notNull(),
 		description: text("description"),
-		date: timestamp("date", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
+		date: timestamp("date", { mode: "string", withTimezone: true })
+			.default(sql`now()`)
+			.notNull(),
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
 		repeat: repeatEnum().default("one-time").notNull(),
@@ -279,7 +280,9 @@ export const task = pgTable(
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
-		dueDate: date("due_date", { mode: "string" }).default(sql`now() + INTERVAL '1 day'`).notNull(),
+		dueDate: date("due_date", { mode: "string" })
+			.default(sql`now() + INTERVAL '1 day'`)
+			.notNull(),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
@@ -302,7 +305,9 @@ export const file = pgTable(
 		name: text("name").notNull().unique(),
 		s3Url: text("s3_url").notNull(),
 		description: text("description"),
-		tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+		tags: text("tags")
+			.array()
+			.default(sql`ARRAY[]::text[]`),
 		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [

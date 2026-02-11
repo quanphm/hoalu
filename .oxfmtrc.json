@@ -1,0 +1,33 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"tabWidth": 2,
+	"printWidth": 100,
+	"singleQuote": false,
+	"jsxSingleQuote": false,
+	"quoteProps": "as-needed",
+	"trailingComma": "all",
+	"semi": true,
+	"arrowParens": "always",
+	"bracketSameLine": false,
+	"bracketSpacing": true,
+	"experimentalSortImports": {
+		"groups": [["builtin"], ["external"], ["internal"], ["parent", "sibling", "index"]],
+		"newlinesBetween": true
+	},
+	"experimentalTailwindcss": {
+		"attributes": ["class", "className"],
+		"functions": ["cn", "clsx", "cva"]
+	},
+	"ignorePatterns": ["**/src/routeTree.gen.ts"],
+	"overrides": [
+		{
+			"files": ["apps/app/src/routes/__root.tsx"],
+			"options": {
+				"experimentalSortImports": {
+					"partitionByComment": true
+				}
+			}
+		}
+	]
+}

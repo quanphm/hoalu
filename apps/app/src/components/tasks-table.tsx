@@ -1,6 +1,5 @@
-import { createColumnHelper, type Row } from "@tanstack/react-table";
-import { useState } from "react";
-
+import { DataTable } from "#app/components/data-table/index.tsx";
+import type { TaskSchema } from "#app/lib/schema.ts";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -11,9 +10,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-
-import { DataTable } from "#app/components/data-table/index.tsx";
-import type { TaskSchema } from "#app/lib/schema.ts";
+import { createColumnHelper, type Row } from "@tanstack/react-table";
+import { useState } from "react";
 
 const columnHelper = createColumnHelper<TaskSchema>();
 

@@ -1,7 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-
+import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronDown, PlusIcon } from "@hoalu/icons/lucide";
 import { HouseIcon, LinkIcon } from "@hoalu/icons/nucleo";
 import {
@@ -16,12 +17,9 @@ import {
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { SidebarMenuButton } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
-
-import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 interface Props {
 	selectedWorkspace: {
@@ -42,7 +40,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				render={
 					<SidebarMenuButton
 						size="lg"
-						className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+						className="border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border"
 					/>
 				}
 			>
@@ -95,10 +93,10 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuItem className="gap-2 p-2" onClick={() => setDialog({ state: true })}>
-					<div className="flex size-4 items-center justify-center text-muted-foreground">
+					<div className="text-muted-foreground flex size-4 items-center justify-center">
 						<PlusIcon className="size-4" />
 					</div>
-					<div className="font-medium text-muted-foreground">Create workspace</div>
+					<div className="text-muted-foreground font-medium">Create workspace</div>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

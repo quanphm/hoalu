@@ -1,7 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
-import { useId } from "react";
-
+import { UserAvatar } from "#app/components/user-avatar.tsx";
+import { KEYBOARD_SHORTCUTS, THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
+import { useAuth } from "#app/hooks/use-auth.ts";
 import {
 	CheckIcon,
 	KeyRoundIcon,
@@ -23,10 +22,10 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
+import { Link } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
+import { useId } from "react";
 
-import { UserAvatar } from "#app/components/user-avatar.tsx";
-import { KEYBOARD_SHORTCUTS, THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
-import { useAuth } from "#app/hooks/use-auth.ts";
 import { HotKey } from "../hotkey";
 
 export function NavUser() {
@@ -45,7 +44,7 @@ export function NavUser() {
 							render={
 								<SidebarMenuButton
 									size="lg"
-									className="border border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+									className="border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border"
 								/>
 							}
 						>

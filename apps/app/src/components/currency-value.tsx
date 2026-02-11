@@ -1,6 +1,5 @@
-import { cn } from "@hoalu/ui/utils";
-
 import { formatCurrency } from "#app/helpers/currency.ts";
+import { cn } from "@hoalu/ui/utils";
 
 interface CurrencyValueProps {
 	value: number;
@@ -22,12 +21,12 @@ export function CurrencyValue({
 		return (
 			<Component
 				className={cn(
-					"font-geist-mono font-semibold text-base text-foreground tracking-tight",
+					"font-geist-mono text-foreground text-base font-semibold tracking-tight",
 					props.className,
 				)}
 			>
 				{formattedValue}
-				<span className="ml-1 font-normal text-muted-foreground">{props.currency}</span>
+				<span className="text-muted-foreground ml-1 font-normal">{props.currency}</span>
 			</Component>
 		);
 	}
@@ -36,7 +35,7 @@ export function CurrencyValue({
 
 	return (
 		<Component
-			className={cn("font-geist-mono text-base text-foreground tracking-tight", props.className)}
+			className={cn("font-geist-mono text-foreground text-base tracking-tight", props.className)}
 		>
 			{content}
 		</Component>

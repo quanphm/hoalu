@@ -1,8 +1,7 @@
-import { zValidator } from "@hono/zod-validator";
-import type { ZodObject } from "zod";
-
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { zValidator } from "@hono/zod-validator";
+import type { ZodObject } from "zod";
 
 export const jsonBodyValidator = <T extends ZodObject>(schema: T) =>
 	zValidator("json", schema, (result, c) => {

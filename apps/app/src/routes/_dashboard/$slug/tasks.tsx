@@ -1,8 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
-
 import {
 	Section,
 	SectionContent,
@@ -12,6 +7,9 @@ import {
 import { TasksTable } from "#app/components/tasks-table.tsx";
 import type { TaskSchema } from "#app/lib/schema.ts";
 import { tasksQueryOptions } from "#app/services/query-options.ts";
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Button } from "@hoalu/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/tasks")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

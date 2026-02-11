@@ -1,6 +1,5 @@
-import { useMemo } from "react";
-
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { useMemo } from "react";
 
 interface UseExpenseNavigationProps {
 	expenses: SyncedExpense[];

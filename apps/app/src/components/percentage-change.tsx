@@ -1,13 +1,11 @@
-import { useState } from "react";
-
-import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
-import { Button } from "@hoalu/ui/button";
-import { cn } from "@hoalu/ui/utils";
-
 import {
 	getPercentageChangeTextClasses,
 	type PercentageChange,
 } from "#app/helpers/percentage-change.ts";
+import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
+import { useState } from "react";
 
 const IconComponent: Record<
 	PercentageChange["status"],
@@ -99,7 +97,7 @@ export function PercentageChangeBadge({
 	return (
 		<span
 			className={cn(
-				"inline-flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 font-medium text-xs",
+				"bg-muted/50 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium",
 				textClasses,
 				change.status === "increase" && "bg-red-50 dark:bg-red-950/30",
 				change.status === "decrease" && "bg-green-50 dark:bg-green-950/30",

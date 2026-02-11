@@ -137,8 +137,8 @@ import { useAtom } from "jotai";
 import { selectedExpenseAtom } from "#app/atoms/expenses.ts";
 
 function ExpenseList() {
-  const [selectedId, setSelectedId] = useAtom(selectedExpenseAtom);
-  // ...
+	const [selectedId, setSelectedId] = useAtom(selectedExpenseAtom);
+	// ...
 }
 ```
 
@@ -154,36 +154,36 @@ Collections use a **factory pattern** for workspace-scoped data with automatic c
 type CollectionWithCleanup = { cleanup: () => void };
 
 export function createCollectionFactory<T extends CollectionWithCleanup>(
-  name: string,
-  createFn: (slug: string) => T,
+	name: string,
+	createFn: (slug: string) => T,
 ) {
-  const instances = new Map<string, T>();
+	const instances = new Map<string, T>();
 
-  return {
-    get(slug: string): T {
-      const existing = instances.get(slug);
-      if (existing) return existing;
+	return {
+		get(slug: string): T {
+			const existing = instances.get(slug);
+			if (existing) return existing;
 
-      const collection = createFn(slug);
-      instances.set(slug, collection);
-      return collection;
-    },
+			const collection = createFn(slug);
+			instances.set(slug, collection);
+			return collection;
+		},
 
-    clear(slug?: string) {
-      if (slug) {
-        const collection = instances.get(slug);
-        if (collection) {
-          collection.cleanup();
-          instances.delete(slug);
-        }
-      } else {
-        for (const collection of instances.values()) {
-          collection.cleanup();
-        }
-        instances.clear();
-      }
-    },
-  };
+		clear(slug?: string) {
+			if (slug) {
+				const collection = instances.get(slug);
+				if (collection) {
+					collection.cleanup();
+					instances.delete(slug);
+				}
+			} else {
+				for (const collection of instances.values()) {
+					collection.cleanup();
+				}
+				instances.clear();
+			}
+		},
+	};
 }
 ```
 
@@ -194,38 +194,34 @@ import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
-import {
-  CurrencySchema,
-  IsoDateSchema,
-  RepeatSchema,
-} from "@hoalu/common/schema";
+import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/common/schema";
 import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
 
 const ExpenseCollectionSchema = z.object({
-  id: z.uuidv7(),
-  title: z.string(),
-  description: z.string().nullable(),
-  amount: z.coerce.number(),
-  currency: CurrencySchema,
-  repeat: RepeatSchema,
-  date: IsoDateSchema,
-  wallet_id: z.uuidv7(),
-  category_id: z.uuidv7().nullable(),
-  creator_id: z.uuidv7(),
-  created_at: IsoDateSchema,
+	id: z.uuidv7(),
+	title: z.string(),
+	description: z.string().nullable(),
+	amount: z.coerce.number(),
+	currency: CurrencySchema,
+	repeat: RepeatSchema,
+	date: IsoDateSchema,
+	wallet_id: z.uuidv7(),
+	category_id: z.uuidv7().nullable(),
+	creator_id: z.uuidv7(),
+	created_at: IsoDateSchema,
 });
 
 const factory = createCollectionFactory("expense", (slug: string) =>
-  createCollection(
-    electricCollectionOptions({
-      id: `expense-${slug}`,
-      getKey: (item) => item.id,
-      shapeOptions: {
-        url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
-      },
-      schema: ExpenseCollectionSchema,
-    }),
-  ),
+	createCollection(
+		electricCollectionOptions({
+			id: `expense-${slug}`,
+			getKey: (item) => item.id,
+			shapeOptions: {
+				url: `${import.meta.env.PUBLIC_API_URL}/sync/expenses?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
+			},
+			schema: ExpenseCollectionSchema,
+		}),
+	),
 );
 
 export const expenseCollectionFactory = factory.get;
@@ -241,17 +237,17 @@ import { clearWalletCollection } from "./wallet.ts";
 import { exchangeRateCollection } from "./exchange-rate.ts";
 
 export function clearWorkspaceCollections(slug: string) {
-  clearExpenseCollection(slug);
-  clearCategoryCollection(slug);
-  clearWalletCollection(slug);
-  exchangeRateCollection.cleanup();
+	clearExpenseCollection(slug);
+	clearCategoryCollection(slug);
+	clearWalletCollection(slug);
+	exchangeRateCollection.cleanup();
 }
 
 export function clearAllWorkspaceCollections() {
-  clearExpenseCollection();
-  clearCategoryCollection();
-  clearWalletCollection();
-  exchangeRateCollection.cleanup();
+	clearExpenseCollection();
+	clearCategoryCollection();
+	clearWalletCollection();
+	exchangeRateCollection.cleanup();
 }
 ```
 
@@ -265,52 +261,50 @@ import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
 
 export function useExpenseLiveQuery() {
-  const workspace = useWorkspace();
+	const workspace = useWorkspace();
 
-  // Query with joins
-  const { data: expenses } = useLiveQuery((q) =>
-    q
-      .from({ expense: expenseCollection(workspace.id) })
-      .innerJoin(
-        { wallet: walletCollection(workspace.id) },
-        ({ expense, wallet }) => eq(expense.wallet_id, wallet.id),
-      )
-      .leftJoin(
-        { category: categoryCollection(workspace.id) },
-        ({ expense, category }) => eq(expense.category_id, category.id),
-      )
-      .orderBy(({ expense }) => expense.date, "desc")
-      .select(({ expense, wallet, category }) => ({
-        ...expense,
-        category: {
-          id: category?.id,
-          name: category?.name,
-          description: category?.description,
-          color: category?.color,
-        },
-        wallet: {
-          id: wallet.id,
-          name: wallet.name,
-          description: wallet.description,
-          currency: wallet.currency,
-          type: wallet.type,
-          isActive: wallet.is_active,
-        },
-      })),
-  );
+	// Query with joins
+	const { data: expenses } = useLiveQuery((q) =>
+		q
+			.from({ expense: expenseCollection(workspace.id) })
+			.innerJoin({ wallet: walletCollection(workspace.id) }, ({ expense, wallet }) =>
+				eq(expense.wallet_id, wallet.id),
+			)
+			.leftJoin({ category: categoryCollection(workspace.id) }, ({ expense, category }) =>
+				eq(expense.category_id, category.id),
+			)
+			.orderBy(({ expense }) => expense.date, "desc")
+			.select(({ expense, wallet, category }) => ({
+				...expense,
+				category: {
+					id: category?.id,
+					name: category?.name,
+					description: category?.description,
+					color: category?.color,
+				},
+				wallet: {
+					id: wallet.id,
+					name: wallet.name,
+					description: wallet.description,
+					currency: wallet.currency,
+					type: wallet.type,
+					isActive: wallet.is_active,
+				},
+			})),
+	);
 
-  // Transform for presentation layer
-  return useMemo(() => {
-    if (!expenses) return [];
+	// Transform for presentation layer
+	return useMemo(() => {
+		if (!expenses) return [];
 
-    return expenses.map((expense) => ({
-      ...expense,
-      date: datetime.format(expense.date, "yyyy-MM-dd"),
-      amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
-      realAmount: Number(expense.amount),
-      convertedAmount: Number(expense.amount),
-    }));
-  }, [expenses]);
+		return expenses.map((expense) => ({
+			...expense,
+			date: datetime.format(expense.date, "yyyy-MM-dd"),
+			amount: monetary.fromRealAmount(Number(expense.amount), expense.currency),
+			realAmount: Number(expense.amount),
+			convertedAmount: Number(expense.amount),
+		}));
+	}, [expenses]);
 }
 
 export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>;
@@ -324,17 +318,17 @@ import { queryOptions } from "@tanstack/react-query";
 import { apiClient } from "#app/lib/api-client.ts";
 
 export const getExpensesQueryOptions = (workspaceId: string) =>
-  queryOptions({
-    queryKey: ["expenses", workspaceId],
-    queryFn: async () => {
-      const res = await apiClient.api.expenses.$get({
-        query: { workspaceId },
-      });
-      if (!res.ok) throw new Error("Failed to fetch expenses");
-      const { data } = await res.json();
-      return data;
-    },
-  });
+	queryOptions({
+		queryKey: ["expenses", workspaceId],
+		queryFn: async () => {
+			const res = await apiClient.api.expenses.$get({
+				query: { workspaceId },
+			});
+			if (!res.ok) throw new Error("Failed to fetch expenses");
+			const { data } = await res.json();
+			return data;
+		},
+	});
 ```
 
 **Mutations** (`services/mutations.ts`):
@@ -344,20 +338,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "#app/lib/api-client.ts";
 
 export function useCreateExpense() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (data: ExpensePostSchema) => {
-      const res = await apiClient.api.expenses.$post({ json: data });
-      if (!res.ok) throw new Error("Failed to create expense");
-      return res.json();
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["expenses", variables.workspaceId],
-      });
-    },
-  });
+	return useMutation({
+		mutationFn: async (data: ExpensePostSchema) => {
+			const res = await apiClient.api.expenses.$post({ json: data });
+			if (!res.ok) throw new Error("Failed to create expense");
+			return res.json();
+		},
+		onSuccess: (_, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: ["expenses", variables.workspaceId],
+			});
+		},
+	});
 }
 ```
 
@@ -382,18 +376,18 @@ import { createHonoApp } from "@hoalu/furnace";
 const app = createHonoApp();
 
 app.all("/sync/*", async (c) => {
-  const session = await getSession(c);
-  if (!session) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
+	const session = await getSession(c);
+	if (!session) {
+		return c.json({ error: "Unauthorized" }, 401);
+	}
 
-  // Proxy to Electric with authentication
-  const syncUrl = new URL(`${env.SYNC_URL}${c.req.path}`);
-  return fetch(syncUrl, {
-    method: c.req.method,
-    headers: c.req.raw.headers,
-    body: c.req.raw.body,
-  });
+	// Proxy to Electric with authentication
+	const syncUrl = new URL(`${env.SYNC_URL}${c.req.path}`);
+	return fetch(syncUrl, {
+		method: c.req.method,
+		headers: c.req.raw.headers,
+		body: c.req.raw.body,
+	});
 });
 ```
 
@@ -418,23 +412,21 @@ export function LocalPostgresProvider({ children }) {
 ```typescript
 // Collections automatically sync via Electric shapes
 const expenseCollection = createCollection(
-  electricCollectionOptions({
-    shapeOptions: {
-      url: `${API_URL}/sync`, // Proxied to Electric
-      params: {
-        table: "expense",
-        where: "workspace_id = $1",
-        params: [workspaceId],
-      },
-    },
-    schema: SelectExpenseSchema,
-  }),
+	electricCollectionOptions({
+		shapeOptions: {
+			url: `${API_URL}/sync`, // Proxied to Electric
+			params: {
+				table: "expense",
+				where: "workspace_id = $1",
+				params: [workspaceId],
+			},
+		},
+		schema: SelectExpenseSchema,
+	}),
 );
 
 // Live queries subscribe to changes
-const { data } = useLiveQuery((q) =>
-  q.from({ expense: expenseCollection(workspaceId) }),
-);
+const { data } = useLiveQuery((q) => q.from({ expense: expenseCollection(workspaceId) }));
 // Data updates automatically when DB changes!
 ```
 
@@ -667,30 +659,30 @@ function ExpenseList({ expenses }: { expenses: ExpenseClient[] }) {
 
 ```typescript
 export function useDeleteExpense() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.api.expenses[":id"].$delete({ param: { id } });
-    },
-    onMutate: async (id) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["expenses"] });
+	return useMutation({
+		mutationFn: async (id: string) => {
+			await apiClient.api.expenses[":id"].$delete({ param: { id } });
+		},
+		onMutate: async (id) => {
+			// Cancel outgoing refetches
+			await queryClient.cancelQueries({ queryKey: ["expenses"] });
 
-      // Snapshot previous value
-      const previous = queryClient.getQueryData(["expenses"]);
+			// Snapshot previous value
+			const previous = queryClient.getQueryData(["expenses"]);
 
-      // Optimistically update
-      queryClient.setQueryData<ExpenseSchema[]>(["expenses"], (old) =>
-        old?.filter((e) => e.id !== id),
-      );
+			// Optimistically update
+			queryClient.setQueryData<ExpenseSchema[]>(["expenses"], (old) =>
+				old?.filter((e) => e.id !== id),
+			);
 
-      return { previous };
-    },
-    onError: (err, id, context) => {
-      // Rollback on error
-      queryClient.setQueryData(["expenses"], context?.previous);
-    },
-  });
+			return { previous };
+		},
+		onError: (err, id, context) => {
+			// Rollback on error
+			queryClient.setQueryData(["expenses"], context?.previous);
+		},
+	});
 }
 ```

@@ -1,8 +1,6 @@
-import { Link } from "@tanstack/react-router";
-
-import { Button } from "@hoalu/ui/button";
-
 import { SuperCenteredLayout } from "#app/components/layouts/super-centered-layout.tsx";
+import { Button } from "@hoalu/ui/button";
+import { Link } from "@tanstack/react-router";
 
 export function NotFound() {
 	return (

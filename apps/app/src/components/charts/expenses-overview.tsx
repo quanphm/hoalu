@@ -1,23 +1,3 @@
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useMemo, useRef } from "react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-
-import { datetime } from "@hoalu/common/datetime";
-import type { ColorSchema } from "@hoalu/common/schema";
-import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
-import { CameraIcon } from "@hoalu/icons/nucleo";
-import { Button } from "@hoalu/ui/button";
-import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
-
 import {
 	chartCategoryFilterAtom,
 	chartGroupByAtom,
@@ -39,6 +19,25 @@ import {
 } from "#app/helpers/date-range.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { datetime } from "@hoalu/common/datetime";
+import type { ColorSchema } from "@hoalu/common/schema";
+import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
+import { CameraIcon } from "@hoalu/icons/nucleo";
+import { Button } from "@hoalu/ui/button";
+import {
+	Card,
+	CardAction,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@hoalu/ui/card";
+import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useMemo, useRef } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
 
@@ -76,6 +75,8 @@ interface ExpenseOverviewProps {
 	categories: SyncedCategory[];
 }
 
+type GroupedDateEntry = { date: string; value: number; isMonthly?: boolean };
+
 export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
@@ -100,43 +101,44 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
 
-	type GroupedDateEntry = { date: string; value: number; isMonthly?: boolean };
-
 	// Apply date grouping logic (shared between total and category mode)
-	const applyDateGrouping = (sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
-		const today = new Date();
+	const applyDateGrouping = useCallback(
+		(sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
+			const today = new Date();
 
-		if (dateRange === "ytd") {
-			return groupDataByMonth(sourceData, true);
-		} else if (dateRange === "all") {
-			return groupDataByMonth(sourceData, false);
-		} else if (isMonthBasedRange(dateRange)) {
-			return groupDataByMonth(sourceData, false);
-		} else if (dateRange === "mtd") {
-			return generateMTDDataWithZeros(sourceData);
-		} else if (dateRange === "wtd") {
-			const startOfWeek = getStartOfWeek(today, 1);
-			const endOfWeek = datetime.endOfDay(today);
-			return generateDailyDataForRange(sourceData, startOfWeek, endOfWeek);
-		} else if (dateRange === "custom" && customRange) {
-			const startDate = datetime.startOfDay(customRange.from);
-			const endDate = datetime.endOfDay(customRange.to);
-			if (chartGroupBy === "month") {
+			if (dateRange === "ytd") {
+				return groupDataByMonth(sourceData, true);
+			} else if (dateRange === "all") {
 				return groupDataByMonth(sourceData, false);
+			} else if (isMonthBasedRange(dateRange)) {
+				return groupDataByMonth(sourceData, false);
+			} else if (dateRange === "mtd") {
+				return generateMTDDataWithZeros(sourceData);
+			} else if (dateRange === "wtd") {
+				const startOfWeek = getStartOfWeek(today, 1);
+				const endOfWeek = datetime.endOfDay(today);
+				return generateDailyDataForRange(sourceData, startOfWeek, endOfWeek);
+			} else if (dateRange === "custom" && customRange) {
+				const startDate = datetime.startOfDay(customRange.from);
+				const endDate = datetime.endOfDay(customRange.to);
+				if (chartGroupBy === "month") {
+					return groupDataByMonth(sourceData, false);
+				} else {
+					return generateDailyDataForRange(sourceData, startDate, endDate);
+				}
+			} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
+				const days = parseInt(dateRange, 10);
+				return generateDailyDataWithZeros(sourceData, days);
 			} else {
-				return generateDailyDataForRange(sourceData, startDate, endDate);
+				return generateDailyDataWithZeros(sourceData, 50);
 			}
-		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
-			const days = parseInt(dateRange, 10);
-			return generateDailyDataWithZeros(sourceData, days);
-		} else {
-			return generateDailyDataWithZeros(sourceData, 50);
-		}
-	};
+		},
+		[dateRange, customRange, chartGroupBy],
+	);
 
 	const totalData = useMemo(
 		() => applyDateGrouping(filteredData),
-		[filteredData, dateRange, customRange, chartGroupBy],
+		[applyDateGrouping, filteredData],
 	);
 
 	// Category mode data: build per-category series then merge into grouped records
@@ -185,17 +187,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			}
 			return merged;
 		});
-	}, [
-		isCategoryMode,
-		selectedCategoryIds,
-		stats.aggregation.byDateAndCategory,
-		dateRange,
-		customRange,
-		chartGroupBy,
-	]);
+	}, [isCategoryMode, selectedCategoryIds, stats.aggregation.byDateAndCategory, applyDateGrouping]);
 
 	const data = isCategoryMode ? categoryData : totalData;
-	console.log("ExpenseOverview data:", data);
 
 	// Calculate total: filtered by selected categories in category mode, or all expenses in total mode
 	const totalExpenses = useMemo(() => {
@@ -302,7 +296,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							<CurrencyValue
 								value={totalExpenses}
 								currency={currency}
-								className="font-semibold text-3xl"
+								className="text-3xl font-semibold"
 							/>
 							{isCategoryMode && (
 								<span className="text-muted-foreground text-sm">
@@ -395,9 +389,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 										const showTotal = selectedCategoryIds.length >= 2;
 
 										return (
-											<div className="rounded-md border bg-background p-3 shadow-sm">
+											<div className="bg-background rounded-md border p-3 shadow-sm">
 												<div className="grid gap-2">
-													<span className="text-muted-foreground text-xs uppercase tracking-wider">
+													<span className="text-muted-foreground text-xs tracking-wider uppercase">
 														{formattedDate}
 													</span>
 													{payload.map((entry) => (
@@ -417,18 +411,18 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 															<CurrencyValue
 																value={entry.value}
 																currency={currency}
-																className="font-medium text-sm"
+																className="text-sm font-medium"
 															/>
 														</div>
 													))}
 													{showTotal && (
 														<div className="border-t pt-2">
 															<div className="flex items-center justify-between gap-4">
-																<span className="font-semibold text-sm">Total</span>
+																<span className="text-sm font-semibold">Total</span>
 																<CurrencyValue
 																	value={total}
 																	currency={currency}
-																	className="font-bold text-sm"
+																	className="text-sm font-bold"
 																/>
 															</div>
 														</div>
@@ -439,10 +433,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									}
 
 									return (
-										<div className="rounded-md border bg-background p-3 shadow-sm">
+										<div className="bg-background rounded-md border p-3 shadow-sm">
 											<div className="grid gap-2">
 												<div className="flex flex-col">
-													<span className="text-muted-foreground text-xs uppercase tracking-wider">
+													<span className="text-muted-foreground text-xs tracking-wider uppercase">
 														{formattedDate}
 													</span>
 													<CurrencyValue

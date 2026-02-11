@@ -3,14 +3,14 @@
 	"version": "0.19.0",
 	"private": true,
 	"type": "module",
+	"imports": {
+		"#app/*": "./src/*"
+	},
 	"scripts": {
 		"dev": "vite",
 		"dev:pwa": "rimraf dev-dist && DEBUG=vite-plugin-pwa SW_DEV=true SW=false CLAIMS=false SW_DESTROY=true vite --force",
 		"build": "vite build",
 		"preview": "vite preview --port=4173"
-	},
-	"imports": {
-		"#app/*": "./src/*"
 	},
 	"dependencies": {
 		"@electric-sql/pglite": "^0.3.15",

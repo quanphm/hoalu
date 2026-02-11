@@ -1,6 +1,5 @@
-import type { BetterAuthPlugin } from "better-auth";
-
 import { generateId } from "@hoalu/common/generate-id";
+import type { BetterAuthPlugin } from "better-auth";
 
 export const userPublicId = () => {
 	return {

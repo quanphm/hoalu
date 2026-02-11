@@ -1,14 +1,12 @@
-import { Link } from "@tanstack/react-router";
-import { formatDistanceToNow } from "date-fns";
-
-import { Badge } from "@hoalu/ui/badge";
-import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
-
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
+import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
+import { Link } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
 
 const RECENT_EXPENSES_LIMIT = 10;
 
@@ -22,7 +20,7 @@ export function RecentExpenses() {
 			<Card>
 				<CardHeader>
 					<div className="flex items-center justify-between">
-						<h3 className="font-semibold text-lg">Recent Transactions</h3>
+						<h3 className="text-lg font-semibold">Recent Transactions</h3>
 						<Button
 							variant="outline"
 							size="sm"
@@ -30,7 +28,7 @@ export function RecentExpenses() {
 								<Link
 									to="/$slug/expenses"
 									params={{ slug: workspace.slug }}
-									className="flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground"
+									className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
 								/>
 							}
 						>
@@ -49,7 +47,7 @@ export function RecentExpenses() {
 		<Card>
 			<CardHeader>
 				<div className="flex items-center justify-between">
-					<h3 className="font-semibold text-lg">Recent Transactions</h3>
+					<h3 className="text-lg font-semibold">Recent Transactions</h3>
 					<Button
 						variant="outline"
 						size="sm"
@@ -57,7 +55,7 @@ export function RecentExpenses() {
 							<Link
 								to="/$slug/expenses"
 								params={{ slug: workspace.slug }}
-								className="flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground"
+								className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
 							/>
 						}
 					>
@@ -70,10 +68,10 @@ export function RecentExpenses() {
 					{recentExpenses.map((expense) => (
 						<div
 							key={expense.id}
-							className="flex items-start justify-between gap-2 border-border/50 border-b pb-3 last:border-b-0 last:pb-0"
+							className="border-border/50 flex items-start justify-between gap-2 border-b pb-3 last:border-b-0 last:pb-0"
 						>
 							<div className="min-w-0 flex-1">
-								<p className="truncate font-medium text-sm">{expense.title}</p>
+								<p className="truncate text-sm font-medium">{expense.title}</p>
 								<div className="mt-1 flex items-center gap-2">
 									{expense.category?.name && expense.category?.color && (
 										<Badge className={createCategoryTheme(expense.category.color)}>

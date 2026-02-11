@@ -1,10 +1,3 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-
-import { Button } from "@hoalu/ui/button";
-import { toastManager } from "@hoalu/ui/toast";
-
 import { deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { SettingCard } from "#app/components/cards.tsx";
 import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
@@ -25,6 +18,11 @@ import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import { useEditWorkspace } from "#app/services/mutations.ts";
 import { getActiveMemberOptions, workspaceLogoOptions } from "#app/services/query-options.ts";
+import { Button } from "@hoalu/ui/button";
+import { toastManager } from "@hoalu/ui/toast";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
 	component: RouteComponent,

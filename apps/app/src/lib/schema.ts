@@ -1,9 +1,7 @@
+import type { honoClient } from "#app/lib/api-client.ts";
+import { ColorSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import * as z from "zod";
-
-import { ColorSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
-
-import type { honoClient } from "#app/lib/api-client.ts";
 
 /**
  * workspaces

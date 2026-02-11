@@ -1,5 +1,4 @@
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
-
 import { XIcon } from "@hoalu/icons/tabler";
 
 import { cn } from "../utils";
@@ -28,7 +27,7 @@ function SheetOverlay({
 		<SheetPrimitive.Backdrop
 			data-slot="sheet-backdrop"
 			className={cn(
-				"data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/50 data-closed:animate-out data-open:animate-in",
+				"data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 z-50 bg-black/50",
 				className,
 			)}
 			{...props}
@@ -52,7 +51,7 @@ function SheetContent({
 			<SheetPrimitive.Popup
 				data-slot="sheet-popup"
 				className={cn(
-					"fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-closed:animate-out data-open:animate-in data-closed:duration-300 data-open:duration-500",
+					"bg-background data-closed:animate-out data-open:animate-in fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-closed:duration-300 data-open:duration-500",
 					side === "right" &&
 						"data-closed:slide-out-to-right data-open:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
 					side === "left" &&
@@ -67,7 +66,7 @@ function SheetContent({
 			>
 				{children}
 				{!hideCloseButton && (
-					<SheetPrimitive.Close className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+					<SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
 						<XIcon className="size-4" />
 						<span className="sr-only">Close</span>
 					</SheetPrimitive.Close>
@@ -101,7 +100,7 @@ function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPr
 	return (
 		<SheetPrimitive.Title
 			data-slot="sheet-title"
-			className={cn("font-semibold text-foreground", className)}
+			className={cn("text-foreground font-semibold", className)}
 			{...props}
 		/>
 	);

@@ -1,3 +1,6 @@
+import { FacePlusIcon } from "@hoalu/icons/nucleo";
+import { Button } from "@hoalu/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import {
 	type EmojiPickerListCategoryHeaderProps,
 	type EmojiPickerListEmojiProps,
@@ -5,10 +8,6 @@ import {
 	EmojiPicker as Frimousse,
 } from "frimousse";
 import * as React from "react";
-
-import { FacePlusIcon } from "@hoalu/icons/nucleo";
-import { Button } from "@hoalu/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 
 export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -28,14 +27,14 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 				>
 					<Frimousse.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-neutral-100 px-2.5 py-2 text-sm dark:bg-neutral-800" />
 					<Frimousse.Viewport className="relative flex-1 outline-hidden">
-						<Frimousse.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+						<Frimousse.Loading className="absolute inset-0 flex items-center justify-center text-sm text-neutral-400 dark:text-neutral-500">
 							Loading…
 						</Frimousse.Loading>
-						<Frimousse.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+						<Frimousse.Empty className="absolute inset-0 flex items-center justify-center text-sm text-neutral-400 dark:text-neutral-500">
 							No emoji found.
 						</Frimousse.Empty>
 						<Frimousse.List
-							className="select-none pb-1.5"
+							className="pb-1.5 select-none"
 							components={{
 								CategoryHeader,
 								Row,
@@ -52,7 +51,7 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 function CategoryHeader({ category, ...props }: EmojiPickerListCategoryHeaderProps) {
 	return (
 		<div
-			className="bg-white px-3 pt-3 pb-1.5 font-medium text-neutral-600 text-xs dark:bg-neutral-900 dark:text-neutral-400"
+			className="bg-white px-3 pt-3 pb-1.5 text-xs font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400"
 			{...props}
 		>
 			{category.label}

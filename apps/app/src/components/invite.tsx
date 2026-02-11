@@ -1,6 +1,8 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { authClient } from "#app/lib/auth-client.ts";
+import { workspaceKeys } from "#app/lib/query-key-factory.ts";
+import { InviteFormSchema } from "#app/lib/schema.ts";
 import { MailPlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -13,12 +15,8 @@ import {
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { toastManager } from "@hoalu/ui/toast";
-
-import { useAppForm } from "#app/components/forms/index.tsx";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { authClient } from "#app/lib/auth-client.ts";
-import { workspaceKeys } from "#app/lib/query-key-factory.ts";
-import { InviteFormSchema } from "#app/lib/schema.ts";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export function InviteDialog() {
 	const [open, setOpen] = useState(false);

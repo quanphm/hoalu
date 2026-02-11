@@ -1,9 +1,8 @@
-import { useId, useRef, useState } from "react";
-
 import { CheckIcon, CopyIcon } from "@hoalu/icons/lucide";
 import { Input } from "@hoalu/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { useId, useRef, useState } from "react";
 
 export function InputWithCopy({ value }: { value: string }) {
 	const id = useId();
@@ -34,7 +33,7 @@ export function InputWithCopy({ value }: { value: string }) {
 						<button
 							type="button"
 							onClick={handleCopy}
-							className="absolute inset-y-0 end-0 flex h-full w-9 cursor-pointer items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 hover:text-foreground focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
+							className="text-muted-foreground/80 hover:text-foreground focus-visible:text-foreground focus-visible:outline-ring/70 absolute inset-y-0 end-0 flex h-full w-9 cursor-pointer items-center justify-center rounded-e-lg border border-transparent outline-offset-2 focus-visible:outline-2 disabled:pointer-events-none disabled:cursor-not-allowed"
 							aria-label={copied ? "Copied" : "Copy to clipboard"}
 							disabled={copied}
 						/>

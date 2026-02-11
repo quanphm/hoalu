@@ -36,7 +36,7 @@ export function DatepickerInputField(props: Props) {
 							min="1970-01-01"
 						/>
 					</FieldControl>
-					<div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+					<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
 						<CalendarIcon className="size-4" aria-hidden="true" />
 					</div>
 				</div>

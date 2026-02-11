@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { CreateCategoryForm } from "#app/components/categories/category-actions.tsx";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -21,9 +21,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
+import { useState } from "react";
 
-import { CreateCategoryForm } from "#app/components/categories/category-actions.tsx";
-import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -62,8 +61,8 @@ export function SelectCategoryField(props: Props) {
 									role="combobox"
 									aria-expanded={popoverOpen}
 									className={cn(
-										"w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
-										"focus:border-ring focus:ring-[3px] focus:ring-ring/20",
+										"border-input bg-background hover:bg-background focus-visible:border-ring focus-visible:ring-ring/20 w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:ring-[3px]",
+										"focus:border-ring focus:ring-ring/20 focus:ring-[3px]",
 									)}
 								/>
 							}
@@ -74,11 +73,11 @@ export function SelectCategoryField(props: Props) {
 							</span>
 							<ChevronDownIcon
 								aria-hidden="true"
-								className="size-4 shrink-0 text-muted-foreground/80"
+								className="text-muted-foreground/80 size-4 shrink-0"
 							/>
 						</PopoverTrigger>
 					</FieldControl>
-					<PopoverContent className="w-full min-w-(--anchor-width) border-input p-0" align="start">
+					<PopoverContent className="border-input w-full min-w-(--anchor-width) p-0" align="start">
 						<Command>
 							<CommandInput placeholder="Search..." />
 							<CommandList>
@@ -108,7 +107,7 @@ export function SelectCategoryField(props: Props) {
 							</CommandList>
 						</Command>
 						<Separator />
-						<div className="overflow-hidden px-2 py-1 text-foreground **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-1 **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-group-heading]]:text-sm">
+						<div className="text-foreground **:[[cmdk-group-heading]]:text-muted-foreground overflow-hidden px-2 py-1 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-1 **:[[cmdk-group-heading]]:text-sm">
 							<DialogTrigger
 								render={
 									<Button

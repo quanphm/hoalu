@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-
+import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
+import { formatCurrency } from "#app/helpers/currency.ts";
 import { CalculatorIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Input } from "@hoalu/ui/input";
 import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
+import { useEffect, useRef, useState } from "react";
 
-import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
-import { formatCurrency } from "#app/helpers/currency.ts";
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
 
@@ -117,7 +116,7 @@ export function TransactionAmountField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="isolate flex rounded-md">
 				<SelectNative
-					className="w-[80px] rounded-e-none bg-muted"
+					className="bg-muted w-[80px] rounded-e-none"
 					value={field.state.value.currency}
 					onBlur={field.handleBlur}
 					onChange={handleCurrencyChange}
@@ -139,7 +138,7 @@ export function TransactionAmountField(props: Props) {
 								className="h-9 rounded-s-none"
 							/>
 							{calculatedValue !== null && (
-								<div className="absolute right-3 -bottom-6 left-3 text-muted-foreground text-xs">
+								<div className="text-muted-foreground absolute right-3 -bottom-6 left-3 text-xs">
 									= {formatCurrency(calculatedValue, field.state.value.currency)}
 								</div>
 							)}
@@ -162,11 +161,11 @@ export function TransactionAmountField(props: Props) {
 							>
 								<NumberFieldGroup
 									className={cn(
-										"relative inline-flex h-9 w-full items-center overflow-hidden whitespace-nowrap rounded-md border border-input text-sm outline-none focus-visible:outline-none data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:ring-[3px] data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40",
+										"border-input data-focus-within:border-ring data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]",
 										"rounded-s-none data-focus-within:z-10",
 									)}
 								>
-									<NumberFieldInput className="flex-1 bg-background px-3 py-2 text-foreground tabular-nums outline-none" />
+									<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
 								</NumberFieldGroup>
 							</NumberField>
 							<Button
@@ -176,7 +175,7 @@ export function TransactionAmountField(props: Props) {
 								variant="ghost"
 								size="icon"
 							>
-								<CalculatorIcon className="size-4 text-muted-foreground" />
+								<CalculatorIcon className="text-muted-foreground size-4" />
 							</Button>
 						</div>
 					)}

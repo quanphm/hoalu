@@ -15,7 +15,7 @@ export function InputWithPrefixField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<div className="flex rounded-lg">
-				<span className="inline-flex items-center rounded-s-lg border border-input bg-muted px-3 text-muted-foreground text-sm">
+				<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-lg border px-3 text-sm">
 					{import.meta.env.PUBLIC_APP_BASE_URL}/
 				</span>
 				<FieldControl>

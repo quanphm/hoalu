@@ -1,6 +1,5 @@
-import * as z from "zod";
-
 import { standardValidate } from "@hoalu/common/standard-validate";
+import * as z from "zod";
 
 export const EnvSchema = z.object({
 	AUTH_SECRET: z.string().min(1),

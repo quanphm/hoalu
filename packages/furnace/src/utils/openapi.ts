@@ -1,7 +1,6 @@
+import { HTTPStatus } from "@hoalu/common/http-status";
 import { resolver } from "hono-openapi";
 import * as z from "zod";
-
-import { HTTPStatus } from "@hoalu/common/http-status";
 
 interface Response {
 	description: string;

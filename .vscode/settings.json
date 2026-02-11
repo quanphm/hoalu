@@ -4,17 +4,16 @@
 	"editor.formatOnSave": true,
 	"editor.wordWrap": "on",
 	"editor.suggestSelection": "first",
-	"editor.defaultFormatter": "biomejs.biome",
+	"editor.defaultFormatter": "oxc.oxc-vscode",
 	"editor.codeActionsOnSave": {
-		"quickfix.biome": "explicit",
-		"source.organizeImports.biome": "explicit"
+		"source.fixAll.oxc": "explicit"
 	},
 	"editor.quickSuggestions": {
 		"strings": "on"
 	},
 	"[javascript][javascriptreact][typescript][typescriptreact][css][tailwindcss][json]": {
 		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "biomejs.biome"
+		"editor.defaultFormatter": "oxc.oxc-vscode"
 	},
 	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
 	"typescript.implementationsCodeLens.enabled": true,
@@ -23,12 +22,12 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "files.watcherExclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "search.exclude": {
-    "**/routeTree.gen.ts": true
-  }
+		"**/routeTree.gen.ts": true
+	},
+	"files.watcherExclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"search.exclude": {
+		"**/routeTree.gen.ts": true
+	}
 }
