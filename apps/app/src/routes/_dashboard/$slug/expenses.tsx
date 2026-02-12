@@ -20,7 +20,7 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
-import { normalizeSearch } from "#app/helpers/normalize-search.ts";
+import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { RepeatSchema } from "@hoalu/common/schema";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
@@ -188,13 +188,13 @@ function filter(
 				return false;
 			}
 		}
-		// Search by keywords (diacritic-insensitive, e.g. "an sang" matches "ăn sáng")
+		// Search by keywords (multi-term, diacritic-insensitive)
+		// e.g., "kem 64" matches expenses with "kem" in title AND "64" in amount
 		if (searchKeywords) {
-			const needle = normalizeSearch(searchKeywords);
-			return (
-				normalizeSearch(expense.title).includes(needle) ||
-				normalizeSearch(expense.description).includes(needle)
-			);
+			return matchesSearch(searchKeywords, {
+				textFields: [expense.title, expense.description],
+				numericFields: [expense.realAmount],
+			});
 		}
 
 		return true;

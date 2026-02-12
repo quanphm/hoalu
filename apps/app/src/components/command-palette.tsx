@@ -4,7 +4,7 @@ import {
 	createWalletDialogAtom,
 } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
-import { normalizeSearch } from "#app/helpers/normalize-search.ts";
+import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { datetime } from "@hoalu/common/datetime";
@@ -47,6 +47,7 @@ function useExpenseSearch(slug: string | undefined, search: string) {
 				.select(({ expense, category }) => ({
 					id: expense.id,
 					title: expense.title,
+					description: expense.description,
 					amount: expense.amount,
 					currency: expense.currency,
 					date: expense.date,
@@ -58,8 +59,13 @@ function useExpenseSearch(slug: string | undefined, search: string) {
 
 	const filteredExpenses = useMemo(() => {
 		if (!search.trim() || !expenses) return [];
-		const needle = normalizeSearch(search);
-		return expenses.filter((e) => normalizeSearch(e.title).includes(needle));
+
+		return expenses.filter((e) =>
+			matchesSearch(search, {
+				textFields: [e.title, e.description],
+				numericFields: [e.amount],
+			}),
+		);
 	}, [expenses, search]);
 
 	return filteredExpenses;
@@ -215,6 +221,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 type ExpenseSearchResult = {
 	id: string;
 	title: string;
+	description: string | null;
 	amount: number;
 	currency: string;
 	date: string;
@@ -271,23 +278,17 @@ function ExpenseSearchResults({
 									<div className="flex flex-1 items-center justify-between gap-2 overflow-hidden">
 										<div className="flex min-w-0 items-center gap-2">
 											<span className="truncate">{expense.title}</span>
-											{expense.categoryName && (
-												<span className="text-muted-foreground shrink-0 text-xs">
-													{expense.categoryName}
-												</span>
-											)}
-										</div>
-										<div className="flex shrink-0 items-center gap-2">
-											<span className="font-mono text-xs font-bold">
-												{formatCurrency(
-													monetary.fromRealAmount(Number(expense.amount), expense.currency),
-													expense.currency,
-												)}
-											</span>
-											<span className="text-muted-foreground text-xs">
+											<span className="text-muted-foreground shrink-0 text-xs">
+												{expense.categoryName && `${expense.categoryName} · `}
 												{datetime.format(expense.date, "MMM d, yyyy")}
 											</span>
 										</div>
+										<span className="pr-2 font-mono text-xs font-bold">
+											{formatCurrency(
+												monetary.fromRealAmount(Number(expense.amount), expense.currency),
+												expense.currency,
+											)}
+										</span>
 									</div>
 								</button>
 							);
