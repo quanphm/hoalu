@@ -24,6 +24,7 @@ const router = createTanStackRouter({
 	defaultNotFoundComponent: NotFound,
 	defaultErrorComponent: DefaultCatchBoundary,
 });
+
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;

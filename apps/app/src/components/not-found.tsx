@@ -11,7 +11,9 @@ export function NotFound() {
 				</div>
 				<p className="flex flex-wrap items-center gap-2">
 					<Button onClick={() => window.history.back()}>Go back</Button>
-					<Button variant="outline" render={<Link to="/">Start Over</Link>}></Button>
+					<Button variant="outline" render={<Link to="/" />}>
+						Start Over
+					</Button>
 				</p>
 			</div>
 		</SuperCenteredLayout>

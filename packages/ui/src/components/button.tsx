@@ -1,4 +1,5 @@
-import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils";
@@ -40,19 +41,24 @@ const buttonVariants = cva(
 	},
 );
 
-type ButtonProps = React.ComponentProps<typeof ButtonPrimitive> &
-	VariantProps<typeof buttonVariants>;
-
+interface ButtonProps extends useRender.ComponentProps<"button"> {
+	variant?: VariantProps<typeof buttonVariants>["variant"];
+	size?: VariantProps<typeof buttonVariants>["size"];
+}
 function Button({ className, variant, size, render, ...props }: ButtonProps) {
-	return (
-		<ButtonPrimitive
-			nativeButton
-			data-slot="button"
-			focusableWhenDisabled
-			className={cn(buttonVariants({ variant, size, className }))}
-			{...props}
-		/>
-	);
+	const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] = render
+		? undefined
+		: "button";
+	const defaultProps = {
+		className: cn(buttonVariants({ className, size, variant })),
+		"data-slot": "button",
+		type: typeValue,
+	};
+	return useRender({
+		defaultTagName: "button",
+		props: mergeProps<"button">(defaultProps, props),
+		render,
+	});
 }
 
 export { Button, type ButtonProps, buttonVariants };
