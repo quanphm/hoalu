@@ -32,7 +32,7 @@ export function DatepickerInputField(props: Props) {
 							type="date"
 							value={inputValue}
 							onChange={handleInputChange}
-							className="peer appearance-none ps-9 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+							className="ps-6"
 							min="1970-01-01"
 						/>
 					</FieldControl>
