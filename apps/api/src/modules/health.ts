@@ -74,7 +74,7 @@ export function healthModule() {
 				info: {
 					title: "Hoalu API",
 					description: "OpenAPI documentation",
-					version: "0.19.0",
+					version: "0.20.0",
 				},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
