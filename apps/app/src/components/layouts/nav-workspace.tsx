@@ -1,4 +1,4 @@
-import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+// import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -27,7 +27,7 @@ import { useSetAtom } from "jotai";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
-	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
+	// const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
 	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	return (

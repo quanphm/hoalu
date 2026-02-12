@@ -19,12 +19,11 @@ interface ExpenseDetailsProps {
 
 export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	const { currentExpense, currentIndex, handleGoUp, handleGoDown, canGoUp, canGoDown } =
-		useExpenseNavigation({
-			expenses,
-			selectedId: selectedRow.id,
-			onSelectExpense,
-		});
+	const { currentExpense, handleGoUp, handleGoDown, canGoUp, canGoDown } = useExpenseNavigation({
+		expenses,
+		selectedId: selectedRow.id,
+		onSelectExpense,
+	});
 
 	return (
 		<div className="bg-card text-card-foreground flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
