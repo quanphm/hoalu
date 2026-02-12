@@ -113,6 +113,11 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "/",
 		enabled: true,
 	},
+	command_palette: {
+		label: `${kbdSymbols.META} K`,
+		hotkey: "meta+k",
+		enabled: true,
+	},
 } as const;
 
 export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;

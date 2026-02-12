@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 
-const RECENT_EXPENSES_LIMIT = 10;
+const RECENT_EXPENSES_LIMIT = 7;
 
 export function RecentExpenses() {
 	const workspace = useWorkspace();
@@ -24,13 +24,7 @@ export function RecentExpenses() {
 						<Button
 							variant="outline"
 							size="sm"
-							render={
-								<Link
-									to="/$slug/expenses"
-									params={{ slug: workspace.slug }}
-									className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
-								/>
-							}
+							render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
 						>
 							View all
 						</Button>
@@ -51,13 +45,7 @@ export function RecentExpenses() {
 					<Button
 						variant="outline"
 						size="sm"
-						render={
-							<Link
-								to="/$slug/expenses"
-								params={{ slug: workspace.slug }}
-								className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
-							/>
-						}
+						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
 					>
 						View all
 					</Button>
@@ -78,11 +66,6 @@ export function RecentExpenses() {
 											{expense.category.name}
 										</Badge>
 									)}
-									<p className="text-muted-foreground text-xs">
-										{formatDistanceToNow(new Date(expense.date), {
-											addSuffix: true,
-										})}
-									</p>
 								</div>
 							</div>
 							<div className="shrink-0 text-right">
@@ -92,6 +75,11 @@ export function RecentExpenses() {
 									style="currency"
 									className="font-semibold"
 								/>
+								<p className="text-muted-foreground text-xs">
+									{formatDistanceToNow(new Date(expense.date), {
+										addSuffix: true,
+									})}
+								</p>
 							</div>
 						</div>
 					))}

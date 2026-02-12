@@ -1,3 +1,5 @@
+import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
+import { CommandPalette } from "#app/components/command-palette.tsx";
 import {
 	AVAILABLE_WORKSPACE_SHORTCUT,
 	KEYBOARD_SHORTCUTS,
@@ -6,6 +8,7 @@ import {
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useAtom } from "jotai";
 import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -16,6 +19,20 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
+	const [commandPaletteOpen, setCommandPaletteOpen] = useAtom(commandPaletteOpenAtom);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.command_palette.hotkey,
+		(e) => {
+			e.preventDefault();
+			setCommandPaletteOpen((prev) => !prev);
+		},
+		{
+			description: "Toggle: Command Palette",
+			enabled: KEYBOARD_SHORTCUTS.command_palette.enabled,
+			enableOnFormTags: true,
+		},
+	);
 
 	useHotkeys(
 		AVAILABLE_WORKSPACE_SHORTCUT,
@@ -83,5 +100,10 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 		},
 	);
 
-	return children;
+	return (
+		<>
+			{children}
+			<CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
+		</>
+	);
 }

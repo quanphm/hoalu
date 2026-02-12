@@ -1,6 +1,8 @@
-import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+// import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { SearchIcon } from "@hoalu/icons/lucide";
 import {
 	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
@@ -25,18 +27,28 @@ import { useSetAtom } from "jotai";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
-	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
+	// const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
+	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	return (
 		<>
 			<SidebarGroup>
 				<SidebarGroupContent>
-					<Button
+					{/* <Button
 						variant="default"
 						className="mt-2 w-full justify-center"
 						onClick={() => setCreateExpenseDialog({ state: true })}
 					>
 						Create expense
+					</Button> */}
+					<Button
+						variant="outline"
+						className="mt-2 w-full justify-start gap-2"
+						onClick={() => setCommandPaletteOpen(true)}
+					>
+						<SearchIcon className="size-4" />
+						<span className="flex-1 text-left">Search...</span>
+						<HotKey {...KEYBOARD_SHORTCUTS.command_palette} />
 					</Button>
 				</SidebarGroupContent>
 			</SidebarGroup>

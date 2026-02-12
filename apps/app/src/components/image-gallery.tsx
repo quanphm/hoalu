@@ -16,7 +16,6 @@ export function ImageGallery(props: {
 				{props.data.map((image) => (
 					<div
 						key={image.name}
-						role="button"
 						tabIndex={0}
 						className="group bg-muted/50 hover:border-primary/50 relative aspect-square cursor-pointer overflow-hidden rounded-md border transition-all hover:shadow-md"
 						onClick={() => setSelectedImage(image)}
@@ -28,7 +27,7 @@ export function ImageGallery(props: {
 							className="h-full w-full object-cover transition-transform group-hover:scale-105"
 						/>
 						{image.description && (
-							<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
+							<div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
 								<p className="truncate text-xs text-white">{image.description}</p>
 							</div>
 						)}
