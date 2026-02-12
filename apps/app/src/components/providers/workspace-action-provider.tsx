@@ -1,13 +1,15 @@
 import {
+	commandPaletteOpenAtom,
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
 	createWalletDialogAtom,
 	dialogStateAtom,
 	draftExpenseAtom,
 } from "#app/atoms/index.ts";
+import { CommandPalette } from "#app/components/command-palette.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -34,6 +36,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogAtom);
 	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
+	const [commandPaletteOpen, setCommandPaletteOpen] = useAtom(commandPaletteOpenAtom);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
@@ -128,5 +131,24 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		[slug, allowShortcutNavigate],
 	);
 
-	return children;
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.command_palette.hotkey,
+		(e) => {
+			e.preventDefault();
+			setCommandPaletteOpen((prev) => !prev);
+		},
+		{
+			description: "Toggle: Command Palette",
+			enabled: KEYBOARD_SHORTCUTS.command_palette.enabled,
+			enableOnFormTags: true,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	return (
+		<>
+			{children}
+			<CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
+		</>
+	);
 }
