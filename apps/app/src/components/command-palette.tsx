@@ -278,7 +278,7 @@ function ExpenseSearchResults({
 											)}
 										</div>
 										<div className="flex shrink-0 items-center gap-2">
-											<span className="font-mono text-xs">
+											<span className="font-mono text-xs font-bold">
 												{formatCurrency(
 													monetary.fromRealAmount(Number(expense.amount), expense.currency),
 													expense.currency,

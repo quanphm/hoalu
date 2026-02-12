@@ -532,7 +532,7 @@ export function ExpenseSearch() {
 			<Input
 				type="search"
 				placeholder="Search"
-				className="peer ps-9 focus-visible:ring-0"
+				className="peer ps-6 focus-visible:ring-0"
 				value={value}
 				onChange={(e) => {
 					setValue(e.target.value);
