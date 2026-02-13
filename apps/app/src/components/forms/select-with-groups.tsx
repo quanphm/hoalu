@@ -2,8 +2,8 @@ import {
 	Select,
 	SelectContent,
 	SelectGroup,
-	SelectItem,
 	SelectLabel,
+	SelectItem,
 	SelectTrigger,
 	SelectValue,
 } from "@hoalu/ui/select";
@@ -26,7 +26,10 @@ export function SelectWithGroupsField(props: Props) {
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<FieldControl>
 				<Select items={items} value={field.state.value} onValueChange={field.handleChange}>
-					<SelectTrigger className="bg-background focus:border-ring focus:ring-ring/20 focus:ring-[3px]">
+					<SelectTrigger
+						size="sm"
+						className="bg-background focus:border-ring focus:ring-ring/20 focus:ring-[3px]"
+					>
 						<SelectValue />
 					</SelectTrigger>
 

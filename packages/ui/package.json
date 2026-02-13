@@ -19,6 +19,7 @@
 		"./chart": "./src/components/chart.tsx",
 		"./checkbox": "./src/components/checkbox.tsx",
 		"./collapsible": "./src/components/collapsible.tsx",
+		"./combobox": "./src/components/combobox.tsx",
 		"./command": "./src/components/command.tsx",
 		"./dialog": "./src/components/dialog.tsx",
 		"./drawer": "./src/components/drawer.tsx",

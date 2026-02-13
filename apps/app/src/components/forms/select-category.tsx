@@ -1,15 +1,16 @@
 import { CreateCategoryForm } from "#app/components/categories/category-actions.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "@hoalu/ui/command";
+	Combobox,
+	ComboboxEmpty,
+	ComboboxInput,
+	ComboboxItem,
+	ComboboxList,
+	ComboboxPopup,
+	ComboboxSeparator,
+} from "@hoalu/ui/combobox";
 import {
 	Dialog,
 	DialogContent,
@@ -18,13 +19,15 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
-import { Separator } from "@hoalu/ui/separator";
-import { cn } from "@hoalu/ui/utils";
 import { useState } from "react";
 
-import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
+import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
+
+interface CategoryOption {
+	label: string;
+	value: string;
+}
 
 interface Props {
 	label?: React.ReactNode;
@@ -34,95 +37,56 @@ interface Props {
 }
 
 export function SelectCategoryField(props: Props) {
-	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const field = useFieldContext<string>();
 	const { value } = field.state;
 
 	const categories = useLiveQueryCategories();
-	const categorieyOptions = [...categories]
+	const categoryOptions: CategoryOption[] = [...categories]
 		.sort((a, b) => b.total - a.total)
 		.map((c) => ({
 			label: c.name,
 			value: c.id,
 		}));
 
+	const selectedOption = categoryOptions.find((opt) => opt.value === value) ?? null;
+
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-				<Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>
-					<FieldControl>
-						<PopoverTrigger
-							render={
-								<Button
-									variant="outline"
-									role="combobox"
-									aria-expanded={popoverOpen}
-									className={cn(
-										"border-input bg-background hover:bg-background focus-visible:border-ring focus-visible:ring-ring/20 w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:ring-[3px]",
-										"focus:border-ring focus:ring-ring/20 focus:ring-[3px]",
-									)}
-								/>
-							}
-							disabled={props.disabled}
-						>
-							<span className={cn("truncate", !value && "text-muted-foreground")}>
-								{value ? categorieyOptions.find((opt) => opt.value === value)?.label : "Select"}
-							</span>
-							<ChevronDownIcon
-								aria-hidden="true"
-								className="text-muted-foreground/80 size-4 shrink-0"
-							/>
-						</PopoverTrigger>
-					</FieldControl>
-					<PopoverContent className="border-input w-full min-w-(--anchor-width) p-0" align="start">
-						<Command>
-							<CommandInput placeholder="Search..." />
-							<CommandList>
-								<CommandEmpty>No result.</CommandEmpty>
-								<CommandGroup className="max-h-[175px] overflow-auto">
-									{categorieyOptions.map((opt) => (
-										<CommandItem
-											key={opt.value}
-											value={opt.label}
-											onSelect={(currentLabel) => {
-												const currentOption = categorieyOptions.find(
-													(opt) => opt.label === currentLabel,
-												);
-												if (currentOption) {
-													field.handleChange(
-														currentOption.value === value ? "" : currentOption.value,
-													);
-												}
-												setPopoverOpen(false);
-											}}
-										>
-											{opt.label}
-											{value === opt.value && <CheckIcon size={16} className="ml-auto" />}
-										</CommandItem>
-									))}
-								</CommandGroup>
-							</CommandList>
-						</Command>
-						<Separator />
-						<div className="text-foreground **:[[cmdk-group-heading]]:text-muted-foreground overflow-hidden px-2 py-1 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-1 **:[[cmdk-group-heading]]:text-sm">
-							<DialogTrigger
-								render={
-									<Button
-										variant="ghost"
-										className="w-full justify-start"
-										onClick={() => setPopoverOpen(false)}
-									/>
-								}
-							>
+				<Combobox<CategoryOption>
+					value={selectedOption}
+					onValueChange={(newValue) => {
+						field.handleChange(newValue?.value ?? "");
+					}}
+					items={categoryOptions}
+					disabled={props.disabled}
+				>
+					<ComboboxInput placeholder="Select" />
+					<ComboboxPopup className="max-h-64">
+						<ComboboxEmpty>No result.</ComboboxEmpty>
+						<ComboboxList>
+							{(item: CategoryOption) => (
+								<ComboboxItem
+									key={item.value}
+									value={item}
+									className="grid-cols-[1fr_1rem] ps-3 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1"
+								>
+									{item.label}
+								</ComboboxItem>
+							)}
+						</ComboboxList>
+						<ComboboxSeparator />
+						<div className="px-1 py-1">
+							<DialogTrigger render={<Button variant="ghost" className="w-full justify-start" />}>
 								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
 								Create new
 							</DialogTrigger>
 						</div>
-					</PopoverContent>
-				</Popover>
+					</ComboboxPopup>
+				</Combobox>
 				<DialogContent className="sm:max-w-[420px]">
 					<DialogHeader>
 						<DialogTitle>Create new category</DialogTitle>
