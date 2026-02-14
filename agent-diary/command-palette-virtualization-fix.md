@@ -124,3 +124,280 @@ const MAX_LIST_HEIGHT = 384; // max-h-96
 2. **Variable height virtualization**: Pass a function to `estimateSize` that returns different heights based on item type
 3. **Conditional overflow**: Only apply `overflow-y-auto` when content exceeds max height to avoid unnecessary scrollbars
 4. **Bottom padding**: Add extra space (8px) when content fits naturally to prevent items from touching container edges
+
+---
+
+## Keyboard Navigation for Virtualized Lists (base-ui Autocomplete)
+
+**Date**: 2026-02-15
+**Issue**: Arrow up/down keyboard navigation not working in virtualized command palette
+
+### Problem
+
+After implementing virtualization, keyboard navigation (ArrowUp/ArrowDown) stopped working. The highlight stayed on the first item regardless of key presses.
+
+### Root Cause
+
+base-ui's Autocomplete requires specific props on `Autocomplete.Item` (wrapped as `CommandItem`) to manage keyboard navigation:
+1. `value` - the actual item object that base-ui tracks internally
+2. `index` - the item's index in the `items` array passed to `Autocomplete.Root`
+
+Additionally, items must be wrapped in `Autocomplete.List` (wrapped as `CommandList`) for the listbox keyboard management to work.
+
+### Solution
+
+**1. Track `itemIndex` separately from virtual row index:**
+
+Headers are not selectable items, so we need a separate counter that only increments for actual items:
+
+```typescript
+type VirtualizedItem =
+  | { type: "header"; label: string; itemIndex?: never }
+  | { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
+  | { type: "action"; data: ActionItem; itemIndex: number };
+
+const virtualizedItems: VirtualizedItem[] = useMemo(() => {
+  const items: VirtualizedItem[] = [];
+  let itemIndex = 0;
+
+  if (hasExpenseResults) {
+    items.push({ type: "header", label: "Expenses" });
+    for (const expense of filteredExpenses) {
+      items.push({ type: "expense", data: expense, itemIndex });
+      itemIndex++;
+    }
+  }
+
+  items.push({ type: "header", label: "Actions" });
+  for (const action of actions) {
+    items.push({ type: "action", data: action, itemIndex });
+    itemIndex++;
+  }
+
+  return items;
+}, [hasExpenseResults, filteredExpenses, actions]);
+```
+
+**2. Build `autocompleteItems` array for base-ui:**
+
+This array contains only selectable items (no headers) and is passed to `Command` (Autocomplete.Root):
+
+```typescript
+const autocompleteItems = useMemo(() => {
+  const expenseItems = filteredExpenses.map((e) => ({
+    id: e.id,
+    title: e.title,
+    amount: e.amount,
+  }));
+  const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
+  return [...expenseItems, ...actionItems];
+}, [filteredExpenses, actions]);
+```
+
+**3. Pass `value` and `index` to CommandItem:**
+
+```typescript
+if (item.type === "expense") {
+  const expense = item.data;
+  const autocompleteItem = autocompleteItems[item.itemIndex];
+  return (
+    <CommandItem
+      key={expense.id}
+      value={autocompleteItem}  // Required for base-ui item tracking
+      index={item.itemIndex}    // Required for virtualized keyboard nav
+      // ... other props
+    />
+  );
+}
+```
+
+**4. Wrap virtualized content in CommandList:**
+
+```typescript
+return (
+  <CommandList className="!p-0">
+    <div ref={parentRef} style={{ height: containerHeight }} className="...">
+      <div style={{ height: totalHeight }} className="relative w-full">
+        {virtualItems.map((virtualRow) => {
+          // ... render items
+        })}
+      </div>
+    </div>
+  </CommandList>
+);
+```
+
+### Key Props Required
+
+| Prop | Purpose |
+|------|---------|
+| `value` | The item object from `autocompleteItems` - base-ui uses this for internal tracking |
+| `index` | The item's position in `autocompleteItems` - required when `virtualized={true}` |
+
+### Files Modified
+
+- `apps/app/src/components/command-palette.tsx`
+
+### Additional Improvements Made
+
+1. **Results count in footer**: Shows "X results" when expense search returns matches
+2. **Vertical separator fix**: Added explicit height (`!h-4`) since `h-full` doesn't work in flex containers with `items-center`
+3. **Accessibility improvements**: Added `aria-hidden="true"` to decorative Kbd icons and `role="presentation"` to section headers
+
+---
+
+## Keyboard Navigation Scrolling for Off-Screen Items
+
+**Date**: 2026-02-15
+**Issue**: Keyboard navigation stops when items are outside the visible viewport
+
+### Problem
+
+With virtualization, keyboard navigation (ArrowUp/ArrowDown) appeared to "stop" when the next item to highlight wasn't rendered by the virtualizer. The virtualizer only renders items within the visible area + overscan, so if you press ArrowDown and the next item isn't rendered, nothing visible happens.
+
+### Solution
+
+Use the `onItemHighlighted` callback on `Autocomplete.Root` (wrapped as `Command`) to scroll the virtualizer to the highlighted item when navigating via keyboard.
+
+**1. Create a ref to hold the scroll function:**
+
+```typescript
+const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
+```
+
+**2. Implement `onItemHighlighted` callback:**
+
+```typescript
+const handleItemHighlighted = useCallback(
+  (highlightedValue: unknown, eventDetails: { reason: string }) => {
+    if (eventDetails.reason === "keyboard" && highlightedValue) {
+      const value = highlightedValue as { id: string };
+      // Find the index of the highlighted item in autocompleteItems
+      const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+      if (itemIndex !== -1 && scrollToItemRef.current) {
+        scrollToItemRef.current(itemIndex);
+      }
+    }
+  },
+  [autocompleteItems],
+);
+```
+
+**3. Pass callback to Command:**
+
+```typescript
+<Command
+  items={autocompleteItems}
+  virtualized
+  onItemHighlighted={handleItemHighlighted}
+>
+```
+
+**4. Expose scroll function from VirtualizedList via ref:**
+
+```typescript
+function VirtualizedList({ scrollToItemRef, items, ... }) {
+  useEffect(() => {
+    scrollToItemRef.current = (itemIndex: number) => {
+      // Find the virtualizedItems index that corresponds to this itemIndex
+      const virtualIndex = items.findIndex(
+        (item) => item.type !== "header" && item.itemIndex === itemIndex,
+      );
+      if (virtualIndex !== -1) {
+        virtualizer.scrollToIndex(virtualIndex, { align: "auto" });
+      }
+    };
+
+    return () => {
+      scrollToItemRef.current = null;
+    };
+  }, [items, virtualizer, scrollToItemRef]);
+}
+```
+
+### Key Details
+
+1. **`onItemHighlighted` receives item value, not index**: You need to find the index by matching the item's `id`
+2. **`eventDetails.reason`**: Can be `'keyboard'`, `'pointer'`, or `'none'` - only scroll for keyboard navigation
+3. **Two-level index mapping**: 
+   - `itemIndex` in autocompleteItems (excludes headers)
+   - `virtualIndex` in virtualizedItems (includes headers)
+4. **`align: "auto"`**: Scrolls minimally to bring item into view (doesn't center unnecessarily)
+
+### Files Modified
+
+- `apps/app/src/components/command-palette.tsx`
+
+### base-ui Documentation Reference
+
+From the Autocomplete API docs:
+
+```typescript
+onItemHighlighted?: (
+  highlightedValue: ItemValue | undefined,
+  eventDetails: { reason: 'keyboard' | 'pointer' | 'none' }
+) => void
+```
+
+Callback fired when an item is highlighted or unhighlighted. The `reason` describes why the highlight changed.
+
+---
+
+## Description-Matched Items Not Keyboard-Navigable
+
+**Date**: 2026-02-15
+**Issue**: Searching "bia" shows 8 results including items matched via description (e.g., "Kingfood", "Foodmart"), but keyboard navigation skips those items and cannot reach them.
+
+### Problem
+
+When searching "bia", `filteredExpenses` correctly matched expenses where "bia" appeared in either `title` or `description`. However, keyboard navigation only worked for expenses where "bia" was in the `title`.
+
+### Root Cause
+
+base-ui `Autocomplete` (via `Command`) uses `mode="list"` by default, which **re-filters `autocompleteItems` internally** against the typed query. The `autocompleteItems` array only exposes `{ id, title, amount }` per expense — no `description`. So for items like "Kingfood" (matched via description), base-ui's internal filter couldn't match "bia" against `title: "Kingfood"` and treated those items as hidden/non-navigable.
+
+This created a split:
+- **Visible in list**: all 8 expenses (pre-filtered by `filteredExpenses` which checks both title + description)
+- **Navigable via keyboard**: only the subset whose `title` contained "bia" (base-ui's internal filter)
+
+### Solution
+
+Add `mode="none"` to the `Command` component in `command-palette.tsx`.
+
+```typescript
+// Before
+<Command
+  items={autocompleteItems}
+  value={search}
+  onValueChange={(value) => setSearch(value)}
+  virtualized
+  onItemHighlighted={handleItemHighlighted}
+>
+
+// After
+<Command
+  items={autocompleteItems}
+  value={search}
+  onValueChange={(value) => setSearch(value)}
+  virtualized
+  mode="none"
+  onItemHighlighted={handleItemHighlighted}
+>
+```
+
+`mode="none"` tells base-ui that items are **static/pre-filtered** — no internal filtering is applied. All items passed to `Command` are treated as fully navigable.
+
+### base-ui `mode` Values
+
+| Mode | Filtering | Inline autocompletion |
+|------|-----------|-----------------------|
+| `list` (default) | Dynamic, based on input | No |
+| `both` | Dynamic, based on input | Yes |
+| `inline` | None (static) | Yes |
+| `none` | None (static) | No |
+
+Use `mode="none"` whenever filtering is handled externally (as in this command palette).
+
+### Files Modified
+
+- `apps/app/src/components/command-palette.tsx` — added `mode="none"` to `<Command>`
