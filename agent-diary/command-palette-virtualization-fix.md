@@ -504,3 +504,161 @@ export const VIRTUALIZER_OVERSCAN = 5;
 ### Files Removed
 
 - `apps/app/src/components/command-palette.tsx` — replaced by directory structure
+
+---
+
+## Accessibility & Performance Review Fixes
+
+**Date**: 2026-02-15
+**Issue**: Multiple accessibility and performance improvements identified during comprehensive code review
+
+### Review Context
+
+Applied all skills (vercel-react-best-practices, vercel-composition-patterns, turborepo, web-design-guidelines, ui-skills) to review the command palette module.
+
+### High-Priority Fixes (Accessibility)
+
+**1. Missing focus-visible styles after outline-none**
+
+`action-item.tsx` and `expense-item.tsx` had `outline-none` without visible focus replacement, violating web-design-guidelines rule: "Never `outline-none` without focus replacement".
+
+```typescript
+// Before
+className="... outline-none select-none"
+
+// After
+className="... outline-none select-none focus-visible:ring-2 focus-visible:ring-ring"
+```
+
+**2. Missing aria-live for search results announcement**
+
+Screen readers weren't notified when search results count changed.
+
+```typescript
+// Before (command-palette.tsx:166)
+<div className="flex items-center gap-3">
+
+// After
+<div className="flex items-center gap-3" aria-live="polite">
+```
+
+**3. Empty state missing role="status"**
+
+Empty state in `virtualized-list.tsx` wasn't announced to screen readers.
+
+```typescript
+// Before
+<div className="text-muted-foreground py-6 text-center text-sm">No results.</div>
+
+// After
+<div role="status" className="text-muted-foreground py-6 text-center text-sm">
+  No results.
+</div>
+```
+
+**4. String concatenation instead of cn() utility**
+
+`virtualized-list.tsx` used template literal for conditional classes, violating ui-skills rule.
+
+```typescript
+// Before
+className={`relative w-full overflow-x-hidden p-2 ${needsScroll ? "overflow-y-auto" : "overflow-y-hidden"}`}
+
+// After
+import { cn } from "@hoalu/ui/utils";
+className={cn(
+  "relative w-full overflow-x-hidden p-2",
+  needsScroll ? "overflow-y-auto" : "overflow-y-hidden",
+)}
+```
+
+### Medium-Priority Fixes (Performance)
+
+**1. Stable callback with ref pattern for runAction**
+
+`runAction` was recreating on every `onOpenChange` prop change, causing unnecessary re-renders per `rerender-defer-reads` rule.
+
+```typescript
+// Before
+const runAction = useCallback(
+  (action: () => void) => {
+    onOpenChange(false);
+    setSearch("");
+    action();
+  },
+  [onOpenChange],
+);
+
+// After
+const onOpenChangeRef = useRef(onOpenChange);
+useEffect(() => {
+  onOpenChangeRef.current = onOpenChange;
+}, [onOpenChange]);
+
+const runAction = useCallback((action: () => void) => {
+  onOpenChangeRef.current(false);
+  setSearch("");
+  action();
+}, []); // Now stable - empty deps
+```
+
+**2. Stable callback for handleItemHighlighted**
+
+`handleItemHighlighted` was recreating on every `autocompleteItems` change, but it only needed the ref value in the callback body.
+
+```typescript
+// Before
+const handleItemHighlighted = useCallback(
+  (highlightedValue: unknown, eventDetails: { reason: string }) => {
+    // ...
+    const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+    // ...
+  },
+  [autocompleteItems], // Recreates on every search
+);
+
+// After
+const autocompleteItemsRef = useRef(autocompleteItems);
+useEffect(() => {
+  autocompleteItemsRef.current = autocompleteItems;
+}, [autocompleteItems]);
+
+const handleItemHighlighted = useCallback(
+  (highlightedValue: unknown, eventDetails: { reason: string }) => {
+    // ...
+    const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === value.id);
+    // ...
+  },
+  [], // Now stable
+);
+```
+
+**3. Added tabular-nums for currency alignment**
+
+Currency values in `expense-item.tsx` weren't using proper numeric alignment.
+
+```typescript
+// Before
+<span className="font-mono text-xs font-bold">
+
+// After
+<span className="font-mono text-xs font-bold tabular-nums">
+```
+
+### Files Modified
+
+- `apps/app/src/components/command-palette/command-palette.tsx`
+- `apps/app/src/components/command-palette/virtualized-list.tsx`
+- `apps/app/src/components/command-palette/action-item.tsx`
+- `apps/app/src/components/command-palette/expense-item.tsx`
+
+### Rules Applied
+
+| Rule Source | Rule ID | Issue |
+|-------------|---------|-------|
+| web-design-guidelines | focus-visible | Missing focus ring after outline-none |
+| web-design-guidelines | aria-live | Async updates need aria-live="polite" |
+| web-design-guidelines | role="status" | Empty states should announce to screen readers |
+| ui-skills | cn utility | Use cn() for class logic |
+| vercel-react-best-practices | rerender-defer-reads | Don't subscribe to state only used in callbacks |
+| web-design-guidelines | tabular-nums | Use tabular-nums for number columns |
