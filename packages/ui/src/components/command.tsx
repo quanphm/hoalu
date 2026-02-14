@@ -29,7 +29,8 @@ function CommandDialogBackdrop({ className, ...props }: CommandDialogPrimitive.B
 	return (
 		<CommandDialogPrimitive.Backdrop
 			className={cn(
-				"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
+				"fixed inset-0 z-50 bg-black/32 backdrop-blur-md transition-all duration-200",
+				"data-ending-style:opacity-0 data-starting-style:opacity-0",
 				className,
 			)}
 			data-slot="command-dialog-backdrop"
@@ -198,7 +199,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			className={cn(
-				"text-muted-foreground flex items-center justify-between gap-2 rounded-b-[calc(var(--radius-2xl)-1px)] border-t px-5 py-3 text-xs",
+				"text-muted-foreground z-10 flex items-center justify-between gap-2 rounded-b-[calc(var(--radius-2xl)-1px)] border-t px-5 py-3 text-xs",
 				className,
 			)}
 			data-slot="command-footer"

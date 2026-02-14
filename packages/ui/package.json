@@ -27,6 +27,7 @@
 		"./empty": "./src/components/empty.tsx",
 		"./field": "./src/components/field.tsx",
 		"./frame": "./src/components/frame.tsx",
+		"./kbd": "./src/components/kbd.tsx",
 		"./input": "./src/components/input.tsx",
 		"./label": "./src/components/label.tsx",
 		"./number-field": "./src/components/number-field.tsx",

@@ -4,6 +4,7 @@ import {
 	expenseWalletFilterAtom,
 	mobileFilterExpandedAtom,
 	searchKeywordsAtom,
+	selectedExpenseAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
@@ -31,6 +32,7 @@ import * as z from "zod";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
+	id: z.optional(z.string()),
 });
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses")({
@@ -39,7 +41,9 @@ export const Route = createFileRoute("/_dashboard/$slug/expenses")({
 });
 
 function RouteComponent() {
-	const { date: searchByDate } = Route.useSearch();
+	const { date: searchByDate, id: searchById } = Route.useSearch();
+	const navigate = Route.useNavigate();
+
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
@@ -52,8 +56,15 @@ function RouteComponent() {
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
 	const [isFilterExpanded, setIsFilterExpanded] = useAtom(mobileFilterExpandedAtom);
+	const [, setSelectedExpense] = useAtom(selectedExpenseAtom);
 
-	// Reset filter drawer state when component unmounts
+	useEffect(() => {
+		if (searchById) {
+			setSelectedExpense({ id: searchById });
+			navigate({ search: (prev) => ({ ...prev, id: undefined }), replace: true });
+		}
+	}, [searchById, setSelectedExpense, navigate]);
+
 	useEffect(() => {
 		return () => {
 			setIsFilterExpanded(false);
