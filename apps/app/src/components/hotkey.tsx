@@ -5,7 +5,7 @@ export function HotKey({
 	label,
 	enabled = true,
 	...props
-}: React.ComponentProps<"span"> & { label: string | number; enabled?: boolean }) {
+}: React.ComponentProps<"span"> & { label: React.ReactNode; enabled?: boolean }) {
 	if (!enabled) {
 		return null;
 	}

@@ -6,30 +6,27 @@ import {
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
-import { CirclePlusIcon } from "@hoalu/icons/lucide";
+import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "@hoalu/icons/lucide";
 import {
 	Command,
-	CommandCollection,
 	CommandDialog,
 	CommandDialogPopup,
-	CommandEmpty,
-	CommandGroup,
-	CommandGroupLabel,
+	CommandFooter,
 	CommandInput,
 	CommandItem,
 	CommandList,
 	CommandPanel,
-	CommandSeparator,
+	CommandShortcut,
 } from "@hoalu/ui/command";
+import { KbdGroup, Kbd } from "@hoalu/ui/kbd";
+import { Separator } from "@hoalu/ui/separator";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useSetAtom } from "jotai";
-import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 function useExpenseSearch(slug: string | undefined, search: string) {
 	const expenseCollection = useMemo(() => (slug ? expenseCollectionFactory(slug) : null), [slug]);
@@ -76,25 +73,31 @@ interface CommandPaletteProps {
 	onOpenChange: (open: boolean) => void;
 }
 
-interface CommandPaletteItem {
+interface ExpenseSearchResult {
+	id: string;
+	title: string;
+	description: string | null;
+	amount: number;
+	currency: string;
+	date: string;
+	categoryName: string | undefined;
+}
+
+interface ActionItem {
 	id: string;
 	label: string;
-	icon?: React.ReactNode;
 	meta?: React.ReactNode;
 	onAction: () => void;
 }
 
-interface CommandPaletteGroup {
-	value: string;
-	items: CommandPaletteItem[];
-}
+type VirtualizedItem =
+	| { type: "header"; label: string; itemIndex?: never }
+	| { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
+	| { type: "action"; data: ActionItem; itemIndex: number };
 
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const [search, setSearch] = useState("");
-	const navigate = useNavigate();
-	const params = useParams({ from: "/_dashboard/$slug" });
-	const slug = params.slug as string | undefined;
-	const { data: workspaces } = useQuery(listWorkspacesOptions());
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
 	const setCreateWalletDialog = useSetAtom(createWalletDialogAtom);
@@ -103,71 +106,92 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const filteredExpenses = useExpenseSearch(slug, search);
 	const hasExpenseResults = filteredExpenses.length > 0;
 
-	const close = useCallback(() => {
-		onOpenChange(false);
-		setSearch("");
-	}, [onOpenChange]);
-
 	const runAction = useCallback(
 		(action: () => void) => {
-			close();
+			onOpenChange(false);
+			setSearch("");
 			action();
 		},
-		[close],
+		[onOpenChange],
 	);
 
-	const quickActions: CommandPaletteItem[] = useMemo(() => {
-		if (!slug) return [];
-		return [
+	const actions: ActionItem[] = useMemo(
+		() => [
 			{
 				id: "create-expense",
 				label: "Create Expense",
-				icon: <CirclePlusIcon />,
 				onAction: () => runAction(() => setCreateExpenseDialog({ state: true })),
+				meta: <CommandShortcut>⇧E</CommandShortcut>,
 			},
 			{
 				id: "create-wallet",
 				label: "Create Wallet",
-				icon: <CirclePlusIcon />,
 				onAction: () => runAction(() => setCreateWalletDialog({ state: true })),
+				meta: <CommandShortcut>⇧W</CommandShortcut>,
 			},
 			{
 				id: "create-category",
 				label: "Create Category",
-				icon: <CirclePlusIcon />,
 				onAction: () => runAction(() => setCreateCategoryDialog({ state: true })),
+				meta: <CommandShortcut>⇧C</CommandShortcut>,
 			},
-		];
-	}, [slug, runAction, setCreateExpenseDialog, setCreateWalletDialog, setCreateCategoryDialog]);
+		],
+		[runAction, setCreateExpenseDialog, setCreateWalletDialog, setCreateCategoryDialog],
+	);
 
-	const workspaceItems: CommandPaletteItem[] = useMemo(() => {
-		if (!workspaces || workspaces.length <= 1) return [];
-		return workspaces.map((ws, index) => ({
-			id: `workspace-${ws.id}`,
-			label: ws.name,
-			icon: (
-				<span className="flex size-5 items-center justify-center rounded border text-xs font-medium">
-					{index + 1}
-				</span>
-			),
-			meta:
-				ws.slug === slug ? (
-					<span className="text-muted-foreground ml-1 text-xs">(current)</span>
-				) : undefined,
-			onAction: () => runAction(() => navigate({ to: "/$slug", params: { slug: ws.slug } })),
+	// Build unified items array for virtualization
+	// itemIndex tracks the index in autocompleteItems (excludes headers)
+	const virtualizedItems: VirtualizedItem[] = useMemo(() => {
+		const items: VirtualizedItem[] = [];
+		let itemIndex = 0;
+
+		// Add expenses section if there are results
+		if (hasExpenseResults) {
+			items.push({ type: "header", label: "Expenses" });
+			for (const expense of filteredExpenses) {
+				items.push({ type: "expense", data: expense, itemIndex });
+				itemIndex++;
+			}
+		}
+
+		// Always add actions section
+		items.push({ type: "header", label: "Actions" });
+		for (const action of actions) {
+			items.push({ type: "action", data: action, itemIndex });
+			itemIndex++;
+		}
+
+		return items;
+	}, [hasExpenseResults, filteredExpenses, actions]);
+
+	// Build items array for base-ui Autocomplete (only actual selectable items, not headers)
+	const autocompleteItems = useMemo(() => {
+		const expenseItems = filteredExpenses.map((e) => ({
+			id: e.id,
+			title: e.title,
+			amount: e.amount,
 		}));
-	}, [workspaces, slug, runAction, navigate]);
+		const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
+		return [...expenseItems, ...actionItems];
+	}, [filteredExpenses, actions]);
 
-	const groups: CommandPaletteGroup[] = useMemo(() => {
-		const result: CommandPaletteGroup[] = [];
-		if (quickActions.length > 0) {
-			result.push({ value: "Quick Actions", items: quickActions });
-		}
-		if (workspaceItems.length > 0) {
-			result.push({ value: "Workspaces", items: workspaceItems });
-		}
-		return result;
-	}, [quickActions, workspaceItems]);
+	// Ref to hold the scroll function from VirtualizedList
+	const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
+
+	// Handle keyboard navigation - scroll to highlighted item
+	const handleItemHighlighted = useCallback(
+		(highlightedValue: unknown, eventDetails: { reason: string }) => {
+			if (eventDetails.reason === "keyboard" && highlightedValue) {
+				const value = highlightedValue as { id: string };
+				// Find the index of the highlighted item in autocompleteItems
+				const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+				if (itemIndex !== -1 && scrollToItemRef.current) {
+					scrollToItemRef.current(itemIndex);
+				}
+			}
+		},
+		[autocompleteItems],
+	);
 
 	return (
 		<CommandDialog
@@ -178,101 +202,162 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			}}
 		>
 			<CommandDialogPopup>
-				<Command items={groups} value={search} onValueChange={(value) => setSearch(value)}>
-					<CommandInput placeholder="Search anything" />
+				<Command
+					items={autocompleteItems}
+					value={search}
+					onValueChange={(value) => setSearch(value)}
+					virtualized
+					mode="none"
+					onItemHighlighted={handleItemHighlighted}
+				>
+					<CommandInput placeholder="Search..." />
 					<CommandPanel>
-						{!hasExpenseResults && <CommandEmpty>No results.</CommandEmpty>}
-
-						{slug && hasExpenseResults && (
-							<ExpenseSearchResults
-								slug={slug}
-								expenses={filteredExpenses}
-								onAction={runAction}
-								navigate={navigate}
-							/>
-						)}
-
-						<CommandList>
-							{(group, groupIndex) => (
-								<Fragment key={group.value}>
-									<CommandGroup items={group.items}>
-										<CommandGroupLabel>{group.value}</CommandGroupLabel>
-										<CommandCollection>
-											{(item) => (
-												<CommandItem key={item.id} value={item.id} onClick={item.onAction}>
-													{item.icon}
-													<span>{item.label}</span>
-													{item.meta}
-												</CommandItem>
-											)}
-										</CommandCollection>
-									</CommandGroup>
-									{groupIndex < groups.length - 1 && <CommandSeparator />}
-								</Fragment>
-							)}
-						</CommandList>
+						<VirtualizedList
+							items={virtualizedItems}
+							autocompleteItems={autocompleteItems}
+							runAction={runAction}
+							scrollToItemRef={scrollToItemRef}
+						/>
 					</CommandPanel>
+
+					<CommandFooter>
+						{hasExpenseResults && (
+							<span className="text-foreground">
+								{filteredExpenses.length} {filteredExpenses.length === 1 ? "expense" : "expenses"}{" "}
+								found
+							</span>
+						)}
+						<div className="flex items-center gap-3">
+							<div className="flex items-center gap-1">
+								<KbdGroup aria-hidden="true">
+									<Kbd className="bg-background text-foreground">
+										<ArrowUpIcon />
+									</Kbd>
+									<Kbd className="bg-background text-foreground">
+										<ArrowDownIcon />
+									</Kbd>
+								</KbdGroup>
+								<span>Navigate</span>
+							</div>
+							<div className="flex items-center gap-1">
+								<Kbd className="bg-background text-foreground" aria-hidden="true">
+									<CornerDownLeftIcon />
+								</Kbd>
+								<span>Open</span>
+							</div>
+							<Separator orientation="vertical" className="h-4!" />
+							<div className="flex items-center gap-1">
+								<Kbd className="bg-background text-foreground" aria-hidden="true">
+									Esc
+								</Kbd>
+								<span>Close</span>
+							</div>
+						</div>
+					</CommandFooter>
 				</Command>
 			</CommandDialogPopup>
 		</CommandDialog>
 	);
 }
 
-type ExpenseSearchResult = {
-	id: string;
-	title: string;
-	description: string | null;
-	amount: number;
-	currency: string;
-	date: string;
-	categoryName: string | undefined;
-};
+const ITEM_HEIGHT = 36;
+const HEADER_HEIGHT = 32;
+const MAX_LIST_HEIGHT = 384; // max-h-96
 
-const EXPENSE_ITEM_HEIGHT = 36;
-
-function ExpenseSearchResults({
-	slug,
-	expenses,
-	onAction,
-	navigate,
+function VirtualizedList({
+	items,
+	autocompleteItems,
+	runAction,
+	scrollToItemRef,
 }: {
-	slug: string;
-	expenses: ExpenseSearchResult[];
-	onAction: (action: () => void) => void;
-	navigate: ReturnType<typeof useNavigate>;
+	items: VirtualizedItem[];
+	autocompleteItems: Array<{ id: string; title?: string; label?: string }>;
+	runAction: (action: () => void) => void;
+	scrollToItemRef: React.MutableRefObject<((itemIndex: number) => void) | null>;
 }) {
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const parentRef = useRef<HTMLDivElement>(null);
 
 	const virtualizer = useVirtualizer({
-		count: expenses.length,
+		count: items.length,
 		getScrollElement: () => parentRef.current,
-		estimateSize: () => EXPENSE_ITEM_HEIGHT,
+		estimateSize: (index) => (items[index].type === "header" ? HEADER_HEIGHT : ITEM_HEIGHT),
 		overscan: 5,
-		measureElement: (element) => element.getBoundingClientRect().height,
 	});
 
+	// Expose scroll function to parent via ref
+	useEffect(() => {
+		scrollToItemRef.current = (itemIndex: number) => {
+			// Find the virtualizedItems index that corresponds to this itemIndex
+			const virtualIndex = items.findIndex(
+				(item) => item.type !== "header" && item.itemIndex === itemIndex,
+			);
+			if (virtualIndex !== -1) {
+				virtualizer.scrollToIndex(virtualIndex, { align: "auto" });
+			}
+		};
+
+		return () => {
+			scrollToItemRef.current = null;
+		};
+	}, [items, virtualizer, scrollToItemRef]);
+
 	const virtualItems = virtualizer.getVirtualItems();
+	const totalHeight = virtualizer.getTotalSize();
+	const needsScroll = totalHeight > MAX_LIST_HEIGHT;
+
+	// Add 8px extra space at the bottom when content fits naturally
+	const containerHeight = needsScroll ? MAX_LIST_HEIGHT : totalHeight + 8;
+
+	if (items.length === 0) {
+		return <div className="text-muted-foreground py-6 text-center text-sm">No results.</div>;
+	}
 
 	return (
-		<div data-slot="command-expense-results" className="p-2">
-			<p className="text-muted-foreground px-2 py-1.5 text-xs font-medium">Expenses</p>
-			<div ref={parentRef} className="max-h-96 overflow-y-auto">
-				<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
-					<div
-						style={{ transform: `translateY(${virtualItems[0]?.start ?? 0}px)` }}
-						className="absolute top-0 left-0 w-full"
-					>
-						{virtualItems.map((virtualRow) => {
-							const expense = expenses[virtualRow.index];
+		<CommandList className="p-0!">
+			<div
+				ref={parentRef}
+				style={{ height: containerHeight }}
+				className={`relative w-full overflow-x-hidden p-2 ${needsScroll ? "overflow-y-auto" : "overflow-y-hidden"}`}
+			>
+				<div style={{ height: totalHeight }} className="relative w-full">
+					{virtualItems.map((virtualRow) => {
+						const item = items[virtualRow.index];
+
+						if (item.type === "header") {
 							return (
-								<button
-									key={expense.id}
-									ref={virtualizer.measureElement}
+								<div
+									key={`header-${item.label}`}
 									data-index={virtualRow.index}
-									type="button"
-									className="hover:bg-foreground/10 flex min-h-8 w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
+									role="presentation"
+									aria-hidden="true"
+									className="text-muted-foreground absolute top-0 left-0 w-full px-2 py-2 text-xs font-medium"
+									style={{ transform: `translateY(${virtualRow.start}px)` }}
+								>
+									{item.label}
+								</div>
+							);
+						}
+
+						if (item.type === "expense") {
+							const expense = item.data;
+							const autocompleteItem = autocompleteItems[item.itemIndex];
+							return (
+								<CommandItem
+									key={expense.id}
+									value={autocompleteItem}
+									index={item.itemIndex}
+									className="hover:bg-foreground/10 absolute top-0 left-0 flex min-h-8 w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none"
+									style={{ transform: `translateY(${virtualRow.start}px)` }}
 									onClick={() =>
-										onAction(() => navigate({ to: "/$slug/expenses", params: { slug } }))
+										runAction(() =>
+											navigate({
+												to: "/$slug/expenses",
+												params: { slug },
+												search: { id: expense.id },
+											}),
+										)
 									}
 								>
 									<div className="flex flex-1 items-center justify-between gap-2 overflow-hidden">
@@ -283,19 +368,39 @@ function ExpenseSearchResults({
 												{datetime.format(expense.date, "MMM d, yyyy")}
 											</span>
 										</div>
-										<span className="pr-2 font-mono text-xs font-bold">
+										<span className="font-mono text-xs font-bold">
 											{formatCurrency(
 												monetary.fromRealAmount(Number(expense.amount), expense.currency),
 												expense.currency,
 											)}
 										</span>
 									</div>
-								</button>
+								</CommandItem>
 							);
-						})}
-					</div>
+						}
+
+						if (item.type === "action") {
+							const action = item.data;
+							const autocompleteItem = autocompleteItems[item.itemIndex];
+							return (
+								<CommandItem
+									key={action.id}
+									value={autocompleteItem}
+									index={item.itemIndex}
+									className="hover:bg-foreground/10 absolute top-0 left-0 flex min-h-8 w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none"
+									style={{ transform: `translateY(${virtualRow.start}px)` }}
+									onClick={action.onAction}
+								>
+									<span className="flex-1">{action.label}</span>
+									{action.meta}
+								</CommandItem>
+							);
+						}
+
+						return null;
+					})}
 				</div>
 			</div>
-		</div>
+		</CommandList>
 	);
 }

@@ -6,6 +6,7 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
+import { getRouteApi } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -78,7 +79,10 @@ function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 	);
 }
 
+const routeApi = getRouteApi("/_dashboard/$slug/expenses");
+
 function ExpenseList(props: { expenses: SyncedExpense[] }) {
+	const { id: searchById } = routeApi.useSearch();
 	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
@@ -178,6 +182,17 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		},
 		[selectedExpense.id, props.expenses],
 	);
+
+	// Auto-scroll to the selected expense when it changes (e.g. from URL ?id= param)
+	useEffect(() => {
+		if (!searchById) return;
+		const index = flattenExpenses.findIndex(
+			(item) => item.type === "expense" && item.expense.id === searchById,
+		);
+		if (index >= 0) {
+			virtualizer.scrollToIndex(index, { align: "center" });
+		}
+	}, [searchById, flattenExpenses, virtualizer]);
 
 	useEffect(() => {
 		return () => {
