@@ -139,6 +139,7 @@ After implementing virtualization, keyboard navigation (ArrowUp/ArrowDown) stopp
 ### Root Cause
 
 base-ui's Autocomplete requires specific props on `Autocomplete.Item` (wrapped as `CommandItem`) to manage keyboard navigation:
+
 1. `value` - the actual item object that base-ui tracks internally
 2. `index` - the item's index in the `items` array passed to `Autocomplete.Root`
 
@@ -152,29 +153,29 @@ Headers are not selectable items, so we need a separate counter that only increm
 
 ```typescript
 type VirtualizedItem =
-  | { type: "header"; label: string; itemIndex?: never }
-  | { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
-  | { type: "action"; data: ActionItem; itemIndex: number };
+	| { type: "header"; label: string; itemIndex?: never }
+	| { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
+	| { type: "action"; data: ActionItem; itemIndex: number };
 
 const virtualizedItems: VirtualizedItem[] = useMemo(() => {
-  const items: VirtualizedItem[] = [];
-  let itemIndex = 0;
+	const items: VirtualizedItem[] = [];
+	let itemIndex = 0;
 
-  if (hasExpenseResults) {
-    items.push({ type: "header", label: "Expenses" });
-    for (const expense of filteredExpenses) {
-      items.push({ type: "expense", data: expense, itemIndex });
-      itemIndex++;
-    }
-  }
+	if (hasExpenseResults) {
+		items.push({ type: "header", label: "Expenses" });
+		for (const expense of filteredExpenses) {
+			items.push({ type: "expense", data: expense, itemIndex });
+			itemIndex++;
+		}
+	}
 
-  items.push({ type: "header", label: "Actions" });
-  for (const action of actions) {
-    items.push({ type: "action", data: action, itemIndex });
-    itemIndex++;
-  }
+	items.push({ type: "header", label: "Actions" });
+	for (const action of actions) {
+		items.push({ type: "action", data: action, itemIndex });
+		itemIndex++;
+	}
 
-  return items;
+	return items;
 }, [hasExpenseResults, filteredExpenses, actions]);
 ```
 
@@ -184,13 +185,13 @@ This array contains only selectable items (no headers) and is passed to `Command
 
 ```typescript
 const autocompleteItems = useMemo(() => {
-  const expenseItems = filteredExpenses.map((e) => ({
-    id: e.id,
-    title: e.title,
-    amount: e.amount,
-  }));
-  const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
-  return [...expenseItems, ...actionItems];
+	const expenseItems = filteredExpenses.map((e) => ({
+		id: e.id,
+		title: e.title,
+		amount: e.amount,
+	}));
+	const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
+	return [...expenseItems, ...actionItems];
 }, [filteredExpenses, actions]);
 ```
 
@@ -229,10 +230,10 @@ return (
 
 ### Key Props Required
 
-| Prop | Purpose |
-|------|---------|
+| Prop    | Purpose                                                                            |
+| ------- | ---------------------------------------------------------------------------------- |
 | `value` | The item object from `autocompleteItems` - base-ui uses this for internal tracking |
-| `index` | The item's position in `autocompleteItems` - required when `virtualized={true}` |
+| `index` | The item's position in `autocompleteItems` - required when `virtualized={true}`    |
 
 ### Files Modified
 
@@ -269,17 +270,17 @@ const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
 
 ```typescript
 const handleItemHighlighted = useCallback(
-  (highlightedValue: unknown, eventDetails: { reason: string }) => {
-    if (eventDetails.reason === "keyboard" && highlightedValue) {
-      const value = highlightedValue as { id: string };
-      // Find the index of the highlighted item in autocompleteItems
-      const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
-      if (itemIndex !== -1 && scrollToItemRef.current) {
-        scrollToItemRef.current(itemIndex);
-      }
-    }
-  },
-  [autocompleteItems],
+	(highlightedValue: unknown, eventDetails: { reason: string }) => {
+		if (eventDetails.reason === "keyboard" && highlightedValue) {
+			const value = highlightedValue as { id: string };
+			// Find the index of the highlighted item in autocompleteItems
+			const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+			if (itemIndex !== -1 && scrollToItemRef.current) {
+				scrollToItemRef.current(itemIndex);
+			}
+		}
+	},
+	[autocompleteItems],
 );
 ```
 
@@ -319,7 +320,7 @@ function VirtualizedList({ scrollToItemRef, items, ... }) {
 
 1. **`onItemHighlighted` receives item value, not index**: You need to find the index by matching the item's `id`
 2. **`eventDetails.reason`**: Can be `'keyboard'`, `'pointer'`, or `'none'` - only scroll for keyboard navigation
-3. **Two-level index mapping**: 
+3. **Two-level index mapping**:
    - `itemIndex` in autocompleteItems (excludes headers)
    - `virtualIndex` in virtualizedItems (includes headers)
 4. **`align: "auto"`**: Scrolls minimally to bring item into view (doesn't center unnecessarily)
@@ -357,6 +358,7 @@ When searching "bia", `filteredExpenses` correctly matched expenses where "bia" 
 base-ui `Autocomplete` (via `Command`) uses `mode="list"` by default, which **re-filters `autocompleteItems` internally** against the typed query. The `autocompleteItems` array only exposes `{ id, title, amount }` per expense — no `description`. So for items like "Kingfood" (matched via description), base-ui's internal filter couldn't match "bia" against `title: "Kingfood"` and treated those items as hidden/non-navigable.
 
 This created a split:
+
 - **Visible in list**: all 8 expenses (pre-filtered by `filteredExpenses` which checks both title + description)
 - **Navigable via keyboard**: only the subset whose `title` contained "bia" (base-ui's internal filter)
 
@@ -389,15 +391,274 @@ Add `mode="none"` to the `Command` component in `command-palette.tsx`.
 
 ### base-ui `mode` Values
 
-| Mode | Filtering | Inline autocompletion |
-|------|-----------|-----------------------|
-| `list` (default) | Dynamic, based on input | No |
-| `both` | Dynamic, based on input | Yes |
-| `inline` | None (static) | Yes |
-| `none` | None (static) | No |
+| Mode             | Filtering               | Inline autocompletion |
+| ---------------- | ----------------------- | --------------------- |
+| `list` (default) | Dynamic, based on input | No                    |
+| `both`           | Dynamic, based on input | Yes                   |
+| `inline`         | None (static)           | Yes                   |
+| `none`           | None (static)           | No                    |
 
 Use `mode="none"` whenever filtering is handled externally (as in this command palette).
 
 ### Files Modified
 
 - `apps/app/src/components/command-palette.tsx` — added `mode="none"` to `<Command>`
+
+---
+
+## Code Refactoring for Maintainability
+
+**Date**: 2026-02-15
+**Issue**: Single 407-line file handling multiple concerns
+
+### Problem
+
+The `command-palette.tsx` file grew to 407 lines with:
+
+- Type definitions
+- Constants
+- Custom hooks
+- Multiple component renderers
+- Virtualization logic
+- Main component
+
+This made navigation and modification harder as complexity grew.
+
+### Solution
+
+Split into a modular directory structure:
+
+```
+apps/app/src/components/command-palette/
+├── index.ts                 # Barrel export
+├── types.ts                 # Type definitions (~35 lines)
+├── constants.ts             # Configuration constants (4 lines)
+├── use-expense-search.ts    # Live query hook (~45 lines)
+├── header-item.tsx          # Header renderer (~15 lines)
+├── expense-item.tsx         # Expense item renderer (~45 lines)
+├── action-item.tsx          # Action item renderer (~25 lines)
+├── virtualized-list.tsx     # Virtualization logic (~110 lines)
+└── command-palette.tsx      # Main component (~175 lines)
+```
+
+### Key Decisions
+
+**1. Discriminated union types centralized:**
+
+```typescript
+// types.ts
+export type VirtualizedItem =
+	| { type: "header"; label: string; itemIndex?: never }
+	| { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
+	| { type: "action"; data: ActionItem; itemIndex: number };
+
+export type AutocompleteItem = AutocompleteExpenseItem | AutocompleteActionItem;
+```
+
+**2. Item renderers as separate components:**
+
+Each item type has its own file, making it easy to:
+
+- Test in isolation
+- Modify styling without affecting others
+- Add new item types (wallets, tasks, etc.)
+
+**3. Constants extracted for easy tuning:**
+
+```typescript
+// constants.ts
+export const ITEM_HEIGHT = 36;
+export const HEADER_HEIGHT = 32;
+export const MAX_LIST_HEIGHT = 384;
+export const VIRTUALIZER_OVERSCAN = 5;
+```
+
+**4. Hook separation:**
+
+`useExpenseSearch` extracted to its own file with clear return type annotation.
+
+### Benefits
+
+1. **Single responsibility** - Each file handles one concern
+2. **Easier testing** - Item renderers can be tested independently
+3. **Future extensibility** - Adding new item types just requires a new `*-item.tsx`
+4. **Better navigation** - Easier to find and modify specific parts
+5. **Smaller diffs** - Changes are localized to relevant files
+
+### Files Created
+
+- `apps/app/src/components/command-palette/index.ts`
+- `apps/app/src/components/command-palette/types.ts`
+- `apps/app/src/components/command-palette/constants.ts`
+- `apps/app/src/components/command-palette/use-expense-search.ts`
+- `apps/app/src/components/command-palette/header-item.tsx`
+- `apps/app/src/components/command-palette/expense-item.tsx`
+- `apps/app/src/components/command-palette/action-item.tsx`
+- `apps/app/src/components/command-palette/virtualized-list.tsx`
+- `apps/app/src/components/command-palette/command-palette.tsx`
+
+### Files Modified
+
+- `apps/app/src/components/providers/workspace-action-provider.tsx` — updated import path
+
+### Files Removed
+
+- `apps/app/src/components/command-palette.tsx` — replaced by directory structure
+
+---
+
+## Accessibility & Performance Review Fixes
+
+**Date**: 2026-02-15
+**Issue**: Multiple accessibility and performance improvements identified during comprehensive code review
+
+### Review Context
+
+Applied all skills (vercel-react-best-practices, vercel-composition-patterns, turborepo, web-design-guidelines, ui-skills) to review the command palette module.
+
+### High-Priority Fixes (Accessibility)
+
+**1. Missing focus-visible styles after outline-none**
+
+`action-item.tsx` and `expense-item.tsx` had `outline-none` without visible focus replacement, violating web-design-guidelines rule: "Never `outline-none` without focus replacement".
+
+```typescript
+// Before
+className="... outline-none select-none"
+
+// After
+className="... outline-none select-none focus-visible:ring-2 focus-visible:ring-ring"
+```
+
+**2. Missing aria-live for search results announcement**
+
+Screen readers weren't notified when search results count changed.
+
+```typescript
+// Before (command-palette.tsx:166)
+<div className="flex items-center gap-3">
+
+// After
+<div className="flex items-center gap-3" aria-live="polite">
+```
+
+**3. Empty state missing role="status"**
+
+Empty state in `virtualized-list.tsx` wasn't announced to screen readers.
+
+```typescript
+// Before
+<div className="text-muted-foreground py-6 text-center text-sm">No results.</div>
+
+// After
+<div role="status" className="text-muted-foreground py-6 text-center text-sm">
+  No results.
+</div>
+```
+
+**4. String concatenation instead of cn() utility**
+
+`virtualized-list.tsx` used template literal for conditional classes, violating ui-skills rule.
+
+```typescript
+// Before
+className={`relative w-full overflow-x-hidden p-2 ${needsScroll ? "overflow-y-auto" : "overflow-y-hidden"}`}
+
+// After
+import { cn } from "@hoalu/ui/utils";
+className={cn(
+  "relative w-full overflow-x-hidden p-2",
+  needsScroll ? "overflow-y-auto" : "overflow-y-hidden",
+)}
+```
+
+### Medium-Priority Fixes (Performance)
+
+**1. Stable callback with ref pattern for runAction**
+
+`runAction` was recreating on every `onOpenChange` prop change, causing unnecessary re-renders per `rerender-defer-reads` rule.
+
+```typescript
+// Before
+const runAction = useCallback(
+  (action: () => void) => {
+    onOpenChange(false);
+    setSearch("");
+    action();
+  },
+  [onOpenChange],
+);
+
+// After
+const onOpenChangeRef = useRef(onOpenChange);
+useEffect(() => {
+  onOpenChangeRef.current = onOpenChange;
+}, [onOpenChange]);
+
+const runAction = useCallback((action: () => void) => {
+  onOpenChangeRef.current(false);
+  setSearch("");
+  action();
+}, []); // Now stable - empty deps
+```
+
+**2. Stable callback for handleItemHighlighted**
+
+`handleItemHighlighted` was recreating on every `autocompleteItems` change, but it only needed the ref value in the callback body.
+
+```typescript
+// Before
+const handleItemHighlighted = useCallback(
+  (highlightedValue: unknown, eventDetails: { reason: string }) => {
+    // ...
+    const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+    // ...
+  },
+  [autocompleteItems], // Recreates on every search
+);
+
+// After
+const autocompleteItemsRef = useRef(autocompleteItems);
+useEffect(() => {
+  autocompleteItemsRef.current = autocompleteItems;
+}, [autocompleteItems]);
+
+const handleItemHighlighted = useCallback(
+  (highlightedValue: unknown, eventDetails: { reason: string }) => {
+    // ...
+    const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === value.id);
+    // ...
+  },
+  [], // Now stable
+);
+```
+
+**3. Added tabular-nums for currency alignment**
+
+Currency values in `expense-item.tsx` weren't using proper numeric alignment.
+
+```typescript
+// Before
+<span className="font-mono text-xs font-bold">
+
+// After
+<span className="font-mono text-xs font-bold tabular-nums">
+```
+
+### Files Modified
+
+- `apps/app/src/components/command-palette/command-palette.tsx`
+- `apps/app/src/components/command-palette/virtualized-list.tsx`
+- `apps/app/src/components/command-palette/action-item.tsx`
+- `apps/app/src/components/command-palette/expense-item.tsx`
+
+### Rules Applied
+
+| Rule Source | Rule ID | Issue |
+|-------------|---------|-------|
+| web-design-guidelines | focus-visible | Missing focus ring after outline-none |
+| web-design-guidelines | aria-live | Async updates need aria-live="polite" |
+| web-design-guidelines | role="status" | Empty states should announce to screen readers |
+| ui-skills | cn utility | Use cn() for class logic |
+| vercel-react-best-practices | rerender-defer-reads | Don't subscribe to state only used in callbacks |
+| web-design-guidelines | tabular-nums | Use tabular-nums for number columns |

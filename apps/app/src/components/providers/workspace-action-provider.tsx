@@ -6,7 +6,7 @@ import {
 	dialogStateAtom,
 	draftExpenseAtom,
 } from "#app/atoms/index.ts";
-import { CommandPalette } from "#app/components/command-palette.tsx";
+import { CommandPalette } from "#app/components/command-palette/index.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
