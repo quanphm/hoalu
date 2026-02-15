@@ -20,7 +20,7 @@ function TooltipPositioner({
 			<TooltipPrimitive.Positioner
 				data-slot="tooltip-positioner"
 				sideOffset={sideOffset}
-				className={cn("z-50", className)}
+				className={cn("z-[70]", className)}
 				{...props}
 			/>
 		</TooltipPrimitive.Portal>

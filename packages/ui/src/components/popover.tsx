@@ -22,7 +22,7 @@ function PopoverPositioner({
 	return (
 		<PopoverPrimitive.Positioner
 			data-slot="popover-positioner"
-			className={cn("z-50", className)}
+			className={cn("z-[60]", className)}
 			sideOffset={sideOffset}
 			{...props}
 		/>
@@ -42,7 +42,7 @@ function PopoverContent({
 				<PopoverPrimitive.Popup
 					data-slot="popover-popup"
 					className={cn(
-						"data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground data-[closed]:animate-out data-[open]:animate-in z-50 w-72 origin-[var(--transform-origin)] rounded-md border p-4 shadow-md outline-hidden transition-[transform,scale,opacity]",
+						"data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground data-[closed]:animate-out data-[open]:animate-in w-72 origin-[var(--transform-origin)] rounded-md border p-4 shadow-md outline-hidden transition-[transform,scale,opacity]",
 						className,
 					)}
 					{...props}
