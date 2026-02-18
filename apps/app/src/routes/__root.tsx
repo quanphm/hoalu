@@ -10,6 +10,7 @@ import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boun
 import { ReloadPromptPwa } from "#app/components/reload-prompt-pwa.tsx";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
+import { hotkeysDevtoolsPlugin } from "@tanstack/react-hotkeys-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
@@ -52,6 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						render: <TanStackRouterDevtoolsPanel />,
 					},
 					formDevtoolsPlugin(),
+					hotkeysDevtoolsPlugin(),
 				]}
 			/>
 		</>

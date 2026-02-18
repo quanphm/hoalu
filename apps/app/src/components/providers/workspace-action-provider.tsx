@@ -45,7 +45,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		},
 		{
 			preventDefault: true,
-			description: "Dialog: Create new expense",
 		},
 		[],
 	);
@@ -57,7 +56,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		},
 		{
 			preventDefault: true,
-			description: "Dialog: Create new wallet",
 		},
 		[],
 	);
@@ -69,7 +67,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		},
 		{
 			preventDefault: true,
-			description: "Dialog: Create new category",
 		},
 		[],
 	);
@@ -79,7 +76,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		() => {
 			navigate({ to: "/$slug", params: { slug } });
 		},
-		{ description: "Navigate: Dashboard", enabled: allowShortcutNavigate },
+		{ enabled: allowShortcutNavigate },
 		[slug, allowShortcutNavigate],
 	);
 
@@ -89,7 +86,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/$slug/expenses", params: { slug } });
 		},
 		{
-			description: "Navigate: Expenses",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
 		},
 		[slug, allowShortcutNavigate],
@@ -101,7 +97,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/$slug/tasks", params: { slug } });
 		},
 		{
-			description: "Navigate: Tasks",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
 		},
 		[slug, allowShortcutNavigate],
@@ -113,7 +108,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
 		},
 		{
-			description: "Navigate: Settings / Workspace",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_workspace.enabled,
 		},
 		[slug, allowShortcutNavigate],
@@ -125,7 +119,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/$slug/settings/members", params: { slug } });
 		},
 		{
-			description: "Navigate: Settings / Members",
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_members.enabled,
 		},
 		[slug, allowShortcutNavigate],
@@ -138,7 +131,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 			setCommandPaletteOpen((prev) => !prev);
 		},
 		{
-			description: "Toggle: Command Palette",
 			enabled: KEYBOARD_SHORTCUTS.command_palette.enabled,
 			enableOnFormTags: true,
 		},
