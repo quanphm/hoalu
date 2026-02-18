@@ -16,7 +16,7 @@
     },
     "apps/api": {
       "name": "@hoalu/api",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@electric-sql/client": "^1.4.1",
         "@hoalu/auth": "workspace:*",
@@ -50,7 +50,7 @@
     },
     "apps/app": {
       "name": "@hoalu/app",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@electric-sql/pglite": "^0.3.15",
         "@electric-sql/pglite-react": "^0.2.33",
@@ -67,6 +67,7 @@
         "@tanstack/react-devtools": "^0.8.6",
         "@tanstack/react-form": "^1.27.7",
         "@tanstack/react-form-devtools": "^0.2.11",
+        "@tanstack/react-hotkeys": "^0.1.0",
         "@tanstack/react-query": "^5.90.17",
         "@tanstack/react-query-devtools": "^5.91.2",
         "@tanstack/react-router": "^1.150.0",
@@ -95,6 +96,7 @@
         "@hoalu/themes": "workspace:*",
         "@hoalu/tsconfig": "workspace:*",
         "@tailwindcss/vite": "^4.1.18",
+        "@tanstack/react-hotkeys-devtools": "^0.1.0",
         "@tanstack/router-plugin": "^1.150.0",
         "@types/node": "^25.0.9",
         "@types/react": "catalog:",
@@ -107,7 +109,7 @@
     },
     "packages/auth": {
       "name": "@hoalu/auth",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@hoalu/common": "workspace:*",
         "better-auth": "catalog:",
@@ -119,7 +121,7 @@
     },
     "packages/common": {
       "name": "@hoalu/common",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@hoalu/countries": "workspace:*",
         "@standard-schema/spec": "^1.1.0",
@@ -134,14 +136,14 @@
     },
     "packages/countries": {
       "name": "@hoalu/countries",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "devDependencies": {
         "@hoalu/tsconfig": "workspace:*",
       },
     },
     "packages/email": {
       "name": "@hoalu/email",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@react-email/components": "^1.0.4",
       },
@@ -157,7 +159,7 @@
     },
     "packages/furnace": {
       "name": "@hoalu/furnace",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@hoalu/common": "workspace:*",
         "hono-openapi": "^1.1.2",
@@ -177,7 +179,7 @@
     },
     "packages/icons": {
       "name": "@hoalu/icons",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "lucide-react": "^0.562.0",
       },
@@ -189,7 +191,7 @@
     },
     "packages/themes": {
       "name": "@hoalu/themes",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@tailwindcss/typography": "^0.5.19",
         "tailwind-scrollbar": "4.0.2",
@@ -205,7 +207,7 @@
     },
     "packages/ui": {
       "name": "@hoalu/ui",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@base-ui/react": "^1.1.0",
         "@hoalu/icons": "workspace:*",
@@ -1164,7 +1166,7 @@
 
     "@tanstack/devtools-ui": ["@tanstack/devtools-ui@0.4.4", "", { "dependencies": { "clsx": "^2.1.1", "goober": "^2.1.16", "solid-js": "^1.9.9" } }, "sha512-5xHXFyX3nom0UaNfiOM92o6ziaHjGo3mcSGe2HD5Xs8dWRZNpdZ0Smd0B9ddEhy0oB+gXyMzZgUJb9DmrZV0Mg=="],
 
-    "@tanstack/devtools-utils": ["@tanstack/devtools-utils@0.2.4", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4" }, "peerDependencies": { "@types/react": ">=17.0.0", "preact": ">=10.0.0", "react": ">=17.0.0", "solid-js": ">=1.9.7", "vue": ">=3.2.0" }, "optionalPeers": ["@types/react", "preact", "react", "solid-js", "vue"] }, "sha512-6Y6JJHxoerWuq/dVLOPLZ1iSpZie1C+3whGjDFCK126qI8dA+Gui3s5jZUD12kvzs7vhRqY+uUlA5S6f85FHqg=="],
+    "@tanstack/devtools-utils": ["@tanstack/devtools-utils@0.3.0", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4" }, "peerDependencies": { "@types/react": ">=17.0.0", "preact": ">=10.0.0", "react": ">=17.0.0", "solid-js": ">=1.9.7", "vue": ">=3.2.0" }, "optionalPeers": ["@types/react", "preact", "react", "solid-js", "vue"] }, "sha512-JgApXVrgtgSLIPrm/QWHx0u6c9Ji0MNMDWhwujapj8eMzux5aOfi+2Ycwzj0A0qITXA12SEPYV3HC568mDtYmQ=="],
 
     "@tanstack/devtools-vite": ["@tanstack/devtools-vite@0.3.12", "", { "dependencies": { "@babel/core": "^7.28.4", "@babel/generator": "^7.28.3", "@babel/parser": "^7.28.4", "@babel/traverse": "^7.28.4", "@babel/types": "^7.28.4", "@tanstack/devtools-client": "0.0.5", "@tanstack/devtools-event-bus": "0.3.3", "chalk": "^5.6.2", "launch-editor": "^2.11.1", "picomatch": "^4.0.3" }, "peerDependencies": { "vite": "^6.0.0 || ^7.0.0" } }, "sha512-fGJgu4xUhKmGk+a+/aHD8l5HKVk6+ObA+6D3YC3xCXbai/YmaGhztqcZf1tKUqjZyYyQLHsjqmKzvJgVpQP1jw=="],
 
@@ -1175,6 +1177,10 @@
     "@tanstack/form-devtools": ["@tanstack/form-devtools@0.2.11", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4", "@tanstack/devtools-utils": "^0.2.3", "@tanstack/form-core": "1.27.7", "clsx": "^2.1.1", "dayjs": "^1.11.18", "goober": "^2.1.16" }, "peerDependencies": { "solid-js": ">=1.9.9" } }, "sha512-wCQ5uicGfxs34ytZmVhppKELijrx4OU5zRj4PYs0RbBJH3bJYOj5MATsj+rkdDLi1FeVrwLgK2qX4a6c/hWF4g=="],
 
     "@tanstack/history": ["@tanstack/history@1.145.7", "", {}, "sha512-gMo/ReTUp0a3IOcZoI3hH6PLDC2R/5ELQ7P2yu9F6aEkA0wSQh+Q4qzMrtcKvF2ut0oE+16xWCGDo/TdYd6cEQ=="],
+
+    "@tanstack/hotkeys": ["@tanstack/hotkeys@0.1.0", "", { "dependencies": { "@tanstack/store": "^0.8.0" } }, "sha512-2ypLO3C2vKxMbCjiOfA3RzDaUIUYsQtyLc+Qwl6oKzQvWxReGlQN7DOQZSeKyX9D395d3E65e2v7Fm14BzUGew=="],
+
+    "@tanstack/hotkeys-devtools": ["@tanstack/hotkeys-devtools@0.1.0", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4", "@tanstack/devtools-utils": "^0.3.0", "clsx": "^2.1.1", "goober": "^2.1.18", "solid-js": "^1.9.11" }, "peerDependencies": { "@tanstack/hotkeys": "0.1.0" } }, "sha512-dKqDIo+7DGj30AmPFde82dU5ttdi5MG0HJ3zLQzBfysrykt2I+S2chLxboGE6k/TB2CAJIwbc2OjtgLlP1YxJA=="],
 
     "@tanstack/pacer-lite": ["@tanstack/pacer-lite@0.2.1", "", {}, "sha512-3PouiFjR4B6x1c969/Pl4ZIJleof1M0n6fNX8NRiC9Sqv1g06CVDlEaXUR4212ycGFyfq4q+t8Gi37Xy+z34iQ=="],
 
@@ -1191,6 +1197,10 @@
     "@tanstack/react-form": ["@tanstack/react-form@1.27.7", "", { "dependencies": { "@tanstack/form-core": "1.27.7", "@tanstack/react-store": "^0.8.0" }, "peerDependencies": { "react": "^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-xTg4qrUY0fuLaSnkATLZcK3BWlnwLp7IuAb6UTbZKngiDEvvDCNTvVvHgPlgef1O2qN4klZxInRyRY6oEkXZ2A=="],
 
     "@tanstack/react-form-devtools": ["@tanstack/react-form-devtools@0.2.11", "", { "dependencies": { "@tanstack/devtools-utils": "^0.2.3", "@tanstack/form-devtools": "0.2.11" }, "peerDependencies": { "react": "^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-Hv6aZqH2dfamFPWwonA20xKj61xU3omilOYEGdihldOddl+cFLY6P7q66Zqs0p9a9mOQvBS+/i0zBcZjRzvupg=="],
+
+    "@tanstack/react-hotkeys": ["@tanstack/react-hotkeys@0.1.0", "", { "dependencies": { "@tanstack/hotkeys": "0.1.0", "@tanstack/react-store": "^0.8.0" }, "peerDependencies": { "react": ">=16.8", "react-dom": ">=16.8" } }, "sha512-Hteo+hdPKdR2G7uAwTmScu1JUHM/f03lVihxVfR/A3XMyVJmbzi4SJieRk/kLgYKeXFRGIUx/xSI3mHeVc6DbQ=="],
+
+    "@tanstack/react-hotkeys-devtools": ["@tanstack/react-hotkeys-devtools@0.1.0", "", { "dependencies": { "@tanstack/devtools-utils": "^0.3.0", "@tanstack/hotkeys-devtools": "0.1.0" }, "peerDependencies": { "@types/react": ">=16.8", "@types/react-dom": ">=16.8", "react": ">=16.8", "react-dom": ">=16.8" } }, "sha512-5lBY8oSLHCdc2ShmnPj+BLF5RaRZNxh1ggCfbcgyMLkWHqel3EWtWFb+61EEwY6CqUmVTJxqhm4TjS86UxtOyA=="],
 
     "@tanstack/react-query": ["@tanstack/react-query@5.90.17", "", { "dependencies": { "@tanstack/query-core": "5.90.17" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-PGc2u9KLwohDUSchjW9MZqeDQJfJDON7y4W7REdNBgiFKxQy+Pf7eGjiFWEj5xPqKzAeHYdAb62IWI1a9UJyGQ=="],
 
@@ -2632,6 +2642,12 @@
 
     "@tanstack/form-core/@tanstack/store": ["@tanstack/store@0.7.7", "", {}, "sha512-xa6pTan1bcaqYDS9BDpSiS63qa6EoDkPN9RsRaxHuDdVDNntzq3xNwR5YKTU/V3SkSyC9T4YVOPh2zRQN0nhIQ=="],
 
+    "@tanstack/form-devtools/@tanstack/devtools-utils": ["@tanstack/devtools-utils@0.2.4", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4" }, "peerDependencies": { "@types/react": ">=17.0.0", "preact": ">=10.0.0", "react": ">=17.0.0", "solid-js": ">=1.9.7", "vue": ">=3.2.0" }, "optionalPeers": ["@types/react", "preact", "react", "solid-js", "vue"] }, "sha512-6Y6JJHxoerWuq/dVLOPLZ1iSpZie1C+3whGjDFCK126qI8dA+Gui3s5jZUD12kvzs7vhRqY+uUlA5S6f85FHqg=="],
+
+    "@tanstack/hotkeys-devtools/solid-js": ["solid-js@1.9.11", "", { "dependencies": { "csstype": "^3.1.0", "seroval": "~1.5.0", "seroval-plugins": "~1.5.0" } }, "sha512-WEJtcc5mkh/BnHA6Yrg4whlF8g6QwpmXXRg4P2ztPmcKeHHlH4+djYecBLhSpecZY2RRECXYUwIc/C2r3yzQ4Q=="],
+
+    "@tanstack/react-form-devtools/@tanstack/devtools-utils": ["@tanstack/devtools-utils@0.2.4", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4" }, "peerDependencies": { "@types/react": ">=17.0.0", "preact": ">=10.0.0", "react": ">=17.0.0", "solid-js": ">=1.9.7", "vue": ">=3.2.0" }, "optionalPeers": ["@types/react", "preact", "react", "solid-js", "vue"] }, "sha512-6Y6JJHxoerWuq/dVLOPLZ1iSpZie1C+3whGjDFCK126qI8dA+Gui3s5jZUD12kvzs7vhRqY+uUlA5S6f85FHqg=="],
+
     "@tanstack/router-core/seroval": ["seroval@1.4.1", "", {}, "sha512-9GOc+8T6LN4aByLN75uRvMbrwY5RDBW6lSlknsY4LEa9ZmWcxKcRe1G/Q3HZXjltxMHTrStnvrwAICxZrhldtg=="],
 
     "@tanstack/router-core/seroval-plugins": ["seroval-plugins@1.4.0", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-zir1aWzoiax6pbBVjoYVd0O1QQXgIL3eVGBMsBsNmM8Ukq90yGaWlfx0AB9dTS8GPqrOrbXn79vmItCUP9U3BQ=="],
@@ -2775,6 +2791,10 @@
     "@isaacs/cliui/string-width/emoji-regex": ["emoji-regex@9.2.2", "", {}, "sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg=="],
 
     "@rollup/plugin-node-resolve/@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
+
+    "@tanstack/hotkeys-devtools/solid-js/seroval": ["seroval@1.5.0", "", {}, "sha512-OE4cvmJ1uSPrKorFIH9/w/Qwuvi/IMcGbv5RKgcJ/zjA/IohDLU6SVaxFN9FwajbP7nsX0dQqMDes1whk3y+yw=="],
+
+    "@tanstack/hotkeys-devtools/solid-js/seroval-plugins": ["seroval-plugins@1.5.0", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-EAHqADIQondwRZIdeW2I636zgsODzoBDwb3PT/+7TLDWyw1Dy/Xv7iGUIEXXav7usHDE9HVhOU61irI3EnyyHA=="],
 
     "accepts/mime-types/mime-db": ["mime-db@1.52.0", "", {}, "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg=="],
 

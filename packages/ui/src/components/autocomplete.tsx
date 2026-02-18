@@ -90,7 +90,7 @@ function AutocompletePopup({
 			<AutocompletePrimitive.Positioner
 				align={align}
 				alignOffset={alignOffset}
-				className="z-[60] select-none"
+				className="z-50 select-none"
 				data-slot="autocomplete-positioner"
 				side={side}
 				sideOffset={sideOffset}

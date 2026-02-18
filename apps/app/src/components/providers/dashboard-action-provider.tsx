@@ -37,29 +37,20 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 			}
 		},
 		{
-			description: "Navigate: Workspaces",
 			enabled: workspaces && workspaces.length > 0,
 		},
 		[workspaces, workspaces?.length],
 	);
 
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.goto_home.hotkey,
-		() => {
-			navigate({ to: "/" });
-		},
-		{ description: "Navigate: Home" },
-	);
+	useHotkeys(KEYBOARD_SHORTCUTS.goto_home.hotkey, () => {
+		navigate({ to: "/" });
+	});
 
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
-		() => {
-			const currentThemeIndex = THEMES.indexOf(theme as (typeof THEMES)[number]);
-			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
-			setTheme(THEMES[nextThemeIndex]);
-		},
-		{ description: "Theme: Cycle through themes" },
-	);
+	useHotkeys(KEYBOARD_SHORTCUTS.toggle_theme.hotkey, () => {
+		const currentThemeIndex = THEMES.indexOf(theme as (typeof THEMES)[number]);
+		const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+		setTheme(THEMES[nextThemeIndex]);
+	});
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_preferences.hotkey,
@@ -67,7 +58,6 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/account/preferences" });
 		},
 		{
-			description: "Navigate: Preferences",
 			enabled: KEYBOARD_SHORTCUTS.goto_preferences.enabled,
 		},
 	);
@@ -78,7 +68,6 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 			navigate({ to: "/account/tokens" });
 		},
 		{
-			description: "Navigate: Tokens",
 			enabled: KEYBOARD_SHORTCUTS.goto_tokens.enabled,
 		},
 	);
