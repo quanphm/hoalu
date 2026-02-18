@@ -22,7 +22,7 @@ function PopoverPositioner({
 	return (
 		<PopoverPrimitive.Positioner
 			data-slot="popover-positioner"
-			className={cn("z-[60]", className)}
+			className={cn("z-50", className)}
 			sideOffset={sideOffset}
 			{...props}
 		/>

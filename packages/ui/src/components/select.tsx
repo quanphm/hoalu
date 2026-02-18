@@ -74,7 +74,7 @@ function SelectPositioner({
 				data-slot="select-positioner"
 				alignItemWithTrigger={false}
 				sideOffset={5}
-				className={cn("z-[60]", className)}
+				className={cn("z-50", className)}
 				{...props}
 			/>
 		</SelectPrimitive.Portal>
