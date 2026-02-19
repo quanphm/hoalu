@@ -56,7 +56,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			<div className="flex w-2/3 flex-col gap-1">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="text-muted-foreground/72 truncate leading-relaxed">
+					<div className="text-accent-foreground truncate leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}
@@ -69,7 +69,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 					<WalletBadge {...props.wallet} />
 				</div>
 			</div>
-			<div className="flex flex-col items-end gap-1 text-right">
+			<div className="flex items-end justify-center gap-4 text-right">
 				<TransactionAmount data={props} />
 			</div>
 		</div>

@@ -19,6 +19,7 @@
 	body {
 		@apply relative bg-transparent text-foreground;
 		@apply font-sans;
+		letter-spacing: var(--tracking-normal);
 	}
 
 	html,

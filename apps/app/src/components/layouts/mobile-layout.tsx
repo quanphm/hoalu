@@ -1,5 +1,5 @@
 import { ButtonLink } from "#app/components/button-link.tsx";
-import { THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
+import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
@@ -9,6 +9,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
@@ -75,7 +76,27 @@ function MobileHeader() {
 							<PaletteIcon className="size-5" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" role="menu">
-							{THEMES.map((themeName) => {
+							{SYSTEM_THEMES.map((themeName) => {
+								const isSelected = theme === themeName;
+								return (
+									<DropdownMenuItem
+										key={themeName}
+										onClick={() => setTheme(themeName)}
+										className="capitalize"
+										role="menuitemradio"
+										aria-checked={isSelected}
+									>
+										{isSelected && (
+											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+												<CheckIcon className="size-4" aria-hidden="true" />
+											</span>
+										)}
+										<span className="ms-6">{THEME_LABELS[themeName]}</span>
+									</DropdownMenuItem>
+								);
+							})}
+							<DropdownMenuSeparator />
+							{CUSTOM_THEMES.map((themeName) => {
 								const isSelected = theme === themeName;
 								return (
 									<DropdownMenuItem

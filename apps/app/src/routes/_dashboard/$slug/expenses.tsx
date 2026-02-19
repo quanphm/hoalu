@@ -85,7 +85,7 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-68px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-68px)]"
+				className="h-[calc(100vh-84px-70px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-70px)]"
 			>
 				{/* <SectionItem
 					data-slot="expense-filter"
@@ -98,20 +98,18 @@ function RouteComponent() {
 					<ExpenseFilter expenses={filteredExpenses} categories={categories} />
 				</SectionItem> */}
 
-				{/* Expense list - full width on mobile */}
 				<SectionItem
 					data-slot="expense-list"
-					desktopSpan="col-span-5"
+					desktopSpan="col-span-6"
 					tabletSpan={1}
 					mobileOrder={1}
 				>
 					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
 
-				{/* Details panel - hidden on mobile, shown as drawer instead */}
 				<SectionItem
 					data-slot="expense-details"
-					desktopSpan="col-span-7"
+					desktopSpan="col-span-6"
 					tabletSpan={1}
 					mobileOrder={2}
 					hideOnMobile

@@ -332,7 +332,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-2 sm:p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-full min-h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[250px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer

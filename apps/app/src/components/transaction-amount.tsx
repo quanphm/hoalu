@@ -20,6 +20,7 @@ export function TransactionAmount(props: { data: SyncedExpense }) {
 				currency={workspaceCurrency}
 				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
 				as="p"
+				className="text-[14px]"
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue

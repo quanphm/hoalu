@@ -228,7 +228,7 @@ export function ExpenseFilterDropdown() {
 				>
 					<div className="flex min-h-[400px]">
 						{/* Left Panel - Filter Menu */}
-						<div className="bg-accent w-[200px] border-r p-1">
+						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
 							<FilterMenuItem
 								icon={<SearchIcon className="size-4" />}
 								label="Search"
@@ -378,20 +378,20 @@ function FilterMenuItem({
 			variant="ghost"
 			onClick={onClick}
 			className={cn(
-				"flex w-full",
+				"flex w-full px-2 md:px-3",
 				selected ? "bg-background hover:bg-background" : "hover:bg-background",
 			)}
 		>
 			<span
 				className={cn(
-					"flex size-5 items-center justify-center",
+					"flex size-5 shrink-0 items-center justify-center",
 					active ? "text-primary" : "text-muted-foreground",
 				)}
 			>
 				{active ? <CheckIcon className="size-4" /> : icon}
 			</span>
-			<span className="flex-1 text-left">{label}</span>
-			<CaretRightFilledIcon className="text-muted-foreground size-4" />
+			<span className="min-w-0 flex-1 truncate text-left text-sm">{label}</span>
+			<CaretRightFilledIcon className="text-muted-foreground hidden size-4 shrink-0 md:block" />
 		</Button>
 	);
 }

@@ -82,7 +82,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset>{children}</SidebarInset>
+			<SidebarInset className="border">{children}</SidebarInset>
 		</SidebarProvider>
 	);
 }
