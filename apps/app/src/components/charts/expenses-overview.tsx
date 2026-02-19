@@ -53,19 +53,20 @@ const chartConfig = {
 
 /**
  * Map category ColorSchema values to hex colors for Recharts fill.
- * Uses darker shades for better visibility on charts.
+ * Uses vibrant colors matching createChartColor() for visual consistency.
+ * Dark mode uses lighter shades (400) for better visibility on dark backgrounds.
  */
 const CATEGORY_COLOR_HEX: Record<ColorSchema, string> = {
-	red: "#ef4444",
-	green: "#22c55e",
-	teal: "#14b8a6",
-	blue: "#6366f1",
-	yellow: "#eab308",
-	orange: "#f97316",
-	purple: "#a855f7",
-	pink: "#ec4899",
-	gray: "#6b7280",
-	stone: "#78716c",
+	red: "#f87171", // red-400
+	green: "#34d399", // emerald-400
+	teal: "#2dd4bf", // teal-400
+	blue: "#60a5fa", // blue-400
+	yellow: "#fcd34d", // amber-300
+	orange: "#fb923c", // orange-400
+	purple: "#a78bfa", // violet-400
+	pink: "#f472b6", // pink-400
+	gray: "#64748b", // slate-500
+	stone: "#78716c", // stone-500
 };
 
 const routeApi = getRouteApi("/_dashboard/$slug");

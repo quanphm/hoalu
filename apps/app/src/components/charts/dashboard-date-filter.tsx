@@ -8,7 +8,7 @@ import {
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
-import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { createChartColor } from "#app/helpers/colors.ts";
 import {
 	AVAILABLE_LAST_DAYS_OPTIONS,
 	AVAILABLE_LAST_MONTHS_OPTIONS,
@@ -178,13 +178,12 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 									>
 										{isSelected && <CheckIcon className="size-3" />}
 									</div>
-									<div
-										className={cn(
-											"size-2.5 shrink-0 rounded-full",
-											createCategoryTheme(category.color),
-											"shadow-none dark:shadow-none",
-										)}
-									/>
+								<div
+									className={cn(
+										"size-2.5 shrink-0 rounded-full",
+										createChartColor(category.color),
+									)}
+								/>
 									<span className="truncate">{category.name}</span>
 								</button>
 							);

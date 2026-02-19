@@ -1,6 +1,27 @@
 import type { ColorSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { cn } from "@hoalu/ui/utils";
 
+/**
+ * Vibrant solid colors for charts and data visualization.
+ * More saturated than badge themes for better visual distinction.
+ */
+export function createChartColor(color: ColorSchema) {
+	const variants: Record<ColorSchema, string> = {
+		red: "bg-red-500 dark:bg-red-400",
+		green: "bg-emerald-500 dark:bg-emerald-400",
+		teal: "bg-teal-500 dark:bg-teal-400",
+		blue: "bg-blue-500 dark:bg-blue-400",
+		yellow: "bg-amber-400 dark:bg-amber-300",
+		orange: "bg-orange-500 dark:bg-orange-400",
+		purple: "bg-violet-500 dark:bg-violet-400",
+		pink: "bg-pink-500 dark:bg-pink-400",
+		gray: "bg-slate-400 dark:bg-slate-500",
+		stone: "bg-stone-400 dark:bg-stone-500",
+	};
+
+	return variants[color];
+}
+
 export function createCategoryTheme(color: ColorSchema) {
 	const variants: Record<ColorSchema, string> = {
 		red: cn(

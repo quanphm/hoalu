@@ -6,7 +6,7 @@ import {
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { createChartColor } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
@@ -134,7 +134,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-4 w-full items-center justify-center gap-px overflow-hidden rounded-md">
+		<div className="flex h-4 w-full items-center justify-center gap-0.5 overflow-hidden rounded-md">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
@@ -142,8 +142,7 @@ function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number 
 						key={data.id}
 						className={cn(
 							"h-full transition-all duration-300",
-							createCategoryTheme(data.color),
-							"shadow-none dark:shadow-none",
+							createChartColor(data.color),
 						)}
 						style={{
 							width: `${widthPercentage}%`,
@@ -196,7 +195,7 @@ function CategoryListBreakdown(props: {
 				return (
 					<div key={data.id} className="flex items-center justify-between py-1">
 						<div className="flex items-center gap-3">
-							<div className={cn("h-3 w-3 rounded-xs", createCategoryTheme(data.color))} />
+							<div className={cn("size-3 rounded-sm", createChartColor(data.color))} />
 							<Button
 								variant="link"
 								onClick={() => handleClick(data.id)}

@@ -10,7 +10,7 @@ interface WalletCommonProps {
 
 export function WalletBadge(props: WalletCommonProps) {
 	return (
-		<Badge className="bg-background gap-1.5">
+		<Badge className="gap-1.5 bg-transparent">
 			<WalletLabel {...props} />
 		</Badge>
 	);
@@ -23,7 +23,7 @@ export function WalletLabel(props: WalletCommonProps) {
 				className={cn("size-2 rounded-full", createWalletTheme(props.type))}
 				aria-hidden="true"
 			/>
-			<span title={props.name} className="max-w-[100px] min-w-0 truncate">
+			<span title={props.name} className="text-foreground max-w-[100px] min-w-0 truncate">
 				{props.name}
 			</span>
 		</>
