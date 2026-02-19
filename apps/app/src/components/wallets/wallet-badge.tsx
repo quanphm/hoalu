@@ -10,7 +10,7 @@ interface WalletCommonProps {
 
 export function WalletBadge(props: WalletCommonProps) {
 	return (
-		<Badge variant="outline" className="bg-background gap-1.5">
+		<Badge variant="default" className="gap-1.5 bg-transparent">
 			<WalletLabel {...props} />
 		</Badge>
 	);

@@ -134,12 +134,10 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flattenExpenses[index];
-			// Mobile: smaller items (group header 38, expense 60)
-			// Desktop: normal size (group header 38, expense 78)
 			if (shouldUseMobileLayout) {
-				return item.type === "group-header" ? 38 : 60;
+				return item.type === "group-header" ? 40 : 60;
 			}
-			return item.type === "group-header" ? 38 : 78;
+			return item.type === "group-header" ? 40 : 86;
 		},
 		// Add padding at the bottom for mobile nav bar
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,

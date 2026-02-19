@@ -47,7 +47,6 @@ function ExpenseContent(props: ExpenseContentProps) {
 				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-6 pl-3",
 			)}
 			data-slot="expense-item"
-			role="button"
 			aria-label={`Select expense ${props.title}`}
 			tabIndex={0}
 			onClick={handleClick}
@@ -57,7 +56,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			<div className="flex w-2/3 flex-col gap-1">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="text-muted-foreground truncate text-xs leading-relaxed">
+					<div className="text-muted-foreground/72 truncate leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}

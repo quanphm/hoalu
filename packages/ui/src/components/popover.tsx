@@ -32,17 +32,24 @@ function PopoverPositioner({
 function PopoverContent({
 	className,
 	align = "center",
+	side = "bottom",
 	sideOffset = 4,
+	alignOffset = 0,
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Popup> &
 	React.ComponentProps<typeof PopoverPrimitive.Positioner>) {
 	return (
 		<PopoverPrimitive.Portal>
-			<PopoverPositioner sideOffset={sideOffset} align={align}>
+			<PopoverPositioner
+				sideOffset={sideOffset}
+				alignOffset={alignOffset}
+				align={align}
+				side={side}
+			>
 				<PopoverPrimitive.Popup
 					data-slot="popover-popup"
 					className={cn(
-						"data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground data-[closed]:animate-out data-[open]:animate-in w-72 origin-[var(--transform-origin)] rounded-md border p-4 shadow-md outline-hidden transition-[transform,scale,opacity]",
+						"data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground data-closed:animate-out data-open:animate-in w-72 origin-(--transform-origin) rounded-md border p-4 shadow-md outline-hidden transition-[transform,scale,opacity]",
 						className,
 					)}
 					{...props}
