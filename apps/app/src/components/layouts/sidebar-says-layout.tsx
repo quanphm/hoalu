@@ -38,7 +38,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider className={cn(theme)}>
-			<Sidebar>
+			<Sidebar variant="inset">
 				<SidebarHeader className="border-b">
 					<SidebarMenu>
 						<SidebarMenuItem>
@@ -82,7 +82,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset>{children}</SidebarInset>
+			<SidebarInset className="border">{children}</SidebarInset>
 		</SidebarProvider>
 	);
 }

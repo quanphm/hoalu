@@ -56,7 +56,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 					Home
 					<HotKey {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
-				<DropdownMenuItem
+				{/* <DropdownMenuItem
 					className="gap-2 p-2"
 					render={
 						<a href="https://hoalu.app" target="_blank" rel="noreferrer">
@@ -66,13 +66,13 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 							</span>
 						</a>
 					}
-				/>
+				/> */}
 				<DropdownMenuSeparator />
 
 				<DropdownMenuGroup>
-					<DropdownMenuGroupLabel className="text-muted-foreground/60 text-xs">
+					{/* <DropdownMenuGroupLabel className="text-muted-foreground/60 text-xs">
 						Workspaces
-					</DropdownMenuGroupLabel>
+					</DropdownMenuGroupLabel> */}
 					<ScrollArea className="max-h-72">
 						{workspaces.map((ws) => (
 							<DropdownMenuItem

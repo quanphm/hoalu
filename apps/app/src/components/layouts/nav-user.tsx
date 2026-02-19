@@ -1,5 +1,10 @@
 import { UserAvatar } from "#app/components/user-avatar.tsx";
-import { KEYBOARD_SHORTCUTS, THEME_LABELS, THEMES } from "#app/helpers/constants.ts";
+import {
+	CUSTOM_THEMES,
+	KEYBOARD_SHORTCUTS,
+	SYSTEM_THEMES,
+	THEME_LABELS,
+} from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import {
 	CheckIcon,
@@ -64,7 +69,22 @@ export function NavUser() {
 								</DropdownMenuSubTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuSubContent>
-										{THEMES.map((themeName) => (
+										{SYSTEM_THEMES.map((themeName) => (
+											<DropdownMenuItem
+												key={themeName}
+												onClick={() => setTheme(themeName)}
+												className="capitalize"
+											>
+												{theme === themeName && (
+													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+														<CheckIcon className="size-4" />
+													</span>
+												)}
+												<span className="ms-6">{THEME_LABELS[themeName]}</span>
+											</DropdownMenuItem>
+										))}
+										<DropdownMenuSeparator />
+										{CUSTOM_THEMES.map((themeName) => (
 											<DropdownMenuItem
 												key={themeName}
 												onClick={() => setTheme(themeName)}

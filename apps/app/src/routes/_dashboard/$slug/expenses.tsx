@@ -1,15 +1,15 @@
 import {
+	type AmountFilterState,
+	expenseAmountFilterAtom,
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
-	mobileFilterExpandedAtom,
 	searchKeywordsAtom,
 	selectedExpenseAtom,
 } from "#app/atoms/index.ts";
-import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
-import { ExpenseFilter, MobileFilterToggle } from "#app/components/expenses/expense-filter.tsx";
+import { ExpenseFilterDropdown } from "#app/components/expenses/expense-filter-dropdown.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import {
@@ -24,7 +24,6 @@ import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { RepeatSchema } from "@hoalu/common/schema";
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
 import { useDeferredValue, useEffect } from "react";
@@ -46,17 +45,16 @@ function RouteComponent() {
 
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const expenses = useLiveQueryExpenses();
-	const categories = useLiveQueryCategories();
 
 	const range = toFromToDateObject(searchByDate);
 	const searchKeywords = useAtomValue(searchKeywordsAtom);
 	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
 	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
 	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
+	const amountFilter = useAtomValue(expenseAmountFilterAtom);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
-	const [isFilterExpanded, setIsFilterExpanded] = useAtom(mobileFilterExpandedAtom);
-	const [, setSelectedExpense] = useAtom(selectedExpenseAtom);
+	const [_, setSelectedExpense] = useAtom(selectedExpenseAtom);
 
 	useEffect(() => {
 		if (searchById) {
@@ -65,18 +63,13 @@ function RouteComponent() {
 		}
 	}, [searchById, setSelectedExpense, navigate]);
 
-	useEffect(() => {
-		return () => {
-			setIsFilterExpanded(false);
-		};
-	}, [setIsFilterExpanded]);
-
 	const filteredExpenses = filter(expenses, {
 		selectedCategoryIds,
 		selectedWalletIds,
 		selectedRepeat,
 		searchKeywords: deferredSearchKeywords,
 		range,
+		amountFilter,
 	});
 
 	return (
@@ -84,17 +77,17 @@ function RouteComponent() {
 			<SectionHeader>
 				<SectionTitle>Expenses</SectionTitle>
 				<SectionAction className="flex items-center gap-2">
-					<MobileFilterToggle />
 					<CreateExpenseDialogTrigger />
 				</SectionAction>
 			</SectionHeader>
 
+			<ExpenseFilterDropdown />
+
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-80px)]"
+				className="h-[calc(100vh-84px-70px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-70px)]"
 			>
-				{/* Filter panel - hidden on mobile by default */}
-				<SectionItem
+				{/* <SectionItem
 					data-slot="expense-filter"
 					desktopSpan="col-span-2"
 					tabletSpan={1}
@@ -103,19 +96,17 @@ function RouteComponent() {
 					className="pr-4 pb-4"
 				>
 					<ExpenseFilter expenses={filteredExpenses} categories={categories} />
-				</SectionItem>
+				</SectionItem> */}
 
-				{/* Expense list - full width on mobile */}
 				<SectionItem
 					data-slot="expense-list"
-					desktopSpan="col-span-4"
+					desktopSpan="col-span-6"
 					tabletSpan={1}
 					mobileOrder={1}
 				>
 					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
 
-				{/* Details panel - hidden on mobile, shown as drawer instead */}
 				<SectionItem
 					data-slot="expense-details"
 					desktopSpan="col-span-6"
@@ -126,25 +117,6 @@ function RouteComponent() {
 					<ExpenseDetails expenses={filteredExpenses} />
 				</SectionItem>
 			</SectionContent>
-
-			{/* Mobile filter drawer */}
-			{shouldUseMobileLayout && (
-				<Drawer open={isFilterExpanded} onOpenChange={setIsFilterExpanded} direction="bottom">
-					<DrawerContent className="h-[95vh] max-h-[95vh]">
-						<DrawerHeader className="shrink-0 border-b">
-							<DrawerTitle>Filters</DrawerTitle>
-						</DrawerHeader>
-						<div className="min-h-0 flex-1 overflow-y-auto p-4">
-							<ExpenseFilter expenses={filteredExpenses} categories={categories} />
-						</div>
-						<div className="shrink-0 border-t p-4">
-							<DrawerClose className="bg-primary text-primary-foreground w-full rounded-md py-2">
-								Apply Filters
-							</DrawerClose>
-						</div>
-					</DrawerContent>
-				</Drawer>
-			)}
 
 			{/* Mobile expense details drawer */}
 			{shouldUseMobileLayout && <MobileExpenseDetails expenses={filteredExpenses} />}
@@ -165,10 +137,17 @@ function filter(
 					to: Date;
 			  }
 			| undefined;
+		amountFilter: AmountFilterState;
 	},
 ) {
-	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, searchKeywords, range } =
-		condition;
+	const {
+		selectedCategoryIds,
+		selectedWalletIds,
+		selectedRepeat,
+		searchKeywords,
+		range,
+		amountFilter,
+	} = condition;
 	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
 	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
@@ -196,6 +175,16 @@ function filter(
 		// Repeat filter
 		if (selectedRepeat.length > 0) {
 			if (!selectedRepeat.includes(expense.repeat)) {
+				return false;
+			}
+		}
+		// Amount filter
+		if (amountFilter.min !== null || amountFilter.max !== null) {
+			const amount = expense.realAmount;
+			if (amountFilter.min !== null && amount < amountFilter.min) {
+				return false;
+			}
+			if (amountFilter.max !== null && amount > amountFilter.max) {
 				return false;
 			}
 		}

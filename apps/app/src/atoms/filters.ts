@@ -4,8 +4,6 @@ import type { CategorySchema, WalletSchema } from "#app/lib/schema.ts";
 import type { RepeatSchema } from "@hoalu/common/schema";
 import { atom } from "jotai";
 
-export const mobileFilterExpandedAtom = atom<boolean>(false);
-
 export const expenseCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 
 export const chartCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
@@ -13,6 +11,16 @@ export const chartCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 export const expenseWalletFilterAtom = atom<WalletSchema["id"][]>([]);
 
 export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
+
+export interface AmountFilterState {
+	min: number | null;
+	max: number | null;
+}
+
+export const expenseAmountFilterAtom = atom<AmountFilterState>({
+	min: null,
+	max: null,
+});
 
 export const searchKeywordsAtom = atom<string>("");
 

@@ -40,14 +40,13 @@ function ExpenseContent(props: ExpenseContentProps) {
 		<div
 			id={props.id}
 			className={cn(
-				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border border-transparent text-sm outline-none",
-				"focus-visible:bg-muted/80 focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
-				selectedRow.id === props.id && "bg-muted/80 ring-ring ring-2 ring-inset",
+				"border-b-border hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
+				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
+				selectedRow.id === props.id && "ring-ring ring-2 ring-inset",
 				// Mobile: compact items, Desktop: normal padding
-				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-6 pl-3",
+				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-4 pl-3",
 			)}
 			data-slot="expense-item"
-			role="button"
 			aria-label={`Select expense ${props.title}`}
 			tabIndex={0}
 			onClick={handleClick}
@@ -57,7 +56,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			<div className="flex w-2/3 flex-col gap-1">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="text-muted-foreground truncate text-xs leading-relaxed">
+					<div className="text-accent-foreground truncate leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}
@@ -70,7 +69,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 					<WalletBadge {...props.wallet} />
 				</div>
 			</div>
-			<div className="flex flex-col items-end gap-1 text-right">
+			<div className="flex items-end justify-center gap-4 text-right">
 				<TransactionAmount data={props} />
 			</div>
 		</div>

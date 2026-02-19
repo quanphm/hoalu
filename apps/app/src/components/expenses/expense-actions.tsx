@@ -467,7 +467,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 				</FieldGroup>
 				<Field
 					orientation="horizontal"
-					className="bg-card sticky bottom-0 w-full justify-end px-4 py-2"
+					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
 				>
 					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>

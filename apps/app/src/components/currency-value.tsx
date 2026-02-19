@@ -10,6 +10,8 @@ interface CurrencyValueProps {
 	as?: "span" | "p";
 }
 
+const DEFAULT_CLASSNAME = "font-geist-mono text-foreground text-base tracking-tight tabular-nums";
+
 export function CurrencyValue({
 	as: Component = "span",
 	style = "currency",
@@ -19,12 +21,7 @@ export function CurrencyValue({
 
 	if (style === "decimal") {
 		return (
-			<Component
-				className={cn(
-					"font-geist-mono text-foreground text-base font-semibold tracking-tight",
-					props.className,
-				)}
-			>
+			<Component className={cn(DEFAULT_CLASSNAME, props.className)}>
 				{formattedValue}
 				<span className="text-muted-foreground ml-1 font-normal">{props.currency}</span>
 			</Component>
@@ -33,11 +30,5 @@ export function CurrencyValue({
 
 	const content = props.prefix ? `${props.prefix} ${formattedValue}` : formattedValue;
 
-	return (
-		<Component
-			className={cn("font-geist-mono text-foreground text-base tracking-tight", props.className)}
-		>
-			{content}
-		</Component>
-	);
+	return <Component className={cn(DEFAULT_CLASSNAME, props.className)}>{content}</Component>;
 }
