@@ -215,10 +215,7 @@ export function ExpenseFilterDropdown() {
 			>
 				<PopoverTrigger render={<Button variant="outline" />}>
 					<ListFilterIcon className="size-4" />
-					<span>Filters</span>
-					<Badge variant="secondary" size="sm">
-						{activeFiltersCount}
-					</Badge>
+					<span>Filters ({activeFiltersCount})</span>
 				</PopoverTrigger>
 
 				<PopoverContent
@@ -448,7 +445,7 @@ function SearchFilterView({
 			</div>
 			<div className="relative">
 				<Input
-					type="search"
+					type="text"
 					placeholder="Search by title, description, or amount"
 					value={value}
 					onChange={(e) => onChange(e.target.value)}

@@ -18,9 +18,9 @@ export function TransactionAmount(props: { data: SyncedExpense }) {
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
+				prefix={workspaceCurrency !== sourceCurrency ? "~" : undefined}
 				as="p"
-				className="text-[14px]"
+				className="text-[14px] font-semibold"
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue
