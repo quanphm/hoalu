@@ -36,8 +36,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const setCreateWalletDialog = useSetAtom(createWalletDialogAtom);
 	const setCreateCategoryDialog = useSetAtom(createCategoryDialogAtom);
 
-	const filteredExpenses = useExpenseSearch(slug, search);
-	const hasExpenseResults = filteredExpenses.length > 0;
+	const { filtered: filteredExpenses, recent: recentExpenses } = useExpenseSearch(slug, search);
+	const isSearching = search.trim().length > 0;
+	const hasSearchResults = isSearching && filteredExpenses.length > 0;
+	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;
 
 	// Use ref pattern for stable callback (rerender-defer-reads)
 	const onOpenChangeRef = useRef(onOpenChange);
@@ -81,10 +83,16 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		const items: VirtualizedItem[] = [];
 		let itemIndex = 0;
 
-		// Add expenses section if there are results
-		if (hasExpenseResults) {
+		// Show search results when searching, recent expenses otherwise (mutually exclusive)
+		if (hasSearchResults) {
 			items.push({ type: "header", label: "Expenses" });
 			for (const expense of filteredExpenses) {
+				items.push({ type: "expense", data: expense, itemIndex });
+				itemIndex++;
+			}
+		} else if (hasRecentExpenses) {
+			items.push({ type: "header", label: "Recent expenses" });
+			for (const expense of recentExpenses) {
 				items.push({ type: "expense", data: expense, itemIndex });
 				itemIndex++;
 			}
@@ -98,18 +106,19 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		}
 
 		return items;
-	}, [hasExpenseResults, filteredExpenses, actions]);
+	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, actions]);
 
 	// Build items array for base-ui Autocomplete (only actual selectable items, not headers)
+	// Order must match virtualizedItems (excluding headers) for correct itemIndex mapping
 	const autocompleteItems: AutocompleteItem[] = useMemo(() => {
-		const expenseItems = filteredExpenses.map((e) => ({
-			id: e.id,
-			title: e.title,
-			amount: e.amount,
-		}));
+		const expenseItems = hasSearchResults
+			? filteredExpenses.map((e) => ({ id: e.id, title: e.title, amount: e.amount }))
+			: hasRecentExpenses
+				? recentExpenses.map((e) => ({ id: e.id, title: e.title, amount: e.amount }))
+				: [];
 		const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
 		return [...expenseItems, ...actionItems];
-	}, [filteredExpenses, actions]);
+	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, actions]);
 
 	// Ref to hold the scroll function from VirtualizedList
 	const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
@@ -164,7 +173,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
 					<CommandFooter>
 						<div className="flex items-center gap-3" aria-live="polite">
-							{hasExpenseResults && (
+							{hasSearchResults && (
 								<span className="text-foreground">
 									{filteredExpenses.length} {filteredExpenses.length === 1 ? "expense" : "expenses"}{" "}
 									found

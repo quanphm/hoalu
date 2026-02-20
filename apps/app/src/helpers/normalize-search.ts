@@ -2,12 +2,20 @@
  * Normalize a string for diacritic-insensitive search.
  * Decomposes characters into base + combining marks (NFD), then strips
  * the combining marks so that e.g. "ăn sáng" → "an sang".
+ *
+ * Also handles Vietnamese đ/Đ (Latin D with stroke) which doesn't decompose
+ * via NFD since it's a distinct Unicode character, not a base + combining mark.
  */
 export function normalizeSearch(input: string | null) {
 	if (!input) {
 		return "";
 	}
-	return input.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+	return input
+		.normalize("NFD")
+		.replace(/\p{M}/gu, "")
+		.replace(/đ/g, "d")
+		.replace(/Đ/g, "D")
+		.toLowerCase();
 }
 
 interface SearchableItem {
