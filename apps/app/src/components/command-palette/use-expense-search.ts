@@ -1,17 +1,20 @@
-import { useMemo } from "react";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useMemo } from "react";
 
 import type { ExpenseSearchResult } from "./types.ts";
 
-export function useExpenseSearch(slug: string | undefined, search: string): ExpenseSearchResult[] {
+const RECENT_EXPENSES_LIMIT = 3;
+
+interface UseExpenseSearchResult {
+	filtered: ExpenseSearchResult[];
+	recent: ExpenseSearchResult[];
+}
+
+export function useExpenseSearch(slug: string | undefined, search: string): UseExpenseSearchResult {
 	const expenseCollection = useMemo(() => (slug ? expenseCollectionFactory(slug) : null), [slug]);
-	const categoryCollection = useMemo(
-		() => (slug ? categoryCollectionFactory(slug) : null),
-		[slug],
-	);
+	const categoryCollection = useMemo(() => (slug ? categoryCollectionFactory(slug) : null), [slug]);
 
 	const { data: expenses } = useLiveQuery(
 		(q) => {
@@ -35,7 +38,7 @@ export function useExpenseSearch(slug: string | undefined, search: string): Expe
 		[slug],
 	);
 
-	const filteredExpenses = useMemo(() => {
+	const filtered = useMemo(() => {
 		if (!search.trim() || !expenses) return [];
 
 		return expenses.filter((e) =>
@@ -46,5 +49,10 @@ export function useExpenseSearch(slug: string | undefined, search: string): Expe
 		);
 	}, [expenses, search]);
 
-	return filteredExpenses;
+	const recent = useMemo(() => {
+		if (!expenses) return [];
+		return expenses.slice(0, RECENT_EXPENSES_LIMIT);
+	}, [expenses]);
+
+	return { filtered, recent };
 }
