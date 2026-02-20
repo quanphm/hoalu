@@ -341,11 +341,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						maxBarSize={maxBarSize}
 						margin={{ left: -12, right: 12, top: 12 }}
 					>
-						<CartesianGrid vertical={false} strokeDasharray="2 2" stroke="var(--border)" />
+						<CartesianGrid vertical={false} strokeDasharray="2 2" />
 						<XAxis
 							dataKey="date"
 							tickLine={false}
-							tickMargin={12}
+							axisLine={false}
+							tickMargin={8}
 							ticks={
 								data.length === 0
 									? []
@@ -365,7 +366,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									? datetime.format(date, "MMM yyyy")
 									: datetime.format(date, "dd/MM/yyyy");
 							}}
-							stroke="var(--border)"
 						/>
 						<YAxis
 							tickLine={false}
