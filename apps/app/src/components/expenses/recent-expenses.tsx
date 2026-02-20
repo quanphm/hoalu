@@ -20,7 +20,7 @@ export function RecentExpenses() {
 			<Card>
 				<CardHeader>
 					<div className="flex items-center justify-between">
-						<h3 className="text-lg font-semibold">Recent Transactions</h3>
+						<h3 className="text-lg font-semibold">Recent Expenses</h3>
 						<Button
 							variant="outline"
 							size="sm"
@@ -41,7 +41,7 @@ export function RecentExpenses() {
 		<Card>
 			<CardHeader>
 				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-semibold">Recent Transactions</h3>
+					<h3 className="text-lg font-semibold">Recent Expenses</h3>
 					<Button
 						variant="outline"
 						size="sm"
