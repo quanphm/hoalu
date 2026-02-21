@@ -30,7 +30,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 			{currentExpense && (
 				<div
 					data-slot="expense-details-actions"
-					className="flex justify-between border-b px-4 py-2"
+					className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2"
 				>
 					<div className="flex items-center justify-center gap-2">
 						<Tooltip>

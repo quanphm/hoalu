@@ -136,7 +136,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 			if (shouldUseMobileLayout) {
 				return item.type === "group-header" ? 40 : 60;
 			}
-			return item.type === "group-header" ? 40 : 86;
+			return item.type === "group-header" ? 40 : 81;
 		},
 		// Add padding at the bottom for mobile nav bar
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,

@@ -182,8 +182,8 @@ const route = app
 
 			const { amount, currency } = payload;
 			const realAmount = monetary.toRealAmount(
-				amount || Number.parseFloat(expense.amount),
-				currency || expense.currency,
+				amount ?? Number.parseFloat(expense.amount),
+				currency ?? expense.currency,
 			);
 
 			const queryData = await expenseRepository.update({

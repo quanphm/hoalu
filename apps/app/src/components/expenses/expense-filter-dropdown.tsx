@@ -90,11 +90,11 @@ export function ExpenseFilterDropdown() {
 		if (amountFilter.min !== null || amountFilter.max !== null) {
 			let label = "";
 			if (amountFilter.min !== null && amountFilter.max !== null) {
-				label = `$${amountFilter.min} - $${amountFilter.max}`;
+				label = `${amountFilter.min} - ${amountFilter.max}`;
 			} else if (amountFilter.min !== null) {
-				label = `≥ $${amountFilter.min}`;
+				label = `≥ ${amountFilter.min}`;
 			} else if (amountFilter.max !== null) {
-				label = `≤ $${amountFilter.max}`;
+				label = `≤ ${amountFilter.max}`;
 			}
 			summaries.push({
 				key: "amount",
@@ -227,42 +227,42 @@ export function ExpenseFilterDropdown() {
 						{/* Left Panel - Filter Menu */}
 						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
 							<FilterMenuItem
-								icon={<SearchIcon className="size-4" />}
+								icon={<SearchIcon className="size-3" />}
 								label="Search"
 								active={hasActiveFilter("search")}
 								selected={currentView === "search"}
 								onClick={() => setCurrentView("search")}
 							/>
 							<FilterMenuItem
-								icon={<CalendarIcon className="size-4" />}
+								icon={<CalendarIcon className="size-3" />}
 								label="Date"
 								active={hasActiveFilter("date")}
 								selected={currentView === "date"}
 								onClick={() => setCurrentView("date")}
 							/>
 							<FilterMenuItem
-								icon={<DollarSignIcon className="size-4" />}
+								icon={<DollarSignIcon className="size-3" />}
 								label="Amount"
 								active={hasActiveFilter("amount")}
 								selected={currentView === "amount"}
 								onClick={() => setCurrentView("amount")}
 							/>
 							<FilterMenuItem
-								icon={<TagIcon className="size-4" />}
+								icon={<TagIcon className="size-3" />}
 								label="Category"
 								active={hasActiveFilter("category")}
 								selected={currentView === "category"}
 								onClick={() => setCurrentView("category")}
 							/>
 							<FilterMenuItem
-								icon={<WalletIcon className="size-4" />}
+								icon={<WalletIcon className="size-3" />}
 								label="Wallet"
 								active={hasActiveFilter("wallet")}
 								selected={currentView === "wallet"}
 								onClick={() => setCurrentView("wallet")}
 							/>
 							<FilterMenuItem
-								icon={<RefreshCwIcon className="size-4" />}
+								icon={<RefreshCwIcon className="size-3" />}
 								label="Repeat"
 								active={hasActiveFilter("repeat")}
 								selected={currentView === "repeat"}

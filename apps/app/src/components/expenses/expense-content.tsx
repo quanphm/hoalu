@@ -53,14 +53,14 @@ function ExpenseContent(props: ExpenseContentProps) {
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
 		>
-			<div className="flex w-2/3 flex-col gap-1">
+			<div className="flex w-2/3 flex-col gap-0.5">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
-					<div className="text-accent-foreground truncate leading-relaxed">
+					<div className="text-muted-foreground truncate leading-relaxed">
 						{htmlToText(props.description)}
 					</div>
 				)}
-				<div data-slot="item-tags" className="mt-0.5 flex gap-1.5">
+				<div data-slot="item-tags" className="mt-0.5 flex origin-top-left scale-90 gap-1.5">
 					{props.category.name && props.category.color ? (
 						<Badge className={cn(createCategoryTheme(props.category.color))}>
 							{props.category.name}
