@@ -5,6 +5,7 @@ import {
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { FilesCompactUpload } from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
@@ -23,7 +24,6 @@ import { walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@hoalu/ui/accordion";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
@@ -218,6 +218,12 @@ function CreateExpenseForm() {
 							/>
 						</div>
 						<form.AppField
+							name="repeat"
+							children={(field) => (
+								<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+							)}
+						/>
+						<form.AppField
 							name="description"
 							children={(field) => (
 								<field.TiptapField label="Note" defaultValue={draft.description} />
@@ -231,39 +237,20 @@ function CreateExpenseForm() {
 						/>
 						<form.AppField name="date" children={(field) => <field.DatepickerField />} />
 					</FieldGroup>
-					<Accordion className="col-span-12 w-full">
-						<AccordionItem
-							value="advanced"
-							className="bg-background has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative overflow-auto rounded-md border outline-none last:border-b has-focus-visible:z-10 has-focus-visible:ring-[3px]"
-						>
-							<AccordionTrigger className="bg-muted rounded-none px-4 py-2">More</AccordionTrigger>
-							<AccordionContent>
-								<FieldGroup className="grid grid-cols-12 gap-4 px-4 py-4">
-									<div className="col-span-5 flex flex-col gap-4">
-										<form.AppField
-											name="repeat"
-											children={(field) => (
-												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-											)}
-										/>
-									</div>
-									<div className="col-span-7 flex flex-col gap-4">
-										<form.AppField
-											name="attachments"
-											children={(field) => <field.FilesField label="Attachments" />}
-										/>
-									</div>
-								</FieldGroup>
-							</AccordionContent>
-						</AccordionItem>
-					</Accordion>
 				</div>
 
-				<DialogFooter>
-					<Field orientation="horizontal" className="justify-end">
-						<form.SubscribeButton>Create expense</form.SubscribeButton>
-					</Field>
-				</DialogFooter>
+				<FilesCompactUpload
+					onFilesSelectedUpdate={(files) => form.setFieldValue("attachments", files)}
+				>
+					{(trigger) => (
+						<DialogFooter>
+							<Field orientation="horizontal" className="justify-between">
+								{trigger}
+								<form.SubscribeButton>Create expense</form.SubscribeButton>
+							</Field>
+						</DialogFooter>
+					)}
+				</FilesCompactUpload>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -352,6 +339,7 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
+	const expenseFilesMutation = useUploadExpenseFiles();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
 
 	const walletGroups = wallets.reduce(
@@ -417,6 +405,15 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					repeat: value.repeat,
 				},
 			});
+
+			if (value.attachments.length > 0) {
+				await expenseFilesMutation.mutateAsync({
+					id: props.data.id,
+					title: value.title,
+					date: value.date,
+					files: value.attachments,
+				});
+			}
 		},
 	});
 
@@ -449,28 +446,32 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 						/>
 					</div>
 					<form.AppField
-						name="description"
-						children={(field) => (
-							<field.TiptapField label="Note" defaultValue={props.data.description ?? ""} />
-						)}
-					/>
-					<form.AppField
 						name="repeat"
 						children={(field) => (
 							<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 						)}
 					/>
 					<form.AppField
-						name="attachments"
-						children={(field) => <field.FilesField label="Attachments" />}
+						name="description"
+						children={(field) => (
+							<field.TiptapField label="Note" defaultValue={props.data.description ?? ""} />
+						)}
 					/>
 				</FieldGroup>
-				<Field
-					orientation="horizontal"
-					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
+
+				<FilesCompactUpload
+					onFilesSelectedUpdate={(files) => form.setFieldValue("attachments", files)}
 				>
-					<form.SubscribeButton>Update</form.SubscribeButton>
-				</Field>
+					{(trigger) => (
+						<Field
+							orientation="horizontal"
+							className="bg-card sticky bottom-0 w-full justify-between border-t px-4 py-2"
+						>
+							{trigger}
+							<form.SubscribeButton>Update</form.SubscribeButton>
+						</Field>
+					)}
+				</FilesCompactUpload>
 			</form.Form>
 		</form.AppForm>
 	);

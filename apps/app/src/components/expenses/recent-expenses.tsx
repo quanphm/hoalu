@@ -2,11 +2,11 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
 import { Link } from "@tanstack/react-router";
-import { formatDistanceToNow } from "date-fns";
 
 const RECENT_EXPENSES_LIMIT = 7;
 
@@ -60,15 +60,15 @@ export function RecentExpenses() {
 						>
 							<div className="min-w-0 flex-1">
 								<p className="truncate text-sm font-medium">{expense.title}</p>
-								<div className="mt-1 flex items-center gap-2">
+							</div>
+							<div className="flex shrink-0 items-center gap-3 text-right">
+								<div className="flex origin-right scale-80 items-center">
 									{expense.category?.name && expense.category?.color && (
 										<Badge className={createCategoryTheme(expense.category.color)}>
 											{expense.category.name}
 										</Badge>
 									)}
 								</div>
-							</div>
-							<div className="shrink-0 text-right">
 								<CurrencyValue
 									value={expense.realAmount}
 									currency={expense.currency}
@@ -76,9 +76,7 @@ export function RecentExpenses() {
 									className="font-semibold"
 								/>
 								<p className="text-muted-foreground text-xs">
-									{formatDistanceToNow(new Date(expense.date), {
-										addSuffix: true,
-									})}
+									{datetime.format(new Date(expense.date), "dd MMM")}
 								</p>
 							</div>
 						</div>
