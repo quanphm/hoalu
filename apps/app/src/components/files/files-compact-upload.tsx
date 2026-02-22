@@ -55,7 +55,7 @@ export function FilesCompactUpload({ onFilesSelectedUpdate, children }: FilesCom
 	return (
 		<>
 			{errors.length > 0 && (
-				<div className="border-destructive/20 bg-destructive/10 text-destructive mx-4 rounded-md border p-3">
+				<div className="border-destructive/20 bg-destructive/10 text-destructive rounded-md border p-3">
 					<div className="mb-1 flex items-center justify-between">
 						<h3 className="text-sm font-medium">Upload failed</h3>
 						<button type="button" onClick={clearErrors}>
@@ -71,7 +71,7 @@ export function FilesCompactUpload({ onFilesSelectedUpdate, children }: FilesCom
 			)}
 
 			{files.length > 0 && (
-				<ul ref={previewRef} className="mx-4 grid grid-cols-4 gap-1.5">
+				<ul ref={previewRef} className="grid grid-cols-5 gap-1.5">
 					{files.map((file, index) => (
 						<li key={file.name} className="bg-muted/50 relative flex rounded-md text-sm">
 							<div className="relative aspect-square w-full overflow-hidden rounded-md">
