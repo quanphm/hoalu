@@ -86,16 +86,6 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
 
-	const focusExpense = useEffectEvent((id: string) => {
-		requestAnimationFrame(() => {
-			const element = document.getElementById(id);
-			if (element) {
-				element.focus();
-				element.scrollIntoView({ block: "nearest", behavior: "smooth" });
-			}
-		});
-	});
-
 	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, SyncedExpense[]>();
 		props.expenses.forEach((expense) => {
@@ -129,7 +119,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 
 	const virtualizer = useVirtualizer({
 		count: flattenExpenses.length,
-		overscan: 5,
+		overscan: 10,
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flattenExpenses[index];
@@ -140,6 +130,23 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		},
 		// Add padding at the bottom for mobile nav bar
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
+	});
+
+	const scrollToExpense = useEffectEvent((id: string) => {
+		// Find the index in the flattened list (which includes group headers)
+		const index = flattenExpenses.findIndex(
+			(item) => item.type === "expense" && item.expense.id === id,
+		);
+		if (index >= 0) {
+			virtualizer.scrollToIndex(index, { align: "auto" });
+			// After virtualizer scrolls, focus the element once it's rendered
+			requestAnimationFrame(() => {
+				const element = document.getElementById(id);
+				if (element) {
+					element.focus();
+				}
+			});
+		}
 	});
 
 	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
@@ -158,9 +165,9 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 			if (!nextRowData) return;
 
 			onSelectExpenseEvent(nextRowData.id);
-			focusExpense(nextRowData.id);
+			scrollToExpense(nextRowData.id);
 		},
-		[selectedExpense],
+		[selectedExpense.id, props.expenses],
 	);
 
 	useHotkeys(
@@ -175,7 +182,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 			if (!prevRowData) return;
 
 			onSelectExpenseEvent(prevRowData.id);
-			focusExpense(prevRowData.id);
+			scrollToExpense(prevRowData.id);
 		},
 		[selectedExpense.id, props.expenses],
 	);
