@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ColorSchema } from "@hoalu/common/schema";
 
 export interface ExpenseSearchResult {
 	id: string;
@@ -8,14 +8,17 @@ export interface ExpenseSearchResult {
 	currency: string;
 	date: string;
 	categoryName: string | undefined;
+	categoryColor: ColorSchema | undefined;
 	/** uFuzzy highlight ranges for the title: [start0, end0, start1, end1, ...] */
 	titleRanges: number[] | null;
+	/** uFuzzy highlight ranges for the description: [start0, end0, start1, end1, ...] */
+	descriptionRanges: number[] | null;
 }
 
 export interface ActionItem {
 	id: string;
 	label: string;
-	meta?: ReactNode;
+	meta?: React.ReactNode;
 	onAction: () => void;
 }
 

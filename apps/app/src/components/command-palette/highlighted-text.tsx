@@ -1,16 +1,6 @@
 import type { ReactNode } from "react";
 
-/**
- * Renders text with highlighted match ranges from uFuzzy.
- * Ranges are flat arrays: [start0, end0, start1, end1, ...]
- */
-export function HighlightedText({
-	text,
-	ranges,
-}: {
-	text: string;
-	ranges: number[] | null;
-}) {
+export function HighlightedText({ text, ranges }: { text: string; ranges: number[] | null }) {
 	if (!ranges || ranges.length === 0) {
 		return <>{text}</>;
 	}
@@ -29,7 +19,7 @@ export function HighlightedText({
 
 		// Matched text
 		parts.push(
-			<mark key={i} className="bg-yellow-400/30 text-inherit rounded-xs">
+			<mark key={i} className="rounded-xs bg-yellow-400/30 text-inherit">
 				{text.slice(start, end)}
 			</mark>,
 		);

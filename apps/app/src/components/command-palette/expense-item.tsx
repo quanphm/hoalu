@@ -1,7 +1,9 @@
+import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { monetary } from "@hoalu/common/monetary";
+import { Badge } from "@hoalu/ui/badge";
 import { CommandItem } from "@hoalu/ui/command";
 
 import { HighlightedText } from "./highlighted-text.tsx";
@@ -38,15 +40,19 @@ export function ExpenseItem({
 					<span className="text-muted-foreground truncate text-xs">
 						<HighlightedText
 							text={htmlToText(expense.description) ?? ""}
-							ranges={expense.titleRanges}
+							ranges={expense.descriptionRanges}
 						/>
 					</span>
 				</div>
 				<span className="flex shrink-0 items-center gap-3 text-xs tabular-nums">
 					{expense.categoryName && (
-						<span className="text-muted-foreground shrink-0 text-xs">{expense.categoryName}</span>
+						<div className="flex origin-right scale-90 items-center">
+							<Badge className={createCategoryTheme(expense.categoryColor)}>
+								{expense.categoryName}
+							</Badge>
+						</div>
 					)}
-					<span className="text-muted-foreground tabular-nums">
+					<span className="text-muted-foreground">
 						{datetime.format(expense.date, "MMM d, yyyy")}
 					</span>
 					<span className="font-mono font-bold">

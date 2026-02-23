@@ -6,6 +6,7 @@ import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { Link } from "@tanstack/react-router";
 
 const RECENT_EXPENSES_LIMIT = 7;
@@ -14,28 +15,6 @@ export function RecentExpenses() {
 	const workspace = useWorkspace();
 	const expenses = useLiveQueryExpenses();
 	const recentExpenses = expenses.slice(0, RECENT_EXPENSES_LIMIT);
-
-	if (recentExpenses.length === 0) {
-		return (
-			<Card>
-				<CardHeader>
-					<div className="flex items-center justify-between">
-						<h3 className="text-lg font-semibold">Recent Expenses</h3>
-						<Button
-							variant="outline"
-							size="sm"
-							render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
-						>
-							View all
-						</Button>
-					</div>
-				</CardHeader>
-				<CardContent>
-					<p className="text-muted-foreground text-sm">No expenses yet</p>
-				</CardContent>
-			</Card>
-		);
-	}
 
 	return (
 		<Card>
@@ -52,37 +31,51 @@ export function RecentExpenses() {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<div className="space-y-3">
-					{recentExpenses.map((expense) => (
-						<div
-							key={expense.id}
-							className="border-border/50 flex items-start justify-between gap-2 border-b pb-3 last:border-b-0 last:pb-0"
-						>
-							<div className="min-w-0 flex-1">
-								<p className="truncate text-sm font-medium">{expense.title}</p>
-							</div>
-							<div className="flex shrink-0 items-center gap-3 text-right">
-								<div className="flex origin-right scale-80 items-center">
-									{expense.category?.name && expense.category?.color && (
-										<Badge className={createCategoryTheme(expense.category.color)}>
-											{expense.category.name}
-										</Badge>
-									)}
+				{recentExpenses.length === 0 && <EmptyData />}
+				{recentExpenses.length > 0 && (
+					<div className="space-y-3">
+						{recentExpenses.map((expense) => (
+							<div
+								key={expense.id}
+								className="border-border/50 flex items-start justify-between gap-2 border-b pb-3 last:border-b-0 last:pb-0"
+							>
+								<div className="min-w-0 flex-1">
+									<p className="truncate text-sm font-medium">{expense.title}</p>
 								</div>
-								<CurrencyValue
-									value={expense.realAmount}
-									currency={expense.currency}
-									style="currency"
-									className="font-semibold"
-								/>
-								<p className="text-muted-foreground text-xs">
-									{datetime.format(new Date(expense.date), "dd MMM")}
-								</p>
+								<div className="flex shrink-0 items-center gap-3 text-right">
+									<div className="flex origin-right scale-80 items-center">
+										{expense.category?.name && expense.category?.color && (
+											<Badge className={createCategoryTheme(expense.category.color)}>
+												{expense.category.name}
+											</Badge>
+										)}
+									</div>
+									<p className="text-muted-foreground text-xs">
+										{datetime.format(new Date(expense.date), "MMM d, yyyy")}
+									</p>
+									<CurrencyValue
+										value={expense.realAmount}
+										currency={expense.currency}
+										style="currency"
+										className="text-sm font-semibold"
+									/>
+								</div>
 							</div>
-						</div>
-					))}
-				</div>
+						))}
+					</div>
+				)}
 			</CardContent>
 		</Card>
+	);
+}
+
+function EmptyData() {
+	return (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No data yet</EmptyTitle>
+				<EmptyDescription>You haven&apos;t created any expenses yet.</EmptyDescription>
+			</EmptyHeader>
+		</Empty>
 	);
 }

@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
 import { CommandList } from "@hoalu/ui/command";
 import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useEffect, useRef } from "react";
 
 import { ActionItem } from "./action-item.tsx";
 import { HEADER_HEIGHT, ITEM_HEIGHT, MAX_LIST_HEIGHT, VIRTUALIZER_OVERSCAN } from "./constants.ts";
@@ -61,7 +61,7 @@ export function VirtualizedList({
 	if (items.length === 0) {
 		return (
 			<div role="status" className="text-muted-foreground py-6 text-center text-sm">
-				No results.
+				No results
 			</div>
 		);
 	}
@@ -82,13 +82,7 @@ export function VirtualizedList({
 						const style = { transform: `translateY(${virtualRow.start}px)` };
 
 						if (item.type === "header") {
-							return (
-								<HeaderItem
-									key={`header-${item.label}`}
-									label={item.label}
-									style={style}
-								/>
-							);
+							return <HeaderItem key={`header-${item.label}`} label={item.label} style={style} />;
 						}
 
 						if (item.type === "expense") {

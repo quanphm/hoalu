@@ -152,7 +152,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 				if (!openState) setSearch("");
 			}}
 		>
-			<CommandDialogPopup>
+			<CommandDialogPopup className="max-w-3xl">
 				<Command
 					items={autocompleteItems}
 					value={search}
