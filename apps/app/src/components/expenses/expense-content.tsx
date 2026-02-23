@@ -40,7 +40,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 		<div
 			id={props.id}
 			className={cn(
-				"border-b-border hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
+				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
 				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
 				selectedRow.id === props.id && "ring-ring ring-2 ring-inset",
 				// Mobile: compact items, Desktop: normal padding
