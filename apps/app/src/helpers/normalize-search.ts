@@ -25,9 +25,9 @@ interface SearchableItem {
 	numericFields?: (number | null | undefined)[];
 }
 
-type ComparisonOp = ">" | ">=" | "<" | "<=" | "=";
+export type ComparisonOp = ">" | ">=" | "<" | "<=" | "=";
 
-interface NumericComparison {
+export interface NumericComparison {
 	op: ComparisonOp;
 	value: number;
 }
@@ -59,7 +59,7 @@ function parseFormattedNumber(str: string): number {
 	return Number(str.replace(/[.,]/g, ""));
 }
 
-function compareNumeric(fieldValue: number, op: ComparisonOp, target: number): boolean {
+export function compareNumeric(fieldValue: number, op: ComparisonOp, target: number): boolean {
 	switch (op) {
 		case ">":
 			return fieldValue > target;
@@ -81,7 +81,7 @@ function compareNumeric(fieldValue: number, op: ComparisonOp, target: number): b
  * first, then the remaining text is split into space-separated terms for
  * text/substring matching.
  */
-function parseQuery(query: string): ParsedQuery {
+export function parseQuery(query: string): ParsedQuery {
 	const comparisons: NumericComparison[] = [];
 
 	// Extract comparison expressions from the query

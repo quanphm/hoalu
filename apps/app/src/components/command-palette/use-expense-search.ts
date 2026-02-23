@@ -1,5 +1,5 @@
 import { htmlToText } from "#app/helpers/dom-parser.ts";
-import { normalizeSearch } from "#app/helpers/normalize-search.ts";
+import { compareNumeric, normalizeSearch, parseQuery } from "#app/helpers/normalize-search.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
 import uFuzzy from "@leeoniya/ufuzzy";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -124,10 +124,37 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 		const trimmed = search.trim();
 		if (!trimmed || !expenses || expenses.length === 0) return [];
 
-		const normalizedNeedle = normalizeSearch(trimmed);
-		const normalizedTerms = normalizedNeedle.split(/\s+/).filter(Boolean);
+		// Parse comparison expressions (e.g. "> 100000") from the search input.
+		// Text terms are passed to uFuzzy; comparisons post-filter by amount.
+		const { terms: parsedTerms, comparisons } = parseQuery(trimmed);
+		const textNeedle = parsedTerms.map((t) => t.text).join(" ");
+		const hasTextSearch = textNeedle.length > 0;
+		const hasComparisons = comparisons.length > 0;
+
+		// Helper: check if an expense passes all amount comparisons
+		const passesComparisons = (amount: number) =>
+			comparisons.every((comp) => compareNumeric(amount, comp.op, comp.value));
+
 		const { normalized } = haystack;
 		const expenseCount = expenses.length;
+
+		// Comparison-only query (no text terms): filter all expenses by amount
+		if (!hasTextSearch) {
+			const results: ExpenseSearchResult[] = [];
+			for (let i = 0; i < expenses.length; i++) {
+				if (passesComparisons(Number(expenses[i].amount))) {
+					results.push({
+						...expenses[i],
+						titleRanges: null,
+						descriptionRanges: null,
+					});
+				}
+			}
+			return results;
+		}
+
+		const normalizedNeedle = normalizeSearch(textNeedle);
+		const normalizedTerms = normalizedNeedle.split(/\s+/).filter(Boolean);
 
 		// Use the composite search() API with outOfOrder support
 		const [idxs, info] = uf.search(normalized, normalizedNeedle, 1);
@@ -169,6 +196,12 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 		for (const haystackIdx of idxs) {
 			const isDescription = haystackIdx >= expenseCount;
 			const expenseIdx = isDescription ? haystackIdx - expenseCount : haystackIdx;
+
+			// Post-filter by amount comparisons if present
+			if (hasComparisons && !passesComparisons(Number(expenses[expenseIdx].amount))) {
+				continue;
+			}
+
 			const ranges =
 				rangesById.get(haystackIdx) ??
 				computeTermRanges(normalized[haystackIdx], normalizedTerms);
