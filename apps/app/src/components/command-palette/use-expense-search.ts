@@ -9,6 +9,54 @@ import type { ExpenseSearchResult } from "./types.ts";
 
 const RECENT_EXPENSES_LIMIT = 3;
 
+/**
+ * Compute highlight ranges by finding each search term as a substring
+ * in the normalized text. Used as a fallback when uFuzzy doesn't provide
+ * ranges (e.g. multi-term out-of-order queries).
+ *
+ * Since normalizeSearch preserves string length (1:1 character mapping),
+ * the positions found in normalized text map directly to the original text.
+ *
+ * Returns a flat array [start0, end0, start1, end1, ...] sorted by position.
+ */
+function computeTermRanges(normalizedText: string, normalizedTerms: string[]): number[] | null {
+	const ranges: number[] = [];
+
+	for (const term of normalizedTerms) {
+		if (!term) continue;
+		let pos = 0;
+		while (true) {
+			const idx = normalizedText.indexOf(term, pos);
+			if (idx === -1) break;
+			ranges.push(idx, idx + term.length);
+			pos = idx + term.length;
+		}
+	}
+
+	if (ranges.length === 0) return null;
+
+	// Sort by start position and merge overlapping ranges
+	const sorted: number[] = [];
+	const pairs = [];
+	for (let i = 0; i < ranges.length; i += 2) {
+		pairs.push([ranges[i], ranges[i + 1]]);
+	}
+	pairs.sort((a, b) => a[0] - b[0]);
+
+	let [curStart, curEnd] = pairs[0];
+	for (let i = 1; i < pairs.length; i++) {
+		if (pairs[i][0] <= curEnd) {
+			curEnd = Math.max(curEnd, pairs[i][1]);
+		} else {
+			sorted.push(curStart, curEnd);
+			[curStart, curEnd] = pairs[i];
+		}
+	}
+	sorted.push(curStart, curEnd);
+
+	return sorted;
+}
+
 interface UseExpenseSearchResult {
 	filtered: ExpenseSearchResult[];
 	recent: ExpenseSearchResult[];
@@ -77,6 +125,7 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 		if (!trimmed || !expenses || expenses.length === 0) return [];
 
 		const normalizedNeedle = normalizeSearch(trimmed);
+		const normalizedTerms = normalizedNeedle.split(/\s+/).filter(Boolean);
 		const { normalized } = haystack;
 		const expenseCount = expenses.length;
 
@@ -85,17 +134,18 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 
 		if (!idxs || idxs.length === 0) return [];
 
-		// Determine which haystack indices contain the needle as an exact substring.
-		// filter() is too loose (regexp b.*i.*a matches "bai"), so we check directly.
+		// Determine which *matched* haystack indices contain every search term
+		// as an exact substring. Only checks matched items (not the full haystack).
 		const exactIdxs = new Set<number>();
-		for (let i = 0; i < normalized.length; i++) {
-			if (normalized[i].includes(normalizedNeedle)) {
+		for (const i of idxs) {
+			if (normalizedTerms.every((term) => normalized[i].includes(term))) {
 				exactIdxs.add(i);
 			}
 		}
 
-		// Build a ranges lookup from info so we can attach highlights
-		// regardless of iteration order
+		// Build a ranges lookup from info so we can attach highlights.
+		// For multi-term out-of-order queries, info may be null — fall back
+		// to computing ranges by finding each term as a substring.
 		const rangesById = new Map<number, number[]>();
 		if (info) {
 			for (let i = 0; i < info.idx.length; i++) {
@@ -119,7 +169,9 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 		for (const haystackIdx of idxs) {
 			const isDescription = haystackIdx >= expenseCount;
 			const expenseIdx = isDescription ? haystackIdx - expenseCount : haystackIdx;
-			const ranges = rangesById.get(haystackIdx) ?? null;
+			const ranges =
+				rangesById.get(haystackIdx) ??
+				computeTermRanges(normalized[haystackIdx], normalizedTerms);
 			const isExact = exactIdxs.has(haystackIdx);
 
 			let entry = matchMap.get(expenseIdx);
