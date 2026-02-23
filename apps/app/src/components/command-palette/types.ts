@@ -8,6 +8,8 @@ export interface ExpenseSearchResult {
 	currency: string;
 	date: string;
 	categoryName: string | undefined;
+	/** uFuzzy highlight ranges for the title: [start0, end0, start1, end1, ...] */
+	titleRanges: number[] | null;
 }
 
 export interface ActionItem {
