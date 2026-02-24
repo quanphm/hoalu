@@ -96,12 +96,12 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_preferences: {
-		label: `${kbdSymbols.SHIFT} ⌘ P`,
+		label: `${kbdSymbols.SHIFT} ${kbdSymbols.META} P`,
 		hotkey: "shift+meta+p",
 		enabled: false,
 	},
 	goto_tokens: {
-		label: `${kbdSymbols.SHIFT} ⌘ A`,
+		label: `${kbdSymbols.SHIFT} ${kbdSymbols.META} A`,
 		hotkey: "shift+meta+a",
 		enabled: false,
 	},
@@ -122,7 +122,18 @@ export const KEYBOARD_SHORTCUTS = {
 	},
 } as const;
 
-export const AVAILABLE_WORKSPACE_SHORTCUT = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
+export const AVAILABLE_WORKSPACE_SHORTCUT = [
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8",
+	"9",
+	"0",
+] as const;
 
 export const AVAILABLE_LAST_DAYS_OPTIONS = [
 	{ value: "7", label: "Last 7 days" },

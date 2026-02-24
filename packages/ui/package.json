@@ -49,14 +49,14 @@
 		"./tooltip": "./src/components/tooltip.tsx"
 	},
 	"dependencies": {
-		"@base-ui/react": "^1.1.0",
+		"@base-ui/react": "^1.2.0",
 		"@hoalu/icons": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.1.1",
-		"react-day-picker": "^9.13.0",
-		"recharts": "^3.6.0",
-		"tailwind-merge": "^3.4.0",
+		"react-day-picker": "^9.13.2",
+		"recharts": "^3.7.0",
+		"tailwind-merge": "^3.5.0",
 		"usehooks-ts": "^3.1.1",
 		"vaul": "^1.1.2"
 	},

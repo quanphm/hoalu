@@ -137,6 +137,28 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		[slug, allowShortcutNavigate],
 	);
 
+	useHotkeys(
+		"g>c",
+		() => {
+			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "categories" } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	useHotkeys(
+		"g>w",
+		() => {
+			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "wallets" } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
 	return (
 		<>
 			{children}
