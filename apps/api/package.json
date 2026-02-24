@@ -22,7 +22,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
-		"@electric-sql/client": "^1.4.1",
+		"@electric-sql/client": "^1.5.7",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
 		"@hoalu/countries": "workspace:*",
@@ -30,25 +30,25 @@
 		"@hoalu/furnace": "workspace:*",
 		"@hono/standard-validator": "^0.2.2",
 		"@hono/zod-validator": "^0.7.6",
-		"@react-email/render": "^2.0.2",
-		"@scalar/hono-api-reference": "^0.9.33",
+		"@react-email/render": "^2.0.4",
+		"@scalar/hono-api-reference": "^0.9.44",
 		"better-auth": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"hono": "catalog:",
-		"hono-openapi": "^1.1.2",
-		"ioredis": "^5.9.2",
-		"nodemailer": "^7.0.12",
-		"pg": "^8.17.1",
+		"hono-openapi": "^1.2.0",
+		"ioredis": "^5.9.3",
+		"nodemailer": "^7.0.13",
+		"pg": "^8.18.0",
 		"react": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
 		"@types/bun": "catalog:",
-		"@types/nodemailer": "^7.0.5",
+		"@types/nodemailer": "^7.0.11",
 		"@types/pg": "^8.16.0",
 		"@types/react": "catalog:",
-		"drizzle-kit": "^0.31.8",
-		"rimraf": "^6.1.2"
+		"drizzle-kit": "^0.31.9",
+		"rimraf": "^6.1.3"
 	}
 }

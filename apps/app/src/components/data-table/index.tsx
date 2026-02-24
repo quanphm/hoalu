@@ -2,7 +2,6 @@ import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hoalu/ui/table";
 import { cn } from "@hoalu/ui/utils";
-import { useLayoutEffect } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	flexRender,
@@ -18,6 +17,7 @@ import {
 	type Updater,
 	useReactTable,
 } from "@tanstack/react-table";
+import { useLayoutEffect } from "react";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 

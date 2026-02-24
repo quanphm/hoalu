@@ -108,9 +108,16 @@ export function NavWorkspace() {
 						</SidebarMenuItem> */}
 
 						<SidebarMenuItem>
-							<SidebarMenuButton render={<Link to="/$slug/library" params={{ slug }} />}>
+							<SidebarMenuButton
+								render={
+									<Link to="/$slug/library" params={{ slug }} search={{ tab: "categories" }} />
+								}
+							>
 								<TriangleSquareCircleIcon />
 								<span>Library</span>
+								<SidebarMenuBadge>
+									<HotKey label="GC" />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
