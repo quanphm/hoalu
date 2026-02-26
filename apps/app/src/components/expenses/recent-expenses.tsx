@@ -43,7 +43,7 @@ export function RecentExpenses() {
 									<p className="truncate text-sm font-medium">{expense.title}</p>
 								</div>
 								<div className="flex shrink-0 items-center gap-3 text-right">
-									<div className="flex origin-right scale-80 items-center">
+									<div className="flex origin-right scale-90 items-center">
 										{expense.category?.name && expense.category?.color && (
 											<Badge className={createCategoryTheme(expense.category.color)}>
 												{expense.category.name}
