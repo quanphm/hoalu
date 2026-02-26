@@ -2,14 +2,18 @@ import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { getCurrencyList } from "@hoalu/countries";
 
 export const SYSTEM_THEMES = ["light", "dark"] as const;
-export const CUSTOM_THEMES = ["creamy", "deluge", "linear"] as const;
+export const CUSTOM_THEMES = [
+	"creamy",
+	"deluge",
+	// "linear",
+] as const;
 export const THEMES = [...SYSTEM_THEMES, ...CUSTOM_THEMES] as const;
 export const THEME_LABELS: Record<(typeof THEMES)[number], string> = {
 	light: "Light",
 	dark: "Dark",
 	creamy: "Creamy",
 	deluge: "Deluge",
-	linear: "Linear",
+	// linear: "Linear",
 };
 
 export const kbdSymbols = {
@@ -66,8 +70,8 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_home: {
-		label: `${kbdSymbols.SHIFT} H`,
-		hotkey: "shift+h",
+		label: "GH",
+		hotkey: "g>h",
 		enabled: true,
 	},
 	goto_dashboard: {
@@ -81,38 +85,33 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_tasks: {
-		label: "T",
-		hotkey: "t",
+		label: "GT",
+		hotkey: "g>t",
 		enabled: false,
 	},
 	goto_workspace: {
-		label: "S",
-		hotkey: "s",
+		label: "GS",
+		hotkey: "g>s",
 		enabled: true,
 	},
 	goto_members: {
-		label: "M",
-		hotkey: "m",
+		label: "GM",
+		hotkey: "g>m",
 		enabled: true,
 	},
 	goto_preferences: {
-		label: `${kbdSymbols.SHIFT} ${kbdSymbols.META} P`,
-		hotkey: "shift+meta+p",
+		label: `GP`,
+		hotkey: "g>p",
 		enabled: false,
 	},
 	goto_tokens: {
-		label: `${kbdSymbols.SHIFT} ${kbdSymbols.META} A`,
-		hotkey: "shift+meta+a",
+		label: `GA`,
+		hotkey: "g>a",
 		enabled: false,
 	},
 	toggle_theme: {
 		label: `${kbdSymbols.SHIFT} D`,
 		hotkey: "shift+d",
-		enabled: true,
-	},
-	search: {
-		label: "/",
-		hotkey: "/",
 		enabled: true,
 	},
 	command_palette: {

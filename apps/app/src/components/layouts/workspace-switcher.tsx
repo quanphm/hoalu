@@ -54,7 +54,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
 					<HouseIcon />
 					Home
-					<HotKey {...KEYBOARD_SHORTCUTS.goto_home} />
+					<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
 				{/* <DropdownMenuItem
 					className="gap-2 p-2"

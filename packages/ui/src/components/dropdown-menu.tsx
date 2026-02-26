@@ -197,7 +197,7 @@ function DropdownMenuSubTrigger({
 			{...props}
 		>
 			{children}
-			<CaretRightFilledIcon className="ml-auto size-4" />
+			<CaretRightFilledIcon className="size-4" />
 		</MenuPrimitive.SubmenuTrigger>
 	);
 }
