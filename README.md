@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <img src="media/hoalu.jpeg" alt="Hoalu Dashboard" width="800">
+  <img src="media/hoalu.png" alt="Hoalu Dashboard" width="800">
 </p>
 
 <p align="center">
