@@ -54,7 +54,7 @@ export function RecentExpenses() {
 										{datetime.format(new Date(expense.date), "MMM d, yyyy")}
 									</p>
 									<CurrencyValue
-										value={expense.realAmount}
+										value={expense.amount}
 										currency={expense.currency}
 										style="currency"
 										className="text-sm font-semibold"

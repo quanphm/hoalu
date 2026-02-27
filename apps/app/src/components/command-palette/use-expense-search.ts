@@ -7,7 +7,7 @@ import { useMemo, useRef } from "react";
 
 import type { ExpenseSearchResult } from "./types.ts";
 
-const RECENT_EXPENSES_LIMIT = 3;
+const RECENT_EXPENSES_LIMIT = 5;
 
 /**
  * Compute highlight ranges by finding each search term as a substring
@@ -203,8 +203,7 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 			}
 
 			const ranges =
-				rangesById.get(haystackIdx) ??
-				computeTermRanges(normalized[haystackIdx], normalizedTerms);
+				rangesById.get(haystackIdx) ?? computeTermRanges(normalized[haystackIdx], normalizedTerms);
 			const isExact = exactIdxs.has(haystackIdx);
 
 			let entry = matchMap.get(expenseIdx);

@@ -97,7 +97,6 @@
         "@hoalu/themes": "workspace:*",
         "@hoalu/tsconfig": "workspace:*",
         "@tailwindcss/vite": "^4.2.1",
-        "@tanstack/react-hotkeys-devtools": "^0.1.3",
         "@tanstack/router-plugin": "^1.162.8",
         "@types/node": "^25.3.0",
         "@types/react": "catalog:",
@@ -1041,8 +1040,6 @@
 
     "@tanstack/hotkeys": ["@tanstack/hotkeys@0.1.3", "", { "dependencies": { "@tanstack/store": "^0.8.0" } }, "sha512-16T+rq9niDG0QcMkG4wIDD2xBCl+dVLEiq5wvNeRpSvndb8jRSATRj1IydipTAA0t0+GT+zdQRTqgXU0Yp54mw=="],
 
-    "@tanstack/hotkeys-devtools": ["@tanstack/hotkeys-devtools@0.1.3", "", { "dependencies": { "@tanstack/devtools-ui": "^0.4.4", "@tanstack/devtools-utils": "^0.3.0", "clsx": "^2.1.1", "goober": "^2.1.18", "solid-js": "^1.9.11" }, "peerDependencies": { "@tanstack/hotkeys": "0.1.3" } }, "sha512-2Kra72YVGvZCvdltYuEtKjbaf+k7njbjXBQY0EJRDHqANi1zNnewSeHsN//fPgyCYsGgSeXoTG7Q/+ckfuZvzA=="],
-
     "@tanstack/pacer-lite": ["@tanstack/pacer-lite@0.2.1", "", {}, "sha512-3PouiFjR4B6x1c969/Pl4ZIJleof1M0n6fNX8NRiC9Sqv1g06CVDlEaXUR4212ycGFyfq4q+t8Gi37Xy+z34iQ=="],
 
     "@tanstack/query-core": ["@tanstack/query-core@5.90.20", "", {}, "sha512-OMD2HLpNouXEfZJWcKeVKUgQ5n+n3A2JFmBaScpNDUqSrQSjiveC7dKMe53uJUg1nDG16ttFPz2xfilz6i2uVg=="],
@@ -1060,8 +1057,6 @@
     "@tanstack/react-form-devtools": ["@tanstack/react-form-devtools@0.2.16", "", { "dependencies": { "@tanstack/devtools-utils": "^0.3.0", "@tanstack/form-devtools": "0.2.16" }, "peerDependencies": { "react": "^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-8zZZoi3XlIjEjDEr1LREmdTyKkYIGgBDgSqx4WVg/VLoqGw/j5mfXwjzbYhPNHd9eHzjmsweOJ9jzozbWKRh4g=="],
 
     "@tanstack/react-hotkeys": ["@tanstack/react-hotkeys@0.1.3", "", { "dependencies": { "@tanstack/hotkeys": "0.1.3", "@tanstack/react-store": "^0.8.0" }, "peerDependencies": { "react": ">=16.8", "react-dom": ">=16.8" } }, "sha512-UnMd2o/MEJB0QtvVVTqUK+6Klp/W3gTqWplg9GyFOpXb7LyHXKp2oyVQDvltezFUl+ugaf3U07ou4hAffcumKQ=="],
-
-    "@tanstack/react-hotkeys-devtools": ["@tanstack/react-hotkeys-devtools@0.1.3", "", { "dependencies": { "@tanstack/devtools-utils": "^0.3.0", "@tanstack/hotkeys-devtools": "0.1.3" }, "peerDependencies": { "@types/react": ">=16.8", "@types/react-dom": ">=16.8", "react": ">=16.8", "react-dom": ">=16.8" } }, "sha512-frgVmZz3h/PuyMouOP+axdiP2x0xGv9rvqSNzBn0joNj/I6DN3VAVoOMqIVKO3uoUN33eukGabiiiQoi3irj0A=="],
 
     "@tanstack/react-query": ["@tanstack/react-query@5.90.21", "", { "dependencies": { "@tanstack/query-core": "5.90.20" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-0Lu6y5t+tvlTJMTO7oh5NSpJfpg/5D41LlThfepTixPYkJ0sE2Jj0m0f6yYqujBwIXlId87e234+MxG3D3g7kg=="],
 

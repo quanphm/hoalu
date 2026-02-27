@@ -20,7 +20,7 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
@@ -85,13 +85,15 @@ function CreateExpenseForm() {
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
-		"last_used_Wallet",
+		`last_used_wallet_${slug}`,
 		null,
 	);
 	const [lastUsedCategoryId, setLastUsedCategoryId] = useLocalStorage<string | null>(
-		"last_used_category",
+		`last_used_category_${slug}`,
 		null,
 	);
+
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
 	const fallbackWallet = {
 		label: wallets[0].name,
@@ -132,8 +134,17 @@ function CreateExpenseForm() {
 	const userId = user?.id || "";
 	const defaultWallet = walletGroups[userId]?.options[0] || fallbackWallet;
 
-	const initialWallet = draft.walletId || lastUsedWalletId || defaultWallet.value;
-	const initialCategory = draft.categoryId || lastUsedCategoryId;
+	const validLastWallet =
+		lastUsedWalletId && wallets.some((w) => w.id === lastUsedWalletId && w.isActive)
+			? lastUsedWalletId
+			: null;
+	const validLastCategory =
+		lastUsedCategoryId && categories.some((c) => c.id === lastUsedCategoryId)
+			? lastUsedCategoryId
+			: null;
+
+	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
+	const initialCategory = draft.categoryId || validLastCategory;
 
 	const form = useAppForm({
 		defaultValues: {
