@@ -5,8 +5,8 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Card, CardContent, CardHeader } from "@hoalu/ui/card";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { Link } from "@tanstack/react-router";
 
 const RECENT_EXPENSES_LIMIT = 7;
@@ -19,8 +19,8 @@ export function RecentExpenses() {
 	return (
 		<Card>
 			<CardHeader>
-				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-semibold">Recent Expenses</h3>
+				<CardTitle>Recent Expenses</CardTitle>
+				<CardAction>
 					<Button
 						variant="outline"
 						size="sm"
@@ -28,7 +28,7 @@ export function RecentExpenses() {
 					>
 						View all
 					</Button>
-				</div>
+				</CardAction>
 			</CardHeader>
 			<CardContent>
 				{recentExpenses.length === 0 && <EmptyData />}
