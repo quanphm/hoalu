@@ -326,6 +326,57 @@ const workspaces = {
 	},
 };
 
+const recurringBills = {
+	create: async (slug: string, payload: Record<string, unknown>) => {
+		const response = await honoClient.bff["recurring-bills"].$post({
+			query: { workspaceIdOrSlug: slug },
+			json: payload as any,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: Record<string, unknown>) => {
+		const response = await honoClient.bff["recurring-bills"][":id"].$patch({
+			param: { id },
+			query: { workspaceIdOrSlug: slug },
+			json: payload as any,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	listUpcoming: async (slug: string) => {
+		const response = await honoClient.bff["recurring-bills"].upcoming.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	archive: async (slug: string, id: string) => {
+		const response = await honoClient.bff["recurring-bills"][":id"].$delete({
+			param: { id },
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
@@ -334,4 +385,5 @@ export const apiClient = {
 	exchangeRates,
 	files,
 	workspaces,
+	recurringBills,
 };

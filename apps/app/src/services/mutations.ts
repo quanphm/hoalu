@@ -5,6 +5,7 @@ import { authClient } from "#app/lib/auth-client.ts";
 import {
 	categoryKeys,
 	expenseKeys,
+	recurringBillKeys,
 	walletKeys,
 	workspaceKeys,
 } from "#app/lib/query-key-factory.ts";
@@ -271,6 +272,7 @@ export function useEditExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -299,6 +301,147 @@ export function useDeleteExpense() {
 			});
 			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useCreateRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: Record<string, unknown> }) => {
+			const result = await apiClient.recurringBills.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			playConfirmSound();
+			toastManager.add({
+				title: "Recurring bill created.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+/**
+ * Creates a recurring bill from an existing expense, then links the expense to it.
+ * Used by the "Set up recurring bill" prompt in the expense detail panel.
+ */
+export function useSetUpRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({
+			expense,
+		}: {
+			expense: {
+				id: string;
+				title: string;
+				amount: number;
+				currency: string;
+				repeat: string;
+				date: string;
+				walletId: string;
+				categoryId: string | null | undefined;
+				workspaceId: string;
+			};
+		}) => {
+			// Step 1: create the bill
+			const bill = await apiClient.recurringBills.create(slug, {
+				title: expense.title,
+				amount: expense.amount,
+				currency: expense.currency,
+				repeat: expense.repeat,
+				anchorDate: expense.date,
+				walletId: expense.walletId,
+				categoryId: expense.categoryId ?? null,
+				workspaceId: expense.workspaceId,
+			});
+			// Step 2: link the expense to the new bill (no anchor advance — just linking)
+			await apiClient.expenses.edit(slug, expense.id, {
+				recurringBillId: bill.id,
+			});
+			return bill;
+		},
+		onSuccess: () => {
+			playConfirmSound();
+			toastManager.add({
+				title: "Recurring bill set up.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useEditRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: Record<string, unknown> }) => {
+			const result = await apiClient.recurringBills.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			playConfirmSound();
+			toastManager.add({
+				title: "Recurring bill updated.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useArchiveRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.recurringBills.archive(slug, id);
+			return result;
+		},
+		onSuccess: () => {
+			playDropSound();
+			toastManager.add({
+				title: "Recurring bill removed.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
 		},
 		onError: (error) => {
 			toastManager.add({

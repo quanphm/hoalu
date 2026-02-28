@@ -2,12 +2,14 @@ import {
 	createExpenseDialogAtom,
 	deleteExpenseDialogAtom,
 	draftExpenseAtom,
+	logPaymentAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { FilesCompactUpload } from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
+import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
@@ -20,7 +22,7 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
@@ -83,15 +85,18 @@ function CreateExpenseForm() {
 
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
+	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
-		"last_used_Wallet",
+		`last_used_wallet_${slug}`,
 		null,
 	);
 	const [lastUsedCategoryId, setLastUsedCategoryId] = useLocalStorage<string | null>(
-		"last_used_category",
+		`last_used_category_${slug}`,
 		null,
 	);
+
+	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
 
 	const fallbackWallet = {
 		label: wallets[0].name,
@@ -132,8 +137,17 @@ function CreateExpenseForm() {
 	const userId = user?.id || "";
 	const defaultWallet = walletGroups[userId]?.options[0] || fallbackWallet;
 
-	const initialWallet = draft.walletId || lastUsedWalletId || defaultWallet.value;
-	const initialCategory = draft.categoryId || lastUsedCategoryId;
+	const validLastWallet =
+		lastUsedWalletId && wallets.some((w) => w.id === lastUsedWalletId && w.isActive)
+			? lastUsedWalletId
+			: null;
+	const validLastCategory =
+		lastUsedCategoryId && categories.some((c) => c.id === lastUsedCategoryId)
+			? lastUsedCategoryId
+			: null;
+
+	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
+	const initialCategory = draft.categoryId || validLastCategory;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -163,10 +177,12 @@ function CreateExpenseForm() {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
+					...(logPayment.recurringBillId ? { recurringBillId: logPayment.recurringBillId } : {}),
 				},
 			});
 
 			setDraft(RESET);
+			setLogPayment({ recurringBillId: null });
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
@@ -188,9 +204,10 @@ function CreateExpenseForm() {
 		return () => {
 			if (!form.state.isSubmitted) {
 				setDraft(form.state.values);
+				setLogPayment({ recurringBillId: null });
 			}
 		};
-	}, [form.state.isSubmitted, setDraft, form.state.values]);
+	}, [form.state.isSubmitted, setDraft, setLogPayment, form.state.values]);
 
 	return (
 		<form.AppForm>
@@ -341,13 +358,14 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const mutation = useEditExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
+	const recurringBills = useLiveQueryRecurringBills();
 
 	const walletGroups = wallets.reduce(
 		(result, current) => {
 			const owner = current.owner;
-			if (!current.isActive) {
-				return result;
-			}
+			// if (!current.isActive) {
+			// 	return result;
+			// }
 			if (!result[owner.id]) {
 				result[owner.id] = {
 					name: owner.name,
@@ -374,6 +392,22 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		>,
 	);
 
+	// Build bill options for the select field.
+	// Always include the currently-linked bill (so the selected value renders correctly),
+	// then add other bills whose repeat cadence matches the expense's repeat.
+	const linkedBillId = props.data.recurring_bill_id;
+	const billOptions = [
+		{ label: "None", value: "" },
+		...recurringBills
+			.filter(
+				(b) =>
+					b.id === linkedBillId ||
+					b.repeat === props.data.repeat ||
+					props.data.repeat === "one-time",
+			)
+			.map((b) => ({ label: b.title, value: b.id })),
+	];
+
 	const form = useAppForm({
 		defaultValues: {
 			title: props.data.title ?? "",
@@ -386,6 +420,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			walletId: props.data.wallet.id ?? "",
 			categoryId: props.data.category?.id ?? "",
 			repeat: props.data.repeat ?? "one-time",
+			recurringBillId: props.data.recurring_bill_id ?? "",
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
@@ -403,6 +438,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
+					// Pass null to unlink, pass id to link, omit if not changed
+					...(value.recurringBillId !== (props.data.recurring_bill_id ?? "")
+						? { recurringBillId: value.recurringBillId || null }
+						: {}),
 				},
 			});
 
@@ -416,6 +455,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			}
 		},
 	});
+
+	useEffect(() => {
+		form.reset();
+	}, [props.data.recurring_bill_id, form]);
 
 	return (
 		<form.AppForm>
@@ -450,6 +493,19 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 						children={(field) => (
 							<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 						)}
+					/>
+					<form.Subscribe
+						selector={(s) => s.values.repeat}
+						children={(repeat) =>
+							repeat !== "one-time" && recurringBills.length > 0 ? (
+								<form.AppField
+									name="recurringBillId"
+									children={(field) => (
+										<field.SelectField label="Recurring bill" options={billOptions} />
+									)}
+								/>
+							) : null
+						}
 					/>
 					<form.AppField
 						name="description"

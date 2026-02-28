@@ -13,7 +13,7 @@ export function HotKey({
 	return (
 		<span
 			className={cn(
-				"bg-background text-muted-foreground pointer-events-none hidden h-5 min-w-6 items-center justify-center gap-1 rounded border px-1.5 text-center text-xs leading-none tracking-wider select-none sm:flex",
+				"bg-background text-muted-foreground pointer-events-none hidden h-5 min-w-6 items-center justify-center gap-1 rounded border px-1.5 text-center text-[9px] leading-none tracking-widest select-none sm:flex",
 				"ring-primary",
 				className,
 			)}

@@ -33,9 +33,26 @@ export type AutocompleteActionItem = {
 	label: string;
 };
 
-export type AutocompleteItem = AutocompleteExpenseItem | AutocompleteActionItem;
+export interface UpcomingBillItem {
+	recurringBillId: string;
+	date: string;
+	title: string;
+	amount: number;
+	currency: string;
+	walletName: string;
+	categoryName: string | null;
+	categoryColor: ColorSchema | null;
+}
+
+export type AutocompleteUpcomingBillItem = {
+	id: string;
+	title: string;
+};
+
+export type AutocompleteItem = AutocompleteExpenseItem | AutocompleteActionItem | AutocompleteUpcomingBillItem;
 
 export type VirtualizedItem =
 	| { type: "header"; label: string; itemIndex?: never }
 	| { type: "expense"; data: ExpenseSearchResult; itemIndex: number }
-	| { type: "action"; data: ActionItem; itemIndex: number };
+	| { type: "action"; data: ActionItem; itemIndex: number }
+	| { type: "upcoming-bill"; data: UpcomingBillItem; itemIndex: number };

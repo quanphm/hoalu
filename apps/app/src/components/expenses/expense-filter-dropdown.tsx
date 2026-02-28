@@ -717,6 +717,8 @@ function DateFilterView({
 	value: { from: Date; to: Date } | undefined;
 	onChange: (value: { from: Date; to: Date } | undefined) => void;
 }) {
+	const currentYear = datetime.getYear(new Date());
+
 	return (
 		<div className="flex flex-col p-4">
 			<div className="mb-2 flex items-center justify-between">
@@ -741,7 +743,8 @@ function DateFilterView({
 						onChange({ from: selected.from, to: selected.to });
 					}
 				}}
-				className="[--cell-size:--spacing(9)]"
+				endMonth={new Date(currentYear + 2, 11)}
+				className="w-full bg-transparent [--cell-size:--spacing(8)]"
 			/>
 
 			{value && (

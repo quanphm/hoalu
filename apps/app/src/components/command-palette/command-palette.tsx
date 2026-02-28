@@ -19,7 +19,9 @@ import { useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { ActionItem, AutocompleteItem, VirtualizedItem } from "./types.ts";
+import { upcomingBillsQueryOptions } from "#app/services/query-options.ts";
+import { useQuery } from "@tanstack/react-query";
+import type { ActionItem, AutocompleteItem, UpcomingBillItem, VirtualizedItem } from "./types.ts";
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
 
@@ -40,6 +42,20 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const isSearching = search.trim().length > 0;
 	const hasSearchResults = isSearching && filteredExpenses.length > 0;
 	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;
+
+	const { data: allUpcomingBills = [] } = useQuery(upcomingBillsQueryOptions(slug));
+	// Show at most 2 upcoming bills in the palette
+	const upcomingBills: UpcomingBillItem[] = allUpcomingBills.slice(0, 2).map((b: UpcomingBillItem & { recurringBillId: string }) => ({
+		recurringBillId: b.recurringBillId,
+		date: b.date,
+		title: b.title,
+		amount: b.amount,
+		currency: b.currency,
+		walletName: b.walletName,
+		categoryName: b.categoryName,
+		categoryColor: b.categoryColor as UpcomingBillItem["categoryColor"],
+	}));
+	const hasUpcomingBills = !isSearching && upcomingBills.length > 0;
 
 	// Use ref pattern for stable callback (rerender-defer-reads)
 	const onOpenChangeRef = useRef(onOpenChange);
@@ -98,6 +114,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			}
 		}
 
+		// Upcoming bills (only when not searching)
+		if (hasUpcomingBills) {
+			items.push({ type: "header", label: "Upcoming bills" });
+			for (const bill of upcomingBills) {
+				items.push({ type: "upcoming-bill", data: bill, itemIndex });
+				itemIndex++;
+			}
+		}
+
 		// Always add actions section
 		items.push({ type: "header", label: "Actions" });
 		for (const action of actions) {
@@ -106,7 +131,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		}
 
 		return items;
-	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, actions]);
+	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, hasUpcomingBills, upcomingBills, actions]);
 
 	// Build items array for base-ui Autocomplete (only actual selectable items, not headers)
 	// Order must match virtualizedItems (excluding headers) for correct itemIndex mapping
@@ -116,9 +141,12 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			: hasRecentExpenses
 				? recentExpenses.map((e) => ({ id: e.id, title: e.title, amount: e.amount }))
 				: [];
+		const billItems = hasUpcomingBills
+			? upcomingBills.map((b) => ({ id: b.recurringBillId, title: b.title }))
+			: [];
 		const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
-		return [...expenseItems, ...actionItems];
-	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, actions]);
+		return [...expenseItems, ...billItems, ...actionItems];
+	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, hasUpcomingBills, upcomingBills, actions]);
 
 	// Ref to hold the scroll function from VirtualizedList
 	const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);

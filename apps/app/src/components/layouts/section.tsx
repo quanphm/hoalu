@@ -6,7 +6,7 @@ function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div"
 		<div
 			ref={ref}
 			data-slot="section"
-			className={cn("flex flex-col gap-4", className)}
+			className={cn("flex flex-col gap-3", className)}
 			{...props}
 		/>
 	);
@@ -77,7 +77,7 @@ function SectionContent({
 				} as React.CSSProperties
 			}
 			className={cn(
-				"grid gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-(--grid-cols)",
+				"grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-(--grid-cols)",
 				className,
 			)}
 			{...props}
@@ -89,7 +89,7 @@ function SectionTitle({ className, ref, children, ...props }: React.ComponentPro
 	return (
 		<h2
 			data-slot="section-title"
-			className={cn("text-xl leading-tight font-medium", className)}
+			className={cn("text-xl leading-none font-medium", className)}
 			{...props}
 		>
 			{children}

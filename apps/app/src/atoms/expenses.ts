@@ -14,6 +14,7 @@ const basedExpense: ExpenseAtomSchema = {
 	walletId: "",
 	categoryId: "",
 	repeat: "one-time",
+	recurringBillId: undefined,
 };
 const draftExpenseAtom = atomWithStorage("draft_expense", basedExpense);
 
@@ -23,4 +24,11 @@ const selectedExpenseAtom = atom<{
 	id: null,
 });
 
-export { draftExpenseAtom, selectedExpenseAtom };
+/**
+ * Used by the "Log payment" flow from upcoming bills.
+ * When set, CreateExpenseForm will include this recurringBillId in the POST payload
+ * (which also advances the bill's anchor_date server-side).
+ */
+const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillId: null });
+
+export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom };

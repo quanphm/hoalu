@@ -9,6 +9,10 @@ import {
 	DeleteCategoryDialogContent,
 } from "#app/components/categories/category-actions.tsx";
 import {
+	ArchiveRecurringBillDialogContent,
+	CreateRecurringBillDialogContent,
+} from "#app/components/recurring-bills/recurring-bill-actions.tsx";
+import {
 	Dialog,
 	DialogBackdrop,
 	DialogPopup,
@@ -49,7 +53,7 @@ export function DialogProvider(props: PropsWithChildren) {
 				<DialogPortal>
 					<DialogBackdrop />
 					<DialogViewport>
-						<Content id={currentDialog?.id} />
+						<Content id={currentDialog?.id} data={currentDialog?.data} />
 					</DialogViewport>
 				</DialogPortal>
 			</Dialog>
@@ -57,7 +61,7 @@ export function DialogProvider(props: PropsWithChildren) {
 	);
 }
 
-function Content(props: { id?: DialogId }) {
+function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 	switch (props.id) {
 		case "create-workspace":
 			return <CreateWorkspaceDialogContent />;
@@ -80,6 +84,11 @@ function Content(props: { id?: DialogId }) {
 			return <CreateCategoryDialogContent />;
 		case "delete-category":
 			return <DeleteCategoryDialogContent />;
+
+		case "create-recurring-bill":
+			return <CreateRecurringBillDialogContent />;
+		case "archive-recurring-bill":
+			return <ArchiveRecurringBillDialogContent />;
 
 		default:
 			return <DialogPopup>Not supported dialog</DialogPopup>;

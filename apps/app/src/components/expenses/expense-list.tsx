@@ -5,12 +5,14 @@ import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+const routeApi = getRouteApi("/_dashboard/$slug/expenses");
 const MOBILE_NAV_HEIGHT = 80;
 
 type ExpenseItem = {
@@ -50,14 +52,6 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 	);
 }
 
-function EmptyState() {
-	return (
-		<p className="bg-muted text-muted-foreground mx-4 rounded-lg p-4 text-center text-base">
-			No expenses found
-		</p>
-	);
-}
-
 function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 	const {
 		metadata: { currency: workspaceCurrency },
@@ -78,7 +72,16 @@ function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
 	);
 }
 
-const routeApi = getRouteApi("/_dashboard/$slug/expenses");
+function EmptyState() {
+	return (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No expenses</EmptyTitle>
+				<EmptyDescription>Create your first expense to track your spending.</EmptyDescription>
+			</EmptyHeader>
+		</Empty>
+	);
+}
 
 function ExpenseList(props: { expenses: SyncedExpense[] }) {
 	const { id: searchById } = routeApi.useSearch();
@@ -218,7 +221,6 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 			data-slot="expense-list-container"
 			className={cn(
 				"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
-				// Desktop: borders and rounded corner, Mobile: no borders
 				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
 			)}
 		>

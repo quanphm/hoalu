@@ -8,6 +8,7 @@ import { ActionItem } from "./action-item.tsx";
 import { HEADER_HEIGHT, ITEM_HEIGHT, MAX_LIST_HEIGHT, VIRTUALIZER_OVERSCAN } from "./constants.ts";
 import { ExpenseItem } from "./expense-item.tsx";
 import { HeaderItem } from "./header-item.tsx";
+import { RecurringBillItem } from "./recurring-bill-item.tsx";
 import type { AutocompleteItem, VirtualizedItem } from "./types.ts";
 
 interface VirtualizedListProps {
@@ -118,6 +119,28 @@ export function VirtualizedList({
 									autocompleteItem={autocompleteItem}
 									itemIndex={item.itemIndex}
 									style={style}
+								/>
+							);
+						}
+
+						if (item.type === "upcoming-bill") {
+							const bill = item.data;
+							const autocompleteItem = autocompleteItems[item.itemIndex];
+							return (
+								<RecurringBillItem
+									key={`${bill.recurringBillId}-${bill.date}`}
+									bill={bill}
+									autocompleteItem={autocompleteItem}
+									itemIndex={item.itemIndex}
+									style={style}
+									onClick={() =>
+										runAction(() =>
+											navigate({
+												to: "/$slug/recurring-bills",
+												params: { slug },
+											}),
+										)
+									}
 								/>
 							);
 						}

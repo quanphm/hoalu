@@ -233,6 +233,36 @@ export const wallet = pgTable(
 	(table) => [index("wallet_workspace_id_idx").on(table.workspaceId)],
 );
 
+export const recurringBill = pgTable(
+	"recurring_bill",
+	{
+		id: uuid("id").primaryKey(),
+		title: text("title").notNull(),
+		description: text("description"),
+		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
+		currency: varchar({ length: 3 }).notNull(),
+		repeat: repeatEnum().notNull(),
+		anchorDate: date("anchor_date", { mode: "string" }).notNull(),
+		walletId: uuid("wallet_id")
+			.notNull()
+			.references(() => wallet.id, { onDelete: "cascade" }),
+		categoryId: uuid("category_id").references(() => category.id, { onDelete: "set null" }),
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
+		creatorId: uuid("creator_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		isActive: boolean("is_active").default(true).notNull(),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("recurring_bill_workspace_id_idx").on(table.workspaceId),
+		index("recurring_bill_wallet_id_idx").on(table.walletId),
+	],
+);
+
 export const expense = pgTable(
 	"expense",
 	{
@@ -245,6 +275,9 @@ export const expense = pgTable(
 		currency: varchar({ length: 3 }).notNull(),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
 		repeat: repeatEnum().default("one-time").notNull(),
+		recurringBillId: uuid("recurring_bill_id").references(() => recurringBill.id, {
+			onDelete: "set null",
+		}),
 		creatorId: uuid("creator_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "set null" }),
@@ -263,6 +296,7 @@ export const expense = pgTable(
 		index("expense_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
 		index("expense_workspace_id_idx").on(table.workspaceId),
 		index("expense_wallet_id_idx").on(table.walletId),
+		index("expense_recurring_bill_id_idx").on(table.recurringBillId),
 	],
 );
 

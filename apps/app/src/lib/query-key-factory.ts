@@ -59,3 +59,9 @@ export const exchangeRateKeys = {
 	pair: ({ from = "USD", to }: ExchangeRatesQuerySchema) =>
 		[...exchangeRateKeys.all, { from, to }] as const,
 };
+
+export const recurringBillKeys = {
+	all: (slug: string) => recurringBillKeys["~withWorkspace"](slug),
+	upcoming: (slug: string) => [...recurringBillKeys.all(slug), "upcoming"] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "recurring-bills"] as const,
+};

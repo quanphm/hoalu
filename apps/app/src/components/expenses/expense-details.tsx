@@ -6,12 +6,52 @@ import {
 import { useExpenseNavigation } from "#app/components/expenses/use-expense-navigation.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { useSetUpRecurringBill } from "#app/services/mutations.ts";
+import { ChevronDownIcon, ChevronUpIcon, RepeatIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
+function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
+	const workspace = useWorkspace();
+	const mutation = useSetUpRecurringBill();
+
+	return (
+		<div className="border-border bg-muted/40 mb-3 flex items-center gap-3 px-4 py-2">
+			<RepeatIcon className="size-4 shrink-0" />
+			<div className="min-w-0 flex-1">
+				<p className="text-sm font-medium">Track future payments</p>
+				<p className="text-muted-foreground text-sm">
+					Link a recurring bill to project upcoming charges.
+				</p>
+			</div>
+			<Button
+				variant="outline"
+				disabled={mutation.isPending}
+				onClick={() =>
+					mutation.mutate({
+						expense: {
+							id: expense.id,
+							title: expense.title,
+							amount: expense.amount,
+							currency: expense.currency,
+							repeat: expense.repeat,
+							date: expense.date,
+							walletId: expense.wallet.id,
+							categoryId: expense.category?.id,
+							workspaceId: workspace.id,
+						},
+					})
+				}
+			>
+				{mutation.isPending ? "Setting up…" : "Set up"}
+			</Button>
+		</div>
+	);
+}
 
 interface ExpenseDetailsProps {
 	expenses: SyncedExpense[];
@@ -81,7 +121,12 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 			)}
 			<div data-slot="expense-details-form">
 				{currentExpense ? (
-					<EditExpenseForm key={currentExpense.id} data={currentExpense} />
+					<>
+						{currentExpense.repeat !== "one-time" && !currentExpense.recurring_bill_id && (
+							<SetUpRecurringBillPrompt expense={currentExpense} />
+						)}
+						<EditExpenseForm key={currentExpense.id} data={currentExpense} />
+					</>
 				) : (
 					<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
 						No expenses selected
@@ -92,7 +137,6 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	);
 }
 
-// Mobile full-screen expense details drawer
 export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
 	const { currentExpense, handleGoUp, handleGoDown, canGoUp, canGoDown } = useExpenseNavigation({

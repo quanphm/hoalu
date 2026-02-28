@@ -59,6 +59,11 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "shift+e",
 		enabled: true,
 	},
+	create_recurring_bill: {
+		label: `${kbdSymbols.SHIFT} B`,
+		hotkey: "shift+b",
+		enabled: true,
+	},
 	create_wallet: {
 		label: `${kbdSymbols.SHIFT} W`,
 		hotkey: "shift+w",
@@ -88,6 +93,26 @@ export const KEYBOARD_SHORTCUTS = {
 		label: "GT",
 		hotkey: "g>t",
 		enabled: false,
+	},
+	goto_recurring_bills: {
+		label: "GR",
+		hotkey: "g>r",
+		enabled: true,
+	},
+	goto_categories: {
+		label: "GC",
+		hotkey: "g>c",
+		enabled: true,
+	},
+	goto_wallets: {
+		label: "GW",
+		hotkey: "g>w",
+		enabled: true,
+	},
+	goto_files: {
+		label: "GF",
+		hotkey: "g>f",
+		enabled: true,
 	},
 	goto_workspace: {
 		label: "GS",
