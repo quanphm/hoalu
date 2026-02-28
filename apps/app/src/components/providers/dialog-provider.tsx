@@ -20,7 +20,7 @@ import {
 	DialogViewport,
 } from "@hoalu/ui/dialog";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import type { PropsWithChildren } from "react";
+import { Suspense, type PropsWithChildren } from "react";
 
 import {
 	CreateExpenseDialogContent,
@@ -53,7 +53,9 @@ export function DialogProvider(props: PropsWithChildren) {
 				<DialogPortal>
 					<DialogBackdrop />
 					<DialogViewport>
-						<Content id={currentDialog?.id} data={currentDialog?.data} />
+						<Suspense fallback={null}>
+							<Content id={currentDialog?.id} data={currentDialog?.data} />
+						</Suspense>
 					</DialogViewport>
 				</DialogPortal>
 			</Dialog>

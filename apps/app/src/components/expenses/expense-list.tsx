@@ -39,11 +39,7 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 		>
 			<div className="flex items-center gap-2">
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
-				{isToday && (
-					<Badge variant="secondary" className="ml-1">
-						Today
-					</Badge>
-				)}
+				{isToday && <Badge className="ml-1">Today</Badge>}
 			</div>
 			<div className="ml-auto">
 				<TotalExpenseByDate data={expenses} />
