@@ -1,6 +1,23 @@
 name: hoalu-platform
 
 services:
+  api-migration:
+    container_name: hoalu-api-migration
+    build:
+      context: ../
+      dockerfile: ./deployments/api.Dockerfile
+      target: migration
+    env_file:
+      - .env
+    restart: "no"
+    networks:
+      - hoalu_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+
   api:
     container_name: hoalu-api
     build:
@@ -12,6 +29,9 @@ services:
     networks:
       - hoalu_network
       - traefik_network
+    depends_on:
+      api-migration:
+        condition: service_completed_successfully
     deploy:
       resources:
         limits:
