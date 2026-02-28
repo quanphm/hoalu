@@ -1,35 +1,25 @@
 import { UpcomingBillsList } from "#app/components/calendar/upcoming-bills-list.tsx";
-import { useCalendar } from "#app/components/calendar/use-calendar.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@hoalu/ui/card";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { upcomingBillsQueryOptions } from "#app/services/query-options.ts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-interface CalendarWidgetProps {
-	expenses: SyncedExpense[];
-}
-
-export function CalendarWidget({ expenses }: CalendarWidgetProps) {
-	const { upcomingBills } = useCalendar(expenses);
-	const upcomingCount = upcomingBills.length;
+export function CalendarWidget() {
+	const workspace = useWorkspace();
+	const { data: upcomingBills } = useSuspenseQuery(upcomingBillsQueryOptions(workspace.slug));
 
 	return (
 		<Card>
 			<CardHeader className="pb-3">
-				<CardTitle>Upcoming Bills</CardTitle>
-				<CardDescription>Predicted from last month · Next 30 days</CardDescription>
-				<CardAction>
-					{upcomingCount > 0 && (
-						<span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-medium">
-							{upcomingCount} scheduled
+				<CardTitle className="flex items-center gap-2">
+					Upcoming Bills{" "}
+					{upcomingBills.length > 0 && (
+						<span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-xs font-normal">
+							{upcomingBills.length} scheduled
 						</span>
 					)}
-				</CardAction>
+				</CardTitle>
+				<CardDescription>Next 30 days · Yearly bills within 1 year</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<UpcomingBillsList bills={upcomingBills} />

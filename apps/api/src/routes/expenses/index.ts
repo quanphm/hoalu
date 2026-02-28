@@ -1,3 +1,5 @@
+import { db, schema } from "#api/db/index.ts";
+import { and, eq, sql } from "drizzle-orm";
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
@@ -123,18 +125,50 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const { amount, currency, date, ...rest } = payload;
+			const { amount, currency, date, recurringBillId, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
+			const expenseDate = date || new Date().toISOString();
+			const newAnchorDate = expenseDate.slice(0, 10); // "yyyy-MM-dd"
 
-			const expense = await expenseRepository.insert({
-				...rest,
-				id: generateId({ use: "uuid" }),
-				workspaceId: workspace.id,
-				creatorId: user.id,
-				date: date || new Date().toISOString(),
-				amount: `${realAmount}`,
-				currency,
+			const expense = await db.transaction(async (tx) => {
+				// If a recurringBillId is provided (Log payment flow), advance the bill's anchor date
+				if (recurringBillId) {
+					const [bill] = await tx
+						.select()
+						.from(schema.recurringBill)
+						.where(
+							and(
+								eq(schema.recurringBill.id, recurringBillId),
+								eq(schema.recurringBill.workspaceId, workspace.id),
+							),
+						)
+						.limit(1);
+
+					if (bill) {
+						await tx
+							.update(schema.recurringBill)
+							.set({ anchorDate: newAnchorDate, updatedAt: sql`now()` })
+							.where(eq(schema.recurringBill.id, recurringBillId));
+					}
+				}
+
+				const [expense] = await tx
+					.insert(schema.expense)
+					.values({
+						...rest,
+						id: generateId({ use: "uuid" }),
+						workspaceId: workspace.id,
+						creatorId: user.id,
+						date: expenseDate,
+						amount: `${realAmount}`,
+						currency,
+						recurringBillId: recurringBillId ?? null,
+					})
+					.returning();
+
+				return expense;
 			});
+
 			if (!expense) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
@@ -180,20 +214,121 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const { amount, currency } = payload;
-			const realAmount = monetary.toRealAmount(
-				amount ?? Number.parseFloat(expense.amount),
-				currency ?? expense.currency,
-			);
+			const {
+				amount,
+				currency,
+				date,
+				repeat,
+				title,
+				description,
+				walletId,
+				categoryId,
+				recurringBillId: explicitRecurringBillId,
+			} = payload;
+			const resolvedCurrency = currency ?? expense.currency;
+			const resolvedAmount = amount ?? Number.parseFloat(expense.amount);
+			const realAmount = monetary.toRealAmount(resolvedAmount, resolvedCurrency);
 
-			const queryData = await expenseRepository.update({
-				id: param.id,
-				workspaceId: workspace.id,
-				payload: {
-					...payload,
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
+
+			// If the caller explicitly provided recurringBillId (link/unlink), skip all
+			// automatic bill management and just use the explicit value.
+			const explicitBillOverride = "recurringBillId" in payload;
+
+			const queryData = await db.transaction(async (tx) => {
+				let resolvedRecurringBillId: string | null | undefined = expense.recurringBillId ?? null;
+
+				if (explicitBillOverride) {
+					// Caller is explicitly setting the link — trust it, no side effects
+					resolvedRecurringBillId = explicitRecurringBillId ?? null;
+				} else if (repeat !== undefined) {
+					// repeat is explicitly being changed — manage the linked bill accordingly
+					const newRepeat = repeat;
+					const becomesOneOff = newRepeat === "one-time" || newRepeat === "custom";
+					const newAnchorDate = date ? date.slice(0, 10) : expense.date.slice(0, 10);
+
+					if (expense.recurringBillId) {
+						if (becomesOneOff) {
+							// Unlink and archive the existing bill
+							await tx
+								.update(schema.recurringBill)
+								.set({ isActive: false, updatedAt: sql`now()` })
+								.where(eq(schema.recurringBill.id, expense.recurringBillId));
+							resolvedRecurringBillId = null;
+						} else {
+							// Sync the existing bill's metadata
+							await tx
+								.update(schema.recurringBill)
+								.set({
+									...(title !== undefined && { title }),
+									...(description !== undefined && { description }),
+									...(walletId !== undefined && { walletId }),
+									...(categoryId !== undefined && { categoryId }),
+									amount: `${realAmount}`,
+									currency: resolvedCurrency,
+									repeat: newRepeat,
+									anchorDate: newAnchorDate,
+									updatedAt: sql`now()`,
+								})
+								.where(eq(schema.recurringBill.id, expense.recurringBillId));
+						}
+					} else if (!becomesOneOff) {
+						// No existing bill and repeat is now recurring — do NOT auto-create here.
+						// The UI shows the "Set up recurring bill" prompt; let the user do it explicitly.
+					}
+				} else if (expense.recurringBillId) {
+					// No repeat change, no explicit override — sync mutable fields on existing bill
+					const newAnchorDate = date ? date.slice(0, 10) : expense.date.slice(0, 10);
+					await tx
+						.update(schema.recurringBill)
+						.set({
+							...(title !== undefined && { title }),
+							...(description !== undefined && { description }),
+							...(walletId !== undefined && { walletId }),
+							...(categoryId !== undefined && { categoryId }),
+							...(amount !== undefined && { amount: `${realAmount}` }),
+							...(currency !== undefined && { currency: resolvedCurrency }),
+							...(date !== undefined && { anchorDate: newAnchorDate }),
+							updatedAt: sql`now()`,
+						})
+						.where(eq(schema.recurringBill.id, expense.recurringBillId));
+				}
+
+				// Build the expense update — only include fields that were explicitly provided.
+				// Never spread all of payload to avoid Zod-defaulted fields overwriting DB values.
+				const expenseSet: Record<string, unknown> = {
 					amount: `${realAmount}`,
-				},
+					currency: resolvedCurrency,
+					recurringBillId: resolvedRecurringBillId ?? null,
+					updatedAt: sql`now()`,
+				};
+				if (title !== undefined) expenseSet.title = title;
+				if (description !== undefined) expenseSet.description = description;
+				if (repeat !== undefined) expenseSet.repeat = repeat;
+				if (date !== undefined) expenseSet.date = date;
+				if (walletId !== undefined) expenseSet.walletId = walletId;
+				if (categoryId !== undefined) expenseSet.categoryId = categoryId;
+
+				// Update the expense row
+				const [updated] = await tx
+					.update(schema.expense)
+					.set(expenseSet)
+					.where(
+						and(
+							eq(schema.expense.id, param.id),
+							eq(schema.expense.workspaceId, workspace.id),
+						),
+					)
+					.returning();
+
+				return updated ?? null;
 			});
+
 			if (!queryData) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}

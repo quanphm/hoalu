@@ -2,12 +2,14 @@ import {
 	createExpenseDialogAtom,
 	deleteExpenseDialogAtom,
 	draftExpenseAtom,
+	logPaymentAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { FilesCompactUpload } from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
+import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
@@ -83,6 +85,7 @@ function CreateExpenseForm() {
 
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
+	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
@@ -174,10 +177,12 @@ function CreateExpenseForm() {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
+					...(logPayment.recurringBillId ? { recurringBillId: logPayment.recurringBillId } : {}),
 				},
 			});
 
 			setDraft(RESET);
+			setLogPayment({ recurringBillId: null });
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
@@ -199,9 +204,10 @@ function CreateExpenseForm() {
 		return () => {
 			if (!form.state.isSubmitted) {
 				setDraft(form.state.values);
+				setLogPayment({ recurringBillId: null });
 			}
 		};
-	}, [form.state.isSubmitted, setDraft, form.state.values]);
+	}, [form.state.isSubmitted, setDraft, setLogPayment, form.state.values]);
 
 	return (
 		<form.AppForm>
@@ -352,6 +358,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const mutation = useEditExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
+	const recurringBills = useLiveQueryRecurringBills();
 
 	const walletGroups = wallets.reduce(
 		(result, current) => {
@@ -385,6 +392,22 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		>,
 	);
 
+	// Build bill options for the select field.
+	// Always include the currently-linked bill (so the selected value renders correctly),
+	// then add other bills whose repeat cadence matches the expense's repeat.
+	const linkedBillId = props.data.recurring_bill_id;
+	const billOptions = [
+		{ label: "None", value: "" },
+		...recurringBills
+			.filter(
+				(b) =>
+					b.id === linkedBillId ||
+					b.repeat === props.data.repeat ||
+					props.data.repeat === "one-time",
+			)
+			.map((b) => ({ label: b.title, value: b.id })),
+	];
+
 	const form = useAppForm({
 		defaultValues: {
 			title: props.data.title ?? "",
@@ -397,6 +420,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			walletId: props.data.wallet.id ?? "",
 			categoryId: props.data.category?.id ?? "",
 			repeat: props.data.repeat ?? "one-time",
+			recurringBillId: props.data.recurring_bill_id ?? "",
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
@@ -414,6 +438,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
+					// Pass null to unlink, pass id to link, omit if not changed
+					...(value.recurringBillId !== (props.data.recurring_bill_id ?? "")
+						? { recurringBillId: value.recurringBillId || null }
+						: {}),
 				},
 			});
 
@@ -427,6 +455,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			}
 		},
 	});
+
+	// useEffect(() => {
+	// 	form.setFieldValue("recurringBillId", props.data.recurring_bill_id ?? "");
+	// }, [props.data.recurring_bill_id]);
 
 	return (
 		<form.AppForm>
@@ -461,6 +493,19 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 						children={(field) => (
 							<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 						)}
+					/>
+					<form.Subscribe
+						selector={(s) => s.values.repeat}
+						children={(repeat) =>
+							repeat !== "one-time" && recurringBills.length > 0 ? (
+								<form.AppField
+									name="recurringBillId"
+									children={(field) => (
+										<field.SelectField label="Recurring bill" options={billOptions} />
+									)}
+								/>
+							) : null
+						}
 					/>
 					<form.AppField
 						name="description"

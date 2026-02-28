@@ -45,7 +45,7 @@ function RouteComponent() {
 				</div>
 				<div className="col-span-12 flex flex-col gap-6 md:col-span-7">
 					<ExpenseOverview expenses={expenses} categories={categories} />
-					<CalendarWidget expenses={expenses} />
+					<CalendarWidget />
 				</div>
 				<div className="col-span-12 flex flex-col gap-6 md:col-span-5">
 					<ExpenseStatsRow expenses={expenses} />

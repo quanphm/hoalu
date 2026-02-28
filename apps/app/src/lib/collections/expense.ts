@@ -14,6 +14,7 @@ const ExpenseCollectionSchema = z.object({
 	date: IsoDateSchema,
 	wallet_id: z.uuidv7(),
 	category_id: z.uuidv7().nullable(),
+	recurring_bill_id: z.uuidv7().nullable(),
 	creator_id: z.uuidv7(),
 	created_at: IsoDateSchema,
 });

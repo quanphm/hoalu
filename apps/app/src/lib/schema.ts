@@ -41,6 +41,7 @@ export const ExpenseFormSchema = z.object({
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
+	recurringBillId: z.string().optional(),
 	attachments: z.array(z.file()),
 });
 export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;

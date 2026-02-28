@@ -6,6 +6,7 @@ import { SearchIcon } from "@hoalu/icons/lucide";
 import {
 	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
+	CalendarIcon,
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
@@ -85,6 +86,16 @@ export function NavWorkspace() {
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
 								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
+								tooltip="Recurring Bills"
+							>
+								<CalendarIcon />
+								<span>Recurring Bills</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 

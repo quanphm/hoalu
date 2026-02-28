@@ -12,7 +12,7 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
 			disableTransitionOnChange
 		>
 			<TooltipProvider>
-				<ToastProvider>{children}</ToastProvider>
+				<ToastProvider position="bottom-center">{children}</ToastProvider>
 			</TooltipProvider>
 		</NextThemesProvider>
 	);
