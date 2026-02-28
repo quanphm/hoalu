@@ -59,7 +59,7 @@ function RecurringBillRow({ bill, isSelected, onSelect }: RecurringBillRowProps)
 						value={isForeignCurrency ? bill.convertedAmount : bill.amount}
 						currency={isForeignCurrency ? workspaceCurrency : bill.currency}
 						prefix={isForeignCurrency ? "~" : undefined}
-						className="text-sm font-semibold"
+						className="text-[14px] font-semibold"
 					/>
 					{isForeignCurrency && (
 						<CurrencyValue
@@ -67,6 +67,7 @@ function RecurringBillRow({ bill, isSelected, onSelect }: RecurringBillRowProps)
 							currency={bill.currency}
 							prefix="original"
 							className="text-muted-foreground/70 text-[10px]"
+							as="p"
 						/>
 					)}
 				</div>

@@ -41,7 +41,7 @@ export function RecurringBillItem({
 						</div>
 					)}
 					<span className="text-muted-foreground">
-						{datetime.format(new Date(`${bill.date}T00:00:00`), "MMM d")}
+						{datetime.format(new Date(`${bill.date}T00:00:00`), "MMM d, yyyy")}
 					</span>
 					<span className="font-mono font-bold">~{formatCurrency(bill.amount, bill.currency)}</span>
 				</span>
