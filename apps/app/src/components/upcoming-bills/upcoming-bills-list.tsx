@@ -175,7 +175,6 @@ function BillRow({ bill, onClick }: BillRowProps) {
 				{bill.categoryName && bill.categoryColor && (
 					<Badge
 						className={cn(
-							"h-4 px-1 py-0 text-[9px] leading-none",
 							createCategoryTheme(bill.categoryColor as Parameters<typeof createCategoryTheme>[0]),
 						)}
 					>

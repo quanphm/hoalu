@@ -15,6 +15,44 @@ import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 
+function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
+	const workspace = useWorkspace();
+	const mutation = useSetUpRecurringBill();
+
+	return (
+		<div className="border-border bg-muted/40 mb-3 flex items-center gap-3 px-4 py-2">
+			<RepeatIcon className="size-4 shrink-0" />
+			<div className="min-w-0 flex-1">
+				<p className="text-sm font-medium">Track future payments</p>
+				<p className="text-muted-foreground text-sm">
+					Link a recurring bill to project upcoming charges.
+				</p>
+			</div>
+			<Button
+				variant="outline"
+				disabled={mutation.isPending}
+				onClick={() =>
+					mutation.mutate({
+						expense: {
+							id: expense.id,
+							title: expense.title,
+							amount: expense.amount,
+							currency: expense.currency,
+							repeat: expense.repeat,
+							date: expense.date,
+							walletId: expense.wallet.id,
+							categoryId: expense.category?.id,
+							workspaceId: workspace.id,
+						},
+					})
+				}
+			>
+				{mutation.isPending ? "Setting up…" : "Set up"}
+			</Button>
+		</div>
+	);
+}
+
 interface ExpenseDetailsProps {
 	expenses: SyncedExpense[];
 }
@@ -95,44 +133,6 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 					</h2>
 				)}
 			</div>
-		</div>
-	);
-}
-
-function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
-	const workspace = useWorkspace();
-	const mutation = useSetUpRecurringBill();
-
-	return (
-		<div className="border-border bg-muted/40 mb-3 flex items-center gap-3 px-4 py-2">
-			<RepeatIcon className="size-4 shrink-0" />
-			<div className="min-w-0 flex-1">
-				<p className="text-sm font-medium">Track future payment</p>
-				<p className="text-muted-foreground text-sm">
-					Link a recurring bill to project upcoming charges.
-				</p>
-			</div>
-			<Button
-				variant="outline"
-				disabled={mutation.isPending}
-				onClick={() =>
-					mutation.mutate({
-						expense: {
-							id: expense.id,
-							title: expense.title,
-							amount: expense.amount,
-							currency: expense.currency,
-							repeat: expense.repeat,
-							date: expense.date,
-							walletId: expense.wallet.id,
-							categoryId: expense.category?.id,
-							workspaceId: workspace.id,
-						},
-					})
-				}
-			>
-				{mutation.isPending ? "Setting up…" : "Set up"}
-			</Button>
 		</div>
 	);
 }

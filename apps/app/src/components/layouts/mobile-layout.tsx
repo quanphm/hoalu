@@ -128,7 +128,7 @@ function MobileBottomNav() {
 
 	const navItemClass = cn(
 		"relative flex h-full w-full flex-col items-center justify-center gap-1.5 px-2 py-2",
-		"text-sm font-medium transition-colors",
+		"text-sm font-medium",
 		"text-muted-foreground hover:text-foreground",
 	);
 

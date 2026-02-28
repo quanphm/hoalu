@@ -38,100 +38,6 @@ interface CategoryData {
 	color: ColorSchema;
 }
 
-interface CategoryBreakdownProps {
-	expenses: SyncedExpense[];
-	categories: SyncedCategory[];
-}
-
-export function CategoryBreakdown(props: CategoryBreakdownProps) {
-	const [view, setView] = useState<"less" | "more">("less");
-	const {
-		metadata: { currency },
-	} = useWorkspace();
-
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
-
-	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
-
-	const categoryTotals: Record<string, number> = {};
-	for (const expense of filteredExpenses) {
-		const categoryId = expense.category?.id;
-		if (categoryId) {
-			const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
-			categoryTotals[categoryId] = (categoryTotals[categoryId] || 0) + amount;
-		}
-	}
-
-	const allCategoryData: CategoryData[] = Object.entries(categoryTotals)
-		.map(([categoryId, total]) => {
-			const category = props.categories.find((c) => c.id === categoryId);
-			return {
-				id: categoryId,
-				name: category?.name || "Unknown",
-				color: category?.color || "gray",
-				value: total,
-			};
-		})
-		.filter((item) => item.value > 0)
-		.sort((a, b) => b.value - a.value);
-
-	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
-	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
-	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
-
-	const categoryData = [...topCategories];
-	if (othersTotal > 0) {
-		categoryData.push({
-			id: "others",
-			name: "Others",
-			color: "gray",
-			value: othersTotal,
-		});
-	}
-
-	const handleToggleView = () => {
-		setView((state) => (state === "less" ? "more" : "less"));
-	};
-
-	const dataToView = view === "less" ? categoryData : allCategoryData;
-	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
-
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Categories Breakdown</CardTitle>
-				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
-				<CardAction>
-					{dataToView.length > TOP_N_CATEGORY && (
-						<div className="flex justify-end">
-							<Button variant="outline" size="sm" onClick={handleToggleView}>
-								{view === "less" && "View all"}
-								{view === "more" && "View less"}
-							</Button>
-						</div>
-					)}
-				</CardAction>
-			</CardHeader>
-			<CardContent>
-				{dataToView.length === 0 ? (
-					<EmptyData />
-				) : (
-					<div className="space-y-4">
-						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
-						<CategoryListBreakdown
-							data={dataToView}
-							totalAmount={totalAmount}
-							currency={currency}
-							onToggleView={handleToggleView}
-						/>
-					</div>
-				)}
-			</CardContent>
-		</Card>
-	);
-}
-
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
 		<div className="flex h-4 w-full items-center justify-center gap-0.5 overflow-hidden rounded-md">
@@ -140,10 +46,7 @@ function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number 
 				return (
 					<div
 						key={data.id}
-						className={cn(
-							"h-full transition-all duration-300",
-							createChartColor(data.color),
-						)}
+						className={cn("h-full transition-all duration-300", createChartColor(data.color))}
 						style={{
 							width: `${widthPercentage}%`,
 						}}
@@ -237,5 +140,99 @@ function EmptyData() {
 				</div>
 			</EmptyContent>
 		</Empty>
+	);
+}
+
+interface CategoryBreakdownProps {
+	expenses: SyncedExpense[];
+	categories: SyncedCategory[];
+}
+
+export function CategoryBreakdown(props: CategoryBreakdownProps) {
+	const [view, setView] = useState<"less" | "more">("less");
+	const {
+		metadata: { currency },
+	} = useWorkspace();
+
+	const dateRange = useAtomValue(selectDateRangeAtom);
+	const customRange = useAtomValue(customDateRangeAtom);
+
+	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
+
+	const categoryTotals: Record<string, number> = {};
+	for (const expense of filteredExpenses) {
+		const categoryId = expense.category?.id;
+		if (categoryId) {
+			const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
+			categoryTotals[categoryId] = (categoryTotals[categoryId] || 0) + amount;
+		}
+	}
+
+	const allCategoryData: CategoryData[] = Object.entries(categoryTotals)
+		.map(([categoryId, total]) => {
+			const category = props.categories.find((c) => c.id === categoryId);
+			return {
+				id: categoryId,
+				name: category?.name || "Unknown",
+				color: category?.color || "gray",
+				value: total,
+			};
+		})
+		.filter((item) => item.value > 0)
+		.sort((a, b) => b.value - a.value);
+
+	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
+	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
+	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
+
+	const categoryData = [...topCategories];
+	if (othersTotal > 0) {
+		categoryData.push({
+			id: "others",
+			name: "Others",
+			color: "gray",
+			value: othersTotal,
+		});
+	}
+
+	const handleToggleView = () => {
+		setView((state) => (state === "less" ? "more" : "less"));
+	};
+
+	const dataToView = view === "less" ? categoryData : allCategoryData;
+	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
+
+	return (
+		<Card className="pb-3">
+			<CardHeader>
+				<CardTitle>Categories Breakdown</CardTitle>
+				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
+				<CardAction>
+					{dataToView.length > TOP_N_CATEGORY && (
+						<div className="flex justify-end">
+							<Button variant="outline" size="sm" onClick={handleToggleView}>
+								{view === "less" && "View all"}
+								{view === "more" && "View less"}
+							</Button>
+						</div>
+					)}
+				</CardAction>
+			</CardHeader>
+			<CardContent>
+				{dataToView.length === 0 ? (
+					<EmptyData />
+				) : (
+					<div className="space-y-4">
+						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
+						<CategoryListBreakdown
+							data={dataToView}
+							totalAmount={totalAmount}
+							currency={currency}
+							onToggleView={handleToggleView}
+						/>
+					</div>
+				)}
+			</CardContent>
+		</Card>
 	);
 }

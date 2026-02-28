@@ -109,43 +109,43 @@ export function VirtualizedList({
 							);
 						}
 
-					if (item.type === "action") {
-						const action = item.data;
-						const autocompleteItem = autocompleteItems[item.itemIndex];
-						return (
-							<ActionItem
-								key={action.id}
-								action={action}
-								autocompleteItem={autocompleteItem}
-								itemIndex={item.itemIndex}
-								style={style}
-							/>
-						);
-					}
+						if (item.type === "action") {
+							const action = item.data;
+							const autocompleteItem = autocompleteItems[item.itemIndex];
+							return (
+								<ActionItem
+									key={action.id}
+									action={action}
+									autocompleteItem={autocompleteItem}
+									itemIndex={item.itemIndex}
+									style={style}
+								/>
+							);
+						}
 
-					if (item.type === "upcoming-bill") {
-						const bill = item.data;
-						const autocompleteItem = autocompleteItems[item.itemIndex];
-						return (
-							<RecurringBillItem
-								key={`${bill.recurringBillId}-${bill.date}`}
-								bill={bill}
-								autocompleteItem={autocompleteItem}
-								itemIndex={item.itemIndex}
-								style={style}
-								onClick={() =>
-									runAction(() =>
-										navigate({
-											to: "/$slug/expenses",
-											params: { slug },
-										}),
-									)
-								}
-							/>
-						);
-					}
+						if (item.type === "upcoming-bill") {
+							const bill = item.data;
+							const autocompleteItem = autocompleteItems[item.itemIndex];
+							return (
+								<RecurringBillItem
+									key={`${bill.recurringBillId}-${bill.date}`}
+									bill={bill}
+									autocompleteItem={autocompleteItem}
+									itemIndex={item.itemIndex}
+									style={style}
+									onClick={() =>
+										runAction(() =>
+											navigate({
+												to: "/$slug/recurring-bills",
+												params: { slug },
+											}),
+										)
+									}
+								/>
+							);
+						}
 
-					return null;
+						return null;
 					})}
 				</div>
 			</div>

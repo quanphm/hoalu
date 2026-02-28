@@ -1,4 +1,3 @@
-// import { createExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -28,20 +27,12 @@ import { useSetAtom } from "jotai";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
-	// const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
 	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	return (
 		<>
 			<SidebarGroup>
 				<SidebarGroupContent>
-					{/* <Button
-						variant="default"
-						className="mt-2 w-full justify-center"
-						onClick={() => setCreateExpenseDialog({ state: true })}
-					>
-						Create expense
-					</Button> */}
 					<Button
 						variant="outline"
 						className="mt-2 w-full justify-start gap-2"
@@ -96,6 +87,9 @@ export function NavWorkspace() {
 							>
 								<CalendarIcon />
 								<span>Recurring Bills</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
@@ -127,7 +121,7 @@ export function NavWorkspace() {
 								<TriangleSquareCircleIcon />
 								<span>Library</span>
 								<SidebarMenuBadge>
-									<HotKey label="GC" />
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_categories} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -136,6 +130,9 @@ export function NavWorkspace() {
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileIcon />
 								<span>Files</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_files} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>

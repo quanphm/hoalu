@@ -1,11 +1,11 @@
-import { createRecurringBillDialogAtom } from "#app/atoms/index.ts";
+import { archiveRecurringBillDialogAtom, createRecurringBillDialogAtom } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import {
 	type SyncedRecurringBill,
 	useSelectedRecurringBill,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
+import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	useArchiveRecurringBill,
@@ -13,8 +13,7 @@ import {
 	useEditRecurringBill,
 } from "#app/services/mutations.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
-import { Trash2Icon } from "@hoalu/icons/lucide";
-import { Button } from "@hoalu/ui/button";
+import { Button, ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
 	DialogDescription,
@@ -24,10 +23,11 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
+
+import { HotKey } from "../hotkey";
 
 const BillFormSchema = z.object({
 	title: z.string().min(1),
@@ -43,6 +43,19 @@ const BillFormSchema = z.object({
 });
 
 type BillFormSchema = z.infer<typeof BillFormSchema>;
+
+export function CreateRecurringBillDialogTrigger({
+	showKbd = true,
+	...props
+}: ButtonProps & { showKbd?: boolean }) {
+	const setDialog = useSetAtom(createRecurringBillDialogAtom);
+	return (
+		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
+			Create bill
+			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_recurring_bill} />}
+		</Button>
+	);
+}
 
 interface CreateRecurringBillFormProps {
 	defaultDate?: string;
@@ -107,10 +120,14 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 	return (
 		<form.AppForm>
 			<form.Form>
-				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
+				<FieldGroup className="grid grid-cols-1 gap-4">
+					<form.AppField
+						name="date"
+						children={(field) => <field.DatepickerInputField label="Date" />}
+					/>
 					<form.AppField
 						name="title"
-						children={(field) => <field.InputField label="Title" required />}
+						children={(field) => <field.InputField label="Title" required autoFocus />}
 					/>
 					<form.AppField
 						name="transaction"
@@ -139,21 +156,18 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 							/>
 						)}
 					/>
-					<form.AppField
-						name="date"
-						children={(field) => <field.DatepickerInputField label="Anchor date" />}
-					/>
+
 					<form.AppField
 						name="description"
 						children={(field) => <field.TiptapField label="Note" defaultValue="" />}
 					/>
 				</FieldGroup>
-				<Field
-					orientation="horizontal"
-					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
-				>
-					<form.SubscribeButton>Create bill</form.SubscribeButton>
-				</Field>
+
+				<DialogFooter>
+					<Field orientation="horizontal" className="justify-end">
+						<form.SubscribeButton>Create bill</form.SubscribeButton>
+					</Field>
+				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -205,6 +219,10 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 			<form.Form>
 				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
 					<form.AppField
+						name="date"
+						children={(field) => <field.DatepickerInputField label="Date" />}
+					/>
+					<form.AppField
 						name="title"
 						children={(field) => <field.InputField label="Title" required />}
 					/>
@@ -235,10 +253,7 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 							/>
 						)}
 					/>
-					<form.AppField
-						name="date"
-						children={(field) => <field.DatepickerInputField label="Anchor date" />}
-					/>
+
 					<form.AppField
 						name="description"
 						children={(field) => (
@@ -250,16 +265,28 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 					orientation="horizontal"
 					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
 				>
-					<form.SubscribeButton>Update bill</form.SubscribeButton>
+					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-export function ArchiveRecurringBillDialogContent({ id }: { id: string }) {
+export function ArchiveRecurringBillDialogContent() {
 	const { onSelectBill } = useSelectedRecurringBill();
 	const mutation = useArchiveRecurringBill();
+	const [dialog, setDialog] = useAtom(archiveRecurringBillDialogAtom);
+
+	const onDelete = async () => {
+		if (!dialog?.data?.id) {
+			setDialog({ state: false });
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		onSelectBill(null);
+		setDialog({ state: false });
+	};
+
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
@@ -271,13 +298,7 @@ export function ArchiveRecurringBillDialogContent({ id }: { id: string }) {
 			</DialogHeader>
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
-				<Button
-					variant="destructive"
-					onClick={async () => {
-						await mutation.mutateAsync({ id });
-						onSelectBill(null);
-					}}
-				>
+				<Button variant="destructive" onClick={onDelete}>
 					Archive
 				</Button>
 			</DialogFooter>
@@ -285,32 +306,10 @@ export function ArchiveRecurringBillDialogContent({ id }: { id: string }) {
 	);
 }
 
-export function ArchiveRecurringBillButton({ id }: { id: string }) {
-	const mutation = useArchiveRecurringBill();
-	return (
-		<Tooltip>
-			<TooltipTrigger
-				render={
-					<Button
-						size="icon"
-						variant="ghost"
-						onClick={() => mutation.mutate({ id })}
-						disabled={mutation.isPending}
-					/>
-				}
-			>
-				<Trash2Icon className="size-4" />
-			</TooltipTrigger>
-			<TooltipContent side="bottom">Archive</TooltipContent>
-		</Tooltip>
-	);
-}
-
-// Helpers
 function buildWalletGroups(wallets: any[]) {
 	return wallets.reduce(
 		(result: any, current: any) => {
-			if (!current.isActive) return result;
+			// if (!current.isActive) return result;
 			const owner = current.owner;
 			if (!result[owner.id]) {
 				result[owner.id] = {

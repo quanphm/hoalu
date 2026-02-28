@@ -11,40 +11,15 @@ import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSetAtom } from "jotai";
 
-export function RecurringBillDetails() {
-	const bills = useLiveQueryRecurringBills();
-	const { bill: selected, onSelectBill } = useSelectedRecurringBill();
-
-	const currentBill: SyncedRecurringBill | undefined = bills.find((b) => b.id === selected.id);
-
-	return (
-		<div className="bg-card text-card-foreground flex h-full flex-col overflow-auto rounded-none border border-b-0 p-0">
-			{currentBill ? (
-				<>
-					<BillDetailsHeader bill={currentBill} onClose={() => onSelectBill(null)} />
-					<EditRecurringBillForm key={currentBill.id} bill={currentBill} />
-				</>
-			) : (
-				<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
-					No bill selected
-				</h2>
-			)}
-		</div>
-	);
-}
-
-function BillDetailsHeader({
-	bill,
-	onClose,
-}: {
-	bill: SyncedRecurringBill;
-	onClose: () => void;
-}) {
+function BillDetailsHeader({ bill, onClose }: { bill: SyncedRecurringBill; onClose: () => void }) {
 	const setArchiveDialog = useSetAtom(archiveRecurringBillDialogAtom);
 
 	return (
-		<div className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2">
-			<span className="text-sm font-medium leading-8">Bill details</span>
+		<div
+			data-slot="recurring-bill-details-actions"
+			className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2"
+		>
+			<div>&nbsp;</div>
 			<div className="flex items-center gap-2">
 				<Tooltip>
 					<TooltipTrigger
@@ -62,14 +37,36 @@ function BillDetailsHeader({
 					<TooltipContent side="bottom">Archive</TooltipContent>
 				</Tooltip>
 				<Tooltip>
-					<TooltipTrigger
-						render={<Button size="icon" variant="ghost" onClick={onClose} />}
-					>
+					<TooltipTrigger render={<Button size="icon" variant="ghost" onClick={onClose} />}>
 						<XIcon className="size-4" />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Close</TooltipContent>
 				</Tooltip>
 			</div>
+		</div>
+	);
+}
+
+export function RecurringBillDetails() {
+	const bills = useLiveQueryRecurringBills();
+	const { bill: selected, onSelectBill } = useSelectedRecurringBill();
+
+	const currentBill: SyncedRecurringBill | undefined = bills.find((b) => b.id === selected.id);
+
+	return (
+		<div className="bg-card text-card-foreground flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
+			{currentBill ? (
+				<>
+					<BillDetailsHeader bill={currentBill} onClose={() => onSelectBill(null)} />
+					<div data-slot="recurring-bill-details-form">
+						<EditRecurringBillForm key={currentBill.id} bill={currentBill} />
+					</div>
+				</>
+			) : (
+				<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
+					No bill selected
+				</h2>
+			)}
 		</div>
 	);
 }

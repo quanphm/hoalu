@@ -363,9 +363,9 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const walletGroups = wallets.reduce(
 		(result, current) => {
 			const owner = current.owner;
-			if (!current.isActive) {
-				return result;
-			}
+			// if (!current.isActive) {
+			// 	return result;
+			// }
 			if (!result[owner.id]) {
 				result[owner.id] = {
 					name: owner.name,
@@ -456,9 +456,9 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		},
 	});
 
-	// useEffect(() => {
-	// 	form.setFieldValue("recurringBillId", props.data.recurring_bill_id ?? "");
-	// }, [props.data.recurring_bill_id]);
+	useEffect(() => {
+		form.reset();
+	}, [props.data.recurring_bill_id, form]);
 
 	return (
 		<form.AppForm>

@@ -26,6 +26,8 @@ export const datetime = {
 	parse: dateFns.parse,
 	startOfDay: dateFns.startOfDay,
 	endOfDay: dateFns.endOfDay,
+	getMonth: dateFns.getMonth,
+	getYear: dateFns.getYear,
 };
 
 /**

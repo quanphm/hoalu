@@ -37,17 +37,13 @@ export function RecurringBillItem({
 				<span className="flex shrink-0 items-center gap-3 text-xs tabular-nums">
 					{bill.categoryName && bill.categoryColor && (
 						<div className="flex origin-right scale-90 items-center">
-							<Badge className={createCategoryTheme(bill.categoryColor)}>
-								{bill.categoryName}
-							</Badge>
+							<Badge className={createCategoryTheme(bill.categoryColor)}>{bill.categoryName}</Badge>
 						</div>
 					)}
 					<span className="text-muted-foreground">
 						{datetime.format(new Date(`${bill.date}T00:00:00`), "MMM d")}
 					</span>
-					<span className="font-mono font-bold">
-						~{formatCurrency(bill.amount, bill.currency)}
-					</span>
+					<span className="font-mono font-bold">~{formatCurrency(bill.amount, bill.currency)}</span>
 				</span>
 			</div>
 		</CommandItem>

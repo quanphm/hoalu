@@ -66,7 +66,7 @@ function RouteComponent() {
 					<button
 						type="button"
 						onClick={() => setDialog({ state: true })}
-						className="h-full cursor-pointer text-left transition-colors"
+						className="h-full cursor-pointer text-left"
 					>
 						<Card className="bg-muted/50 hover:border-foreground/40 hover:bg-muted h-full justify-center border-dashed">
 							<div className="flex flex-col items-center justify-center gap-2">

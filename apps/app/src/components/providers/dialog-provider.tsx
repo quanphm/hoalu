@@ -88,7 +88,7 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 		case "create-recurring-bill":
 			return <CreateRecurringBillDialogContent />;
 		case "archive-recurring-bill":
-			return <ArchiveRecurringBillDialogContent id={props.data?.id ?? ""} />;
+			return <ArchiveRecurringBillDialogContent />;
 
 		default:
 			return <DialogPopup>Not supported dialog</DialogPopup>;

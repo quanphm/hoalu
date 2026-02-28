@@ -2,6 +2,7 @@ import {
 	commandPaletteOpenAtom,
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
+	createRecurringBillDialogAtom,
 	createWalletDialogAtom,
 	dialogStateAtom,
 	draftExpenseAtom,
@@ -36,12 +37,25 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogAtom);
 	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
+	const setRecurringBillOpen = useSetAtom(createRecurringBillDialogAtom);
+
 	const [commandPaletteOpen, setCommandPaletteOpen] = useAtom(commandPaletteOpenAtom);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
 			setExpenseOpen({ state: true });
+		},
+		{
+			preventDefault: true,
+		},
+		[],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_recurring_bill.hotkey,
+		() => {
+			setRecurringBillOpen({ state: true });
 		},
 		{
 			preventDefault: true,
@@ -138,7 +152,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	);
 
 	useHotkeys(
-		"g>c",
+		KEYBOARD_SHORTCUTS.goto_categories.hotkey,
 		() => {
 			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "categories" } });
 		},
@@ -149,9 +163,31 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	);
 
 	useHotkeys(
-		"g>w",
+		KEYBOARD_SHORTCUTS.goto_wallets.hotkey,
 		() => {
 			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "wallets" } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_recurring_bills.hotkey,
+		() => {
+			navigate({ to: "/$slug/recurring-bills", params: { slug } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_files.hotkey,
+		() => {
+			navigate({ to: "/$slug/files", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,
