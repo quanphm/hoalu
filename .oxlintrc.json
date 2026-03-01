@@ -15,6 +15,7 @@
 		"typescript/no-explicit-any": "off",
 		"no-debugger": "warn",
 		"no-unused-vars": "off",
+		"no-shadow": "off",
 		"react/no-array-index-key": "warn",
 		"react/no-danger": "warn",
 		"jsx-a11y/no-autofocus": "off",

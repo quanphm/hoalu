@@ -1,6 +1,6 @@
+import { APIError } from "@better-auth/core/error";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint } from "better-auth/api";
-import { APIError } from "better-call";
 import * as z from "zod";
 
 import { getAdapter } from "../adapter";
@@ -24,9 +24,7 @@ export const addMember = createAuthEndpoint(
 	async (ctx) => {
 		const workspaceId = ctx.body.workspaceId;
 		if (!workspaceId) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
@@ -42,17 +40,16 @@ export const addMember = createAuthEndpoint(
 			workspaceId,
 		});
 		if (alreadyMember) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
-			});
+			throw APIError.from(
+				"BAD_REQUEST",
+				WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
+			);
 		}
 
 		const membershipLimit = ctx.context.orgOptions?.membershipLimit || 100;
 		const members = await adapter.listMembers({ workspaceId });
 		if (members.length >= membershipLimit) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED,
-			});
+			throw APIError.from("FORBIDDEN", WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED);
 		}
 
 		const createdMember = await adapter.createMember({
@@ -122,40 +119,33 @@ export const removeMember = createAuthEndpoint(
 		const session = ctx.context.session;
 		const idOrSlug = ctx.body.idOrSlug;
 		if (!idOrSlug) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 		const currentMemberBySession = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
 			workspaceId: workspace.id,
 		});
 		if (!currentMemberBySession) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 		const role = ctx.context.roles[currentMemberBySession.role];
 		if (!role) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND);
 		}
 		const isLeaving = currentMemberBySession.userId === ctx.body.userId;
 
 		const isOwnerLeaving =
 			isLeaving && currentMemberBySession.role === (ctx.context.orgOptions?.creatorRole || "owner");
 		if (isOwnerLeaving) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.YOU_CANNOT_LEAVE_THE_WORKSPACE_AS_THE_ONLY_OWNER,
-			});
+			throw APIError.from(
+				"BAD_REQUEST",
+				WORKSPACE_ERROR_CODES.YOU_CANNOT_LEAVE_THE_WORKSPACE_AS_THE_ONLY_OWNER,
+			);
 		}
 
 		const canDeleteMember =
@@ -164,9 +154,10 @@ export const removeMember = createAuthEndpoint(
 				member: ["delete"],
 			}).success;
 		if (!canDeleteMember) {
-			throw new APIError("UNAUTHORIZED", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_MEMBER,
-			});
+			throw APIError.from(
+				"UNAUTHORIZED",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_THIS_MEMBER,
+			);
 		}
 
 		const existing = await adapter.findMemberByWorkspaceId({
@@ -174,9 +165,7 @@ export const removeMember = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!existing) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 
 		await adapter.deleteMember(existing.userId, existing.workspaceId);
@@ -240,12 +229,7 @@ export const updateMemberRole = createAuthEndpoint(
 		const session = ctx.context.session;
 		const workspaceId = ctx.body.workspaceId;
 		if (!workspaceId) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE);
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const member = await adapter.findMemberByWorkspaceId({
@@ -253,21 +237,11 @@ export const updateMemberRole = createAuthEndpoint(
 			workspaceId,
 		});
 		if (!member) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 		const role = ctx.context.roles[member.role];
 		if (!role) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND);
 		}
 		/**
 		 * If the member is not an owner, they cannot update the role of another member
@@ -279,22 +253,14 @@ export const updateMemberRole = createAuthEndpoint(
 			}).error ||
 			(ctx.body.role === "owner" && member.role !== "owner");
 		if (canUpdateMember) {
-			return ctx.json(null, {
-				body: {
-					message: "You are not allowed to update this member",
-				},
-				status: HTTPStatus.codes.FORBIDDEN,
+			throw new APIError("FORBIDDEN", {
+				message: "You are not allowed to update this member",
 			});
 		}
 
 		const updatedMember = await adapter.updateMember(ctx.body.userId, workspaceId, ctx.body.role);
 		if (!updatedMember) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 		return ctx.json(updatedMember);
 	},
@@ -347,25 +313,19 @@ export const getActiveMember = createAuthEndpoint(
 		const session = ctx.context.session;
 		const idOrSlug = ctx.query?.idOrSlug;
 		if (!idOrSlug) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.NO_ACTIVE_WORKSPACE);
 		}
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 
 		return ctx.json(member);

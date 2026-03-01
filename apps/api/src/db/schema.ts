@@ -139,29 +139,27 @@ export const invitation = pgTable("invitation", {
 });
 
 export const apikey = pgTable("apikey", {
-	id: uuid("id").primaryKey(),
+	id: text("id").primaryKey(),
+	configId: text("config_id").notNull(),
 	name: text("name"),
 	start: text("start"),
 	prefix: text("prefix"),
 	key: text("key").notNull(),
-	userId: uuid("user_id")
-		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+	referenceId: text("reference_id").notNull(),
 	refillInterval: integer("refill_interval"),
 	refillAmount: integer("refill_amount"),
-	lastRefillAt: timestamp("last_refill_at"),
-	enabled: boolean("enabled"),
-	rateLimitEnabled: boolean("rate_limit_enabled"),
+	lastRefillAt: timestamp("last_refill_at", { precision: 6, withTimezone: true }),
+	enabled: boolean("enabled").notNull(),
+	rateLimitEnabled: boolean("rate_limit_enabled").notNull(),
 	rateLimitTimeWindow: integer("rate_limit_time_window"),
 	rateLimitMax: integer("rate_limit_max"),
-	requestCount: integer("request_count"),
+	requestCount: integer("request_count").notNull(),
 	remaining: integer("remaining"),
-	lastRequest: timestamp("last_request"),
-	expiresAt: timestamp("expires_at"),
-	createdAt: timestamp("created_at").notNull(),
-	updatedAt: timestamp("updated_at").notNull(),
+	lastRequest: timestamp("last_request", { precision: 6, withTimezone: true }),
+	expiresAt: timestamp("expires_at", { precision: 6, withTimezone: true }),
+	createdAt: timestamp("created_at", { precision: 6, withTimezone: true }).notNull(),
+	updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true }).notNull(),
 	permissions: text("permissions"),
-	metadata: text("metadata"),
 });
 
 /**

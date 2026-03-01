@@ -2,16 +2,16 @@ import { db } from "#api/db/index.ts";
 import { category, wallet } from "#api/db/schema.ts";
 import { sendEmail } from "#api/lib/email.ts";
 import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "#api/utils/constants.ts";
+import { apiKey } from "@better-auth/api-key";
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
 import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, jwt, openAPI } from "better-auth/plugins";
-import type { Auth } from "better-auth/types";
+import { jwt, openAPI } from "better-auth/plugins";
 
-export const auth: Auth = betterAuth({
+export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL,
 	basePath: "/api/auth",
 	secret: process.env.AUTH_SECRET,
