@@ -1,4 +1,5 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import {
 	type SyncedRecurringBill,
 	useSelectedRecurringBill,
@@ -9,7 +10,61 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+
+const MOBILE_NAV_HEIGHT = 80;
+
+type BillItem = {
+	type: "bill";
+	bill: SyncedRecurringBill;
+};
+
+type GroupHeaderItem = {
+	type: "group-header";
+	repeat: string;
+	label: string;
+	bills: SyncedRecurringBill[];
+};
+
+type VirtualItem = BillItem | GroupHeaderItem;
+
+const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
+
+function GroupHeader({ label, bills }: Omit<GroupHeaderItem, "type" | "repeat">) {
+	const {
+		metadata: { currency: workspaceCurrency },
+	} = useWorkspace();
+
+	const total = useMemo(() => {
+		let sum = 0;
+		for (const bill of bills) {
+			if (bill.currency === workspaceCurrency) {
+				sum += bill.amount;
+			} else if (bill.convertedAmount > 0) {
+				sum += bill.convertedAmount;
+			}
+		}
+		return sum;
+	}, [bills, workspaceCurrency]);
+
+	return (
+		<div
+			data-slot="recurring-bill-group-title"
+			className="border-muted bg-muted flex items-center py-2 pr-4 pl-3 text-xs"
+		>
+			<span className="font-medium">{label}</span>
+			<div className="ml-auto">
+				<CurrencyValue
+					value={total}
+					currency={workspaceCurrency}
+					className="text-destructive font-semibold"
+				/>
+			</div>
+		</div>
+	);
+}
 
 interface RecurringBillRowProps {
 	bill: SyncedRecurringBill;
@@ -21,24 +76,23 @@ function RecurringBillRow({ bill, isSelected, onSelect }: RecurringBillRowProps)
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const repeatLabel =
-		AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === bill.repeat)?.label ?? bill.repeat;
 	const isForeignCurrency = bill.currency !== workspaceCurrency;
 
 	return (
 		<button
+			id={bill.id}
 			type="button"
 			onClick={onSelect}
 			className={cn(
-				"flex w-full items-center gap-0 overflow-hidden py-2 pr-4 pl-3 text-left",
+				"border-b-border/50 flex w-full items-center gap-0 overflow-hidden border-b py-2 pr-4 pl-3 text-left",
 				"hover:bg-muted/50",
+				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
 				isSelected && "ring-ring ring-2 ring-inset",
 			)}
 		>
 			<div className="flex min-w-0 flex-1 flex-col gap-1">
 				<p className="truncate text-sm font-medium">{bill.title}</p>
 				<div className="flex items-center gap-1.5">
-					<p className="text-muted-foreground text-xs">{repeatLabel}</p>
 					{bill.category_name && bill.category_color && (
 						<Badge
 							className={cn(
@@ -93,53 +147,150 @@ interface RecurringBillListProps {
 	bills: SyncedRecurringBill[];
 }
 
-export function RecurringBillList({ bills }: RecurringBillListProps) {
+function RecurringBillList({ bills }: RecurringBillListProps) {
 	const { bill: selected, onSelectBill } = useSelectedRecurringBill();
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
+	const { shouldUseMobileLayout } = useLayoutMode();
+	const parentRef = useRef<HTMLDivElement>(null);
 
-	const total = useMemo(() => {
-		let sum = 0;
+	const flatItems = useMemo<VirtualItem[]>(() => {
+		const grouped = new Map<string, SyncedRecurringBill[]>();
 		for (const bill of bills) {
-			if (bill.currency === workspaceCurrency) {
-				sum += bill.amount;
-			} else if (bill.convertedAmount > 0) {
-				sum += bill.convertedAmount;
+			const key = bill.repeat;
+			const existing = grouped.get(key);
+			if (existing) {
+				existing.push(bill);
+			} else {
+				grouped.set(key, [bill]);
 			}
 		}
-		return sum;
-	}, [bills, workspaceCurrency]);
+
+		// Sort groups by canonical order, unknowns at the end
+		const sortedKeys = Array.from(grouped.keys()).sort((a, b) => {
+			const ai = REPEAT_ORDER.indexOf(a);
+			const bi = REPEAT_ORDER.indexOf(b);
+			return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+		});
+
+		const items: VirtualItem[] = [];
+		for (const key of sortedKeys) {
+			const groupBills = grouped.get(key)!;
+			const label = AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === key)?.label ?? key;
+			items.push({ type: "group-header", repeat: key, label, bills: groupBills });
+			for (const bill of groupBills) {
+				items.push({ type: "bill", bill });
+			}
+		}
+		return items;
+	}, [bills]);
+
+	const billsOnly = useMemo(
+		() => flatItems.filter((i): i is BillItem => i.type === "bill").map((i) => i.bill),
+		[flatItems],
+	);
+
+	const virtualizer = useVirtualizer({
+		count: flatItems.length,
+		overscan: 10,
+		getScrollElement: () => parentRef.current,
+		estimateSize: (index) => {
+			const item = flatItems[index];
+			return item?.type === "group-header" ? 40 : 60;
+		},
+		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
+	});
+
+	const scrollToBill = useEffectEvent((id: string) => {
+		const index = flatItems.findIndex((i) => i.type === "bill" && i.bill.id === id);
+		if (index >= 0) {
+			virtualizer.scrollToIndex(index, { align: "auto" });
+			requestAnimationFrame(() => {
+				document.getElementById(id)?.focus();
+			});
+		}
+	});
+
+	const onSelectBillEvent = useEffectEvent((id: string | null) => {
+		onSelectBill(id);
+	});
+
+	useHotkeys(
+		"j",
+		() => {
+			if (!selected.id) return;
+			const currentIndex = billsOnly.findIndex((b) => b.id === selected.id);
+			const next = billsOnly[currentIndex + 1];
+			if (!next) return;
+			onSelectBillEvent(next.id);
+			scrollToBill(next.id);
+		},
+		[selected.id, billsOnly],
+	);
+
+	useHotkeys(
+		"k",
+		() => {
+			if (!selected.id) return;
+			const currentIndex = billsOnly.findIndex((b) => b.id === selected.id);
+			const prev = billsOnly[currentIndex - 1];
+			if (!prev) return;
+			onSelectBillEvent(prev.id);
+			scrollToBill(prev.id);
+		},
+		[selected.id, billsOnly],
+	);
+
+	useHotkeys("esc", () => onSelectBillEvent(null), []);
+
+	useEffect(() => {
+		return () => {
+			onSelectBillEvent(null);
+		};
+	}, []);
 
 	if (bills.length === 0) {
 		return <EmptyState />;
 	}
 
+	const virtualExpenses = virtualizer.getVirtualItems();
+
 	return (
 		<div
 			data-slot="recurring-bills-list-container"
-			className={cn("scrollbar-thin h-full w-full overflow-y-auto contain-strict")}
+			className={cn(
+				"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
+			)}
+			ref={parentRef}
 		>
-			<div className="relative flex h-full w-full flex-col divide-y rounded-tl-lg border-t border-l">
-				<div className="border-muted bg-muted flex items-center py-2 pr-4 pl-3 text-sm">
-					<span>Total</span>
-					<div className="ml-auto">
-						<CurrencyValue
-							value={total}
-							currency={workspaceCurrency}
-							className="text-destructive font-semibold"
-						/>
-					</div>
+			<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
+				<div
+					style={{
+						transform: `translateY(${virtualExpenses[0]?.start ?? 0}px)`,
+					}}
+					className="absolute top-0 left-0 w-full"
+				>
+					{virtualExpenses.map((virtualRow) => {
+						const item = flatItems[virtualRow.index];
+						return (
+							<div key={virtualRow.key} data-index={virtualRow.index}>
+								{item.type === "group-header" ? (
+									<GroupHeader label={item.label} bills={item.bills} />
+								) : (
+									<RecurringBillRow
+										bill={item.bill}
+										isSelected={selected.id === item.bill.id}
+										onSelect={() =>
+											onSelectBillEvent(selected.id === item.bill.id ? null : item.bill.id)
+										}
+									/>
+								)}
+							</div>
+						);
+					})}
 				</div>
-				{bills.map((bill) => (
-					<RecurringBillRow
-						key={bill.id}
-						bill={bill}
-						isSelected={selected.id === bill.id}
-						onSelect={() => onSelectBill(selected.id === bill.id ? null : bill.id)}
-					/>
-				))}
 			</div>
 		</div>
 	);
 }
+
+export default memo(RecurringBillList);

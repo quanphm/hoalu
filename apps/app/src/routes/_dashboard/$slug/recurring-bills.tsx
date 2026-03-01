@@ -8,8 +8,8 @@ import {
 } from "#app/components/layouts/section.tsx";
 import { CreateRecurringBillDialogTrigger } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 import { RecurringBillDetails } from "#app/components/recurring-bills/recurring-bill-details.tsx";
-import { RecurringBillList } from "#app/components/recurring-bills/recurring-bill-list.tsx";
-import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import RecurringBillList from "#app/components/recurring-bills/recurring-bill-list.tsx";
+import { useSortedRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 });
 
 function RouteComponent() {
-	const bills = useLiveQueryRecurringBills();
+	const bills = useSortedRecurringBills();
 
 	return (
 		<Section className="-mb-8">

@@ -13,6 +13,9 @@ import { useAtom } from "jotai";
 import { atom } from "jotai";
 import { useMemo } from "react";
 
+// Canonical display order for repeat groups — must match recurring-bill-list.tsx
+const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
+
 export const selectedRecurringBillAtom = atom<{ id: string | null }>({ id: null });
 
 export function useSelectedRecurringBill() {
@@ -126,3 +129,35 @@ export function useLiveQueryRecurringBills() {
 }
 
 export type SyncedRecurringBill = ReturnType<typeof useLiveQueryRecurringBills>[number];
+
+/**
+ * Returns bills sorted in the same grouped display order used by the list:
+ * daily → weekly → monthly → yearly → one-time, with each group's internal
+ * order preserved (created_at desc from the live query).
+ *
+ * Use this anywhere you need an ordered flat list for navigation, so that
+ * j/k buttons always move in the same order the user sees on screen.
+ */
+export function useSortedRecurringBills() {
+	const bills = useLiveQueryRecurringBills();
+
+	return useMemo(() => {
+		const grouped = new Map<string, SyncedRecurringBill[]>();
+		for (const bill of bills) {
+			const existing = grouped.get(bill.repeat);
+			if (existing) {
+				existing.push(bill);
+			} else {
+				grouped.set(bill.repeat, [bill]);
+			}
+		}
+
+		const sortedKeys = Array.from(grouped.keys()).sort((a, b) => {
+			const ai = REPEAT_ORDER.indexOf(a);
+			const bi = REPEAT_ORDER.indexOf(b);
+			return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+		});
+
+		return sortedKeys.flatMap((key) => grouped.get(key)!);
+	}, [bills]);
+}
