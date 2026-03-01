@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
 VERSION: 0.21.0
-LAST_UPDATED: 2026-01-24
+LAST_UPDATED: 2026-03-01
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -37,6 +37,7 @@ When debug with browser, please refer to these addresses to access the applicati
 | Expense live queries | `apps/app/src/components/expenses/use-expenses.ts`              | 255                                 |
 | Category components  | `apps/app/src/components/categories/`                           | 3 files                             |
 | Wallet components    | `apps/app/src/components/wallets/`                              | 2 files                             |
+| Bills components     | `apps/app/src/components/bills/`                                | 4 files                             |
 | Auth setup           | `apps/api/src/lib/auth.ts`                                      | -                                   |
 | Sync proxy           | `apps/api/src/modules/sync.ts`                                  | -                                   |
 | PGlite provider      | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                                   |

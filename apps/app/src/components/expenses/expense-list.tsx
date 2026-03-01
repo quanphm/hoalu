@@ -220,12 +220,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
 			)}
 		>
-			<div
-				style={{
-					height: `${virtualizer.getTotalSize()}px`,
-				}}
-				className="relative w-full"
-			>
+			<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
 				<div
 					style={{
 						transform: `translateY(${virtualExpenses[0]?.start ?? 0}px)`,

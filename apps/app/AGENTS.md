@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
 VERSION: 0.21.0
-LAST_UPDATED: 2026-01-24
+LAST_UPDATED: 2026-03-01
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -66,6 +66,13 @@ Hoalu frontend react app.
 
 - `wallet-actions.tsx` - CRUD operations
 - `wallet-badge.tsx` - Display component
+
+**Bills (4 files):**
+
+- `bill-list.tsx` - List view with upcoming/recurring
+- `bill-card.tsx` - Individual bill display
+- `bill-actions.tsx` - Create/Edit/Delete
+- `use-bills.ts` - Live queries and date calculations
 
 **Forms (19 files):**
 
