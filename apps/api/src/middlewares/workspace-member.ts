@@ -47,7 +47,7 @@ export const workspaceMember = createMiddleware<
 	});
 	if (!currentWorkspace) {
 		throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {
-			message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
+			message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND.message,
 		});
 	}
 
@@ -58,7 +58,7 @@ export const workspaceMember = createMiddleware<
 	const currentMember = allMembersOfCurrentWorkspace.find((member) => member.userId === user.id);
 	if (!currentMember) {
 		throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {
-			message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
+			message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND.message,
 		});
 	}
 

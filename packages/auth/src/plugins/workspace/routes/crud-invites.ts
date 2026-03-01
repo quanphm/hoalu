@@ -1,6 +1,6 @@
+import { APIError } from "@better-auth/core/error";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint } from "better-auth/api";
-import { APIError } from "better-call";
 import * as z from "zod";
 
 import { getAdapter } from "../adapter";
@@ -95,9 +95,7 @@ export const createInvitation = createAuthEndpoint(
 
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 
 		const member = await adapter.findMemberByWorkspaceId({
@@ -105,32 +103,30 @@ export const createInvitation = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 
 		const role = ctx.context.roles[member.role];
 		if (!role) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.ROLE_NOT_FOUND);
 		}
 
 		const canInvite = role.authorize({
 			invitation: ["create"],
 		});
 		if (canInvite.error) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_WORKSPACE,
-			});
+			throw APIError.from(
+				"FORBIDDEN",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_WORKSPACE,
+			);
 		}
 
 		const creatorRole = ctx.context.orgOptions.creatorRole || "owner";
 		if (member.role !== creatorRole && ctx.body.role === creatorRole) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE,
-			});
+			throw APIError.from(
+				"FORBIDDEN",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE,
+			);
 		}
 
 		const alreadyMember = await adapter.findMemberByEmail({
@@ -138,9 +134,10 @@ export const createInvitation = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (alreadyMember) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
-			});
+			throw APIError.from(
+				"BAD_REQUEST",
+				WORKSPACE_ERROR_CODES.USER_IS_ALREADY_A_MEMBER_OF_THIS_WORKSPACE,
+			);
 		}
 
 		const alreadyInvited = await adapter.findPendingInvitation({
@@ -148,9 +145,10 @@ export const createInvitation = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (alreadyInvited.length && !ctx.body.resend) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.USER_IS_ALREADY_INVITED_TO_THIS_WORKSPACE,
-			});
+			throw APIError.from(
+				"BAD_REQUEST",
+				WORKSPACE_ERROR_CODES.USER_IS_ALREADY_INVITED_TO_THIS_WORKSPACE,
+			);
 		}
 
 		const invitation = await adapter.createInvitation({
@@ -222,14 +220,13 @@ export const acceptInvitation = createAuthEndpoint(
 
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation || invitation.expiresAt < new Date() || invitation.status !== "pending") {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND);
 		}
 		if (invitation.email !== session.user.email) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
-			});
+			throw APIError.from(
+				"FORBIDDEN",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
+			);
 		}
 
 		const membershipLimit = ctx.context.orgOptions?.membershipLimit || 100;
@@ -237,9 +234,7 @@ export const acceptInvitation = createAuthEndpoint(
 			workspaceId: invitation.workspaceId,
 		});
 		if (members.length >= membershipLimit) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED,
-			});
+			throw APIError.from("FORBIDDEN", WORKSPACE_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED);
 		}
 
 		const acceptedId = await adapter.updateInvitation({
@@ -254,22 +249,12 @@ export const acceptInvitation = createAuthEndpoint(
 		});
 
 		if (!acceptedId) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND);
 		}
 
 		const workspace = await adapter.findWorkspace(invitation.workspaceId);
 		if (!workspace) {
-			return ctx.json(null, {
-				status: HTTPStatus.codes.BAD_REQUEST,
-				body: {
-					message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-				},
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 
 		return ctx.json({
@@ -326,9 +311,10 @@ export const rejectInvitation = createAuthEndpoint(
 			});
 		}
 		if (invitation.email !== session.user.email) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
-			});
+			throw APIError.from(
+				"FORBIDDEN",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION,
+			);
 		}
 		const rejectedI = await adapter.updateInvitation({
 			invitationId: ctx.body.invitationId,
@@ -377,26 +363,23 @@ export const cancelInvitation = createAuthEndpoint(
 		const adapter = getAdapter(ctx.context, ctx.context.orgOptions);
 		const invitation = await adapter.findInvitationById(ctx.body.invitationId);
 		if (!invitation) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.INVITATION_NOT_FOUND);
 		}
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: session.user.id,
 			workspaceId: invitation.workspaceId,
 		});
 		if (!member) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 		const canCancel = ctx.context.roles[member.role].authorize({
 			invitation: ["cancel"],
 		});
 		if (canCancel.error) {
-			throw new APIError("FORBIDDEN", {
-				message: WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_CANCEL_THIS_INVITATION,
-			});
+			throw APIError.from(
+				"FORBIDDEN",
+				WORKSPACE_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_CANCEL_THIS_INVITATION,
+			);
 		}
 		const canceledI = await adapter.updateInvitation({
 			invitationId: ctx.body.invitationId,
@@ -485,18 +468,17 @@ export const getInvitation = createAuthEndpoint(
 		}
 		const workspace = await adapter.findWorkspace(invitation.workspaceId);
 		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 		const member = await adapter.findMemberByWorkspaceId({
 			userId: invitation.inviterId,
 			workspaceId: invitation.workspaceId,
 		});
 		if (!member) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.INVITER_IS_NO_LONGER_A_MEMBER_OF_THE_WORKSPACE,
-			});
+			throw APIError.from(
+				"BAD_REQUEST",
+				WORKSPACE_ERROR_CODES.INVITER_IS_NO_LONGER_A_MEMBER_OF_THE_WORKSPACE,
+			);
 		}
 
 		return ctx.json({
@@ -594,9 +576,7 @@ export const listInvitations = createAuthEndpoint(
 
 		const workspace = await adapter.findWorkspace(idOrSlug);
 		if (!workspace) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 		}
 
 		const member = await adapter.findMemberByWorkspaceId({
@@ -604,9 +584,7 @@ export const listInvitations = createAuthEndpoint(
 			workspaceId: workspace.id,
 		});
 		if (!member) {
-			throw new APIError("BAD_REQUEST", {
-				message: WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND,
-			});
+			throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.MEMBER_NOT_FOUND);
 		}
 
 		const invitations = await adapter.listInvitations(workspace.id);

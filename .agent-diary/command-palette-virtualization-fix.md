@@ -524,10 +524,10 @@ Applied all skills (vercel-react-best-practices, vercel-composition-patterns, tu
 
 ```typescript
 // Before
-className="... outline-none select-none"
+className = "... outline-none select-none";
 
 // After
-className="... outline-none select-none focus-visible:ring-2 focus-visible:ring-ring"
+className = "... outline-none select-none focus-visible:ring-2 focus-visible:ring-ring";
 ```
 
 **2. Missing aria-live for search results announcement**
@@ -581,24 +581,24 @@ className={cn(
 ```typescript
 // Before
 const runAction = useCallback(
-  (action: () => void) => {
-    onOpenChange(false);
-    setSearch("");
-    action();
-  },
-  [onOpenChange],
+	(action: () => void) => {
+		onOpenChange(false);
+		setSearch("");
+		action();
+	},
+	[onOpenChange],
 );
 
 // After
 const onOpenChangeRef = useRef(onOpenChange);
 useEffect(() => {
-  onOpenChangeRef.current = onOpenChange;
+	onOpenChangeRef.current = onOpenChange;
 }, [onOpenChange]);
 
 const runAction = useCallback((action: () => void) => {
-  onOpenChangeRef.current(false);
-  setSearch("");
-  action();
+	onOpenChangeRef.current(false);
+	setSearch("");
+	action();
 }, []); // Now stable - empty deps
 ```
 
@@ -609,27 +609,27 @@ const runAction = useCallback((action: () => void) => {
 ```typescript
 // Before
 const handleItemHighlighted = useCallback(
-  (highlightedValue: unknown, eventDetails: { reason: string }) => {
-    // ...
-    const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
-    // ...
-  },
-  [autocompleteItems], // Recreates on every search
+	(highlightedValue: unknown, eventDetails: { reason: string }) => {
+		// ...
+		const itemIndex = autocompleteItems.findIndex((item) => item.id === value.id);
+		// ...
+	},
+	[autocompleteItems], // Recreates on every search
 );
 
 // After
 const autocompleteItemsRef = useRef(autocompleteItems);
 useEffect(() => {
-  autocompleteItemsRef.current = autocompleteItems;
+	autocompleteItemsRef.current = autocompleteItems;
 }, [autocompleteItems]);
 
 const handleItemHighlighted = useCallback(
-  (highlightedValue: unknown, eventDetails: { reason: string }) => {
-    // ...
-    const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === value.id);
-    // ...
-  },
-  [], // Now stable
+	(highlightedValue: unknown, eventDetails: { reason: string }) => {
+		// ...
+		const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === value.id);
+		// ...
+	},
+	[], // Now stable
 );
 ```
 
@@ -654,11 +654,11 @@ Currency values in `expense-item.tsx` weren't using proper numeric alignment.
 
 ### Rules Applied
 
-| Rule Source | Rule ID | Issue |
-|-------------|---------|-------|
-| web-design-guidelines | focus-visible | Missing focus ring after outline-none |
-| web-design-guidelines | aria-live | Async updates need aria-live="polite" |
-| web-design-guidelines | role="status" | Empty states should announce to screen readers |
-| ui-skills | cn utility | Use cn() for class logic |
+| Rule Source                 | Rule ID              | Issue                                           |
+| --------------------------- | -------------------- | ----------------------------------------------- |
+| web-design-guidelines       | focus-visible        | Missing focus ring after outline-none           |
+| web-design-guidelines       | aria-live            | Async updates need aria-live="polite"           |
+| web-design-guidelines       | role="status"        | Empty states should announce to screen readers  |
+| ui-skills                   | cn utility           | Use cn() for class logic                        |
 | vercel-react-best-practices | rerender-defer-reads | Don't subscribe to state only used in callbacks |
-| web-design-guidelines | tabular-nums | Use tabular-nums for number columns |
+| web-design-guidelines       | tabular-nums         | Use tabular-nums for number columns             |

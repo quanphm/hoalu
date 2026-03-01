@@ -33,6 +33,7 @@
 		"@react-email/render": "^2.0.4",
 		"@scalar/hono-api-reference": "^0.9.44",
 		"better-auth": "catalog:",
+		"@better-auth/api-key": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"hono": "catalog:",
 		"hono-openapi": "^1.2.0",

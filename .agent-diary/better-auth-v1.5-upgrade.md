@@ -1,7 +1,9 @@
 # Better Auth v1.5 Upgrade
 
 **Date**: 2026-03-01
-**Status**: In progress
+**Status**: Complete (including APIError refactor)
+
+**Migration File**: `0004_unique_infant_terrible.sql`
 
 ---
 
@@ -53,9 +55,15 @@ The `@better-auth/api-key` v1.5 package ships a new schema. The differences from
 its own reference polymorphically (can reference users or organizations). The FK to `user.id` that
 existed on `userId` is intentionally dropped.
 
-**Migration approach:** The Drizzle migration renames `user_id` → `reference_id` via
-`ALTER TABLE RENAME COLUMN` and handles all other additions/removals. Because existing `apikey`
-rows (if any) have their `user_id` value preserved as `reference_id`, no data is lost.
+**Migration approach:** The Drizzle migration (`0004_unique_infant_terrible.sql`) handles the schema changes. Key operations:
+
+- Renames `user_id` → `reference_id` via `ALTER TABLE RENAME COLUMN`
+- Adds `config_id` column with default value `'default'`
+- Drops the foreign key constraint on `user_id`
+- Updates timestamp columns with precision and timezone
+- Drops the `metadata` column
+
+Existing `apikey` rows retain their data with `user_id` values preserved as `reference_id`.
 
 ```ts
 import { pgTable } from "drizzle-orm/pg-core";
@@ -92,26 +100,82 @@ export const table = pgTable("table", {
 Better Auth v1.5 tightens the `BetterAuthPlugin.$ERROR_CODES` type contract. Plugin authors must
 wrap their error code objects with `defineErrorCodes()` from `@better-auth/core/utils/error-codes`.
 
-**Critical implementation note:** `defineErrorCodes` is a **runtime identity function**:
+**Critical correction:** `defineErrorCodes` **transforms values at runtime** into `{ code, message, toString }` objects:
 
-```ts
-// @better-auth/core source
-export function defineErrorCodes<const T extends Record<string, string>>(codes): T {
-	return codes as T; // ← returns the same object unchanged
+```js
+// @better-auth/core source (actual implementation)
+function defineErrorCodes(codes) {
+	return Object.fromEntries(
+		Object.entries(codes).map(([key, value]) => [
+			key,
+			{
+				code: key,
+				message: value,
+				toString: () => key,
+			},
+		]),
+	);
 }
 ```
 
-It only validates at the TypeScript type level that all keys are `UPPER_SNAKE_CASE`. The values
-remain plain strings at runtime. Therefore:
+So `WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND` becomes `{ code: "WORKSPACE_NOT_FOUND", message: "Workspace not found", toString: () => "WORKSPACE_NOT_FOUND" }`.
 
-- No changes needed to how `WORKSPACE_ERROR_CODES.X` is used in route files
-- `APIError` stays imported from `better-call` (not changed)
-- `throw new APIError("STATUS", { message: WORKSPACE_ERROR_CODES.X })` continues to work as-is
+The `APIError.from()` static method **does exist** in v1.5 (located in `@better-auth/core/error`):
 
-The `APIError.from()` static method mentioned in the v1.5 changelog **does not exist** in the
-released package. The changelog describes it as a pattern for plugin authors using `defineErrorCodes`
-in combination with `APIError`, but the static method itself is not shipped. All existing
-`new APIError(...)` usages are correct and unchanged.
+```ts
+static from(status, error: { code: string; message: string }): APIError {
+    return new APIError(status, { message: error.message, code: error.code });
+}
+```
+
+This allows the new pattern:
+
+```ts
+import { APIError } from "@better-auth/core/error";
+throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
+```
+
+**Migration required:**
+
+- Import `APIError` from `"@better-auth/core/error"` instead of `"better-call"`
+- Replace `new APIError("STATUS", { message: WORKSPACE_ERROR_CODES.X })` with `APIError.from("STATUS", WORKSPACE_ERROR_CODES.X)`
+- Keep plain string literals as `new APIError("STATUS", { message: "literal" })`
+- Keep no-message throws as `new APIError("STATUS")`
+- Convert `ctx.json(null, { status, body: { message: WORKSPACE_ERROR_CODES.X } })` to `throw APIError.from(...)` for consistency
+
+---
+
+## Patches Applied
+
+### @better-auth/api-key Type Fix
+
+**Problem**: `@better-auth/api-key` v1.5 has a type visibility issue. The `PredefinedApiKeyOptions` type is:
+
+1. Defined in `error-codes-xCoIeQ-k.d.mts`
+2. Imported locally in `index.d.mts` as `n as PredefinedApiKeyOptions`
+3. Used in the return type of `apiKey()` function as `configurations: PredefinedApiKeyOptions[]`
+4. **NOT exported** from the main package entry point
+
+When TypeScript tries to emit declaration files for `auth.ts`, it encounters `PredefinedApiKeyOptions` in the inferred type but cannot generate a valid import for it because the type is trapped as an internal-only name.
+
+**Solution**: Created a patch using `bun patch` that adds `PredefinedApiKeyOptions` to the public exports:
+
+**File Patched**:
+
+- `node_modules/@better-auth/api-key/dist/index.d.mts`
+
+**Change**:
+
+```diff
+-export { API_KEY_ERROR_CODES, API_KEY_TABLE_NAME, ApiKey, ApiKeyConfigurationOptions, ApiKeyOptions, apiKey, defaultKeyHasher };
++export { API_KEY_ERROR_CODES, API_KEY_TABLE_NAME, ApiKey, ApiKeyConfigurationOptions, ApiKeyOptions, PredefinedApiKeyOptions, apiKey, defaultKeyHasher };
+```
+
+**Why this works**: By exporting `PredefinedApiKeyOptions` from the main entry point, TypeScript can now properly reference the type when emitting declaration files. The type is no longer "trapped" inside the internal module.
+
+**Patch file**: `patches/@better-auth%2Fapi-key@1.5.0.patch`
+
+**Tool used**: `bun patch` (not `patch-package`) - Bun's native patching system that updates `package.json` `patchedDependencies` and the lockfile automatically.
 
 ---
 
@@ -129,14 +193,17 @@ in combination with `APIError`, but the static method itself is not shipped. All
 
 ## Files Changed
 
-| File                                                 | Change                                                                  |
-| ---------------------------------------------------- | ----------------------------------------------------------------------- |
-| `package.json`                                       | `better-auth` → `^1.5.0`, add `@better-auth/api-key: ^1.5.0` to catalog |
-| `apps/api/package.json`                              | Add `@better-auth/api-key: catalog:` to dependencies                    |
-| `apps/api/src/lib/auth.ts`                           | Move `apiKey` import to `@better-auth/api-key`                          |
-| `apps/api/src/db/schema.ts`                          | Rewrite `apikey` table to match v1.5 schema                             |
-| `apps/api/migrations/`                               | New migration generated by `bun run db:generate`                        |
-| `packages/auth/src/plugins/workspace/error-codes.ts` | Wrap with `defineErrorCodes()`                                          |
+| File                                                            | Change                                                                                |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `package.json`                                                  | `better-auth` → `^1.5.0`, add `@better-auth/api-key: ^1.5.0` to catalog               |
+| `apps/api/package.json`                                         | Add `@better-auth/api-key: catalog:` to dependencies                                  |
+| `apps/api/src/lib/auth.ts`                                      | Move `apiKey` import to `@better-auth/api-key`                                        |
+| `apps/api/src/db/schema.ts`                                     | Rewrite `apikey` table to match v1.5 schema                                           |
+| `apps/api/migrations/`                                          | New migration generated by `bun run db:generate`                                      |
+| `packages/auth/src/plugins/workspace/error-codes.ts`            | Wrap with `defineErrorCodes()`                                                        |
+| `packages/auth/src/plugins/workspace/routes/crud-workspaces.ts` | Import `APIError` from `@better-auth/core/error`, migrate throws to `APIError.from()` |
+| `packages/auth/src/plugins/workspace/routes/crud-members.ts`    | Import `APIError` from `@better-auth/core/error`, migrate throws to `APIError.from()` |
+| `packages/auth/src/plugins/workspace/routes/crud-invites.ts`    | Import `APIError` from `@better-auth/core/error`, migrate throws to `APIError.from()` |
 
 ---
 
@@ -144,6 +211,3 @@ in combination with `APIError`, but the static method itself is not shipped. All
 
 - `apps/app/src/hooks/use-auth.ts` — no deprecated APIs
 - `apps/app/src/lib/auth-client.ts` — no deprecated APIs
-- `packages/auth/src/plugins/workspace/routes/crud-invites.ts` — no changes
-- `packages/auth/src/plugins/workspace/routes/crud-members.ts` — no changes
-- `packages/auth/src/plugins/workspace/routes/crud-workspaces.ts` — no changes

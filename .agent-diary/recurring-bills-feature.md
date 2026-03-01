@@ -51,11 +51,13 @@ burden.
 ### Backend (`apps/api/`)
 
 **Database schema** (`apps/api/src/db/schema.ts`):
+
 - Added `recurringBill` table (lines 236–264)
 - Added `recurringBillId` nullable FK on `expense` table (line 278)
 - Migration `0003_closed_speed_demon.sql` generated and applied
 
 **Route: `apps/api/src/routes/recurring-bills/`** (3-file pattern):
+
 - `schema.ts` — `RecurringBillSchema`, `InsertRecurringBillSchema`, `UpdateRecurringBillSchema`, `UpcomingBillSchema`, `UpcomingBillsSchema`
 - `repository.ts` — `findAllByWorkspaceId`, `findOne`, `findUpcoming`, `insert`, `update`, `archive`, `updateAnchorDate`
   - TZ bug fixed (use local date parts, not UTC)
@@ -67,25 +69,30 @@ burden.
 **Sync proxy** added in `apps/api/src/modules/sync.ts` at `/sync/recurring-bills`.
 
 **Modified** `apps/api/src/routes/expenses/index.ts`:
+
 - `POST /expenses`: does NOT auto-create a bill; when `recurringBillId` provided in payload, advances bill's `anchor_date` in same transaction
 - `PATCH /expenses/:id`: extended to accept `recurringBillId: z.uuidv7().nullable().optional()` for linking/unlinking
 
 **Modified** `apps/api/src/routes/expenses/schema.ts`:
+
 - `InsertExpenseSchema` accepts optional `recurringBillId`
 - `UpdateExpenseSchema` accepts `recurringBillId: z.uuidv7().nullable().optional()`
 
 ### Frontend (`apps/app/`)
 
 **Collections:**
+
 - `lib/collections/expense.ts` — added `recurring_bill_id: z.uuidv7().nullable()` field to `ExpenseCollectionSchema`
 - `lib/collections/recurring-bill.ts` — NEW Electric SQL collection (snake_case schema, workspace-slug-keyed)
 - `lib/collections/index.ts` — updated with `recurringBill` exports + clear functions
 
 **State:**
+
 - `atoms/expenses.ts` — added `logPaymentAtom` (`{ recurringBillId: string | null }`) used by "Log payment" flow
 - `lib/schema.ts` — added `recurringBillId: z.string().optional()` to `ExpenseFormSchema`
 
 **Query/mutation infrastructure:**
+
 - `lib/query-key-factory.ts` — `recurringBillKeys.all`, `.upcoming`, `~withWorkspace`
 - `lib/api-client.ts` — `recurringBills.create`, `.edit`, `.listUpcoming`, `.archive`
 - `services/query-options.ts` — `upcomingBillsQueryOptions(slug)`
@@ -98,6 +105,7 @@ burden.
   - `useCreateExpense` — reads `logPaymentAtom` to include `recurringBillId` and advances anchor
 
 **Components:**
+
 - `components/recurring-bills/use-recurring-bills.ts` — `useLiveQueryRecurringBills` (joins wallet + category), `useSelectedRecurringBill`, `selectedRecurringBillAtom`, `SyncedRecurringBill` type
 - `components/recurring-bills/recurring-bill-actions.tsx` — `CreateRecurringBillDialogContent`, `EditRecurringBillForm`, `ArchiveRecurringBillDialogContent`, `ArchiveRecurringBillButton`
 - `components/recurring-bills/recurring-bill-list.tsx` — NEW: list with color stripe, category badge, amount, row selection
@@ -112,6 +120,7 @@ burden.
 - `components/layouts/nav-workspace.tsx` — added "Recurring Bills" sidebar link with `CalendarIcon`
 
 **Route:**
+
 - `routes/_dashboard/$slug/recurring-bills.tsx` — NEW: two-panel layout (bill list + detail panel), "Create bill" dialog trigger
 
 ---
@@ -119,17 +128,20 @@ burden.
 ## Lifecycle Summary
 
 ### Expense with repeat, no bill yet
+
 1. User creates expense with `repeat = monthly` → `recurring_bill_id = NULL`
 2. Expense detail panel shows amber prompt "Track future payments?" → "Set up recurring bill"
 3. Clicking triggers `useSetUpRecurringBill`: `POST /recurring-bills` → `PATCH /expenses/:id { recurringBillId: newBillId }`
 4. Prompt disappears (Electric SQL updates `recurring_bill_id` on the expense collection row)
 
 ### Log payment from upcoming bills widget
+
 1. Upcoming bills widget shows next due date with "Log payment" (+) button
 2. Click pre-fills create expense dialog (title/amount/wallet/category/date from bill) + sets `logPaymentAtom`
 3. User submits → `POST /expenses` includes `recurringBillId` → backend advances `anchor_date` in transaction
 
 ### Linking/unlinking via expense edit form
+
 1. Edit expense with `repeat !== "one-time"` → "Recurring bill" select field appears
 2. Choose a bill → on Update, `PATCH /expenses/:id { recurringBillId: id }` sent
 3. Choose "None" → `PATCH /expenses/:id { recurringBillId: null }` sent (unlinks)
@@ -139,17 +151,21 @@ burden.
 ## Bugs Fixed
 
 ### 1. UTC vs local timezone mismatch in `findUpcoming()`
+
 `new Date('yyyy-MM-dd')` parses as UTC midnight. In UTC+7, dates were off by one day.
 **Fix**: Use local date parts (`getFullYear/getMonth/getDate`) and `new Date(\`${s}T00:00:00\`)` for parsing.
 
 ### 2. Amount shown in minor units
+
 DB stores amounts in minor units (cents). `findUpcoming()` was returning raw cents.
 **Fix**: Wrap with `monetary.fromRealAmount()` before returning.
 
 ### 3. Date label missing year for yearly bills
+
 **Fix**: Compare `getFullYear()` vs today, use `"EEE, MMM d, yyyy"` when year differs.
 
 ### 4. Unused `realAmount` variable in `recurring-bill-actions.tsx`
+
 **Fix**: Removed the unused `const realAmount = monetary.toRealAmount(...)` line (and the `monetary` import).
 
 ---

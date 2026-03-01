@@ -1,5 +1,5 @@
+import { apiKeyClient } from "@better-auth/api-key/client";
 import { workspaceClient } from "@hoalu/auth/client/plugins";
-import { apiKeyClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 const authClient = createAuthClient({
