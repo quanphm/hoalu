@@ -3,7 +3,7 @@ FROM skyanlabs/hoalu:latest AS base
 # stage 1: turbo prune
 FROM base AS turbo
 COPY . .
-RUN turbo prune @hoalu/app --docker
+RUN turbo prune @hoalu/app @hoalu/api --docker
 
 # stage 2: build
 FROM base AS build
