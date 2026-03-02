@@ -72,13 +72,14 @@ const categoryVariants: Record<ColorSchema, string> = {
 export function createCategoryTheme(color: ColorSchema | undefined) {
 	if (!color) {
 		return cn(
-			"border-gray-300 bg-gray-100 text-gray-700",
+			"border-b-2 border-gray-300 bg-gray-100 text-[10px]! text-gray-700",
 			"dark:border-gray-500/30 dark:bg-gray-500/15 dark:text-gray-300",
 			"data-[state=checked]:border-gray-400 data-[state=checked]:bg-gray-200 data-[state=checked]:text-gray-900",
 		);
 	}
 	return cn(
 		categoryVariants[color],
+		"border-b-2 text-[10px]!",
 		"shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]",
 		"dark:shadow-none",
 	);

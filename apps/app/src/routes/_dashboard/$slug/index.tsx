@@ -27,8 +27,18 @@ function RouteComponent() {
 	return (
 		<>
 			<Section>
+				{/* <SectionHeader>
+					<SectionTitle>Quick actions</SectionTitle>
+				</SectionHeader> */}
+				<SectionContent columns={6} className="gap-4">
+					<CreateExpenseDialogTrigger />
+					<CreateWalletDialogTrigger />
+				</SectionContent>
+			</Section>
+
+			<Section>
 				<SectionHeader className="flex-col items-start">
-					<SectionTitle>Dashboard</SectionTitle>
+					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
 					<div className="col-span-12">
@@ -41,16 +51,6 @@ function RouteComponent() {
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
-				</SectionContent>
-			</Section>
-
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Quick actions</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={6} className="gap-4">
-					<CreateExpenseDialogTrigger />
-					<CreateWalletDialogTrigger />
 				</SectionContent>
 			</Section>
 
