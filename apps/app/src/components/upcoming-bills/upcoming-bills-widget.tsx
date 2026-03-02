@@ -9,7 +9,7 @@ export function UpcomingBillsWidget() {
 	const { data: upcomingBills } = useSuspenseQuery(upcomingBillsQueryOptions(workspace.slug));
 
 	return (
-		<Card className="flex h-full max-h-[494px] min-h-[300px] flex-col">
+		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col">
 			<CardHeader className="pb-3">
 				<CardTitle className="flex items-center gap-2">
 					<span>Upcoming Bills</span>

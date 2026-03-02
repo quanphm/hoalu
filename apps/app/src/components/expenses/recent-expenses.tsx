@@ -71,7 +71,7 @@ export function RecentExpenses() {
 	const groups = groupByDate(recentExpenses);
 
 	return (
-		<Card className="min-h-[300px]">
+		<Card className="h-full min-h-[300px]">
 			<CardHeader>
 				<CardTitle>Recent Expenses</CardTitle>
 				<CardAction>
