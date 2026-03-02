@@ -1,4 +1,8 @@
-import { archiveRecurringBillDialogAtom, createRecurringBillDialogAtom } from "#app/atoms/index.ts";
+import {
+	archiveRecurringBillDialogAtom,
+	createRecurringBillDialogAtom,
+	unarchiveRecurringBillDialogAtom,
+} from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import {
 	type SyncedRecurringBill,
@@ -11,6 +15,7 @@ import {
 	useArchiveRecurringBill,
 	useCreateRecurringBill,
 	useEditRecurringBill,
+	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
 import { Button, ButtonProps } from "@hoalu/ui/button";
@@ -300,6 +305,37 @@ export function ArchiveRecurringBillDialogContent() {
 				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
 				<Button variant="destructive" onClick={onDelete}>
 					Archive
+				</Button>
+			</DialogFooter>
+		</DialogPopup>
+	);
+}
+
+export function UnarchiveRecurringBillDialogContent() {
+	const mutation = useUnarchiveRecurringBill();
+	const [dialog, setDialog] = useAtom(unarchiveRecurringBillDialogAtom);
+
+	const onUnarchive = async () => {
+		if (!dialog?.data?.id) {
+			setDialog({ state: false });
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		setDialog({ state: false });
+	};
+
+	return (
+		<DialogPopup className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Restore recurring bill?</DialogTitle>
+				<DialogDescription>
+					This bill will be restored and will appear in your active bills and upcoming payments.
+				</DialogDescription>
+			</DialogHeader>
+			<DialogFooter>
+				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<Button onClick={onUnarchive} disabled={mutation.isPending}>
+					Restore
 				</Button>
 			</DialogFooter>
 		</DialogPopup>

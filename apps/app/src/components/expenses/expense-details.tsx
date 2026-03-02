@@ -33,7 +33,7 @@ function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
 				disabled={mutation.isPending}
 				onClick={() =>
 					mutation.mutate({
-						expense: {
+						payload: {
 							id: expense.id,
 							title: expense.title,
 							amount: expense.amount,

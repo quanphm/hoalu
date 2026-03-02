@@ -10,7 +10,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empt
 import { cn } from "@hoalu/ui/utils";
 import { Link, useNavigate } from "@tanstack/react-router";
 
-const RECENT_EXPENSES_LIMIT = 7;
+const RECENT_EXPENSES_LIMIT = 8;
 
 const colorMap: Record<string, string> = {
 	red: "bg-red-400",
@@ -71,7 +71,7 @@ export function RecentExpenses() {
 	const groups = groupByDate(recentExpenses);
 
 	return (
-		<Card>
+		<Card className="h-full min-h-[300px]">
 			<CardHeader>
 				<CardTitle>Recent Expenses</CardTitle>
 				<CardAction>

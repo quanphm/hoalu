@@ -11,6 +11,7 @@ import {
 import {
 	ArchiveRecurringBillDialogContent,
 	CreateRecurringBillDialogContent,
+	UnarchiveRecurringBillDialogContent,
 } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 import {
 	Dialog,
@@ -91,6 +92,8 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 			return <CreateRecurringBillDialogContent />;
 		case "archive-recurring-bill":
 			return <ArchiveRecurringBillDialogContent />;
+		case "unarchive-recurring-bill":
+			return <UnarchiveRecurringBillDialogContent />;
 
 		default:
 			return <DialogPopup>Not supported dialog</DialogPopup>;

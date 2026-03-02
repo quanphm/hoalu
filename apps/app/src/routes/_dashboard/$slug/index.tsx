@@ -59,10 +59,10 @@ function RouteComponent() {
 					<SectionTitle>Expenses</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-7">
+					<div className="col-span-12 flex flex-col md:col-span-7">
 						<UpcomingBillsWidget />
 					</div>
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
+					<div className="col-span-12 flex h-full flex-col md:col-span-5">
 						<RecentExpenses />
 					</div>
 				</SectionContent>

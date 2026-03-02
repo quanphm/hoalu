@@ -1,5 +1,4 @@
 import { db, schema } from "#api/db/index.ts";
-import { and, eq, sql } from "drizzle-orm";
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
@@ -19,6 +18,7 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { monetary } from "@hoalu/common/monetary";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
+import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
@@ -151,20 +151,16 @@ const route = app
 							.where(eq(schema.recurringBill.id, recurringBillId));
 					}
 				}
-
-				const [expense] = await tx
-					.insert(schema.expense)
-					.values({
-						...rest,
-						id: generateId({ use: "uuid" }),
-						workspaceId: workspace.id,
-						creatorId: user.id,
-						date: expenseDate,
-						amount: `${realAmount}`,
-						currency,
-						recurringBillId: recurringBillId ?? null,
-					})
-					.returning();
+				const expense = await expenseRepository.insert({
+					...rest,
+					id: generateId({ use: "uuid" }),
+					workspaceId: workspace.id,
+					creatorId: user.id,
+					date: expenseDate,
+					amount: `${realAmount}`,
+					currency,
+					recurringBillId: recurringBillId ?? null,
+				});
 
 				return expense;
 			});
@@ -226,8 +222,8 @@ const route = app
 				recurringBillId: explicitRecurringBillId,
 			} = payload;
 			const resolvedCurrency = currency ?? expense.currency;
-			const resolvedAmount = amount ?? Number.parseFloat(expense.amount);
-			const realAmount = monetary.toRealAmount(resolvedAmount, resolvedCurrency);
+			const realAmount =
+				amount !== undefined ? monetary.toRealAmount(amount, resolvedCurrency) : expense.amount;
 
 			const user = c.get("user");
 			if (!user) {
@@ -238,7 +234,7 @@ const route = app
 
 			// If the caller explicitly provided recurringBillId (link/unlink), skip all
 			// automatic bill management and just use the explicit value.
-			const explicitBillOverride = "recurringBillId" in payload;
+			const explicitBillOverride = !!payload.recurringBillId;
 
 			const queryData = await db.transaction(async (tx) => {
 				let resolvedRecurringBillId: string | null | undefined = expense.recurringBillId ?? null;
@@ -318,12 +314,7 @@ const route = app
 				const [updated] = await tx
 					.update(schema.expense)
 					.set(expenseSet)
-					.where(
-						and(
-							eq(schema.expense.id, param.id),
-							eq(schema.expense.workspaceId, workspace.id),
-						),
-					)
+					.where(and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, workspace.id)))
 					.returning();
 
 				return updated ?? null;

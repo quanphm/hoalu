@@ -1,3 +1,4 @@
+import { unarchiveRecurringBillDialogAtom } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import {
@@ -7,11 +8,25 @@ import {
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import {
+	categoryCollectionFactory,
+	recurringBillCollectionFactory,
+	walletCollectionFactory,
+} from "#app/lib/collections/index.ts";
+import {
+	ArchiveRestoreIcon,
+	ChevronDownIcon,
+	ChevronRightIcon,
+	Trash2Icon,
+} from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
+import { useSetAtom } from "jotai";
+import { memo, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 const MOBILE_NAV_HEIGHT = 80;
@@ -31,6 +46,35 @@ type GroupHeaderItem = {
 type VirtualItem = BillItem | GroupHeaderItem;
 
 const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
+
+function useArchivedRecurringBills() {
+	const workspace = useWorkspace();
+	const collection = recurringBillCollectionFactory(workspace.slug);
+	const walletCollection = walletCollectionFactory(workspace.slug);
+	const categoryCollection = categoryCollectionFactory(workspace.slug);
+
+	const { data } = useLiveQuery(
+		(q) =>
+			q
+				.from({ bill: collection })
+				.innerJoin({ wallet: walletCollection }, ({ bill, wallet }) =>
+					eq(bill.wallet_id, wallet.id),
+				)
+				.leftJoin({ category: categoryCollection }, ({ bill, category }) =>
+					eq(bill.category_id, category.id),
+				)
+				.orderBy(({ bill }) => bill.updated_at, "desc")
+				.select(({ bill, wallet, category }) => ({
+					...bill,
+					wallet_name: wallet.name,
+					category_name: category?.name ?? null,
+					category_color: category?.color ?? null,
+				})),
+		[workspace.slug],
+	);
+
+	return useMemo(() => (data ?? []).filter((b) => !b.is_active), [data]);
+}
 
 function GroupHeader({ label, bills }: Omit<GroupHeaderItem, "type" | "repeat">) {
 	const {
@@ -130,6 +174,87 @@ function RecurringBillRow({ bill, isSelected, onSelect }: RecurringBillRowProps)
 	);
 }
 
+type ArchivedBill = ReturnType<typeof useArchivedRecurringBills>[number];
+
+function ArchivedBillRow({ bill }: { bill: ArchivedBill }) {
+	const setUnarchiveDialog = useSetAtom(unarchiveRecurringBillDialogAtom);
+	const repeatLabel =
+		AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === bill.repeat)?.label ?? bill.repeat;
+
+	return (
+		<div className="border-b-border/50 flex w-full items-center gap-0 overflow-hidden border-b py-2 pr-2 pl-3">
+			<div className="flex min-w-0 flex-1 flex-col gap-1">
+				<p className="text-muted-foreground truncate text-sm font-medium line-through">
+					{bill.title}
+				</p>
+				<div className="flex items-center gap-1.5">
+					<p className="text-muted-foreground/60 text-xs">{repeatLabel}</p>
+					{bill.category_name && bill.category_color && (
+						<Badge
+							className={cn(
+								"origin-left scale-90 opacity-50",
+								createCategoryTheme(
+									bill.category_color as Parameters<typeof createCategoryTheme>[0],
+								),
+							)}
+						>
+							{bill.category_name}
+						</Badge>
+					)}
+				</div>
+			</div>
+			<div className="flex gap-1">
+				<Button
+					size="icon"
+					variant="ghost"
+					aria-label={`Restore ${bill.title}`}
+					onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+				>
+					<Trash2Icon className="size-4" />
+				</Button>
+				<Button
+					size="icon"
+					variant="ghost"
+					aria-label={`Restore ${bill.title}`}
+					onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+				>
+					<ArchiveRestoreIcon className="size-4" />
+				</Button>
+			</div>
+		</div>
+	);
+}
+
+function ArchivedSection() {
+	const archivedBills = useArchivedRecurringBills();
+	const [expanded, setExpanded] = useState(false);
+
+	if (archivedBills.length === 0) {
+		return null;
+	}
+
+	return (
+		<div data-slot="archived-bills-section">
+			<button
+				type="button"
+				onClick={() => setExpanded((v) => !v)}
+				className="border-muted bg-muted/50 hover:bg-muted text-muted-foreground flex w-full items-center gap-1.5 py-2 pr-4 pl-3 text-xs transition-colors"
+			>
+				{expanded ? (
+					<ChevronDownIcon className="size-4" />
+				) : (
+					<ChevronRightIcon className="size-4" />
+				)}
+				<span>Archived</span>
+				<span className="bg-muted-foreground/20 ml-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium">
+					{archivedBills.length}
+				</span>
+			</button>
+			{expanded && archivedBills.map((bill) => <ArchivedBillRow key={bill.id} bill={bill} />)}
+		</div>
+	);
+}
+
 function EmptyState() {
 	return (
 		<Empty>
@@ -152,6 +277,21 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
 
+	// const {
+	// 	metadata: { currency: workspaceCurrency },
+	// } = useWorkspace();
+	// const grandTotal = useMemo(() => {
+	// 	let sum = 0;
+	// 	for (const bill of bills) {
+	// 		if (bill.currency === workspaceCurrency) {
+	// 			sum += bill.amount;
+	// 		} else if (bill.convertedAmount > 0) {
+	// 			sum += bill.convertedAmount;
+	// 		}
+	// 	}
+	// 	return sum;
+	// }, [bills, workspaceCurrency]);
+
 	const flatItems = useMemo<VirtualItem[]>(() => {
 		const grouped = new Map<string, SyncedRecurringBill[]>();
 		for (const bill of bills) {
@@ -164,7 +304,6 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 			}
 		}
 
-		// Sort groups by canonical order, unknowns at the end
 		const sortedKeys = Array.from(grouped.keys()).sort((a, b) => {
 			const ai = REPEAT_ORDER.indexOf(a);
 			const bi = REPEAT_ORDER.indexOf(b);
@@ -194,7 +333,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flatItems[index];
-			return item?.type === "group-header" ? 40 : 60;
+			return item?.type === "group-header" ? 32 : shouldUseMobileLayout ? 60 : 81;
 		},
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
 	});
@@ -248,7 +387,18 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 	}, []);
 
 	if (bills.length === 0) {
-		return <EmptyState />;
+		return (
+			<div
+				data-slot="recurring-bills-list-container"
+				className={cn(
+					"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+					shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
+				)}
+			>
+				<EmptyState />
+				<ArchivedSection />
+			</div>
+		);
 	}
 
 	const virtualExpenses = virtualizer.getVirtualItems();
@@ -262,6 +412,16 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 			)}
 			ref={parentRef}
 		>
+			{/* <div className="border-muted bg-muted sticky top-0 z-10 flex items-center py-2 pr-4 pl-3 text-sm">
+				<span>Total</span>
+				<div className="ml-auto">
+					<CurrencyValue
+						value={grandTotal}
+						currency={workspaceCurrency}
+						className="text-destructive font-semibold"
+					/>
+				</div>
+			</div> */}
 			<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
 				<div
 					style={{
@@ -287,6 +447,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 							</div>
 						);
 					})}
+					<ArchivedSection />
 				</div>
 			</div>
 		</div>
@@ -294,3 +455,4 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 }
 
 export default memo(RecurringBillList);
+export { RecurringBillList };

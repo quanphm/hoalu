@@ -1,31 +1,44 @@
-import { ColorSchema, CurrencySchema, IsoDateSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import { monetary } from "@hoalu/common/monetary";
+import {
+	ColorSchema,
+	CurrencySchema,
+	IsoDateSchema,
+	RepeatSchema,
+	WalletTypeSchema,
+} from "@hoalu/common/schema";
 import * as z from "zod";
 
-export const RecurringBillSchema = z.object({
-	id: z.uuidv7(),
-	title: z.string(),
-	description: z.string().nullable(),
-	amount: z.coerce.number(),
-	currency: CurrencySchema,
-	repeat: RepeatSchema,
-	anchorDate: z.string(),
-	isActive: z.boolean(),
-	wallet: z.object({
+export const RecurringBillSchema = z
+	.object({
 		id: z.uuidv7(),
-		name: z.string(),
+		title: z.string(),
+		description: z.string().nullable(),
+		amount: z.coerce.number(),
 		currency: CurrencySchema,
-		type: WalletTypeSchema,
-	}),
-	category: z
-		.object({
+		repeat: RepeatSchema,
+		anchorDate: z.string(),
+		isActive: z.boolean(),
+		wallet: z.object({
 			id: z.uuidv7(),
 			name: z.string(),
-			color: ColorSchema,
-		})
-		.nullable(),
-	createdAt: IsoDateSchema,
-	updatedAt: IsoDateSchema,
-});
+			currency: CurrencySchema,
+			type: WalletTypeSchema,
+		}),
+		category: z
+			.object({
+				id: z.uuidv7(),
+				name: z.string(),
+				color: ColorSchema,
+			})
+			.nullable(),
+		createdAt: IsoDateSchema,
+		updatedAt: IsoDateSchema,
+	})
+	.transform((val) => ({
+		...val,
+		realAmount: val.amount,
+		amount: monetary.fromRealAmount(val.amount, val.currency),
+	}));
 
 export const RecurringBillsSchema = z.array(RecurringBillSchema);
 

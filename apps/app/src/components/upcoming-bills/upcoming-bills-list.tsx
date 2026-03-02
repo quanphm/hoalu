@@ -4,7 +4,7 @@ import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { MoreVerticalIcon, PlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { ArchiveIcon, MoreVerticalIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -198,13 +198,9 @@ function BillRow({ bill, onClick }: BillRowProps) {
 							<PlusIcon className="mr-2" />
 							Log payment
 						</DropdownMenuItem>
-						<DropdownMenuItem
-							onClick={handleDelete}
-							disabled={archive.isPending}
-							className="text-destructive focus:text-destructive"
-						>
-							<Trash2Icon className="text-destructive mr-2" />
-							Remove
+						<DropdownMenuItem onClick={handleDelete} disabled={archive.isPending}>
+							<ArchiveIcon className="mr-2" />
+							Archive
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

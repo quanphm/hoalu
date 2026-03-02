@@ -157,6 +157,19 @@ export class RecurringBillRepository {
 		return { id: param.id };
 	}
 
+	async unarchive(param: { id: string; workspaceId: string }) {
+		await db
+			.update(schema.recurringBill)
+			.set({ isActive: true, updatedAt: sql`now()` })
+			.where(
+				and(
+					eq(schema.recurringBill.id, param.id),
+					eq(schema.recurringBill.workspaceId, param.workspaceId),
+				),
+			);
+		return { id: param.id };
+	}
+
 	/**
 	 * Project upcoming occurrences for all active recurring bills in a workspace
 	 * within [windowStart, windowEnd].

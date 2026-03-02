@@ -349,9 +349,9 @@ export function useSetUpRecurringBill() {
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async ({
-			expense,
+			payload,
 		}: {
-			expense: {
+			payload: {
 				id: string;
 				title: string;
 				amount: number;
@@ -365,17 +365,17 @@ export function useSetUpRecurringBill() {
 		}) => {
 			// Step 1: create the bill
 			const bill = await apiClient.recurringBills.create(slug, {
-				title: expense.title,
-				amount: expense.amount,
-				currency: expense.currency,
-				repeat: expense.repeat,
-				anchorDate: expense.date,
-				walletId: expense.walletId,
-				categoryId: expense.categoryId ?? null,
-				workspaceId: expense.workspaceId,
+				title: payload.title,
+				amount: payload.amount,
+				currency: payload.currency,
+				repeat: payload.repeat,
+				anchorDate: payload.date,
+				walletId: payload.walletId,
+				categoryId: payload.categoryId ?? null,
+				workspaceId: payload.workspaceId,
 			});
 			// Step 2: link the expense to the new bill (no anchor advance — just linking)
-			await apiClient.expenses.edit(slug, expense.id, {
+			await apiClient.expenses.edit(slug, payload.id, {
 				recurringBillId: bill.id,
 			});
 			return bill;
@@ -439,6 +439,33 @@ export function useArchiveRecurringBill() {
 			playDropSound();
 			toastManager.add({
 				title: "Recurring bill removed.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useUnarchiveRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.recurringBills.unarchive(slug, id);
+			return result;
+		},
+		onSuccess: () => {
+			playConfirmSound();
+			toastManager.add({
+				title: "Recurring bill restored.",
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });

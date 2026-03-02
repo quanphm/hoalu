@@ -9,7 +9,7 @@ export function UpcomingBillsWidget() {
 	const { data: upcomingBills } = useSuspenseQuery(upcomingBillsQueryOptions(workspace.slug));
 
 	return (
-		<Card>
+		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col">
 			<CardHeader className="pb-3">
 				<CardTitle className="flex items-center gap-2">
 					<span>Upcoming Bills</span>
@@ -21,7 +21,7 @@ export function UpcomingBillsWidget() {
 				</CardTitle>
 				<CardDescription>Next 30 days · Yearly bills within 1 year</CardDescription>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="min-h-0 flex-1 overflow-y-auto">
 				<UpcomingBillsList bills={upcomingBills} />
 			</CardContent>
 		</Card>
