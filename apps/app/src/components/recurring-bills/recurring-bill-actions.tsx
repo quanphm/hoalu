@@ -1,6 +1,7 @@
 import {
 	archiveRecurringBillDialogAtom,
 	createRecurringBillDialogAtom,
+	deleteRecurringBillDialogAtom,
 	unarchiveRecurringBillDialogAtom,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -14,6 +15,7 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	useArchiveRecurringBill,
 	useCreateRecurringBill,
+	useDeleteRecurringBill,
 	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
@@ -336,6 +338,49 @@ export function UnarchiveRecurringBillDialogContent() {
 				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
 				<Button onClick={onUnarchive} disabled={mutation.isPending}>
 					Restore
+				</Button>
+			</DialogFooter>
+		</DialogPopup>
+	);
+}
+
+export function DeleteRecurringBillDialogContent() {
+	const { onSelectBill } = useSelectedRecurringBill();
+	const mutation = useDeleteRecurringBill();
+	const [dialog, setDialog] = useAtom(deleteRecurringBillDialogAtom);
+
+	const billTitle = dialog?.data?.title ?? "this bill";
+
+	const onDelete = async () => {
+		if (!dialog?.data?.id) {
+			setDialog({ state: false });
+			return;
+		}
+		try {
+			await mutation.mutateAsync({ id: dialog.data.id });
+			onSelectBill(null);
+		} finally {
+			setDialog({ state: false });
+		}
+	};
+
+	return (
+		<DialogPopup className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Delete recurring bill?</DialogTitle>
+				<WarningMessage>
+					This will permanently delete "{billTitle}". Linked expenses will remain but will no
+					longer be associated with this bill. This action cannot be undone.
+				</WarningMessage>
+			</DialogHeader>
+			<DialogFooter>
+				<DialogClose
+					render={<Button type="button" variant="secondary" disabled={mutation.isPending} />}
+				>
+					Cancel
+				</DialogClose>
+				<Button variant="destructive" onClick={onDelete} disabled={mutation.isPending}>
+					Delete
 				</Button>
 			</DialogFooter>
 		</DialogPopup>
