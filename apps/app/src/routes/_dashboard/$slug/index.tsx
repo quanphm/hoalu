@@ -15,6 +15,7 @@ import {
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 import { createFileRoute } from "@tanstack/react-router";
+import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
 	component: RouteComponent,
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 function RouteComponent() {
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
+	const recentExpensesRef = useRef<HTMLDivElement>(null);
 
 	return (
 		<>
@@ -59,10 +61,10 @@ function RouteComponent() {
 					<SectionTitle>Expenses</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-7">
+					<div className="col-span-12 flex flex-col md:col-span-7">
 						<UpcomingBillsWidget />
 					</div>
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
+					<div ref={recentExpensesRef} className="col-span-12 flex flex-col md:col-span-5">
 						<RecentExpenses />
 					</div>
 				</SectionContent>

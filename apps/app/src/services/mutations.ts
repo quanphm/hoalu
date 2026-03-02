@@ -454,6 +454,33 @@ export function useArchiveRecurringBill() {
 	return mutation;
 }
 
+export function useUnarchiveRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.recurringBills.unarchive(slug, id);
+			return result;
+		},
+		onSuccess: () => {
+			playConfirmSound();
+			toastManager.add({
+				title: "Recurring bill restored.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.upcoming(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
 export function useDuplicateExpense() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const setDraft = useSetAtom(draftExpenseAtom);

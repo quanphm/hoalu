@@ -396,8 +396,13 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	// Always include the currently-linked bill (so the selected value renders correctly),
 	// then add other bills whose repeat cadence matches the expense's repeat.
 	const linkedBillId = props.data.recurring_bill_id;
+	const linkedBillIsArchived =
+		!!linkedBillId && !recurringBills.some((b) => b.id === linkedBillId);
 	const billOptions = [
 		{ label: "None", value: "" },
+		// If the linked bill is archived it won't appear in recurringBills (filtered by is_active).
+		// Inject a placeholder so the select doesn't fall back to showing the raw UUID.
+		...(linkedBillIsArchived ? [{ label: "Archived bill", value: linkedBillId }] : []),
 		...recurringBills
 			.filter(
 				(b) =>
@@ -497,13 +502,20 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					<form.Subscribe
 						selector={(s) => s.values.repeat}
 						children={(repeat) =>
-							repeat !== "one-time" && recurringBills.length > 0 ? (
-								<form.AppField
-									name="recurringBillId"
-									children={(field) => (
-										<field.SelectField label="Recurring bill" options={billOptions} />
+							repeat !== "one-time" && (recurringBills.length > 0 || linkedBillIsArchived) ? (
+								<div className="flex flex-col gap-1.5">
+									<form.AppField
+										name="recurringBillId"
+										children={(field) => (
+											<field.SelectField label="Recurring bill" options={billOptions} />
+										)}
+									/>
+									{linkedBillIsArchived && (
+										<WarningMessage>
+											The linked recurring bill has been archived.
+										</WarningMessage>
 									)}
-								/>
+								</div>
 							) : null
 						}
 					/>

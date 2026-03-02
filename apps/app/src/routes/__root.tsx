@@ -42,6 +42,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			{children}
 			<ReloadPromptPwa />
 			<TanStackDevtools
+				config={{
+					position: "top-right",
+				}}
 				plugins={[
 					{
 						name: "Query",

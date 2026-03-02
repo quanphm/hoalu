@@ -190,6 +190,33 @@ const route = app
 			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
+	.patch(
+		"/:id/unarchive",
+		describeRoute({
+			tags: TAGS,
+			summary: "Unarchive (restore) a recurring bill",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.not_found(),
+				...OpenAPI.response(z.object({ data: z.object({ id: z.string() }) }), HTTPStatus.codes.OK),
+			},
+		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
+
+			const existing = await repository.findOne({ id: param.id, workspaceId: workspace.id });
+			if (!existing) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
+
+			const result = await repository.unarchive({ id: param.id, workspaceId: workspace.id });
+			return c.json({ data: result }, HTTPStatus.codes.OK);
+		},
+	)
 	.delete(
 		"/:id",
 		describeRoute({

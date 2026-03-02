@@ -375,6 +375,18 @@ const recurringBills = {
 		const { data } = await response.json();
 		return data;
 	},
+	unarchive: async (slug: string, id: string) => {
+		const response = await honoClient.bff["recurring-bills"][":id"]["unarchive"].$patch({
+			param: { id },
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 };
 
 export const apiClient = {
