@@ -145,40 +145,6 @@ throw APIError.from("BAD_REQUEST", WORKSPACE_ERROR_CODES.WORKSPACE_NOT_FOUND);
 
 ---
 
-## Patches Applied
-
-### @better-auth/api-key Type Fix
-
-**Problem**: `@better-auth/api-key` v1.5 has a type visibility issue. The `PredefinedApiKeyOptions` type is:
-
-1. Defined in `error-codes-xCoIeQ-k.d.mts`
-2. Imported locally in `index.d.mts` as `n as PredefinedApiKeyOptions`
-3. Used in the return type of `apiKey()` function as `configurations: PredefinedApiKeyOptions[]`
-4. **NOT exported** from the main package entry point
-
-When TypeScript tries to emit declaration files for `auth.ts`, it encounters `PredefinedApiKeyOptions` in the inferred type but cannot generate a valid import for it because the type is trapped as an internal-only name.
-
-**Solution**: Created a patch using `bun patch` that adds `PredefinedApiKeyOptions` to the public exports:
-
-**File Patched**:
-
-- `node_modules/@better-auth/api-key/dist/index.d.mts`
-
-**Change**:
-
-```diff
--export { API_KEY_ERROR_CODES, API_KEY_TABLE_NAME, ApiKey, ApiKeyConfigurationOptions, ApiKeyOptions, apiKey, defaultKeyHasher };
-+export { API_KEY_ERROR_CODES, API_KEY_TABLE_NAME, ApiKey, ApiKeyConfigurationOptions, ApiKeyOptions, PredefinedApiKeyOptions, apiKey, defaultKeyHasher };
-```
-
-**Why this works**: By exporting `PredefinedApiKeyOptions` from the main entry point, TypeScript can now properly reference the type when emitting declaration files. The type is no longer "trapped" inside the internal module.
-
-**Patch file**: `patches/@better-auth%2Fapi-key@1.5.0.patch`
-
-**Tool used**: `bun patch` (not `patch-package`) - Bun's native patching system that updates `package.json` `patchedDependencies` and the lockfile automatically.
-
----
-
 ## Breaking Changes That Do NOT Apply
 
 | Change                                     | Reason not applicable                                                                                                                      |

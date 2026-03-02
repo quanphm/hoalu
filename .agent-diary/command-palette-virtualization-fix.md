@@ -216,7 +216,7 @@ if (item.type === "expense") {
 
 ```typescript
 return (
-  <CommandList className="!p-0">
+  <CommandList className="p-0!">
     <div ref={parentRef} style={{ height: containerHeight }} className="...">
       <div style={{ height: totalHeight }} className="relative w-full">
         {virtualItems.map((virtualRow) => {
