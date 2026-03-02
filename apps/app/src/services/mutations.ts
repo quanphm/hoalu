@@ -481,6 +481,35 @@ export function useUnarchiveRecurringBill() {
 	return mutation;
 }
 
+export function useDeleteRecurringBill() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.recurringBills.permanentDelete(slug, id);
+			return result;
+		},
+		onSuccess: () => {
+			playDropSound();
+			toastManager.add({
+				title: "Recurring bill deleted.",
+				type: "success",
+			});
+			// Invalidate the parent key so all child queries (upcoming, etc.)
+			// are refreshed after the bill is permanently removed from the DB.
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
 export function useDuplicateExpense() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const setDraft = useSetAtom(draftExpenseAtom);

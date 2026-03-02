@@ -190,7 +190,34 @@ const route = app
 			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
-	.patch(
+	.post(
+		"/:id/archive",
+		describeRoute({
+			tags: TAGS,
+			summary: "Archive (soft-delete) a recurring bill",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.not_found(),
+				...OpenAPI.response(z.object({ data: z.object({ id: z.string() }) }), HTTPStatus.codes.OK),
+			},
+		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
+
+			const existing = await repository.findOne({ id: param.id, workspaceId: workspace.id });
+			if (!existing) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
+
+			const result = await repository.archive({ id: param.id, workspaceId: workspace.id });
+			return c.json({ data: result }, HTTPStatus.codes.OK);
+		},
+	)
+	.post(
 		"/:id/unarchive",
 		describeRoute({
 			tags: TAGS,
@@ -221,27 +248,55 @@ const route = app
 		"/:id",
 		describeRoute({
 			tags: TAGS,
-			summary: "Archive a recurring bill",
+			summary:
+				"Permanently delete an archived recurring bill (linked expenses are unlinked, not deleted)",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.not_found(),
-				...OpenAPI.response(z.object({ data: z.object({ id: z.string() }) }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: z.object({ id: z.uuidv7() }) }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
+			const user = c.get("user");
+			if (!user) {
+				throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, {
+					message: HTTPStatus.phrases.UNAUTHORIZED,
+				});
+			}
+
 			const workspace = c.get("workspace");
+			const membership = c.get("membership");
 			const param = c.req.valid("param");
 
-			const existing = await repository.findOne({ id: param.id, workspaceId: workspace.id });
+			const existing = await repository.findRaw({ id: param.id, workspaceId: workspace.id });
 			if (!existing) {
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const result = await repository.archive({ id: param.id, workspaceId: workspace.id });
-			return c.json({ data: result }, HTTPStatus.codes.OK);
+			if (existing.creatorId !== user.id && membership.role !== "owner") {
+				return c.json(
+					{ message: "You don't have permission to permanently delete this bill." },
+					HTTPStatus.codes.FORBIDDEN,
+				);
+			}
+
+			// Bills must be archived first — prevents accidental hard-delete of active bills.
+			if (existing.isActive) {
+				return c.json(
+					{ message: "Bill must be archived before it can be permanently deleted." },
+					HTTPStatus.codes.CONFLICT,
+				);
+			}
+
+			const deleted = await repository.permanentDelete({ id: param.id, workspaceId: workspace.id });
+			if (!deleted) {
+				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			}
+
+			return c.json({ data: { id: deleted.id } }, HTTPStatus.codes.OK);
 		},
 	);
 

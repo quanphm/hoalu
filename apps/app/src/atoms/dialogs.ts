@@ -22,6 +22,7 @@ const DIALOG_ID = [
 	"create-recurring-bill",
 	"archive-recurring-bill",
 	"unarchive-recurring-bill",
+	"delete-recurring-bill",
 ] as const;
 export type DialogId = (typeof DIALOG_ID)[number];
 
@@ -115,3 +116,4 @@ export const deleteCategoryDialogAtom = createDialogAtom("delete-category");
 export const createRecurringBillDialogAtom = createDialogAtom("create-recurring-bill");
 export const archiveRecurringBillDialogAtom = createDialogAtom("archive-recurring-bill");
 export const unarchiveRecurringBillDialogAtom = createDialogAtom("unarchive-recurring-bill");
+export const deleteRecurringBillDialogAtom = createDialogAtom("delete-recurring-bill");

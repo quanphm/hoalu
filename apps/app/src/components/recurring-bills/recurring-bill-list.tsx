@@ -1,4 +1,7 @@
-import { unarchiveRecurringBillDialogAtom } from "#app/atoms/index.ts";
+import {
+	deleteRecurringBillDialogAtom,
+	unarchiveRecurringBillDialogAtom,
+} from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import {
@@ -178,6 +181,7 @@ type ArchivedBill = ReturnType<typeof useArchivedRecurringBills>[number];
 
 function ArchivedBillRow({ bill }: { bill: ArchivedBill }) {
 	const setUnarchiveDialog = useSetAtom(unarchiveRecurringBillDialogAtom);
+	const setDeleteDialog = useSetAtom(deleteRecurringBillDialogAtom);
 	const repeatLabel =
 		AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === bill.repeat)?.label ?? bill.repeat;
 
@@ -207,8 +211,8 @@ function ArchivedBillRow({ bill }: { bill: ArchivedBill }) {
 				<Button
 					size="icon"
 					variant="ghost"
-					aria-label={`Restore ${bill.title}`}
-					onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+					aria-label={`Delete ${bill.title}`}
+					onClick={() => setDeleteDialog({ state: true, data: { id: bill.id, title: bill.title } })}
 				>
 					<Trash2Icon className="size-4" />
 				</Button>

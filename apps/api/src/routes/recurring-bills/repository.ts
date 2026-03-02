@@ -171,6 +171,47 @@ export class RecurringBillRepository {
 	}
 
 	/**
+	 * Look up a bill by id + workspaceId without any joins, so the result is
+	 * never affected by missing wallet / category rows.
+	 */
+	async findRaw(param: { id: string; workspaceId: string }) {
+		const [row] = await db
+			.select()
+			.from(schema.recurringBill)
+			.where(
+				and(
+					eq(schema.recurringBill.id, param.id),
+					eq(schema.recurringBill.workspaceId, param.workspaceId),
+				),
+			);
+		return row ?? null;
+	}
+
+	/**
+	 * Permanently delete a recurring bill. Returns the deleted row (id +
+	 * creatorId) so the caller can perform auth checks atomically, or null if
+	 * no matching row was found (wrong id / wrong workspace).
+	 *
+	 * The FK on expense.recurring_bill_id is defined with onDelete:"set null",
+	 * so linked expenses are automatically unlinked by the DB.
+	 */
+	async permanentDelete(param: { id: string; workspaceId: string }) {
+		const [deleted] = await db
+			.delete(schema.recurringBill)
+			.where(
+				and(
+					eq(schema.recurringBill.id, param.id),
+					eq(schema.recurringBill.workspaceId, param.workspaceId),
+				),
+			)
+			.returning({
+				id: schema.recurringBill.id,
+				creatorId: schema.recurringBill.creatorId,
+			});
+		return deleted ?? null;
+	}
+
+	/**
 	 * Project upcoming occurrences for all active recurring bills in a workspace
 	 * within [windowStart, windowEnd].
 	 *
