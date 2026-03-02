@@ -105,6 +105,7 @@ const route = app
 					message: HTTPStatus.phrases.UNAUTHORIZED,
 				});
 			}
+
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 			const { amount, currency, ...rest } = payload;
@@ -164,9 +165,8 @@ const route = app
 
 			const { amount, currency, ...rest } = payload;
 			const resolvedCurrency = currency ?? existing.currency;
-			const realAmount = amount !== undefined
-				? monetary.toRealAmount(amount, resolvedCurrency)
-				: monetary.toRealAmount(Number(existing.amount), resolvedCurrency);
+			const realAmount =
+				amount !== undefined ? monetary.toRealAmount(amount, resolvedCurrency) : existing.amount;
 
 			await repository.update({
 				id: param.id,

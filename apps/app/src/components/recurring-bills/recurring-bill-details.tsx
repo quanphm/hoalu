@@ -7,7 +7,7 @@ import {
 	useSortedRecurringBills,
 	useSelectedRecurringBill,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
-import { ChevronDownIcon, ChevronUpIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { ChevronDownIcon, ChevronUpIcon, ArchiveIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -70,7 +70,7 @@ function BillDetailsHeader({ bill, bills, onSelectBill }: BillDetailsHeaderProps
 							/>
 						}
 					>
-						<Trash2Icon className="size-4" />
+						<ArchiveIcon className="size-4" />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Archive</TooltipContent>
 				</Tooltip>

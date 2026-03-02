@@ -13,20 +13,23 @@ import {
 	recurringBillCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
+import {
+	ArchiveRestoreIcon,
+	ChevronDownIcon,
+	ChevronRightIcon,
+	Trash2Icon,
+} from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { ArchiveRestoreIcon, ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useSetAtom } from "jotai";
 import { memo, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useSetAtom } from "jotai";
 
 const MOBILE_NAV_HEIGHT = 80;
-
-// ─── Virtual item types ────────────────────────────────────────────────────────
 
 type BillItem = {
 	type: "bill";
@@ -44,9 +47,6 @@ type VirtualItem = BillItem | GroupHeaderItem;
 
 const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
 
-// ─── Hooks ────────────────────────────────────────────────────────────────────
-
-/** Returns all archived bills (is_active = false) for the current workspace. */
 function useArchivedRecurringBills() {
 	const workspace = useWorkspace();
 	const collection = recurringBillCollectionFactory(workspace.slug);
@@ -75,8 +75,6 @@ function useArchivedRecurringBills() {
 
 	return useMemo(() => (data ?? []).filter((b) => !b.is_active), [data]);
 }
-
-// ─── GroupHeader ──────────────────────────────────────────────────────────────
 
 function GroupHeader({ label, bills }: Omit<GroupHeaderItem, "type" | "repeat">) {
 	const {
@@ -111,8 +109,6 @@ function GroupHeader({ label, bills }: Omit<GroupHeaderItem, "type" | "repeat">)
 		</div>
 	);
 }
-
-// ─── RecurringBillRow ─────────────────────────────────────────────────────────
 
 interface RecurringBillRowProps {
 	bill: SyncedRecurringBill;
@@ -178,8 +174,6 @@ function RecurringBillRow({ bill, isSelected, onSelect }: RecurringBillRowProps)
 	);
 }
 
-// ─── ArchivedSection ─────────────────────────────────────────────────────────
-
 type ArchivedBill = ReturnType<typeof useArchivedRecurringBills>[number];
 
 function ArchivedBillRow({ bill }: { bill: ArchivedBill }) {
@@ -209,15 +203,24 @@ function ArchivedBillRow({ bill }: { bill: ArchivedBill }) {
 					)}
 				</div>
 			</div>
-			<Button
-				size="icon"
-				variant="ghost"
-				className="size-7 shrink-0"
-				aria-label={`Restore ${bill.title}`}
-				onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
-			>
-				<ArchiveRestoreIcon className="size-3.5" />
-			</Button>
+			<div className="flex gap-1">
+				<Button
+					size="icon"
+					variant="ghost"
+					aria-label={`Restore ${bill.title}`}
+					onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+				>
+					<Trash2Icon className="size-4" />
+				</Button>
+				<Button
+					size="icon"
+					variant="ghost"
+					aria-label={`Restore ${bill.title}`}
+					onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+				>
+					<ArchiveRestoreIcon className="size-4" />
+				</Button>
+			</div>
 		</div>
 	);
 }
@@ -226,7 +229,9 @@ function ArchivedSection() {
 	const archivedBills = useArchivedRecurringBills();
 	const [expanded, setExpanded] = useState(false);
 
-	if (archivedBills.length === 0) return null;
+	if (archivedBills.length === 0) {
+		return null;
+	}
 
 	return (
 		<div data-slot="archived-bills-section">
@@ -236,22 +241,19 @@ function ArchivedSection() {
 				className="border-muted bg-muted/50 hover:bg-muted text-muted-foreground flex w-full items-center gap-1.5 py-2 pr-4 pl-3 text-xs transition-colors"
 			>
 				{expanded ? (
-					<ChevronDownIcon className="size-3.5" />
+					<ChevronDownIcon className="size-4" />
 				) : (
-					<ChevronRightIcon className="size-3.5" />
+					<ChevronRightIcon className="size-4" />
 				)}
 				<span>Archived</span>
 				<span className="bg-muted-foreground/20 ml-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium">
 					{archivedBills.length}
 				</span>
 			</button>
-			{expanded &&
-				archivedBills.map((bill) => <ArchivedBillRow key={bill.id} bill={bill} />)}
+			{expanded && archivedBills.map((bill) => <ArchivedBillRow key={bill.id} bill={bill} />)}
 		</div>
 	);
 }
-
-// ─── EmptyState ───────────────────────────────────────────────────────────────
 
 function EmptyState() {
 	return (
@@ -266,8 +268,6 @@ function EmptyState() {
 	);
 }
 
-// ─── RecurringBillList ────────────────────────────────────────────────────────
-
 interface RecurringBillListProps {
 	bills: SyncedRecurringBill[];
 }
@@ -277,24 +277,21 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
 
-	// ── Grand total ────────────────────────────────────────────────────────────
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
+	// const {
+	// 	metadata: { currency: workspaceCurrency },
+	// } = useWorkspace();
+	// const grandTotal = useMemo(() => {
+	// 	let sum = 0;
+	// 	for (const bill of bills) {
+	// 		if (bill.currency === workspaceCurrency) {
+	// 			sum += bill.amount;
+	// 		} else if (bill.convertedAmount > 0) {
+	// 			sum += bill.convertedAmount;
+	// 		}
+	// 	}
+	// 	return sum;
+	// }, [bills, workspaceCurrency]);
 
-	const grandTotal = useMemo(() => {
-		let sum = 0;
-		for (const bill of bills) {
-			if (bill.currency === workspaceCurrency) {
-				sum += bill.amount;
-			} else if (bill.convertedAmount > 0) {
-				sum += bill.convertedAmount;
-			}
-		}
-		return sum;
-	}, [bills, workspaceCurrency]);
-
-	// ── Flatten bills into virtual items (grouped by repeat type) ─────────────
 	const flatItems = useMemo<VirtualItem[]>(() => {
 		const grouped = new Map<string, SyncedRecurringBill[]>();
 		for (const bill of bills) {
@@ -325,13 +322,11 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		return items;
 	}, [bills]);
 
-	// ── Flat bills only (for j/k navigation) ──────────────────────────────────
 	const billsOnly = useMemo(
 		() => flatItems.filter((i): i is BillItem => i.type === "bill").map((i) => i.bill),
 		[flatItems],
 	);
 
-	// ── Virtualizer ───────────────────────────────────────────────────────────
 	const virtualizer = useVirtualizer({
 		count: flatItems.length,
 		overscan: 10,
@@ -343,7 +338,6 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
 	});
 
-	// ── Scroll & selection helpers ─────────────────────────────────────────────
 	const scrollToBill = useEffectEvent((id: string) => {
 		const index = flatItems.findIndex((i) => i.type === "bill" && i.bill.id === id);
 		if (index >= 0) {
@@ -358,7 +352,6 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		onSelectBill(id);
 	});
 
-	// ── Keyboard navigation ───────────────────────────────────────────────────
 	useHotkeys(
 		"j",
 		() => {
@@ -419,8 +412,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 			)}
 			ref={parentRef}
 		>
-			{/* Grand total sticky header */}
-			<div className="border-muted bg-muted sticky top-0 z-10 flex items-center py-2 pr-4 pl-3 text-sm">
+			{/* <div className="border-muted bg-muted sticky top-0 z-10 flex items-center py-2 pr-4 pl-3 text-sm">
 				<span>Total</span>
 				<div className="ml-auto">
 					<CurrencyValue
@@ -429,13 +421,8 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 						className="text-destructive font-semibold"
 					/>
 				</div>
-			</div>
-
-			{/* Virtual canvas — height drives the scrollable area */}
-			<div
-				style={{ height: `${virtualizer.getTotalSize()}px` }}
-				className="relative w-full"
-			>
+			</div> */}
+			<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
 				<div
 					style={{
 						transform: `translateY(${virtualExpenses[0]?.start ?? 0}px)`,
@@ -453,17 +440,13 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 										bill={item.bill}
 										isSelected={selected.id === item.bill.id}
 										onSelect={() =>
-											onSelectBillEvent(
-												selected.id === item.bill.id ? null : item.bill.id,
-											)
+											onSelectBillEvent(selected.id === item.bill.id ? null : item.bill.id)
 										}
 									/>
 								)}
 							</div>
 						);
 					})}
-
-					{/* Archived section inside the translated div — no gap */}
 					<ArchivedSection />
 				</div>
 			</div>
