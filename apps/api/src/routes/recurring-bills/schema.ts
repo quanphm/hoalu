@@ -83,3 +83,24 @@ export const UpcomingBillSchema = z.object({
 });
 
 export const UpcomingBillsSchema = z.array(UpcomingBillSchema);
+
+export const UnifiedBillSchema = z.object({
+	recurringBillId: z.uuidv7(),
+	date: z.string(), // "yyyy-MM-dd"
+	title: z.string(),
+	amount: z.number(),
+	currency: CurrencySchema,
+	repeat: RepeatSchema,
+	walletId: z.uuidv7(),
+	walletName: z.string(),
+	categoryId: z.uuidv7().nullable(),
+	categoryName: z.string().nullable(),
+	categoryColor: ColorSchema.nullable(),
+	isPaid: z.boolean(),
+});
+
+export const UnifiedBillsSchema = z.object({
+	overdue: z.array(UnifiedBillSchema),
+	today: z.array(UnifiedBillSchema),
+	upcoming: z.array(UnifiedBillSchema),
+});

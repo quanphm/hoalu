@@ -263,6 +263,27 @@ export const recurringBill = pgTable(
 	],
 );
 
+export const recurringBillOccurrence = pgTable(
+	"recurring_bill_occurrence",
+	{
+		id: uuid("id").primaryKey(),
+		recurringBillId: uuid("recurring_bill_id")
+			.notNull()
+			.references(() => recurringBill.id, { onDelete: "cascade" }),
+		dueDate: date("due_date", { mode: "string" }).notNull(),
+		expenseId: uuid("expense_id").references(() => expense.id, { onDelete: "set null" }),
+		paidAt: timestamp("paid_at", { mode: "string" }),
+		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("rbo_recurring_bill_id_idx").on(table.recurringBillId),
+		index("rbo_due_date_idx").on(table.dueDate),
+		index("rbo_expense_id_idx").on(table.expenseId),
+		index("rbo_unpaid_idx").on(table.recurringBillId, table.dueDate).where(sql`${table.expenseId} IS NULL`),
+	],
+);
+
 export const expense = pgTable(
 	"expense",
 	{

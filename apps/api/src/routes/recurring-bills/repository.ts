@@ -1,6 +1,6 @@
 import { db, schema } from "#api/db/index.ts";
 import { monetary } from "@hoalu/common/monetary";
-import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 
 type NewRecurringBill = typeof schema.recurringBill.$inferInsert;
 
@@ -340,4 +340,230 @@ export class RecurringBillRepository {
 		results.sort((a, b) => a.date.localeCompare(b.date));
 		return results;
 	}
+
+	/**
+	 * Find unified bills: overdue (unpaid past occurrences), today, and upcoming.
+	 * Uses explicit occurrence tracking for paid status.
+	 */
+	async findUnified(param: { workspaceId: string }): Promise<{
+		overdue: UnifiedBillEntry[];
+		today: UnifiedBillEntry[];
+		upcoming: UnifiedBillEntry[];
+	}> {
+		const todayStr = formatDate(new Date());
+		const todayLocal = parseLocalDate(todayStr);
+		const thirtyDaysAgoStr = formatDate(addDays(todayLocal, -30));
+		const oneMonthOutStr = formatDate(addDays(todayLocal, 30));
+		const oneYearOutStr = formatDate(addYears(todayLocal, 1));
+
+		// Get all active recurring bills with their details
+		const bills = await db
+			.select({
+				id: schema.recurringBill.id,
+				title: schema.recurringBill.title,
+				amount: schema.recurringBill.amount,
+				currency: schema.recurringBill.currency,
+				repeat: schema.recurringBill.repeat,
+				anchorDate: schema.recurringBill.anchorDate,
+				dueDay: schema.recurringBill.dueDay,
+				dueMonth: schema.recurringBill.dueMonth,
+				createdAt: schema.recurringBill.createdAt,
+				walletId: schema.wallet.id,
+				walletName: schema.wallet.name,
+				categoryId: schema.category.id,
+				categoryName: schema.category.name,
+				categoryColor: schema.category.color,
+			})
+			.from(schema.recurringBill)
+			.innerJoin(schema.wallet, eq(schema.recurringBill.walletId, schema.wallet.id))
+			.leftJoin(schema.category, eq(schema.recurringBill.categoryId, schema.category.id))
+			.where(
+				and(
+					eq(schema.recurringBill.workspaceId, param.workspaceId),
+					eq(schema.recurringBill.isActive, true),
+				),
+			);
+
+		// Get all paid occurrences for these bills
+		const billIds = bills.map(b => b.id);
+		const paidOccurrences = billIds.length > 0 
+			? await db
+				.select({
+					recurringBillId: schema.recurringBillOccurrence.recurringBillId,
+					dueDate: schema.recurringBillOccurrence.dueDate,
+				})
+				.from(schema.recurringBillOccurrence)
+				.where(
+					and(
+						inArray(schema.recurringBillOccurrence.recurringBillId, billIds),
+						sql`${schema.recurringBillOccurrence.expenseId} IS NOT NULL`,
+					),
+				)
+			: [];
+
+		const paidDatesByBill = new Map<string, Set<string>>();
+		for (const po of paidOccurrences) {
+			if (!paidDatesByBill.has(po.recurringBillId)) {
+				paidDatesByBill.set(po.recurringBillId, new Set());
+			}
+			paidDatesByBill.get(po.recurringBillId)!.add(po.dueDate);
+		}
+
+		const overdue: UnifiedBillEntry[] = [];
+		const today: UnifiedBillEntry[] = [];
+		const upcoming: UnifiedBillEntry[] = [];
+
+		for (const bill of bills) {
+			// Generate all expected occurrences from bill start until window end
+			const windowEndStr = bill.repeat === "yearly" ? oneYearOutStr : oneMonthOutStr;
+			
+			// For overdue detection, only look back 30 days (within the month)
+			// AND don't show occurrences before the bill was created
+			// This prevents showing overdue bills from before the bill existed
+			const billCreatedStr = bill.createdAt.slice(0, 10);
+			const startStr = thirtyDaysAgoStr > billCreatedStr ? thirtyDaysAgoStr : billCreatedStr;
+			
+			const allDates = generateOccurrencesRange(
+				{ 
+					repeat: bill.repeat, 
+					anchorDate: bill.anchorDate, 
+					dueDay: bill.dueDay, 
+					dueMonth: bill.dueMonth 
+				},
+				startStr,
+				windowEndStr,
+			);
+
+			const paidDates = paidDatesByBill.get(bill.id) ?? new Set();
+
+			for (const dateStr of allDates) {
+				if (paidDates.has(dateStr)) continue; // Skip paid occurrences
+
+				const entry: UnifiedBillEntry = {
+					recurringBillId: bill.id,
+					date: dateStr,
+					title: bill.title,
+					amount: monetary.fromRealAmount(Number(bill.amount), bill.currency),
+					currency: bill.currency,
+					repeat: bill.repeat,
+					walletId: bill.walletId,
+					walletName: bill.walletName,
+					categoryId: bill.categoryId ?? null,
+					categoryName: bill.categoryName ?? null,
+					categoryColor: bill.categoryColor ?? null,
+					isPaid: false,
+				};
+
+				if (dateStr < todayStr) {
+					overdue.push(entry);
+				} else if (dateStr === todayStr) {
+					today.push(entry);
+				} else {
+					upcoming.push(entry);
+				}
+			}
+		}
+
+		// Sort each category by date
+		overdue.sort((a, b) => a.date.localeCompare(b.date));
+		today.sort((a, b) => a.date.localeCompare(b.date));
+		upcoming.sort((a, b) => a.date.localeCompare(b.date));
+
+		return { overdue, today, upcoming };
+	}
+}
+
+export interface UnifiedBillEntry {
+	recurringBillId: string;
+	date: string;
+	title: string;
+	amount: number;
+	currency: string;
+	repeat: string;
+	walletId: string;
+	walletName: string;
+	categoryId: string | null;
+	categoryName: string | null;
+	categoryColor: string | null;
+	isPaid: boolean;
+}
+
+/**
+ * Generate occurrences within a date range [startStr, endStr].
+ * Similar to generateOccurrences but doesn't filter by >= today.
+ */
+function generateOccurrencesRange(
+	bill: {
+		repeat: string;
+		anchorDate: string;
+		dueDay: number | null;
+		dueMonth: number | null;
+	},
+	startStr: string,
+	endStr: string,
+): string[] {
+	const start = parseLocalDate(startStr);
+	const end = parseLocalDate(endStr);
+	const results: string[] = [];
+
+	if (bill.repeat === "daily") {
+		let cur = new Date(start);
+		while (true) {
+			const ds = formatDate(cur);
+			if (ds > endStr) break;
+			if (ds >= startStr) results.push(ds);
+			cur = addDays(cur, 1);
+			if (results.length > 400) break;
+		}
+		return results;
+	}
+
+	if (bill.repeat === "weekly") {
+		const dow = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDay();
+		// Find first occurrence >= start
+		const startDow = start.getDay();
+		let daysForward = ((dow - startDow) + 7) % 7;
+		let cur = addDays(start, daysForward);
+		while (true) {
+			const ds = formatDate(cur);
+			if (ds > endStr) break;
+			results.push(ds);
+			cur = addDays(cur, 7);
+			if (results.length > 400) break;
+		}
+		return results;
+	}
+
+	if (bill.repeat === "monthly") {
+		const dueDay = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDate();
+		let y = start.getFullYear();
+		let m = start.getMonth();
+		for (let i = 0; i < 400; i++) {
+			const occ = new Date(y, m, dueDay);
+			if (occ.getMonth() !== m) occ.setDate(0);
+			const ds = formatDate(occ);
+			if (ds > endStr) break;
+			if (ds >= startStr) results.push(ds);
+			m++;
+			if (m > 11) { m = 0; y++; }
+		}
+		return results;
+	}
+
+	if (bill.repeat === "yearly") {
+		const anchor = parseLocalDate(bill.anchorDate);
+		const dueMonth = (bill.dueMonth ?? anchor.getMonth() + 1) - 1;
+		const dueDay = bill.dueDay ?? anchor.getDate();
+		const startYear = start.getFullYear();
+		const endYear = end.getFullYear();
+		for (let year = startYear; year <= endYear; year++) {
+			const occ = new Date(year, dueMonth, dueDay);
+			if (occ.getMonth() !== dueMonth) occ.setDate(0);
+			const ds = formatDate(occ);
+			if (ds >= startStr && ds <= endStr) results.push(ds);
+		}
+		return results;
+	}
+
+	return results;
 }

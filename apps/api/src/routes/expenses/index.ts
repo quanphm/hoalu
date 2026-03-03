@@ -163,6 +163,44 @@ const route = app
 					recurringBillId: recurringBillId ?? null,
 				});
 
+				// Track occurrence payment for recurring bills
+				if (recurringBillId && expense) {
+					const expenseDateStr = new Date(expenseDate).toISOString().slice(0, 10);
+					
+					// Try to find existing occurrence for this bill + date
+					const [existingOccurrence] = await tx
+						.select()
+						.from(schema.recurringBillOccurrence)
+						.where(
+							and(
+								eq(schema.recurringBillOccurrence.recurringBillId, recurringBillId),
+								eq(schema.recurringBillOccurrence.dueDate, expenseDateStr),
+							),
+						)
+						.limit(1);
+
+					if (existingOccurrence) {
+						// Update existing occurrence as paid
+						await tx
+							.update(schema.recurringBillOccurrence)
+							.set({ 
+								expenseId: expense.id, 
+								paidAt: sql`now()`,
+								updatedAt: sql`now()` 
+							})
+							.where(eq(schema.recurringBillOccurrence.id, existingOccurrence.id));
+					} else {
+						// Create new occurrence record marked as paid
+						await tx.insert(schema.recurringBillOccurrence).values({
+							id: generateId({ use: "uuid" }),
+							recurringBillId,
+							dueDate: expenseDateStr,
+							expenseId: expense.id,
+							paidAt: sql`now()`,
+						});
+					}
+				}
+
 				return expense;
 			});
 

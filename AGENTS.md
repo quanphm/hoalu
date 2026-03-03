@@ -45,6 +45,8 @@ When debug with browser, please refer to these addresses to access the applicati
 | Collection factory   | `apps/app/src/lib/collections/create-collection-factory.ts`     | -                                   |
 | Query options        | `apps/app/src/services/query-options.ts`                        | -                                   |
 | Mutations            | `apps/app/src/services/mutations.ts`                            | -                                   |
+| Recurring bills      | `apps/api/src/routes/recurring-bills/`                          | -                                   |
+| Bills widget         | `apps/app/src/components/upcoming-bills/`                       | -                                   |
 
 ### Critical Constraints
 
@@ -70,6 +72,26 @@ When debug with browser, please refer to these addresses to access the applicati
 - ✅ Include OpenAPI documentation for all API routes
 - ✅ Use `z.coerce.number()` for Electric SQL numeric fields
 - ✅ Restart dev servers after API changes to regenerate types
+
+### Recurring Bills Data Model
+
+**Tables:**
+- `recurring_bill` - The bill definition (amount, frequency, due day/month)
+- `recurring_bill_occurrence` - Individual expected payments (due_date, paid status)
+
+**Key Concept:**
+When a recurring bill is created, the system calculates expected occurrences. When a user "logs a payment", an expense is created AND an occurrence record is marked as paid (linked via `expense_id`).
+
+**Migration Strategy:**
+If adding occurrence tracking to existing data:
+1. Create the new table via migration (see `0006_occurrence_tracking.sql`)
+2. Backfill from existing expenses (see `0007_backfill_occurrences.sql`)
+3. Future expenses automatically create occurrence records on payment
+
+**API Endpoints:**
+- `GET /api/recurring-bills` - List all bills
+- `GET /api/recurring-bills/unified` - Get overdue + today + upcoming with payment status
+- `POST /api/expenses` - Log payment (creates expense + marks occurrence paid)
 
 ## Development Workflow
 

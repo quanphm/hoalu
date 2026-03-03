@@ -363,6 +363,17 @@ const recurringBills = {
 		const { data } = await response.json();
 		return data;
 	},
+	getUnified: async (slug: string) => {
+		const response = await honoClient.bff["recurring-bills"].unified.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 	archive: async (slug: string, id: string) => {
 		const response = await honoClient.bff["recurring-bills"][":id"]["archive"].$post({
 			param: { id },
