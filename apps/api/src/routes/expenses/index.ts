@@ -131,10 +131,12 @@ const route = app
 			const newAnchorDate = expenseDate.slice(0, 10); // "yyyy-MM-dd"
 
 			const expense = await db.transaction(async (tx) => {
-				// If a recurringBillId is provided (Log payment flow), advance anchor_date only for
-				// yearly bills — monthly/weekly due dates are fixed (due_day/due_month) and never drift.
+				let bill: typeof schema.recurringBill.$inferSelect | null = null;
+				
+				// If a recurringBillId is provided (Log payment flow), fetch bill details
+				// and advance anchor_date only for yearly bills — monthly/weekly due dates are fixed
 				if (recurringBillId) {
-					const [bill] = await tx
+					[bill] = await tx
 						.select()
 						.from(schema.recurringBill)
 						.where(
@@ -164,17 +166,43 @@ const route = app
 				});
 
 				// Track occurrence payment for recurring bills
-				if (recurringBillId && expense) {
-					const expenseDateStr = new Date(expenseDate).toISOString().slice(0, 10);
+				if (recurringBillId && bill && expense) {
+					// Calculate the correct due date based on bill's schedule
+					// Parse expense date as local date to avoid UTC offset issues
+					const expenseDateLocal = expenseDate.slice(0, 10); // "YYYY-MM-DD"
+					const [year, month, day] = expenseDateLocal.split("-").map(Number);
+					let dueDateStr: string;
 					
-					// Try to find existing occurrence for this bill + date
+					if (bill.repeat === "monthly" && bill.dueDay) {
+						// For monthly bills, use the due_day from the expense's month
+						dueDateStr = `${year}-${String(month).padStart(2, "0")}-${String(bill.dueDay).padStart(2, "0")}`;
+					} else if (bill.repeat === "weekly" && bill.dueDay !== null) {
+						// For weekly bills, find the nearest occurrence of the due day
+						const expenseDateObj = new Date(year, month - 1, day);
+						const expenseDayOfWeek = expenseDateObj.getDay();
+						const targetDayOfWeek = bill.dueDay;
+						const daysDiff = (targetDayOfWeek - expenseDayOfWeek + 7) % 7;
+						const dueDate = new Date(year, month - 1, day + daysDiff);
+						dueDateStr = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, "0")}-${String(dueDate.getDate()).padStart(2, "0")}`;
+					} else if (bill.repeat === "yearly") {
+						// For yearly bills, use the anchor_date month/day
+						const anchorDate = new Date(bill.anchorDate);
+						const dueMonth = bill.dueMonth ?? (anchorDate.getMonth() + 1);
+						const dueDay = bill.dueDay ?? anchorDate.getDate();
+						dueDateStr = `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
+					} else {
+						// For daily or other cases, use the expense date
+						dueDateStr = expenseDateLocal;
+					}
+					
+					// Try to find existing occurrence for this bill + due date
 					const [existingOccurrence] = await tx
 						.select()
 						.from(schema.recurringBillOccurrence)
 						.where(
 							and(
 								eq(schema.recurringBillOccurrence.recurringBillId, recurringBillId),
-								eq(schema.recurringBillOccurrence.dueDate, expenseDateStr),
+								eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
 							),
 						)
 						.limit(1);
@@ -194,7 +222,7 @@ const route = app
 						await tx.insert(schema.recurringBillOccurrence).values({
 							id: generateId({ use: "uuid" }),
 							recurringBillId,
-							dueDate: expenseDateStr,
+							dueDate: dueDateStr,
 							expenseId: expense.id,
 							paidAt: sql`now()`,
 						});

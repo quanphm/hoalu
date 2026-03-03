@@ -22,7 +22,11 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
+import {
+	categoriesQueryOptions,
+	recurringBillsQueryOptions,
+	walletsQueryOptions,
+} from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
@@ -80,6 +84,7 @@ function CreateExpenseForm() {
 	const { user } = useAuth();
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const { data: recurringBills } = useSuspenseQuery(recurringBillsQueryOptions(slug));
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 
@@ -148,6 +153,15 @@ function CreateExpenseForm() {
 
 	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
 	const initialCategory = draft.categoryId || validLastCategory;
+	const initialRecurringBillId = logPayment.recurringBillId || undefined;
+
+	const recurringBillOptions = [
+		{ value: "", label: "None" },
+		...recurringBills.map((bill) => ({
+			value: bill.id,
+			label: bill.title,
+		})),
+	];
 
 	const form = useAppForm({
 		defaultValues: {
@@ -161,6 +175,7 @@ function CreateExpenseForm() {
 			walletId: initialWallet,
 			categoryId: initialCategory,
 			repeat: draft.repeat,
+			recurringBillId: initialRecurringBillId,
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
@@ -177,7 +192,7 @@ function CreateExpenseForm() {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
-					...(logPayment.recurringBillId ? { recurringBillId: logPayment.recurringBillId } : {}),
+					...(value.recurringBillId ? { recurringBillId: value.recurringBillId } : {}),
 				},
 			});
 
@@ -204,10 +219,9 @@ function CreateExpenseForm() {
 		return () => {
 			if (!form.state.isSubmitted) {
 				setDraft(form.state.values);
-				setLogPayment({ recurringBillId: null });
 			}
 		};
-	}, [form.state.isSubmitted, setDraft, setLogPayment, form.state.values]);
+	}, [form.state.isSubmitted, setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>
@@ -234,12 +248,23 @@ function CreateExpenseForm() {
 								children={(field) => <field.SelectCategoryField label="Category" />}
 							/>
 						</div>
-						<form.AppField
-							name="repeat"
-							children={(field) => (
-								<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-							)}
-						/>
+						<div className="grid grid-cols-2 gap-4">
+							<form.AppField
+								name="repeat"
+								children={(field) => (
+									<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+								)}
+							/>
+							<form.AppField
+								name="recurringBillId"
+								children={(field) => (
+									<field.SelectField
+										label="Recurring bill"
+										options={recurringBillOptions}
+									/>
+								)}
+							/>
+						</div>
 						<form.AppField
 							name="description"
 							children={(field) => (

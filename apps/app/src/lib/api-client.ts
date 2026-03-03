@@ -327,6 +327,17 @@ const workspaces = {
 };
 
 const recurringBills = {
+	list: async (slug: string) => {
+		const response = await honoClient.bff["recurring-bills"].$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 	create: async (slug: string, payload: Record<string, unknown>) => {
 		const response = await honoClient.bff["recurring-bills"].$post({
 			query: { workspaceIdOrSlug: slug },

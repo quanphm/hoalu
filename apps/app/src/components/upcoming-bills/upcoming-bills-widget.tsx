@@ -21,14 +21,10 @@ export function UpcomingBillsWidget() {
 						</span>
 					)}
 				</CardTitle>
-				<CardDescription>Overdue, today, and next 30 days</CardDescription>
+				<CardDescription>Overdue, today, next 30 days and annually bills</CardDescription>
 			</CardHeader>
 			<CardContent className="min-h-0 flex-1 overflow-y-auto">
-				<UnifiedBillsList
-					overdue={data.overdue}
-					today={data.today}
-					upcoming={data.upcoming}
-				/>
+				<UnifiedBillsList overdue={data.overdue} today={data.today} upcoming={data.upcoming} />
 			</CardContent>
 		</Card>
 	);

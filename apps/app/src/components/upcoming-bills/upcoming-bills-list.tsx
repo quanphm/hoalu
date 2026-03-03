@@ -18,7 +18,6 @@ import { cn } from "@hoalu/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
-// Legacy interface for backward compatibility
 export interface UpcomingBill {
 	recurringBillId: string;
 	date: string;
@@ -55,7 +54,11 @@ interface GroupedBills {
 	entries: UnifiedBill[];
 }
 
-function groupBills(overdue: UnifiedBill[], today: UnifiedBill[], upcoming: UnifiedBill[]): GroupedBills[] {
+function groupBills(
+	overdue: UnifiedBill[],
+	today: UnifiedBill[],
+	upcoming: UnifiedBill[],
+): GroupedBills[] {
 	const groups: GroupedBills[] = [];
 
 	// Add overdue group if any
@@ -80,7 +83,6 @@ function groupBills(overdue: UnifiedBill[], today: UnifiedBill[], upcoming: Unif
 		}
 	}
 
-	// Add today group if any
 	if (today.length > 0) {
 		groups.push({
 			label: "Today",
@@ -90,7 +92,6 @@ function groupBills(overdue: UnifiedBill[], today: UnifiedBill[], upcoming: Unif
 		});
 	}
 
-	// Add upcoming groups by date
 	const upcomingByDate = new Map<string, UnifiedBill[]>();
 	for (const bill of upcoming) {
 		const existing = upcomingByDate.get(bill.date) ?? [];
@@ -128,8 +129,7 @@ export function UpcomingBillsList({ bills }: UpcomingBillsListProps) {
 	const workspace = useWorkspace();
 	const navigate = useNavigate();
 
-	// Convert legacy bills to unified format
-	const unifiedBills: UnifiedBill[] = bills.map(b => ({ ...b, isPaid: false }));
+	const unifiedBills: UnifiedBill[] = bills.map((b) => ({ ...b, isPaid: false }));
 	const groups = groupBills([], [], unifiedBills);
 
 	function handleBillClick(bill: UnifiedBill) {
@@ -176,7 +176,6 @@ export function UpcomingBillsList({ bills }: UpcomingBillsListProps) {
 	);
 }
 
-// New unified component with overdue support
 export function UnifiedBillsList({ overdue, today, upcoming }: UnifiedBillsListProps) {
 	const workspace = useWorkspace();
 	const navigate = useNavigate();
@@ -303,9 +302,7 @@ function BillRow({ bill, onClick }: BillRowProps) {
 				{bill.categoryName && bill.categoryColor && (
 					<Badge
 						className={cn(
-							createCategoryTheme(
-								bill.categoryColor as Parameters<typeof createCategoryTheme>[0],
-							),
+							createCategoryTheme(bill.categoryColor as Parameters<typeof createCategoryTheme>[0]),
 						)}
 					>
 						{bill.categoryName}
