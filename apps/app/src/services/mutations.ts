@@ -245,6 +245,7 @@ export function useCreateExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -272,6 +273,7 @@ export function useEditExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -300,6 +302,7 @@ export function useDeleteExpense() {
 			});
 			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -313,6 +316,7 @@ export function useDeleteExpense() {
 }
 
 export function useCreateRecurringBill() {
+	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async ({ payload }: { payload: Record<string, unknown> }) => {
@@ -325,6 +329,8 @@ export function useCreateRecurringBill() {
 				title: "Recurring bill created.",
 				type: "success",
 			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -384,6 +390,8 @@ export function useSetUpRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -397,6 +405,7 @@ export function useSetUpRecurringBill() {
 }
 
 export function useEditRecurringBill() {
+	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async ({ id, payload }: { id: string; payload: Record<string, unknown> }) => {
@@ -409,6 +418,8 @@ export function useEditRecurringBill() {
 				title: "Recurring bill updated.",
 				type: "success",
 			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -422,6 +433,7 @@ export function useEditRecurringBill() {
 }
 
 export function useArchiveRecurringBill() {
+	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async ({ id }: { id: string }) => {
@@ -434,6 +446,8 @@ export function useArchiveRecurringBill() {
 				title: "Recurring bill removed.",
 				type: "success",
 			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -447,6 +461,7 @@ export function useArchiveRecurringBill() {
 }
 
 export function useUnarchiveRecurringBill() {
+	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
 		mutationFn: async ({ id }: { id: string }) => {
@@ -459,6 +474,8 @@ export function useUnarchiveRecurringBill() {
 				title: "Recurring bill restored.",
 				type: "success",
 			});
+			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({
@@ -485,9 +502,8 @@ export function useDeleteRecurringBill() {
 				title: "Recurring bill deleted.",
 				type: "success",
 			});
-			// Invalidate the parent key so all child queries (upcoming, etc.)
-			// are refreshed after the bill is permanently removed from the DB.
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
+			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
 			toastManager.add({

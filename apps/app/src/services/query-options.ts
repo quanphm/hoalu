@@ -8,6 +8,7 @@ import {
 	expenseKeys,
 	fileKeys,
 	memberKeys,
+	recurringBillKeys,
 	taskKeys,
 	walletKeys,
 	workspaceKeys,
@@ -270,6 +271,18 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQue
 		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
 		placeholderData: { rate: 1, inverse_rate: 1 },
 		throwOnError: true,
+	});
+};
+
+/**
+ * recurring bills - all active
+ */
+
+export const recurringBillsQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: recurringBillKeys.all(slug),
+		queryFn: () => apiClient.recurringBills.list(slug),
+		staleTime: TIME_IN_MILLISECONDS.MINUTE,
 	});
 };
 
