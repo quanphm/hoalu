@@ -5,6 +5,7 @@ import {
 	InsertRecurringBillSchema,
 	RecurringBillSchema,
 	RecurringBillsSchema,
+	UnifiedBillsSchema,
 	UpdateRecurringBillSchema,
 	UpcomingBillsSchema,
 } from "#api/routes/recurring-bills/schema.ts";
@@ -73,6 +74,34 @@ const route = app
 			const upcoming = await repository.findUpcoming({ workspaceId: workspace.id });
 
 			const parsed = UpcomingBillsSchema.safeParse(upcoming);
+			if (!parsed.success) {
+				return c.json(
+					{ message: createIssueMsg(parsed.error.issues) },
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
+				);
+			}
+
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
+		},
+	)
+	.get(
+		"/unified",
+		describeRoute({
+			tags: TAGS,
+			summary: "Get unified bills: overdue, today, and upcoming with payment status",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.response(z.object({ data: UnifiedBillsSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const unified = await repository.findUnified({ workspaceId: workspace.id });
+
+			const parsed = UnifiedBillsSchema.safeParse(unified);
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

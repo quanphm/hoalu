@@ -274,6 +274,19 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQue
 };
 
 /**
+ * recurring bills - unified (overdue + today + upcoming)
+ */
+
+export const unifiedBillsQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+		queryFn: () => apiClient.recurringBills.getUnified(slug),
+		staleTime: TIME_IN_MILLISECONDS.MINUTE,
+		placeholderData: { overdue: [], today: [], upcoming: [] },
+	});
+};
+
+/**
  * files
  */
 

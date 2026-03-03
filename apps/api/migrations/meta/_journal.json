@@ -43,6 +43,13 @@
       "when": 1772546577121,
       "tag": "0005_redundant_solo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1772550371019,
+      "tag": "0006_huge_sugar_man",
+      "breakpoints": true
     }
   ]
 }
