@@ -1,12 +1,9 @@
 import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { upcomingBillsQueryOptions } from "#app/services/query-options.ts";
+import { useUpcomingBills } from "#app/components/upcoming-bills/use-upcoming-bills.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { useSuspenseQuery } from "@tanstack/react-query";
 
 export function UpcomingBillsWidget() {
-	const workspace = useWorkspace();
-	const { data: upcomingBills } = useSuspenseQuery(upcomingBillsQueryOptions(workspace.slug));
+	const upcomingBills = useUpcomingBills();
 
 	return (
 		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col">

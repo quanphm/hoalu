@@ -241,6 +241,8 @@ export const recurringBill = pgTable(
 		currency: varchar({ length: 3 }).notNull(),
 		repeat: repeatEnum().notNull(),
 		anchorDate: date("anchor_date", { mode: "string" }).notNull(),
+		dueDay: integer("due_day"), // monthly: day-of-month (1-31), weekly: day-of-week (0=Sun..6=Sat)
+		dueMonth: integer("due_month"), // yearly only: month (1-12)
 		walletId: uuid("wallet_id")
 			.notNull()
 			.references(() => wallet.id, { onDelete: "cascade" }),

@@ -39,7 +39,10 @@ import { HotKey } from "../hotkey";
 const BillFormSchema = z.object({
 	title: z.string().min(1),
 	description: z.string().optional(),
-	date: z.string().min(1),
+	// dueDay stored as string because SelectField emits strings; parsed to number at submit
+	dueDay: z.string().optional(),
+	// anchorDate: full date, only used when repeat=yearly
+	anchorDate: z.string().optional(),
 	transaction: z.object({
 		value: z.number().min(0),
 		currency: z.string().min(1),
@@ -82,6 +85,21 @@ export function CreateRecurringBillDialogContent(props: CreateRecurringBillFormP
 	);
 }
 
+const DOW_OPTIONS = [
+	{ value: "1", label: "Monday" },
+	{ value: "2", label: "Tuesday" },
+	{ value: "3", label: "Wednesday" },
+	{ value: "4", label: "Thursday" },
+	{ value: "5", label: "Friday" },
+	{ value: "6", label: "Saturday" },
+	{ value: "0", label: "Sunday" },
+];
+
+const DOM_OPTIONS = Array.from({ length: 31 }, (_, i) => ({
+	value: String(i + 1),
+	label: String(i + 1),
+}));
+
 function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBillFormProps) {
 	const workspace = useWorkspace();
 	const mutation = useCreateRecurringBill();
@@ -91,11 +109,16 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 	const walletGroups = buildWalletGroups(wallets);
 	const defaultWallet = wallets[0];
 
+	const defaultDueDay = defaultDate
+		? new Date(`${defaultDate}T00:00:00`).getDate()
+		: new Date().getDate();
+
 	const form = useAppForm({
 		defaultValues: {
 			title: "",
 			description: "",
-			date: defaultDate ?? new Date().toISOString().slice(0, 10),
+			dueDay: String(defaultDueDay),
+			anchorDate: defaultDate ?? new Date().toISOString().slice(0, 10),
 			transaction: {
 				value: 0,
 				currency: defaultWallet?.currency ?? workspace.metadata.currency,
@@ -112,11 +135,13 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 					description: value.description,
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
-					anchorDate: value.date,
+					repeat: value.repeat,
 					walletId: value.walletId,
 					categoryId: value.categoryId || null,
-					repeat: value.repeat,
 					workspaceId: workspace.id,
+					...(value.repeat === "yearly"
+						? { anchorDate: value.anchorDate }
+						: { dueDay: value.dueDay ? Number(value.dueDay) : undefined }),
 				},
 			});
 			setDialog({ state: false });
@@ -128,9 +153,49 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup className="grid grid-cols-1 gap-4">
-					<form.AppField
-						name="date"
-						children={(field) => <field.DatepickerInputField label="Date" />}
+					<form.Subscribe
+						selector={(s) => s.values.repeat}
+						children={(repeat) => (
+							<div className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}>
+								<form.AppField
+									name="repeat"
+									children={(field) => (
+										<field.SelectField
+											label="Repeat"
+											options={AVAILABLE_REPEAT_OPTIONS.filter(
+												(o) => o.value !== "one-time" && o.value !== "custom",
+											)}
+										/>
+									)}
+								/>
+								{repeat === "yearly" ? (
+									<form.AppField
+										name="anchorDate"
+										children={(field) => <field.DatepickerInputField label="Due date" />}
+									/>
+								) : repeat === "weekly" ? (
+									<form.AppField
+										name="dueDay"
+										children={(field) => (
+											<field.SelectField
+												label="Day of week"
+												options={DOW_OPTIONS}
+											/>
+										)}
+									/>
+								) : repeat === "monthly" ? (
+									<form.AppField
+										name="dueDay"
+										children={(field) => (
+											<field.SelectField
+												label="Day of month"
+												options={DOM_OPTIONS}
+											/>
+										)}
+									/>
+								) : null}
+							</div>
+						)}
 					/>
 					<form.AppField
 						name="title"
@@ -152,17 +217,6 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 							children={(field) => <field.SelectCategoryField label="Category" />}
 						/>
 					</div>
-					<form.AppField
-						name="repeat"
-						children={(field) => (
-							<field.SelectField
-								label="Repeat"
-								options={AVAILABLE_REPEAT_OPTIONS.filter(
-									(o) => o.value !== "one-time" && o.value !== "custom",
-								)}
-							/>
-						)}
-					/>
 
 					<form.AppField
 						name="description"
@@ -194,7 +248,8 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 		defaultValues: {
 			title: bill.title,
 			description: bill.description ?? "",
-			date: bill.anchor_date,
+			dueDay: String(bill.due_day ?? new Date().getDate()),
+			anchorDate: bill.anchor_date,
 			transaction: {
 				value: bill.amount,
 				currency: bill.currency,
@@ -212,10 +267,12 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 					description: value.description,
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
-					anchorDate: value.date,
 					walletId: value.walletId,
 					categoryId: value.categoryId || null,
 					repeat: value.repeat,
+					...(value.repeat === "yearly"
+						? { dueDay: new Date(`${value.anchorDate}T00:00:00`).getDate(), dueMonth: new Date(`${value.anchorDate}T00:00:00`).getMonth() + 1 }
+						: { dueDay: value.dueDay ? Number(value.dueDay) : undefined }),
 				},
 			});
 		},
@@ -225,9 +282,49 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 		<form.AppForm>
 			<form.Form>
 				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
-					<form.AppField
-						name="date"
-						children={(field) => <field.DatepickerInputField label="Date" />}
+					<form.Subscribe
+						selector={(s) => s.values.repeat}
+						children={(repeat) => (
+							<div className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}>
+								<form.AppField
+									name="repeat"
+									children={(field) => (
+										<field.SelectField
+											label="Repeat"
+											options={AVAILABLE_REPEAT_OPTIONS.filter(
+												(o) => o.value !== "one-time" && o.value !== "custom",
+											)}
+										/>
+									)}
+								/>
+								{repeat === "yearly" ? (
+									<form.AppField
+										name="anchorDate"
+										children={(field) => <field.DatepickerInputField label="Due date" />}
+									/>
+								) : repeat === "weekly" ? (
+									<form.AppField
+										name="dueDay"
+										children={(field) => (
+											<field.SelectField
+												label="Day of week"
+												options={DOW_OPTIONS}
+											/>
+										)}
+									/>
+								) : repeat === "monthly" ? (
+									<form.AppField
+										name="dueDay"
+										children={(field) => (
+											<field.SelectField
+												label="Day of month"
+												options={DOM_OPTIONS}
+											/>
+										)}
+									/>
+								) : null}
+							</div>
+						)}
 					/>
 					<form.AppField
 						name="title"
@@ -249,17 +346,6 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 							children={(field) => <field.SelectCategoryField label="Category" />}
 						/>
 					</div>
-					<form.AppField
-						name="repeat"
-						children={(field) => (
-							<field.SelectField
-								label="Repeat"
-								options={AVAILABLE_REPEAT_OPTIONS.filter(
-									(o) => o.value !== "one-time" && o.value !== "custom",
-								)}
-							/>
-						)}
-					/>
 
 					<form.AppField
 						name="description"

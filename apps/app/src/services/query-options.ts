@@ -8,7 +8,6 @@ import {
 	expenseKeys,
 	fileKeys,
 	memberKeys,
-	recurringBillKeys,
 	taskKeys,
 	walletKeys,
 	workspaceKeys,
@@ -271,19 +270,6 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQue
 		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
 		placeholderData: { rate: 1, inverse_rate: 1 },
 		throwOnError: true,
-	});
-};
-
-/**
- * recurring bills
- */
-
-export const upcomingBillsQueryOptions = (slug: string) => {
-	return queryOptions({
-		queryKey: recurringBillKeys.upcoming(slug),
-		queryFn: () => apiClient.recurringBills.listUpcoming(slug),
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		placeholderData: [],
 	});
 };
 

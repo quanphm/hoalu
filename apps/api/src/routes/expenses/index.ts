@@ -131,7 +131,8 @@ const route = app
 			const newAnchorDate = expenseDate.slice(0, 10); // "yyyy-MM-dd"
 
 			const expense = await db.transaction(async (tx) => {
-				// If a recurringBillId is provided (Log payment flow), advance the bill's anchor date
+				// If a recurringBillId is provided (Log payment flow), advance anchor_date only for
+				// yearly bills — monthly/weekly due dates are fixed (due_day/due_month) and never drift.
 				if (recurringBillId) {
 					const [bill] = await tx
 						.select()
@@ -144,7 +145,7 @@ const route = app
 						)
 						.limit(1);
 
-					if (bill) {
+					if (bill && bill.repeat === "yearly") {
 						await tx
 							.update(schema.recurringBill)
 							.set({ anchorDate: newAnchorDate, updatedAt: sql`now()` })
@@ -246,7 +247,6 @@ const route = app
 					// repeat is explicitly being changed — manage the linked bill accordingly
 					const newRepeat = repeat;
 					const becomesOneOff = newRepeat === "one-time" || newRepeat === "custom";
-					const newAnchorDate = date ? date.slice(0, 10) : expense.date.slice(0, 10);
 
 					if (expense.recurringBillId) {
 						if (becomesOneOff) {
@@ -257,7 +257,8 @@ const route = app
 								.where(eq(schema.recurringBill.id, expense.recurringBillId));
 							resolvedRecurringBillId = null;
 						} else {
-							// Sync the existing bill's metadata
+							// Sync the existing bill's metadata — anchorDate is NOT touched here;
+							// it only advances when a new payment is logged (POST with recurringBillId).
 							await tx
 								.update(schema.recurringBill)
 								.set({
@@ -268,7 +269,6 @@ const route = app
 									amount: `${realAmount}`,
 									currency: resolvedCurrency,
 									repeat: newRepeat,
-									anchorDate: newAnchorDate,
 									updatedAt: sql`now()`,
 								})
 								.where(eq(schema.recurringBill.id, expense.recurringBillId));
@@ -278,8 +278,8 @@ const route = app
 						// The UI shows the "Set up recurring bill" prompt; let the user do it explicitly.
 					}
 				} else if (expense.recurringBillId) {
-					// No repeat change, no explicit override — sync mutable fields on existing bill
-					const newAnchorDate = date ? date.slice(0, 10) : expense.date.slice(0, 10);
+					// No repeat change, no explicit override — sync mutable fields on existing bill.
+					// anchorDate is NOT touched here; it only advances when a new payment is logged.
 					await tx
 						.update(schema.recurringBill)
 						.set({
@@ -289,7 +289,6 @@ const route = app
 							...(categoryId !== undefined && { categoryId }),
 							...(amount !== undefined && { amount: `${realAmount}` }),
 							...(currency !== undefined && { currency: resolvedCurrency }),
-							...(date !== undefined && { anchorDate: newAnchorDate }),
 							updatedAt: sql`now()`,
 						})
 						.where(eq(schema.recurringBill.id, expense.recurringBillId));

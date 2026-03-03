@@ -3,6 +3,7 @@ import {
 	createExpenseDialogAtom,
 	createWalletDialogAtom,
 } from "#app/atoms/index.ts";
+import { useUpcomingBills } from "#app/components/upcoming-bills/use-upcoming-bills.ts";
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "@hoalu/icons/lucide";
 import {
 	Command,
@@ -19,8 +20,6 @@ import { useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { upcomingBillsQueryOptions } from "#app/services/query-options.ts";
-import { useQuery } from "@tanstack/react-query";
 import type { ActionItem, AutocompleteItem, UpcomingBillItem, VirtualizedItem } from "./types.ts";
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
@@ -43,9 +42,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const hasSearchResults = isSearching && filteredExpenses.length > 0;
 	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;
 
-	const { data: allUpcomingBills = [] } = useQuery(upcomingBillsQueryOptions(slug));
+	const allUpcomingBills = useUpcomingBills();
 	// Show at most 2 upcoming bills in the palette
-	const upcomingBills: UpcomingBillItem[] = allUpcomingBills.slice(0, 2).map((b: UpcomingBillItem & { recurringBillId: string }) => ({
+	const upcomingBills: UpcomingBillItem[] = allUpcomingBills.slice(0, 3).map((b) => ({
 		recurringBillId: b.recurringBillId,
 		date: b.date,
 		title: b.title,
@@ -131,7 +130,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		}
 
 		return items;
-	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, hasUpcomingBills, upcomingBills, actions]);
+	}, [
+		hasSearchResults,
+		filteredExpenses,
+		hasRecentExpenses,
+		recentExpenses,
+		hasUpcomingBills,
+		upcomingBills,
+		actions,
+	]);
 
 	// Build items array for base-ui Autocomplete (only actual selectable items, not headers)
 	// Order must match virtualizedItems (excluding headers) for correct itemIndex mapping
@@ -146,7 +153,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			: [];
 		const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
 		return [...expenseItems, ...billItems, ...actionItems];
-	}, [hasSearchResults, filteredExpenses, hasRecentExpenses, recentExpenses, hasUpcomingBills, upcomingBills, actions]);
+	}, [
+		hasSearchResults,
+		filteredExpenses,
+		hasRecentExpenses,
+		recentExpenses,
+		hasUpcomingBills,
+		upcomingBills,
+		actions,
+	]);
 
 	// Ref to hold the scroll function from VirtualizedList
 	const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
