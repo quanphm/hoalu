@@ -11,6 +11,7 @@ import { InputWithEmojiPickerField } from "./input-with-emoji-picker";
 import { InputWithPrefixField } from "./input-with-prefix";
 import { SelectField } from "./select";
 import { SelectCategoryField } from "./select-category";
+import { SelectRecurringBillField } from "./select-recurring-bill";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
 import { SubscribeButton } from "./subscribe-button";
@@ -27,6 +28,7 @@ const { useAppForm, withForm } = createFormHook({
 		SelectWithSearchField,
 		SelectWithGroupsField,
 		SelectCategoryField,
+		SelectRecurringBillField,
 		DatepickerField,
 		DatepickerInputField,
 		TransactionAmountField,

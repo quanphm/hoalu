@@ -22,11 +22,7 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import {
-	categoriesQueryOptions,
-	recurringBillsQueryOptions,
-	walletsQueryOptions,
-} from "#app/services/query-options.ts";
+import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
@@ -84,7 +80,6 @@ function CreateExpenseForm() {
 	const { user } = useAuth();
 	const { slug } = routeApi.useParams();
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
-	const { data: recurringBills } = useSuspenseQuery(recurringBillsQueryOptions(slug));
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 
@@ -154,14 +149,6 @@ function CreateExpenseForm() {
 	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
 	const initialCategory = draft.categoryId || validLastCategory;
 	const initialRecurringBillId = logPayment.recurringBillId || undefined;
-
-	const recurringBillOptions = [
-		{ value: "", label: "None" },
-		...recurringBills.map((bill) => ({
-			value: bill.id,
-			label: bill.title,
-		})),
-	];
 
 	const form = useAppForm({
 		defaultValues: {
@@ -248,23 +235,30 @@ function CreateExpenseForm() {
 								children={(field) => <field.SelectCategoryField label="Category" />}
 							/>
 						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<form.AppField
-								name="repeat"
-								children={(field) => (
-									<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-								)}
-							/>
-							<form.AppField
-								name="recurringBillId"
-								children={(field) => (
-									<field.SelectField
-										label="Recurring bill"
-										options={recurringBillOptions}
+						<form.Subscribe
+							selector={(s) => s.values.repeat}
+							children={(repeat) => (
+								<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
+									<form.AppField
+										name="repeat"
+										children={(field) => (
+											<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+										)}
 									/>
-								)}
-							/>
-						</div>
+									{repeat !== "one-time" && (
+										<form.AppField
+											name="recurringBillId"
+											children={(field) => (
+												<field.SelectRecurringBillField
+													label="Recurring bill"
+													repeat={repeat}
+												/>
+											)}
+										/>
+									)}
+								</div>
+							)}
+						/>
 						<form.AppField
 							name="description"
 							children={(field) => (
@@ -417,26 +411,9 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		>,
 	);
 
-	// Build bill options for the select field.
-	// Always include the currently-linked bill (so the selected value renders correctly),
-	// then add other bills whose repeat cadence matches the expense's repeat.
 	const linkedBillId = props.data.recurring_bill_id;
 	const linkedBillIsArchived =
 		!!linkedBillId && !recurringBills.some((b) => b.id === linkedBillId);
-	const billOptions = [
-		{ label: "None", value: "" },
-		// If the linked bill is archived it won't appear in recurringBills (filtered by is_active).
-		// Inject a placeholder so the select doesn't fall back to showing the raw UUID.
-		...(linkedBillIsArchived ? [{ label: "Archived bill", value: linkedBillId }] : []),
-		...recurringBills
-			.filter(
-				(b) =>
-					b.id === linkedBillId ||
-					b.repeat === props.data.repeat ||
-					props.data.repeat === "one-time",
-			)
-			.map((b) => ({ label: b.title, value: b.id })),
-	];
 
 	const form = useAppForm({
 		defaultValues: {
@@ -518,21 +495,25 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 							children={(field) => <field.SelectCategoryField label="Category" />}
 						/>
 					</div>
-					<form.AppField
-						name="repeat"
-						children={(field) => (
-							<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-						)}
-					/>
-					<form.Subscribe
-						selector={(s) => s.values.repeat}
-						children={(repeat) =>
-							repeat !== "one-time" && (recurringBills.length > 0 || linkedBillIsArchived) ? (
+				<form.Subscribe
+					selector={(s) => s.values.repeat}
+					children={(repeat) => (
+						<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
+							<form.AppField
+								name="repeat"
+								children={(field) => (
+									<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+								)}
+							/>
+							{repeat !== "one-time" && (
 								<div className="flex flex-col gap-1.5">
 									<form.AppField
 										name="recurringBillId"
 										children={(field) => (
-											<field.SelectField label="Recurring bill" options={billOptions} />
+											<field.SelectRecurringBillField
+												label="Recurring bill"
+												repeat={repeat}
+											/>
 										)}
 									/>
 									{linkedBillIsArchived && (
@@ -541,9 +522,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 										</WarningMessage>
 									)}
 								</div>
-							) : null
-						}
-					/>
+							)}
+						</div>
+					)}
+				/>
 					<form.AppField
 						name="description"
 						children={(field) => (

@@ -70,7 +70,7 @@ export function CreateRecurringBillDialogTrigger({
 interface CreateRecurringBillFormProps {
 	defaultDate?: string;
 	defaultExpenseId?: string;
-	onSuccess?: () => void;
+	onSuccess?: (newBillId?: string) => void;
 }
 
 export function CreateRecurringBillDialogContent(props: CreateRecurringBillFormProps) {
@@ -100,7 +100,7 @@ const DOM_OPTIONS = Array.from({ length: 31 }, (_, i) => ({
 	label: String(i + 1),
 }));
 
-function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBillFormProps) {
+export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBillFormProps) {
 	const workspace = useWorkspace();
 	const mutation = useCreateRecurringBill();
 	const setDialog = useSetAtom(createRecurringBillDialogAtom);
@@ -129,7 +129,7 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 		} as BillFormSchema,
 		validators: { onSubmit: BillFormSchema },
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
+			const bill = await mutation.mutateAsync({
 				payload: {
 					title: value.title,
 					description: value.description,
@@ -145,7 +145,7 @@ function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBill
 				},
 			});
 			setDialog({ state: false });
-			onSuccess?.();
+			onSuccess?.(bill?.id);
 		},
 	});
 
