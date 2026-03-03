@@ -62,6 +62,5 @@ export const exchangeRateKeys = {
 
 export const recurringBillKeys = {
 	all: (slug: string) => recurringBillKeys["~withWorkspace"](slug),
-	upcoming: (slug: string) => [...recurringBillKeys.all(slug), "upcoming"] as const,
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "recurring-bills"] as const,
 };

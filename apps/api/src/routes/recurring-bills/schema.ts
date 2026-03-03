@@ -17,6 +17,8 @@ export const RecurringBillSchema = z
 		currency: CurrencySchema,
 		repeat: RepeatSchema,
 		anchorDate: z.string(),
+		dueDay: z.number().int().nullable(),
+		dueMonth: z.number().int().nullable(),
 		isActive: z.boolean(),
 		wallet: z.object({
 			id: z.uuidv7(),
@@ -48,13 +50,23 @@ export const InsertRecurringBillSchema = z.object({
 	amount: z.number(),
 	currency: CurrencySchema,
 	repeat: RepeatSchema,
-	anchorDate: z.string(),
+	// dueDay: day-of-month (1-31) for monthly, day-of-week (0-6) for weekly.
+	// For yearly, the full anchorDate is used instead.
+	dueDay: z.number().int().min(0).max(31).optional(),
+	// dueMonth: month (1-12), only for yearly bills.
+	dueMonth: z.number().int().min(1).max(12).optional(),
+	// anchorDate: full "yyyy-MM-dd", required for yearly bills to anchor the recurrence year.
+	// For monthly/weekly/daily it is derived from dueDay/dueMonth and not user-supplied.
+	anchorDate: z.string().optional(),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7().optional(),
 	workspaceId: z.uuidv7(),
 });
 
-export const UpdateRecurringBillSchema = InsertRecurringBillSchema.partial();
+export const UpdateRecurringBillSchema = InsertRecurringBillSchema.omit({
+	anchorDate: true,
+	workspaceId: true,
+}).partial();
 
 export const UpcomingBillSchema = z.object({
 	recurringBillId: z.uuidv7(),

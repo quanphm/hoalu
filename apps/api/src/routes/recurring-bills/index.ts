@@ -106,19 +106,61 @@ const route = app
 				});
 			}
 
-			const workspace = c.get("workspace");
-			const payload = c.req.valid("json");
-			const { amount, currency, ...rest } = payload;
-			const realAmount = monetary.toRealAmount(amount, currency);
+		const workspace = c.get("workspace");
+		const payload = c.req.valid("json");
+		const { amount, currency, dueDay, dueMonth, anchorDate, repeat, ...rest } = payload;
+		const realAmount = monetary.toRealAmount(amount, currency);
 
-			const bill = await repository.insert({
-				id: generateId({ use: "uuid" }),
-				...rest,
-				amount: `${realAmount}`,
-				currency,
-				workspaceId: workspace.id,
-				creatorId: user.id,
-			});
+		// Derive anchorDate and due_day/due_month from the payload:
+		// - yearly: anchorDate is required, dueDay/dueMonth extracted from it
+		// - monthly: dueDay is required, anchorDate synthesized as current-year-month + dueDay
+		// - weekly: dueDay is required (0-6), anchorDate synthesized as the next matching weekday
+		// - daily: no anchor needed, use today
+		const today = new Date();
+		const pad = (n: number) => String(n).padStart(2, "0");
+		let resolvedAnchorDate: string;
+		let resolvedDueDay: number | null = dueDay ?? null;
+		let resolvedDueMonth: number | null = dueMonth ?? null;
+
+		if (repeat === "yearly") {
+			if (!anchorDate) {
+				return c.json({ message: "anchorDate is required for yearly bills" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+			resolvedAnchorDate = anchorDate;
+			const d = new Date(`${anchorDate}T00:00:00`);
+			resolvedDueDay = d.getDate();
+			resolvedDueMonth = d.getMonth() + 1;
+		} else if (repeat === "monthly") {
+			const day = dueDay ?? today.getDate();
+			resolvedDueDay = day;
+			resolvedDueMonth = null;
+			resolvedAnchorDate = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(day)}`;
+		} else if (repeat === "weekly") {
+			const dow = dueDay ?? today.getDay();
+			resolvedDueDay = dow;
+			resolvedDueMonth = null;
+			// Synthesize anchor as the most recent occurrence of that weekday
+			const diff = ((today.getDay() - dow) + 7) % 7;
+			const anchor = new Date(today);
+			anchor.setDate(today.getDate() - diff);
+			resolvedAnchorDate = `${anchor.getFullYear()}-${pad(anchor.getMonth() + 1)}-${pad(anchor.getDate())}`;
+		} else {
+			// daily or one-time
+			resolvedAnchorDate = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+		}
+
+		const bill = await repository.insert({
+			id: generateId({ use: "uuid" }),
+			...rest,
+			repeat,
+			amount: `${realAmount}`,
+			currency,
+			anchorDate: resolvedAnchorDate,
+			dueDay: resolvedDueDay,
+			dueMonth: resolvedDueMonth,
+			workspaceId: workspace.id,
+			creatorId: user.id,
+		});
 
 			if (!bill) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
@@ -163,20 +205,33 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const { amount, currency, ...rest } = payload;
-			const resolvedCurrency = currency ?? existing.currency;
-			const realAmount =
-				amount !== undefined ? monetary.toRealAmount(amount, resolvedCurrency) : existing.amount;
+		const { amount, currency, dueDay, dueMonth, ...rest } = payload;
+		const resolvedCurrency = currency ?? existing.currency;
+		const realAmount =
+			amount !== undefined ? monetary.toRealAmount(amount, resolvedCurrency) : existing.amount;
 
-			await repository.update({
-				id: param.id,
-				workspaceId: workspace.id,
-				payload: {
-					...rest,
-					amount: `${realAmount}`,
-					currency: resolvedCurrency,
-				},
-			});
+		// When dueDay changes, also update anchorDate for yearly bills
+		// (monthly/weekly anchors are synthetic and not user-meaningful)
+		let updatedAnchorDate: string | undefined;
+		if (dueDay !== undefined && existing.repeat === "yearly") {
+			const resolvedDueMonth = dueMonth ?? existing.dueMonth ?? new Date().getMonth() + 1;
+			const year = new Date().getFullYear();
+			const pad = (n: number) => String(n).padStart(2, "0");
+			updatedAnchorDate = `${year}-${pad(resolvedDueMonth)}-${pad(dueDay)}`;
+		}
+
+		await repository.update({
+			id: param.id,
+			workspaceId: workspace.id,
+			payload: {
+				...rest,
+				amount: `${realAmount}`,
+				currency: resolvedCurrency,
+				...(dueDay !== undefined && { dueDay }),
+				...(dueMonth !== undefined && { dueMonth }),
+				...(updatedAnchorDate !== undefined && { anchorDate: updatedAnchorDate }),
+			},
+		});
 
 			const full = await repository.findOne({ id: param.id, workspaceId: workspace.id });
 			const parsed = RecurringBillSchema.safeParse(full);

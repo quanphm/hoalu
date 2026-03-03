@@ -12,6 +12,8 @@ const RecurringBillCollectionSchema = z.object({
 	currency: CurrencySchema,
 	repeat: RepeatSchema,
 	anchor_date: z.string(),
+	due_day: z.coerce.number().int().nullable(),
+	due_month: z.coerce.number().int().nullable(),
 	wallet_id: z.uuidv7(),
 	category_id: z.uuidv7().nullable(),
 	workspace_id: z.uuidv7(),

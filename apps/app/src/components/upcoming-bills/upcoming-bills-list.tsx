@@ -14,7 +14,6 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
-import { cn } from "@hoalu/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
@@ -160,12 +159,11 @@ function BillRow({ bill, onClick }: BillRowProps) {
 				className="flex min-w-0 flex-1 items-center gap-2 text-left"
 			>
 				<span
-					className={cn(
-						"h-8 w-1 shrink-0 rounded-full",
+					className={
 						bill.categoryColor
-							? getCategoryStripeColor(bill.categoryColor)
-							: "bg-muted-foreground/30",
-					)}
+							? `h-8 w-1 shrink-0 rounded-full ${getCategoryStripeColor(bill.categoryColor)}`
+							: "bg-muted-foreground/30 h-8 w-1 shrink-0 rounded-full"
+					}
 				/>
 				<div className="min-w-0 flex-1">
 					<p className="truncate text-sm font-medium">{bill.title}</p>
@@ -174,8 +172,8 @@ function BillRow({ bill, onClick }: BillRowProps) {
 			<div className="flex shrink-0 items-center gap-2">
 				{bill.categoryName && bill.categoryColor && (
 					<Badge
-						className={cn(
-							createCategoryTheme(bill.categoryColor as Parameters<typeof createCategoryTheme>[0]),
+						className={createCategoryTheme(
+							bill.categoryColor as Parameters<typeof createCategoryTheme>[0],
 						)}
 					>
 						{bill.categoryName}
