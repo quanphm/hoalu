@@ -39,7 +39,7 @@ export function SelectWithSearchField(props: Props) {
 				items={props.options}
 				disabled={props.disabled}
 			>
-				<ComboboxInput placeholder="Select" />
+				<ComboboxInput placeholder="Select" inputClassName="h-9 items-center" />
 				<ComboboxPopup className="max-h-64">
 					<ComboboxEmpty>No result.</ComboboxEmpty>
 					<ComboboxList>

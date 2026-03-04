@@ -64,7 +64,7 @@ export function SelectCategoryField(props: Props) {
 					items={categoryOptions}
 					disabled={props.disabled}
 				>
-					<ComboboxInput placeholder="Select" />
+					<ComboboxInput placeholder="Select" inputClassName="h-9 items-center" />
 					<ComboboxPopup className="max-h-64">
 						<ComboboxEmpty>No result.</ComboboxEmpty>
 						<ComboboxList>
