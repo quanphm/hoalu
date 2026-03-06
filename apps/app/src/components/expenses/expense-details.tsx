@@ -11,7 +11,7 @@ import { useSetUpRecurringBill } from "#app/services/mutations.ts";
 import { ChevronDownIcon, ChevronUpIcon, RepeatIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@hoalu/ui/drawer";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 
@@ -145,17 +145,17 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 		onSelectExpense,
 	});
 
-	const isOpen = currentExpense !== undefined;
+	const isOpen = !!currentExpense;
 
 	function handleClose() {
 		onSelectExpense(null);
 	}
 
 	return (
-		<Drawer open={isOpen} onOpenChange={(open) => !open && handleClose()} direction="bottom">
-			<DrawerContent className="h-[95vh] max-h-[95vh]">
-				<DrawerHeader className="flex flex-row items-center justify-between border-b">
-					<DrawerTitle>Expense Details</DrawerTitle>
+		<Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+			<DialogContent className="flex max-h-[90dvh] flex-col gap-0 p-0" showCloseButton={false}>
+				<DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-2">
+					<DialogTitle className="text-base font-semibold">Expense Details</DialogTitle>
 					<div className="flex items-center gap-2">
 						<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
 							<ChevronUpIcon className="size-4" />
@@ -169,17 +169,19 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 								<DeleteExpense id={currentExpense.id} />
 							</>
 						)}
-						<DrawerClose asChild>
-							<Button size="icon" variant="ghost">
-								<XIcon className="size-4" />
-							</Button>
-						</DrawerClose>
+						<DialogClose
+							render={
+								<Button size="icon" variant="ghost" aria-label="Close">
+									<XIcon className="size-4" />
+								</Button>
+							}
+						/>
 					</div>
-				</DrawerHeader>
+				</DialogHeader>
 				<ScrollArea className="flex-1 overflow-auto">
 					{currentExpense && <EditExpenseForm key={currentExpense.id} data={currentExpense} />}
 				</ScrollArea>
-			</DrawerContent>
-		</Drawer>
+			</DialogContent>
+		</Dialog>
 	);
 }

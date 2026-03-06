@@ -1,12 +1,10 @@
-import { selectedExpenseAtom } from "#app/atoms/index.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { useSelectedExpense, type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useLayoutMode } from "#app/hooks/use-layout-mode.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
-import { useAtomValue } from "jotai";
 import { memo } from "react";
 
 import { WalletBadge } from "../wallets/wallet-badge";
@@ -16,7 +14,7 @@ interface ExpenseContentProps extends SyncedExpense {
 }
 
 function ExpenseContent(props: ExpenseContentProps) {
-	const selectedRow = useAtomValue(selectedExpenseAtom);
+	const { expense: selectedRow } = useSelectedExpense();
 	const { shouldUseMobileLayout } = useLayoutMode();
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -28,6 +26,12 @@ function ExpenseContent(props: ExpenseContentProps) {
 	};
 
 	const handleFocus: React.FocusEventHandler<HTMLDivElement> = () => {
+		// On mobile layout, skip auto-select on focus: when the dialog closes,
+		// the browser restores focus to the last-focused list item, which would
+		// immediately re-open the dialog via this handler.
+		if (shouldUseMobileLayout) {
+			return;
+		}
 		props.onClick(props.id);
 	};
 

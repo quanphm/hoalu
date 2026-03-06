@@ -51,6 +51,9 @@ export default defineConfig({
 	envPrefix: "PUBLIC_",
 	plugins: [
 		devtools({
+			consolePiping: {
+				enabled: false,
+			},
 			enhancedLogs: {
 				enabled: false,
 			},
