@@ -5,13 +5,16 @@ import {
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
 	searchKeywordsAtom,
-	selectedExpenseAtom,
 } from "#app/atoms/index.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
 import { ExpenseFilterDropdown } from "#app/components/expenses/expense-filter-dropdown.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
-import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
+import {
+	type SyncedExpense,
+	useLiveQueryExpenses,
+	useSelectedExpense,
+} from "#app/components/expenses/use-expenses.ts";
 import {
 	Section,
 	SectionAction,
@@ -25,7 +28,7 @@ import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { RepeatSchema } from "@hoalu/common/schema";
 import { createFileRoute } from "@tanstack/react-router";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { useDeferredValue, useEffect } from "react";
 import * as z from "zod";
 
@@ -54,14 +57,14 @@ function RouteComponent() {
 	const amountFilter = useAtomValue(expenseAmountFilterAtom);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
-	const [_, setSelectedExpense] = useAtom(selectedExpenseAtom);
+	const { onSelectExpense } = useSelectedExpense();
 
 	useEffect(() => {
 		if (searchById) {
-			setSelectedExpense({ id: searchById });
+			onSelectExpense(searchById);
 			navigate({ search: (prev) => ({ ...prev, id: undefined }), replace: true });
 		}
-	}, [searchById, setSelectedExpense, navigate]);
+	}, [searchById, onSelectExpense, navigate]);
 
 	const filteredExpenses = filter(expenses, {
 		selectedCategoryIds,
