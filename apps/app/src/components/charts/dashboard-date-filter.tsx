@@ -109,7 +109,7 @@ function ChartGroupByFilter() {
 
 	return (
 		<Select<ChartGroupBy> value={groupBy} onValueChange={handleGroupByChange}>
-			<SelectTrigger className="w-auto min-w-0 shrink-0">
+			<SelectTrigger className="w-auto min-w-0 shrink text-xs sm:text-sm">
 				<SelectValue>
 					{(value: ChartGroupBy) => {
 						return value === "date" ? "By date" : "By month";
@@ -139,7 +139,12 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 		<div className="flex items-center gap-1">
 			<Popover>
 				<PopoverTrigger
-					render={<Button variant={hasSelection ? "default" : "outline"} className="gap-1.5" />}
+					render={
+						<Button
+							variant={hasSelection ? "default" : "outline"}
+							className="gap-1.5 px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm"
+						/>
+					}
 				>
 					<LayersIcon className="size-3.5" />
 					<span>
@@ -178,12 +183,12 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 									>
 										{isSelected && <CheckIcon className="size-3" />}
 									</div>
-								<div
-									className={cn(
-										"size-2.5 shrink-0 rounded-full",
-										createChartColor(category.color),
-									)}
-								/>
+									<div
+										className={cn(
+											"size-2.5 shrink-0 rounded-full",
+											createChartColor(category.color),
+										)}
+									/>
 									<span className="truncate">{category.name}</span>
 								</button>
 							);
