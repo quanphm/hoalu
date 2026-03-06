@@ -32,11 +32,6 @@ services:
     depends_on:
       api-migration:
         condition: service_completed_successfully
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 1G
     labels:
       - traefik.enable=true
       - traefik.http.routers.hoalu-api.entrypoints=web
@@ -59,11 +54,6 @@ services:
       - traefik_network
     depends_on:
       - api
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 1G
     labels:
       - traefik.enable=true
       - traefik.http.routers.hoalu-app.entrypoints=web
