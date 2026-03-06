@@ -27,9 +27,6 @@ function RouteComponent() {
 	return (
 		<>
 			<Section>
-				{/* <SectionHeader>
-					<SectionTitle>Quick actions</SectionTitle>
-				</SectionHeader> */}
 				<SectionContent columns={6} className="gap-4">
 					<CreateExpenseDialogTrigger />
 					<CreateWalletDialogTrigger />
@@ -41,13 +38,13 @@ function RouteComponent() {
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12">
+					<div className="col-span-12 w-full">
 						<DashboardDateFilter categories={categories} />
 					</div>
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-7">
+					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>
-					<div className="col-span-12 flex flex-col gap-4 md:col-span-5">
+					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-5">
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
@@ -59,10 +56,10 @@ function RouteComponent() {
 					<SectionTitle>Expenses</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 flex flex-col md:col-span-7">
+					<div className="col-span-12 flex w-full flex-col md:col-span-7">
 						<UpcomingBillsWidget />
 					</div>
-					<div className="col-span-12 flex h-full flex-col md:col-span-5">
+					<div className="col-span-12 flex h-full w-full flex-col md:col-span-5">
 						<RecentExpenses />
 					</div>
 				</SectionContent>
