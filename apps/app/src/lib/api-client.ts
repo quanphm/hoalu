@@ -303,6 +303,30 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
+	scanReceipt: async (slug: string, imageBase64: string) => {
+		const response = await honoClient.bff.files["scan-receipt"].$post({
+			query: { workspaceIdOrSlug: slug },
+			json: { imageBase64 },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	getExpenseFiles: async (slug: string, expenseId: string) => {
+		const response = await honoClient.bff.files.workspace.expense[":id"].$get({
+			param: { id: expenseId },
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 };
 
 const workspaces = {

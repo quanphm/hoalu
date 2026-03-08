@@ -2,6 +2,13 @@ import type { ExpenseFormSchema } from "#app/lib/schema.ts";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+/**
+ * Holds the original high-res receipt file captured during OCR scan.
+ * Written by ReceiptReview when user approves, cleared by CreateExpenseForm after upload.
+ * Uses `null` (not stored in localStorage) because File objects are not serialisable.
+ */
+const scannedReceiptAtom = atom<File | null>(null);
+
 type ExpenseAtomSchema = Omit<ExpenseFormSchema, "attachments">;
 const basedExpense: ExpenseAtomSchema = {
 	title: "",
@@ -31,4 +38,4 @@ const selectedExpenseAtom = atom<{
  */
 const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillId: null });
 
-export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom };
+export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom };

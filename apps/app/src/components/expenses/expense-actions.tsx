@@ -3,6 +3,7 @@ import {
 	deleteExpenseDialogAtom,
 	draftExpenseAtom,
 	logPaymentAtom,
+	scannedReceiptAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
@@ -86,6 +87,7 @@ function CreateExpenseForm() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
+	const [scannedReceipt, setScannedReceipt] = useAtom(scannedReceiptAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
@@ -163,7 +165,8 @@ function CreateExpenseForm() {
 			categoryId: initialCategory,
 			repeat: draft.repeat,
 			recurringBillId: initialRecurringBillId,
-			attachments: [],
+			// Pre-populate scanned receipt file so it's uploaded on submit
+			attachments: scannedReceipt ? [scannedReceipt] : [],
 		} as ExpenseFormSchema,
 		validators: {
 			onSubmit: ExpenseFormSchema,
@@ -185,6 +188,7 @@ function CreateExpenseForm() {
 
 			setDraft(RESET);
 			setLogPayment({ recurringBillId: null });
+			setScannedReceipt(null);
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
@@ -249,10 +253,7 @@ function CreateExpenseForm() {
 										<form.AppField
 											name="recurringBillId"
 											children={(field) => (
-												<field.SelectRecurringBillField
-													label="Recurring bill"
-													repeat={repeat}
-												/>
+												<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
 											)}
 										/>
 									)}
@@ -412,8 +413,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	);
 
 	const linkedBillId = props.data.recurring_bill_id;
-	const linkedBillIsArchived =
-		!!linkedBillId && !recurringBills.some((b) => b.id === linkedBillId);
+	const linkedBillIsArchived = !!linkedBillId && !recurringBills.some((b) => b.id === linkedBillId);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -495,37 +495,32 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 							children={(field) => <field.SelectCategoryField label="Category" />}
 						/>
 					</div>
-				<form.Subscribe
-					selector={(s) => s.values.repeat}
-					children={(repeat) => (
-						<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
-							<form.AppField
-								name="repeat"
-								children={(field) => (
-									<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-								)}
-							/>
-							{repeat !== "one-time" && (
-								<div className="flex flex-col gap-1.5">
-									<form.AppField
-										name="recurringBillId"
-										children={(field) => (
-											<field.SelectRecurringBillField
-												label="Recurring bill"
-												repeat={repeat}
-											/>
-										)}
-									/>
-									{linkedBillIsArchived && (
-										<WarningMessage>
-											The linked recurring bill has been archived.
-										</WarningMessage>
+					<form.Subscribe
+						selector={(s) => s.values.repeat}
+						children={(repeat) => (
+							<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
+								<form.AppField
+									name="repeat"
+									children={(field) => (
+										<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 									)}
-								</div>
-							)}
-						</div>
-					)}
-				/>
+								/>
+								{repeat !== "one-time" && (
+									<div className="flex flex-col gap-1.5">
+										<form.AppField
+											name="recurringBillId"
+											children={(field) => (
+												<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
+											)}
+										/>
+										{linkedBillIsArchived && (
+											<WarningMessage>The linked recurring bill has been archived.</WarningMessage>
+										)}
+									</div>
+								)}
+							</div>
+						)}
+					/>
 					<form.AppField
 						name="description"
 						children={(field) => (
