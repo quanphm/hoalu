@@ -1,5 +1,5 @@
 import { db, schema } from "#api/db/index.ts";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 type NewFile = typeof schema.file.$inferInsert;
 type NewFileExpense = typeof schema.fileExpense.$inferInsert;
@@ -51,5 +51,26 @@ export class FileRepository {
 	async insertFileExpense(param: NewFileExpense[]) {
 		const result = await db.insert(schema.fileExpense).values(param).returning();
 		return result;
+	}
+
+	async findAllByExpenseId(param: { expenseId: string; workspaceId: string }) {
+		const fileExpenseRecords = await db
+			.select()
+			.from(schema.fileExpense)
+			.where(
+				and(
+					eq(schema.fileExpense.expenseId, param.expenseId),
+					eq(schema.fileExpense.workspaceId, param.workspaceId),
+				),
+			);
+
+		if (fileExpenseRecords.length === 0) {
+			return [];
+		}
+
+		const fileIds = fileExpenseRecords.map((fe) => fe.fileId);
+		const files = await db.select().from(schema.file).where(inArray(schema.file.id, fileIds));
+
+		return files;
 	}
 }

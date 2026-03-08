@@ -310,3 +310,12 @@ export const filesQueryOptions = (slug: string) => {
 		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
+
+export const expenseFilesQueryOptions = (slug: string, expenseId: string) => {
+	return queryOptions({
+		queryKey: [...fileKeys.all(slug), "expense", expenseId],
+		queryFn: () => apiClient.files.getExpenseFiles(slug, expenseId),
+		staleTime: TIME_IN_MILLISECONDS.DAY,
+		enabled: !!expenseId,
+	});
+};

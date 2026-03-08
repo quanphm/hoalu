@@ -10,6 +10,7 @@ export * from "./file";
 export * from "./file-upload";
 export * from "./folder";
 export * from "./home";
+export * from "./scan";
 export * from "./layout-dashboard";
 export * from "./settings";
 export * from "./tent";

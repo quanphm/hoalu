@@ -1,6 +1,8 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { extractReceiptData } from "#api/lib/ocr.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
 import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
 import { getS3Path, isValidFileType } from "#api/utils/io.ts";
@@ -18,6 +20,7 @@ import * as z from "zod";
 
 const app = createHonoInstance();
 const fileRepository = new FileRepository();
+const categoryRepository = new CategoryRepository();
 const TAGS = ["Files"];
 
 const route = app
@@ -142,6 +145,112 @@ const route = app
 				return c.json({ data: file }, HTTPStatus.codes.OK);
 			}
 			return c.json({ data: null }, HTTPStatus.codes.OK);
+		},
+	)
+	.post(
+		"/scan-receipt",
+		describeRoute({
+			tags: TAGS,
+			summary: "Scan receipt image with OCR",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(
+					z.object({
+						data: z
+							.object({
+								amount: z.number(),
+								date: z.string(),
+								merchantName: z.string(),
+								suggestedCategoryId: z.string().uuid().nullable(),
+								currency: z.string(),
+								confidence: z.number(),
+								items: z
+									.array(
+										z.object({
+											name: z.string(),
+											quantity: z.number().optional(),
+											price: z.number().optional(),
+										}),
+									)
+									.optional(),
+							})
+							.nullable(),
+					}),
+					HTTPStatus.codes.OK,
+				),
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		jsonBodyValidator(z.object({ imageBase64: z.string() })),
+		async (c) => {
+			const workspace = c.get("workspace");
+			const payload = c.req.valid("json");
+
+			// Fetch workspace categories for AI matching
+			const categories = await categoryRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
+
+			// Extract receipt data using OCR
+			const receiptData = await extractReceiptData(
+				payload.imageBase64,
+				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+			);
+
+			// Log confidence for analytics
+			if (receiptData) {
+				console.log(`[OCR] Receipt scanned - confidence: ${receiptData.confidence}`);
+			}
+
+			return c.json({ data: receiptData }, HTTPStatus.codes.OK);
+		},
+	)
+	.get(
+		"/workspace/expense/:id",
+		describeRoute({
+			tags: TAGS,
+			summary: "Get files for an expense",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(z.object({ data: FilesSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		idParamValidator,
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const param = c.req.valid("param");
+
+			const files = await fileRepository.findAllByExpenseId({
+				expenseId: param.id,
+				workspaceId: workspace.id,
+			});
+
+			const filesWithPresignedUrl = await Promise.all(
+				files.map(async (file) => {
+					const path = getS3Path(file.s3Url);
+					const presignedUrl = bunS3Client.presign(path, {
+						expiresIn: TIME_IN_SECONDS.DAY,
+					});
+					return { ...file, presignedUrl };
+				}),
+			);
+
+			const parsed = FilesSchema.safeParse(filesWithPresignedUrl);
+			if (!parsed.success) {
+				return c.json(
+					{ message: createIssueMsg(parsed.error.issues) },
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
+				);
+			}
+
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(

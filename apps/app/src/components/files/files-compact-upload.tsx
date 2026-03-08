@@ -71,7 +71,7 @@ export function FilesCompactUpload({ onFilesSelectedUpdate, children }: FilesCom
 			)}
 
 			{files.length > 0 && (
-				<ul ref={previewRef} className="grid grid-cols-5 gap-1.5">
+				<ul ref={previewRef} className="grid grid-cols-5 gap-1.5 px-4">
 					{files.map((file, index) => (
 						<li key={file.name} className="bg-muted/50 relative flex rounded-md text-sm">
 							<div className="relative aspect-square w-full overflow-hidden rounded-md">

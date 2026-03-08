@@ -16,6 +16,7 @@ export const FileMetaSchema = z.object({
 });
 
 export const FileSchema = z.object({
+	id: z.uuidv7(),
 	name: z.string().min(1),
 	description: z.string().nullable(),
 	tags: z.optional(z.array(z.string())),

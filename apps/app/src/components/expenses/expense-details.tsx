@@ -8,12 +8,15 @@ import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useSetUpRecurringBill } from "#app/services/mutations.ts";
+import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
 import { ChevronDownIcon, ChevronUpIcon, RepeatIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
 	const workspace = useWorkspace();
@@ -126,12 +129,47 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 							<SetUpRecurringBillPrompt expense={currentExpense} />
 						)}
 						<EditExpenseForm key={currentExpense.id} data={currentExpense} />
+						<Suspense fallback={null}>
+							<ReceiptPreview expenseId={currentExpense.id} />
+						</Suspense>
 					</>
 				) : (
 					<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
 						No expenses selected
 					</h2>
 				)}
+			</div>
+		</div>
+	);
+}
+
+function ReceiptPreview({ expenseId }: { expenseId: string }) {
+	const workspace = useWorkspace();
+	const { data: files } = useSuspenseQuery(expenseFilesQueryOptions(workspace.slug, expenseId));
+
+	if (!files || files.length === 0) {
+		return null;
+	}
+
+	return (
+		<div className="border-t p-4">
+			<h4 className="mb-2 text-sm font-medium">Receipts</h4>
+			<div className="flex gap-2 overflow-x-auto">
+				{files.map((file) => (
+					<a
+						key={file.id}
+						href={file.presignedUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="block shrink-0"
+					>
+						<img
+							src={file.presignedUrl}
+							alt="Receipt"
+							className="h-24 w-auto rounded-md border object-cover"
+						/>
+					</a>
+				))}
 			</div>
 		</div>
 	);
@@ -179,7 +217,14 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 					</div>
 				</DialogHeader>
 				<ScrollArea className="flex-1 overflow-auto">
-					{currentExpense && <EditExpenseForm key={currentExpense.id} data={currentExpense} />}
+					{currentExpense && (
+						<>
+							<EditExpenseForm key={currentExpense.id} data={currentExpense} />
+							<Suspense fallback={null}>
+								<ReceiptPreview expenseId={currentExpense.id} />
+							</Suspense>
+						</>
+					)}
 				</ScrollArea>
 			</DialogContent>
 		</Dialog>

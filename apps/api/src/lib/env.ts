@@ -12,6 +12,7 @@ export const EnvSchema = z.object({
 	DB_PASSWORD: z.string().min(1),
 	DOMAIN: z.string().min(1),
 	NODE_ENV: z.string().default("development"),
+	OPENROUTER_API_KEY: z.string().optional(),
 	PUBLIC_API_URL: z.url(),
 	PUBLIC_APP_BASE_URL: z.url(),
 	REDIS_URL: z.url(),
