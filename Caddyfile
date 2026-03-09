@@ -3,3 +3,11 @@ hoalu.localhost {
 	reverse_proxy localhost:5173
 	encode gzip
 }
+
+minio.hoalu.localhost {
+	reverse_proxy localhost:9001
+}
+
+s3.hoalu.localhost {
+	reverse_proxy localhost:9000
+}
