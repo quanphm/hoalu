@@ -7,16 +7,16 @@ import { useExpenseNavigation } from "#app/components/expenses/use-expense-navig
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { useSetUpRecurringBill } from "#app/services/mutations.ts";
+import { useSetUpRecurringBill, useDeleteExpenseFile } from "#app/services/mutations.ts";
 import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
-import { ChevronDownIcon, ChevronUpIcon, RepeatIcon } from "@hoalu/icons/lucide";
+import { ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, RepeatIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
 	const workspace = useWorkspace();
@@ -146,6 +146,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 function ReceiptPreview({ expenseId }: { expenseId: string }) {
 	const workspace = useWorkspace();
 	const { data: files } = useSuspenseQuery(expenseFilesQueryOptions(workspace.slug, expenseId));
+	const deleteMutation = useDeleteExpenseFile();
 
 	if (!files || files.length === 0) {
 		return null;
@@ -153,25 +154,155 @@ function ReceiptPreview({ expenseId }: { expenseId: string }) {
 
 	return (
 		<div className="border-t p-4">
-			<h4 className="mb-2 text-sm font-medium">Receipts</h4>
-			<div className="flex gap-2 overflow-x-auto">
-				{files.map((file) => (
-					<a
-						key={file.id}
-						href={file.presignedUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="block shrink-0"
-					>
-						<img
-							src={file.presignedUrl}
-							alt="Receipt"
-							className="h-24 w-auto rounded-md border object-cover"
-						/>
-					</a>
+			<h4 className="mb-2 text-sm font-medium">Attachments</h4>
+			<AttachmentStrip
+				files={files}
+				onDelete={(fileId) => {
+					if (confirm("Delete this attachment?")) {
+						deleteMutation.mutate({ expenseId, fileId });
+					}
+				}}
+			/>
+		</div>
+	);
+}
+
+function AttachmentStrip({
+	files,
+	onDelete,
+}: {
+	files: { id: string; name: string; description: string | null; presignedUrl: string }[];
+	onDelete: (fileId: string) => void;
+}) {
+	const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+	const open = previewIndex !== null;
+	const total = files.length;
+
+	function goTo(index: number) {
+		setPreviewIndex((index + total) % total);
+	}
+
+	useEffect(() => {
+		if (!open) return;
+		function onKeyDown(e: KeyboardEvent) {
+			if (e.key === "ArrowLeft") goTo((previewIndex ?? 0) - 1);
+			if (e.key === "ArrowRight") goTo((previewIndex ?? 0) + 1);
+		}
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [open, previewIndex]);
+
+	const current = previewIndex !== null ? files[previewIndex] : null;
+
+	return (
+		<>
+			<div className="flex gap-3 overflow-x-auto pb-1">
+				{files.map((file, index) => (
+					<div key={file.id} className="group relative shrink-0">
+						<button
+							type="button"
+							className="block cursor-pointer"
+							onClick={() => setPreviewIndex(index)}
+						>
+							<img
+								src={file.presignedUrl}
+								alt="Attachment"
+								className="h-24 w-auto rounded-md border object-cover"
+							/>
+						</button>
+						<Button
+							type="button"
+							size="icon"
+							variant="destructive"
+							className="absolute top-1 right-1 hidden size-6 rounded-full group-hover:flex"
+							onClick={(e) => {
+								e.stopPropagation();
+								onDelete(file.id);
+							}}
+						>
+							<XIcon className="size-4" />
+						</Button>
+					</div>
 				))}
 			</div>
-		</div>
+
+			<Dialog open={open} onOpenChange={(o) => !o && setPreviewIndex(null)}>
+				<DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden">
+					{/* Header */}
+					<div className="flex items-center px-6 pt-6 pb-4 pr-12">
+						<h2 className="text-xl font-semibold leading-none">Attachment preview</h2>
+					</div>
+
+					{/* Image area — full width, no side padding */}
+					<div className="relative flex items-center justify-center bg-black/90 min-h-[40vh]">
+						{current && (
+							<img
+								key={current.presignedUrl}
+								src={current.presignedUrl}
+								alt="Attachment"
+								className="max-h-[60vh] w-full object-contain"
+							/>
+						)}
+						{total > 1 && (
+							<>
+								<Button
+									type="button"
+									size="icon"
+									variant="ghost"
+									className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
+									onClick={() => goTo((previewIndex ?? 0) - 1)}
+								>
+									<ChevronLeftIcon className="size-5" />
+								</Button>
+								<Button
+									type="button"
+									size="icon"
+									variant="ghost"
+									className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
+									onClick={() => goTo((previewIndex ?? 0) + 1)}
+								>
+									<ChevronRightIcon className="size-5" />
+								</Button>
+								<div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+									{files.map((_, i) => (
+										<button
+											key={i}
+											type="button"
+											className={`size-1.5 rounded-full transition-colors ${i === previewIndex ? "bg-white" : "bg-white/40"}`}
+											onClick={() => setPreviewIndex(i)}
+										/>
+									))}
+								</div>
+							</>
+						)}
+					</div>
+
+					{/* Footer */}
+					{current && (
+						<div className="bg-muted/50 flex justify-end border-t px-6 py-4">
+							<Button
+								type="button"
+								variant="destructive"
+								onClick={() => {
+									if (confirm("Delete this attachment?")) {
+										const nextTotal = total - 1;
+										if (nextTotal === 0) {
+											setPreviewIndex(null);
+										} else {
+											setPreviewIndex((previewIndex ?? 0) % nextTotal);
+										}
+										onDelete(current.id);
+									}
+								}}
+							>
+								<Trash2Icon className="size-4" />
+								Delete
+							</Button>
+						</div>
+					)}
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
 

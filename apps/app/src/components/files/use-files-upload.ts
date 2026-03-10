@@ -109,6 +109,15 @@ export function useFilesUpload({
 
 	const clearErrors = () => setErrors([]);
 
+	const clearFiles = useCallback(() => {
+		for (const url of previewUrls) {
+			URL.revokeObjectURL(url);
+		}
+		setFiles([]);
+		setPreviewUrls([]);
+		previewRef.current = [];
+	}, [previewUrls]);
+
 	useEffect(() => {
 		return () => {
 			if (previewRef.current) {
@@ -133,5 +142,6 @@ export function useFilesUpload({
 		handleFileChange,
 		handleRemove,
 		clearErrors,
+		clearFiles,
 	};
 }

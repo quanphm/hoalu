@@ -327,6 +327,17 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
+	deleteExpenseFile: async (slug: string, expenseId: string, fileId: string) => {
+		const response = await honoClient.bff.files.workspace.expense[":expenseId"].file[":fileId"].$delete({
+			param: { expenseId, fileId },
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		return true;
+	},
 };
 
 const workspaces = {

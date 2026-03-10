@@ -7,7 +7,3 @@ hoalu.localhost {
 minio.hoalu.localhost {
 	reverse_proxy localhost:9001
 }
-
-s3.hoalu.localhost {
-	reverse_proxy localhost:9000
-}
