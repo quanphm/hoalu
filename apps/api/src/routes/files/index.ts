@@ -285,6 +285,43 @@ const route = app
 
 			return c.body(null, HTTPStatus.codes.CREATED);
 		},
+	)
+	.delete(
+		"/workspace/expense/:expenseId/file/:fileId",
+		describeRoute({
+			tags: TAGS,
+			summary: "Delete a file from an expense",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.not_found(),
+				[HTTPStatus.codes.NO_CONTENT]: {
+					description: "Success",
+				},
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		async (c) => {
+			const workspace = c.get("workspace");
+			const { expenseId, fileId } = c.req.param();
+
+			const result = await fileRepository.deleteFileExpense({
+				fileId,
+				expenseId,
+				workspaceId: workspace.id,
+			});
+
+			if (!result) {
+				return c.json({ message: "File not found" }, HTTPStatus.codes.NOT_FOUND);
+			}
+
+			const path = getS3Path(result.s3Url);
+			await bunS3Client.delete(path);
+
+			return c.body(null, HTTPStatus.codes.NO_CONTENT);
+		},
 	);
 
 export default route;

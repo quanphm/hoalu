@@ -5,6 +5,7 @@ import { authClient } from "#app/lib/auth-client.ts";
 import {
 	categoryKeys,
 	expenseKeys,
+	fileKeys,
 	recurringBillKeys,
 	walletKeys,
 	workspaceKeys,
@@ -573,7 +574,29 @@ export function useUploadExpenseFiles() {
 			return id;
 		},
 		onSuccess: (expenseId) => {
-			queryClient.invalidateQueries({ queryKey: expenseKeys.withId(slug, expenseId) });
+			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteExpenseFile() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ expenseId, fileId }: { expenseId: string; fileId: string }) => {
+			await apiClient.files.deleteExpenseFile(slug, expenseId, fileId);
+			return { expenseId, fileId };
+		},
+		onSuccess: ({ expenseId }) => {
+			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
 		},
 		onError: (error) => {
 			toastManager.add({

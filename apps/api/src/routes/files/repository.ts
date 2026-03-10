@@ -73,4 +73,44 @@ export class FileRepository {
 
 		return files;
 	}
+
+	async deleteFileExpense(param: { fileId: string; expenseId: string; workspaceId: string }) {
+		const [fileExpense] = await db
+			.select()
+			.from(schema.fileExpense)
+			.where(
+				and(
+					eq(schema.fileExpense.fileId, param.fileId),
+					eq(schema.fileExpense.expenseId, param.expenseId),
+					eq(schema.fileExpense.workspaceId, param.workspaceId),
+				),
+			)
+			.limit(1);
+
+		if (!fileExpense) {
+			return null;
+		}
+
+		const [file] = await db
+			.select()
+			.from(schema.file)
+			.where(eq(schema.file.id, param.fileId))
+			.limit(1);
+
+		if (!file) {
+			return null;
+		}
+
+		await db.delete(schema.fileExpense).where(
+			and(
+				eq(schema.fileExpense.fileId, param.fileId),
+				eq(schema.fileExpense.expenseId, param.expenseId),
+				eq(schema.fileExpense.workspaceId, param.workspaceId),
+			),
+		);
+
+		await db.delete(schema.file).where(eq(schema.file.id, param.fileId));
+
+		return file;
+	}
 }

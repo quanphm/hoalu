@@ -7,7 +7,7 @@ import {
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
-import { FilesCompactUpload } from "#app/components/files/files-compact-upload.tsx";
+import { FilesCompactUpload, type FilesCompactUploadRef } from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
@@ -46,7 +46,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
@@ -83,6 +83,7 @@ function CreateExpenseForm() {
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
+	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
 
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
@@ -202,6 +203,8 @@ function CreateExpenseForm() {
 					date: expense.date,
 					files: value.attachments,
 				});
+				filesUploadRef.current?.clearFiles();
+				form.setFieldValue("attachments", []);
 			}
 		},
 	});
@@ -277,6 +280,7 @@ function CreateExpenseForm() {
 				</div>
 
 				<FilesCompactUpload
+					ref={filesUploadRef}
 					onFilesSelectedUpdate={(files) => form.setFieldValue("attachments", files)}
 				>
 					{(trigger) => (
@@ -377,6 +381,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const workspace = useWorkspace();
 	const mutation = useEditExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
+	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
 	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
 	const recurringBills = useLiveQueryRecurringBills();
 
@@ -459,6 +464,8 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					date: value.date,
 					files: value.attachments,
 				});
+				filesUploadRef.current?.clearFiles();
+				form.setFieldValue("attachments", []);
 			}
 		},
 	});
@@ -530,6 +537,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 				</FieldGroup>
 
 				<FilesCompactUpload
+					ref={filesUploadRef}
 					onFilesSelectedUpdate={(files) => form.setFieldValue("attachments", files)}
 				>
 					{(trigger) => (
