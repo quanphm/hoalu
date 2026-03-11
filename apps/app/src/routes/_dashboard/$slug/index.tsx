@@ -13,6 +13,7 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
+import { VoiceExpenseDialogTrigger } from "#app/components/voice/voice-expense-dialog.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 import { createFileRoute } from "@tanstack/react-router";
@@ -29,8 +30,9 @@ function RouteComponent() {
 		<>
 			<Section>
 				<SectionContent columns={6} className="gap-4">
-					<ScanReceiptDialogTrigger />
-					<CreateExpenseDialogTrigger />
+				<ScanReceiptDialogTrigger />
+				<VoiceExpenseDialogTrigger />
+				<CreateExpenseDialogTrigger />
 					<CreateWalletDialogTrigger />
 				</SectionContent>
 			</Section>

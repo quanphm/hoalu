@@ -29,6 +29,7 @@ import {
 	DeleteExpenseDialogContent,
 } from "../expenses/expense-actions";
 import { ScanReceiptDialogContent } from "../receipt/scan-receipt-dialog";
+import { VoiceExpenseDialogContent } from "../voice/voice-expense-dialog";
 import {
 	CreateWalletDialogContent,
 	DeleteWalletDialogContent,
@@ -79,6 +80,8 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 			return <DeleteExpenseDialogContent />;
 		case "scan-receipt":
 			return <ScanReceiptDialogContent />;
+		case "voice-expense":
+			return <VoiceExpenseDialogContent />;
 
 		case "create-wallet":
 			return <CreateWalletDialogContent />;

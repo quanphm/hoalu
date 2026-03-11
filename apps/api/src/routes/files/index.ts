@@ -1,5 +1,6 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { extractReceiptData } from "#api/lib/ocr.ts";
+import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
@@ -206,6 +207,63 @@ const route = app
 			}
 
 			return c.json({ data: receiptData }, HTTPStatus.codes.OK);
+		},
+	)
+	.post(
+		"/parse-voice",
+		describeRoute({
+			tags: TAGS,
+			summary: "Parse voice transcription into structured expense data",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(
+					z.object({
+						data: z
+							.object({
+								title: z.string(),
+								amount: z.number(),
+								currency: z.string(),
+								date: z.string(),
+								suggestedCategoryId: z.string().uuid().nullable(),
+								repeat: z.enum(["one-time", "daily", "weekly", "monthly", "yearly"]),
+								confidence: z.number(),
+							})
+							.nullable(),
+					}),
+					HTTPStatus.codes.OK,
+				),
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		jsonBodyValidator(z.object({ transcription: z.string().min(1) })),
+		async (c) => {
+			const workspace = c.get("workspace");
+			const payload = c.req.valid("json");
+
+			// Fetch workspace categories for AI matching
+			const categories = await categoryRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
+
+			const today = new Date().toISOString().split("T")[0] as string;
+
+			const voiceData = await parseVoiceExpense(
+				payload.transcription,
+				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+				{
+					today,
+					availableCurrencies: ["USD", "VND", "SGD", "EUR"],
+				},
+			);
+
+			if (voiceData) {
+				console.log(`[Voice] Expense parsed - confidence: ${voiceData.confidence}`);
+			}
+
+			return c.json({ data: voiceData }, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
