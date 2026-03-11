@@ -315,10 +315,10 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
-	parseVoice: async (slug: string, transcription: string) => {
+	parseVoice: async (slug: string, transcription: string, lang: "en-US" | "vi-VN" = "en-US") => {
 		const response = await honoClient.bff.files["parse-voice"].$post({
 			query: { workspaceIdOrSlug: slug },
-			json: { transcription },
+			json: { transcription, lang },
 		});
 		if (!response.ok) {
 			const { message } = await response.json();

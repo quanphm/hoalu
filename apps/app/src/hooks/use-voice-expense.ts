@@ -62,7 +62,14 @@ export interface VoiceExpenseData {
 	confidence: number;
 }
 
-export function useVoiceRecorder() {
+export type VoiceLanguage = "en-US" | "vi-VN";
+
+export const VOICE_LANGUAGES: { value: VoiceLanguage; label: string }[] = [
+	{ value: "en-US", label: "English" },
+	{ value: "vi-VN", label: "Tiếng Việt" },
+];
+
+export function useVoiceRecorder(lang: VoiceLanguage = "en-US") {
 	const [isListening, setIsListening] = useState(false);
 	const [transcript, setTranscript] = useState("");
 	const [interimTranscript, setInterimTranscript] = useState("");
@@ -88,7 +95,7 @@ export function useVoiceRecorder() {
 		const recognition = new SpeechRecognitionClass!();
 		recognition.continuous = false;
 		recognition.interimResults = true;
-		recognition.lang = "en-US";
+		recognition.lang = lang;
 
 		recognition.onstart = () => {
 			setIsListening(true);
@@ -131,7 +138,7 @@ export function useVoiceRecorder() {
 
 		recognitionRef.current = recognition;
 		recognition.start();
-	}, [isSupported]);
+	}, [isSupported, lang]);
 
 	const stop = useCallback(() => {
 		recognitionRef.current?.stop();
@@ -172,8 +179,8 @@ export function useParseVoiceExpense() {
 	const workspace = useWorkspace();
 
 	return useMutation({
-		mutationFn: async (transcription: string) => {
-			const result = await apiClient.files.parseVoice(workspace.slug, transcription);
+		mutationFn: async ({ transcription, lang }: { transcription: string; lang: VoiceLanguage }) => {
+			const result = await apiClient.files.parseVoice(workspace.slug, transcription, lang);
 			return result as VoiceExpenseData | null;
 		},
 	});

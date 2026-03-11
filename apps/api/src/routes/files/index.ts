@@ -238,7 +238,7 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(z.object({ transcription: z.string().min(1) })),
+		jsonBodyValidator(z.object({ transcription: z.string().min(1), lang: z.enum(["en-US", "vi-VN"]).default("en-US") })),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -256,6 +256,7 @@ const route = app
 				{
 					today,
 					availableCurrencies: ["USD", "VND", "SGD", "EUR"],
+					lang: payload.lang,
 				},
 			);
 
