@@ -9,6 +9,7 @@ const DIALOG_ID = [
 	"create-expense",
 	"delete-expense",
 	"scan-receipt",
+	"voice-expense",
 
 	// wallet
 	"create-wallet",
@@ -107,6 +108,7 @@ export const deleteWorkspaceDialogAtom = createDialogAtom("delete-workspace");
 export const createExpenseDialogAtom = createDialogAtom("create-expense");
 export const deleteExpenseDialogAtom = createDialogAtom("delete-expense");
 export const scanReceiptDialogAtom = createDialogAtom("scan-receipt");
+export const voiceExpenseDialogAtom = createDialogAtom("voice-expense");
 
 export const createWalletDialogAtom = createDialogAtom("create-wallet");
 export const editWalletDialogAtom = createDialogAtom("edit-wallet");

@@ -315,6 +315,18 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
+	parseVoice: async (slug: string, transcription: string) => {
+		const response = await honoClient.bff.files["parse-voice"].$post({
+			query: { workspaceIdOrSlug: slug },
+			json: { transcription },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 	getExpenseFiles: async (slug: string, expenseId: string) => {
 		const response = await honoClient.bff.files.workspace.expense[":id"].$get({
 			param: { id: expenseId },
