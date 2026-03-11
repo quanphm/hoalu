@@ -2,7 +2,7 @@ import { createExpenseDialogAtom, voiceExpenseDialogAtom } from "#app/atoms/dial
 import { draftExpenseAtom } from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
 import { categoriesQueryOptions } from "#app/services/query-options.ts";
-import { type VoiceExpenseData, useParseVoiceExpense, useVoiceRecorder } from "#app/hooks/use-voice-expense.ts";
+import { type VoiceExpenseData, useParseVoiceExpense, useVoiceRecorder, VOICE_LANGUAGES, type VoiceLanguage } from "#app/hooks/use-voice-expense.ts";
 import { MicIcon, MicOffIcon, RotateCcwIcon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
@@ -65,8 +65,9 @@ export function VoiceExpenseDialogContent() {
 }
 
 function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpenseData) => void }) {
+	const [selectedLang, setSelectedLang] = useState<VoiceLanguage>("en-US");
 	const { isListening, transcript, interimTranscript, error, isSupported, start, stop, reset } =
-		useVoiceRecorder();
+		useVoiceRecorder(selectedLang);
 	const parseMutation = useParseVoiceExpense();
 	const setVoiceDialog = useSetAtom(voiceExpenseDialogAtom);
 
@@ -74,7 +75,7 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 
 	const handleParse = async () => {
 		if (!transcript.trim()) return;
-		const result = await parseMutation.mutateAsync(transcript.trim());
+		const result = await parseMutation.mutateAsync({ transcription: transcript.trim(), lang: selectedLang });
 		if (result) {
 			onParseSuccess(result);
 		}
@@ -106,6 +107,27 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 
 	return (
 		<div className="flex flex-col gap-6">
+			{/* Language selector */}
+			<div className="flex items-center justify-center gap-2">
+				{VOICE_LANGUAGES.map((lang) => (
+					<button
+						key={lang.value}
+						type="button"
+						onClick={() => setSelectedLang(lang.value)}
+						disabled={isListening || parseMutation.isPending}
+						className={cn(
+							"rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+							selectedLang === lang.value
+								? "bg-primary text-primary-foreground"
+								: "bg-muted text-muted-foreground hover:bg-muted/80",
+							(isListening || parseMutation.isPending) && "cursor-not-allowed opacity-50",
+						)}
+					>
+						{lang.label}
+					</button>
+				))}
+			</div>
+
 			{/* Mic button */}
 			<div className="flex flex-col items-center gap-4 py-4">
 				<button
@@ -159,7 +181,9 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 					</p>
 				) : (
 					<p className="text-muted-foreground italic">
-						Try: "Spent 45 dollars on coffee" or "Grocery shopping 120 VND yesterday"
+						{selectedLang === "vi-VN"
+							? "Thử: \"Tiêu 100 nghìn cho cà phê\" hoặc \"Mua đồ ăn 200 nghìn hôm qua\""
+							: 'Try: "Spent 45 dollars on coffee" or "Grocery shopping 120 VND yesterday"'}
 					</p>
 				)}
 			</div>
