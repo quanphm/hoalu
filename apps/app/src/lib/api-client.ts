@@ -303,10 +303,10 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
-	scanReceipt: async (slug: string, imageBase64: string) => {
+	scanReceipt: async (slug: string, imagesBase64: string[]) => {
 		const response = await honoClient.bff.files["scan-receipt"].$post({
 			query: { workspaceIdOrSlug: slug },
-			json: { imageBase64 },
+			json: { imagesBase64 },
 		});
 		if (!response.ok) {
 			const { message } = await response.json();

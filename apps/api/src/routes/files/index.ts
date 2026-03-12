@@ -1,5 +1,5 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
-import { extractReceiptData } from "#api/lib/ocr.ts";
+import { extractReceiptDataBatch } from "#api/lib/ocr.ts";
 import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
@@ -152,32 +152,34 @@ const route = app
 		"/scan-receipt",
 		describeRoute({
 			tags: TAGS,
-			summary: "Scan receipt image with OCR",
+			summary: "Scan one or more receipt images with OCR",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(
 					z.object({
-						data: z
-							.object({
-								amount: z.number(),
-								date: z.string(),
-								merchantName: z.string(),
-								suggestedCategoryId: z.string().uuid().nullable(),
-								currency: z.string(),
-								confidence: z.number(),
-								items: z
-									.array(
-										z.object({
-											name: z.string(),
-											quantity: z.number().optional(),
-											price: z.number().optional(),
-										}),
-									)
-									.optional(),
-							})
-							.nullable(),
+						data: z.array(
+							z
+								.object({
+									amount: z.number(),
+									date: z.string(),
+									merchantName: z.string(),
+									suggestedCategoryId: z.string().uuid().nullable(),
+									currency: z.string(),
+									confidence: z.number(),
+									items: z
+										.array(
+											z.object({
+												name: z.string(),
+												quantity: z.number().optional(),
+												price: z.number().optional(),
+											}),
+										)
+										.optional(),
+								})
+								.nullable(),
+						),
 					}),
 					HTTPStatus.codes.OK,
 				),
@@ -185,7 +187,7 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(z.object({ imageBase64: z.string() })),
+		jsonBodyValidator(z.object({ imagesBase64: z.array(z.string()).min(1).max(10) })),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
@@ -195,18 +197,17 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			// Extract receipt data using OCR
-			const receiptData = await extractReceiptData(
-				payload.imageBase64,
+			// Scan all images in parallel
+			const results = await extractReceiptDataBatch(
+				payload.imagesBase64,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
 			);
 
-			// Log confidence for analytics
-			if (receiptData) {
-				console.log(`[OCR] Receipt scanned - confidence: ${receiptData.confidence}`);
-			}
+			// Log summary
+			const successCount = results.filter(Boolean).length;
+			console.log(`[OCR] Scanned ${payload.imagesBase64.length} image(s), ${successCount} succeeded`);
 
-			return c.json({ data: receiptData }, HTTPStatus.codes.OK);
+			return c.json({ data: results }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(

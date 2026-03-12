@@ -3,7 +3,7 @@ import {
 	deleteExpenseDialogAtom,
 	draftExpenseAtom,
 	logPaymentAtom,
-	scannedReceiptAtom,
+	scannedReceiptsAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
@@ -88,7 +88,7 @@ function CreateExpenseForm() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
-	const [scannedReceipt, setScannedReceipt] = useAtom(scannedReceiptAtom);
+	const [scannedReceipts, setScannedReceipts] = useAtom(scannedReceiptsAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
@@ -166,8 +166,8 @@ function CreateExpenseForm() {
 			categoryId: initialCategory,
 			repeat: draft.repeat,
 			recurringBillId: initialRecurringBillId,
-			// Pre-populate scanned receipt file so it's uploaded on submit
-			attachments: scannedReceipt ? [scannedReceipt] : [],
+			// Pre-populate scanned receipt files so they're uploaded on submit
+			attachments: scannedReceipts.length > 0 ? scannedReceipts : [],
 		} as ExpenseFormSchema,
 		validators: {
 			onSubmit: ExpenseFormSchema,
@@ -189,7 +189,7 @@ function CreateExpenseForm() {
 
 			setDraft(RESET);
 			setLogPayment({ recurringBillId: null });
-			setScannedReceipt(null);
+			setScannedReceipts([]);
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {

@@ -72,7 +72,7 @@ export async function extractReceiptData(
 							type: "text",
 							text: `You are a receipt OCR system. Extract the following information from the receipt image:
 - Total amount (the final total, not subtotal)
-- Date (in YYYY-MM-DD format)
+- Date (output always as YYYY-MM-DD)
 - Merchant/store name
 - Currency (3-letter ISO code like USD, EUR, VND)
 - Confidence score (0-1) based on image quality and clarity
@@ -81,6 +81,16 @@ export async function extractReceiptData(
 ${categoryListText}
 
 Match the receipt to one of the available categories based on the merchant name and items. If no good match exists, set suggestedCategoryId to null.
+
+DATE FORMAT RULES — use all available signals to determine the correct date:
+1. If a digit in the day or month position is > 12, that unambiguously identifies which field is which.
+2. Infer locale from the language printed on the receipt and the merchant country:
+   - Vietnamese, French, German, Spanish, Portuguese, Dutch, Italian, Thai, Indonesian → DD/MM/YYYY
+   - Japanese, Chinese, Korean → YYYY/MM/DD or YYYY年MM月DD日
+   - US English, Filipino → MM/DD/YYYY
+   - UK/Australian English → DD/MM/YYYY
+3. When the date is fully ambiguous (both day and month ≤ 12, no locale clues), prefer DD/MM/YYYY as it is the most common format worldwide.
+4. Always output the resolved date as YYYY-MM-DD regardless of the source format.
 
 Return accurate data with high confidence only if you can read the receipt clearly.`,
 						},
@@ -98,4 +108,16 @@ Return accurate data with high confidence only if you can read the receipt clear
 		console.error("OCR extraction failed:", error);
 		return null;
 	}
+}
+
+/**
+ * Scan multiple receipt images in parallel and return per-image results.
+ * Each entry in the returned array corresponds to the same index in `imagesBase64`.
+ * If an individual image fails, that entry will be null.
+ */
+export async function extractReceiptDataBatch(
+	imagesBase64: string[],
+	categories: Category[],
+): Promise<(ReceiptData | null)[]> {
+	return Promise.all(imagesBase64.map((img) => extractReceiptData(img, categories)));
 }

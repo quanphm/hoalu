@@ -3,9 +3,16 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 /**
- * Holds the original high-res receipt file captured during OCR scan.
+ * Holds the original high-res receipt files captured during OCR scan.
  * Written by ReceiptReview when user approves, cleared by CreateExpenseForm after upload.
- * Uses `null` (not stored in localStorage) because File objects are not serialisable.
+ * Stored in memory only (File objects are not serialisable to localStorage).
+ * Supports multiple files when the user scans multiple attachments at once.
+ */
+const scannedReceiptsAtom = atom<File[]>([]);
+
+/**
+ * @deprecated Use scannedReceiptsAtom instead.
+ * Kept for backward compatibility — resolves to the first file in scannedReceiptsAtom.
  */
 const scannedReceiptAtom = atom<File | null>(null);
 
@@ -38,4 +45,4 @@ const selectedExpenseAtom = atom<{
  */
 const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillId: null });
 
-export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom };
+export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom, scannedReceiptsAtom };
