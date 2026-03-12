@@ -7,16 +7,11 @@ import { Button } from "@hoalu/ui/button";
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
 
 interface ReceiptScanFallbackProps {
-	originalFile: File | null;
-	compressedBase64?: string;
+	failureFiles: File[];
 	onBack: () => void;
 }
 
-export function ReceiptScanFallback({
-	originalFile,
-	compressedBase64,
-	onBack,
-}: ReceiptScanFallbackProps) {
+export function ReceiptScanFallback({ failureFiles, onBack }: ReceiptScanFallbackProps) {
 	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 
@@ -28,9 +23,11 @@ export function ReceiptScanFallback({
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle>Could Not Read Receipt</DialogTitle>
+				<DialogTitle>Could Not Read Receipt{failureFiles.length > 1 ? "s" : ""}</DialogTitle>
 				<DialogDescription>
-					We couldn't extract information from this image automatically.
+					{failureFiles.length > 1
+						? `We couldn't extract information from any of the ${failureFiles.length} attachments automatically.`
+						: "We couldn't extract information from this attachment automatically."}
 				</DialogDescription>
 			</DialogHeader>
 
@@ -44,21 +41,28 @@ export function ReceiptScanFallback({
 							<li>All text should be readable</li>
 							<li>The total amount must be visible</li>
 							<li>Avoid crumpled or damaged receipts</li>
+							<li>For PDFs, ensure the text layer is present (not scanned images)</li>
 						</ul>
 					</AlertDescription>
 				</Alert>
 
-				{(compressedBase64 || originalFile) && (
+				{failureFiles.length > 0 && (
 					<div className="space-y-2">
-						<p className="text-sm font-medium">Your Image</p>
-						<div className="border-muted overflow-hidden rounded-md border">
-							{compressedBase64 ? (
-								<img src={compressedBase64} alt="Receipt" className="h-auto w-full" />
-							) : (
-								<div className="flex aspect-[3/4] w-full items-center justify-center bg-muted">
-									<ImageIcon className="text-muted-foreground size-12" />
+						<p className="text-sm font-medium">
+							{failureFiles.length} file{failureFiles.length > 1 ? "s" : ""} uploaded
+						</p>
+						<div className="flex flex-wrap gap-2">
+							{failureFiles.map((file, idx) => (
+								<div
+									key={`${file.name}-${idx}`}
+									className="border-muted bg-muted/50 flex items-center gap-1.5 rounded-md border px-2 py-1"
+								>
+									<ImageIcon className="text-muted-foreground size-3.5 flex-shrink-0" />
+									<span className="text-muted-foreground max-w-[120px] truncate text-xs">
+										{file.name}
+									</span>
 								</div>
-							)}
+							))}
 						</div>
 					</div>
 				)}
