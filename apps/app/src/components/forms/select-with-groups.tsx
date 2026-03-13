@@ -7,6 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@hoalu/ui/select";
+import { useMemo } from "react";
 
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
@@ -19,13 +20,13 @@ interface Props {
 
 export function SelectWithGroupsField(props: Props) {
 	const field = useFieldContext<string>();
-	const items = Object.values(props.groups).flatMap((v) => v.options);
+	const items = useMemo(() => Object.values(props.groups).flatMap((v) => v.options), [props.groups]);
 
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<FieldControl>
-				<Select items={items} value={field.state.value} onValueChange={field.handleChange}>
+				<Select items={items} value={field.state.value} onValueChange={(value) => value && field.handleChange(value)}>
 				<SelectTrigger
 					className="bg-muted text-foreground focus:border-ring focus:ring-ring/20 focus:ring-[3px]"
 				>
