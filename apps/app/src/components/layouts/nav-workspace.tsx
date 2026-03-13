@@ -1,9 +1,10 @@
 import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { ScanQueuePanel } from "#app/components/receipt/scan-queue-panel.tsx";
+import { KEYBOARD_SHORTCUTS, MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
+import { useScanQueue } from "#app/hooks/use-scan-queue.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
-	// AlignBoxTopCenterIcon,
 	ArrowsExchangeIcon,
 	CalendarIcon,
 	FileIcon,
@@ -15,6 +16,7 @@ import {
 import { Button } from "@hoalu/ui/button";
 import {
 	SidebarGroup,
+	SidebarGroupAction,
 	SidebarGroupContent,
 	SidebarGroupLabel,
 	SidebarMenu,
@@ -27,6 +29,7 @@ import { useSetAtom } from "jotai";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const { activeJobs } = useScanQueue();
 	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	return (
@@ -162,6 +165,18 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
+
+			<SidebarGroup>
+				<SidebarGroupLabel>
+					Queue{" "}
+					<span className="text-muted-foregroundtext-xs pl-2">
+						{activeJobs.length}/{MAX_QUEUE_SIZE}
+					</span>
+				</SidebarGroupLabel>
+				<SidebarGroupContent>
+					<ScanQueuePanel />
 				</SidebarGroupContent>
 			</SidebarGroup>
 		</>

@@ -1,0 +1,335 @@
+import { generateId } from "@hoalu/common/generate-id";
+import { atom, type Atom, type WritableAtom } from "jotai";
+
+import type {
+	MainProcessorConfig,
+	TaskJob,
+	TaskQueueConfig,
+	WorkerErrorResponse,
+	WorkerRequest,
+	WorkerResponse,
+	WorkerSuccessResponse,
+} from "./types.ts";
+
+export interface TaskQueueAtoms<TInput, TResult> {
+	queueAtom: Atom<TaskJob<TInput, TResult>[]>;
+	pendingAtom: Atom<TaskJob<TInput, TResult>[]>;
+	processingAtom: Atom<TaskJob<TInput, TResult>[]>;
+	completedAtom: Atom<TaskJob<TInput, TResult>[]>;
+	failedAtom: Atom<TaskJob<TInput, TResult>[]>;
+}
+
+export interface TaskQueueActions<TInput> {
+	add: WritableAtom<null, [TInput], void>;
+	retry: WritableAtom<null, [string], void>;
+	dismiss: WritableAtom<null, [string], void>;
+	remove: WritableAtom<null, [string], void>;
+	startEngine: WritableAtom<null, [], void>;
+}
+
+export interface TaskQueueUtils {
+	cleanup: () => void;
+}
+
+export interface TaskQueue<TInput, TResult>
+	extends TaskQueueAtoms<TInput, TResult>, TaskQueueActions<TInput>, TaskQueueUtils {}
+
+export function createTaskQueue<TInput, TResult>(
+	config: TaskQueueConfig<TInput, TResult>,
+): TaskQueue<TInput, TResult> {
+	let isEngineRunning = false;
+	const { maxConcurrent = 1, maxRetries = 2 } = config;
+
+	const baseQueueAtom = atom<TaskJob<TInput, TResult>[]>([]);
+	const queueAtom = atom((get) => get(baseQueueAtom));
+	const pendingAtom = atom((get) => get(baseQueueAtom).filter((job) => job.status === "pending"));
+
+	const processingAtom = atom((get) =>
+		get(baseQueueAtom).filter((job) => job.status === "processing"),
+	);
+	const completedAtom = atom((get) =>
+		get(baseQueueAtom).filter((job) => job.status === "completed"),
+	);
+	const failedAtom = atom((get) => get(baseQueueAtom).filter((job) => job.status === "failed"));
+
+	let worker: Worker | null = null;
+	function getWorker(): Worker | null {
+		if (config.processor.type !== "worker") {
+			return null;
+		}
+		if (!worker) {
+			worker = config.processor.worker ?? null;
+		}
+		return worker;
+	}
+
+	async function processJob(
+		set: (atom: typeof baseQueueAtom, value: TaskJob<TInput, TResult>[]) => void,
+		get: <T>(atom: Atom<T>) => T,
+		jobId: string,
+	) {
+		const jobs = get(baseQueueAtom);
+		const job = jobs.find((j) => j.id === jobId);
+		if (!job || job.status !== "pending") return;
+
+		// Mark as processing
+		set(
+			baseQueueAtom,
+			jobs.map((j) => (j.id === jobId ? { ...j, status: "processing" as const } : j)),
+		);
+
+		try {
+			let result: TResult;
+
+			if (config.processor.type === "main") {
+				// Main thread processing
+				result = await (config.processor as MainProcessorConfig<TInput, TResult>).execute(
+					job.input,
+				);
+			} else {
+				// Worker thread processing
+				console.log("[TaskQueue] Processing job via worker:", jobId);
+				result = await new Promise<TResult>((resolve, reject) => {
+					const workerInstance = getWorker();
+					if (!workerInstance) {
+						reject(new Error("Worker not available"));
+						return;
+					}
+
+					const messageHandler = (event: MessageEvent<WorkerResponse<TResult>>) => {
+						const response = event.data;
+						if (response.jobId !== jobId) return;
+
+						workerInstance.removeEventListener("message", messageHandler);
+						workerInstance.removeEventListener("error", errorHandler);
+
+						if ("error" in response) {
+							reject(new Error((response as WorkerErrorResponse).error));
+						} else {
+							resolve((response as WorkerSuccessResponse<TResult>).result);
+						}
+					};
+
+					const errorHandler = (event: ErrorEvent) => {
+						workerInstance.removeEventListener("message", messageHandler);
+						workerInstance.removeEventListener("error", errorHandler);
+						reject(new Error(event.message || "Worker error"));
+					};
+
+					workerInstance.addEventListener("message", messageHandler);
+					workerInstance.addEventListener("error", errorHandler);
+
+					const request: WorkerRequest<TInput> = {
+						jobId,
+						input: job.input,
+					};
+					workerInstance.postMessage(request);
+				});
+			}
+
+			const currentJobs = get(baseQueueAtom);
+			set(
+				baseQueueAtom,
+				currentJobs.map((j) =>
+					j.id === jobId
+						? {
+								...j,
+								status: "completed" as const,
+								result,
+								completedAt: new Date().toISOString(),
+							}
+						: j,
+				),
+			);
+		} catch (error) {
+			console.error("[TaskQueue] Job processing error:", error);
+			const errorMessage = error instanceof Error ? error.message : "Unknown error";
+			const currentJobs = get(baseQueueAtom);
+			const currentJob = currentJobs.find((j) => j.id === jobId);
+
+			const shouldRetry = (currentJob?.retryCount ?? 0) < maxRetries;
+
+			if (shouldRetry) {
+				set(
+					baseQueueAtom,
+					currentJobs.map((j) =>
+						j.id === jobId
+							? {
+									...j,
+									status: "pending" as const,
+									retryCount: (j.retryCount ?? 0) + 1,
+									errorMessage,
+								}
+							: j,
+					),
+				);
+			} else {
+				set(
+					baseQueueAtom,
+					currentJobs.map((j) =>
+						j.id === jobId
+							? {
+									...j,
+									status: "failed" as const,
+									errorMessage,
+								}
+							: j,
+					),
+				);
+			}
+		}
+	}
+
+	const add = atom(null, (get, set, input: TInput) => {
+		const newJob: TaskJob<TInput, TResult> = {
+			id: generateId({ use: "uuid" }),
+			status: "pending",
+			retryCount: 0,
+			input,
+			result: null,
+			errorMessage: null,
+			createdAt: new Date().toISOString(),
+			completedAt: null,
+		};
+
+		const currentJobs = get(baseQueueAtom);
+		set(baseQueueAtom, [...currentJobs, newJob]);
+
+		if (isEngineRunning) {
+			const processingCount = currentJobs.filter((j) => j.status === "processing").length;
+			if (processingCount < maxConcurrent) {
+				// Use setTimeout to avoid synchronous re-entry issues
+				setTimeout(() => {
+					const processNext = async () => {
+						try {
+							const jobs = get(baseQueueAtom);
+							const currentProcessingCount = jobs.filter((j) => j.status === "processing").length;
+							if (currentProcessingCount >= maxConcurrent) {
+								return;
+							}
+
+							const nextPending = jobs.find((j) => j.status === "pending");
+							if (!nextPending) return;
+
+							await processJob(set, get, nextPending.id);
+
+							// Continue processing
+							const updatedJobs = get(baseQueueAtom);
+
+							const hasMorePending = updatedJobs.some((j) => j.status === "pending");
+							if (hasMorePending) {
+								processNext();
+							}
+						} catch (err) {
+							console.error("[TaskQueue] processNext error:", err);
+						}
+					};
+					processNext();
+				}, 0);
+			}
+		}
+	});
+
+	const retry = atom(null, (get, set, jobId: string) => {
+		const currentJobs = get(baseQueueAtom);
+		set(
+			baseQueueAtom,
+			currentJobs.map((j) =>
+				j.id === jobId
+					? {
+							...j,
+							status: "pending" as const,
+							retryCount: 0, // Reset retry count for manual retry
+							errorMessage: null,
+						}
+					: j,
+			),
+		);
+		// Trigger engine to process the retried job
+		if (isEngineRunning) {
+			const processNext = async () => {
+				const jobs = get(baseQueueAtom);
+				const processingCount = jobs.filter((j) => j.status === "processing").length;
+				if (processingCount >= maxConcurrent) return;
+				const nextPending = jobs.find((j) => j.status === "pending");
+				if (!nextPending) return;
+				await processJob(set, get, nextPending.id);
+				// Continue processing
+				const updatedJobs = get(baseQueueAtom);
+				const hasMorePending = updatedJobs.some((j) => j.status === "pending");
+				if (hasMorePending) {
+					processNext();
+				}
+			};
+			processNext();
+		}
+	});
+
+	const dismiss = atom(null, (get, set, jobId: string) => {
+		const currentJobs = get(baseQueueAtom);
+		set(
+			baseQueueAtom,
+			currentJobs.map((j) => (j.id === jobId ? { ...j, status: "dismissed" as const } : j)),
+		);
+	});
+
+	const remove = atom(null, (get, set, jobId: string) => {
+		const currentJobs = get(baseQueueAtom);
+		set(
+			baseQueueAtom,
+			currentJobs.filter((j) => j.id !== jobId),
+		);
+	});
+
+	const startEngine = atom(null, (get, set) => {
+		if (isEngineRunning) {
+			return;
+		}
+		isEngineRunning = true;
+
+		const processNext = async () => {
+			const jobs = get(baseQueueAtom);
+			const processingCount = jobs.filter((j) => j.status === "processing").length;
+
+			if (processingCount >= maxConcurrent) {
+				return;
+			}
+
+			const nextPending = jobs.find((j) => j.status === "pending");
+			if (!nextPending) {
+				return;
+			}
+
+			await processJob(set, get, nextPending.id);
+
+			const updatedJobs = get(baseQueueAtom);
+			const hasMorePending = updatedJobs.some((j) => j.status === "pending");
+			if (hasMorePending) {
+				processNext();
+			}
+		};
+		processNext();
+	});
+
+	function cleanup() {
+		if (worker) {
+			worker.terminate();
+			worker = null;
+		}
+		isEngineRunning = false;
+	}
+
+	return {
+		queueAtom,
+		pendingAtom,
+		processingAtom,
+		completedAtom,
+		failedAtom,
+		add,
+		retry,
+		dismiss,
+		remove,
+		startEngine,
+		cleanup,
+	};
+}

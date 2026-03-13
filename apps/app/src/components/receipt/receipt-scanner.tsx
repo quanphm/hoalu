@@ -1,18 +1,15 @@
-import { useReceiptScan, type ReceiptScanResult } from "#app/hooks/use-receipt-scan.ts";
-import { FileTextIcon, ScanIcon, UploadIcon, XIcon } from "@hoalu/icons/lucide";
+import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
+import { useScanQueue, type ReceiptScanInput } from "#app/hooks/use-scan-queue.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { FileTextIcon, ScanIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Dialog, DialogContent } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
+import { useSetAtom } from "jotai";
 import { useCallback, useRef, useState } from "react";
 
-const MAX_FILES = 10;
+const MAX_FILES = 3;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "application/pdf"];
 const ACCEPTED_MIME_SET = new Set(ACCEPTED_TYPES);
-
-interface ReceiptScannerProps {
-	onScanSuccess: (results: ReceiptScanResult[]) => void;
-	onScanFailure: (files: File[]) => void;
-}
 
 interface PendingFile {
 	file: File;
@@ -81,35 +78,40 @@ async function encodeFileForOcr(file: File): Promise<{
 	});
 }
 
-export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerProps) {
+export function ReceiptScanner() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
 	const [isDragging, setIsDragging] = useState(false);
-	const [isScanning, setIsScanning] = useState(false);
-	const scanMutation = useReceiptScan();
+	const [isEncoding, setIsEncoding] = useState(false);
+	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
+	const workspace = useWorkspace();
+	const { add, remainingSlots } = useScanQueue();
 
-	const addFiles = useCallback((incoming: File[]) => {
-		const valid = incoming.filter((f) => ACCEPTED_MIME_SET.has(f.type));
-		if (valid.length === 0) return;
+	const addFiles = useCallback(
+		(incoming: File[]) => {
+			const valid = incoming.filter((f) => ACCEPTED_MIME_SET.has(f.type));
+			if (valid.length === 0) return;
 
-		setPendingFiles((prev) => {
-			const combined = [...prev];
-			for (const file of valid) {
-				if (combined.length >= MAX_FILES) break;
-				// Deduplicate by name + size
-				const isDupe = combined.some(
-					(p) => p.file.name === file.name && p.file.size === file.size,
-				);
-				if (!isDupe) {
-					combined.push({
-						file,
-						previewUrl: isPdf(file) ? null : URL.createObjectURL(file),
-					});
+			setPendingFiles((prev) => {
+				const combined = [...prev];
+				for (const file of valid) {
+					if (combined.length >= remainingSlots) break;
+					// Deduplicate by name + size
+					const isDupe = combined.some(
+						(p) => p.file.name === file.name && p.file.size === file.size,
+					);
+					if (!isDupe) {
+						combined.push({
+							file,
+							previewUrl: isPdf(file) ? null : URL.createObjectURL(file),
+						});
+					}
 				}
-			}
-			return combined;
-		});
-	}, []);
+				return combined;
+			});
+		},
+		[remainingSlots],
+	);
 
 	const removeFile = (index: number) => {
 		setPendingFiles((prev) => {
@@ -145,12 +147,11 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 		addFiles(files);
 	};
 
-	const handleScan = async () => {
+	const handleAddToQueue = async () => {
 		if (pendingFiles.length === 0) return;
 
-		setIsScanning(true);
+		setIsEncoding(true);
 		try {
-			// Encode all files for OCR in parallel
 			const encoded = await Promise.all(
 				pendingFiles.map(async (p) => {
 					const { base64, previewBase64 } = await encodeFileForOcr(p.file);
@@ -158,9 +159,18 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 				}),
 			);
 
-			const results = await scanMutation.mutateAsync(encoded);
+			for (const item of encoded) {
+				const input: ReceiptScanInput = {
+					fileName: item.file.name,
+					fileSize: item.file.size,
+					fileType: item.file.type,
+					previewBase64: item.previewBase64,
+					encodedBase64: item.base64,
+					workspaceSlug: workspace.slug,
+				};
+				add(input);
+			}
 
-			// Cleanup object URLs
 			setPendingFiles((prev) => {
 				for (const p of prev) {
 					if (p.previewUrl) URL.revokeObjectURL(p.previewUrl);
@@ -168,35 +178,42 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 				return [];
 			});
 
-			const successes = results.filter((r) => r.data !== null);
-			const failures = results.filter((r) => r.data === null).map((r) => r.file);
-
-			if (successes.length > 0) {
-				onScanSuccess(results);
-			} else {
-				onScanFailure(failures);
-			}
+			setScanDialog({ state: false });
 		} catch (error) {
 			console.error("Receipt scan error:", error);
-			onScanFailure(pendingFiles.map((p) => p.file));
 		} finally {
-			setIsScanning(false);
+			setIsEncoding(false);
 		}
 	};
 
+	const isQueueFull = remainingSlots === 0;
+
 	return (
 		<div className="flex w-full flex-col gap-4">
+			{/* Queue full notice */}
+			{isQueueFull && (
+				<div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/50">
+					<AlertCircleIcon className="size-4 text-amber-600 dark:text-amber-400" />
+					<p className="text-sm text-amber-800 dark:text-amber-200">
+						Queue is full. Please wait for jobs to complete or remove some items.
+					</p>
+				</div>
+			)}
+
 			{/* Drop zone */}
 			<div
 				className={cn(
 					"flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors",
-					isDragging
-						? "border-primary bg-primary/5"
-						: "border-muted-foreground/25 hover:border-muted-foreground/50",
+					isDragging && !isQueueFull ? "border-primary bg-primary/5" : "border-muted-foreground/25",
+					isQueueFull && "cursor-not-allowed opacity-50",
 				)}
-				onDragOver={handleDragOver}
+				onDragOver={(e) => {
+					if (!isQueueFull) handleDragOver(e);
+				}}
 				onDragLeave={handleDragLeave}
-				onDrop={handleDrop}
+				onDrop={(e) => {
+					if (!isQueueFull) handleDrop(e);
+				}}
 			>
 				<div className="bg-muted flex size-12 items-center justify-center rounded-full">
 					<UploadIcon className="text-muted-foreground size-5" />
@@ -205,6 +222,8 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 					<p className="text-sm font-medium">Drop files here or browse</p>
 					<p className="text-muted-foreground mt-1 text-xs">
 						Images (JPEG, PNG, WEBP, HEIC) or PDF — up to {MAX_FILES} files
+						{remainingSlots < MAX_FILES &&
+							` (${remainingSlots} slot${remainingSlots !== 1 ? "s" : ""} remaining)`}
 					</p>
 				</div>
 				<div className="flex gap-2">
@@ -218,6 +237,7 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 								fileInputRef.current.click();
 							}
 						}}
+						disabled={isQueueFull}
 					>
 						Browse files
 					</Button>
@@ -231,13 +251,13 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 								fileInputRef.current.click();
 							}
 						}}
+						disabled={isQueueFull}
 					>
 						Use camera
 					</Button>
 				</div>
 			</div>
 
-			{/* Hidden file input */}
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -245,6 +265,7 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 				multiple
 				className="hidden"
 				onChange={handleFileInputChange}
+				disabled={isQueueFull}
 			/>
 
 			{/* Preview grid */}
@@ -255,7 +276,10 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 					</p>
 					<div className="flex flex-wrap gap-2">
 						{pendingFiles.map((p, idx) => (
-							<div key={`${p.file.name}-${p.file.size}`} className="group relative size-24 flex-shrink-0">
+							<div
+								key={`${p.file.name}-${p.file.size}`}
+								className="group relative size-24 shrink-0"
+							>
 								<div className="border-muted bg-muted/50 size-full overflow-hidden rounded-md border">
 									{p.previewUrl ? (
 										<img
@@ -275,7 +299,7 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 								<button
 									type="button"
 									onClick={() => removeFile(idx)}
-									className="bg-background border-muted absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full border shadow-sm opacity-0 transition-opacity group-hover:opacity-100"
+									className="bg-background border-muted absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full border opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
 								>
 									<XIcon className="size-3" />
 								</button>
@@ -286,28 +310,23 @@ export function ReceiptScanner({ onScanSuccess, onScanFailure }: ReceiptScannerP
 					<Button
 						type="button"
 						className="w-full"
-						onClick={handleScan}
-						disabled={isScanning}
+						onClick={handleAddToQueue}
+						disabled={isEncoding || isQueueFull}
 					>
-						<ScanIcon className="mr-2 size-4" />
-						Scan {pendingFiles.length} attachment{pendingFiles.length > 1 ? "s" : ""}
+						{isEncoding ? (
+							<>
+								<div className="mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+								Encoding...
+							</>
+						) : (
+							<>
+								<ScanIcon className="mr-2 size-4" />
+								Add {pendingFiles.length} to queue
+							</>
+						)}
 					</Button>
 				</div>
 			)}
-
-			{/* Scanning overlay dialog */}
-			<Dialog open={isScanning} onOpenChange={() => {}}>
-				<DialogContent className="sm:max-w-md">
-					<div className="flex flex-col items-center justify-center py-8">
-						<div className="mb-4 size-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-						<p className="text-sm font-medium">
-							Analyzing {pendingFiles.length} attachment
-							{pendingFiles.length > 1 ? "s" : ""}…
-						</p>
-						<p className="text-muted-foreground mt-1 text-xs">This may take a few seconds</p>
-					</div>
-				</DialogContent>
-			</Dialog>
 		</div>
 	);
 }
