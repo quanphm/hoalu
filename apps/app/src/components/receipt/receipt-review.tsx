@@ -53,14 +53,14 @@ function formatLineItemPrice(price: number, currencyCode: string): string {
 
 function buildDescription(items: ReceiptData["items"], currency: string): string {
 	if (!items || items.length === 0) return "";
-	const rows = items
+	const listItems = items
 		.map((item) => {
 			const name = item.quantity && item.quantity > 1 ? `${item.name} x${item.quantity}` : item.name;
-			const price = item.price != null ? formatLineItemPrice(item.price, currency) : "";
-			return `<tr><td>${name}</td><td>${price}</td></tr>`;
+			const price = item.price != null ? ` — ${formatLineItemPrice(item.price, currency)}` : "";
+			return `<li>${name}${price}</li>`;
 		})
 		.join("");
-	return `<table><tbody>${rows}</tbody></table>`;
+	return `<ul>${listItems}</ul>`;
 }
 
 export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {

@@ -1,7 +1,7 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { extractReceiptDataBatch } from "#api/lib/ocr.ts";
-import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
+import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
@@ -192,7 +192,6 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			// Fetch workspace categories for AI matching
 			const categories = await categoryRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
 			});
@@ -205,7 +204,9 @@ const route = app
 
 			// Log summary
 			const successCount = results.filter(Boolean).length;
-			console.log(`[OCR] Scanned ${payload.imagesBase64.length} image(s), ${successCount} succeeded`);
+			console.log(
+				`[OCR] Scanned ${payload.imagesBase64.length} image(s), ${successCount} succeeded`,
+			);
 
 			return c.json({ data: results }, HTTPStatus.codes.OK);
 		},
@@ -239,7 +240,12 @@ const route = app
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
-		jsonBodyValidator(z.object({ transcription: z.string().min(1), lang: z.enum(["en-US", "vi-VN"]).default("en-US") })),
+		jsonBodyValidator(
+			z.object({
+				transcription: z.string().min(1),
+				lang: z.enum(["en-US", "vi-VN"]).default("en-US"),
+			}),
+		),
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");

@@ -9,6 +9,7 @@ const DIALOG_ID = [
 	"create-expense",
 	"delete-expense",
 	"scan-receipt",
+	"scan-queue-review",
 	"voice-expense",
 
 	// wallet
@@ -121,3 +122,5 @@ export const createRecurringBillDialogAtom = createDialogAtom("create-recurring-
 export const archiveRecurringBillDialogAtom = createDialogAtom("archive-recurring-bill");
 export const unarchiveRecurringBillDialogAtom = createDialogAtom("unarchive-recurring-bill");
 export const deleteRecurringBillDialogAtom = createDialogAtom("delete-recurring-bill");
+
+export const scanQueueReviewDialogAtom = createDialogAtom("scan-queue-review");
