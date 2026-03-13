@@ -12,10 +12,13 @@ import {
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
+import { ScanQueuePanel } from "#app/components/receipt/scan-queue-panel.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
 // import { VoiceExpenseDialogTrigger } from "#app/components/voice/voice-expense-dialog.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
+import { useScanQueue } from "#app/hooks/use-scan-queue.ts";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 function RouteComponent() {
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
+	const { activeJobs } = useScanQueue();
 
 	return (
 		<>
@@ -34,6 +38,20 @@ function RouteComponent() {
 					{/* <VoiceExpenseDialogTrigger /> */}
 					<CreateExpenseDialogTrigger />
 					<CreateWalletDialogTrigger />
+				</SectionContent>
+			</Section>
+
+			<Section>
+				<SectionHeader className="flex-row items-center gap-2">
+					<SectionTitle className="flex items-center gap-2">
+						Jobs
+						<span className="text-muted-foreground text-sm">
+							{activeJobs.length} / {MAX_QUEUE_SIZE}
+						</span>
+					</SectionTitle>
+				</SectionHeader>
+				<SectionContent columns={4}>
+					<ScanQueuePanel />
 				</SectionContent>
 			</Section>
 

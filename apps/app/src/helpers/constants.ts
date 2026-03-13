@@ -180,4 +180,4 @@ export const AVAILABLE_TO_DATE_RANGE_OPTIONS = [
 
 export const DEFAULT_DATE_RANGE = "mtd";
 
-export const MAX_QUEUE_SIZE = 3;
+export const MAX_QUEUE_SIZE = 4;

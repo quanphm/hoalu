@@ -1,3 +1,4 @@
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import { generateId } from "@hoalu/common/generate-id";
 import { atom, type Atom, type WritableAtom } from "jotai";
 
@@ -30,7 +31,11 @@ export function createTaskQueue<TInput, TResult>(
 	config: TaskQueueConfig<TInput, TResult>,
 ): TaskQueue<TInput, TResult> {
 	let isEngineRunning = false;
-	const { maxConcurrent = 1, maxRetries = 2 } = config;
+	let { maxConcurrent = 1, maxRetries = 2 } = config;
+
+	if (maxConcurrent > MAX_QUEUE_SIZE) {
+		maxConcurrent = MAX_QUEUE_SIZE;
+	}
 
 	const baseQueueAtom = atom<TaskJob<TInput, TResult>[]>([]);
 	const queueAtom = atom((get) => get(baseQueueAtom));

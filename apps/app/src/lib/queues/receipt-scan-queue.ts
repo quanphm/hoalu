@@ -1,3 +1,4 @@
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 
@@ -24,13 +25,11 @@ export type ReceiptScanJob = {
 };
 
 export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptData | null>({
-	maxConcurrent: 1,
+	maxConcurrent: MAX_QUEUE_SIZE,
 	maxRetries: 2,
 	processor: {
 		execute: async (input) => {
-			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [
-				input.encodedBase64,
-			]);
+			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [input.encodedBase64]);
 			return (results[0] as ReceiptData | null) ?? null;
 		},
 	},

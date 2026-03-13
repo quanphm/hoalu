@@ -132,15 +132,8 @@ function EmptyJobPlaceholder() {
 
 export function ScanQueuePanel() {
 	const { activeJobs } = useScanQueue();
-	return (
-		<div className="space-y-3 py-2">
-			<div className="space-y-2">
-				{activeJobs.length > 0 ? (
-					activeJobs.map((job) => <JobItem key={job.id} job={job} />)
-				) : (
-					<EmptyJobPlaceholder />
-				)}
-			</div>
-		</div>
-	);
+	if (activeJobs.length === 0) {
+		return <EmptyJobPlaceholder />;
+	}
+	return activeJobs.map((job) => <JobItem key={job.id} job={job} />);
 }

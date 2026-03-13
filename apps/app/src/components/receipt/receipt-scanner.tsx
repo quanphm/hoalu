@@ -1,4 +1,5 @@
 import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import { useScanQueue, type ReceiptScanInput } from "#app/hooks/use-scan-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { FileTextIcon, ScanIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
@@ -7,13 +8,12 @@ import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
 import { useCallback, useRef, useState } from "react";
 
-const MAX_FILES = 3;
+const MAX_FILES = MAX_QUEUE_SIZE;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "application/pdf"];
 const ACCEPTED_MIME_SET = new Set(ACCEPTED_TYPES);
 
 interface PendingFile {
 	file: File;
-	/** Object URL for image previews; null for PDFs */
 	previewUrl: string | null;
 }
 
