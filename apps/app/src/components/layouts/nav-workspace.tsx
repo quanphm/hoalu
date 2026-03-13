@@ -170,9 +170,9 @@ export function NavWorkspace() {
 
 			<SidebarGroup>
 				<SidebarGroupLabel>
-					Queue{" "}
+					Queue
 					<span className="text-muted-foregroundtext-xs pl-2">
-						{activeJobs.length}/{MAX_QUEUE_SIZE}
+						{activeJobs.length} / {MAX_QUEUE_SIZE}
 					</span>
 				</SidebarGroupLabel>
 				<SidebarGroupContent>

@@ -1,9 +1,7 @@
 import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
+import { apiClient } from "#app/lib/api-client.ts";
 
-import ReceiptScanWorker from "../../workers/receipt-scan?worker";
 import { createTaskQueue } from "./create-task-queue.ts";
-
-const worker = new ReceiptScanWorker();
 
 export interface ReceiptScanInput {
 	fileName: string;
@@ -29,7 +27,11 @@ export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptData | 
 	maxConcurrent: 1,
 	maxRetries: 2,
 	processor: {
-		type: "worker",
-		worker,
+		execute: async (input) => {
+			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [
+				input.encodedBase64,
+			]);
+			return (results[0] as ReceiptData | null) ?? null;
+		},
 	},
 });
