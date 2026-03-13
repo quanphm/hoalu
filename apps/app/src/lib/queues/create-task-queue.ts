@@ -1,15 +1,8 @@
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import { generateId } from "@hoalu/common/generate-id";
 import { atom, type Atom, type WritableAtom } from "jotai";
 
-import type {
-	MainProcessorConfig,
-	TaskJob,
-	TaskQueueConfig,
-	WorkerErrorResponse,
-	WorkerRequest,
-	WorkerResponse,
-	WorkerSuccessResponse,
-} from "./types.ts";
+import type { TaskJob, TaskQueueConfig } from "./types.ts";
 
 export interface TaskQueueAtoms<TInput, TResult> {
 	queueAtom: Atom<TaskJob<TInput, TResult>[]>;
@@ -38,7 +31,11 @@ export function createTaskQueue<TInput, TResult>(
 	config: TaskQueueConfig<TInput, TResult>,
 ): TaskQueue<TInput, TResult> {
 	let isEngineRunning = false;
-	const { maxConcurrent = 1, maxRetries = 2 } = config;
+	let { maxConcurrent = 1, maxRetries = 2 } = config;
+
+	if (maxConcurrent > MAX_QUEUE_SIZE) {
+		maxConcurrent = MAX_QUEUE_SIZE;
+	}
 
 	const baseQueueAtom = atom<TaskJob<TInput, TResult>[]>([]);
 	const queueAtom = atom((get) => get(baseQueueAtom));
@@ -51,17 +48,6 @@ export function createTaskQueue<TInput, TResult>(
 		get(baseQueueAtom).filter((job) => job.status === "completed"),
 	);
 	const failedAtom = atom((get) => get(baseQueueAtom).filter((job) => job.status === "failed"));
-
-	let worker: Worker | null = null;
-	function getWorker(): Worker | null {
-		if (config.processor.type !== "worker") {
-			return null;
-		}
-		if (!worker) {
-			worker = config.processor.worker ?? null;
-		}
-		return worker;
-	}
 
 	async function processJob(
 		set: (atom: typeof baseQueueAtom, value: TaskJob<TInput, TResult>[]) => void,
@@ -79,53 +65,7 @@ export function createTaskQueue<TInput, TResult>(
 		);
 
 		try {
-			let result: TResult;
-
-			if (config.processor.type === "main") {
-				// Main thread processing
-				result = await (config.processor as MainProcessorConfig<TInput, TResult>).execute(
-					job.input,
-				);
-			} else {
-				// Worker thread processing
-				console.log("[TaskQueue] Processing job via worker:", jobId);
-				result = await new Promise<TResult>((resolve, reject) => {
-					const workerInstance = getWorker();
-					if (!workerInstance) {
-						reject(new Error("Worker not available"));
-						return;
-					}
-
-					const messageHandler = (event: MessageEvent<WorkerResponse<TResult>>) => {
-						const response = event.data;
-						if (response.jobId !== jobId) return;
-
-						workerInstance.removeEventListener("message", messageHandler);
-						workerInstance.removeEventListener("error", errorHandler);
-
-						if ("error" in response) {
-							reject(new Error((response as WorkerErrorResponse).error));
-						} else {
-							resolve((response as WorkerSuccessResponse<TResult>).result);
-						}
-					};
-
-					const errorHandler = (event: ErrorEvent) => {
-						workerInstance.removeEventListener("message", messageHandler);
-						workerInstance.removeEventListener("error", errorHandler);
-						reject(new Error(event.message || "Worker error"));
-					};
-
-					workerInstance.addEventListener("message", messageHandler);
-					workerInstance.addEventListener("error", errorHandler);
-
-					const request: WorkerRequest<TInput> = {
-						jobId,
-						input: job.input,
-					};
-					workerInstance.postMessage(request);
-				});
-			}
+			const result = await config.processor.execute(job.input);
 
 			const currentJobs = get(baseQueueAtom);
 			set(
@@ -312,10 +252,6 @@ export function createTaskQueue<TInput, TResult>(
 	});
 
 	function cleanup() {
-		if (worker) {
-			worker.terminate();
-			worker = null;
-		}
 		isEngineRunning = false;
 	}
 
