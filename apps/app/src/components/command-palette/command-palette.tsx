@@ -176,9 +176,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const handleItemHighlighted = useCallback(
 		(highlightedValue: unknown, eventDetails: { reason: string }) => {
 			if (eventDetails.reason === "keyboard" && highlightedValue) {
-				const value = highlightedValue as AutocompleteItem;
+				const itemId = highlightedValue as string;
 				// Find the index of the highlighted item in autocompleteItems
-				const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === value.id);
+				const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === itemId);
 				if (itemIndex !== -1 && scrollToItemRef.current) {
 					scrollToItemRef.current(itemIndex);
 				}

@@ -64,7 +64,8 @@ function RouteComponent() {
 			onSelectExpense(searchById);
 			navigate({ search: (prev) => ({ ...prev, id: undefined }), replace: true });
 		}
-	}, [searchById, onSelectExpense, navigate]);
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+	}, [searchById]);
 
 	const filteredExpenses = filter(expenses, {
 		selectedCategoryIds,
