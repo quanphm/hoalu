@@ -10,7 +10,6 @@ const ReceiptDataSchema = z.object({
 		.describe("Receipt date in YYYY-MM-DD format"),
 	merchantName: z.string().describe("Name of the merchant or store"),
 	suggestedCategoryId: z
-		.string()
 		.uuid()
 		.nullable()
 		.describe(

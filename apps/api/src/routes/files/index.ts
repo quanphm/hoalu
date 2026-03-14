@@ -165,7 +165,7 @@ const route = app
 									amount: z.number(),
 									date: z.string(),
 									merchantName: z.string(),
-									suggestedCategoryId: z.string().uuid().nullable(),
+									suggestedCategoryId: z.uuid().nullable(),
 									currency: z.string(),
 									confidence: z.number(),
 									items: z
@@ -228,7 +228,7 @@ const route = app
 								amount: z.number(),
 								currency: z.string(),
 								date: z.string(),
-								suggestedCategoryId: z.string().uuid().nullable(),
+								suggestedCategoryId: z.uuid().nullable(),
 								repeat: z.enum(["one-time", "daily", "weekly", "monthly", "yearly"]),
 								confidence: z.number(),
 							})
