@@ -7,7 +7,10 @@ import {
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
-import { FilesCompactUpload, type FilesCompactUploadRef } from "#app/components/files/files-compact-upload.tsx";
+import {
+	FilesCompactUpload,
+	type FilesCompactUploadRef,
+} from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
@@ -617,7 +620,7 @@ export function ExpenseSearch() {
 					setValue(e.target.value);
 				}}
 			/>
-			<div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+			<div className="pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
 				<SearchIcon size={16} aria-hidden="true" />
 			</div>
 		</div>
