@@ -7,6 +7,19 @@ TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 
 # AGENTS.md
 
+<!-- intent-skills:start -->
+# Skill mappings - when working in these areas, load the linked skill file into context.
+skills:
+  - task: "React components, performance optimization, or data fetching patterns"
+    load: ".agents/skills/vercel-react-best-practices/SKILL.md"
+  - task: "Building reusable components with compound patterns or context providers"
+    load: ".agents/skills/vercel-composition-patterns/SKILL.md"
+  - task: "Monorepo tasks, Turborepo configuration, or build pipelines"
+    load: ".agents/skills/turborepo/SKILL.md"
+  - task: "UI accessibility audits or design system compliance checks"
+    load: ".agents/skills/web-design-guidelines/SKILL.md"
+<!-- intent-skills:end -->
+
 ## Quick Reference for AI Agents
 
 ### Local Web Browser

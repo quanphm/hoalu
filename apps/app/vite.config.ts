@@ -1,9 +1,10 @@
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react-swc";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const pwaOptions: Partial<VitePWAOptions> = {
 	strategies: "generateSW",
@@ -59,8 +60,15 @@ export default defineConfig({
 			},
 		}),
 		tailwindcss(),
-		tanstackRouter({ target: "react", autoCodeSplitting: false }),
-		react(),
+		tsconfigPaths({
+			projects: ["./tsconfig.json"],
+		}),
+		tanstackStart({
+			spa: {
+				enabled: true,
+			},
+		}),
+		viteReact(),
 		VitePWA(pwaOptions),
 	],
 	define: {
