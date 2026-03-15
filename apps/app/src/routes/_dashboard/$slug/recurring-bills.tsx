@@ -34,7 +34,7 @@ function RouteComponent() {
 			>
 				<SectionItem
 					data-slot="recurring-bill-list"
-					desktopSpan="col-span-6"
+					desktopSpan="col-span-4"
 					tabletSpan={1}
 					mobileOrder={1}
 				>
@@ -43,7 +43,7 @@ function RouteComponent() {
 
 				<SectionItem
 					data-slot="recurring-bill-details"
-					desktopSpan="col-span-6"
+					desktopSpan="col-span-8"
 					tabletSpan={1}
 					mobileOrder={2}
 					hideOnMobile
