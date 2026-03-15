@@ -3,8 +3,13 @@ import {
 	createExpenseDialogAtom,
 	scanQueueReviewDialogAtom,
 } from "#app/atoms/dialogs.ts";
-import { scannedReceiptsAtom, draftExpenseAtom } from "#app/atoms/expenses.ts";
+import {
+	scannedReceiptsAtom,
+	draftExpenseAtom,
+	scannedReceiptJobIdAtom,
+} from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
+import { extensions } from "#app/components/tiptap.tsx";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -22,27 +27,27 @@ import {
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { SelectNative } from "@hoalu/ui/select-native";
-import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { EditorContent, useEditor } from "@tiptap/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
-function ConfidenceBadge({ confidence }: { confidence: number }) {
-	const color = confidence >= 0.8 ? "green" : confidence >= 0.5 ? "yellow" : "red";
-	const label = confidence >= 0.8 ? "High" : confidence >= 0.5 ? "Medium" : "Low";
-	return (
-		<span
-			className={cn(
-				"rounded-full px-2 py-0.5 text-xs font-medium",
-				color === "green" && "bg-green-100 text-green-700",
-				color === "yellow" && "bg-yellow-100 text-yellow-700",
-				color === "red" && "bg-red-100 text-red-700",
-			)}
-		>
-			{label} ({(confidence * 100).toFixed(0)}%)
-		</span>
-	);
-}
+// function ConfidenceBadge({ confidence }: { confidence: number }) {
+// 	const color = confidence >= 0.8 ? "green" : confidence >= 0.5 ? "yellow" : "red";
+// 	const label = confidence >= 0.8 ? "High" : confidence >= 0.5 ? "Medium" : "Low";
+// 	return (
+// 		<span
+// 			className={cn(
+// 				"rounded-full px-2 py-0.5 text-xs font-medium",
+// 				color === "green" && "bg-green-100 text-green-700",
+// 				color === "yellow" && "bg-yellow-100 text-yellow-700",
+// 				color === "red" && "bg-red-100 text-red-700",
+// 			)}
+// 		>
+// 			{label} ({(confidence * 100).toFixed(0)}%)
+// 		</span>
+// 	);
+// }
 
 function buildDescription(items: ReceiptData["items"], currency: string): string {
 	if (!items || items.length === 0) return "";
@@ -88,6 +93,21 @@ export function ScanQueueReviewDialogContent() {
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
 
+	const setScannedReceiptJobId = useSetAtom(scannedReceiptJobIdAtom);
+	const addJob = useSetAtom(receiptScanQueue.add);
+	const dismissJob = useSetAtom(receiptScanQueue.dismiss);
+
+	const feedbackEditor = useEditor({
+		extensions,
+		editorProps: {
+			attributes: {
+				class:
+					"prose dark:prose-invert prose-sm focus:outline-none text-foreground px-3 py-2.5 min-h-16",
+			},
+		},
+		content: "",
+	});
+
 	const currentJob = useMemo(() => {
 		return queue.find((j) => j.id === jobId && j.status === "completed") ?? null;
 	}, [queue, jobId]);
@@ -104,7 +124,7 @@ export function ScanQueueReviewDialogContent() {
 	const hasNext = currentIndex < completedJobs.length - 1;
 	const hasPrev = currentIndex > 0;
 
-	const jobData = currentJob?.result;
+	const jobData = currentJob?.result?.data;
 	const [title, setTitle] = useState(jobData?.merchantName ?? "");
 	const [amount, setAmount] = useState(jobData?.amount ?? 0);
 	const [currency, setCurrency] = useState(jobData?.currency ?? "");
@@ -115,14 +135,15 @@ export function ScanQueueReviewDialogContent() {
 
 	useEffect(() => {
 		if (jobData) {
-			setTitle(jobData.merchantName ?? "");
-			setAmount(jobData.amount ?? 0);
-			setCurrency(jobData.currency ?? "");
-			setDate(jobData.date ?? "");
-			setCategoryId(jobData.suggestedCategoryId ?? "");
+			setTitle(jobData?.merchantName ?? "");
+			setAmount(jobData?.amount ?? 0);
+			setCurrency(jobData?.currency ?? "");
+			setDate(jobData?.date ?? "");
+			setCategoryId(jobData?.suggestedCategoryId ?? "");
 			setError(null);
+			feedbackEditor?.commands.clearContent();
 		}
-	}, [jobId, jobData]);
+	}, [jobId, jobData, feedbackEditor]);
 
 	const handleNext = useCallback(() => {
 		if (!hasNext) return;
@@ -140,7 +161,17 @@ export function ScanQueueReviewDialogContent() {
 		}
 	}, [hasPrev, completedJobs, currentIndex, setReviewDialog]);
 
-	// Handle create expense
+	const handleRefine = useCallback(() => {
+		if (!feedbackEditor || feedbackEditor.isEmpty || !currentJob) return;
+		addJob({
+			...currentJob.input,
+			feedback: feedbackEditor.getText(),
+			conversationHistory: currentJob.result?.conversationHistory ?? [],
+		});
+		dismissJob(currentJob.id);
+		setReviewDialog({ state: false });
+	}, [feedbackEditor, currentJob, addJob, dismissJob, setReviewDialog]);
+
 	const handleCreateExpense = async () => {
 		if (!currentJob) return;
 
@@ -165,6 +196,7 @@ export function ScanQueueReviewDialogContent() {
 				currentJob.input.fileType,
 			);
 			setScannedReceipts([file]);
+			setScannedReceiptJobId(currentJob.id);
 
 			setReviewDialog({ state: false });
 			setCreateDialog({ state: true });
@@ -188,7 +220,7 @@ export function ScanQueueReviewDialogContent() {
 		);
 	}
 
-	const data = currentJob.result;
+	const data = currentJob.result?.data;
 
 	return (
 		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
@@ -235,7 +267,7 @@ export function ScanQueueReviewDialogContent() {
 								className="h-auto w-full"
 							/>
 						) : (
-							<div className="bg-muted flex aspect-[3/4] flex-col items-center justify-center gap-2">
+							<div className="bg-muted flex aspect-3/4 flex-col items-center justify-center gap-2">
 								<FileTextIcon className="text-muted-foreground size-12" />
 								<span className="text-muted-foreground max-w-[80%] truncate text-xs">
 									{currentJob.input.fileName}
@@ -243,17 +275,35 @@ export function ScanQueueReviewDialogContent() {
 							</div>
 						)}
 					</div>
-					{data && (
+
+					{/* {data && (
 						<div className="flex items-center gap-2">
 							<span className="text-muted-foreground text-sm">Confidence:</span>
 							<ConfidenceBadge confidence={data.confidence} />
 						</div>
-					)}
+					)} */}
 					{!data && (
 						<p className="text-muted-foreground text-xs">
 							Could not extract data from this receipt.
 						</p>
 					)}
+
+					<div className="mt-4 space-y-2">
+						<Label>Something wrong? Describe the issue</Label>
+						<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
+							{/* <Toolbar editor={feedbackEditor} /> */}
+							<EditorContent editor={feedbackEditor} />
+						</div>
+						<Button
+							variant="secondary"
+							size="sm"
+							disabled={!feedbackEditor || feedbackEditor.isEmpty}
+							onClick={handleRefine}
+							className="w-full"
+						>
+							Send message
+						</Button>
+					</div>
 				</div>
 
 				<div className="space-y-4">

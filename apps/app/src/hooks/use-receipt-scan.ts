@@ -39,7 +39,7 @@ export function useReceiptScan() {
 			return items.map((item, idx) => ({
 				file: item.file,
 				previewBase64: item.previewBase64,
-				data: (results[idx] as ReceiptData | null) ?? null,
+				data: (results[idx]?.data ?? null) as ReceiptData | null,
 			}));
 		},
 	});

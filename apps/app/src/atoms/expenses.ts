@@ -45,4 +45,13 @@ const selectedExpenseAtom = atom<{
  */
 const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillId: null });
 
-export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom, scannedReceiptsAtom };
+/**
+ * Tracks the receipt scan queue job ID that produced the current draft expense.
+ * Written by ScanQueueReviewDialogContent when the user proceeds to create an expense.
+ * Read and cleared by CreateExpenseForm after the expense is successfully created,
+ * so the originating scan job is removed from the queue automatically.
+ * In-memory only — no persistence needed (transient handoff between two dialogs).
+ */
+const scannedReceiptJobIdAtom = atom<string | null>(null);
+
+export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom, scannedReceiptsAtom, scannedReceiptJobIdAtom };

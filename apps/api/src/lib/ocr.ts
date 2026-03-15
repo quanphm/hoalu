@@ -1,5 +1,6 @@
 import { chat } from "@tanstack/ai";
-import { openRouterText } from "@tanstack/ai-openrouter";
+import type { ConstrainedModelMessage, TextPart, ImagePart } from "@tanstack/ai";
+import { openRouterText, type OpenRouterMessageMetadataByModality } from "@tanstack/ai-openrouter";
 import * as z from "zod";
 
 const ReceiptDataSchema = z.object({
@@ -35,31 +36,23 @@ const ReceiptDataSchema = z.object({
 
 export type ReceiptData = z.infer<typeof ReceiptDataSchema>;
 
+export interface ConversationTurn {
+	role: "user" | "assistant";
+	content: string;
+}
+
+export interface ReceiptExtractionResult {
+	data: ReceiptData | null;
+	conversationHistory: ConversationTurn[];
+}
+
 interface Category {
 	id: string;
 	name: string;
 }
 
-export async function extractReceiptData(
-	imageBase64: string,
-	categories: Category[],
-): Promise<ReceiptData | null> {
-	const categoryListText =
-		categories.length > 0
-			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
-			: "No categories available - set suggestedCategoryId to null.";
-
-	try {
-		const result = await chat({
-			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
-			outputSchema: ReceiptDataSchema,
-			messages: [
-				{
-					role: "user",
-					content: [
-						{
-							type: "text",
-							content: `You are a receipt OCR system. Extract the following information from the receipt image:
+function buildSystemPrompt(categoryListText: string): string {
+	return `You are a receipt OCR system. Extract the following information from the receipt image:
 - Total amount (the final total, not subtotal)
 - Date (output always as YYYY-MM-DD)
 - Merchant/store name
@@ -85,35 +78,80 @@ TEXT EXTRACTION RULES — preserve original text exactly:
 1. Preserve Vietnamese diacritics (accents) exactly as they appear on the receipt
    - CORRECT: "GÀ GIÒN PHỦ SỐT PHÔ MAI", "CƠM TẤM SƯỜN BÌ"
    - INCORRECT: "GA GION PHU SOT PHO MAI", "COM TAM SUON BI"
-2. Keep all Unicode characters including: ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂÊÔƠƯ
-3. Do not normalize, transliterate, or convert accented characters to ASCII
-4. Extract item names exactly as printed, preserving special characters and formatting
+2. Do not normalize, transliterate, or convert accented characters to ASCII
 
-Return accurate data with high confidence only if you can read the receipt clearly.`,
-						},
-						{
-							type: "image",
-							source: {
-								type: "data",
-								value: imageBase64,
-								mimeType: "image/jpeg",
-							},
-						},
-					],
+Return accurate data with high confidence only if you can read the receipt clearly.`;
+}
+
+type OpenRouterInputModalitiesTypes = {
+	inputModalities: readonly ["text", "image"];
+	messageMetadataByModality: OpenRouterMessageMetadataByModality;
+};
+type OpenRouterMessage = ConstrainedModelMessage<OpenRouterInputModalitiesTypes>;
+
+export async function extractReceiptData(
+	imageBase64: string,
+	categories: Category[],
+	conversationHistory?: ConversationTurn[],
+): Promise<ReceiptExtractionResult> {
+	const categoryListText =
+		categories.length > 0
+			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
+			: "No categories available - set suggestedCategoryId to null.";
+
+	const systemPrompt = buildSystemPrompt(categoryListText);
+
+	const firstMessage: OpenRouterMessage = {
+		role: "user",
+		content: [
+			{
+				type: "text",
+				content: systemPrompt,
+			} satisfies TextPart<OpenRouterMessageMetadataByModality["text"]>,
+			{
+				type: "image",
+				source: {
+					type: "data",
+					value: imageBase64,
+					mimeType: "image/jpeg",
 				},
-			],
+				metadata: {
+					detail: "high",
+				},
+			} satisfies ImagePart<OpenRouterMessageMetadataByModality["image"]>,
+		],
+	};
+
+	const messages: OpenRouterMessage[] = [firstMessage];
+
+	if (conversationHistory && conversationHistory.length > 0) {
+		for (const turn of conversationHistory) {
+			messages.push({ role: turn.role, content: turn.content });
+		}
+	}
+
+	try {
+		const result = await chat({
+			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
+			outputSchema: ReceiptDataSchema,
+			messages,
 		});
 
-		return result;
+		const updatedHistory: ConversationTurn[] = [
+			...(conversationHistory ?? [{ role: "user" as const, content: systemPrompt }]),
+			{ role: "assistant" as const, content: JSON.stringify(result) },
+		];
+
+		return { data: result, conversationHistory: updatedHistory };
 	} catch (error) {
 		console.error("OCR extraction failed:", error);
-		return null;
+		return { data: null, conversationHistory: conversationHistory ?? [] };
 	}
 }
 
 export async function batchExtractReceiptData(
 	imagesBase64: string[],
 	categories: Category[],
-): Promise<(ReceiptData | null)[]> {
+): Promise<ReceiptExtractionResult[]> {
 	return Promise.all(imagesBase64.map((img) => extractReceiptData(img, categories)));
 }
