@@ -1,5 +1,5 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
-import { batchExtractReceiptData } from "#api/lib/ocr.ts";
+import { batchExtractReceiptData, extractReceiptData } from "#api/lib/ocr.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
 import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
@@ -23,6 +23,35 @@ const app = createHonoInstance();
 const fileRepository = new FileRepository();
 const categoryRepository = new CategoryRepository();
 const TAGS = ["Files"];
+
+// Shared Zod schemas for OCR response shapes
+const ConversationTurnSchema = z.object({
+	role: z.enum(["user", "assistant"]),
+	content: z.string(),
+});
+
+const ReceiptItemSchema = z.object({
+	name: z.string(),
+	quantity: z.number().optional(),
+	price: z.number().optional(),
+});
+
+const ReceiptDataSchema = z
+	.object({
+		amount: z.number(),
+		date: z.string(),
+		merchantName: z.string(),
+		suggestedCategoryId: z.uuid().nullable(),
+		currency: z.string(),
+		confidence: z.number(),
+		items: z.array(ReceiptItemSchema).optional(),
+	})
+	.nullable();
+
+const ReceiptExtractionResultSchema = z.object({
+	data: ReceiptDataSchema,
+	conversationHistory: z.array(ConversationTurnSchema),
+});
 
 const route = app
 	.post(
@@ -158,29 +187,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(
-					z.object({
-						data: z.array(
-							z
-								.object({
-									amount: z.number(),
-									date: z.string(),
-									merchantName: z.string(),
-									suggestedCategoryId: z.uuid().nullable(),
-									currency: z.string(),
-									confidence: z.number(),
-									items: z
-										.array(
-											z.object({
-												name: z.string(),
-												quantity: z.number().optional(),
-												price: z.number().optional(),
-											}),
-										)
-										.optional(),
-								})
-								.nullable(),
-						),
-					}),
+					z.object({ data: z.array(ReceiptExtractionResultSchema) }),
 					HTTPStatus.codes.OK,
 				),
 			},
@@ -202,12 +209,60 @@ const route = app
 			);
 
 			// Log summary
-			const successCount = results.filter(Boolean).length;
+			const successCount = results.filter((r) => r.data !== null).length;
 			console.log(
 				`[OCR] Scanned ${payload.imagesBase64.length} image(s), ${successCount} succeeded`,
 			);
 
 			return c.json({ data: results }, HTTPStatus.codes.OK);
+		},
+	)
+	.post(
+		"/scan-receipt/refine",
+		describeRoute({
+			tags: TAGS,
+			summary: "Re-extract a single receipt with user feedback and conversation history",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.server_parse_error(),
+				...OpenAPI.response(z.object({ data: ReceiptExtractionResultSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		jsonBodyValidator(
+			z.object({
+				imageBase64: z.string().min(1),
+				feedback: z.string().min(1),
+				conversationHistory: z.array(ConversationTurnSchema).optional(),
+			}),
+		),
+		async (c) => {
+			const workspace = c.get("workspace");
+			const payload = c.req.valid("json");
+
+			const categories = await categoryRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
+
+			// Append the new user feedback turn to the existing history before calling the model
+			const historyWithFeedback = [
+				...(payload.conversationHistory ?? []),
+				{ role: "user" as const, content: payload.feedback },
+			];
+
+			const result = await extractReceiptData(
+				payload.imageBase64,
+				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+				historyWithFeedback,
+			);
+
+			console.log(
+				`[OCR] Refine with feedback - confidence: ${result.data?.confidence ?? "failed"}`,
+			);
+
+			return c.json({ data: result }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(

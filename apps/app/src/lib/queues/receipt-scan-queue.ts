@@ -4,6 +4,16 @@ import { apiClient } from "#app/lib/api-client.ts";
 
 import { createTaskQueue } from "./create-task-queue.ts";
 
+export interface ConversationTurn {
+	role: "user" | "assistant";
+	content: string;
+}
+
+export interface ReceiptScanResult {
+	data: ReceiptData | null;
+	conversationHistory: ConversationTurn[];
+}
+
 export interface ReceiptScanInput {
 	fileName: string;
 	fileSize: number;
@@ -11,6 +21,8 @@ export interface ReceiptScanInput {
 	previewBase64: string | null;
 	encodedBase64: string;
 	workspaceSlug: string;
+	feedback?: string;
+	conversationHistory?: ConversationTurn[];
 }
 
 export type ReceiptScanJob = {
@@ -18,19 +30,31 @@ export type ReceiptScanJob = {
 	status: "pending" | "processing" | "completed" | "failed" | "dismissed";
 	retryCount: number;
 	input: ReceiptScanInput;
-	result: ReceiptData | null;
+	result: ReceiptScanResult | null;
 	errorMessage: string | null;
 	createdAt: string;
 	completedAt: string | null;
 };
 
-export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptData | null>({
+export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptScanResult>({
 	maxConcurrent: MAX_QUEUE_SIZE,
 	maxRetries: 2,
 	processor: {
 		execute: async (input) => {
-			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [input.encodedBase64]);
-			return (results[0] as ReceiptData | null) ?? null;
+			if (input.feedback) {
+				const result = await apiClient.files.refineReceipt(
+					input.workspaceSlug,
+					input.encodedBase64,
+					input.feedback,
+					input.conversationHistory,
+				);
+				return result as ReceiptScanResult;
+			}
+			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [
+				input.encodedBase64,
+			]);
+			const first = results[0] as ReceiptScanResult | undefined;
+			return first ?? { data: null, conversationHistory: [] };
 		},
 	},
 });

@@ -315,6 +315,23 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
+	refineReceipt: async (
+		slug: string,
+		imageBase64: string,
+		feedback: string,
+		conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>,
+	) => {
+		const response = await honoClient.bff.files["scan-receipt"].refine.$post({
+			query: { workspaceIdOrSlug: slug },
+			json: { imageBase64, feedback, conversationHistory },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 	parseVoice: async (slug: string, transcription: string, lang: "en-US" | "vi-VN" = "en-US") => {
 		const response = await honoClient.bff.files["parse-voice"].$post({
 			query: { workspaceIdOrSlug: slug },

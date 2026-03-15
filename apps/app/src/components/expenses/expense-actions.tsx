@@ -4,8 +4,10 @@ import {
 	draftExpenseAtom,
 	logPaymentAtom,
 	scannedReceiptsAtom,
+	scannedReceiptJobIdAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
+import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import {
 	FilesCompactUpload,
@@ -92,6 +94,8 @@ function CreateExpenseForm() {
 	const [draft, setDraft] = useAtom(draftExpenseAtom);
 	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
 	const [scannedReceipts, setScannedReceipts] = useAtom(scannedReceiptsAtom);
+	const [scannedReceiptJobId, setScannedReceiptJobId] = useAtom(scannedReceiptJobIdAtom);
+	const removeJob = useSetAtom(receiptScanQueue.remove);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
@@ -193,6 +197,10 @@ function CreateExpenseForm() {
 			setDraft(RESET);
 			setLogPayment({ recurringBillId: null });
 			setScannedReceipts([]);
+			if (scannedReceiptJobId) {
+				removeJob(scannedReceiptJobId);
+				setScannedReceiptJobId(null);
+			}
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
