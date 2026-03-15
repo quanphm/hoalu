@@ -86,9 +86,10 @@ export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {
 
 	// Form fields — initialised from the best result's data
 	const bestData = results[bestIdx]?.data;
+	const workspaceCurrency = workspace.metadata?.currency as string;
 	const [title, setTitle] = useState(bestData?.merchantName ?? "");
 	const [amount, setAmount] = useState(bestData?.amount ?? 0);
-	const [currency, setCurrency] = useState(bestData?.currency ?? "");
+	const [currency, setCurrency] = useState(bestData?.currency || workspaceCurrency);
 	const [date, setDate] = useState(bestData?.date ?? "");
 	const [categoryId, setCategoryId] = useState<string>(bestData?.suggestedCategoryId ?? "");
 

@@ -125,9 +125,10 @@ export function ScanQueueReviewDialogContent() {
 	const hasPrev = currentIndex > 0;
 
 	const jobData = currentJob?.result?.data;
+	const workspaceCurrency = workspace.metadata?.currency as string;
 	const [title, setTitle] = useState(jobData?.merchantName ?? "");
 	const [amount, setAmount] = useState(jobData?.amount ?? 0);
-	const [currency, setCurrency] = useState(jobData?.currency ?? "");
+	const [currency, setCurrency] = useState(jobData?.currency || workspaceCurrency);
 	const [date, setDate] = useState(jobData?.date ?? "");
 	const [categoryId, setCategoryId] = useState<string>(jobData?.suggestedCategoryId ?? "");
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,13 +138,13 @@ export function ScanQueueReviewDialogContent() {
 		if (jobData) {
 			setTitle(jobData?.merchantName ?? "");
 			setAmount(jobData?.amount ?? 0);
-			setCurrency(jobData?.currency ?? "");
+			setCurrency(jobData?.currency || workspaceCurrency);
 			setDate(jobData?.date ?? "");
 			setCategoryId(jobData?.suggestedCategoryId ?? "");
 			setError(null);
 			feedbackEditor?.commands.clearContent();
 		}
-	}, [jobId, jobData, feedbackEditor]);
+	}, [jobId, jobData, feedbackEditor, workspaceCurrency]);
 
 	const handleNext = useCallback(() => {
 		if (!hasNext) return;
