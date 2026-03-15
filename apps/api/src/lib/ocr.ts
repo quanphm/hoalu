@@ -1,16 +1,15 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { generateObject } from "ai";
+import { chat } from "@tanstack/ai";
+import { openRouterText } from "@tanstack/ai-openrouter";
 import * as z from "zod";
 
 const ReceiptDataSchema = z.object({
-	amount: z.coerce.number().describe("Total amount on the receipt"),
+	amount: z.number().describe("Total amount on the receipt"),
 	date: z
 		.string()
 		.regex(/^\d{4}-\d{2}-\d{2}$/)
 		.describe("Receipt date in YYYY-MM-DD format"),
 	merchantName: z.string().describe("Name of the merchant or store"),
 	suggestedCategoryId: z
-		.string()
 		.uuid()
 		.nullable()
 		.describe(
@@ -45,32 +44,22 @@ export async function extractReceiptData(
 	imageBase64: string,
 	categories: Category[],
 ): Promise<ReceiptData | null> {
-	// Guard: return null if API key is not configured
-	if (!process.env.OPENROUTER_API_KEY) {
-		console.warn("OPENROUTER_API_KEY is not configured - OCR is disabled");
-		return null;
-	}
-
-	const openrouter = createOpenRouter({
-		apiKey: process.env.OPENROUTER_API_KEY,
-	});
-
 	const categoryListText =
 		categories.length > 0
 			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
 			: "No categories available - set suggestedCategoryId to null.";
 
 	try {
-		const result = await generateObject({
-			model: openrouter("mistralai/mistral-small-3.2-24b-instruct"),
-			schema: ReceiptDataSchema,
+		const result = await chat({
+			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
+			outputSchema: ReceiptDataSchema,
 			messages: [
 				{
 					role: "user",
 					content: [
 						{
 							type: "text",
-							text: `You are a receipt OCR system. Extract the following information from the receipt image:
+							content: `You are a receipt OCR system. Extract the following information from the receipt image:
 - Total amount (the final total, not subtotal)
 - Date (output always as YYYY-MM-DD)
 - Merchant/store name
@@ -92,30 +81,37 @@ DATE FORMAT RULES — use all available signals to determine the correct date:
 3. When the date is fully ambiguous (both day and month ≤ 12, no locale clues), prefer DD/MM/YYYY as it is the most common format worldwide.
 4. Always output the resolved date as YYYY-MM-DD regardless of the source format.
 
+TEXT EXTRACTION RULES — preserve original text exactly:
+1. Preserve Vietnamese diacritics (accents) exactly as they appear on the receipt
+   - CORRECT: "GÀ GIÒN PHỦ SỐT PHÔ MAI", "CƠM TẤM SƯỜN BÌ"
+   - INCORRECT: "GA GION PHU SOT PHO MAI", "COM TAM SUON BI"
+2. Keep all Unicode characters including: ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂÊÔƠƯ
+3. Do not normalize, transliterate, or convert accented characters to ASCII
+4. Extract item names exactly as printed, preserving special characters and formatting
+
 Return accurate data with high confidence only if you can read the receipt clearly.`,
 						},
 						{
 							type: "image",
-							image: imageBase64,
+							source: {
+								type: "data",
+								value: imageBase64,
+								mimeType: "image/jpeg",
+							},
 						},
 					],
 				},
 			],
 		});
 
-		return result.object;
+		return result;
 	} catch (error) {
 		console.error("OCR extraction failed:", error);
 		return null;
 	}
 }
 
-/**
- * Scan multiple receipt images in parallel and return per-image results.
- * Each entry in the returned array corresponds to the same index in `imagesBase64`.
- * If an individual image fails, that entry will be null.
- */
-export async function extractReceiptDataBatch(
+export async function batchExtractReceiptData(
 	imagesBase64: string[],
 	categories: Category[],
 ): Promise<(ReceiptData | null)[]> {

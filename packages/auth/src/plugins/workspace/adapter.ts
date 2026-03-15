@@ -25,7 +25,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 					where: [{ field: "publicId", value: workspaceIdOrSlug }],
 				});
 			}
-			const isUUID = z.string().uuid().safeParse(workspaceIdOrSlug);
+			const isUUID = z.uuid().safeParse(workspaceIdOrSlug);
 			if (isUUID.success) {
 				return await adapter.findOne<Workspace>({
 					model: "workspace",

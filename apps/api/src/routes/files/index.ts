@@ -1,5 +1,5 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
-import { extractReceiptDataBatch } from "#api/lib/ocr.ts";
+import { batchExtractReceiptData } from "#api/lib/ocr.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
 import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
@@ -165,7 +165,7 @@ const route = app
 									amount: z.number(),
 									date: z.string(),
 									merchantName: z.string(),
-									suggestedCategoryId: z.string().uuid().nullable(),
+									suggestedCategoryId: z.uuid().nullable(),
 									currency: z.string(),
 									confidence: z.number(),
 									items: z
@@ -196,8 +196,7 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
-			// Scan all images in parallel
-			const results = await extractReceiptDataBatch(
+			const results = await batchExtractReceiptData(
 				payload.imagesBase64,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
 			);
@@ -228,7 +227,7 @@ const route = app
 								amount: z.number(),
 								currency: z.string(),
 								date: z.string(),
-								suggestedCategoryId: z.string().uuid().nullable(),
+								suggestedCategoryId: z.uuid().nullable(),
 								repeat: z.enum(["one-time", "daily", "weekly", "monthly", "yearly"]),
 								confidence: z.number(),
 							})

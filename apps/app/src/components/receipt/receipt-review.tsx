@@ -1,10 +1,10 @@
 import { createExpenseDialogAtom, scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
 import { draftExpenseAtom, scannedReceiptsAtom } from "#app/atoms/expenses.ts";
-import type { ReceiptData, ReceiptScanResult } from "#app/hooks/use-receipt-scan.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
+import type { ReceiptData, ReceiptScanResult } from "#app/hooks/use-receipt-scan.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { categoriesQueryOptions } from "#app/services/query-options.ts";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { FileTextIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
@@ -55,7 +55,8 @@ function buildDescription(items: ReceiptData["items"], currency: string): string
 	if (!items || items.length === 0) return "";
 	const listItems = items
 		.map((item) => {
-			const name = item.quantity && item.quantity > 1 ? `${item.name} x${item.quantity}` : item.name;
+			const name =
+				item.quantity && item.quantity > 1 ? `${item.name} x${item.quantity}` : item.name;
 			const price = item.price != null ? ` — ${formatLineItemPrice(item.price, currency)}` : "";
 			return `<li>${name}${price}</li>`;
 		})
@@ -165,7 +166,7 @@ export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {
 								)}
 							</div>
 							{r.data && (
-								<div className="absolute bottom-0 left-0 right-0 bg-black/40 px-1 py-0.5 text-center">
+								<div className="absolute right-0 bottom-0 left-0 bg-black/40 px-1 py-0.5 text-center">
 									<span className="text-[9px] font-medium text-white">
 										{(r.data.confidence * 100).toFixed(0)}%
 									</span>
@@ -183,13 +184,12 @@ export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {
 
 			{failureCount > 0 && (
 				<p className="text-muted-foreground text-xs">
-					{failureCount} attachment{failureCount > 1 ? "s" : ""} could not be read — still
-					attached to the expense for manual reference.
+					{failureCount} attachment{failureCount > 1 ? "s" : ""} could not be read — still attached
+					to the expense for manual reference.
 				</p>
 			)}
 
 			<div className="grid gap-6 md:grid-cols-2">
-				{/* Current attachment preview */}
 				<div className="space-y-2">
 					<p className="text-sm font-medium">
 						{results.length > 1
@@ -245,12 +245,7 @@ export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {
 
 					<div className="space-y-2">
 						<Label htmlFor="date">Date</Label>
-						<Input
-							id="date"
-							type="date"
-							value={date}
-							onChange={(e) => setDate(e.target.value)}
-						/>
+						<Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 					</div>
 
 					<div className="space-y-2">
@@ -269,34 +264,34 @@ export function ReceiptReview({ results, onBack }: ReceiptReviewProps) {
 						</SelectNative>
 					</div>
 
-				{activeData?.items && activeData.items.length > 0 && (
-					<div className="space-y-2">
-						<p className="text-sm font-medium">Line Items</p>
-						<table className="w-full text-xs">
-							<thead>
-								<tr className="border-b">
-									<th className="py-1 text-left font-medium">Item</th>
-									<th className="py-1 text-right font-medium">Price</th>
-								</tr>
-							</thead>
-							<tbody>
-								{activeData.items.map((item, idx) => (
-									<tr key={idx} className="border-b last:border-0">
-										<td className="py-1 pr-4">
-											{item.name}
-											{item.quantity && item.quantity > 1 && (
-												<span className="text-muted-foreground ml-1">x{item.quantity}</span>
-											)}
-										</td>
-										<td className="py-1 text-right tabular-nums">
-											{item.price != null ? formatLineItemPrice(item.price, currency) : "—"}
-										</td>
+					{activeData?.items && activeData.items.length > 0 && (
+						<div className="space-y-2">
+							<p className="text-sm font-medium">Line Items</p>
+							<table className="w-full text-xs">
+								<thead>
+									<tr className="border-b">
+										<th className="py-1 text-left font-medium">Item</th>
+										<th className="py-1 text-right font-medium">Price</th>
 									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				)}
+								</thead>
+								<tbody>
+									{activeData.items.map((item, idx) => (
+										<tr key={idx} className="border-b last:border-0">
+											<td className="py-1 pr-4">
+												{item.name}
+												{item.quantity && item.quantity > 1 && (
+													<span className="text-muted-foreground ml-1">x{item.quantity}</span>
+												)}
+											</td>
+											<td className="py-1 text-right tabular-nums">
+												{item.price != null ? formatLineItemPrice(item.price, currency) : "—"}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
 				</div>
 			</div>
 
