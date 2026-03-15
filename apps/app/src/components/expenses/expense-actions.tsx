@@ -278,7 +278,9 @@ function CreateExpenseForm() {
 							name="date"
 							children={(field) => <field.DatepickerInputField label="Date" />}
 						/>
-						<form.AppField name="date" children={(field) => <field.DatepickerField />} />
+						<div className="hidden md:block">
+							<form.AppField name="date" children={(field) => <field.DatepickerField />} />
+						</div>
 					</FieldGroup>
 				</div>
 

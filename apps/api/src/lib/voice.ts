@@ -1,12 +1,12 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { generateObject } from "ai";
+import { chat } from "@tanstack/ai";
+import { openRouterText } from "@tanstack/ai-openrouter";
 import * as z from "zod";
 
 const VoiceExpenseDataSchema = z.object({
 	title: z
 		.string()
 		.describe("Short descriptive title for the expense (e.g. 'Coffee', 'Grocery shopping')"),
-	amount: z.coerce.number().describe("Numeric amount of the expense"),
+	amount: z.number().describe("Numeric amount of the expense"),
 	currency: z.string().length(3).describe("3-letter ISO currency code (e.g. USD, EUR, VND)"),
 	date: z
 		.string()
@@ -20,7 +20,6 @@ const VoiceExpenseDataSchema = z.object({
 		),
 	repeat: z
 		.enum(["one-time", "daily", "weekly", "monthly", "yearly"])
-		.default("one-time")
 		.describe("Recurrence pattern, default to one-time unless user explicitly mentions repeating"),
 	confidence: z
 		.number()
@@ -49,15 +48,6 @@ export async function parseVoiceExpense(
 	categories: Category[],
 	context: ParseContext,
 ): Promise<VoiceExpenseData | null> {
-	if (!process.env.OPENROUTER_API_KEY) {
-		console.warn("OPENROUTER_API_KEY is not configured - voice parsing is disabled");
-		return null;
-	}
-
-	const openrouter = createOpenRouter({
-		apiKey: process.env.OPENROUTER_API_KEY,
-	});
-
 	const categoryListText =
 		categories.length > 0
 			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
@@ -100,9 +90,9 @@ English date examples (convert to YYYY-MM-DD):
 - Set confidence based on how clearly and completely the details were provided`;
 
 	try {
-		const result = await generateObject({
-			model: openrouter("mistralai/mistral-small-3.2-24b-instruct"),
-			schema: VoiceExpenseDataSchema,
+		const result = await chat({
+			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
+			outputSchema: VoiceExpenseDataSchema,
 			messages: [
 				{
 					role: "user",
@@ -123,7 +113,7 @@ Transcription (${context.lang === "vi-VN" ? "Vietnamese" : "English"}): "${trans
 			],
 		});
 
-		return result.object;
+		return result;
 	} catch (error) {
 		console.error("Voice expense parsing failed:", error);
 		return null;

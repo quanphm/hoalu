@@ -1,20 +1,30 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import { currentDialogAtom, createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
+import {
+	currentDialogAtom,
+	createExpenseDialogAtom,
+	scanQueueReviewDialogAtom,
+} from "#app/atoms/dialogs.ts";
 import { scannedReceiptsAtom, draftExpenseAtom } from "#app/atoms/expenses.ts";
-import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
+import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
+import { formatCurrency } from "#app/helpers/currency.ts";
 import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
 import { categoriesQueryOptions } from "#app/services/query-options.ts";
-import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { FileTextIcon, ChevronRightIcon, ChevronLeftIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogPopup } from "@hoalu/ui/dialog";
+import {
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogPopup,
+} from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
 function ConfidenceBadge({ confidence }: { confidence: number }) {
@@ -34,25 +44,13 @@ function ConfidenceBadge({ confidence }: { confidence: number }) {
 	);
 }
 
-function formatLineItemPrice(price: number, currencyCode: string): string {
-	const fractionDigits = (zeroDecimalCurrencies as readonly string[]).includes(
-		currencyCode.toUpperCase(),
-	)
-		? 0
-		: 2;
-	const formatted = new Intl.NumberFormat(undefined, {
-		minimumFractionDigits: fractionDigits,
-		maximumFractionDigits: fractionDigits,
-	}).format(price);
-	return `${currencyCode} ${formatted}`;
-}
-
 function buildDescription(items: ReceiptData["items"], currency: string): string {
 	if (!items || items.length === 0) return "";
 	const listItems = items
 		.map((item) => {
-			const name = item.quantity && item.quantity > 1 ? `${item.name} x${item.quantity}` : item.name;
-			const price = item.price != null ? ` — ${formatLineItemPrice(item.price, currency)}` : "";
+			const name =
+				item.quantity && item.quantity > 1 ? `${item.name} x${item.quantity}` : item.name;
+			const price = item.price != null ? ` — ${formatCurrency(item.price, currency)}` : "";
 			return `<li>${name}${price}</li>`;
 		})
 		.join("");
@@ -90,7 +88,6 @@ export function ScanQueueReviewDialogContent() {
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
 
-	// Find current job and completed jobs
 	const currentJob = useMemo(() => {
 		return queue.find((j) => j.id === jobId && j.status === "completed") ?? null;
 	}, [queue, jobId]);
@@ -107,7 +104,6 @@ export function ScanQueueReviewDialogContent() {
 	const hasNext = currentIndex < completedJobs.length - 1;
 	const hasPrev = currentIndex > 0;
 
-	// Form state - initialize from job data
 	const jobData = currentJob?.result;
 	const [title, setTitle] = useState(jobData?.merchantName ?? "");
 	const [amount, setAmount] = useState(jobData?.amount ?? 0);
@@ -117,7 +113,6 @@ export function ScanQueueReviewDialogContent() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// Reset form state when jobId changes
 	useEffect(() => {
 		if (jobData) {
 			setTitle(jobData.merchantName ?? "");
@@ -129,7 +124,6 @@ export function ScanQueueReviewDialogContent() {
 		}
 	}, [jobId, jobData]);
 
-	// Navigation
 	const handleNext = useCallback(() => {
 		if (!hasNext) return;
 		const nextJob = completedJobs[currentIndex + 1];
@@ -156,7 +150,6 @@ export function ScanQueueReviewDialogContent() {
 			// Build description from line items
 			const description = buildDescription(jobData?.items, currency);
 
-			// Set draft expense data
 			setDraftExpense((draft) => ({
 				...draft,
 				title,
@@ -166,7 +159,6 @@ export function ScanQueueReviewDialogContent() {
 				categoryId: categoryId || "",
 			}));
 
-			// Reconstruct File from base64 and set as scanned receipt
 			const file = await base64ToFile(
 				currentJob.input.encodedBase64,
 				currentJob.input.fileName,
@@ -174,7 +166,6 @@ export function ScanQueueReviewDialogContent() {
 			);
 			setScannedReceipts([file]);
 
-			// Close review dialog and open create expense dialog
 			setReviewDialog({ state: false });
 			setCreateDialog({ state: true });
 		} catch (err) {
@@ -203,7 +194,9 @@ export function ScanQueueReviewDialogContent() {
 		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
 			<DialogHeader>
 				<div className="flex items-center justify-between">
-					<DialogTitle>Review Receipt ({currentIndex + 1} of {completedJobs.length})</DialogTitle>
+					<DialogTitle>
+						Review Receipt ({currentIndex + 1} of {completedJobs.length})
+					</DialogTitle>
 					{completedJobs.length > 1 && (
 						<div className="flex items-center gap-1">
 							<Button
@@ -233,9 +226,7 @@ export function ScanQueueReviewDialogContent() {
 			</DialogHeader>
 
 			<div className="grid gap-6 md:grid-cols-2">
-				{/* Receipt preview */}
 				<div className="space-y-2">
-					<p className="text-sm font-medium">Receipt Image</p>
 					<div className="border-muted overflow-hidden rounded-md border">
 						{currentJob.input.previewBase64 ? (
 							<img
@@ -265,7 +256,6 @@ export function ScanQueueReviewDialogContent() {
 					)}
 				</div>
 
-				{/* Form fields */}
 				<div className="space-y-4">
 					<div className="space-y-2">
 						<Label htmlFor="title">Merchant Name</Label>
@@ -289,12 +279,7 @@ export function ScanQueueReviewDialogContent() {
 
 					<div className="space-y-2">
 						<Label htmlFor="date">Date</Label>
-						<Input
-							id="date"
-							type="date"
-							value={date}
-							onChange={(e) => setDate(e.target.value)}
-						/>
+						<Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 					</div>
 
 					<div className="space-y-2">
@@ -315,7 +300,6 @@ export function ScanQueueReviewDialogContent() {
 
 					{data?.items && data.items.length > 0 && (
 						<div className="space-y-2">
-							<p className="text-sm font-medium">Line Items</p>
 							<table className="w-full text-xs">
 								<thead>
 									<tr className="border-b">
@@ -333,7 +317,7 @@ export function ScanQueueReviewDialogContent() {
 												)}
 											</td>
 											<td className="py-1 text-right tabular-nums">
-												{item.price != null ? formatLineItemPrice(item.price, currency) : "—"}
+												{item.price != null ? formatCurrency(item.price, currency) : "—"}
 											</td>
 										</tr>
 									))}
@@ -345,25 +329,12 @@ export function ScanQueueReviewDialogContent() {
 			</div>
 
 			{error && (
-				<div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
-					{error}
-				</div>
+				<div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">{error}</div>
 			)}
 			<DialogFooter>
-				{hasNext ? (
-					<>
-						<Button variant="ghost" onClick={handleNext} disabled={isSubmitting}>
-							Skip
-						</Button>
-						<Button onClick={handleCreateExpense} disabled={isSubmitting}>
-							{isSubmitting ? "Creating..." : "Create Expense"}
-						</Button>
-					</>
-				) : (
-					<Button onClick={handleCreateExpense} disabled={isSubmitting}>
-						{isSubmitting ? "Creating..." : "Create Expense"}
-					</Button>
-				)}
+				<Button onClick={handleCreateExpense} disabled={isSubmitting}>
+					{isSubmitting ? "Creating..." : "Create Expense"}
+				</Button>
 			</DialogFooter>
 		</DialogPopup>
 	);
