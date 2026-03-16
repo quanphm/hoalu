@@ -28,7 +28,7 @@ import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
@@ -108,6 +108,12 @@ export function ScanQueueReviewDialogContent() {
 		content: "",
 	});
 
+	const feedbackEditorState = useEditorState({
+		editor: feedbackEditor,
+		selector: (ctx) => ({ isEmpty: ctx.editor?.isEmpty ?? true }),
+	});
+	const isFeedbackEmpty = feedbackEditorState?.isEmpty ?? true;
+
 	const currentJob = useMemo(() => {
 		return queue.find((j) => j.id === jobId && j.status === "completed") ?? null;
 	}, [queue, jobId]);
@@ -163,7 +169,7 @@ export function ScanQueueReviewDialogContent() {
 	}, [hasPrev, completedJobs, currentIndex, setReviewDialog]);
 
 	const handleRefine = useCallback(() => {
-		if (!feedbackEditor || feedbackEditor.isEmpty || !currentJob) return;
+		if (!feedbackEditor || isFeedbackEmpty || !currentJob) return;
 		addJob({
 			...currentJob.input,
 			feedback: feedbackEditor.getText(),
@@ -171,7 +177,7 @@ export function ScanQueueReviewDialogContent() {
 		});
 		dismissJob(currentJob.id);
 		setReviewDialog({ state: false });
-	}, [feedbackEditor, currentJob, addJob, dismissJob, setReviewDialog]);
+	}, [feedbackEditor, isFeedbackEmpty, currentJob, addJob, dismissJob, setReviewDialog]);
 
 	const handleCreateExpense = async () => {
 		if (!currentJob) return;
@@ -288,23 +294,6 @@ export function ScanQueueReviewDialogContent() {
 							Could not extract data from this receipt.
 						</p>
 					)}
-
-					<div className="mt-4 space-y-2">
-						<Label>Something wrong? Describe the issue</Label>
-						<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
-							{/* <Toolbar editor={feedbackEditor} /> */}
-							<EditorContent editor={feedbackEditor} />
-						</div>
-						<Button
-							variant="secondary"
-							size="sm"
-							disabled={!feedbackEditor || feedbackEditor.isEmpty}
-							onClick={handleRefine}
-							className="w-full"
-						>
-							Send message
-						</Button>
-					</div>
 				</div>
 
 				<div className="space-y-4">
@@ -376,6 +365,22 @@ export function ScanQueueReviewDialogContent() {
 							</table>
 						</div>
 					)}
+
+					<div className="mt-4 space-y-2">
+						<Label>Something wrong? Describe the issue</Label>
+						<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
+							<EditorContent editor={feedbackEditor} />
+						</div>
+						<Button
+							variant="secondary"
+							size="sm"
+							disabled={isFeedbackEmpty}
+							onClick={handleRefine}
+							className="w-full"
+						>
+							Send message
+						</Button>
+					</div>
 				</div>
 			</div>
 
