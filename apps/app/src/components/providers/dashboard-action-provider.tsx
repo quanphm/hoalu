@@ -6,7 +6,7 @@ import {
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
+import { useTheme } from "#app/hooks/use-theme.ts";
 import { useHotkeys } from "react-hotkeys-hook";
 
 /**
@@ -14,7 +14,7 @@ import { useHotkeys } from "react-hotkeys-hook";
  */
 export function DashboardActionProvider({ children }: { children: React.ReactNode }) {
 	const navigate = useNavigate();
-	const { theme, setTheme } = useTheme();
+	const { mode, setTheme } = useTheme();
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
 	useHotkeys(
@@ -47,7 +47,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 	});
 
 	useHotkeys(KEYBOARD_SHORTCUTS.toggle_theme.hotkey, () => {
-		const currentThemeIndex = THEMES.indexOf(theme as (typeof THEMES)[number]);
+		const currentThemeIndex = THEMES.indexOf(mode);
 		const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
 		setTheme(THEMES[nextThemeIndex]);
 	});

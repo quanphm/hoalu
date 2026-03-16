@@ -92,9 +92,11 @@ function RouteComponent() {
 						<SettingCard title="Profile">
 							<EditWorkspaceForm canEdit={canUpdateWorkspace} />
 						</SettingCard>
+
 						<SettingCard title="Workspace ID">
 							<InputWithCopy value={workspace.publicId} />
 						</SettingCard>
+
 						<SettingCard
 							title="Logo"
 							description="Click the logo to upload a new image. PNG or JPEG file. Max file size 5MB."
@@ -121,6 +123,11 @@ function RouteComponent() {
 								/>
 							)}
 						</SettingCard>
+
+						<SettingCard title="Preferences">
+							<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />
+						</SettingCard>
+
 						{canDeleteWorkspace && (
 							<SettingCard
 								title="Delete workspace"
@@ -132,14 +139,6 @@ function RouteComponent() {
 								</Button>
 							</SettingCard>
 						)}
-					</SectionContent>
-				</div>
-
-				<div className="col-span-4">
-					<SectionContent>
-						<SettingCard title="Preferences">
-							<EditWorkspaceMetadataForm canEdit={canUpdateWorkspace} />
-						</SettingCard>
 					</SectionContent>
 				</div>
 			</SectionContent>

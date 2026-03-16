@@ -32,8 +32,8 @@ const pwaOptions: Partial<VitePWAOptions> = {
 				purpose: "maskable",
 			},
 		],
-		theme_color: "#242a3a",
-		background_color: "#242a3a",
+		theme_color: "#f9f7f3",
+		background_color: "#f9f7f3",
 	},
 	workbox: {
 		cleanupOutdatedCaches: true,

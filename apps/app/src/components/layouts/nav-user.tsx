@@ -28,14 +28,14 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
+import { useTheme } from "#app/hooks/use-theme.ts";
 import { useId } from "react";
 
 import { HotKey } from "../hotkey";
 
 export function NavUser() {
 	const { user, signOut } = useAuth();
-	const { theme, setTheme } = useTheme();
+	const { mode, setTheme } = useTheme();
 	const reactId = useId();
 
 	if (!user) return null;
@@ -75,7 +75,7 @@ export function NavUser() {
 												onClick={() => setTheme(themeName)}
 												className="capitalize"
 											>
-												{theme === themeName && (
+												{mode === themeName && (
 													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 														<CheckIcon className="size-4" />
 													</span>
@@ -90,7 +90,7 @@ export function NavUser() {
 												onClick={() => setTheme(themeName)}
 												className="capitalize"
 											>
-												{theme === themeName && (
+												{mode === themeName && (
 													<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 														<CheckIcon className="size-4" />
 													</span>

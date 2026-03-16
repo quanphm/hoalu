@@ -14,10 +14,8 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 } from "@hoalu/ui/sidebar";
-import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
 
 // import { NavDocumentation } from "./nav-documentation";
 import { NavWorkspaceList } from "./nav-workspace-list";
@@ -28,8 +26,6 @@ import { NavWorkspaceList } from "./nav-workspace-list";
  * @see https://web.dev/patterns/layout/sidebar-says
  */
 export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
-	const { theme } = useTheme();
-
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;
 
@@ -37,7 +33,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
 
 	return (
-		<SidebarProvider className={cn(theme)}>
+		<SidebarProvider>
 			<Sidebar variant="inset">
 				<SidebarHeader className="border-b">
 					<SidebarMenu>
