@@ -11,10 +11,9 @@ const THEME_COLORS: Record<ResolvedTheme, string> = {
 	light: "#f9f7f3",
 	dark: "#242a3a",
 	creamy: "#f8f4eb",
-	deluge: "#1a1f3a",
 };
 
-const ALL_THEME_CLASSES: ResolvedTheme[] = ["light", "dark", "creamy", "deluge"];
+const ALL_THEME_CLASSES: ResolvedTheme[] = ["light", "dark", "creamy"];
 
 let currentMode: ThemeMode = DEFAULT_MODE;
 let currentResolved: ResolvedTheme = "light";
@@ -42,7 +41,7 @@ function applyTheme(resolved: ResolvedTheme) {
 		root.classList.remove(cls);
 	}
 	root.classList.add(resolved);
-	root.style.colorScheme = resolved === "dark" || resolved === "deluge" ? "dark" : "light";
+	root.style.colorScheme = resolved === "dark" ? "dark" : "light";
 
 	// Update <meta name="theme-color">
 	const hex = THEME_COLORS[resolved];
@@ -61,8 +60,6 @@ function applyTheme(resolved: ResolvedTheme) {
 		el.content = hex;
 	}
 }
-
-// ── Initialization (runs once at module load in the browser) ───────────────
 
 function init() {
 	if (typeof window === "undefined") return;
@@ -116,7 +113,6 @@ export function useTheme() {
 		notify();
 	}, []);
 
-	// Ensure theme is applied on mount (handles SSR hydration edge case)
 	useEffect(() => {
 		applyTheme(currentResolved);
 	}, []);
