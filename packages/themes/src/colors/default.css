@@ -82,6 +82,13 @@
 	--input: oklch(0.2909 0.018 264.2422);
 	--ring: oklch(0.6123 0.1574 288.517);
 
+	--info: var(--color-blue-500);
+	--info-foreground: var(--color-blue-700);
+	--success: var(--color-emerald-500);
+	--success-foreground: var(--color-emerald-700);
+	--warning: var(--color-amber-500);
+	--warning-foreground: var(--color-amber-700);
+
 	--chart-1: oklch(0.6123 0.1574 288.517);
 	--chart-2: oklch(0.7769 0.1101 213.1947);
 	--chart-3: oklch(0.7792 0.122 64.3264);

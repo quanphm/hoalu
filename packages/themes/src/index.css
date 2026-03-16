@@ -5,8 +5,6 @@
 
 @import "./colors/default.css";
 @import "./colors/creamy.css";
-@import "./colors/deluge.css";
-@import "./colors/linear.css";
 @import "./theme.css";
 
 @plugin "@tailwindcss/typography";

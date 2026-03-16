@@ -2,19 +2,13 @@ import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { getCurrencyList } from "@hoalu/countries";
 
 export const SYSTEM_THEMES = ["system", "light", "dark"] as const;
-export const CUSTOM_THEMES = [
-	"creamy",
-	"deluge",
-	// "linear",
-] as const;
+export const CUSTOM_THEMES = ["creamy"] as const;
 export const THEMES = [...SYSTEM_THEMES, ...CUSTOM_THEMES] as const;
 export const THEME_LABELS: Record<(typeof THEMES)[number], string> = {
 	system: "System",
 	light: "Light",
 	dark: "Dark",
 	creamy: "Creamy",
-	deluge: "Deluge",
-	// linear: "Linear",
 };
 
 export const kbdSymbols = {
