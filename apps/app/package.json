@@ -46,7 +46,6 @@
 		"hono": "catalog:",
 		"html2canvas-pro": "^2.0.2",
 		"jotai": "^2.18.0",
-		"next-themes": "^0.4.6",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-hotkeys-hook": "^5.2.4",

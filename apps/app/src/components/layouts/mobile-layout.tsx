@@ -15,7 +15,7 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
+import { useTheme } from "#app/hooks/use-theme.ts";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -24,10 +24,9 @@ interface LayoutProps {
 export function MobileLayout({ children }: LayoutProps) {
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;
-	const { theme } = useTheme();
 
 	return (
-		<div className={cn("bg-background flex flex-col", theme)}>
+		<div className="bg-background flex flex-col">
 			{hasSlug && <MobileHeader />}
 			<main data-slot="main-content" className="pb-16">
 				{children}
@@ -39,7 +38,7 @@ export function MobileLayout({ children }: LayoutProps) {
 
 function MobileHeader() {
 	const params = useParams({ strict: false });
-	const { theme, setTheme } = useTheme();
+	const { mode, setTheme } = useTheme();
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -50,7 +49,7 @@ function MobileHeader() {
 	}
 
 	return (
-		<header className="bg-background border-b">
+		<header className="bg-background border-b pt-[env(safe-area-inset-top)]">
 			<div className="flex h-14 items-center justify-between px-2 md:px-4">
 				<div className="flex items-center gap-2">
 					<Button
@@ -77,7 +76,7 @@ function MobileHeader() {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" role="menu">
 							{SYSTEM_THEMES.map((themeName) => {
-								const isSelected = theme === themeName;
+								const isSelected = mode === themeName;
 								return (
 									<DropdownMenuItem
 										key={themeName}
@@ -97,7 +96,7 @@ function MobileHeader() {
 							})}
 							<DropdownMenuSeparator />
 							{CUSTOM_THEMES.map((themeName) => {
-								const isSelected = theme === themeName;
+								const isSelected = mode === themeName;
 								return (
 									<DropdownMenuItem
 										key={themeName}

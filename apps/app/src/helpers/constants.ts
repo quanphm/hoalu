@@ -1,7 +1,7 @@
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { getCurrencyList } from "@hoalu/countries";
 
-export const SYSTEM_THEMES = ["light", "dark"] as const;
+export const SYSTEM_THEMES = ["system", "light", "dark"] as const;
 export const CUSTOM_THEMES = [
 	"creamy",
 	"deluge",
@@ -9,6 +9,7 @@ export const CUSTOM_THEMES = [
 ] as const;
 export const THEMES = [...SYSTEM_THEMES, ...CUSTOM_THEMES] as const;
 export const THEME_LABELS: Record<(typeof THEMES)[number], string> = {
+	system: "System",
 	light: "Light",
 	dark: "Dark",
 	creamy: "Creamy",
