@@ -14,6 +14,7 @@ const ExchangeRateCollectionSchema = z.object({
 
 export const exchangeRateCollection = createCollection(
 	electricCollectionOptions({
+		id: "exchange-rates",
 		getKey: (item) => `${item.from_currency}-${item.to_currency}-${item.valid_from}`,
 		shapeOptions: {
 			url: `${import.meta.env.PUBLIC_API_URL}/sync/exchange-rates`,

@@ -4,7 +4,7 @@ const isDev = import.meta.env.DEV;
 
 function debugLog(name: string, message: string) {
 	if (isDev) {
-		// console.log(`[collection: ${name}] ${message}`);
+		console.log(`[collection: ${name}] ${message}`);
 	}
 }
 
