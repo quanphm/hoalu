@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-VERSION: 0.22.0
+VERSION: 0.23.0
 LAST_UPDATED: 2026-03-06
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---

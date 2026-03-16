@@ -9,8 +9,6 @@ import { monetary } from "@hoalu/common/monetary";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
-// ─── date helpers (mirrors repository.ts) ────────────────────────────────────
-
 function formatDate(d: Date): string {
 	const y = d.getFullYear();
 	const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -41,11 +39,7 @@ interface BillShape {
 	due_month: number | null;
 }
 
-function generateOccurrences(
-	bill: BillShape,
-	todayStr: string,
-	windowEndStr: string,
-): string[] {
+function generateOccurrences(bill: BillShape, todayStr: string, windowEndStr: string): string[] {
 	const today = parseLocalDate(todayStr);
 	const upcoming: string[] = [];
 
@@ -64,7 +58,7 @@ function generateOccurrences(
 	if (bill.repeat === "weekly") {
 		const dow = bill.due_day ?? parseLocalDate(bill.anchor_date).getDay();
 		const todayDow = today.getDay();
-		const daysBack = ((todayDow - dow) + 7) % 7;
+		const daysBack = (todayDow - dow + 7) % 7;
 		const daysForward = daysBack === 0 ? 0 : 7 - daysBack;
 		let cur = addDays(today, daysForward);
 		while (true) {
@@ -90,7 +84,10 @@ function generateOccurrences(
 			if (ds > windowEndStr) break;
 			if (ds >= todayStr) upcoming.push(ds);
 			m++;
-			if (m > 11) { m = 0; y++; }
+			if (m > 11) {
+				m = 0;
+				y++;
+			}
 		}
 		return upcoming;
 	}
@@ -112,9 +109,7 @@ function generateOccurrences(
 	return upcoming;
 }
 
-// ─── hook ─────────────────────────────────────────────────────────────────────
-
-export function useUpcomingBills(): UpcomingBill[] {
+export function useUpcomingBills(): Omit<UpcomingBill, "isPaid">[] {
 	const workspace = useWorkspace();
 	const billCollection = recurringBillCollectionFactory(workspace.slug);
 	const walletCollection = walletCollectionFactory(workspace.slug);
@@ -157,7 +152,7 @@ export function useUpcomingBills(): UpcomingBill[] {
 		const oneMonthOutStr = formatDate(addDays(todayLocal, 30));
 		const oneYearOutStr = formatDate(addYears(todayLocal, 1));
 
-		const results: UpcomingBill[] = [];
+		const results: Omit<UpcomingBill, "isPaid">[] = [];
 
 		for (const bill of data) {
 			if (!bill.is_active) continue;
@@ -183,6 +178,7 @@ export function useUpcomingBills(): UpcomingBill[] {
 		}
 
 		results.sort((a, b) => a.date.localeCompare(b.date));
+
 		return results;
 	}, [data]);
 }

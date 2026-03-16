@@ -1,4 +1,4 @@
-import { UnifiedBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
+import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
@@ -24,7 +24,7 @@ export function UpcomingBillsWidget() {
 				<CardDescription>Overdue, today, next 30 days and annually bills</CardDescription>
 			</CardHeader>
 			<CardContent className="min-h-0 flex-1 overflow-y-auto">
-				<UnifiedBillsList overdue={data.overdue} today={data.today} upcoming={data.upcoming} />
+				<UpcomingBillsList overdue={data.overdue} today={data.today} upcoming={data.upcoming} />
 			</CardContent>
 		</Card>
 	);
