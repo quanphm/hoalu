@@ -112,7 +112,7 @@ export function ScanQueueReviewDialogContent() {
 		editor: feedbackEditor,
 		selector: (ctx) => ({ isEmpty: ctx.editor?.isEmpty ?? true }),
 	});
-	const isFeedbackEmpty = feedbackEditorState?.isEmpty ?? true;
+	const isFeedbackEmpty = feedbackEditorState?.isEmpty;
 
 	const currentJob = useMemo(() => {
 		return queue.find((j) => j.id === jobId && j.status === "completed") ?? null;
