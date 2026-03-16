@@ -43,7 +43,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;
 
 	const allUpcomingBills = useUpcomingBills();
-	// Show at most 2 upcoming bills in the palette
 	const upcomingBills: UpcomingBillItem[] = allUpcomingBills.slice(0, 3).map((b) => ({
 		recurringBillId: b.recurringBillId,
 		date: b.date,
@@ -56,7 +55,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	}));
 	const hasUpcomingBills = !isSearching && upcomingBills.length > 0;
 
-	// Use ref pattern for stable callback (rerender-defer-reads)
 	const onOpenChangeRef = useRef(onOpenChange);
 	useEffect(() => {
 		onOpenChangeRef.current = onOpenChange;
@@ -195,7 +193,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 				if (!openState) setSearch("");
 			}}
 		>
-			<CommandDialogPopup className="max-w-3xl">
+			<CommandDialogPopup className="max-w-2xl">
 				<Command
 					items={autocompleteItems}
 					value={search}

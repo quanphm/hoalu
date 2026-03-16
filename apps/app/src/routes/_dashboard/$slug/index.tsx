@@ -74,9 +74,9 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
-				<SectionHeader className="flex-col items-start">
+				{/* <SectionHeader className="flex-col items-start">
 					<SectionTitle>Expenses</SectionTitle>
-				</SectionHeader>
+				</SectionHeader> */}
 				<SectionContent columns={12} className="items-start">
 					<div className="col-span-12 flex w-full flex-col md:col-span-7">
 						<UpcomingBillsWidget />

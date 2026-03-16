@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-VERSION: 0.22.0
+VERSION: 0.23.0
 LAST_UPDATED: 2026-03-06
 TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
@@ -76,6 +76,7 @@ When debug with browser, please refer to these addresses to access the applicati
 ### Recurring Bills Data Model
 
 **Tables:**
+
 - `recurring_bill` - The bill definition (amount, frequency, due day/month)
 - `recurring_bill_occurrence` - Individual expected payments (due_date, paid status)
 
@@ -84,11 +85,13 @@ When a recurring bill is created, the system calculates expected occurrences. Wh
 
 **Migration Strategy:**
 If adding occurrence tracking to existing data:
+
 1. Create the new table via migration (see `0006_occurrence_tracking.sql`)
 2. Backfill from existing expenses (see `0007_backfill_occurrences.sql`)
 3. Future expenses automatically create occurrence records on payment
 
 **API Endpoints:**
+
 - `GET /api/recurring-bills` - List all bills
 - `GET /api/recurring-bills/unified` - Get overdue + today + upcoming with payment status
 - `POST /api/expenses` - Log payment (creates expense + marks occurrence paid)

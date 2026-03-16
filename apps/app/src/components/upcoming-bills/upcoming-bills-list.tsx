@@ -1,7 +1,6 @@
 import { createExpenseDialogAtom, draftExpenseAtom, logPaymentAtom } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { ArchiveIcon, MoreVerticalIcon, PlusIcon } from "@hoalu/icons/lucide";
@@ -15,7 +14,6 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
 export interface UpcomingBill {
@@ -30,41 +28,33 @@ export interface UpcomingBill {
 	categoryId: string | null;
 	categoryName: string | null;
 	categoryColor: string | null;
-}
-
-// New unified interface with payment status
-export interface UnifiedBill extends UpcomingBill {
 	isPaid: boolean;
 }
 
-interface UpcomingBillsListProps {
-	bills: UpcomingBill[];
-}
-
 interface UnifiedBillsListProps {
-	overdue: UnifiedBill[];
-	today: UnifiedBill[];
-	upcoming: UnifiedBill[];
+	overdue: UpcomingBill[];
+	today: UpcomingBill[];
+	upcoming: UpcomingBill[];
 }
 
 interface GroupedBills {
 	label: string;
 	date: string;
 	isOverdue: boolean;
-	entries: UnifiedBill[];
+	entries: UpcomingBill[];
 }
 
 function groupBills(
-	overdue: UnifiedBill[],
-	today: UnifiedBill[],
-	upcoming: UnifiedBill[],
+	overdue: UpcomingBill[],
+	today: UpcomingBill[],
+	upcoming: UpcomingBill[],
 ): GroupedBills[] {
 	const groups: GroupedBills[] = [];
 
 	// Add overdue group if any
 	if (overdue.length > 0) {
 		// Group overdue by date
-		const overdueByDate = new Map<string, UnifiedBill[]>();
+		const overdueByDate = new Map<string, UpcomingBill[]>();
 		for (const bill of overdue) {
 			const existing = overdueByDate.get(bill.date) ?? [];
 			existing.push(bill);
@@ -92,7 +82,7 @@ function groupBills(
 		});
 	}
 
-	const upcomingByDate = new Map<string, UnifiedBill[]>();
+	const upcomingByDate = new Map<string, UpcomingBill[]>();
 	for (const bill of upcoming) {
 		const existing = upcomingByDate.get(bill.date) ?? [];
 		existing.push(bill);
@@ -124,72 +114,8 @@ function groupBills(
 	return groups;
 }
 
-// Legacy component for backward compatibility
-export function UpcomingBillsList({ bills }: UpcomingBillsListProps) {
-	const workspace = useWorkspace();
-	const navigate = useNavigate();
-
-	const unifiedBills: UnifiedBill[] = bills.map((b) => ({ ...b, isPaid: false }));
-	const groups = groupBills([], [], unifiedBills);
-
-	function handleBillClick(bill: UnifiedBill) {
-		const d = new Date(`${bill.date}T00:00:00`);
-		const ts = d.getTime();
-		navigate({
-			to: "/$slug/expenses",
-			params: { slug: workspace.slug },
-			search: { date: `${ts}-${ts}` },
-		});
-	}
-
-	if (bills.length === 0) {
-		return (
-			<Empty>
-				<EmptyHeader>
-					<EmptyTitle>No upcoming bills</EmptyTitle>
-					<EmptyDescription>No recurring expenses scheduled.</EmptyDescription>
-				</EmptyHeader>
-			</Empty>
-		);
-	}
-
-	return (
-		<div className="space-y-3">
-			{groups.map((group) => (
-				<div key={group.date}>
-					<div className="mb-1 flex items-center gap-2">
-						<span className="text-muted-foreground text-xs font-semibold">{group.label}</span>
-						<div className="bg-border h-px flex-1" />
-					</div>
-					<div className="space-y-1">
-						{group.entries.map((bill) => (
-							<BillRow
-								key={`${bill.recurringBillId}-${group.date}`}
-								bill={bill}
-								onClick={() => handleBillClick(bill)}
-							/>
-						))}
-					</div>
-				</div>
-			))}
-		</div>
-	);
-}
-
-export function UnifiedBillsList({ overdue, today, upcoming }: UnifiedBillsListProps) {
-	const workspace = useWorkspace();
-	const navigate = useNavigate();
+export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsListProps) {
 	const groups = groupBills(overdue, today, upcoming);
-
-	function handleBillClick(bill: UnifiedBill) {
-		const d = new Date(`${bill.date}T00:00:00`);
-		const ts = d.getTime();
-		navigate({
-			to: "/$slug/expenses",
-			params: { slug: workspace.slug },
-			search: { date: `${ts}-${ts}` },
-		});
-	}
 
 	if (groups.length === 0) {
 		return (
@@ -221,10 +147,9 @@ export function UnifiedBillsList({ overdue, today, upcoming }: UnifiedBillsListP
 					</div>
 					<div className="space-y-1">
 						{group.entries.map((bill) => (
-							<BillRow
+							<UpcomingBillRow
 								key={`${bill.recurringBillId}-${group.date}-${group.isOverdue}`}
 								bill={bill}
-								onClick={() => handleBillClick(bill)}
 							/>
 						))}
 					</div>
@@ -234,12 +159,11 @@ export function UnifiedBillsList({ overdue, today, upcoming }: UnifiedBillsListP
 	);
 }
 
-interface BillRowProps {
-	bill: UnifiedBill;
-	onClick?: () => void;
+interface UpcomingBillRowProps {
+	bill: UpcomingBill;
 }
 
-function BillRow({ bill, onClick }: BillRowProps) {
+function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 	const archive = useArchiveRecurringBill();
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 	const setDraft = useSetAtom(draftExpenseAtom);
@@ -279,7 +203,7 @@ function BillRow({ bill, onClick }: BillRowProps) {
 		>
 			<button
 				type="button"
-				onClick={onClick}
+				onClick={handleLogPayment}
 				className="flex min-w-0 flex-1 items-center gap-2 text-left"
 			>
 				<span

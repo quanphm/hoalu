@@ -1,6 +1,7 @@
 import { chat } from "@tanstack/ai";
-import { openRouterText } from "@tanstack/ai-openrouter";
 import * as z from "zod";
+
+import { openRouterTextAdapter } from "./openrouter";
 
 const VoiceExpenseDataSchema = z.object({
 	title: z
@@ -91,7 +92,7 @@ English date examples (convert to YYYY-MM-DD):
 
 	try {
 		const result = await chat({
-			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
+			adapter: openRouterTextAdapter,
 			outputSchema: VoiceExpenseDataSchema,
 			messages: [
 				{

@@ -1,7 +1,9 @@
 import { chat } from "@tanstack/ai";
 import type { ConstrainedModelMessage, TextPart, ImagePart } from "@tanstack/ai";
-import { openRouterText, type OpenRouterMessageMetadataByModality } from "@tanstack/ai-openrouter";
+import type { OpenRouterMessageMetadataByModality } from "@tanstack/ai-openrouter";
 import * as z from "zod";
+
+import { openRouterTextAdapter } from "./openrouter";
 
 const ReceiptDataSchema = z.object({
 	amount: z.number().describe("Total amount on the receipt"),
@@ -132,7 +134,7 @@ export async function extractReceiptData(
 
 	try {
 		const result = await chat({
-			adapter: openRouterText("mistralai/mistral-small-3.2-24b-instruct"),
+			adapter: openRouterTextAdapter,
 			outputSchema: ReceiptDataSchema,
 			messages,
 		});
