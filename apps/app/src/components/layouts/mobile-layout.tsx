@@ -1,5 +1,6 @@
 import { ButtonLink } from "#app/components/button-link.tsx";
 import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
+import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
@@ -15,7 +16,6 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useTheme } from "#app/hooks/use-theme.ts";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -49,7 +49,7 @@ function MobileHeader() {
 	}
 
 	return (
-		<header className="bg-background border-b pt-[env(safe-area-inset-top)]">
+		<header className="bg-background border-b">
 			<div className="flex h-14 items-center justify-between px-2 md:px-4">
 				<div className="flex items-center gap-2">
 					<Button

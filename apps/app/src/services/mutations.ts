@@ -25,6 +25,9 @@ import { toastManager } from "@hoalu/ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+import { WebHaptics } from "web-haptics";
+
+const haptics = new WebHaptics();
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -50,6 +53,7 @@ export function useCreateWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
+			haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace created.",
 				type: "success",
@@ -63,6 +67,7 @@ export function useCreateWorkspace() {
 			});
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -93,6 +98,7 @@ export function useEditWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
+			haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace updated.",
 				type: "success",
@@ -130,6 +136,7 @@ export function useEditWorkspaceMetadata() {
 			return data;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace updated.",
 				type: "success",
@@ -152,6 +159,7 @@ export function useDeleteWorkspace() {
 			return data;
 		},
 		onSuccess: async (data) => {
+			haptics.trigger("warning");
 			toastManager.add({
 				title: "Workspace deleted.",
 				type: "success",
@@ -161,6 +169,7 @@ export function useDeleteWorkspace() {
 			navigate({ to: "/" });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -186,11 +195,13 @@ export function useRemoveMember() {
 			return data;
 		},
 		onSuccess: async () => {
+			haptics.trigger("warning");
 			playDropSound();
 			queryClient.removeQueries({ queryKey: workspaceKeys.all });
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -213,10 +224,12 @@ export function useCancelInvitation() {
 			return data;
 		},
 		onSuccess: () => {
+			haptics.trigger("warning");
 			playDropSound();
 			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -240,6 +253,7 @@ export function useCreateExpense() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Expense created.",
@@ -249,6 +263,7 @@ export function useCreateExpense() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -268,6 +283,7 @@ export function useEditExpense() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Expense updated.",
@@ -277,6 +293,7 @@ export function useEditExpense() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -296,6 +313,7 @@ export function useDeleteExpense() {
 			return result;
 		},
 		onSuccess: (rs) => {
+			haptics.trigger("warning");
 			playDropSound();
 			toastManager.add({
 				title: "Expense deleted.",
@@ -306,6 +324,7 @@ export function useDeleteExpense() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -325,6 +344,7 @@ export function useCreateRecurringBill() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Recurring bill created.",
@@ -334,6 +354,7 @@ export function useCreateRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -385,6 +406,7 @@ export function useSetUpRecurringBill() {
 			return bill;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Recurring bill set up.",
@@ -395,6 +417,7 @@ export function useSetUpRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -414,6 +437,7 @@ export function useEditRecurringBill() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Recurring bill updated.",
@@ -423,6 +447,7 @@ export function useEditRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -442,6 +467,7 @@ export function useArchiveRecurringBill() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("warning");
 			playDropSound();
 			toastManager.add({
 				title: "Recurring bill removed.",
@@ -451,6 +477,7 @@ export function useArchiveRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -470,6 +497,7 @@ export function useUnarchiveRecurringBill() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Recurring bill restored.",
@@ -479,6 +507,7 @@ export function useUnarchiveRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -498,6 +527,7 @@ export function useDeleteRecurringBill() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("warning");
 			playDropSound();
 			toastManager.add({
 				title: "Recurring bill deleted.",
@@ -507,6 +537,7 @@ export function useDeleteRecurringBill() {
 			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -574,9 +605,11 @@ export function useUploadExpenseFiles() {
 			return id;
 		},
 		onSuccess: (expenseId) => {
+			haptics.trigger("success");
 			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -596,9 +629,11 @@ export function useDeleteExpenseFile() {
 			return { expenseId, fileId };
 		},
 		onSuccess: ({ expenseId }) => {
+			haptics.trigger("warning");
 			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -622,6 +657,7 @@ export function useCreateWallet() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Wallet created.",
@@ -630,6 +666,7 @@ export function useCreateWallet() {
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -649,6 +686,7 @@ export function useEditWallet() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Wallet updated.",
@@ -657,6 +695,7 @@ export function useEditWallet() {
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -676,6 +715,7 @@ export function useDeleteWallet() {
 			return result;
 		},
 		onSuccess: async (rs) => {
+			haptics.trigger("warning");
 			playDropSound();
 			toastManager.add({
 				title: "Wallet deleted.",
@@ -685,6 +725,7 @@ export function useDeleteWallet() {
 			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -708,6 +749,7 @@ export function useCreateCategory() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Category created.",
@@ -716,6 +758,7 @@ export function useCreateCategory() {
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -735,6 +778,7 @@ export function useEditCategory() {
 			return result;
 		},
 		onSuccess: () => {
+			haptics.trigger("success");
 			playConfirmSound();
 			toastManager.add({
 				title: "Category updated.",
@@ -743,6 +787,7 @@ export function useEditCategory() {
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -762,6 +807,7 @@ export function useDeleteCategory() {
 			return result;
 		},
 		onSuccess: async (rs) => {
+			haptics.trigger("warning");
 			playDropSound();
 			toastManager.add({
 				title: "Category deleted.",
@@ -771,6 +817,7 @@ export function useDeleteCategory() {
 			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
 		},
 		onError: (error) => {
+			haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
