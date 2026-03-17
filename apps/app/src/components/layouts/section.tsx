@@ -6,7 +6,7 @@ function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div"
 		<div
 			ref={ref}
 			data-slot="section"
-			className={cn("flex flex-col gap-3", className)}
+			className={cn("flex flex-col gap-2 md:gap-3", className)}
 			{...props}
 		/>
 	);
@@ -45,29 +45,6 @@ function SectionContent({
 	columns?: number;
 	mobileLayout?: "stack" | "tabs" | "drawer";
 }) {
-	const { mode } = useLayoutMode();
-
-	if (mode === "mobile") {
-		return (
-			<div
-				ref={ref}
-				className={cn("flex h-full flex-col gap-4 overflow-hidden", className)}
-				{...props}
-			/>
-		);
-	}
-
-	if (mode === "tablet") {
-		return (
-			<div
-				ref={ref}
-				className={cn("grid h-full grid-cols-2 gap-4 overflow-hidden", className)}
-				{...props}
-			/>
-		);
-	}
-
-	// Desktop: Original grid layout
 	return (
 		<div
 			ref={ref}
@@ -77,7 +54,8 @@ function SectionContent({
 				} as React.CSSProperties
 			}
 			className={cn(
-				"grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-(--grid-cols)",
+				"grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 lg:grid-cols-(--grid-cols)",
+				"overflow-hidden",
 				className,
 			)}
 			{...props}

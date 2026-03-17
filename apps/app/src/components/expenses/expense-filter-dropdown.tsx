@@ -10,9 +10,9 @@ import {
 	useLiveQueryCategories,
 	type SyncedCategory,
 } from "#app/components/categories/use-categories.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WalletLabel } from "#app/components/wallets/wallet-badge.tsx";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import {
@@ -39,19 +39,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 
-const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date" | "search";
 
 export function ExpenseFilterDropdown() {
-	const { slug } = workspaceRouteApi.useParams();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const wallets = useLiveQueryWallets();
 	const categories = useLiveQueryCategories();
 
 	const [open, setOpen] = useState(false);

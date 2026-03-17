@@ -7,7 +7,7 @@ import {
 	scannedReceiptJobIdAtom,
 	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
-import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
+import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
 import {
 	FilesCompactUpload,
@@ -16,10 +16,12 @@ import {
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
 import { ExpenseFormSchema } from "#app/lib/schema.ts";
 import {
 	useCreateExpense,
@@ -28,7 +30,6 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { categoriesQueryOptions, walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon } from "@hoalu/icons/tabler";
@@ -47,7 +48,6 @@ import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -85,7 +85,7 @@ export function CreateExpenseDialogContent() {
 function CreateExpenseForm() {
 	const { user } = useAuth();
 	const { slug } = routeApi.useParams();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const wallets = useLiveQueryWallets();
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
@@ -106,7 +106,9 @@ function CreateExpenseForm() {
 		null,
 	);
 
-	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(slug));
+	const categories = useLiveQueryCategories();
+
+	if (!wallets.length) return null;
 
 	const fallbackWallet = {
 		label: wallets[0].name,
@@ -151,6 +153,7 @@ function CreateExpenseForm() {
 		lastUsedWalletId && wallets.some((w) => w.id === lastUsedWalletId && w.isActive)
 			? lastUsedWalletId
 			: null;
+
 	const validLastCategory =
 		lastUsedCategoryId && categories.some((c) => c.id === lastUsedCategoryId)
 			? lastUsedCategoryId
@@ -395,7 +398,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	const mutation = useEditExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
+	const wallets = useLiveQueryWallets();
 	const recurringBills = useLiveQueryRecurringBills();
 
 	const walletGroups = wallets.reduce(

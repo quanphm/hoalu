@@ -32,7 +32,7 @@ export function ExpenseStatsRow(props: ExpenseStatsRowProps) {
 	];
 
 	return (
-		<Card className="w-full px-6 py-4">
+		<Card className="hidden w-full px-6 py-4 sm:block">
 			<CardContent className="grid grid-cols-3 gap-6 p-0">
 				{stats.map((stat) => {
 					return (

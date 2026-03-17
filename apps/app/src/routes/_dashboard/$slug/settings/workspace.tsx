@@ -88,7 +88,7 @@ function RouteComponent() {
 			</SectionHeader>
 			<SectionContent columns={12}>
 				<div className="col-span-8">
-					<SectionContent>
+					<SectionContent className="grid-cols-1">
 						<SettingCard title="Profile">
 							<EditWorkspaceForm canEdit={canUpdateWorkspace} />
 						</SettingCard>

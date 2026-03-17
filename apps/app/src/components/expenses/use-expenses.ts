@@ -1,5 +1,6 @@
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -14,13 +15,11 @@ import {
 	expenseCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
 import { monetary } from "@hoalu/common/monetary";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
@@ -42,10 +41,9 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 	const categories = options.categories;
 
 	const {
-		slug,
 		metadata: { currency },
 	} = useWorkspace();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const wallets = useLiveQueryWallets();
 
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);

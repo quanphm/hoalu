@@ -141,7 +141,7 @@ function MobileBottomNav() {
 			aria-label="Main navigation"
 			className="bg-background/95 supports-backdrop-filter:bg-background/60 fixed bottom-0 z-50 w-full border-t pb-[env(safe-area-inset-bottom)] backdrop-blur"
 		>
-			<div className="grid h-20 grid-cols-3 gap-1 px-2 py-2">
+			<div className="grid grid-cols-3 gap-1 p-1">
 				<ButtonLink
 					to="/$slug"
 					params={{ slug }}
@@ -170,23 +170,8 @@ function MobileBottomNav() {
 					<ArrowsExchangeIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Expense</span>
 				</ButtonLink>
-				{/* <ButtonLink
-					to="/$slug/tasks"
-					params={{ slug }}
-					size="sm"
-					variant="ghost"
-					activeOptions={{ exact: true }}
-					className={navItemClass}
-					activeProps={{
-						className: activeNavItemClass,
-					}}
-					disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-				>
-					<AlignBoxTopCenterIcon className="size-6" />
-					<span className="truncate text-xs leading-none">Tasks</span>
-				</ButtonLink> */}
 				<ButtonLink
-					to="/$slug/settings"
+					to="/$slug/settings/workspace"
 					params={{ slug }}
 					size="sm"
 					variant="ghost"
