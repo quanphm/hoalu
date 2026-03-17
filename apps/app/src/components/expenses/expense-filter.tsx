@@ -4,14 +4,13 @@ import {
 	expenseWalletFilterAtom,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { Button } from "@hoalu/ui/button";
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Label } from "@hoalu/ui/label";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 
@@ -19,7 +18,6 @@ import type { SyncedCategory } from "../categories/use-categories";
 import { WalletLabel } from "../wallets/wallet-badge";
 import { ExpenseCalendar, ExpenseSearch } from "./expense-actions";
 
-const workspaceRouteApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 interface ExpenseFilterProps {
@@ -28,8 +26,7 @@ interface ExpenseFilterProps {
 }
 
 export function ExpenseFilter(props: ExpenseFilterProps) {
-	const { slug } = workspaceRouteApi.useParams();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(slug));
+	const wallets = useLiveQueryWallets();
 	const stats = useExpenseStats({
 		expenses: props.expenses,
 		categories: props.categories,

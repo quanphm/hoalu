@@ -19,7 +19,7 @@ import {
 	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
-import { walletsQueryOptions } from "#app/services/query-options.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { Button, ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -30,7 +30,6 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
 
@@ -104,7 +103,9 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 	const workspace = useWorkspace();
 	const mutation = useCreateRecurringBill();
 	const setDialog = useSetAtom(createRecurringBillDialogAtom);
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
+	const wallets = useLiveQueryWallets();
+
+	if (!wallets.length) return null;
 
 	const walletGroups = buildWalletGroups(wallets);
 	const defaultWallet = wallets[0];
@@ -239,9 +240,8 @@ interface EditRecurringBillFormProps {
 }
 
 export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
-	const workspace = useWorkspace();
 	const mutation = useEditRecurringBill();
-	const { data: wallets } = useSuspenseQuery(walletsQueryOptions(workspace.slug));
+	const wallets = useLiveQueryWallets();
 	const walletGroups = buildWalletGroups(wallets);
 
 	const form = useAppForm({
