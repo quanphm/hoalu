@@ -11,6 +11,7 @@ const WalletCollectionSchema = z.object({
 	currency: CurrencySchema,
 	type: WalletTypeSchema,
 	is_active: z.boolean(),
+	owner_id: z.uuidv7(),
 });
 
 const factory = createCollectionFactory("wallet", (slug: string) =>

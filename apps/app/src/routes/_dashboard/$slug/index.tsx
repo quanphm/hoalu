@@ -33,7 +33,7 @@ function RouteComponent() {
 	return (
 		<>
 			<Section>
-				<SectionContent columns={6} className="gap-4">
+				<SectionContent columns={6}>
 					<ScanReceiptDialogTrigger />
 					{/* <VoiceExpenseDialogTrigger /> */}
 					<CreateExpenseDialogTrigger />
