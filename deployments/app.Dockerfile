@@ -1,11 +1,9 @@
 FROM skyanlabs/hoalu:latest AS base
 
-# stage 1: turbo prune
 FROM base AS turbo
 COPY . .
 RUN turbo prune @hoalu/app @hoalu/api --docker
 
-# stage 2: build
 FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
@@ -28,7 +26,6 @@ RUN bun run build:types
 WORKDIR /repo/apps/app
 RUN bun run build
 
-# stage 3: runtime
 FROM nginx:alpine
 COPY --from=build /repo/apps/app/dist /usr/share/nginx/html
 COPY --from=build /repo/apps/app/nginx.conf /etc/nginx/nginx.conf
