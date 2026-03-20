@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"@better-auth/api-key": "catalog:",
-		"@electric-sql/client": "^1.5.9",
+		"@electric-sql/client": "^1.5.13",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
 		"@hoalu/countries": "workspace:*",
@@ -32,15 +32,15 @@
 		"@hono/standard-validator": "^0.2.2",
 		"@hono/zod-validator": "^0.7.6",
 		"@react-email/render": "^2.0.4",
-		"@scalar/hono-api-reference": "^0.9.46",
-		"@tanstack/ai": "^0.8.0",
-		"@tanstack/ai-openrouter": "^0.6.5",
+		"@scalar/hono-api-reference": "^0.10.4",
+		"@tanstack/ai": "^0.8.1",
+		"@tanstack/ai-openrouter": "^0.6.6",
 		"better-auth": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"hono": "catalog:",
 		"hono-openapi": "^1.2.0",
-		"ioredis": "^5.10.0",
-		"nodemailer": "^8.0.1",
+		"ioredis": "^5.10.1",
+		"nodemailer": "^8.0.3",
 		"pg": "^8.19.0",
 		"react": "catalog:",
 		"zod": "catalog:"
@@ -51,7 +51,7 @@
 		"@types/nodemailer": "^7.0.11",
 		"@types/pg": "^8.18.0",
 		"@types/react": "catalog:",
-		"drizzle-kit": "^0.31.9",
+		"drizzle-kit": "^0.31.10",
 		"rimraf": "^6.1.3"
 	}
 }

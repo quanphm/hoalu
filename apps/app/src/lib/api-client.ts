@@ -218,6 +218,18 @@ const expenses = {
 		const { data } = await response.json();
 		return data;
 	},
+	parseQuickEntry: async (slug: string, text: string) => {
+		const response = await honoClient.bff.expenses["parse-quick-entry"].$post({
+			query: { workspaceIdOrSlug: slug },
+			json: { text },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
 };
 
 const exchangeRates = {

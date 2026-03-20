@@ -1,6 +1,8 @@
 import { db, schema } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
 import {
 	DeleteExpenseSchema,
@@ -8,6 +10,8 @@ import {
 	ExpensesSchema,
 	InsertExpenseSchema,
 	LiteExpenseSchema,
+	QuickEntryParseSchema,
+	QuickEntryResultSchema,
 	UpdateExpenseSchema,
 } from "#api/routes/expenses/schema.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
@@ -25,6 +29,7 @@ import * as z from "zod";
 
 const app = createHonoInstance();
 const expenseRepository = new ExpenseRepository();
+const categoryRepository = new CategoryRepository();
 const TAGS = ["Expenses"];
 
 const route = app
@@ -132,7 +137,7 @@ const route = app
 
 			const expense = await db.transaction(async (tx) => {
 				let bill: typeof schema.recurringBill.$inferSelect | null = null;
-				
+
 				// If a recurringBillId is provided (Log payment flow), fetch bill details
 				// and advance anchor_date only for yearly bills — monthly/weekly due dates are fixed
 				if (recurringBillId) {
@@ -172,7 +177,7 @@ const route = app
 					const expenseDateLocal = expenseDate.slice(0, 10); // "YYYY-MM-DD"
 					const [year, month, day] = expenseDateLocal.split("-").map(Number);
 					let dueDateStr: string;
-					
+
 					if (bill.repeat === "monthly" && bill.dueDay) {
 						// For monthly bills, use the due_day from the expense's month
 						dueDateStr = `${year}-${String(month).padStart(2, "0")}-${String(bill.dueDay).padStart(2, "0")}`;
@@ -187,14 +192,14 @@ const route = app
 					} else if (bill.repeat === "yearly") {
 						// For yearly bills, use the anchor_date month/day
 						const anchorDate = new Date(bill.anchorDate);
-						const dueMonth = bill.dueMonth ?? (anchorDate.getMonth() + 1);
+						const dueMonth = bill.dueMonth ?? anchorDate.getMonth() + 1;
 						const dueDay = bill.dueDay ?? anchorDate.getDate();
 						dueDateStr = `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
 					} else {
 						// For daily or other cases, use the expense date
 						dueDateStr = expenseDateLocal;
 					}
-					
+
 					// Try to find existing occurrence for this bill + due date
 					const [existingOccurrence] = await tx
 						.select()
@@ -211,10 +216,10 @@ const route = app
 						// Update existing occurrence as paid
 						await tx
 							.update(schema.recurringBillOccurrence)
-							.set({ 
-								expenseId: expense.id, 
+							.set({
+								expenseId: expense.id,
 								paidAt: sql`now()`,
-								updatedAt: sql`now()` 
+								updatedAt: sql`now()`,
 							})
 							.where(eq(schema.recurringBillOccurrence.id, existingOccurrence.id));
 					} else {
@@ -433,6 +438,50 @@ const route = app
 			}
 
 			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
+		},
+	)
+	.post(
+		"/parse-quick-entry",
+		describeRoute({
+			tags: TAGS,
+			summary: "Parse quick entry text",
+			description: "Parse natural language expense description into structured data using AI",
+			responses: {
+				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
+				...OpenAPI.response(z.object({ data: QuickEntryResultSchema }), HTTPStatus.codes.OK),
+			},
+		}),
+		workspaceQueryValidator,
+		workspaceMember,
+		jsonBodyValidator(QuickEntryParseSchema),
+		async (c) => {
+			const workspace = c.get("workspace");
+			const { text } = c.req.valid("json");
+
+			const categories = await categoryRepository.findAllByWorkspaceId({
+				workspaceId: workspace.id,
+			});
+
+			const today = new Date().toISOString().split("T")[0];
+			const workspaceCurrency = workspace.metadata?.currency;
+
+			const parsed = await parseVoiceExpense(
+				text,
+				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+				{
+					today,
+					availableCurrencies: [workspaceCurrency, "USD", "EUR", "SGD"],
+				},
+			);
+
+			if (!parsed) {
+				throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {
+					message: "Could not parse expense description",
+				});
+			}
+
+			return c.json({ data: parsed }, HTTPStatus.codes.OK);
 		},
 	);
 

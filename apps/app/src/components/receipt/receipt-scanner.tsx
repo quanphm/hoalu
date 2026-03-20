@@ -134,7 +134,6 @@ export function ReceiptScanner() {
 	};
 
 	const handleDragLeave = (e: React.DragEvent) => {
-		// Only clear when truly leaving the drop zone (not entering a child)
 		if (!e.currentTarget.contains(e.relatedTarget as Node)) {
 			setIsDragging(false);
 		}
@@ -190,7 +189,6 @@ export function ReceiptScanner() {
 
 	return (
 		<div className="flex w-full flex-col gap-4">
-			{/* Queue full notice */}
 			{isQueueFull && (
 				<div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/50">
 					<AlertCircleIcon className="size-4 text-amber-600 dark:text-amber-400" />
@@ -200,7 +198,6 @@ export function ReceiptScanner() {
 				</div>
 			)}
 
-			{/* Drop zone */}
 			<div
 				className={cn(
 					"flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors",
@@ -268,7 +265,6 @@ export function ReceiptScanner() {
 				disabled={isQueueFull}
 			/>
 
-			{/* Preview grid */}
 			{pendingFiles.length > 0 && (
 				<div className="space-y-3">
 					<p className="text-sm font-medium">
@@ -313,17 +309,7 @@ export function ReceiptScanner() {
 						onClick={handleAddToQueue}
 						disabled={isEncoding || isQueueFull}
 					>
-						{isEncoding ? (
-							<>
-								<div className="mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-								Encoding...
-							</>
-						) : (
-							<>
-								<ScanIcon className="mr-2 size-4" />
-								Add {pendingFiles.length} to queue
-							</>
-						)}
+						Start scan
 					</Button>
 				</div>
 			)}

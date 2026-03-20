@@ -95,3 +95,20 @@ export const LiteExpenseSchema = BaseExpenseSchema.pick({
 	realAmount: val.amount,
 	amount: monetary.fromRealAmount(val.amount, val.currency),
 }));
+
+export const QuickEntryParseSchema = z.object({
+	text: z.string().min(1).describe("Natural language expense description"),
+});
+
+export const QuickEntryResultSchema = z.object({
+	title: z.string(),
+	amount: z.number(),
+	currency: CurrencySchema,
+	date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+	suggestedCategoryId: z.uuidv7().nullable(),
+	repeat: RepeatSchema,
+	confidence: z.number().min(0).max(1),
+});
+
+export type QuickEntryParseSchema = z.infer<typeof QuickEntryParseSchema>;
+export type QuickEntryResultSchema = z.infer<typeof QuickEntryResultSchema>;

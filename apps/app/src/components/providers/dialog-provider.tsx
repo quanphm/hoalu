@@ -30,6 +30,7 @@ import {
 } from "../expenses/expense-actions";
 import { ScanReceiptDialogContent } from "../receipt/scan-receipt-dialog";
 import { ScanQueueReviewDialogContent } from "../receipt/scan-queue-review-dialog.tsx";
+import { QuickExpensesDialogContent } from "../quick-expenses/quick-expenses-dialog.tsx";
 import { VoiceExpenseDialogContent } from "../voice/voice-expense-dialog";
 import {
 	CreateWalletDialogContent,
@@ -85,6 +86,8 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 			return <ScanQueueReviewDialogContent />;
 		case "voice-expense":
 			return <VoiceExpenseDialogContent />;
+		case "quick-expense":
+			return <QuickExpensesDialogContent />;
 
 		case "create-wallet":
 			return <CreateWalletDialogContent />;

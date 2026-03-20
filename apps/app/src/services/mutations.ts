@@ -335,6 +335,25 @@ export function useDeleteExpense() {
 	return mutation;
 }
 
+export function useParseQuickExpense() {
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ text }: { text: string }) => {
+			const result = await apiClient.expenses.parseQuickEntry(slug, text);
+			return result;
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Couldn't parse expense",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
 export function useCreateRecurringBill() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();

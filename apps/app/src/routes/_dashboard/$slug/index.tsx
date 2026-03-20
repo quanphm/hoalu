@@ -12,6 +12,7 @@ import {
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
+import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
 import { ScanQueuePanel } from "#app/components/receipt/scan-queue-panel.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
 // import { VoiceExpenseDialogTrigger } from "#app/components/voice/voice-expense-dialog.tsx";
@@ -36,6 +37,7 @@ function RouteComponent() {
 				<SectionContent columns={6}>
 					<ScanReceiptDialogTrigger />
 					{/* <VoiceExpenseDialogTrigger /> */}
+					<QuickExpensesDialogTrigger />
 					<CreateExpenseDialogTrigger />
 					<CreateWalletDialogTrigger />
 				</SectionContent>
@@ -70,14 +72,6 @@ function RouteComponent() {
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
-				</SectionContent>
-			</Section>
-
-			<Section>
-				{/* <SectionHeader className="flex-col items-start">
-					<SectionTitle>Expenses</SectionTitle>
-				</SectionHeader> */}
-				<SectionContent columns={12} className="items-start">
 					<div className="col-span-12 flex w-full flex-col md:col-span-7">
 						<UpcomingBillsWidget />
 					</div>

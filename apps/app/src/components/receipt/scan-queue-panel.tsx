@@ -114,20 +114,23 @@ function JobItem({ job }: { job: ReceiptScanJob }) {
 }
 
 function EmptyJobPlaceholder() {
-	return (
-		<div className="bg-muted/30 flex items-center gap-2 rounded-md border border-dashed p-2">
-			<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm">
-				<ReceiptIcon className="text-muted-foreground/40 size-4" />
-			</div>
-			<div className="min-w-0 flex-1">
-				<p className="text-muted-foreground/60 truncate text-xs font-medium">No items</p>
-				<div className="flex items-center gap-1">
-					<div className="bg-muted-foreground/20 size-3 rounded-full" />
-					<span className="text-muted-foreground/60 text-[10px]">Add files to scan</span>
+	return Array(1)
+		.fill(null)
+		.map((_, i) => (
+			<div
+				key={i}
+				className="bg-muted/30 flex items-center gap-2 rounded-md border border-dashed p-2"
+			>
+				<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm"></div>
+				<div className="min-w-0 flex-1">
+					<p className="text-muted-foreground/60 truncate text-xs font-medium">No items</p>
+					<div className="flex items-center gap-1">
+						<div className="bg-muted-foreground/20 size-3 rounded-full" />
+						<span className="text-muted-foreground/60 text-[10px]">Add files to scan</span>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
+		));
 }
 
 export function ScanQueuePanel() {
