@@ -106,6 +106,7 @@ export const QuickEntryResultSchema = z.object({
 	currency: CurrencySchema,
 	date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 	suggestedCategoryId: z.uuidv7().nullable(),
+	suggestedWalletId: z.uuidv7().nullable(),
 	repeat: RepeatSchema,
 	confidence: z.number().min(0).max(1),
 });

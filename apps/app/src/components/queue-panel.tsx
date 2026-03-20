@@ -134,6 +134,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 			description: "",
 			date: new Date(job.result!.date).toISOString(),
 			transaction: { value: job.result!.amount, currency: job.result!.currency },
+			walletId: job.result!.suggestedWalletId ?? "",
 			categoryId: job.result!.suggestedCategoryId ?? "",
 			repeat: job.result!.repeat,
 		}));

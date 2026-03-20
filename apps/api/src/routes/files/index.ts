@@ -5,6 +5,7 @@ import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
+import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
 import { getS3Path, isValidFileType } from "#api/utils/io.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
@@ -22,6 +23,7 @@ import * as z from "zod";
 const app = createHonoInstance();
 const fileRepository = new FileRepository();
 const categoryRepository = new CategoryRepository();
+const walletRepository = new WalletRepository();
 const TAGS = ["Files"];
 
 // Shared Zod schemas for OCR response shapes
@@ -304,16 +306,22 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			// Fetch workspace categories for AI matching
-			const categories = await categoryRepository.findAllByWorkspaceId({
-				workspaceId: workspace.id,
-			});
+			// Fetch workspace categories and wallets for AI matching
+			const [categories, wallets] = await Promise.all([
+				categoryRepository.findAllByWorkspaceId({
+					workspaceId: workspace.id,
+				}),
+				walletRepository.findAllByWorkspaceId({
+					workspaceId: workspace.id,
+				}),
+			]);
 
 			const today = new Date().toISOString().split("T")[0] as string;
 
 			const voiceData = await parseVoiceExpense(
 				payload.transcription,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+				wallets.map((wallet) => ({ id: wallet.id, name: wallet.name })),
 				{
 					today,
 					availableCurrencies: ["USD", "VND", "SGD", "EUR"],

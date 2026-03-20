@@ -5,7 +5,7 @@ import { useEffect, useMemo } from "react";
 
 import type { TaskJob, TaskQueueConfig } from "./types.ts";
 
-export interface TaskQueueAtoms<TInput, TResult> {
+interface TaskQueueAtoms<TInput, TResult> {
 	queueAtom: Atom<TaskJob<TInput, TResult>[]>;
 	pendingAtom: Atom<TaskJob<TInput, TResult>[]>;
 	processingAtom: Atom<TaskJob<TInput, TResult>[]>;
@@ -13,7 +13,7 @@ export interface TaskQueueAtoms<TInput, TResult> {
 	failedAtom: Atom<TaskJob<TInput, TResult>[]>;
 }
 
-export interface TaskQueueActions<TInput> {
+interface TaskQueueActions<TInput> {
 	add: WritableAtom<null, [TInput], void>;
 	retry: WritableAtom<null, [string], void>;
 	dismiss: WritableAtom<null, [string], void>;
@@ -21,11 +21,11 @@ export interface TaskQueueActions<TInput> {
 	startEngine: WritableAtom<null, [], void>;
 }
 
-export interface TaskQueueUtils {
+interface TaskQueueUtils {
 	cleanup: () => void;
 }
 
-export interface UseTaskQueueResult<TInput, TResult> {
+interface UseTaskQueueResult<TInput, TResult> {
 	queue: TaskJob<TInput, TResult>[];
 	activeJobs: TaskJob<TInput, TResult>[];
 	pending: TaskJob<TInput, TResult>[];
@@ -39,7 +39,7 @@ export interface UseTaskQueueResult<TInput, TResult> {
 	remove: (jobId: string) => void;
 }
 
-export interface TaskQueue<TInput, TResult>
+interface TaskQueue<TInput, TResult>
 	extends TaskQueueAtoms<TInput, TResult>, TaskQueueActions<TInput>, TaskQueueUtils {
 	useQueue: () => UseTaskQueueResult<TInput, TResult>;
 }

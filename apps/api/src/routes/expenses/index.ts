@@ -4,6 +4,7 @@ import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
+import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import {
 	DeleteExpenseSchema,
 	ExpenseSchema,
@@ -30,6 +31,7 @@ import * as z from "zod";
 const app = createHonoInstance();
 const expenseRepository = new ExpenseRepository();
 const categoryRepository = new CategoryRepository();
+const walletRepository = new WalletRepository();
 const TAGS = ["Expenses"];
 
 const route = app
@@ -459,9 +461,14 @@ const route = app
 			const workspace = c.get("workspace");
 			const { text } = c.req.valid("json");
 
-			const categories = await categoryRepository.findAllByWorkspaceId({
-				workspaceId: workspace.id,
-			});
+			const [categories, wallets] = await Promise.all([
+				categoryRepository.findAllByWorkspaceId({
+					workspaceId: workspace.id,
+				}),
+				walletRepository.findAllByWorkspaceId({
+					workspaceId: workspace.id,
+				}),
+			]);
 
 			const today = new Date().toISOString().split("T")[0];
 			const workspaceCurrency = workspace.metadata?.currency;
@@ -469,6 +476,7 @@ const route = app
 			const parsed = await parseVoiceExpense(
 				text,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
+				wallets.map((wallet) => ({ id: wallet.id, name: wallet.name })),
 				{
 					today,
 					availableCurrencies: [workspaceCurrency, "USD", "EUR", "SGD"],

@@ -26,7 +26,6 @@
 		"@electric-sql/client": "^1.5.13",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
-		"@hoalu/countries": "workspace:*",
 		"@hoalu/email": "workspace:*",
 		"@hoalu/furnace": "workspace:*",
 		"@hono/standard-validator": "^0.2.2",

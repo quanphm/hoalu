@@ -1,5 +1,5 @@
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import { ChevronsUpDownIcon, XIcon } from "lucide-react";
+import { ChevronsUpDownIcon, XIcon } from "@hoalu/icons/lucide";
 
 import { cn } from "../utils";
 import { Input } from "./input";

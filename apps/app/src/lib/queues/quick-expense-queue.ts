@@ -9,6 +9,7 @@ export interface QuickExpenseResult {
 	currency: string;
 	date: string;
 	suggestedCategoryId: string | null;
+	suggestedWalletId: string | null;
 	repeat: "one-time" | "daily" | "weekly" | "monthly" | "yearly";
 	confidence: number;
 }

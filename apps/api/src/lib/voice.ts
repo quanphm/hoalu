@@ -19,6 +19,12 @@ const VoiceExpenseDataSchema = z.object({
 		.describe(
 			"UUID of the best matching category from the provided list, or null if no good match",
 		),
+	suggestedWalletId: z
+		.uuid()
+		.nullable()
+		.describe(
+			"UUID of the best matching wallet from the provided list, or null if no good match. Match wallet names intelligently - e.g., 'tiền mặt' or 'cash' should match a 'Cash Wallet', 'credit card' should match a 'Credit Card' wallet, etc.",
+		),
 	repeat: z
 		.enum(["one-time", "daily", "weekly", "monthly", "yearly"])
 		.describe("Recurrence pattern, default to one-time unless user explicitly mentions repeating"),
@@ -38,6 +44,11 @@ interface Category {
 	name: string;
 }
 
+interface Wallet {
+	id: string;
+	name: string;
+}
+
 interface ParseContext {
 	today: string;
 	availableCurrencies: string[];
@@ -48,12 +59,18 @@ interface ParseContext {
 export async function parseVoiceExpense(
 	transcription: string,
 	categories: Category[],
+	wallets: Wallet[],
 	context: ParseContext,
 ): Promise<VoiceExpenseData | null> {
 	const categoryListText =
 		categories.length > 0
 			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
 			: "No categories available - set suggestedCategoryId to null.";
+
+	const walletListText =
+		wallets.length > 0
+			? `Available wallets:\n${wallets.map((w) => `- ${w.name} (id: ${w.id})`).join("\n")}`
+			: "No wallets available - set suggestedWalletId to null.";
 
 	const currenciesText = `Available currencies: ${context.availableCurrencies.join(", ")}. Default to the most contextually appropriate one if not mentioned.`;
 
@@ -74,6 +91,8 @@ ${currenciesText}
 
 ${categoryListText}
 
+${walletListText}
+
 ## Amount shorthand notation — ALWAYS expand these:
 - "k" or "K" = thousands → "15k" = 15000, "2.5k" = 2500
 - "m" or "M" = millions → "1m" = 1000000, "1.5M" = 1500000
@@ -87,11 +106,19 @@ English: "today" = ${context.today}, "yesterday" = day before ${context.today}, 
 Vietnamese: "hôm nay" = ${context.today}, "hôm qua" = yesterday, "tuần trước" = last week, "tháng trước" = last month, "ngày mồng 5" = 5th of current month
 If no date is mentioned, use today: ${context.today}
 
+## Wallet matching rules:
+- Look for wallet mentions in the text (e.g., "tiền mặt", "cash", "credit card", "bank", "ví", "thẻ")
+- Match intelligently: "tiền mặt" or "cash" → Cash Wallet, "credit card" → Credit Card wallet, "bank" → Bank wallet
+- Match based on semantic similarity, not just exact name matches
+- If the user mentions a payment method or wallet type, try to match it to the available wallets
+- If no wallet is mentioned or no good match exists, set suggestedWalletId to null
+
 ## Rules:
 - Extract the expense title, amount, currency, and date
 - ALWAYS expand shorthand amounts (k/K/m/M/nghìn/triệu/tr/tỷ) into full numbers
 - If no currency is mentioned, infer from context: Vietnamese text or "nghìn"/"triệu" → VND, "dollar"/"$" → USD, otherwise use the first available currency
 - Match the expense to the most relevant category based on the description
+- Match the expense to the most relevant wallet based on payment method mentions
 - Handle Vietnamese, English, and mixed-language input seamlessly
 - Set repeat to "one-time" unless user explicitly says "every month"/"hàng tháng", "weekly"/"hàng tuần", "daily"/"hàng ngày", "yearly"/"hàng năm"
 - Set confidence based on how clearly and completely the details were provided
