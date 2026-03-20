@@ -1,6 +1,7 @@
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import { generateId } from "@hoalu/common/generate-id";
-import { atom, type Atom, type WritableAtom } from "jotai";
+import { atom, type Atom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
+import { useEffect, useMemo } from "react";
 
 import type { TaskJob, TaskQueueConfig } from "./types.ts";
 
@@ -24,8 +25,24 @@ export interface TaskQueueUtils {
 	cleanup: () => void;
 }
 
+export interface UseTaskQueueResult<TInput, TResult> {
+	queue: TaskJob<TInput, TResult>[];
+	activeJobs: TaskJob<TInput, TResult>[];
+	pending: TaskJob<TInput, TResult>[];
+	processing: TaskJob<TInput, TResult>[];
+	completed: TaskJob<TInput, TResult>[];
+	failed: TaskJob<TInput, TResult>[];
+	remainingSlots: number;
+	add: (input: TInput) => void;
+	retry: (jobId: string) => void;
+	dismiss: (jobId: string) => void;
+	remove: (jobId: string) => void;
+}
+
 export interface TaskQueue<TInput, TResult>
-	extends TaskQueueAtoms<TInput, TResult>, TaskQueueActions<TInput>, TaskQueueUtils {}
+	extends TaskQueueAtoms<TInput, TResult>, TaskQueueActions<TInput>, TaskQueueUtils {
+	useQueue: () => UseTaskQueueResult<TInput, TResult>;
+}
 
 export function createTaskQueue<TInput, TResult>(
 	config: TaskQueueConfig<TInput, TResult>,
@@ -255,6 +272,48 @@ export function createTaskQueue<TInput, TResult>(
 		isEngineRunning = false;
 	}
 
+	function useQueue(): UseTaskQueueResult<TInput, TResult> {
+		const queue = useAtomValue(queueAtom);
+		const pending = useAtomValue(pendingAtom);
+		const processing = useAtomValue(processingAtom);
+		const completed = useAtomValue(completedAtom);
+		const failed = useAtomValue(failedAtom);
+
+		const addFn = useSetAtom(add);
+		const retryFn = useSetAtom(retry);
+		const dismissFn = useSetAtom(dismiss);
+		const removeFn = useSetAtom(remove);
+		const startFn = useSetAtom(startEngine);
+
+		useEffect(() => {
+			startFn();
+			return () => {
+				cleanup();
+			};
+		}, [startFn]);
+
+		const activeJobs = useMemo(() => queue.filter((job) => job.status !== "dismissed"), [queue]);
+
+		const remainingSlots = useMemo(
+			() => Math.max(0, MAX_QUEUE_SIZE - activeJobs.length),
+			[activeJobs],
+		);
+
+		return {
+			queue,
+			activeJobs,
+			pending,
+			processing,
+			completed,
+			failed,
+			remainingSlots,
+			add: addFn,
+			retry: retryFn,
+			dismiss: dismissFn,
+			remove: removeFn,
+		};
+	}
+
 	return {
 		queueAtom,
 		pendingAtom,
@@ -267,5 +326,6 @@ export function createTaskQueue<TInput, TResult>(
 		remove,
 		startEngine,
 		cleanup,
+		useQueue,
 	};
 }

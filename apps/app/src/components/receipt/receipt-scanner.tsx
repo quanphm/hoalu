@@ -1,8 +1,12 @@
 import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
-import { useScanQueue, type ReceiptScanInput } from "#app/hooks/use-scan-queue.ts";
+import {
+	useReceiptScanQueue,
+	useQueueStatus,
+	type ReceiptScanInput,
+} from "#app/hooks/use-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { FileTextIcon, ScanIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
@@ -85,7 +89,8 @@ export function ReceiptScanner() {
 	const [isEncoding, setIsEncoding] = useState(false);
 	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
 	const workspace = useWorkspace();
-	const { add, remainingSlots } = useScanQueue();
+	const { add } = useReceiptScanQueue();
+	const { isFull: isQueueFull, sharedRemainingSlots } = useQueueStatus();
 
 	const addFiles = useCallback(
 		(incoming: File[]) => {
@@ -95,7 +100,7 @@ export function ReceiptScanner() {
 			setPendingFiles((prev) => {
 				const combined = [...prev];
 				for (const file of valid) {
-					if (combined.length >= remainingSlots) break;
+					if (combined.length >= sharedRemainingSlots) break;
 					// Deduplicate by name + size
 					const isDupe = combined.some(
 						(p) => p.file.name === file.name && p.file.size === file.size,
@@ -110,7 +115,7 @@ export function ReceiptScanner() {
 				return combined;
 			});
 		},
-		[remainingSlots],
+		[sharedRemainingSlots],
 	);
 
 	const removeFile = (index: number) => {
@@ -185,8 +190,6 @@ export function ReceiptScanner() {
 		}
 	};
 
-	const isQueueFull = remainingSlots === 0;
-
 	return (
 		<div className="flex w-full flex-col gap-4">
 			{isQueueFull && (
@@ -219,8 +222,8 @@ export function ReceiptScanner() {
 					<p className="text-sm font-medium">Drop files here or browse</p>
 					<p className="text-muted-foreground mt-1 text-xs">
 						Images (JPEG, PNG, WEBP, HEIC) or PDF — up to {MAX_FILES} files
-						{remainingSlots < MAX_FILES &&
-							` (${remainingSlots} slot${remainingSlots !== 1 ? "s" : ""} remaining)`}
+						{sharedRemainingSlots < MAX_FILES &&
+							` (${sharedRemainingSlots} slot${sharedRemainingSlots !== 1 ? "s" : ""} remaining)`}
 					</p>
 				</div>
 				<div className="flex gap-2">
@@ -309,7 +312,7 @@ export function ReceiptScanner() {
 						onClick={handleAddToQueue}
 						disabled={isEncoding || isQueueFull}
 					>
-						Start scan
+						Start scanning
 					</Button>
 				</div>
 			)}

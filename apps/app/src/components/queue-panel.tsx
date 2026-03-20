@@ -1,9 +1,6 @@
-import {
-	createExpenseDialogAtom,
-	scanQueueReviewDialogAtom,
-} from "#app/atoms/dialogs.ts";
+import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
 import { draftExpenseAtom } from "#app/atoms/expenses.ts";
-import { useScanQueue } from "#app/hooks/use-scan-queue.ts";
+import { useReceiptScanQueue, useQuickExpenseQueue } from "#app/hooks/use-queue.ts";
 import type { QuickExpenseJob } from "#app/lib/queues/quick-expense-queue.ts";
 import type { ReceiptScanJob } from "#app/lib/queues/receipt-scan-queue.ts";
 import {
@@ -58,7 +55,7 @@ function JobStatusLabel({ status, retryCount }: { status: JobStatus; retryCount:
 }
 
 function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
-	const { retry, dismiss, remove } = useScanQueue();
+	const { retry, dismiss, remove } = useReceiptScanQueue();
 	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
 
 	const handleReview = () => {
@@ -125,7 +122,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 }
 
 function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
-	const { retryQuick, dismissQuick, removeQuick } = useScanQueue();
+	const { retry, dismiss, remove } = useQuickExpenseQueue();
 	const setDraft = useSetAtom(draftExpenseAtom);
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 
@@ -163,31 +160,21 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 						<Button variant="ghost" size="icon-sm" onClick={handleReview} title="Review">
 							<EyeIcon />
 						</Button>
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							onClick={() => removeQuick(job.id)}
-							title="Remove"
-						>
+						<Button variant="ghost" size="icon-sm" onClick={() => remove(job.id)} title="Remove">
 							<XIcon />
 						</Button>
 					</>
 				)}
 				{job.status === "failed" && (
 					<>
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							onClick={() => retryQuick(job.id)}
-							title="Retry"
-						>
+						<Button variant="ghost" size="icon-sm" onClick={() => retry(job.id)} title="Retry">
 							<RefreshCwIcon />
 						</Button>
 						<Button
 							variant="ghost"
 							size="icon-sm"
 							className="text-destructive hover:text-destructive"
-							onClick={() => dismissQuick(job.id)}
+							onClick={() => dismiss(job.id)}
 							title="Dismiss"
 						>
 							<XIcon />
@@ -195,12 +182,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 					</>
 				)}
 				{(job.status === "pending" || job.status === "dismissed") && (
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						onClick={() => removeQuick(job.id)}
-						title="Remove"
-					>
+					<Button variant="ghost" size="icon-sm" onClick={() => remove(job.id)} title="Remove">
 						<XIcon />
 					</Button>
 				)}
@@ -229,8 +211,9 @@ function EmptyJobPlaceholder() {
 		));
 }
 
-export function ScanQueuePanel() {
-	const { activeJobs, activeQuickJobs } = useScanQueue();
+export function QueuePanel() {
+	const { activeJobs } = useReceiptScanQueue();
+	const { activeJobs: activeQuickJobs } = useQuickExpenseQueue();
 	const allEmpty = activeJobs.length === 0 && activeQuickJobs.length === 0;
 
 	if (allEmpty) {
