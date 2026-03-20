@@ -3,7 +3,7 @@ import type { ConstrainedModelMessage, TextPart, ImagePart } from "@tanstack/ai"
 import type { OpenRouterMessageMetadataByModality } from "@tanstack/ai-openrouter";
 import * as z from "zod";
 
-import { openRouterTextAdapter } from "./openrouter";
+import { openRouterImageAdapter } from "./openrouter";
 
 const ReceiptDataSchema = z.object({
 	amount: z.number().describe("Total amount on the receipt"),
@@ -134,7 +134,7 @@ export async function extractReceiptData(
 
 	try {
 		const result = await chat({
-			adapter: openRouterTextAdapter,
+			adapter: openRouterImageAdapter,
 			outputSchema: ReceiptDataSchema,
 			messages,
 		});

@@ -12,13 +12,14 @@ import {
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { ScanQueuePanel } from "#app/components/receipt/scan-queue-panel.tsx";
+import { QueuePanel } from "#app/components/queue-panel.tsx";
+import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
 // import { VoiceExpenseDialogTrigger } from "#app/components/voice/voice-expense-dialog.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
-import { useScanQueue } from "#app/hooks/use-scan-queue.ts";
+import { useQueueStatus } from "#app/hooks/use-queue.ts";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/")({
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 function RouteComponent() {
 	const expenses = useLiveQueryExpenses();
 	const categories = useLiveQueryCategories();
-	const { activeJobs } = useScanQueue();
+	const { totalActiveJobs } = useQueueStatus();
 
 	return (
 		<>
@@ -36,6 +37,7 @@ function RouteComponent() {
 				<SectionContent columns={6}>
 					<ScanReceiptDialogTrigger />
 					{/* <VoiceExpenseDialogTrigger /> */}
+					<QuickExpensesDialogTrigger />
 					<CreateExpenseDialogTrigger />
 					<CreateWalletDialogTrigger />
 				</SectionContent>
@@ -46,12 +48,12 @@ function RouteComponent() {
 					<SectionTitle className="flex items-center gap-2">
 						Jobs
 						<span className="text-muted-foreground text-sm">
-							{activeJobs.length} / {MAX_QUEUE_SIZE}
+							{totalActiveJobs} / {MAX_QUEUE_SIZE}
 						</span>
 					</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={4}>
-					<ScanQueuePanel />
+					<QueuePanel />
 				</SectionContent>
 			</Section>
 
@@ -70,14 +72,6 @@ function RouteComponent() {
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
-				</SectionContent>
-			</Section>
-
-			<Section>
-				{/* <SectionHeader className="flex-col items-start">
-					<SectionTitle>Expenses</SectionTitle>
-				</SectionHeader> */}
-				<SectionContent columns={12} className="items-start">
 					<div className="col-span-12 flex w-full flex-col md:col-span-7">
 						<UpcomingBillsWidget />
 					</div>

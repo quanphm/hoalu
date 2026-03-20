@@ -1,5 +1,5 @@
 import type { honoClient } from "#app/lib/api-client.ts";
-import { ColorSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import { ColorSchema, CurrencySchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import * as z from "zod";
 
@@ -108,3 +108,17 @@ export type ExchangeRatesQuerySchema = InferRequestType<
 export type FileMetaSchema = InferRequestType<
 	(typeof honoClient.bff.files)["generate-upload-url"]["$post"]
 >["json"];
+
+/**
+ * quick entry
+ */
+export const QuickEntryResultSchema = z.object({
+	title: z.string(),
+	amount: z.number(),
+	currency: CurrencySchema,
+	date: z.string(),
+	suggestedCategoryId: z.string().nullable(),
+	repeat: RepeatSchema,
+	confidence: z.number(),
+});
+export type QuickEntryResultSchema = z.infer<typeof QuickEntryResultSchema>;

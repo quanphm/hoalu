@@ -54,7 +54,7 @@ function RouteComponent() {
 				<SectionHeader>
 					<SectionTitle>Workspaces</SectionTitle>
 				</SectionHeader>
-				<SectionContent columns={4}>
+				<SectionContent columns={4} className="grid-cols-1">
 					{workspaces.map((ws) => {
 						const summary = summaryMap.get(ws.id);
 						return (

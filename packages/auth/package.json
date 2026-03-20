@@ -10,8 +10,10 @@
 		"./client/plugins": "./src/client/plugins/index.ts"
 	},
 	"dependencies": {
+		"@better-auth/core": "catalog:",
 		"@hoalu/common": "workspace:*",
 		"better-auth": "catalog:",
+		"nanostores": "^1.2.0",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

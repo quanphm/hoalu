@@ -1,5 +1,6 @@
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { apiClient } from "#app/lib/api-client.ts";
+import { RepeatSchema } from "@hoalu/common/schema";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -58,7 +59,7 @@ export interface VoiceExpenseData {
 	currency: string;
 	date: string;
 	suggestedCategoryId: string | null;
-	repeat: "one-time" | "daily" | "weekly" | "monthly" | "yearly";
+	repeat: RepeatSchema;
 	confidence: number;
 }
 

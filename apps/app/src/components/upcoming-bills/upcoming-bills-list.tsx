@@ -3,6 +3,7 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 import { datetime } from "@hoalu/common/datetime";
+import { RepeatSchema } from "@hoalu/common/schema";
 import { ArchiveIcon, MoreVerticalIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -186,7 +187,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 			},
 			walletId: bill.walletId,
 			categoryId: bill.categoryId ?? "",
-			repeat: bill.repeat as "one-time" | "daily" | "weekly" | "monthly" | "yearly" | "custom",
+			repeat: bill.repeat as RepeatSchema,
 		});
 		setLogPayment({ recurringBillId: bill.recurringBillId });
 		setDialog({ state: true });

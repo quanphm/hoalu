@@ -1,8 +1,13 @@
 import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
-import { useScanQueue, type ReceiptScanInput } from "#app/hooks/use-scan-queue.ts";
+import {
+	useReceiptScanQueue,
+	useQueueStatus,
+	type ReceiptScanInput,
+} from "#app/hooks/use-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { FileTextIcon, ScanIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
@@ -85,7 +90,8 @@ export function ReceiptScanner() {
 	const [isEncoding, setIsEncoding] = useState(false);
 	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
 	const workspace = useWorkspace();
-	const { add, remainingSlots } = useScanQueue();
+	const { add } = useReceiptScanQueue();
+	const { isFull: isQueueFull, sharedRemainingSlots } = useQueueStatus();
 
 	const addFiles = useCallback(
 		(incoming: File[]) => {
@@ -95,7 +101,7 @@ export function ReceiptScanner() {
 			setPendingFiles((prev) => {
 				const combined = [...prev];
 				for (const file of valid) {
-					if (combined.length >= remainingSlots) break;
+					if (combined.length >= sharedRemainingSlots) break;
 					// Deduplicate by name + size
 					const isDupe = combined.some(
 						(p) => p.file.name === file.name && p.file.size === file.size,
@@ -110,7 +116,7 @@ export function ReceiptScanner() {
 				return combined;
 			});
 		},
-		[remainingSlots],
+		[sharedRemainingSlots],
 	);
 
 	const removeFile = (index: number) => {
@@ -134,7 +140,6 @@ export function ReceiptScanner() {
 	};
 
 	const handleDragLeave = (e: React.DragEvent) => {
-		// Only clear when truly leaving the drop zone (not entering a child)
 		if (!e.currentTarget.contains(e.relatedTarget as Node)) {
 			setIsDragging(false);
 		}
@@ -186,21 +191,17 @@ export function ReceiptScanner() {
 		}
 	};
 
-	const isQueueFull = remainingSlots === 0;
-
 	return (
 		<div className="flex w-full flex-col gap-4">
-			{/* Queue full notice */}
 			{isQueueFull && (
-				<div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/50">
-					<AlertCircleIcon className="size-4 text-amber-600 dark:text-amber-400" />
-					<p className="text-sm text-amber-800 dark:text-amber-200">
-						Queue is full. Please wait for jobs to complete or remove some items.
-					</p>
-				</div>
+				<Alert variant="error">
+					<AlertCircleIcon />
+					<AlertTitle>Queue is full</AlertTitle>
+					<AlertDescription>
+						Please wait for jobs to complete or remove some items.
+					</AlertDescription>
+				</Alert>
 			)}
-
-			{/* Drop zone */}
 			<div
 				className={cn(
 					"flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors",
@@ -222,8 +223,8 @@ export function ReceiptScanner() {
 					<p className="text-sm font-medium">Drop files here or browse</p>
 					<p className="text-muted-foreground mt-1 text-xs">
 						Images (JPEG, PNG, WEBP, HEIC) or PDF — up to {MAX_FILES} files
-						{remainingSlots < MAX_FILES &&
-							` (${remainingSlots} slot${remainingSlots !== 1 ? "s" : ""} remaining)`}
+						{sharedRemainingSlots < MAX_FILES &&
+							` (${sharedRemainingSlots} slot${sharedRemainingSlots !== 1 ? "s" : ""} remaining)`}
 					</p>
 				</div>
 				<div className="flex gap-2">
@@ -268,7 +269,6 @@ export function ReceiptScanner() {
 				disabled={isQueueFull}
 			/>
 
-			{/* Preview grid */}
 			{pendingFiles.length > 0 && (
 				<div className="space-y-3">
 					<p className="text-sm font-medium">
@@ -313,17 +313,7 @@ export function ReceiptScanner() {
 						onClick={handleAddToQueue}
 						disabled={isEncoding || isQueueFull}
 					>
-						{isEncoding ? (
-							<>
-								<div className="mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-								Encoding...
-							</>
-						) : (
-							<>
-								<ScanIcon className="mr-2 size-4" />
-								Add {pendingFiles.length} to queue
-							</>
-						)}
+						Start scanning
 					</Button>
 				</div>
 			)}

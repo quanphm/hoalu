@@ -1,7 +1,8 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "@hoalu/icons/tabler";
 
-import { cn } from "../utils";
+import { cn, mergeProps, useRender } from "../utils";
+import { ScrollArea } from "./scroll-area";
 
 function Dialog(props: React.ComponentProps<typeof DialogPrimitive.Root>) {
 	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -72,11 +73,16 @@ function DialogPopup({
 	);
 }
 
-function DialogContent(props: React.ComponentProps<typeof DialogPopup>) {
+function DialogContent({
+	bottomStickOnMobile = true,
+	...props
+}: DialogPrimitive.Popup.Props & { bottomStickOnMobile?: boolean }) {
 	return (
 		<DialogPortal>
 			<DialogBackdrop />
-			<DialogViewport>
+			<DialogViewport
+				className={cn(bottomStickOnMobile && "max-sm:grid-rows-[1fr_auto] max-sm:p-0 max-sm:pt-12")}
+			>
 				<DialogPopup {...props} />
 			</DialogViewport>
 		</DialogPortal>
@@ -98,7 +104,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			data-slot="dialog-footer"
 			className={cn(
-				"sm:bg-muted/50 flex flex-col-reverse gap-2 sm:-mx-6 sm:mt-2 sm:-mb-6 sm:flex-row sm:justify-end sm:rounded-b-lg sm:border-t sm:px-6 sm:py-4",
+				"sm:bg-muted/50 mt-2 flex flex-col-reverse gap-2 border-t px-6 py-4 sm:-mx-6 sm:-mb-6 sm:flex-row sm:justify-end sm:rounded-b-lg",
 				className,
 			)}
 			{...props}
@@ -129,6 +135,33 @@ function DialogDescription({
 	);
 }
 
+function DialogPanel({
+	className,
+	scrollFade = true,
+	render,
+	...props
+}: useRender.ComponentProps<"div"> & {
+	scrollFade?: boolean;
+}): React.ReactElement {
+	const defaultProps = {
+		className: cn(
+			"p-6 in-[[data-slot=dialog-popup]:has([data-slot=dialog-footer]:not(.border-t))]:pb-1 in-[[data-slot=dialog-popup]:has([data-slot=dialog-header])]:pt-1",
+			className,
+		),
+		"data-slot": "dialog-panel",
+	};
+
+	return (
+		<ScrollArea scrollFade={scrollFade}>
+			{useRender({
+				defaultTagName: "div",
+				props: mergeProps<"div">(defaultProps, props),
+				render,
+			})}
+		</ScrollArea>
+	);
+}
+
 export {
 	Dialog,
 	DialogTrigger,
@@ -142,5 +175,6 @@ export {
 	DialogHeader,
 	DialogFooter,
 	DialogClose,
+	DialogPanel,
 };
 export type { ChangeEventDetails };

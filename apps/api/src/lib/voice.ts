@@ -7,7 +7,7 @@ const VoiceExpenseDataSchema = z.object({
 	title: z
 		.string()
 		.describe("Short descriptive title for the expense (e.g. 'Coffee', 'Grocery shopping')"),
-	amount: z.number().describe("Numeric amount of the expense"),
+	amount: z.number().describe("Numeric amount of the expense after expanding shorthand notation"),
 	currency: z.string().length(3).describe("3-letter ISO currency code (e.g. USD, EUR, VND)"),
 	date: z
 		.string()
@@ -18,6 +18,12 @@ const VoiceExpenseDataSchema = z.object({
 		.nullable()
 		.describe(
 			"UUID of the best matching category from the provided list, or null if no good match",
+		),
+	suggestedWalletId: z
+		.uuid()
+		.nullable()
+		.describe(
+			"UUID of the best matching wallet from the provided list, or null if no good match. Match wallet names intelligently - e.g., 'tiền mặt' or 'cash' should match a 'Cash Wallet', 'credit card' should match a 'Credit Card' wallet, etc.",
 		),
 	repeat: z
 		.enum(["one-time", "daily", "weekly", "monthly", "yearly"])
@@ -38,15 +44,22 @@ interface Category {
 	name: string;
 }
 
+interface Wallet {
+	id: string;
+	name: string;
+}
+
 interface ParseContext {
 	today: string;
 	availableCurrencies: string[];
-	lang: "en-US" | "vi-VN";
+	/** @deprecated Language is now auto-detected. Kept for backward compatibility with voice endpoint. */
+	lang?: "en-US" | "vi-VN";
 }
 
 export async function parseVoiceExpense(
 	transcription: string,
 	categories: Category[],
+	wallets: Wallet[],
 	context: ParseContext,
 ): Promise<VoiceExpenseData | null> {
 	const categoryListText =
@@ -54,41 +67,12 @@ export async function parseVoiceExpense(
 			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
 			: "No categories available - set suggestedCategoryId to null.";
 
+	const walletListText =
+		wallets.length > 0
+			? `Available wallets:\n${wallets.map((w) => `- ${w.name} (id: ${w.id})`).join("\n")}`
+			: "No wallets available - set suggestedWalletId to null.";
+
 	const currenciesText = `Available currencies: ${context.availableCurrencies.join(", ")}. Default to the most contextually appropriate one if not mentioned.`;
-
-	const vietnameseDateExamples = `
-Vietnamese date examples (convert to YYYY-MM-DD):
-- "hôm nay" = today = ${context.today}
-- "hôm qua" = yesterday = calculate from ${context.today}
-- "tuần trước" = last week = calculate from ${context.today}
-- "tháng trước" = last month = calculate from ${context.today}
-- "ngày mồng 5" = 5th day of month`;
-
-	const englishDateExamples = `
-English date examples (convert to YYYY-MM-DD):
-- "today" = ${context.today}
-- "yesterday" = calculate from ${context.today}
-- "last week" = calculate from ${context.today}
-- "last month" = calculate from ${context.today}`;
-
-	const rulesText =
-		context.lang === "vi-VN"
-			? `Quy tắc / Rules:
-- Trích xuất tiêu đề, số tiền, loại tiền tệ và ngày từ bản ghi thoại
-- Nếu không có ngày, sử dụng ngày hôm nay (${context.today})
-- Nếu không có loại tiền tệ, suy luận từ ngữ cảnh (ví dụ: "nghìn" = VND, "dollar" = USD)
-- Khớp với danh mục phù hợp nhất dựa trên tên hoặc mô tả
-- Xử lý cả ngày tiếng Việt và tiếng Anh
-- Đặt repeat thành one-time trừ khi người dùng nói rõ "mỗi tháng", "hàng tuần", v.v.
-- Đặt confidence dựa trên mức độ rõ ràng của chi tiết`
-			: `Rules:
-- Extract the expense title, amount, currency, and date from the transcription
-- If no date is mentioned, use today's date (${context.today})
-- If no currency is mentioned, infer from context (e.g., "nghìn" = VND, "dollar" = USD)
-- Match the expense to the most relevant category based on merchant name or description
-- Handle both Vietnamese and English date expressions
-- Set repeat to one-time unless user explicitly says "every month", "weekly", etc.
-- Set confidence based on how clearly and completely the details were provided`;
 
 	try {
 		const result = await chat({
@@ -97,19 +81,49 @@ English date examples (convert to YYYY-MM-DD):
 			messages: [
 				{
 					role: "user",
-					content: `You are an expense tracking assistant. Parse the following voice transcription into a structured expense record.
+					content: `You are an expense tracking assistant. Parse the following text into a structured expense record.
+
+Auto-detect the language (English, Vietnamese, or mixed) and apply all rules accordingly.
 
 Today's date: ${context.today}
 
 ${currenciesText}
 
-${context.lang === "vi-VN" ? vietnameseDateExamples : englishDateExamples}
-
 ${categoryListText}
 
-${rulesText}
+${walletListText}
 
-Transcription (${context.lang === "vi-VN" ? "Vietnamese" : "English"}): "${transcription}"`,
+## Amount shorthand notation — ALWAYS expand these:
+- "k" or "K" = thousands → "15k" = 15000, "2.5k" = 2500
+- "m" or "M" = millions → "1m" = 1000000, "1.5M" = 1500000
+- "nghìn" or "ngàn" = thousands → "15 nghìn" = 15000
+- "triệu" = millions → "2 triệu" = 2000000
+- "tr" = triệu (millions) → "1.5tr" = 1500000
+- "b" or "B" or "tỷ" = billions → "1b" = 1000000000
+
+## Date expressions (convert to YYYY-MM-DD):
+English: "today" = ${context.today}, "yesterday" = day before ${context.today}, "last week", "last month"
+Vietnamese: "hôm nay" = ${context.today}, "hôm qua" = yesterday, "tuần trước" = last week, "tháng trước" = last month, "ngày mồng 5" = 5th of current month
+If no date is mentioned, use today: ${context.today}
+
+## Wallet matching rules:
+- Look for wallet mentions in the text (e.g., "tiền mặt", "cash", "credit card", "bank", "ví", "thẻ")
+- Match intelligently: "tiền mặt" or "cash" → Cash Wallet, "credit card" → Credit Card wallet, "bank" → Bank wallet
+- Match based on semantic similarity, not just exact name matches
+- If the user mentions a payment method or wallet type, try to match it to the available wallets
+- If no wallet is mentioned or no good match exists, set suggestedWalletId to null
+
+## Rules:
+- Extract the expense title, amount, currency, and date
+- ALWAYS expand shorthand amounts (k/K/m/M/nghìn/triệu/tr/tỷ) into full numbers
+- If no currency is mentioned, infer from context: Vietnamese text or "nghìn"/"triệu" → VND, "dollar"/"$" → USD, otherwise use the first available currency
+- Match the expense to the most relevant category based on the description
+- Match the expense to the most relevant wallet based on payment method mentions
+- Handle Vietnamese, English, and mixed-language input seamlessly
+- Set repeat to "one-time" unless user explicitly says "every month"/"hàng tháng", "weekly"/"hàng tuần", "daily"/"hàng ngày", "yearly"/"hàng năm"
+- Set confidence based on how clearly and completely the details were provided
+
+Text: "${transcription}"`,
 				},
 			],
 		});

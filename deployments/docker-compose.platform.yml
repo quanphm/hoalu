@@ -12,11 +12,6 @@ services:
     restart: "no"
     networks:
       - hoalu_network
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
 
   api:
     container_name: hoalu-api
