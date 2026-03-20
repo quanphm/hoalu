@@ -1,5 +1,10 @@
-import { scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
+import {
+	createExpenseDialogAtom,
+	scanQueueReviewDialogAtom,
+} from "#app/atoms/dialogs.ts";
+import { draftExpenseAtom } from "#app/atoms/expenses.ts";
 import { useScanQueue } from "#app/hooks/use-scan-queue.ts";
+import type { QuickExpenseJob } from "#app/lib/queues/quick-expense-queue.ts";
 import type { ReceiptScanJob } from "#app/lib/queues/receipt-scan-queue.ts";
 import {
 	Loader2Icon,
@@ -7,13 +12,16 @@ import {
 	RefreshCwIcon,
 	EyeIcon,
 	ReceiptIcon,
+	ZapIcon,
 } from "@hoalu/icons/lucide";
 import { XIcon, CheckIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
 
-function JobStatusIcon({ status }: { status: ReceiptScanJob["status"] }) {
+type JobStatus = "pending" | "processing" | "completed" | "failed" | "dismissed";
+
+function JobStatusIcon({ status }: { status: JobStatus }) {
 	switch (status) {
 		case "pending":
 			return <div className="bg-muted-foreground/20 size-3 rounded-full" />;
@@ -30,7 +38,26 @@ function JobStatusIcon({ status }: { status: ReceiptScanJob["status"] }) {
 	}
 }
 
-function JobItem({ job }: { job: ReceiptScanJob }) {
+function JobStatusLabel({ status, retryCount }: { status: JobStatus; retryCount: number }) {
+	return (
+		<span
+			className={cn(
+				"text-[10px]",
+				status === "failed" && "text-destructive",
+				status === "completed" && "text-green-600",
+				status === "processing" && "text-primary",
+				status === "pending" && "text-muted-foreground",
+			)}
+		>
+			{status === "pending" && "Waiting"}
+			{status === "processing" && "Processing"}
+			{status === "completed" && "Ready"}
+			{status === "failed" && (retryCount > 0 ? `Failed (retry ${retryCount})` : "Failed")}
+		</span>
+	);
+}
+
+function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 	const { retry, dismiss, remove } = useScanQueue();
 	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
 
@@ -40,7 +67,6 @@ function JobItem({ job }: { job: ReceiptScanJob }) {
 
 	return (
 		<div className="bg-card flex items-center gap-2 rounded-md border p-2">
-			{/* Preview thumbnail */}
 			<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm">
 				{job.input.previewBase64 ? (
 					<img
@@ -57,25 +83,10 @@ function JobItem({ job }: { job: ReceiptScanJob }) {
 				<p className="truncate text-xs font-medium">{job.input.fileName}</p>
 				<div className="flex items-center gap-1">
 					<JobStatusIcon status={job.status} />
-					<span
-						className={cn(
-							"text-[10px]",
-							job.status === "failed" && "text-destructive",
-							job.status === "completed" && "text-green-600",
-							job.status === "processing" && "text-primary",
-							job.status === "pending" && "text-muted-foreground",
-						)}
-					>
-						{job.status === "pending" && "Waiting"}
-						{job.status === "processing" && "Scanning"}
-						{job.status === "completed" && "Ready"}
-						{job.status === "failed" &&
-							(job.retryCount > 0 ? `Failed (retry ${job.retryCount})` : "Failed")}
-					</span>
+					<JobStatusLabel status={job.status} retryCount={job.retryCount} />
 				</div>
 			</div>
 
-			{/* Actions */}
 			<div className="flex flex-col items-center">
 				{job.status === "completed" && (
 					<>
@@ -113,6 +124,91 @@ function JobItem({ job }: { job: ReceiptScanJob }) {
 	);
 }
 
+function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
+	const { retryQuick, dismissQuick, removeQuick } = useScanQueue();
+	const setDraft = useSetAtom(draftExpenseAtom);
+	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
+
+	const handleReview = () => {
+		if (!job.result) return;
+		setDraft((draft) => ({
+			...draft,
+			title: job.result!.title,
+			description: "",
+			date: new Date(job.result!.date).toISOString(),
+			transaction: { value: job.result!.amount, currency: job.result!.currency },
+			categoryId: job.result!.suggestedCategoryId ?? "",
+			repeat: job.result!.repeat,
+		}));
+		setCreateDialog({ state: true });
+	};
+
+	return (
+		<div className="bg-card flex items-center gap-2 rounded-md border p-2">
+			<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm">
+				<ZapIcon className="text-muted-foreground size-4" />
+			</div>
+
+			<div className="min-w-0 flex-1">
+				<p className="truncate text-xs font-medium">{job.input.text}</p>
+				<div className="flex items-center gap-1">
+					<JobStatusIcon status={job.status} />
+					<JobStatusLabel status={job.status} retryCount={job.retryCount} />
+				</div>
+			</div>
+
+			<div className="flex flex-col items-center">
+				{job.status === "completed" && (
+					<>
+						<Button variant="ghost" size="icon-sm" onClick={handleReview} title="Review">
+							<EyeIcon />
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={() => removeQuick(job.id)}
+							title="Remove"
+						>
+							<XIcon />
+						</Button>
+					</>
+				)}
+				{job.status === "failed" && (
+					<>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={() => retryQuick(job.id)}
+							title="Retry"
+						>
+							<RefreshCwIcon />
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							className="text-destructive hover:text-destructive"
+							onClick={() => dismissQuick(job.id)}
+							title="Dismiss"
+						>
+							<XIcon />
+						</Button>
+					</>
+				)}
+				{(job.status === "pending" || job.status === "dismissed") && (
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						onClick={() => removeQuick(job.id)}
+						title="Remove"
+					>
+						<XIcon />
+					</Button>
+				)}
+			</div>
+		</div>
+	);
+}
+
 function EmptyJobPlaceholder() {
 	return Array(1)
 		.fill(null)
@@ -121,7 +217,7 @@ function EmptyJobPlaceholder() {
 				key={i}
 				className="bg-muted/30 flex items-center gap-2 rounded-md border border-dashed p-2"
 			>
-				<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm"></div>
+				<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm" />
 				<div className="min-w-0 flex-1">
 					<p className="text-muted-foreground/60 truncate text-xs font-medium">No items</p>
 					<div className="flex items-center gap-1">
@@ -134,9 +230,21 @@ function EmptyJobPlaceholder() {
 }
 
 export function ScanQueuePanel() {
-	const { activeJobs } = useScanQueue();
-	if (activeJobs.length === 0) {
+	const { activeJobs, activeQuickJobs } = useScanQueue();
+	const allEmpty = activeJobs.length === 0 && activeQuickJobs.length === 0;
+
+	if (allEmpty) {
 		return <EmptyJobPlaceholder />;
 	}
-	return activeJobs.map((job) => <JobItem key={job.id} job={job} />);
+
+	return (
+		<>
+			{activeJobs.map((job) => (
+				<ReceiptJobItem key={job.id} job={job} />
+			))}
+			{activeQuickJobs.map((job) => (
+				<QuickExpenseJobItem key={job.id} job={job} />
+			))}
+		</>
+	);
 }
