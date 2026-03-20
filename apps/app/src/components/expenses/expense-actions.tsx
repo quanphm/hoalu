@@ -303,7 +303,9 @@ function CreateExpenseForm() {
 						<DialogFooter>
 							<Field orientation="horizontal" className="justify-between">
 								{trigger}
-								<form.SubscribeButton>Create expense</form.SubscribeButton>
+								<form.SubscribeButton disabled={form.state.isSubmitting}>
+									Create expense
+								</form.SubscribeButton>
 							</Field>
 						</DialogFooter>
 					)}
@@ -562,7 +564,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 							className="bg-card sticky bottom-0 w-full justify-between border-t px-4 py-2"
 						>
 							{trigger}
-							<form.SubscribeButton>Update</form.SubscribeButton>
+							<form.SubscribeButton disabled={form.state.isSubmitting}>Update</form.SubscribeButton>
 						</Field>
 					)}
 				</FilesCompactUpload>

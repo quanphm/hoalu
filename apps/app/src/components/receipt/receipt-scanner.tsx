@@ -7,6 +7,7 @@ import {
 } from "#app/hooks/use-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
@@ -193,14 +194,14 @@ export function ReceiptScanner() {
 	return (
 		<div className="flex w-full flex-col gap-4">
 			{isQueueFull && (
-				<div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/50">
-					<AlertCircleIcon className="size-4 text-amber-600 dark:text-amber-400" />
-					<p className="text-sm text-amber-800 dark:text-amber-200">
-						Queue is full. Please wait for jobs to complete or remove some items.
-					</p>
-				</div>
+				<Alert variant="error">
+					<AlertCircleIcon />
+					<AlertTitle>Queue is full</AlertTitle>
+					<AlertDescription>
+						Please wait for jobs to complete or remove some items.
+					</AlertDescription>
+				</Alert>
 			)}
-
 			<div
 				className={cn(
 					"flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors",

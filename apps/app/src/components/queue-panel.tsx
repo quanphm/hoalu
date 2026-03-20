@@ -141,7 +141,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	};
 
 	return (
-		<div className="bg-card flex items-center gap-2 rounded-md border p-2">
+		<div className="bg-card flex min-h-[66px] items-center gap-2 rounded-md border p-2">
 			<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm">
 				<ZapIcon className="text-muted-foreground size-4" />
 			</div>
@@ -197,7 +197,7 @@ function EmptyJobPlaceholder() {
 		.map((_, i) => (
 			<div
 				key={i}
-				className="bg-muted/30 flex items-center gap-2 rounded-md border border-dashed p-2"
+				className="bg-muted/30 flex items-center gap-2 rounded-md border border-dashed p-3"
 			>
 				<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm" />
 				<div className="min-w-0 flex-1">

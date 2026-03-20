@@ -2,6 +2,7 @@ import { useAppForm } from "#app/components/forms/index.tsx";
 import { useQuickExpenseQueue, useQueueStatus } from "#app/hooks/use-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { AlertCircleIcon } from "@hoalu/icons/lucide";
+import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
 import * as z from "zod";
@@ -27,10 +28,7 @@ export function QuickExpensesForm({ onSubmitted }: QuickExpensesFormProps) {
 			onSubmit: QuickEntryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			if (isFull) {
-				console.warn("[QuickExpensesForm] Cannot add: queue is full");
-				return;
-			}
+			if (isFull) return;
 			add({
 				text: value.text.trim(),
 				workspaceSlug: workspace.slug,
@@ -43,12 +41,13 @@ export function QuickExpensesForm({ onSubmitted }: QuickExpensesFormProps) {
 		<form.AppForm>
 			<form.Form>
 				{isFull && (
-					<div className="mb-4 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/50">
-						<AlertCircleIcon className="size-4 text-amber-600 dark:text-amber-400" />
-						<p className="text-sm text-amber-800 dark:text-amber-200">
-							Queue is full. Please wait for jobs to complete or remove some items.
-						</p>
-					</div>
+					<Alert variant="error">
+						<AlertCircleIcon />
+						<AlertTitle>Queue is full</AlertTitle>
+						<AlertDescription>
+							Please wait for jobs to complete or remove some items.
+						</AlertDescription>
+					</Alert>
 				)}
 				<form.AppField
 					name="text"
