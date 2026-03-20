@@ -4,7 +4,6 @@
 /// <reference lib="webworker" />
 
 import type { EnvSchema } from "./lib/env";
-
 import "@tanstack/react-table";
 
 interface ViteBuiltInEnv {
