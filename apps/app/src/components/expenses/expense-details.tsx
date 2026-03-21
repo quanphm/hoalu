@@ -9,10 +9,24 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useSetUpRecurringBill, useDeleteExpenseFile } from "#app/services/mutations.ts";
 import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
-import { ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, RepeatIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import {
+	ChevronDownIcon,
+	ChevronUpIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	RepeatIcon,
+	Trash2Icon,
+} from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@hoalu/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogHeaderAction,
+	DialogTitle,
+} from "@hoalu/ui/dialog";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -112,7 +126,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 						<Tooltip>
 							<TooltipTrigger
 								render={
-									<Button size="icon" variant="ghost" onClick={() => onSelectExpense(null)} />
+									<Button size="icon" variant="outline" onClick={() => onSelectExpense(null)} />
 								}
 							>
 								<XIcon className="size-4" />
@@ -227,14 +241,31 @@ function AttachmentStrip({
 			</div>
 
 			<Dialog open={open} onOpenChange={(o) => !o && setPreviewIndex(null)}>
-				<DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden">
-					{/* Header */}
-					<div className="flex items-center px-6 pt-6 pb-4 pr-12">
-						<h2 className="text-xl font-semibold leading-none">Attachment preview</h2>
-					</div>
-
-					{/* Image area — full width, no side padding */}
-					<div className="relative flex items-center justify-center bg-black/90 min-h-[40vh]">
+				<DialogContent className="max-w-3xl">
+					<DialogHeader>
+						<DialogTitle>Attachment preview</DialogTitle>
+						<DialogHeaderAction>
+							{total > 1 && (
+								<>
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={() => goTo((previewIndex ?? 0) - 1)}
+									>
+										<ChevronLeftIcon className="size-5" />
+									</Button>
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={() => goTo((previewIndex ?? 0) + 1)}
+									>
+										<ChevronRightIcon className="size-5" />
+									</Button>
+								</>
+							)}
+						</DialogHeaderAction>
+					</DialogHeader>
+					<div className="relative flex min-h-[40vh] items-center justify-center bg-black/90">
 						{current && (
 							<img
 								key={current.presignedUrl}
@@ -243,45 +274,11 @@ function AttachmentStrip({
 								className="max-h-[60vh] w-full object-contain"
 							/>
 						)}
-						{total > 1 && (
-							<>
-								<Button
-									type="button"
-									size="icon"
-									variant="ghost"
-									className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
-									onClick={() => goTo((previewIndex ?? 0) - 1)}
-								>
-									<ChevronLeftIcon className="size-5" />
-								</Button>
-								<Button
-									type="button"
-									size="icon"
-									variant="ghost"
-									className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
-									onClick={() => goTo((previewIndex ?? 0) + 1)}
-								>
-									<ChevronRightIcon className="size-5" />
-								</Button>
-								<div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-									{files.map((_, i) => (
-										<button
-											key={i}
-											type="button"
-											className={`size-1.5 rounded-full transition-colors ${i === previewIndex ? "bg-white" : "bg-white/40"}`}
-											onClick={() => setPreviewIndex(i)}
-										/>
-									))}
-								</div>
-							</>
-						)}
 					</div>
 
-					{/* Footer */}
-					{current && (
-						<div className="bg-muted/50 flex justify-end border-t px-6 py-4">
+					<DialogFooter>
+						{current && (
 							<Button
-								type="button"
 								variant="destructive"
 								onClick={() => {
 									if (confirm("Delete this attachment?")) {
@@ -295,11 +292,10 @@ function AttachmentStrip({
 									}
 								}}
 							>
-								<Trash2Icon className="size-4" />
 								Delete
 							</Button>
-						</div>
-					)}
+						)}
+					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 		</>
@@ -322,10 +318,10 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 
 	return (
 		<Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-			<DialogContent className="flex max-h-[90dvh] flex-col gap-0 p-0" showCloseButton={false}>
-				<DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-2">
-					<DialogTitle className="text-base font-semibold">Expense Details</DialogTitle>
-					<div className="flex items-center gap-2">
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Expense Details</DialogTitle>
+					<DialogHeaderAction>
 						<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
 							<ChevronUpIcon className="size-4" />
 						</Button>
@@ -338,16 +334,9 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 								<DeleteExpense id={currentExpense.id} />
 							</>
 						)}
-						<DialogClose
-							render={
-								<Button size="icon" variant="ghost" aria-label="Close">
-									<XIcon className="size-4" />
-								</Button>
-							}
-						/>
-					</div>
+					</DialogHeaderAction>
 				</DialogHeader>
-				<ScrollArea className="flex-1 overflow-auto">
+				<ScrollArea className="max-h-[90vh]">
 					{currentExpense && (
 						<>
 							<EditExpenseForm key={currentExpense.id} data={currentExpense} />

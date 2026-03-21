@@ -324,7 +324,7 @@ export function DeleteExpense({ id }: { id: string }) {
 				render={
 					<Button
 						size="icon"
-						variant="ghost"
+						variant="outline"
 						aria-label="Delete this expense"
 						onClick={() => setDialog({ state: true, data: { id } })}
 					/>
@@ -383,7 +383,7 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 				render={
 					<Button
 						size="icon"
-						variant="ghost"
+						variant="outline"
 						aria-label="Duplicate this expense"
 						onClick={onDuplicate}
 					/>

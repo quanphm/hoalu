@@ -122,7 +122,6 @@ function RouteComponent() {
 				</SectionItem>
 			</SectionContent>
 
-			{/* Mobile expense details drawer */}
 			{shouldUseMobileLayout && <MobileExpenseDetails expenses={filteredExpenses} />}
 		</Section>
 	);

@@ -32,9 +32,13 @@ export const FilesCompactUpload = forwardRef<FilesCompactUploadRef, FilesCompact
 		const previewRef = useRef<HTMLUListElement>(null);
 		const hasScrolledRef = useRef(false);
 
-		useImperativeHandle(ref, () => ({
-			clearFiles,
-		}), [clearFiles]);
+		useImperativeHandle(
+			ref,
+			() => ({
+				clearFiles,
+			}),
+			[clearFiles],
+		);
 
 		useEffect(() => {
 			if (files.length > 0 && !hasScrolledRef.current) {
@@ -92,9 +96,8 @@ export const FilesCompactUpload = forwardRef<FilesCompactUploadRef, FilesCompact
 								</div>
 								<div className="absolute top-1 right-1 flex items-center gap-2">
 									<Button
-										type="button"
 										size="icon"
-										variant="destructive"
+										variant="secondary"
 										className="size-6 rounded-full"
 										onClick={(e) => {
 											e.stopPropagation();
