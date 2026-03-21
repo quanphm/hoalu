@@ -12,6 +12,9 @@ import workspacesRoute from "#api/routes/workspaces/index.ts";
 import { authGuard, rateLimiter } from "@hoalu/furnace";
 import { openAPIRouteHandler } from "hono-openapi";
 import { cors } from "hono/cors";
+import pkg from "../../package.json" with { type: "json" };
+
+const API_VERSION = pkg.version;
 
 export function apiModule() {
 	const app = createHonoInstance()
@@ -38,11 +41,11 @@ export function apiModule() {
 		"/openapi",
 		openAPIRouteHandler(app, {
 			documentation: {
-				info: {
-					title: "Hoalu API",
-					description: "OpenAPI documentation",
-					version: "0.23.0",
-				},
+			info: {
+				title: "Hoalu API",
+				description: "OpenAPI documentation",
+				version: API_VERSION,
+			},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
 		}),

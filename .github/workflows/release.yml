@@ -87,23 +87,9 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: "v${{ steps.version.outputs.version }}"
           body: |
-            ## Hoalu v${{ steps.version.outputs.version }}
-
-            ### Desktop App
-
-            Download the macOS desktop app:
-
-            - **Apple Silicon (M1/M2/M3)**: `hoalu-desktop-darwin-aarch64.dmg`
-            - **Intel Macs**: `hoalu-desktop-darwin-x86_64.dmg`
-
-            **Installation:**
-            1. Download the DMG for your Mac
-            2. Open the DMG and drag Hoalu to your Applications folder
-            3. **First launch**: Right-click the app → "Open" (required because this is an unsigned app)
-
+            Version ${{ steps.version.outputs.version }}
           draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
           prerelease: false
-          # Allow updating existing release (in case workflow runs multiple times)
           allow_updates: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

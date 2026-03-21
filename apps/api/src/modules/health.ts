@@ -4,7 +4,9 @@ import { HTTPStatus } from "@hoalu/common/http-status";
 import { OpenAPI, RATE_LIMIT_MAX_CONNECTIONS, rateLimiter } from "@hoalu/furnace";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
 import * as z from "zod";
+import pkg from "../../package.json" with { type: "json" };
 
+const API_VERSION = pkg.version;
 const TAGS = ["Health"];
 
 export function healthModule() {
@@ -71,11 +73,11 @@ export function healthModule() {
 		"/openapi",
 		openAPIRouteHandler(app, {
 			documentation: {
-				info: {
-					title: "Hoalu API",
-					description: "OpenAPI documentation",
-					version: "0.23.0",
-				},
+			info: {
+				title: "Hoalu API",
+				description: "OpenAPI documentation",
+				version: API_VERSION,
+			},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
 		}),

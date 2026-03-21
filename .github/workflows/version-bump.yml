@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       version_type:
-        description: 'Version bump type'
+        description: "Version bump type"
         type: choice
         options:
           - patch
           - minor
           - major
-        default: 'patch'
+        default: "patch"
         required: true
 
 jobs:
@@ -19,14 +19,14 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    
+
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
-      
+
       - name: Check if on main branch
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -34,7 +34,7 @@ jobs:
             echo "Error: This workflow can only run on the main branch"
             exit 1
           fi
-      
+
       - name: Read current version from git tag
         id: current
         run: |
@@ -49,18 +49,18 @@ jobs:
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "Latest tag: $LATEST_TAG"
           echo "Current version: $CURRENT_VERSION"
-      
+
       - name: Calculate new version
         id: new
         run: |
           CURRENT="${{ steps.current.outputs.current }}"
           TYPE="${{ inputs.version_type }}"
-          
+
           # Parse version components
           MAJOR=$(echo $CURRENT | cut -d. -f1)
           MINOR=$(echo $CURRENT | cut -d. -f2)
           PATCH=$(echo $CURRENT | cut -d. -f3)
-          
+
           # Bump version based on type
           case $TYPE in
             major)
@@ -76,21 +76,25 @@ jobs:
               PATCH=$((PATCH + 1))
               ;;
           esac
-          
+
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION"
-      
+
       - name: Update Cargo.toml
         run: |
           sed -i "s/^version = \"${{ steps.current.outputs.current }}\"/version = \"${{ steps.new.outputs.new }}\"/" apps/desktop/src-tauri/Cargo.toml
-      
-      - name: Update package.json if exists
+
+      - name: Update all package.json files
         run: |
-          if [ -f apps/desktop/package.json ]; then
-            sed -i "s/\"version\": \"${{ steps.current.outputs.current }}\"/\"version\": \"${{ steps.new.outputs.new }}\"/" apps/desktop/package.json
-          fi
-      
+          # Find and update all package.json files
+          find . -name "package.json" -not -path "./node_modules/*" -not -path "*/node_modules/*" | while read -r file; do
+            if grep -q "\"version\": \"${{ steps.current.outputs.current }}\"" "$file"; then
+              sed -i "s/\"version\": \"${{ steps.current.outputs.current }}\"/\"version\": \"${{ steps.new.outputs.new }}\"/" "$file"
+              echo "Updated: $file"
+            fi
+          done
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -98,23 +102,15 @@ jobs:
           branch: chore/version-bump-${{ steps.new.outputs.new }}
           base: main
           commit-message: "chore(ci): version bump to ${{ steps.new.outputs.new }}"
-          title: "chore(ci): version"
+          title: "chore(ci): version bump"
           body: |
             ## Version Bump
-            
+
             **From:** ${{ steps.current.outputs.current }}
             **To:** ${{ steps.new.outputs.new }}
             **Type:** ${{ inputs.version_type }}
-            
+
             ### Changes
             - Updated `Cargo.toml` version
             - Updated `package.json` version (if applicable)
-            
-            ### After Merge
-            Once this PR is merged, the release workflow will automatically:
-            1. Create git tag `desktop-v${{ steps.new.outputs.new }}`
-            2. Create GitHub release
-            3. Build and attach unsigned DMG files
-            
-            **Please review and merge to trigger the release.**
           delete-branch: true
