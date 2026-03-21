@@ -1,4 +1,4 @@
-name: Release - Desktop
+name: Release
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       draft:
-        description: 'Create as draft release'
+        description: "Create as draft release"
         type: boolean
         default: true
 
@@ -22,38 +22,38 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      
+
       - name: Check if this is a version bump commit
         id: check
         run: |
           # Get the latest commit message
           COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Commit message: $COMMIT_MSG"
-          
+
           # Check if it's a version bump (PR merge or direct commit)
           IS_VERSION_BUMP=false
           if echo "$COMMIT_MSG" | grep -qi "chore(ci): version"; then
             IS_VERSION_BUMP=true
             echo "Detected version bump from commit message"
           fi
-          
-          # Also check if Cargo.toml was modified (additional safeguard)
-          if git diff --name-only HEAD~1 HEAD | grep -q "Cargo.toml"; then
-            echo "Cargo.toml was modified in this commit"
+
+          # Also check if package.json was modified (additional safeguard)
+          if git diff --name-only HEAD~1 HEAD | grep -q "package.json"; then
+            echo "package.json was modified in this commit"
             IS_VERSION_BUMP=true
           fi
-          
+
           echo "is_version_bump=$IS_VERSION_BUMP" >> $GITHUB_OUTPUT
           if [ "$IS_VERSION_BUMP" = "true" ]; then
             echo "This is a version bump commit - will trigger release"
           else
             echo "This is not a version bump commit - skipping release"
           fi
-      
-      - name: Read version from Cargo.toml
+
+      - name: Read version from apps/app/package.json
         id: version
         run: |
-          VERSION=$(grep '^version' apps/desktop/src-tauri/Cargo.toml | head -1 | cut -d'"' -f2)
+          VERSION=$(grep '"version"' apps/app/package.json | head -1 | cut -d'"' -f4)
           TAG="v$VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=$TAG" >> $GITHUB_OUTPUT
@@ -72,14 +72,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Get version
+
+      - name: Get version from apps/app/package.json
         id: version
         run: |
-          VERSION=$(grep '^version' apps/desktop/src-tauri/Cargo.toml | head -1 | cut -d'"' -f2)
+          VERSION=$(grep '"version"' apps/app/package.json | head -1 | cut -d'"' -f4)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"
-      
+
       - name: Create or update release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -88,19 +88,19 @@ jobs:
           name: "v${{ steps.version.outputs.version }}"
           body: |
             ## Hoalu v${{ steps.version.outputs.version }}
-            
+
             ### Desktop App
-            
+
             Download the macOS desktop app:
-            
+
             - **Apple Silicon (M1/M2/M3)**: `hoalu-desktop-darwin-aarch64.dmg`
             - **Intel Macs**: `hoalu-desktop-darwin-x86_64.dmg`
-            
+
             **Installation:**
             1. Download the DMG for your Mac
             2. Open the DMG and drag Hoalu to your Applications folder
             3. **First launch**: Right-click the app → "Open" (required because this is an unsigned app)
-            
+
           draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
           prerelease: false
           # Allow updating existing release (in case workflow runs multiple times)
@@ -127,29 +127,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      
+
       - name: Install Rust
         uses: dtolnay/rust-action@stable
         with:
           targets: ${{ matrix.target }}
-      
+
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri
-      
+
       - name: Install dependencies
         run: bun install
-      
+
       - name: Build frontend
         run: bun run build
         working-directory: apps/desktop
-      
+
       - name: Build Tauri app (unsigned)
         run: bun tauri build --target ${{ matrix.target }}
         working-directory: apps/desktop
@@ -160,21 +160,21 @@ jobs:
           APPLE_SIGNING_IDENTITY: ""
           TAURI_SIGNING_PRIVATE_KEY: ""
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
-      
+
       - name: Find and rename DMG file
         id: find_dmg
         run: |
           ORIGINAL_DMG=$(find apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg -name "*.dmg" | head -1)
           RENAMED_DMG="apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/${{ matrix.asset_name }}"
-          
+
           # Rename the DMG file
           cp "$ORIGINAL_DMG" "$RENAMED_DMG"
-          
+
           echo "original_dmg=$ORIGINAL_DMG" >> $GITHUB_OUTPUT
           echo "renamed_dmg=$RENAMED_DMG" >> $GITHUB_OUTPUT
           echo "Original DMG: $ORIGINAL_DMG"
           echo "Renamed to: $RENAMED_DMG"
-      
+
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
