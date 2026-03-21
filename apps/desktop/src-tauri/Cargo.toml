@@ -1,6 +1,6 @@
 [package]
 name = "hoalu-desktop"
-version = "0.23.0"
+version = "0.24.0"
 description = "Hoalu Desktop App"
 authors = ["you"]
 license = "MIT"
