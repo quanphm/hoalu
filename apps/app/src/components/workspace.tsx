@@ -17,7 +17,7 @@ import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import { DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
+import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -32,6 +32,7 @@ export function CreateWorkspaceDialogContent() {
 		<DialogPopup className="sm:max-w-[500px]">
 			<DialogHeader>
 				<DialogTitle>Create a new workspace</DialogTitle>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateWorkspaceForm />
 		</DialogPopup>
@@ -246,13 +247,14 @@ export function EditWorkspaceMetadataForm({ canEdit }: { canEdit: boolean }) {
 export function DeleteWorkspaceDialogContent() {
 	return (
 		<DialogPopup className="sm:max-w-[400px]">
-			<DialogHeader className="space-y-3">
+			<DialogHeader>
 				<DialogTitle>Confirm delete workspace</DialogTitle>
-				<WarningMessage>
-					This action cannot be undone. This will permanently delete the whole workspace and all of
-					its data.
-				</WarningMessage>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				This action cannot be undone. This will permanently delete the whole workspace and all of
+				its data.
+			</WarningMessage>
 			<DeleteWorkspaceForm />
 		</DialogPopup>
 	);

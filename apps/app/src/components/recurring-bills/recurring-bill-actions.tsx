@@ -9,6 +9,7 @@ import {
 	type SyncedRecurringBill,
 	useSelectedRecurringBill,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -19,13 +20,13 @@ import {
 	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
-import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { Button, ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
@@ -78,6 +79,7 @@ export function CreateRecurringBillDialogContent(props: CreateRecurringBillFormP
 			<DialogHeader>
 				<DialogTitle>Set up recurring bill</DialogTitle>
 				<DialogDescription>Track this as a recurring payment going forward.</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateRecurringBillForm {...props} />
 		</DialogPopup>
@@ -157,7 +159,9 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 					<form.Subscribe
 						selector={(s) => s.values.repeat}
 						children={(repeat) => (
-							<div className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}>
+							<div
+								className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}
+							>
 								<form.AppField
 									name="repeat"
 									children={(field) => (
@@ -178,20 +182,14 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 									<form.AppField
 										name="dueDay"
 										children={(field) => (
-											<field.SelectField
-												label="Day of week"
-												options={DOW_OPTIONS}
-											/>
+											<field.SelectField label="Day of week" options={DOW_OPTIONS} />
 										)}
 									/>
 								) : repeat === "monthly" ? (
 									<form.AppField
 										name="dueDay"
 										children={(field) => (
-											<field.SelectField
-												label="Day of month"
-												options={DOM_OPTIONS}
-											/>
+											<field.SelectField label="Day of month" options={DOM_OPTIONS} />
 										)}
 									/>
 								) : null}
@@ -271,7 +269,10 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 					categoryId: value.categoryId || null,
 					repeat: value.repeat,
 					...(value.repeat === "yearly"
-						? { dueDay: new Date(`${value.anchorDate}T00:00:00`).getDate(), dueMonth: new Date(`${value.anchorDate}T00:00:00`).getMonth() + 1 }
+						? {
+								dueDay: new Date(`${value.anchorDate}T00:00:00`).getDate(),
+								dueMonth: new Date(`${value.anchorDate}T00:00:00`).getMonth() + 1,
+							}
 						: { dueDay: value.dueDay ? Number(value.dueDay) : undefined }),
 				},
 			});
@@ -285,7 +286,9 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 					<form.Subscribe
 						selector={(s) => s.values.repeat}
 						children={(repeat) => (
-							<div className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}>
+							<div
+								className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}
+							>
 								<form.AppField
 									name="repeat"
 									children={(field) => (
@@ -306,20 +309,14 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 									<form.AppField
 										name="dueDay"
 										children={(field) => (
-											<field.SelectField
-												label="Day of week"
-												options={DOW_OPTIONS}
-											/>
+											<field.SelectField label="Day of week" options={DOW_OPTIONS} />
 										)}
 									/>
 								) : repeat === "monthly" ? (
 									<form.AppField
 										name="dueDay"
 										children={(field) => (
-											<field.SelectField
-												label="Day of month"
-												options={DOM_OPTIONS}
-											/>
+											<field.SelectField label="Day of month" options={DOM_OPTIONS} />
 										)}
 									/>
 								) : null}
@@ -384,13 +381,14 @@ export function ArchiveRecurringBillDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Remove recurring bill?</DialogTitle>
-				<WarningMessage>
-					This bill will be archived and removed from upcoming payments. Past linked expenses are
-					not affected. This action cannot be undone.
-				</WarningMessage>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				This bill will be archived and removed from upcoming payments. Past linked expenses are not
+				affected. This action cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button variant="destructive" onClick={onDelete}>
 					Archive
 				</Button>
@@ -419,9 +417,10 @@ export function UnarchiveRecurringBillDialogContent() {
 				<DialogDescription>
 					This bill will be restored and will appear in your active bills and upcoming payments.
 				</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button onClick={onUnarchive} disabled={mutation.isPending}>
 					Restore
 				</Button>
@@ -454,14 +453,15 @@ export function DeleteRecurringBillDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete recurring bill?</DialogTitle>
-				<WarningMessage>
-					This will permanently delete "{billTitle}". Linked expenses will remain but will no
-					longer be associated with this bill. This action cannot be undone.
-				</WarningMessage>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				This will permanently delete "{billTitle}". Linked expenses will remain but will no longer
+				be associated with this bill. This action cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
 				<DialogClose
-					render={<Button type="button" variant="secondary" disabled={mutation.isPending} />}
+					render={<Button type="button" variant="outline" disabled={mutation.isPending} />}
 				>
 					Cancel
 				</DialogClose>

@@ -23,6 +23,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogPopup,
+	DialogHeaderAction,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
@@ -222,6 +223,7 @@ export function ScanQueueReviewDialogContent() {
 					<DialogDescription>
 						The receipt you are trying to review is no longer available.
 					</DialogDescription>
+					<DialogHeaderAction />
 				</DialogHeader>
 			</DialogPopup>
 		);
@@ -236,32 +238,22 @@ export function ScanQueueReviewDialogContent() {
 					<DialogTitle>
 						Review Receipt ({currentIndex + 1} of {completedJobs.length})
 					</DialogTitle>
-					{completedJobs.length > 1 && (
-						<div className="flex items-center gap-1">
-							<Button
-								variant="ghost"
-								size="icon"
-								className="size-8"
-								onClick={handlePrev}
-								disabled={!hasPrev}
-							>
-								<ChevronLeftIcon className="size-4" />
-							</Button>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="size-8"
-								onClick={handleNext}
-								disabled={!hasNext}
-							>
-								<ChevronRightIcon className="size-4" />
-							</Button>
-						</div>
-					)}
 				</div>
 				<DialogDescription>
 					Review the extracted data and make any corrections before creating the expense.
 				</DialogDescription>
+				<DialogHeaderAction>
+					{completedJobs.length > 1 && (
+						<>
+							<Button variant="outline" size="icon" onClick={handlePrev} disabled={!hasPrev}>
+								<ChevronLeftIcon />
+							</Button>
+							<Button variant="outline" size="icon" onClick={handleNext} disabled={!hasNext}>
+								<ChevronRightIcon />
+							</Button>
+						</>
+					)}
+				</DialogHeaderAction>
 			</DialogHeader>
 
 			<div className="grid gap-6 md:grid-cols-2">

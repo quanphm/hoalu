@@ -2,7 +2,7 @@ import { quickExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { QuickExpensesForm } from "#app/components/quick-expenses/quick-expenses-form.tsx";
 import { ZapIcon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { DialogDescription, DialogHeader, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
+import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { useSetAtom } from "jotai";
 
 export function QuickExpensesDialogTrigger(props: ButtonProps) {
@@ -26,8 +26,8 @@ export function QuickExpensesDialogContent() {
 	return (
 		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[500px]">
 			<DialogHeader>
-				<DialogTitle>Create expense</DialogTitle>
-				<DialogDescription>Describe your expense.</DialogDescription>
+				<DialogTitle>Create expense (Quick)</DialogTitle>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<QuickExpensesForm onSubmitted={handleSubmitted} />
 		</DialogPopup>

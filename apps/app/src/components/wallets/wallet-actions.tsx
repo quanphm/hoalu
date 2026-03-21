@@ -30,6 +30,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
@@ -57,12 +58,10 @@ export function CreateWalletDialogTrigger() {
 
 export function CreateWalletDialogContent() {
 	return (
-		<DialogPopup className="sm:max-w-[520px]">
+		<DialogPopup className="sm:max-w-[520px]" showCloseButton={false}>
 			<DialogHeader>
 				<DialogTitle>Create new wallet</DialogTitle>
-				<DialogDescription>
-					Add a new wallet to manage and track a separate set of funds or accounts.
-				</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateWalletForm />
 		</DialogPopup>
@@ -257,7 +256,7 @@ export function EditWalletDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Edit wallet</DialogTitle>
-				<DialogDescription>Update your wallet details.</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<EditWalletForm key={dialog?.data?.id} id={dialog?.data?.id} />
 		</DialogPopup>
@@ -280,15 +279,14 @@ export function DeleteWalletDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete wallet?</DialogTitle>
-				<DialogDescription>
-					<WarningMessage>
-						This action will permanently delete your wallet and all associated spending history.
-						This cannot be undone.
-					</WarningMessage>
-				</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				This action will permanently delete your wallet and all associated spending history. This
+				cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>

@@ -135,7 +135,7 @@ function RowActions({ row }: { row: Row<Member> }) {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<DialogClose render={<Button type="button" variant="secondary" />}>No</DialogClose>
+					<DialogClose render={<Button type="button" variant="outline" />}>No</DialogClose>
 					<Button variant="destructive" onClick={() => onCancel()}>
 						Yes
 					</Button>

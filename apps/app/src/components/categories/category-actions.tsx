@@ -19,6 +19,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
@@ -26,6 +27,8 @@ import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+
+import { WarningMessage } from "../warning-message";
 
 export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
@@ -44,6 +47,7 @@ export function CreateCategoryDialogContent() {
 			<DialogHeader>
 				<DialogTitle>Create new category</DialogTitle>
 				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateCategoryForm />
 		</DialogPopup>
@@ -104,9 +108,11 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 					</form.Subscribe>
 				</div>
 
-				<Field orientation="horizontal" className="justify-end">
-					<form.SubscribeButton>Create category</form.SubscribeButton>
-				</Field>
+				<DialogFooter>
+					<Field orientation="horizontal" className="justify-end">
+						<form.SubscribeButton>Create category</form.SubscribeButton>
+					</Field>
+				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -206,8 +212,10 @@ export function DeleteCategoryDialogContent() {
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
-				<DialogTitle>Delete the "{selectedCategory.name}" category?</DialogTitle>
+				<DialogTitle>Delete the "{selectedCategory.name}"?</DialogTitle>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>This action cannot be undone.</WarningMessage>
 			<DialogFooter>
 				<Button type="button" variant="secondary" onClick={() => setDialog({ state: false })}>
 					Cancel

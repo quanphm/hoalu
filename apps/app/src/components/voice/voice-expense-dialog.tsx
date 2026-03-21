@@ -1,14 +1,22 @@
 import { createExpenseDialogAtom, voiceExpenseDialogAtom } from "#app/atoms/dialogs.ts";
 import { draftExpenseAtom } from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
+import {
+	type VoiceExpenseData,
+	useParseVoiceExpense,
+	useVoiceRecorder,
+	VOICE_LANGUAGES,
+	type VoiceLanguage,
+} from "#app/hooks/use-voice-expense.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { categoriesQueryOptions } from "#app/services/query-options.ts";
-import { type VoiceExpenseData, useParseVoiceExpense, useVoiceRecorder, VOICE_LANGUAGES, type VoiceLanguage } from "#app/hooks/use-voice-expense.ts";
 import { MicIcon, MicOffIcon, RotateCcwIcon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
@@ -19,7 +27,6 @@ import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 export function VoiceExpenseDialogTrigger(props: ButtonProps) {
 	const setVoiceDialog = useSetAtom(voiceExpenseDialogAtom);
@@ -46,6 +53,13 @@ export function VoiceExpenseDialogContent() {
 	if (voiceData) {
 		return (
 			<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[600px]">
+				<DialogHeader>
+					<DialogTitle>Review Expense</DialogTitle>
+					<DialogDescription>
+						Review the parsed details and make any corrections before creating the expense.
+					</DialogDescription>
+					<DialogHeaderAction />
+				</DialogHeader>
 				<VoiceExpenseReview voiceData={voiceData} onBack={handleReset} />
 			</DialogPopup>
 		);
@@ -58,6 +72,7 @@ export function VoiceExpenseDialogContent() {
 				<DialogDescription>
 					Speak your expense and we'll fill in the details automatically.
 				</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<VoiceRecorder onParseSuccess={handleParseSuccess} />
 		</DialogPopup>
@@ -75,7 +90,10 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 
 	const handleParse = async () => {
 		if (!transcript.trim()) return;
-		const result = await parseMutation.mutateAsync({ transcription: transcript.trim(), lang: selectedLang });
+		const result = await parseMutation.mutateAsync({
+			transcription: transcript.trim(),
+			lang: selectedLang,
+		});
 		if (result) {
 			onParseSuccess(result);
 		}
@@ -135,7 +153,7 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 					onClick={isListening ? stop : start}
 					disabled={parseMutation.isPending}
 					className={cn(
-						"relative flex size-20 cursor-pointer items-center justify-center rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+						"relative flex size-20 cursor-pointer items-center justify-center rounded-full transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
 						isListening
 							? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -146,11 +164,7 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 					{isListening && (
 						<span className="bg-destructive absolute inset-0 animate-ping rounded-full opacity-30" />
 					)}
-					{isListening ? (
-						<MicOffIcon className="size-8" />
-					) : (
-						<MicIcon className="size-8" />
-					)}
+					{isListening ? <MicOffIcon className="size-8" /> : <MicIcon className="size-8" />}
 				</button>
 
 				<p className="text-muted-foreground text-sm">
@@ -182,7 +196,7 @@ function VoiceRecorder({ onParseSuccess }: { onParseSuccess: (data: VoiceExpense
 				) : (
 					<p className="text-muted-foreground italic">
 						{selectedLang === "vi-VN"
-							? "Thử: \"Tiêu 100 nghìn cho cà phê\" hoặc \"Mua đồ ăn 200 nghìn hôm qua\""
+							? 'Thử: "Tiêu 100 nghìn cho cà phê" hoặc "Mua đồ ăn 200 nghìn hôm qua"'
 							: 'Try: "Spent 45 dollars on coffee" or "Grocery shopping 120 VND yesterday"'}
 					</p>
 				)}
@@ -260,13 +274,6 @@ function VoiceExpenseReview({ voiceData, onBack }: VoiceExpenseReviewProps) {
 
 	return (
 		<>
-			<DialogHeader>
-				<DialogTitle>Review Expense</DialogTitle>
-				<DialogDescription>
-					Review the parsed details and make any corrections before creating the expense.
-				</DialogDescription>
-			</DialogHeader>
-
 			<div className="flex flex-col gap-4">
 				{/* Confidence badge */}
 				<div className="flex items-center gap-2">

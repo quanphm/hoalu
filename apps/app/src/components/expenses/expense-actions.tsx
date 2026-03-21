@@ -40,6 +40,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
+	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
@@ -76,6 +77,7 @@ export function CreateExpenseDialogContent() {
 			<DialogHeader>
 				<DialogTitle>Create new expense</DialogTitle>
 				<DialogDescription>Add a new transaction to track your spending.</DialogDescription>
+				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateExpenseForm />
 		</DialogPopup>
@@ -303,9 +305,7 @@ function CreateExpenseForm() {
 						<DialogFooter>
 							<Field orientation="horizontal" className="justify-between">
 								{trigger}
-								<form.SubscribeButton disabled={form.state.isSubmitting}>
-									Create expense
-								</form.SubscribeButton>
+								<form.SubscribeButton>Create expense</form.SubscribeButton>
 							</Field>
 						</DialogFooter>
 					)}
@@ -356,12 +356,13 @@ export function DeleteExpenseDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Delete this expense?</DialogTitle>
-				<WarningMessage>
-					The expense will be deleted and removed from your history. This action cannot be undone.
-				</WarningMessage>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				The expense will be deleted and removed from your history. This action cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="secondary" />}>Cancel</DialogClose>
+				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
@@ -457,6 +458,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
+			await sleep(5000);
 			await mutation.mutateAsync({
 				id: props.data.id,
 				payload: {
@@ -491,6 +493,8 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 	useEffect(() => {
 		form.reset();
 	}, [props.data.recurring_bill_id, form]);
+
+	console.log(form.state);
 
 	return (
 		<form.AppForm>
@@ -564,7 +568,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 							className="bg-card sticky bottom-0 w-full justify-between border-t px-4 py-2"
 						>
 							{trigger}
-							<form.SubscribeButton disabled={form.state.isSubmitting}>Update</form.SubscribeButton>
+							<form.SubscribeButton>Update</form.SubscribeButton>
 						</Field>
 					)}
 				</FilesCompactUpload>
@@ -640,4 +644,8 @@ export function ExpenseSearch() {
 			</div>
 		</div>
 	);
+}
+
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
