@@ -19,7 +19,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
@@ -71,7 +71,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get version from apps/app/package.json
         id: version
@@ -112,7 +112,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -137,15 +137,8 @@ jobs:
         working-directory: apps/desktop
 
       - name: Build Tauri app (unsigned)
-        run: bun tauri build --target ${{ matrix.target }}
+        run: bun tauri build --target ${{ matrix.target }} --no-sign
         working-directory: apps/desktop
-        env:
-          # Explicitly disable code signing
-          APPLE_CERTIFICATE: ""
-          APPLE_CERTIFICATE_PASSWORD: ""
-          APPLE_SIGNING_IDENTITY: ""
-          TAURI_SIGNING_PRIVATE_KEY: ""
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
 
       - name: Find and rename DMG file
         id: find_dmg
