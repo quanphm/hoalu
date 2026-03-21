@@ -82,15 +82,33 @@ jobs:
 
       - name: Create or update release
         id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: "v${{ steps.version.outputs.version }}"
-          body: |
-            Version ${{ steps.version.outputs.version }}
-          draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
-          prerelease: false
-          allow_updates: true
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          DRAFT_FLAG=""
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}" = "true" ]; then
+            DRAFT_FLAG="--draft"
+          fi
+
+          # Check if release exists
+          if gh release view "$TAG" --json id 2>/dev/null; then
+            echo "Release $TAG already exists, updating..."
+            gh release edit "$TAG" \
+              --title "$TAG" \
+              --notes "Version ${{ steps.version.outputs.version }}" \
+              $DRAFT_FLAG
+          else
+            echo "Creating new release $TAG..."
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes "Version ${{ steps.version.outputs.version }}" \
+              $DRAFT_FLAG \
+              --prerelease=false
+          fi
+
+          # Get release info for outputs
+          RELEASE_INFO=$(gh release view "$TAG" --json id,url)
+          echo "id=$(echo "$RELEASE_INFO" | jq -r '.id')" >> $GITHUB_OUTPUT
+          echo "upload_url=$(echo "$RELEASE_INFO" | jq -r '.url')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -155,9 +173,9 @@ jobs:
           echo "Renamed to: $RENAMED_DMG"
 
       - name: Upload to release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.check-version-bump.outputs.tag }}
-          files: ${{ steps.find_dmg.outputs.renamed_dmg }}
+        run: |
+          gh release upload "${{ needs.check-version-bump.outputs.tag }}" \
+            "${{ steps.find_dmg.outputs.renamed_dmg }}" \
+            --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
