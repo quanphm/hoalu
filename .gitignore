@@ -3,6 +3,7 @@ node_modules
 
 build
 dist
+dist-ssr
 dev-dist
 out
 pg-data
@@ -13,6 +14,10 @@ pg-data
 .next
 .tanstack
 .react-email
+
+# Tauri
+*.local
+**/src-tauri/target/
 
 # debug
 npm-debug.log*

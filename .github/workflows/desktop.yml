@@ -1,0 +1,168 @@
+name: Deployment - Desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: Force a release even if tag exists
+        type: boolean
+        default: false
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.read_version.outputs.value }}
+      tag_name: ${{ steps.create_tag.outputs.tag_name }}
+      needs_release: ${{ steps.create_tag.outputs.tag_existed != 'true' }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from Cargo.toml
+        uses: SebRollen/toml-action@v1.0.2
+        id: read_version
+        with:
+          file: apps/desktop/src-tauri/Cargo.toml
+          field: "package.version"
+
+      - name: Create tag
+        id: create_tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = `desktop-v${{ steps.read_version.outputs.value }}`;
+            const tagRef = `tags/${tag}`;
+
+            core.setOutput("tag_name", tag);
+
+            let tagExisted = true;
+
+            try {
+              await github.rest.git.getRef({
+                ref: tagRef,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              core.notice(`Release skipped — tag '${tag}' already exists. Update the version in 'apps/desktop/src-tauri/Cargo.toml' to make a new release.`);
+            } catch (error) {
+              if ("status" in error && error.status === 404) tagExisted = false;
+              else throw error;
+            }
+
+            core.setOutput("tag_existed", tagExisted);
+
+            if (!tagExisted) {
+              await github.rest.git.createRef({
+                ref: `refs/${tagRef}`,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: context.sha,
+              });
+            }
+
+      - name: Create draft GitHub Release
+        if: ${{ steps.create_tag.outputs.tag_existed != 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Hoalu Desktop v${{ steps.read_version.outputs.value }}"
+          tag_name: ${{ steps.create_tag.outputs.tag_name }}
+          draft: true
+          generate_release_notes: true
+
+  build:
+    needs: draft
+    if: ${{ needs.draft.outputs.needs_release == 'true' }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Rust targets
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - name: Create Apple API Key file
+        run: echo "${{ secrets.APPLE_API_KEY_FILE }}" > api.p8
+
+      - name: Import code signing certificates
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+
+      - name: Build and upload via tauri-action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Code signing
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          # Notarization
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_PATH: ${{ github.workspace }}/api.p8
+          # Tauri updater signing
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ needs.draft.outputs.tag_name }}
+          releaseName: "Hoalu Desktop v${{ needs.draft.outputs.version }}"
+          releaseBody: |
+            ## Hoalu Desktop v${{ needs.draft.outputs.version }}
+
+            ### Installation
+            Download the `.dmg` file for your Mac:
+            - **Apple Silicon (M1/M2/M3+)**: `Hoalu_*_aarch64.dmg`
+            - **Intel Mac**: `Hoalu_*_x64.dmg`
+
+            Open the DMG and drag `Hoalu.app` to your Applications folder.
+
+            ### Auto-Updates
+            The app includes automatic updates. You'll be notified when a new version is available.
+          releaseDraft: true
+          prerelease: false
+          appVersion: ${{ needs.draft.outputs.version }}
+          projectPath: apps/desktop
+          args: ${{ matrix.args }}
+
+  publish:
+    needs: [draft, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Publish GitHub Release (undraft)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.draft.outputs.tag_name }}
+          draft: false

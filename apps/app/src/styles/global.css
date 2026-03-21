@@ -17,7 +17,7 @@
 
 @layer base {
 	body {
-		@apply relative bg-transparent text-foreground;
+		@apply relative bg-background text-foreground;
 		@apply font-sans;
 		letter-spacing: var(--tracking-normal);
 	}
