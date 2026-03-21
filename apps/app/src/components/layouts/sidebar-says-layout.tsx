@@ -76,7 +76,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset className="scrollbar-thin calc(100vh - 1rem) overflow-auto border">
+			<SidebarInset className="scrollbar-thin h-[calc(100vh-1rem)] overflow-auto border">
 				{children}
 			</SidebarInset>
 		</SidebarProvider>
