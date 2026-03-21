@@ -81,10 +81,6 @@ jobs:
           echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION"
 
-      - name: Update Cargo.toml
-        run: |
-          sed -i "s/^version = \"${{ steps.current.outputs.current }}\"/version = \"${{ steps.new.outputs.new }}\"/" apps/desktop/src-tauri/Cargo.toml
-
       - name: Update all package.json files
         run: |
           # Find and update all package.json files
@@ -109,8 +105,4 @@ jobs:
             **From:** ${{ steps.current.outputs.current }}
             **To:** ${{ steps.new.outputs.new }}
             **Type:** ${{ inputs.version_type }}
-
-            ### Changes
-            - Updated `Cargo.toml` version
-            - Updated `package.json` version (if applicable)
           delete-branch: true

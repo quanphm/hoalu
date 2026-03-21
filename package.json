@@ -29,10 +29,7 @@
 		"lint:fix": "oxlint --fix",
 		"format": "oxfmt --write .",
 		"format:check": "oxfmt --check .",
-		"knip": "knip-bun",
-		"desktop:dev": "cd apps/desktop && bun tauri:dev",
-		"desktop:prod": "cd apps/desktop && bun tauri:prod",
-		"desktop:build": "cd apps/desktop && bun run tauri:build:prod"
+		"knip": "knip-bun"
 	},
 	"devDependencies": {
 		"knip": "^5.88.1",
