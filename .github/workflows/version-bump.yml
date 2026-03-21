@@ -91,6 +91,14 @@ jobs:
             fi
           done
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Update lock file
+        run: bun install
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
