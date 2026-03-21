@@ -38,6 +38,7 @@ interface Props {
 
 export function SelectCategoryField(props: Props) {
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [comboboxOpen, setComboboxOpen] = useState(false);
 
 	const field = useFieldContext<string>();
 	const { value } = field.state;
@@ -52,6 +53,13 @@ export function SelectCategoryField(props: Props) {
 
 	const selectedOption = categoryOptions.find((opt) => opt.value === value) ?? null;
 
+	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter" && !comboboxOpen) {
+			event.preventDefault();
+			setComboboxOpen(true);
+		}
+	};
+
 	return (
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
@@ -63,8 +71,14 @@ export function SelectCategoryField(props: Props) {
 					}}
 					items={categoryOptions}
 					disabled={props.disabled}
+					open={comboboxOpen}
+					onOpenChange={setComboboxOpen}
 				>
-					<ComboboxInput placeholder="Select" inputClassName="h-9 items-center" />
+					<ComboboxInput
+						placeholder="Select"
+						inputClassName="h-9 items-center"
+						onKeyDown={handleComboboxInputKeyDown}
+					/>
 					<ComboboxPopup className="max-h-64">
 						<ComboboxEmpty>No result.</ComboboxEmpty>
 						<ComboboxList>

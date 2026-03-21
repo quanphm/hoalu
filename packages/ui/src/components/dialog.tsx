@@ -132,7 +132,7 @@ function DialogHeaderAction({
 			data-slot="dialog-header-action"
 			className={cn(
 				"col-start-2 row-span-2 row-start-1 flex items-center gap-2 self-center justify-self-end " +
-				"max-sm:row-start-1 max-sm:row-span-1",
+					"max-sm:row-span-1 max-sm:row-start-1",
 				className,
 			)}
 			{...props}

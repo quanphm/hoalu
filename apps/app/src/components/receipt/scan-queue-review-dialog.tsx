@@ -24,6 +24,7 @@ import {
 	DialogTitle,
 	DialogPopup,
 	DialogHeaderAction,
+	DialogPanel,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
@@ -256,129 +257,131 @@ export function ScanQueueReviewDialogContent() {
 				</DialogHeaderAction>
 			</DialogHeader>
 
-			<div className="grid gap-6 md:grid-cols-2">
-				<div className="space-y-2">
-					<div className="border-muted overflow-hidden rounded-md border">
-						{currentJob.input.previewBase64 ? (
-							<img
-								src={currentJob.input.previewBase64}
-								alt={currentJob.input.fileName}
-								className="h-auto w-full"
-							/>
-						) : (
-							<div className="bg-muted flex aspect-3/4 flex-col items-center justify-center gap-2">
-								<FileTextIcon className="text-muted-foreground size-12" />
-								<span className="text-muted-foreground max-w-[80%] truncate text-xs">
-									{currentJob.input.fileName}
-								</span>
-							</div>
-						)}
-					</div>
+			<DialogPanel>
+				<div className="grid gap-6 md:grid-cols-2">
+					<div className="space-y-2">
+						<div className="border-muted overflow-hidden rounded-md border">
+							{currentJob.input.previewBase64 ? (
+								<img
+									src={currentJob.input.previewBase64}
+									alt={currentJob.input.fileName}
+									className="h-auto w-full"
+								/>
+							) : (
+								<div className="bg-muted flex aspect-3/4 flex-col items-center justify-center gap-2">
+									<FileTextIcon className="text-muted-foreground size-12" />
+									<span className="text-muted-foreground max-w-[80%] truncate text-xs">
+										{currentJob.input.fileName}
+									</span>
+								</div>
+							)}
+						</div>
 
-					{/* {data && (
+						{/* {data && (
 						<div className="flex items-center gap-2">
 							<span className="text-muted-foreground text-sm">Confidence:</span>
 							<ConfidenceBadge confidence={data.confidence} />
 						</div>
 					)} */}
-					{!data && (
-						<p className="text-muted-foreground text-xs">
-							Could not extract data from this receipt.
-						</p>
-					)}
-				</div>
-
-				<div className="space-y-4">
-					<div className="space-y-2">
-						<Label htmlFor="title">Merchant Name</Label>
-						<Input
-							id="title"
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-							placeholder="Enter merchant name"
-						/>
+						{!data && (
+							<p className="text-muted-foreground text-xs">
+								Could not extract data from this receipt.
+							</p>
+						)}
 					</div>
 
-					<div className="space-y-2">
-						<Label>Amount</Label>
-						<TransactionAmountInput
-							value={amount}
-							currency={currency}
-							onValueChange={setAmount}
-							onCurrencyChange={setCurrency}
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="date">Date</Label>
-						<Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="category">Category</Label>
-						<SelectNative
-							id="category"
-							value={categoryId}
-							onChange={(e) => setCategoryId(e.target.value)}
-						>
-							<option value="">None</option>
-							{categories.map((cat) => (
-								<option key={cat.id} value={cat.id}>
-									{cat.name}
-								</option>
-							))}
-						</SelectNative>
-					</div>
-
-					{data?.items && data.items.length > 0 && (
+					<div className="space-y-4">
 						<div className="space-y-2">
-							<table className="w-full text-xs">
-								<thead>
-									<tr className="border-b">
-										<th className="py-1 text-left font-medium">Item</th>
-										<th className="py-1 text-right font-medium">Price</th>
-									</tr>
-								</thead>
-								<tbody>
-									{data.items.map((item, idx) => (
-										<tr key={idx} className="border-b last:border-0">
-											<td className="py-1 pr-4">
-												{item.name}
-												{item.quantity && item.quantity > 1 && (
-													<span className="text-muted-foreground ml-1">x{item.quantity}</span>
-												)}
-											</td>
-											<td className="py-1 text-right tabular-nums">
-												{item.price != null ? formatCurrency(item.price, currency) : "—"}
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
+							<Label htmlFor="title">Merchant Name</Label>
+							<Input
+								id="title"
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
+								placeholder="Enter merchant name"
+							/>
 						</div>
-					)}
 
-					<div className="mt-4 space-y-2">
-						<Label>Something wrong? Describe the issue</Label>
-						<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
-							<EditorContent editor={feedbackEditor} />
+						<div className="space-y-2">
+							<Label>Amount</Label>
+							<TransactionAmountInput
+								value={amount}
+								currency={currency}
+								onValueChange={setAmount}
+								onCurrencyChange={setCurrency}
+							/>
 						</div>
-						<Button
-							variant="secondary"
-							size="sm"
-							disabled={isFeedbackEmpty}
-							onClick={handleRefine}
-							className="w-full"
-						>
-							Send message
-						</Button>
+
+						<div className="space-y-2">
+							<Label htmlFor="date">Date</Label>
+							<Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="category">Category</Label>
+							<SelectNative
+								id="category"
+								value={categoryId}
+								onChange={(e) => setCategoryId(e.target.value)}
+							>
+								<option value="">None</option>
+								{categories.map((cat) => (
+									<option key={cat.id} value={cat.id}>
+										{cat.name}
+									</option>
+								))}
+							</SelectNative>
+						</div>
+
+						{data?.items && data.items.length > 0 && (
+							<div className="space-y-2">
+								<table className="w-full text-xs">
+									<thead>
+										<tr className="border-b">
+											<th className="py-1 text-left font-medium">Item</th>
+											<th className="py-1 text-right font-medium">Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data.items.map((item, idx) => (
+											<tr key={idx} className="border-b last:border-0">
+												<td className="py-1 pr-4">
+													{item.name}
+													{item.quantity && item.quantity > 1 && (
+														<span className="text-muted-foreground ml-1">x{item.quantity}</span>
+													)}
+												</td>
+												<td className="py-1 text-right tabular-nums">
+													{item.price != null ? formatCurrency(item.price, currency) : "—"}
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						)}
+
+						<div className="mt-4 space-y-2">
+							<Label>Something wrong? Describe the issue</Label>
+							<div className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 overflow-hidden rounded-lg border focus-within:ring-[3px] focus-within:outline-none">
+								<EditorContent editor={feedbackEditor} />
+							</div>
+							<Button
+								variant="secondary"
+								size="sm"
+								disabled={isFeedbackEmpty}
+								onClick={handleRefine}
+								className="w-full"
+							>
+								Send message
+							</Button>
+						</div>
 					</div>
 				</div>
-			</div>
+				{error && (
+					<div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">{error}</div>
+				)}
+			</DialogPanel>
 
-			{error && (
-				<div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">{error}</div>
-			)}
 			<DialogFooter>
 				<Button onClick={handleCreateExpense} disabled={isSubmitting}>
 					{isSubmitting ? "Creating..." : "Create Expense"}

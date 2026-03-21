@@ -34,7 +34,7 @@ export function SelectWithGroupsField(props: Props) {
 					value={field.state.value}
 					onValueChange={(value) => value && field.handleChange(value)}
 				>
-					<SelectTrigger className="bg-muted text-foreground focus:border-ring focus:ring-ring/20 focus:ring-[3px]">
+					<SelectTrigger className="text-foreground focus:border-ring focus:ring-ring/20 focus:ring-[3px]">
 						<SelectValue />
 					</SelectTrigger>
 
