@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Get version from apps/app/package.json
+      - name: Get version
         id: version
         run: |
           VERSION=$(grep '"version"' apps/app/package.json | head -1 | cut -d'"' -f4)
@@ -91,73 +91,5 @@ jobs:
           draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
           prerelease: false
           allow_updates: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-macos:
-    needs: [check-version-bump, create-release]
-    if: github.event_name == 'workflow_dispatch' || needs.check-version-bump.outputs.is_version_bump == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: aarch64-apple-darwin
-            arch: aarch64
-            asset_name: hoalu-desktop-darwin-aarch64.dmg
-          - target: x86_64-apple-darwin
-            arch: x86_64
-            asset_name: hoalu-desktop-darwin-x86_64.dmg
-    runs-on: macos-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: apps/desktop/src-tauri
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Build frontend
-        run: bun run build
-        working-directory: apps/desktop
-
-      - name: Build Tauri app (unsigned)
-        run: bun tauri build --target ${{ matrix.target }} --no-sign
-        working-directory: apps/desktop
-
-      - name: Find and rename DMG file
-        id: find_dmg
-        run: |
-          ORIGINAL_DMG=$(find apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg -name "*.dmg" | head -1)
-          RENAMED_DMG="apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/${{ matrix.asset_name }}"
-
-          # Rename the DMG file
-          cp "$ORIGINAL_DMG" "$RENAMED_DMG"
-
-          echo "original_dmg=$ORIGINAL_DMG" >> $GITHUB_OUTPUT
-          echo "renamed_dmg=$RENAMED_DMG" >> $GITHUB_OUTPUT
-          echo "Original DMG: $ORIGINAL_DMG"
-          echo "Renamed to: $RENAMED_DMG"
-
-      - name: Upload to release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.check-version-bump.outputs.tag }}
-          files: ${{ steps.find_dmg.outputs.renamed_dmg }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
