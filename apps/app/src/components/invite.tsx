@@ -65,7 +65,7 @@ export function InviteDialog() {
 				<MailPlusIcon className="size-4" />
 				Invite people
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[480px]" aria-describedby={undefined}>
+			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>Invite people to your workspace</DialogTitle>
 				</DialogHeader>

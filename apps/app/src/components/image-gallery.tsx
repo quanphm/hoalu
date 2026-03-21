@@ -1,6 +1,12 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Dialog, DialogContent } from "@hoalu/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogHeaderAction,
+	DialogTitle,
+} from "@hoalu/ui/dialog";
 import { useEffect, useState } from "react";
 
 interface ImageItem {
@@ -67,61 +73,30 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 			</div>
 
 			<Dialog open={open} onOpenChange={(o) => !o && close()}>
-				<DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden">
-					{/* Header */}
-					<div className="px-6 pt-6 pb-4 pr-12">
-						<h2 className="text-xl font-semibold leading-none">Attachment preview</h2>
-					</div>
-
-					{/* Image area */}
-					<div className="relative flex items-center justify-center bg-black/90 min-h-[40vh]">
+				<DialogContent className="max-w-3xl">
+					<DialogHeader>
+						<DialogTitle>Attachment preview</DialogTitle>
+						<DialogHeaderAction>
+							<Button size="icon" variant="outline" onClick={() => goTo((selectedIndex ?? 0) - 1)}>
+								<ChevronLeftIcon className="size-5" />
+							</Button>
+							<Button size="icon" variant="outline" onClick={() => goTo((selectedIndex ?? 0) + 1)}>
+								<ChevronRightIcon className="size-5" />
+							</Button>
+						</DialogHeaderAction>
+					</DialogHeader>
+					<div className="relative flex min-h-[40vh] items-center justify-center bg-black/90">
 						{current && (
 							<img
 								key={current.presignedUrl}
 								src={current.presignedUrl}
 								alt={current.description ?? ""}
-								className="max-h-[60vh] w-full object-contain"
+								className="h-[60vh] object-contain md:h-[72vh]"
 							/>
 						)}
-						{total > 1 && (
-							<>
-								<Button
-									type="button"
-									size="icon"
-									variant="ghost"
-									className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
-									onClick={() => goTo((selectedIndex ?? 0) - 1)}
-								>
-									<ChevronLeftIcon className="size-5" />
-								</Button>
-								<Button
-									type="button"
-									size="icon"
-									variant="ghost"
-									className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white hover:bg-black/60"
-									onClick={() => goTo((selectedIndex ?? 0) + 1)}
-								>
-									<ChevronRightIcon className="size-5" />
-								</Button>
-								<div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-									{data.map((_, i) => (
-										<button
-											key={i}
-											type="button"
-											className={`size-1.5 rounded-full transition-colors ${i === selectedIndex ? "bg-white" : "bg-white/40"}`}
-											onClick={() => setSelectedIndex(i)}
-										/>
-									))}
-								</div>
-							</>
-						)}
 					</div>
-
-					{/* Footer — only shown when there's a description */}
 					{current?.description && (
-						<div className="bg-muted/50 border-t px-6 py-4">
-							<p className="text-muted-foreground text-sm">{current.description}</p>
-						</div>
+						<p className="text-muted-foreground text-sm">{current.description}</p>
 					)}
 				</DialogContent>
 			</Dialog>

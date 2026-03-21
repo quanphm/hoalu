@@ -112,7 +112,8 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 					"has-data-[slot=dialog-description]:grid-cols-1 " +
 					"has-data-[slot=dialog-header-action]:grid-cols-[1fr_auto] " +
 					"in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3 " +
-					"max-sm:pb-4",
+					"max-sm:grid-cols-[1fr_auto] max-sm:grid-rows-[auto_auto] " +
+					"[&_[data-slot=dialog-description]]:max-sm:col-span-2",
 				className,
 			)}
 			{...props}
@@ -130,7 +131,8 @@ function DialogHeaderAction({
 		<div
 			data-slot="dialog-header-action"
 			className={cn(
-				"col-start-2 row-span-2 row-start-1 flex items-center gap-2 self-center justify-self-end",
+				"col-start-2 row-span-2 row-start-1 flex items-center gap-2 self-center justify-self-end " +
+				"max-sm:row-start-1 max-sm:row-span-1",
 				className,
 			)}
 			{...props}
