@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
 	Combobox,
 	ComboboxEmpty,
@@ -23,10 +24,18 @@ interface Props {
 }
 
 export function SelectWithSearchField(props: Props) {
+	const [comboboxOpen, setComboboxOpen] = useState(false);
 	const field = useFieldContext<string>();
 	const { value } = field.state;
 
 	const selectedOption = props.options.find((opt) => opt.value === value) ?? null;
+
+	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter" && !comboboxOpen) {
+			event.preventDefault();
+			setComboboxOpen(true);
+		}
+	};
 
 	return (
 		<Field>
@@ -38,8 +47,14 @@ export function SelectWithSearchField(props: Props) {
 				}}
 				items={props.options}
 				disabled={props.disabled}
+				open={comboboxOpen}
+				onOpenChange={setComboboxOpen}
 			>
-				<ComboboxInput placeholder="Select" inputClassName="h-9 items-center" />
+				<ComboboxInput
+					placeholder="Select"
+					inputClassName="h-9 items-center"
+					onKeyDown={handleComboboxInputKeyDown}
+				/>
 				<ComboboxPopup className="max-h-64">
 					<ComboboxEmpty>No result.</ComboboxEmpty>
 					<ComboboxList>

@@ -44,7 +44,7 @@ function playBuffer(buffer: AudioBuffer): void {
 	}
 
 	const gain = c.createGain();
-	gain.gain.value = 0.5;
+	// gain.gain.value = 0.5;
 
 	const source = c.createBufferSource();
 	source.buffer = buffer;

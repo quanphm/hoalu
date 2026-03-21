@@ -45,14 +45,13 @@ interface Props {
 
 export function SelectRecurringBillField(props: Props) {
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [comboboxOpen, setComboboxOpen] = useState(false);
 
 	const field = useFieldContext<string | undefined>();
 	const { value } = field.state;
 
 	const bills = useLiveQueryRecurringBills();
-	const filtered = props.repeat
-		? bills.filter((b) => b.repeat === props.repeat)
-		: bills;
+	const filtered = props.repeat ? bills.filter((b) => b.repeat === props.repeat) : bills;
 
 	const options: RecurringBillOption[] = [
 		{ value: "", label: "None" },
@@ -60,6 +59,13 @@ export function SelectRecurringBillField(props: Props) {
 	];
 
 	const selectedOption = options.find((o) => o.value === (value ?? "")) ?? options[0];
+
+	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter" && !comboboxOpen) {
+			event.preventDefault();
+			setComboboxOpen(true);
+		}
+	};
 
 	return (
 		<Field>
@@ -72,8 +78,14 @@ export function SelectRecurringBillField(props: Props) {
 					}}
 					items={options}
 					disabled={props.disabled}
+					open={comboboxOpen}
+					onOpenChange={setComboboxOpen}
 				>
-					<ComboboxInput placeholder="Select" inputClassName="h-9 items-center" />
+					<ComboboxInput
+						placeholder="Select"
+						inputClassName="h-9 items-center"
+						onKeyDown={handleComboboxInputKeyDown}
+					/>
 					<ComboboxPopup className="max-h-64">
 						<ComboboxEmpty>No result.</ComboboxEmpty>
 						<ComboboxList>
