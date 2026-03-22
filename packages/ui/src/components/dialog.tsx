@@ -104,16 +104,16 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			data-slot="dialog-header"
 			className={cn(
-				"bg-muted/50 @container/dialog-header -mx-6 -mt-6 grid auto-rows-min items-start gap-1 border-b p-4 " +
-					"not-has-data-[slot=dialog-description]:gap-0 " +
-					"not-has-data-[slot=dialog-description]:grid-cols-[1fr_auto] " +
-					"not-has-data-[slot=dialog-description]:grid-rows-1 " +
-					"has-data-[slot=dialog-description]:grid-rows-[auto_auto] " +
-					"has-data-[slot=dialog-description]:grid-cols-1 " +
-					"has-data-[slot=dialog-header-action]:grid-cols-[1fr_auto] " +
-					"in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3 " +
-					"max-sm:grid-cols-[1fr_auto] max-sm:grid-rows-[auto_auto] " +
-					"[&_[data-slot=dialog-description]]:max-sm:col-span-2",
+				"bg-muted/50 @container/dialog-header -mx-6 -mt-6 grid auto-rows-min items-start gap-1 border-b p-4",
+				"not-has-data-[slot=dialog-description]:gap-0",
+				"not-has-data-[slot=dialog-description]:grid-cols-[1fr_auto]",
+				"not-has-data-[slot=dialog-description]:grid-rows-1",
+				"has-data-[slot=dialog-description]:grid-rows-[auto_auto]",
+				"has-data-[slot=dialog-description]:grid-cols-1",
+				"has-data-[slot=dialog-header-action]:grid-cols-[1fr_auto]",
+				"in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3",
+				"max-sm:grid-cols-[1fr_auto] max-sm:grid-rows-[auto_auto]",
+				"**:data-[slot=dialog-description]:max-sm:col-span-2",
 				className,
 			)}
 			{...props}

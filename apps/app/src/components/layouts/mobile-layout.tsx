@@ -1,8 +1,11 @@
+import { useState } from "react";
+
 import { ButtonLink } from "#app/components/button-link.tsx";
+import { CommandPalette } from "#app/components/command-palette/command-palette.tsx";
 import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
-import { CheckIcon, ChevronsUpDownIcon, PaletteIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
@@ -39,6 +42,7 @@ export function MobileLayout({ children }: LayoutProps) {
 function MobileHeader() {
 	const params = useParams({ strict: false });
 	const { mode, setTheme } = useTheme();
+	const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -49,8 +53,8 @@ function MobileHeader() {
 	}
 
 	return (
-		<header className="bg-background border-b">
-			<div className="flex h-14 items-center justify-between px-2 md:px-4">
+		<header className="bg-background border-b pt-[env(safe-area-inset-top)]">
+			<div className="flex min-h-14 items-center justify-between px-2 md:px-4">
 				<div className="flex items-center gap-2">
 					<Button
 						variant="outline"
@@ -67,7 +71,16 @@ function MobileHeader() {
 						<ChevronsUpDownIcon className="text-muted-foreground h-3 w-3" aria-hidden="true" />
 					</Button>
 				</div>
-				<div className="flex items-center">
+				<div className="flex items-center gap-1">
+					<Button
+						variant="ghost"
+						size="icon"
+						aria-label="Search"
+						onClick={() => setCommandPaletteOpen(true)}
+					>
+						<SearchIcon className="size-5" />
+					</Button>
+					<CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={<Button variant="ghost" size="icon" aria-label="Select theme" />}
