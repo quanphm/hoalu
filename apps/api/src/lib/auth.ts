@@ -127,13 +127,25 @@ export const auth = betterAuth({
 							type: "cash",
 							currency: workspaceDefaultCurrency ?? "USD",
 						});
+
 						// default categories
 						await tx.insert(category).values(
-							[...DEFAULT_EXPENSE_CATEGORIES, ...DEFAULT_INCOME_CATEGORIES].map((c) => ({
+							DEFAULT_EXPENSE_CATEGORIES.map((c) => ({
 								id: generateId({ use: "uuid" }),
 								name: c.name,
 								description: c.description,
 								color: c.color,
+								type: "expense" as const,
+								workspaceId: workspace.id,
+							})),
+						);
+						await tx.insert(category).values(
+							DEFAULT_INCOME_CATEGORIES.map((c) => ({
+								id: generateId({ use: "uuid" }),
+								name: c.name,
+								description: c.description,
+								color: c.color,
+								type: "income" as const,
 								workspaceId: workspace.id,
 							})),
 						);

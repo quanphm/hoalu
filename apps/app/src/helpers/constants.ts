@@ -69,6 +69,11 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "shift+c",
 		enabled: true,
 	},
+	create_income: {
+		label: `${kbdSymbols.SHIFT} I`,
+		hotkey: "shift+i",
+		enabled: true,
+	},
 	goto_home: {
 		label: "GH",
 		hotkey: "g>h",
@@ -82,6 +87,11 @@ export const KEYBOARD_SHORTCUTS = {
 	goto_expenses: {
 		label: "E",
 		hotkey: "e",
+		enabled: true,
+	},
+	goto_incomes: {
+		label: "I",
+		hotkey: "i",
 		enabled: true,
 	},
 	goto_tasks: {

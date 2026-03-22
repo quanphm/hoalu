@@ -58,19 +58,29 @@ export const DEFAULT_INCOME_CATEGORIES: {
 	color: ColorSchema;
 }[] = [
 	{
-		name: "💵 Salary",
+		name: "💼 Salary",
 		color: "blue",
 		description: "Income from employment or work",
 	},
 	{
-		name: "💰 Investments",
+		name: "🎉 Bonus",
+		color: "purple",
+		description: "Additional income from bonuses or commissions",
+	},
+	{
+		name: "🏢 Business Revenue",
+		color: "red",
+		description: "Income from business operations or self-employment",
+	},
+	{
+		name: "📊 Investments",
 		color: "green",
 		description: "Income from investment activities",
 	},
 	{
-		name: "🏘️ Passives",
+		name: "💰 Tax Refund",
 		color: "yellow",
-		description: "Income from passive sources like rental properties or royalties",
+		description: "Income from tax refunds",
 	},
 ];
 

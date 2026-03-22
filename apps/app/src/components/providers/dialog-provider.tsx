@@ -9,6 +9,10 @@ import {
 	DeleteCategoryDialogContent,
 } from "#app/components/categories/category-actions.tsx";
 import {
+	CreateIncomeDialogContent,
+	DeleteIncomeDialogContent,
+} from "#app/components/incomes/income-actions.tsx";
+import {
 	ArchiveRecurringBillDialogContent,
 	CreateRecurringBillDialogContent,
 	DeleteRecurringBillDialogContent,
@@ -28,9 +32,9 @@ import {
 	CreateExpenseDialogContent,
 	DeleteExpenseDialogContent,
 } from "../expenses/expense-actions";
-import { ScanReceiptDialogContent } from "../receipt/scan-receipt-dialog";
-import { ScanQueueReviewDialogContent } from "../receipt/scan-queue-review-dialog.tsx";
 import { QuickExpensesDialogContent } from "../quick-expenses/quick-expenses-dialog.tsx";
+import { ScanQueueReviewDialogContent } from "../receipt/scan-queue-review-dialog.tsx";
+import { ScanReceiptDialogContent } from "../receipt/scan-receipt-dialog";
 import { VoiceExpenseDialogContent } from "../voice/voice-expense-dialog";
 import {
 	CreateWalletDialogContent,
@@ -109,6 +113,11 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 			return <UnarchiveRecurringBillDialogContent />;
 		case "delete-recurring-bill":
 			return <DeleteRecurringBillDialogContent />;
+
+		case "create-income":
+			return <CreateIncomeDialogContent />;
+		case "delete-income":
+			return <DeleteIncomeDialogContent />;
 
 		default:
 			return <DialogPopup>Not supported dialog</DialogPopup>;

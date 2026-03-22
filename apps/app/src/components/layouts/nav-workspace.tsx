@@ -8,6 +8,7 @@ import {
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
+	TrendingUpIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
 } from "@hoalu/icons/tabler";
@@ -60,31 +61,50 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/expenses"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
-									/>
-								}
-								tooltip="Expenses"
-							>
-								<ArrowsExchangeIcon />
-								<span>Expenses</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							render={
+								<Link
+									to="/$slug/expenses"
+									params={{ slug }}
+									disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
+								/>
+							}
+							tooltip="Expenses"
+						>
+							<ArrowsExchangeIcon />
+							<span>Expenses</span>
+							<SidebarMenuBadge>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
+							</SidebarMenuBadge>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
 
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
-								tooltip="Recurring Bills"
-							>
-								<CalendarIcon />
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							render={
+								<Link
+									to="/$slug/incomes"
+									params={{ slug }}
+									disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
+								/>
+							}
+							tooltip="Income"
+						>
+							<TrendingUpIcon />
+							<span>Income</span>
+							<SidebarMenuBadge>
+								<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
+							</SidebarMenuBadge>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
+
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
+							tooltip="Recurring Bills"
+						>
+							<CalendarIcon />
 								<span>Recurring Bills</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />

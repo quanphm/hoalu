@@ -23,6 +23,7 @@ import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashb
 import { Route as DashboardSlugTasksRouteImport } from './routes/_dashboard/$slug/tasks'
 import { Route as DashboardSlugRecurringBillsRouteImport } from './routes/_dashboard/$slug/recurring-bills'
 import { Route as DashboardSlugLibraryRouteImport } from './routes/_dashboard/$slug/library'
+import { Route as DashboardSlugIncomesRouteImport } from './routes/_dashboard/$slug/incomes'
 import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
 import { Route as DashboardSlugExpensesRouteImport } from './routes/_dashboard/$slug/expenses'
 import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
@@ -101,6 +102,11 @@ const DashboardSlugLibraryRoute = DashboardSlugLibraryRouteImport.update({
   path: '/library',
   getParentRoute: () => DashboardSlugRouteRoute,
 } as any)
+const DashboardSlugIncomesRoute = DashboardSlugIncomesRouteImport.update({
+  id: '/incomes',
+  path: '/incomes',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
 const DashboardSlugFilesRoute = DashboardSlugFilesRouteImport.update({
   id: '/files',
   path: '/files',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/$slug/files': typeof DashboardSlugFilesRoute
+  '/$slug/incomes': typeof DashboardSlugIncomesRoute
   '/$slug/library': typeof DashboardSlugLibraryRoute
   '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/$slug/files': typeof DashboardSlugFilesRoute
+  '/$slug/incomes': typeof DashboardSlugIncomesRoute
   '/$slug/library': typeof DashboardSlugLibraryRoute
   '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
   '/$slug/tasks': typeof DashboardSlugTasksRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
   '/_dashboard/$slug/expenses': typeof DashboardSlugExpensesRoute
   '/_dashboard/$slug/files': typeof DashboardSlugFilesRoute
+  '/_dashboard/$slug/incomes': typeof DashboardSlugIncomesRoute
   '/_dashboard/$slug/library': typeof DashboardSlugLibraryRoute
   '/_dashboard/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
   '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/$slug/settings'
     | '/$slug/expenses'
     | '/$slug/files'
+    | '/$slug/incomes'
     | '/$slug/library'
     | '/$slug/recurring-bills'
     | '/$slug/tasks'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/$slug/expenses'
     | '/$slug/files'
+    | '/$slug/incomes'
     | '/$slug/library'
     | '/$slug/recurring-bills'
     | '/$slug/tasks'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug/settings'
     | '/_dashboard/$slug/expenses'
     | '/_dashboard/$slug/files'
+    | '/_dashboard/$slug/incomes'
     | '/_dashboard/$slug/library'
     | '/_dashboard/$slug/recurring-bills'
     | '/_dashboard/$slug/tasks'
@@ -376,6 +388,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugLibraryRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
+    '/_dashboard/$slug/incomes': {
+      id: '/_dashboard/$slug/incomes'
+      path: '/incomes'
+      fullPath: '/$slug/incomes'
+      preLoaderRoute: typeof DashboardSlugIncomesRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
     '/_dashboard/$slug/files': {
       id: '/_dashboard/$slug/files'
       path: '/files'
@@ -470,6 +489,7 @@ interface DashboardSlugRouteRouteChildren {
   DashboardSlugSettingsRouteRoute: typeof DashboardSlugSettingsRouteRouteWithChildren
   DashboardSlugExpensesRoute: typeof DashboardSlugExpensesRoute
   DashboardSlugFilesRoute: typeof DashboardSlugFilesRoute
+  DashboardSlugIncomesRoute: typeof DashboardSlugIncomesRoute
   DashboardSlugLibraryRoute: typeof DashboardSlugLibraryRoute
   DashboardSlugRecurringBillsRoute: typeof DashboardSlugRecurringBillsRoute
   DashboardSlugTasksRoute: typeof DashboardSlugTasksRoute
@@ -480,6 +500,7 @@ const DashboardSlugRouteRouteChildren: DashboardSlugRouteRouteChildren = {
   DashboardSlugSettingsRouteRoute: DashboardSlugSettingsRouteRouteWithChildren,
   DashboardSlugExpensesRoute: DashboardSlugExpensesRoute,
   DashboardSlugFilesRoute: DashboardSlugFilesRoute,
+  DashboardSlugIncomesRoute: DashboardSlugIncomesRoute,
   DashboardSlugLibraryRoute: DashboardSlugLibraryRoute,
   DashboardSlugRecurringBillsRoute: DashboardSlugRecurringBillsRoute,
   DashboardSlugTasksRoute: DashboardSlugTasksRoute,

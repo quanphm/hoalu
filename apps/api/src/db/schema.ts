@@ -200,7 +200,7 @@ export const category = pgTable(
 		name: text("name").notNull(),
 		description: text("description"),
 		color: colorTypeEnum().default("gray").notNull(),
-		type: categoryTypeEnum("type").default("expense").notNull(),
+		type: categoryTypeEnum().default("expense").notNull(),
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),

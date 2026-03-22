@@ -6,6 +6,7 @@ import {
 	categoryKeys,
 	expenseKeys,
 	fileKeys,
+	incomeKeys,
 	recurringBillKeys,
 	walletKeys,
 	workspaceKeys,
@@ -15,6 +16,8 @@ import type {
 	CategoryPostSchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
+	IncomePatchSchema,
+	IncomePostSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
 	WorkspaceFormSchema,
@@ -346,6 +349,98 @@ export function useParseQuickExpense() {
 			haptics.trigger("error");
 			toastManager.add({
 				title: "Couldn't parse expense",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+/**
+ * incomes
+ */
+
+export function useCreateIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: IncomePostSchema }) => {
+			const result = await apiClient.incomes.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({
+				title: "Income created.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useEditIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: IncomePatchSchema }) => {
+			const result = await apiClient.incomes.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({
+				title: "Income updated.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.incomes.delete(slug, id);
+			return result;
+		},
+		onSuccess: (rs) => {
+			haptics.trigger("warning");
+			playDropSound();
+			toastManager.add({
+				title: "Income deleted.",
+				type: "success",
+			});
+			queryClient.removeQueries({ queryKey: incomeKeys.withId(slug, rs.id) });
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
 				description: error.message,
 				type: "error",
 			});

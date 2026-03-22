@@ -34,6 +34,7 @@ interface Props {
 	description?: React.ReactNode;
 	actions?: React.ReactNode;
 	disabled?: boolean;
+	type?: "expense" | "income";
 }
 
 export function SelectCategoryField(props: Props) {
@@ -43,7 +44,10 @@ export function SelectCategoryField(props: Props) {
 	const field = useFieldContext<string>();
 	const { value } = field.state;
 
-	const categories = useLiveQueryCategories();
+	const allCategories = useLiveQueryCategories();
+	const categories = props.type
+		? allCategories?.filter((c) => c.type === props.type) ?? []
+		: allCategories ?? [];
 	const categoryOptions: CategoryOption[] = [...categories]
 		.sort((a, b) => b.total - a.total)
 		.map((c) => ({
@@ -107,6 +111,7 @@ export function SelectCategoryField(props: Props) {
 						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 					</DialogHeader>
 					<CreateCategoryForm
+						type={props.type}
 						callback={() => {
 							setDialogOpen(false);
 						}}

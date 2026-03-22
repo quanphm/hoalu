@@ -19,7 +19,7 @@ export const InsertCategorySchema = z.object({
 	type: CategoryTypeSchema,
 });
 
-export const UpdateCategorySchema = InsertCategorySchema.partial();
+export const UpdateCategorySchema = InsertCategorySchema.omit({ type: true }).partial();
 
 export const DeleteCategorySchema = z.object({
 	id: z.uuidv7(),

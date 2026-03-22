@@ -1,11 +1,15 @@
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
+import { CashFlowCard } from "#app/components/charts/cash-flow-card.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
 import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
+// import { IncomeExpenseComparison } from "#app/components/charts/income-expense-comparison.tsx";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { RecentExpenses } from "#app/components/expenses/recent-expenses.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
+import { CreateIncomeDialogTrigger } from "#app/components/incomes/income-actions.tsx";
+import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import {
 	Section,
 	SectionContent,
@@ -28,6 +32,7 @@ export const Route = createFileRoute("/_dashboard/$slug/")({
 
 function RouteComponent() {
 	const expenses = useLiveQueryExpenses();
+	const incomes = useLiveQueryIncomes();
 	const categories = useLiveQueryCategories();
 	const { totalActiveJobs } = useQueueStatus();
 
@@ -39,6 +44,7 @@ function RouteComponent() {
 					{/* <VoiceExpenseDialogTrigger /> */}
 					<QuickExpensesDialogTrigger />
 					<CreateExpenseDialogTrigger />
+					<CreateIncomeDialogTrigger />
 					<CreateWalletDialogTrigger />
 				</SectionContent>
 			</Section>
@@ -65,9 +71,15 @@ function RouteComponent() {
 					<div className="col-span-12 w-full md:col-span-7">
 						<DashboardDateFilter categories={categories} />
 					</div>
+					<div className="@container/main col-span-12 flex w-full flex-row gap-4">
+						<CashFlowCard incomes={incomes} expenses={expenses} />
+					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
 					</div>
+					{/* <div className="col-span-12 flex w-full flex-col gap-4 md:col-span-6">
+						<IncomeExpenseComparison incomes={incomes} expenses={expenses} />
+					</div> */}
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-5">
 						<ExpenseStatsRow expenses={expenses} />
 						<CategoryBreakdown expenses={expenses} categories={categories} />

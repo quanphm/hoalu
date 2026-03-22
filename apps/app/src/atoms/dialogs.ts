@@ -27,6 +27,10 @@ const DIALOG_ID = [
 	"archive-recurring-bill",
 	"unarchive-recurring-bill",
 	"delete-recurring-bill",
+
+	// income
+	"create-income",
+	"delete-income",
 ] as const;
 export type DialogId = (typeof DIALOG_ID)[number];
 
@@ -126,3 +130,6 @@ export const deleteRecurringBillDialogAtom = createDialogAtom("delete-recurring-
 
 export const scanQueueReviewDialogAtom = createDialogAtom("scan-queue-review");
 export const quickExpenseDialogAtom = createDialogAtom("quick-expense");
+
+export const createIncomeDialogAtom = createDialogAtom("create-income");
+export const deleteIncomeDialogAtom = createDialogAtom("delete-income");

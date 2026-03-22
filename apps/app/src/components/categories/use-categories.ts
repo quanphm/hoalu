@@ -1,6 +1,6 @@
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
-import { count, eq, useLiveQuery } from "@tanstack/react-db";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 
 export function useLiveQueryCategories() {
 	const workspace = useWorkspace();
@@ -27,7 +27,6 @@ export function useLiveQueryCategories() {
 					description: category.description,
 					color: category.color,
 					type: category.type,
-					total: count(category.id),
 				}));
 		},
 		[workspace.slug],

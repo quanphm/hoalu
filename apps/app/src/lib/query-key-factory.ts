@@ -42,6 +42,12 @@ export const expenseKeys = {
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "expenses"] as const,
 };
 
+export const incomeKeys = {
+	all: (slug: string) => incomeKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...incomeKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "incomes"] as const,
+};
+
 export const taskKeys = {
 	all: (slug: string) => taskKeys["~withWorkspace"](slug),
 	withId: (slug: string, id: string) => [...taskKeys.all(slug), "id", id] as const,

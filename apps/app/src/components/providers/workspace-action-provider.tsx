@@ -2,6 +2,7 @@ import {
 	commandPaletteOpenAtom,
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
+	createIncomeDialogAtom,
 	createRecurringBillDialogAtom,
 	createWalletDialogAtom,
 	dialogStateAtom,
@@ -35,6 +36,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	}, [slug, setExpenseDraft]);
 
 	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
+	const setIncomeOpen = useSetAtom(createIncomeDialogAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogAtom);
 	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
 	const setRecurringBillOpen = useSetAtom(createRecurringBillDialogAtom);
@@ -45,6 +47,17 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
 			setExpenseOpen({ state: true });
+		},
+		{
+			preventDefault: true,
+		},
+		[],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_income.hotkey,
+		() => {
+			setIncomeOpen({ state: true });
 		},
 		{
 			preventDefault: true,

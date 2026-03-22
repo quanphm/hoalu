@@ -7,6 +7,7 @@ import {
 	exchangeRateKeys,
 	expenseKeys,
 	fileKeys,
+	incomeKeys,
 	memberKeys,
 	recurringBillKeys,
 	taskKeys,
@@ -251,6 +252,58 @@ export const expenseWithIdQueryOptions = (slug: string, id: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.withId(slug, id),
 		queryFn: () => apiClient.expenses.get(slug, id),
+	});
+};
+
+/**
+ * incomes
+ */
+
+export const incomesQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: incomeKeys.all(slug),
+		queryFn: async () => {
+			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const incomes = await apiClient.incomes.list(slug);
+			const promises = incomes.map(async (income) => {
+				const { realAmount, currency: sourceCurrency } = income;
+				try {
+					const result = await queryClient.fetchQuery(
+						exchangeRatesQueryOptions({
+							from: sourceCurrency,
+							to: (workspace as any).metadata.currency,
+						}),
+					);
+					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
+					const factor = isNoCent ? 1 : 100;
+					const convertedAmount = realAmount * (result.rate / factor);
+
+					return {
+						...income,
+						convertedAmount: convertedAmount,
+					};
+				} catch (_error) {
+					return {
+						...income,
+						convertedAmount: -1,
+					};
+				}
+			});
+			const result = await Promise.all(promises);
+			return result.map((income) => {
+				return {
+					...income,
+					date: datetime.format(income.date, "yyyy-MM-dd"),
+				};
+			});
+		},
+	});
+};
+
+export const incomeWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: incomeKeys.withId(slug, id),
+		queryFn: () => apiClient.incomes.get(slug, id),
 	});
 };
 
