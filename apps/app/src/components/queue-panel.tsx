@@ -63,7 +63,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 	};
 
 	return (
-		<div className="bg-card flex items-center gap-2 rounded-md border p-2">
+		<div className="bg-card flex min-h-[66px] items-center gap-2 rounded-md border p-2">
 			<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm">
 				{job.input.previewBase64 ? (
 					<img

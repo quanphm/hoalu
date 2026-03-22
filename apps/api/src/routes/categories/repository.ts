@@ -6,7 +6,14 @@ const schemaColumns = getTableColumns(schema.category);
 type NewCategory = typeof schema.category.$inferInsert;
 
 export class CategoryRepository {
-	async findAllByWorkspaceId(param: { workspaceId: string }) {
+	async findAllByWorkspaceId(param: { workspaceId: string; type?: "expense" | "income" }) {
+		const whereClause = param.type
+			? and(
+					eq(schema.category.workspaceId, param.workspaceId),
+					eq(schema.category.type, param.type),
+				)
+			: eq(schema.category.workspaceId, param.workspaceId);
+
 		const queryData = await db
 			.select({
 				...schemaColumns,
@@ -14,7 +21,7 @@ export class CategoryRepository {
 			})
 			.from(schema.category)
 			.leftJoin(schema.expense, eq(schema.category.id, schema.expense.categoryId))
-			.where(eq(schema.category.workspaceId, param.workspaceId))
+			.where(whereClause)
 			.groupBy(schema.category.id);
 
 		return queryData;

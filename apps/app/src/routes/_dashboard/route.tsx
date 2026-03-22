@@ -16,8 +16,8 @@ export const Route = createFileRoute("/_dashboard")({
 			});
 		}
 	},
-	loader: async ({ context: { queryClient } }) => {
-		await queryClient.ensureQueryData(listWorkspacesOptions());
+	loader: ({ context: { queryClient } }) => {
+		queryClient.ensureQueryData(listWorkspacesOptions());
 	},
 	component: RouteComponent,
 });

@@ -1,9 +1,14 @@
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 import { CurrencyValue } from "./currency-value";
 
-export function TransactionAmount(props: { data: SyncedExpense }) {
+interface TransactionAmountProps {
+	amount: number;
+	convertedAmount: number;
+	currency: string;
+}
+
+export function TransactionAmount(props: { data: TransactionAmountProps }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();

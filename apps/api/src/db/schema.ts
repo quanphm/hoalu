@@ -1,4 +1,5 @@
 import {
+	PG_ENUM_CATEGORY_TYPE,
 	PG_ENUM_COLOR,
 	PG_ENUM_PRIORITY,
 	PG_ENUM_REPEAT,
@@ -173,6 +174,7 @@ export const walletTypeEnum = pgEnum("wallet_type_enum", PG_ENUM_WALLET_TYPE);
 export const priorityEnum = pgEnum("priority_enum", PG_ENUM_PRIORITY);
 export const taskStatusEnum = pgEnum("task_status_enum", PG_ENUM_TASK_STATUS);
 export const repeatEnum = pgEnum("repeat_enum", PG_ENUM_REPEAT);
+export const categoryTypeEnum = pgEnum("category_type_enum", PG_ENUM_CATEGORY_TYPE);
 
 export const fxRate = pgTable(
 	"fx_rate",
@@ -198,6 +200,7 @@ export const category = pgTable(
 		name: text("name").notNull(),
 		description: text("description"),
 		color: colorTypeEnum().default("gray").notNull(),
+		type: categoryTypeEnum().default("expense").notNull(),
 		workspaceId: uuid("workspace_id")
 			.notNull()
 			.references(() => workspace.id, { onDelete: "cascade" }),
@@ -205,7 +208,7 @@ export const category = pgTable(
 		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 	},
 	(table) => [
-		unique("category_workspace_id_name_unique").on(table.workspaceId, table.name),
+		unique("category_workspace_name_type_unique").on(table.workspaceId, table.name, table.type),
 		index("category_workspace_id_idx").on(table.workspaceId),
 	],
 );
@@ -280,7 +283,9 @@ export const recurringBillOccurrence = pgTable(
 		index("rbo_recurring_bill_id_idx").on(table.recurringBillId),
 		index("rbo_due_date_idx").on(table.dueDate),
 		index("rbo_expense_id_idx").on(table.expenseId),
-		index("rbo_unpaid_idx").on(table.recurringBillId, table.dueDate).where(sql`${table.expenseId} IS NULL`),
+		index("rbo_unpaid_idx")
+			.on(table.recurringBillId, table.dueDate)
+			.where(sql`${table.expenseId} IS NULL`),
 	],
 );
 
@@ -318,6 +323,36 @@ export const expense = pgTable(
 		index("expense_workspace_id_idx").on(table.workspaceId),
 		index("expense_wallet_id_idx").on(table.walletId),
 		index("expense_recurring_bill_id_idx").on(table.recurringBillId),
+	],
+);
+
+export const income = pgTable(
+	"income",
+	{
+		id: uuid("id").primaryKey(),
+		title: text("title").notNull(),
+		description: text("description"),
+		date: timestamp("date", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+		currency: varchar("currency", { length: 3 }).notNull(),
+		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
+		repeat: repeatEnum("repeat").default("one-time").notNull(),
+		creatorId: uuid("creator_id").references(() => user.id, { onDelete: "set null" }),
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
+		walletId: uuid("wallet_id")
+			.notNull()
+			.references(() => wallet.id, { onDelete: "cascade" }),
+		categoryId: uuid("category_id").references(() => category.id, { onDelete: "set null" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("income_title_idx").using("gin", sql`to_tsvector('simple', ${table.title})`),
+		index("income_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
+		index("income_workspace_id_idx").on(table.workspaceId),
+		index("income_wallet_id_idx").on(table.walletId),
+		index("income_date_idx").on(table.date),
 	],
 );
 

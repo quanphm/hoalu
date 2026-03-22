@@ -1,11 +1,18 @@
-import { createExpenseDialogAtom, draftExpenseAtom } from "#app/atoms/index.ts";
+import { draftIncomeAtom } from "#app/atoms/incomes.ts";
+import {
+	createExpenseDialogAtom,
+	draftExpenseAtom,
+	createIncomeDialogAtom,
+} from "#app/atoms/index.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
 	categoryKeys,
 	expenseKeys,
 	fileKeys,
+	incomeKeys,
 	recurringBillKeys,
 	walletKeys,
 	workspaceKeys,
@@ -15,6 +22,8 @@ import type {
 	CategoryPostSchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
+	IncomePatchSchema,
+	IncomePostSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
 	WorkspaceFormSchema,
@@ -260,7 +269,9 @@ export function useCreateExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -290,7 +301,9 @@ export function useEditExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -321,7 +334,9 @@ export function useDeleteExpense() {
 			});
 			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -354,6 +369,126 @@ export function useParseQuickExpense() {
 	return mutation;
 }
 
+/**
+ * incomes
+ */
+
+export function useCreateIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: IncomePostSchema }) => {
+			const result = await apiClient.incomes.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({
+				title: "Income created.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useEditIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: IncomePatchSchema }) => {
+			const result = await apiClient.incomes.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({
+				title: "Income updated.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteIncome() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.incomes.delete(slug, id);
+			return result;
+		},
+		onSuccess: (rs) => {
+			haptics.trigger("warning");
+			playDropSound();
+			toastManager.add({
+				title: "Income deleted.",
+				type: "success",
+			});
+			queryClient.removeQueries({ queryKey: incomeKeys.withId(slug, rs.id) });
+			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useDuplicateIncome() {
+	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const setDraft = useSetAtom(draftIncomeAtom);
+
+	const mutation = useMutation({
+		mutationFn: async ({ sourceIncome }: { sourceIncome: SyncedIncome }) => {
+			if (!sourceIncome) return;
+
+			setDraft({
+				title: sourceIncome.title,
+				description: sourceIncome.description ?? "",
+				date: new Date().toISOString(),
+				transaction: {
+					value: sourceIncome.amount,
+					currency: sourceIncome.currency,
+				},
+				walletId: sourceIncome.wallet.id,
+				categoryId: sourceIncome.category?.id ?? "",
+			});
+			setDialog({ state: true });
+
+			return sourceIncome;
+		},
+	});
+
+	return mutation;
+}
+
 export function useCreateRecurringBill() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
@@ -370,7 +505,9 @@ export function useCreateRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -433,7 +570,9 @@ export function useSetUpRecurringBill() {
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -463,7 +602,9 @@ export function useEditRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -493,7 +634,9 @@ export function useArchiveRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -523,7 +666,9 @@ export function useUnarchiveRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -553,7 +698,9 @@ export function useDeleteRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");

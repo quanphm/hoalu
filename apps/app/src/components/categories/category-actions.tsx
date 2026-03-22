@@ -54,7 +54,12 @@ export function CreateCategoryDialogContent() {
 	);
 }
 
-export function CreateCategoryForm({ callback }: { callback?(): void }) {
+const CATEGORY_TYPE_OPTIONS = [
+	{ label: "Expense", value: "expense" },
+	{ label: "Income", value: "income" },
+];
+
+export function CreateCategoryForm({ type, callback }: { type?: "expense" | "income"; callback?(): void }) {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
@@ -62,6 +67,7 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 			name: "🔮 Magic",
 			description: "",
 			color: "purple",
+			type: type ?? "expense",
 		} as CategoryFormSchema,
 		validators: {
 			onSubmit: CategoryFormSchema,
@@ -72,6 +78,7 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 					name: value.name,
 					description: value.description,
 					color: value.color,
+					type: value.type,
 				},
 			});
 
@@ -95,6 +102,14 @@ export function CreateCategoryForm({ callback }: { callback?(): void }) {
 						name="description"
 						children={(field) => <field.InputField label="Description" autoComplete="off" />}
 					/>
+					{!type && (
+						<form.AppField
+							name="type"
+							children={(field) => (
+								<field.SelectField label="Type" options={CATEGORY_TYPE_OPTIONS} />
+							)}
+						/>
+					)}
 					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
 				</FieldGroup>
 

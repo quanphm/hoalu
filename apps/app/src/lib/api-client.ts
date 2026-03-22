@@ -5,6 +5,8 @@ import type {
 	ExpensePatchSchema,
 	ExpensePostSchema,
 	FileMetaSchema,
+	IncomePatchSchema,
+	IncomePostSchema,
 	WalletPatchSchema,
 	WalletPostSchema,
 } from "#app/lib/schema.ts";
@@ -222,6 +224,69 @@ const expenses = {
 		const response = await honoClient.bff.expenses["parse-quick-entry"].$post({
 			query: { workspaceIdOrSlug: slug },
 			json: { text },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
+const incomes = {
+	list: async (slug: string) => {
+		const response = await honoClient.bff.incomes.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	create: async (slug: string, payload: IncomePostSchema) => {
+		const response = await honoClient.bff.incomes.$post({
+			query: { workspaceIdOrSlug: slug },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	get: async (slug: string, id: string) => {
+		const response = await honoClient.bff.incomes[":id"].$get({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: IncomePatchSchema) => {
+		const response = await honoClient.bff.incomes[":id"].$patch({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	delete: async (slug: string, id: string) => {
+		const response = await honoClient.bff.incomes[":id"].$delete({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
 		});
 		if (!response.ok) {
 			const { message } = await response.json();
@@ -504,6 +569,7 @@ export const apiClient = {
 	wallets,
 	categories,
 	expenses,
+	incomes,
 	exchangeRates,
 	files,
 	workspaces,

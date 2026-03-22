@@ -15,7 +15,6 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	RepeatIcon,
-	Trash2Icon,
 } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";

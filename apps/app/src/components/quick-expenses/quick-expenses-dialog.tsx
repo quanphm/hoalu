@@ -10,7 +10,7 @@ export function QuickExpensesDialogTrigger(props: ButtonProps) {
 
 	return (
 		<Button variant="outline" {...props} onClick={() => setQuickDialog({ state: true })}>
-			<ZapIcon />
+			<ZapIcon className="text-blue-600" />
 			Quick add
 		</Button>
 	);
@@ -26,7 +26,7 @@ export function QuickExpensesDialogContent() {
 	return (
 		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[500px]">
 			<DialogHeader>
-				<DialogTitle>Create expense (Quick)</DialogTitle>
+				<DialogTitle>Create expense</DialogTitle>
 				<DialogHeaderAction />
 			</DialogHeader>
 			<QuickExpensesForm onSubmitted={handleSubmitted} />

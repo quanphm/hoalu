@@ -8,8 +8,10 @@ import {
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
+	TrendingUpIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
+	WalletIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -34,7 +36,7 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="outline"
-						className="mt-2 w-full justify-start gap-2"
+						className="mt-2 w-full gap-2"
 						onClick={() => setCommandPaletteOpen(true)}
 					>
 						<SearchIcon className="size-4" />
@@ -60,6 +62,32 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
+						{/* <SidebarMenuItem>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/tasks"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
+									/>
+								}
+								tooltip="Tasks"
+							>
+								<AlignBoxTopCenterIcon />
+								<span>Tasks</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem> */}
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
+
+			<SidebarGroup>
+				<SidebarGroupLabel>Finance</SidebarGroupLabel>
+				<SidebarGroupContent>
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={
@@ -81,6 +109,25 @@ export function NavWorkspace() {
 
 						<SidebarMenuItem>
 							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/incomes"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
+									/>
+								}
+								tooltip="Income"
+							>
+								<TrendingUpIcon />
+								<span>Income</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+
+						<SidebarMenuItem>
+							<SidebarMenuButton
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
 							>
@@ -91,36 +138,30 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
 
-						{/* <SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/tasks"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-									/>
-								}
-								tooltip="Tasks"
-							>
-								<AlignBoxTopCenterIcon />
-								<span>Tasks</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem> */}
-
+			<SidebarGroup>
+				<SidebarGroupLabel>Resources</SidebarGroupLabel>
+				<SidebarGroupContent>
+					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link to="/$slug/library" params={{ slug }} search={{ tab: "categories" }} />
-								}
-							>
+							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
 								<TriangleSquareCircleIcon />
-								<span>Library</span>
+								<span>Categories</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_categories} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+
+						<SidebarMenuItem>
+							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
+								<WalletIcon />
+								<span>Wallets</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_wallets} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -163,7 +204,6 @@ export function NavWorkspace() {
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>
-
 		</>
 	);
 }

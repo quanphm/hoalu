@@ -11,7 +11,7 @@ import { PlusIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/tasks")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/tasks")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
 		await queryClient.ensureQueryData(tasksQueryOptions(slug));
 	},
@@ -34,5 +34,5 @@ function RouteComponent() {
 				<TasksTable data={data} />
 			</SectionContent>
 		</Section>
-	);
+	)
 }

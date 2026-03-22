@@ -8,6 +8,7 @@ const CategoryCollectionSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string(),
 	description: z.string().nullable(),
+	type: z.enum(["expense", "income"]),
 	color: ColorSchema,
 });
 

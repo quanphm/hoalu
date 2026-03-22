@@ -24,7 +24,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/workspace")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/settings/workspace")({
 	component: RouteComponent,
 });
 
@@ -41,7 +41,7 @@ function RouteComponent() {
 		handleFileChange,
 	} = useFilesUpload({
 		onUpload: handleUploadLogo,
-	});
+	})
 
 	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
@@ -49,34 +49,34 @@ function RouteComponent() {
 		permission: {
 			organization: ["delete"],
 		},
-	});
+	})
 
 	const canUpdateWorkspace = authClient.workspace.checkRolePermission({
 		role: member.role as "member" | "admin" | "owner",
 		permission: {
 			organization: ["update"],
 		},
-	});
+	})
 
 	async function handleUploadLogo(files: File[]) {
 		try {
 			const result = await apiClient.files.uploadWithPresignedUrl(workspace.slug, files[0], {
 				tags: ["logo"],
-			});
+			})
 			await mutation.mutateAsync({
 				payload: {
 					name: workspace.name,
 					slug: workspace.slug,
 					logo: result.path,
 				},
-			});
+			})
 		} catch (error) {
 			if (error instanceof Error) {
 				toastManager.add({
 					title: "Something went wrong.",
 					description: error.message,
 					type: "error",
-				});
+				})
 			}
 		}
 	}
@@ -143,5 +143,5 @@ function RouteComponent() {
 				</div>
 			</SectionContent>
 		</Section>
-	);
+	)
 }

@@ -1,4 +1,3 @@
-import { PageContent } from "#app/components/layouts/page-content.tsx";
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
 import {
 	categoryCollectionFactory,
@@ -38,9 +37,7 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 function RouteComponent() {
 	return (
 		<WorkspaceActionProvider>
-			<PageContent>
-				<Outlet />
-			</PageContent>
+			<Outlet />
 		</WorkspaceActionProvider>
 	);
 }

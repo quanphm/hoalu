@@ -2,6 +2,7 @@ import {
 	commandPaletteOpenAtom,
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
+	createIncomeDialogAtom,
 	createRecurringBillDialogAtom,
 	createWalletDialogAtom,
 	dialogStateAtom,
@@ -35,6 +36,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	}, [slug, setExpenseDraft]);
 
 	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
+	const setIncomeOpen = useSetAtom(createIncomeDialogAtom);
 	const setWalletOpen = useSetAtom(createWalletDialogAtom);
 	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
 	const setRecurringBillOpen = useSetAtom(createRecurringBillDialogAtom);
@@ -45,6 +47,17 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
 			setExpenseOpen({ state: true });
+		},
+		{
+			preventDefault: true,
+		},
+		[],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.create_income.hotkey,
+		() => {
+			setIncomeOpen({ state: true });
 		},
 		{
 			preventDefault: true,
@@ -154,7 +167,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_categories.hotkey,
 		() => {
-			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "categories" } });
+			navigate({ to: "/$slug/categories", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,
@@ -165,7 +178,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_wallets.hotkey,
 		() => {
-			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "wallets" } });
+			navigate({ to: "/$slug/wallets", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,
@@ -177,6 +190,17 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.goto_recurring_bills.hotkey,
 		() => {
 			navigate({ to: "/$slug/recurring-bills", params: { slug } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_incomes.hotkey,
+		() => {
+			navigate({ to: "/$slug/incomes", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,

@@ -58,12 +58,37 @@ export type ExpensePatchSchema = InferRequestType<
 >["json"];
 
 /**
+ * incomes
+ */
+export const IncomeFormSchema = z.object({
+	title: z.string().min(1),
+	description: z.optional(z.string()),
+	transaction: z.object({
+		value: z.number().positive(),
+		currency: z.string(),
+	}),
+	date: z.iso.datetime(),
+	walletId: z.uuidv7(),
+	categoryId: z.uuidv7().optional(),
+});
+export type IncomeFormSchema = z.infer<typeof IncomeFormSchema>;
+export type IncomeSchema = InferResponseType<
+	typeof honoClient.bff.incomes.$get,
+	200
+>["data"][number];
+export type IncomePostSchema = InferRequestType<typeof honoClient.bff.incomes.$post>["json"];
+export type IncomePatchSchema = InferRequestType<
+	(typeof honoClient.bff.incomes)[":id"]["$patch"]
+>["json"];
+
+/**
  * categories
  */
 export const CategoryFormSchema = z.object({
 	name: z.string().min(1),
 	description: z.optional(z.string()),
 	color: ColorSchema,
+	type: z.enum(["expense", "income"]),
 });
 export type CategoryFormSchema = z.infer<typeof CategoryFormSchema>;
 export type CategorySchema = InferResponseType<

@@ -50,6 +50,20 @@
       "when": 1772550371019,
       "tag": "0006_huge_sugar_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774170904436,
+      "tag": "0007_green_wendell_vaughn",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774171139811,
+      "tag": "0008_normal_the_leader",
+      "breakpoints": true
     }
   ]
 }

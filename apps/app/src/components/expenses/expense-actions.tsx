@@ -55,7 +55,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/_normal/expenses");
 
 export function CreateExpenseDialogTrigger({
 	showKbd = true,
@@ -255,7 +255,7 @@ function CreateExpenseForm() {
 							/>
 							<form.AppField
 								name="categoryId"
-								children={(field) => <field.SelectCategoryField label="Category" />}
+								children={(field) => <field.SelectCategoryField label="Category" type="expense" />}
 							/>
 						</div>
 						<form.Subscribe
@@ -362,7 +362,7 @@ export function DeleteExpenseDialogContent() {
 				The expense will be deleted and removed from your history. This action cannot be undone.
 			</WarningMessage>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
+				<DialogClose render={<Button variant="outline">Cancel</Button>} />
 				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
@@ -458,7 +458,6 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await sleep(5000);
 			await mutation.mutateAsync({
 				id: props.data.id,
 				payload: {
@@ -494,12 +493,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		form.reset();
 	}, [props.data.recurring_bill_id, form]);
 
-	console.log(form.state);
-
 	return (
 		<form.AppForm>
 			<form.Form>
-				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
+				<FieldGroup className="p-4">
 					<form.AppField
 						name="date"
 						children={(field) => <field.DatepickerInputField label="Date" />}
@@ -521,7 +518,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 						/>
 						<form.AppField
 							name="categoryId"
-							children={(field) => <field.SelectCategoryField label="Category" />}
+							children={(field) => <field.SelectCategoryField label="Category" type="expense" />}
 						/>
 					</div>
 					<form.Subscribe
@@ -644,8 +641,4 @@ export function ExpenseSearch() {
 			</div>
 		</div>
 	);
-}
-
-function sleep(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
 }

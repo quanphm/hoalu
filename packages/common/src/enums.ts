@@ -31,3 +31,5 @@ export const PG_ENUM_REPEAT = [
 	"yearly",
 	"custom",
 ] as const;
+
+export const PG_ENUM_CATEGORY_TYPE = ["expense", "income"] as const;

@@ -35,9 +35,13 @@ const columns = [
 		header: "Description",
 		cell: (info) => info.getValue(),
 	}),
+	columnHelper.accessor("type", {
+		header: "Type",
+		cell: (info) => info.getValue(),
+	}),
 ];
 
-export function CategoryTable({ data }: { data: CategorySchema[] }) {
+export function CategoryTable({ data }: { data: Omit<CategorySchema, "total">[] }) {
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 

@@ -1,0 +1,570 @@
+import {
+	incomeAmountFilterAtom,
+	incomeCategoryFilterAtom,
+	incomeWalletFilterAtom,
+	incomeSearchKeywordsAtom,
+} from "#app/atoms/income-filters.ts";
+import {
+	useLiveQueryCategories,
+	type SyncedCategory,
+} from "#app/components/categories/use-categories.ts";
+import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
+import { WalletLabel } from "#app/components/wallets/wallet-badge.tsx";
+import type { WalletTypeSchema } from "@hoalu/common/schema";
+import {
+	CheckIcon,
+	FilterIcon,
+	ListFilterIcon,
+	SearchIcon,
+	TagIcon,
+	WalletIcon,
+	DollarSignIcon,
+	XIcon,
+} from "@hoalu/icons/lucide";
+import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
+import { Badge } from "@hoalu/ui/badge";
+import { Button } from "@hoalu/ui/button";
+import { Checkbox } from "@hoalu/ui/checkbox";
+import { Input } from "@hoalu/ui/input";
+import { Label } from "@hoalu/ui/label";
+import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";
+import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { Separator } from "@hoalu/ui/separator";
+import { cn } from "@hoalu/ui/utils";
+import { useAtom } from "jotai";
+import { useCallback, useMemo, useState } from "react";
+
+type FilterMenuView = "main" | "amount" | "category" | "wallet" | "search";
+
+interface AmountFilterState {
+	min: number | null;
+	max: number | null;
+}
+
+export function IncomeFilterDropdown() {
+	const wallets = useLiveQueryWallets();
+	const categories = useLiveQueryCategories();
+
+	const [open, setOpen] = useState(false);
+	const [currentView, setCurrentView] = useState<FilterMenuView>("search");
+
+	const [amountFilter, setAmountFilter] = useAtom(incomeAmountFilterAtom);
+	const [selectedCategories, setSelectedCategories] = useAtom(incomeCategoryFilterAtom);
+	const [selectedWallets, setSelectedWallets] = useAtom(incomeWalletFilterAtom);
+	const [searchKeywords, setSearchKeywords] = useAtom(incomeSearchKeywordsAtom);
+
+	const activeFiltersCount = useMemo(() => {
+		let count = 0;
+		if (amountFilter.min !== null || amountFilter.max !== null) count++;
+		if (selectedCategories.length > 0) count++;
+		if (selectedWallets.length > 0) count++;
+		if (searchKeywords) count++;
+		return count;
+	}, [amountFilter, selectedCategories.length, selectedWallets.length, searchKeywords]);
+
+	const filterSummaries = useMemo(() => {
+		const summaries: { key: string; label: string; onRemove: () => void }[] = [];
+
+		if (amountFilter.min !== null || amountFilter.max !== null) {
+			let label = "";
+			if (amountFilter.min !== null && amountFilter.max !== null) {
+				label = `${amountFilter.min} - ${amountFilter.max}`;
+			} else if (amountFilter.min !== null) {
+				label = `≥ ${amountFilter.min}`;
+			} else if (amountFilter.max !== null) {
+				label = `≤ ${amountFilter.max}`;
+			}
+			summaries.push({
+				key: "amount",
+				label,
+				onRemove: () => setAmountFilter({ min: null, max: null }),
+			});
+		}
+
+		if (selectedCategories.length > 0) {
+			const categoryNames = categories
+				.filter((c) => selectedCategories.includes(c.id))
+				.map((c) => c.name);
+			summaries.push({
+				key: "category",
+				label: categoryNames.length === 1 ? categoryNames[0] : `${categoryNames.length} categories`,
+				onRemove: () => setSelectedCategories([]),
+			});
+		}
+
+		if (selectedWallets.length > 0) {
+			const walletNames = wallets.filter((w) => selectedWallets.includes(w.id)).map((w) => w.name);
+			summaries.push({
+				key: "wallet",
+				label: walletNames.length === 1 ? walletNames[0] : `${walletNames.length} wallets`,
+				onRemove: () => setSelectedWallets([]),
+			});
+		}
+
+		if (searchKeywords) {
+			summaries.push({
+				key: "search",
+				label: `"${searchKeywords}"`,
+				onRemove: () => setSearchKeywords(""),
+			});
+		}
+
+		return summaries;
+	}, [
+		amountFilter,
+		selectedCategories,
+		selectedWallets,
+		searchKeywords,
+		categories,
+		wallets,
+		setAmountFilter,
+		setSelectedCategories,
+		setSelectedWallets,
+		setSearchKeywords,
+	]);
+
+	const resetAllFilters = useCallback(() => {
+		setAmountFilter({ min: null, max: null });
+		setSelectedCategories([]);
+		setSelectedWallets([]);
+		setSearchKeywords("");
+	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSearchKeywords]);
+
+	const hasActiveFilter = (filter: FilterMenuView) => {
+		switch (filter) {
+			case "amount":
+				return amountFilter.min !== null || amountFilter.max !== null;
+			case "category":
+				return selectedCategories.length > 0;
+			case "wallet":
+				return selectedWallets.length > 0;
+			case "search":
+				return !!searchKeywords;
+			default:
+				return false;
+		}
+	};
+
+	return (
+		<div className="flex flex-wrap items-center gap-2">
+			<Popover
+				open={open}
+				onOpenChange={(isOpen) => {
+					setOpen(isOpen);
+					if (!isOpen) setCurrentView("search");
+				}}
+			>
+				<PopoverTrigger render={<Button variant="outline" />}>
+					<ListFilterIcon className="size-4" />
+					<span>Filters ({activeFiltersCount})</span>
+				</PopoverTrigger>
+
+				<PopoverContent
+					className="w-xs overflow-hidden p-0 md:w-[540px]"
+					align="start"
+					side="right"
+				>
+					<div className="flex min-h-[400px]">
+						{/* Left Panel - Filter Menu */}
+						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
+							<FilterMenuItem
+								icon={<SearchIcon className="size-3" />}
+								label="Search"
+								active={hasActiveFilter("search")}
+								selected={currentView === "search"}
+								onClick={() => setCurrentView("search")}
+							/>
+							<FilterMenuItem
+								icon={<DollarSignIcon className="size-3" />}
+								label="Amount"
+								active={hasActiveFilter("amount")}
+								selected={currentView === "amount"}
+								onClick={() => setCurrentView("amount")}
+							/>
+							<FilterMenuItem
+								icon={<TagIcon className="size-3" />}
+								label="Category"
+								active={hasActiveFilter("category")}
+								selected={currentView === "category"}
+								onClick={() => setCurrentView("category")}
+							/>
+							<FilterMenuItem
+								icon={<WalletIcon className="size-3" />}
+								label="Wallet"
+								active={hasActiveFilter("wallet")}
+								selected={currentView === "wallet"}
+								onClick={() => setCurrentView("wallet")}
+							/>
+						</div>
+
+						{/* Right Panel - Filter Content */}
+						<div className="flex h-[400px] flex-1 flex-col overflow-scroll">
+							{currentView === "main" && (
+								<MainFilterView
+									activeFiltersCount={activeFiltersCount}
+									filterSummaries={filterSummaries}
+								/>
+							)}
+							{currentView === "search" && (
+								<SearchFilterView value={searchKeywords} onChange={setSearchKeywords} />
+							)}
+							{currentView === "amount" && (
+								<AmountFilterView value={amountFilter} onChange={setAmountFilter} />
+							)}
+							{currentView === "category" && (
+								<CategoryFilterView
+									categories={categories}
+									selected={selectedCategories}
+									onChange={setSelectedCategories}
+								/>
+							)}
+							{currentView === "wallet" && (
+								<WalletFilterView
+									wallets={wallets}
+									selected={selectedWallets}
+									onChange={setSelectedWallets}
+								/>
+							)}
+						</div>
+					</div>
+					<Separator />
+					<div className="flex items-center justify-end p-2">
+						<Button variant="ghost" size="sm" onClick={resetAllFilters}>
+							Reset all
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
+
+			{filterSummaries.map((summary) => (
+				<Badge
+					key={summary.key}
+					variant="secondary"
+					render={<button type="button" onClick={summary.onRemove} />}
+					size="lg"
+				>
+					{summary.label}
+					<XIcon className="size-4" />
+				</Badge>
+			))}
+
+			{activeFiltersCount > 1 && (
+				<Button
+					variant="ghost"
+					size="sm"
+					className="text-muted-foreground"
+					onClick={resetAllFilters}
+				>
+					Reset
+				</Button>
+			)}
+		</div>
+	);
+}
+
+function FilterMenuItem({
+	icon,
+	label,
+	active,
+	selected,
+	onClick,
+}: {
+	icon: React.ReactNode;
+	label: string;
+	active: boolean;
+	selected: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<Button
+			variant="ghost"
+			onClick={onClick}
+			className={cn(
+				"flex w-full px-2 md:px-3",
+				selected ? "bg-background hover:bg-background" : "hover:bg-background",
+			)}
+		>
+			<span
+				className={cn(
+					"flex size-5 shrink-0 items-center justify-center",
+					active ? "text-primary" : "text-muted-foreground",
+				)}
+			>
+				{active ? <CheckIcon className="size-4" /> : icon}
+			</span>
+			<span className="min-w-0 flex-1 truncate text-left text-sm">{label}</span>
+			<CaretRightFilledIcon className="text-muted-foreground hidden size-4 shrink-0 md:block" />
+		</Button>
+	);
+}
+
+function MainFilterView({
+	activeFiltersCount,
+	filterSummaries,
+}: {
+	activeFiltersCount: number;
+	filterSummaries: { key: string; label: string; onRemove: () => void }[];
+}) {
+	return (
+		<div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
+			{activeFiltersCount === 0 ? (
+				<>
+					<FilterIcon className="text-muted-foreground mb-2 size-8" />
+					<p className="text-muted-foreground text-sm">Select a filter from the menu</p>
+				</>
+			) : (
+				<>
+					<p className="mb-4 text-sm font-medium">
+						{activeFiltersCount} active filter
+						{activeFiltersCount > 1 ? "s" : ""}
+					</p>
+					<div className="flex flex-wrap justify-center gap-2">
+						{filterSummaries.map((summary) => (
+							<Badge key={summary.key} variant="outline">
+								{summary.label}
+							</Badge>
+						))}
+					</div>
+				</>
+			)}
+		</div>
+	);
+}
+
+function SearchFilterView({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+}) {
+	return (
+		<div className="flex flex-col gap-4 p-4">
+			<div className="flex items-center justify-between">
+				<h3 className="font-medium">Search</h3>
+				{value && (
+					<Button variant="ghost" size="sm" onClick={() => onChange("")}>
+						Reset
+					</Button>
+				)}
+			</div>
+			<div className="relative">
+				<Input
+					type="text"
+					placeholder="Search by title, description, or amount"
+					value={value}
+					onChange={(e) => onChange(e.target.value)}
+					className="ps-6"
+					autoFocus
+				/>
+				<SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+			</div>
+		</div>
+	);
+}
+
+function AmountFilterView({
+	value,
+	onChange,
+}: {
+	value: AmountFilterState;
+	onChange: (value: AmountFilterState) => void;
+}) {
+	const handleMinChange = useCallback(
+		(newValue: number | null) => {
+			onChange({
+				...value,
+				min: newValue,
+			});
+		},
+		[value, onChange],
+	);
+
+	const handleMaxChange = useCallback(
+		(newValue: number | null) => {
+			onChange({
+				...value,
+				max: newValue,
+			});
+		},
+		[value, onChange],
+	);
+
+	const resetFilter = useCallback(() => {
+		onChange({ min: null, max: null });
+	}, [onChange]);
+
+	return (
+		<div className="flex flex-col gap-4 p-4">
+			<div className="flex items-center justify-between">
+				<h3 className="font-medium">Amount</h3>
+				{(value.min !== null || value.max !== null) && (
+					<Button variant="ghost" size="sm" onClick={resetFilter}>
+						Reset
+					</Button>
+				)}
+			</div>
+
+			<div className="flex flex-col gap-3">
+				<div>
+					<Label className="text-muted-foreground mb-1.5 block text-xs">At least...</Label>
+					<div className="flex rounded-md">
+						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
+							≥
+						</span>
+						<NumberField
+							value={value.min ?? undefined}
+							format={{
+								style: "currency",
+								currency: "USD",
+								currencyDisplay: "symbol",
+								currencySign: "accounting",
+							}}
+							onValueChange={handleMinChange}
+							min={0}
+							step={0.01}
+							className="flex-1"
+						>
+							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
+								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+							</NumberFieldGroup>
+						</NumberField>
+					</div>
+				</div>
+
+				<div>
+					<Label className="text-muted-foreground mb-1.5 block text-xs">No more than...</Label>
+					<div className="flex rounded-md">
+						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
+							≤
+						</span>
+						<NumberField
+							value={value.max ?? undefined}
+							format={{
+								style: "currency",
+								currency: "USD",
+								currencyDisplay: "symbol",
+								currencySign: "accounting",
+							}}
+							onValueChange={handleMaxChange}
+							min={0}
+							step={0.01}
+							className="flex-1"
+						>
+							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
+								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+							</NumberFieldGroup>
+						</NumberField>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function CategoryFilterView({
+	categories,
+	selected,
+	onChange,
+}: {
+	categories: SyncedCategory[];
+	selected: string[];
+	onChange: (value: string[]) => void;
+}) {
+	const toggleCategory = (id: string) => {
+		if (selected.includes(id)) {
+			onChange(selected.filter((s) => s !== id));
+		} else {
+			onChange([...selected, id]);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-4 p-4">
+			<div className="flex items-center justify-between">
+				<h3 className="font-medium">Category</h3>
+				{selected.length > 0 && (
+					<Button variant="ghost" size="sm" onClick={() => onChange([])}>
+						Reset
+					</Button>
+				)}
+			</div>
+
+			<div className="flex flex-col gap-1">
+				{categories
+					.filter((category) => category.type === "income")
+					.map((category) => (
+						<Label
+							key={category.id}
+							htmlFor={`filter-category-${category.id}`}
+							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+						>
+							<Checkbox
+								id={`filter-category-${category.id}`}
+								checked={selected.includes(category.id)}
+								onCheckedChange={() => toggleCategory(category.id)}
+							/>
+							<span className="flex-1 truncate">{category.name}</span>
+						</Label>
+					))}
+			</div>
+		</div>
+	);
+}
+
+function WalletFilterView({
+	wallets,
+	selected,
+	onChange,
+}: {
+	wallets: Array<{
+		id: string;
+		name: string;
+		type: WalletTypeSchema;
+	}>;
+	selected: string[];
+	onChange: (value: string[]) => void;
+}) {
+	const toggleWallet = (id: string) => {
+		if (selected.includes(id)) {
+			onChange(selected.filter((s) => s !== id));
+		} else {
+			onChange([...selected, id]);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-4 p-4">
+			<div className="flex items-center justify-between">
+				<h3 className="font-medium">Wallet</h3>
+				{selected.length > 0 && (
+					<Button variant="ghost" size="sm" onClick={() => onChange([])}>
+						Reset
+					</Button>
+				)}
+			</div>
+
+			<ScrollArea className="h-[280px]">
+				<div className="flex flex-col gap-1">
+					{wallets.map((wallet) => (
+						<Label
+							key={wallet.id}
+							htmlFor={`filter-wallet-${wallet.id}`}
+							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+						>
+							<Checkbox
+								id={`filter-wallet-${wallet.id}`}
+								checked={selected.includes(wallet.id)}
+								onCheckedChange={() => toggleWallet(wallet.id)}
+							/>
+							<span className="flex-1">
+								<WalletLabel name={wallet.name} type={wallet.type} />
+							</span>
+						</Label>
+					))}
+				</div>
+			</ScrollArea>
+		</div>
+	);
+}

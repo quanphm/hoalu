@@ -17,19 +17,23 @@ import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as DashboardSlugRouteRouteImport } from './routes/_dashboard/$slug/route'
-import { Route as DashboardSlugIndexRouteImport } from './routes/_dashboard/$slug/index'
 import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
 import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
-import { Route as DashboardSlugTasksRouteImport } from './routes/_dashboard/$slug/tasks'
-import { Route as DashboardSlugRecurringBillsRouteImport } from './routes/_dashboard/$slug/recurring-bills'
-import { Route as DashboardSlugLibraryRouteImport } from './routes/_dashboard/$slug/library'
-import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
-import { Route as DashboardSlugExpensesRouteImport } from './routes/_dashboard/$slug/expenses'
-import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
-import { Route as DashboardSlugSettingsIndexRouteImport } from './routes/_dashboard/$slug/settings/index'
-import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
-import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
+import { Route as DashboardSlugWithToolbarRouteRouteImport } from './routes/_dashboard/$slug/_with-toolbar/route'
+import { Route as DashboardSlugNormalRouteRouteImport } from './routes/_dashboard/$slug/_normal/route'
+import { Route as DashboardSlugWithToolbarIndexRouteImport } from './routes/_dashboard/$slug/_with-toolbar/index'
+import { Route as DashboardSlugNormalWalletsRouteImport } from './routes/_dashboard/$slug/_normal/wallets'
+import { Route as DashboardSlugNormalTasksRouteImport } from './routes/_dashboard/$slug/_normal/tasks'
+import { Route as DashboardSlugNormalRecurringBillsRouteImport } from './routes/_dashboard/$slug/_normal/recurring-bills'
+import { Route as DashboardSlugNormalIncomesRouteImport } from './routes/_dashboard/$slug/_normal/incomes'
+import { Route as DashboardSlugNormalFilesRouteImport } from './routes/_dashboard/$slug/_normal/files'
+import { Route as DashboardSlugNormalExpensesRouteImport } from './routes/_dashboard/$slug/_normal/expenses'
+import { Route as DashboardSlugNormalCategoriesRouteImport } from './routes/_dashboard/$slug/_normal/categories'
 import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
+import { Route as DashboardSlugNormalSettingsRouteRouteImport } from './routes/_dashboard/$slug/_normal/settings/route'
+import { Route as DashboardSlugNormalSettingsIndexRouteImport } from './routes/_dashboard/$slug/_normal/settings/index'
+import { Route as DashboardSlugNormalSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/_normal/settings/workspace'
+import { Route as DashboardSlugNormalSettingsMembersRouteImport } from './routes/_dashboard/$slug/_normal/settings/members'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/_dashboard',
@@ -69,11 +73,6 @@ const DashboardSlugRouteRoute = DashboardSlugRouteRouteImport.update({
   path: '/$slug',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardSlugIndexRoute = DashboardSlugIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
 const DashboardAccountTokensRoute = DashboardAccountTokensRouteImport.update({
   id: '/account/tokens',
   path: '/account/tokens',
@@ -85,101 +84,137 @@ const DashboardAccountPreferencesRoute =
     path: '/account/preferences',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
-const DashboardSlugTasksRoute = DashboardSlugTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const DashboardSlugRecurringBillsRoute =
-  DashboardSlugRecurringBillsRouteImport.update({
-    id: '/recurring-bills',
-    path: '/recurring-bills',
+const DashboardSlugWithToolbarRouteRoute =
+  DashboardSlugWithToolbarRouteRouteImport.update({
+    id: '/_with-toolbar',
     getParentRoute: () => DashboardSlugRouteRoute,
   } as any)
-const DashboardSlugLibraryRoute = DashboardSlugLibraryRouteImport.update({
-  id: '/library',
-  path: '/library',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const DashboardSlugFilesRoute = DashboardSlugFilesRouteImport.update({
-  id: '/files',
-  path: '/files',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const DashboardSlugExpensesRoute = DashboardSlugExpensesRouteImport.update({
-  id: '/expenses',
-  path: '/expenses',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const DashboardSlugSettingsRouteRoute =
-  DashboardSlugSettingsRouteRouteImport.update({
-    id: '/settings',
-    path: '/settings',
+const DashboardSlugNormalRouteRoute =
+  DashboardSlugNormalRouteRouteImport.update({
+    id: '/_normal',
     getParentRoute: () => DashboardSlugRouteRoute,
   } as any)
-const DashboardSlugSettingsIndexRoute =
-  DashboardSlugSettingsIndexRouteImport.update({
+const DashboardSlugWithToolbarIndexRoute =
+  DashboardSlugWithToolbarIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
+    getParentRoute: () => DashboardSlugWithToolbarRouteRoute,
   } as any)
-const DashboardSlugSettingsWorkspaceRoute =
-  DashboardSlugSettingsWorkspaceRouteImport.update({
-    id: '/workspace',
-    path: '/workspace',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
+const DashboardSlugNormalWalletsRoute =
+  DashboardSlugNormalWalletsRouteImport.update({
+    id: '/wallets',
+    path: '/wallets',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
   } as any)
-const DashboardSlugSettingsMembersRoute =
-  DashboardSlugSettingsMembersRouteImport.update({
-    id: '/members',
-    path: '/members',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
+const DashboardSlugNormalTasksRoute =
+  DashboardSlugNormalTasksRouteImport.update({
+    id: '/tasks',
+    path: '/tasks',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalRecurringBillsRoute =
+  DashboardSlugNormalRecurringBillsRouteImport.update({
+    id: '/recurring-bills',
+    path: '/recurring-bills',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalIncomesRoute =
+  DashboardSlugNormalIncomesRouteImport.update({
+    id: '/incomes',
+    path: '/incomes',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalFilesRoute =
+  DashboardSlugNormalFilesRouteImport.update({
+    id: '/files',
+    path: '/files',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalExpensesRoute =
+  DashboardSlugNormalExpensesRouteImport.update({
+    id: '/expenses',
+    path: '/expenses',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalCategoriesRoute =
+  DashboardSlugNormalCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
   } as any)
 const AuthInviteIdAcceptRoute = AuthInviteIdAcceptRouteImport.update({
   id: '/invite/$id/accept',
   path: '/invite/$id/accept',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const DashboardSlugNormalSettingsRouteRoute =
+  DashboardSlugNormalSettingsRouteRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
+const DashboardSlugNormalSettingsIndexRoute =
+  DashboardSlugNormalSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardSlugNormalSettingsRouteRoute,
+  } as any)
+const DashboardSlugNormalSettingsWorkspaceRoute =
+  DashboardSlugNormalSettingsWorkspaceRouteImport.update({
+    id: '/workspace',
+    path: '/workspace',
+    getParentRoute: () => DashboardSlugNormalSettingsRouteRoute,
+  } as any)
+const DashboardSlugNormalSettingsMembersRoute =
+  DashboardSlugNormalSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => DashboardSlugNormalSettingsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
-  '/$slug': typeof DashboardSlugRouteRouteWithChildren
+  '/$slug': typeof DashboardSlugWithToolbarRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
-  '/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
-  '/$slug/expenses': typeof DashboardSlugExpensesRoute
-  '/$slug/files': typeof DashboardSlugFilesRoute
-  '/$slug/library': typeof DashboardSlugLibraryRoute
-  '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
-  '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
-  '/$slug/': typeof DashboardSlugIndexRoute
+  '/$slug/settings': typeof DashboardSlugNormalSettingsRouteRouteWithChildren
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
-  '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
-  '/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
+  '/$slug/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/$slug/expenses': typeof DashboardSlugNormalExpensesRoute
+  '/$slug/files': typeof DashboardSlugNormalFilesRoute
+  '/$slug/incomes': typeof DashboardSlugNormalIncomesRoute
+  '/$slug/recurring-bills': typeof DashboardSlugNormalRecurringBillsRoute
+  '/$slug/tasks': typeof DashboardSlugNormalTasksRoute
+  '/$slug/wallets': typeof DashboardSlugNormalWalletsRoute
+  '/$slug/': typeof DashboardSlugWithToolbarIndexRoute
+  '/$slug/settings/members': typeof DashboardSlugNormalSettingsMembersRoute
+  '/$slug/settings/workspace': typeof DashboardSlugNormalSettingsWorkspaceRoute
+  '/$slug/settings/': typeof DashboardSlugNormalSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
+  '/$slug': typeof DashboardSlugWithToolbarIndexRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
-  '/$slug/expenses': typeof DashboardSlugExpensesRoute
-  '/$slug/files': typeof DashboardSlugFilesRoute
-  '/$slug/library': typeof DashboardSlugLibraryRoute
-  '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
-  '/$slug/tasks': typeof DashboardSlugTasksRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
-  '/$slug': typeof DashboardSlugIndexRoute
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
-  '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
-  '/$slug/settings': typeof DashboardSlugSettingsIndexRoute
+  '/$slug/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/$slug/expenses': typeof DashboardSlugNormalExpensesRoute
+  '/$slug/files': typeof DashboardSlugNormalFilesRoute
+  '/$slug/incomes': typeof DashboardSlugNormalIncomesRoute
+  '/$slug/recurring-bills': typeof DashboardSlugNormalRecurringBillsRoute
+  '/$slug/tasks': typeof DashboardSlugNormalTasksRoute
+  '/$slug/wallets': typeof DashboardSlugNormalWalletsRoute
+  '/$slug/settings/members': typeof DashboardSlugNormalSettingsMembersRoute
+  '/$slug/settings/workspace': typeof DashboardSlugNormalSettingsWorkspaceRoute
+  '/$slug/settings': typeof DashboardSlugNormalSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -191,19 +226,23 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_dashboard/': typeof DashboardIndexRoute
-  '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
-  '/_dashboard/$slug/expenses': typeof DashboardSlugExpensesRoute
-  '/_dashboard/$slug/files': typeof DashboardSlugFilesRoute
-  '/_dashboard/$slug/library': typeof DashboardSlugLibraryRoute
-  '/_dashboard/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRoute
-  '/_dashboard/$slug/tasks': typeof DashboardSlugTasksRoute
+  '/_dashboard/$slug/_normal': typeof DashboardSlugNormalRouteRouteWithChildren
+  '/_dashboard/$slug/_with-toolbar': typeof DashboardSlugWithToolbarRouteRouteWithChildren
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
-  '/_dashboard/$slug/': typeof DashboardSlugIndexRoute
+  '/_dashboard/$slug/_normal/settings': typeof DashboardSlugNormalSettingsRouteRouteWithChildren
   '/_auth/invite/$id/accept': typeof AuthInviteIdAcceptRoute
-  '/_dashboard/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
-  '/_dashboard/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
-  '/_dashboard/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
+  '/_dashboard/$slug/_normal/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/_dashboard/$slug/_normal/expenses': typeof DashboardSlugNormalExpensesRoute
+  '/_dashboard/$slug/_normal/files': typeof DashboardSlugNormalFilesRoute
+  '/_dashboard/$slug/_normal/incomes': typeof DashboardSlugNormalIncomesRoute
+  '/_dashboard/$slug/_normal/recurring-bills': typeof DashboardSlugNormalRecurringBillsRoute
+  '/_dashboard/$slug/_normal/tasks': typeof DashboardSlugNormalTasksRoute
+  '/_dashboard/$slug/_normal/wallets': typeof DashboardSlugNormalWalletsRoute
+  '/_dashboard/$slug/_with-toolbar/': typeof DashboardSlugWithToolbarIndexRoute
+  '/_dashboard/$slug/_normal/settings/members': typeof DashboardSlugNormalSettingsMembersRoute
+  '/_dashboard/$slug/_normal/settings/workspace': typeof DashboardSlugNormalSettingsWorkspaceRoute
+  '/_dashboard/$slug/_normal/settings/': typeof DashboardSlugNormalSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,35 +253,39 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
-    | '/$slug/settings'
-    | '/$slug/expenses'
-    | '/$slug/files'
-    | '/$slug/library'
-    | '/$slug/recurring-bills'
-    | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
-    | '/$slug/'
+    | '/$slug/settings'
     | '/invite/$id/accept'
+    | '/$slug/categories'
+    | '/$slug/expenses'
+    | '/$slug/files'
+    | '/$slug/incomes'
+    | '/$slug/recurring-bills'
+    | '/$slug/tasks'
+    | '/$slug/wallets'
+    | '/$slug/'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
     | '/$slug/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$slug'
     | '/login'
     | '/reset-password'
     | '/signup'
     | '/verify-email'
-    | '/$slug/expenses'
-    | '/$slug/files'
-    | '/$slug/library'
-    | '/$slug/recurring-bills'
-    | '/$slug/tasks'
     | '/account/preferences'
     | '/account/tokens'
-    | '/$slug'
     | '/invite/$id/accept'
+    | '/$slug/categories'
+    | '/$slug/expenses'
+    | '/$slug/files'
+    | '/$slug/incomes'
+    | '/$slug/recurring-bills'
+    | '/$slug/tasks'
+    | '/$slug/wallets'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
     | '/$slug/settings'
@@ -256,19 +299,23 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_auth/verify-email'
     | '/_dashboard/'
-    | '/_dashboard/$slug/settings'
-    | '/_dashboard/$slug/expenses'
-    | '/_dashboard/$slug/files'
-    | '/_dashboard/$slug/library'
-    | '/_dashboard/$slug/recurring-bills'
-    | '/_dashboard/$slug/tasks'
+    | '/_dashboard/$slug/_normal'
+    | '/_dashboard/$slug/_with-toolbar'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
-    | '/_dashboard/$slug/'
+    | '/_dashboard/$slug/_normal/settings'
     | '/_auth/invite/$id/accept'
-    | '/_dashboard/$slug/settings/members'
-    | '/_dashboard/$slug/settings/workspace'
-    | '/_dashboard/$slug/settings/'
+    | '/_dashboard/$slug/_normal/categories'
+    | '/_dashboard/$slug/_normal/expenses'
+    | '/_dashboard/$slug/_normal/files'
+    | '/_dashboard/$slug/_normal/incomes'
+    | '/_dashboard/$slug/_normal/recurring-bills'
+    | '/_dashboard/$slug/_normal/tasks'
+    | '/_dashboard/$slug/_normal/wallets'
+    | '/_dashboard/$slug/_with-toolbar/'
+    | '/_dashboard/$slug/_normal/settings/members'
+    | '/_dashboard/$slug/_normal/settings/workspace'
+    | '/_dashboard/$slug/_normal/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -334,13 +381,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugRouteRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_dashboard/$slug/': {
-      id: '/_dashboard/$slug/'
-      path: '/'
-      fullPath: '/$slug/'
-      preLoaderRoute: typeof DashboardSlugIndexRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
-    }
     '/_dashboard/account/tokens': {
       id: '/_dashboard/account/tokens'
       path: '/account/tokens'
@@ -355,68 +395,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountPreferencesRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_dashboard/$slug/tasks': {
-      id: '/_dashboard/$slug/tasks'
+    '/_dashboard/$slug/_with-toolbar': {
+      id: '/_dashboard/$slug/_with-toolbar'
+      path: ''
+      fullPath: '/$slug'
+      preLoaderRoute: typeof DashboardSlugWithToolbarRouteRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
+    '/_dashboard/$slug/_normal': {
+      id: '/_dashboard/$slug/_normal'
+      path: ''
+      fullPath: '/$slug'
+      preLoaderRoute: typeof DashboardSlugNormalRouteRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
+    '/_dashboard/$slug/_with-toolbar/': {
+      id: '/_dashboard/$slug/_with-toolbar/'
+      path: '/'
+      fullPath: '/$slug/'
+      preLoaderRoute: typeof DashboardSlugWithToolbarIndexRouteImport
+      parentRoute: typeof DashboardSlugWithToolbarRouteRoute
+    }
+    '/_dashboard/$slug/_normal/wallets': {
+      id: '/_dashboard/$slug/_normal/wallets'
+      path: '/wallets'
+      fullPath: '/$slug/wallets'
+      preLoaderRoute: typeof DashboardSlugNormalWalletsRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
+    }
+    '/_dashboard/$slug/_normal/tasks': {
+      id: '/_dashboard/$slug/_normal/tasks'
       path: '/tasks'
       fullPath: '/$slug/tasks'
-      preLoaderRoute: typeof DashboardSlugTasksRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
+      preLoaderRoute: typeof DashboardSlugNormalTasksRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
-    '/_dashboard/$slug/recurring-bills': {
-      id: '/_dashboard/$slug/recurring-bills'
+    '/_dashboard/$slug/_normal/recurring-bills': {
+      id: '/_dashboard/$slug/_normal/recurring-bills'
       path: '/recurring-bills'
       fullPath: '/$slug/recurring-bills'
-      preLoaderRoute: typeof DashboardSlugRecurringBillsRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
+      preLoaderRoute: typeof DashboardSlugNormalRecurringBillsRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
-    '/_dashboard/$slug/library': {
-      id: '/_dashboard/$slug/library'
-      path: '/library'
-      fullPath: '/$slug/library'
-      preLoaderRoute: typeof DashboardSlugLibraryRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
+    '/_dashboard/$slug/_normal/incomes': {
+      id: '/_dashboard/$slug/_normal/incomes'
+      path: '/incomes'
+      fullPath: '/$slug/incomes'
+      preLoaderRoute: typeof DashboardSlugNormalIncomesRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
-    '/_dashboard/$slug/files': {
-      id: '/_dashboard/$slug/files'
+    '/_dashboard/$slug/_normal/files': {
+      id: '/_dashboard/$slug/_normal/files'
       path: '/files'
       fullPath: '/$slug/files'
-      preLoaderRoute: typeof DashboardSlugFilesRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
+      preLoaderRoute: typeof DashboardSlugNormalFilesRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
-    '/_dashboard/$slug/expenses': {
-      id: '/_dashboard/$slug/expenses'
+    '/_dashboard/$slug/_normal/expenses': {
+      id: '/_dashboard/$slug/_normal/expenses'
       path: '/expenses'
       fullPath: '/$slug/expenses'
-      preLoaderRoute: typeof DashboardSlugExpensesRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
+      preLoaderRoute: typeof DashboardSlugNormalExpensesRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
-    '/_dashboard/$slug/settings': {
-      id: '/_dashboard/$slug/settings'
-      path: '/settings'
-      fullPath: '/$slug/settings'
-      preLoaderRoute: typeof DashboardSlugSettingsRouteRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
-    }
-    '/_dashboard/$slug/settings/': {
-      id: '/_dashboard/$slug/settings/'
-      path: '/'
-      fullPath: '/$slug/settings/'
-      preLoaderRoute: typeof DashboardSlugSettingsIndexRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
-    }
-    '/_dashboard/$slug/settings/workspace': {
-      id: '/_dashboard/$slug/settings/workspace'
-      path: '/workspace'
-      fullPath: '/$slug/settings/workspace'
-      preLoaderRoute: typeof DashboardSlugSettingsWorkspaceRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
-    }
-    '/_dashboard/$slug/settings/members': {
-      id: '/_dashboard/$slug/settings/members'
-      path: '/members'
-      fullPath: '/$slug/settings/members'
-      preLoaderRoute: typeof DashboardSlugSettingsMembersRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
+    '/_dashboard/$slug/_normal/categories': {
+      id: '/_dashboard/$slug/_normal/categories'
+      path: '/categories'
+      fullPath: '/$slug/categories'
+      preLoaderRoute: typeof DashboardSlugNormalCategoriesRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
     }
     '/_auth/invite/$id/accept': {
       id: '/_auth/invite/$id/accept'
@@ -424,6 +471,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/invite/$id/accept'
       preLoaderRoute: typeof AuthInviteIdAcceptRouteImport
       parentRoute: typeof AuthRouteRoute
+    }
+    '/_dashboard/$slug/_normal/settings': {
+      id: '/_dashboard/$slug/_normal/settings'
+      path: '/settings'
+      fullPath: '/$slug/settings'
+      preLoaderRoute: typeof DashboardSlugNormalSettingsRouteRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
+    }
+    '/_dashboard/$slug/_normal/settings/': {
+      id: '/_dashboard/$slug/_normal/settings/'
+      path: '/'
+      fullPath: '/$slug/settings/'
+      preLoaderRoute: typeof DashboardSlugNormalSettingsIndexRouteImport
+      parentRoute: typeof DashboardSlugNormalSettingsRouteRoute
+    }
+    '/_dashboard/$slug/_normal/settings/workspace': {
+      id: '/_dashboard/$slug/_normal/settings/workspace'
+      path: '/workspace'
+      fullPath: '/$slug/settings/workspace'
+      preLoaderRoute: typeof DashboardSlugNormalSettingsWorkspaceRouteImport
+      parentRoute: typeof DashboardSlugNormalSettingsRouteRoute
+    }
+    '/_dashboard/$slug/_normal/settings/members': {
+      id: '/_dashboard/$slug/_normal/settings/members'
+      path: '/members'
+      fullPath: '/$slug/settings/members'
+      preLoaderRoute: typeof DashboardSlugNormalSettingsMembersRouteImport
+      parentRoute: typeof DashboardSlugNormalSettingsRouteRoute
     }
   }
 }
@@ -448,42 +523,80 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
-interface DashboardSlugSettingsRouteRouteChildren {
-  DashboardSlugSettingsMembersRoute: typeof DashboardSlugSettingsMembersRoute
-  DashboardSlugSettingsWorkspaceRoute: typeof DashboardSlugSettingsWorkspaceRoute
-  DashboardSlugSettingsIndexRoute: typeof DashboardSlugSettingsIndexRoute
+interface DashboardSlugNormalSettingsRouteRouteChildren {
+  DashboardSlugNormalSettingsMembersRoute: typeof DashboardSlugNormalSettingsMembersRoute
+  DashboardSlugNormalSettingsWorkspaceRoute: typeof DashboardSlugNormalSettingsWorkspaceRoute
+  DashboardSlugNormalSettingsIndexRoute: typeof DashboardSlugNormalSettingsIndexRoute
 }
 
-const DashboardSlugSettingsRouteRouteChildren: DashboardSlugSettingsRouteRouteChildren =
+const DashboardSlugNormalSettingsRouteRouteChildren: DashboardSlugNormalSettingsRouteRouteChildren =
   {
-    DashboardSlugSettingsMembersRoute: DashboardSlugSettingsMembersRoute,
-    DashboardSlugSettingsWorkspaceRoute: DashboardSlugSettingsWorkspaceRoute,
-    DashboardSlugSettingsIndexRoute: DashboardSlugSettingsIndexRoute,
+    DashboardSlugNormalSettingsMembersRoute:
+      DashboardSlugNormalSettingsMembersRoute,
+    DashboardSlugNormalSettingsWorkspaceRoute:
+      DashboardSlugNormalSettingsWorkspaceRoute,
+    DashboardSlugNormalSettingsIndexRoute:
+      DashboardSlugNormalSettingsIndexRoute,
   }
 
-const DashboardSlugSettingsRouteRouteWithChildren =
-  DashboardSlugSettingsRouteRoute._addFileChildren(
-    DashboardSlugSettingsRouteRouteChildren,
+const DashboardSlugNormalSettingsRouteRouteWithChildren =
+  DashboardSlugNormalSettingsRouteRoute._addFileChildren(
+    DashboardSlugNormalSettingsRouteRouteChildren,
+  )
+
+interface DashboardSlugNormalRouteRouteChildren {
+  DashboardSlugNormalSettingsRouteRoute: typeof DashboardSlugNormalSettingsRouteRouteWithChildren
+  DashboardSlugNormalCategoriesRoute: typeof DashboardSlugNormalCategoriesRoute
+  DashboardSlugNormalExpensesRoute: typeof DashboardSlugNormalExpensesRoute
+  DashboardSlugNormalFilesRoute: typeof DashboardSlugNormalFilesRoute
+  DashboardSlugNormalIncomesRoute: typeof DashboardSlugNormalIncomesRoute
+  DashboardSlugNormalRecurringBillsRoute: typeof DashboardSlugNormalRecurringBillsRoute
+  DashboardSlugNormalTasksRoute: typeof DashboardSlugNormalTasksRoute
+  DashboardSlugNormalWalletsRoute: typeof DashboardSlugNormalWalletsRoute
+}
+
+const DashboardSlugNormalRouteRouteChildren: DashboardSlugNormalRouteRouteChildren =
+  {
+    DashboardSlugNormalSettingsRouteRoute:
+      DashboardSlugNormalSettingsRouteRouteWithChildren,
+    DashboardSlugNormalCategoriesRoute: DashboardSlugNormalCategoriesRoute,
+    DashboardSlugNormalExpensesRoute: DashboardSlugNormalExpensesRoute,
+    DashboardSlugNormalFilesRoute: DashboardSlugNormalFilesRoute,
+    DashboardSlugNormalIncomesRoute: DashboardSlugNormalIncomesRoute,
+    DashboardSlugNormalRecurringBillsRoute:
+      DashboardSlugNormalRecurringBillsRoute,
+    DashboardSlugNormalTasksRoute: DashboardSlugNormalTasksRoute,
+    DashboardSlugNormalWalletsRoute: DashboardSlugNormalWalletsRoute,
+  }
+
+const DashboardSlugNormalRouteRouteWithChildren =
+  DashboardSlugNormalRouteRoute._addFileChildren(
+    DashboardSlugNormalRouteRouteChildren,
+  )
+
+interface DashboardSlugWithToolbarRouteRouteChildren {
+  DashboardSlugWithToolbarIndexRoute: typeof DashboardSlugWithToolbarIndexRoute
+}
+
+const DashboardSlugWithToolbarRouteRouteChildren: DashboardSlugWithToolbarRouteRouteChildren =
+  {
+    DashboardSlugWithToolbarIndexRoute: DashboardSlugWithToolbarIndexRoute,
+  }
+
+const DashboardSlugWithToolbarRouteRouteWithChildren =
+  DashboardSlugWithToolbarRouteRoute._addFileChildren(
+    DashboardSlugWithToolbarRouteRouteChildren,
   )
 
 interface DashboardSlugRouteRouteChildren {
-  DashboardSlugSettingsRouteRoute: typeof DashboardSlugSettingsRouteRouteWithChildren
-  DashboardSlugExpensesRoute: typeof DashboardSlugExpensesRoute
-  DashboardSlugFilesRoute: typeof DashboardSlugFilesRoute
-  DashboardSlugLibraryRoute: typeof DashboardSlugLibraryRoute
-  DashboardSlugRecurringBillsRoute: typeof DashboardSlugRecurringBillsRoute
-  DashboardSlugTasksRoute: typeof DashboardSlugTasksRoute
-  DashboardSlugIndexRoute: typeof DashboardSlugIndexRoute
+  DashboardSlugNormalRouteRoute: typeof DashboardSlugNormalRouteRouteWithChildren
+  DashboardSlugWithToolbarRouteRoute: typeof DashboardSlugWithToolbarRouteRouteWithChildren
 }
 
 const DashboardSlugRouteRouteChildren: DashboardSlugRouteRouteChildren = {
-  DashboardSlugSettingsRouteRoute: DashboardSlugSettingsRouteRouteWithChildren,
-  DashboardSlugExpensesRoute: DashboardSlugExpensesRoute,
-  DashboardSlugFilesRoute: DashboardSlugFilesRoute,
-  DashboardSlugLibraryRoute: DashboardSlugLibraryRoute,
-  DashboardSlugRecurringBillsRoute: DashboardSlugRecurringBillsRoute,
-  DashboardSlugTasksRoute: DashboardSlugTasksRoute,
-  DashboardSlugIndexRoute: DashboardSlugIndexRoute,
+  DashboardSlugNormalRouteRoute: DashboardSlugNormalRouteRouteWithChildren,
+  DashboardSlugWithToolbarRouteRoute:
+    DashboardSlugWithToolbarRouteRouteWithChildren,
 }
 
 const DashboardSlugRouteRouteWithChildren =

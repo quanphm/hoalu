@@ -7,6 +7,7 @@ import {
 	exchangeRateKeys,
 	expenseKeys,
 	fileKeys,
+	incomeKeys,
 	memberKeys,
 	recurringBillKeys,
 	taskKeys,
@@ -29,7 +30,6 @@ export const sessionOptions = () => {
 	return queryOptions({
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: true,
-		staleTime: 0,
 		queryKey: authKeys.session,
 		queryFn: async () => {
 			const { data } = await authClient.getSession();
@@ -98,7 +98,6 @@ export const getWorkspaceDetailsOptions = (slug: string) => {
 			if (error) throw error;
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
 
@@ -109,7 +108,6 @@ export const listWorkspaceSummariesOptions = () => {
 			const res = await apiClient.workspaces.listSummaries();
 			return res;
 		},
-		staleTime: TIME_IN_MILLISECONDS.MINUTE * 5, // Cache for 5 minutes
 	});
 };
 
@@ -120,7 +118,6 @@ export const getWorkspaceSummaryOptions = (id: string) => {
 			const res = await apiClient.workspaces.getSummary(id);
 			return res;
 		},
-		staleTime: TIME_IN_MILLISECONDS.MINUTE * 5,
 	});
 };
 
@@ -147,7 +144,6 @@ export const workspaceLogoOptions = (slug: string, logo: string | null | undefin
 			const data = await apiClient.files.getWorkspaceLogo(slug);
 			return data;
 		},
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 		retry: 2,
 	});
 };
@@ -260,6 +256,58 @@ export const expenseWithIdQueryOptions = (slug: string, id: string) => {
 };
 
 /**
+ * incomes
+ */
+
+export const incomesQueryOptions = (slug: string) => {
+	return queryOptions({
+		queryKey: incomeKeys.all(slug),
+		queryFn: async () => {
+			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const incomes = await apiClient.incomes.list(slug);
+			const promises = incomes.map(async (income) => {
+				const { realAmount, currency: sourceCurrency } = income;
+				try {
+					const result = await queryClient.fetchQuery(
+						exchangeRatesQueryOptions({
+							from: sourceCurrency,
+							to: (workspace as any).metadata.currency,
+						}),
+					);
+					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
+					const factor = isNoCent ? 1 : 100;
+					const convertedAmount = realAmount * (result.rate / factor);
+
+					return {
+						...income,
+						convertedAmount: convertedAmount,
+					};
+				} catch (_error) {
+					return {
+						...income,
+						convertedAmount: -1,
+					};
+				}
+			});
+			const result = await Promise.all(promises);
+			return result.map((income) => {
+				return {
+					...income,
+					date: datetime.format(income.date, "yyyy-MM-dd"),
+				};
+			});
+		},
+	});
+};
+
+export const incomeWithIdQueryOptions = (slug: string, id: string) => {
+	return queryOptions({
+		queryKey: incomeKeys.withId(slug, id),
+		queryFn: () => apiClient.incomes.get(slug, id),
+	});
+};
+
+/**
  * exchange-rates
  */
 
@@ -267,7 +315,6 @@ export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQue
 	return queryOptions<{ rate: number; inverse_rate: number }>({
 		queryKey: exchangeRateKeys.pair({ from, to }),
 		queryFn: () => apiClient.exchangeRates.find({ from, to }),
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
 		placeholderData: { rate: 1, inverse_rate: 1 },
 		throwOnError: true,
@@ -282,7 +329,6 @@ export const recurringBillsQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: recurringBillKeys.all(slug),
 		queryFn: () => apiClient.recurringBills.list(slug),
-		staleTime: TIME_IN_MILLISECONDS.MINUTE,
 	});
 };
 
@@ -307,7 +353,6 @@ export const filesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: fileKeys.all(slug),
 		queryFn: () => apiClient.files.getFiles(slug),
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 	});
 };
 
@@ -315,7 +360,6 @@ export const expenseFilesQueryOptions = (slug: string, expenseId: string) => {
 	return queryOptions({
 		queryKey: [...fileKeys.all(slug), "expense", expenseId],
 		queryFn: () => apiClient.files.getExpenseFiles(slug, expenseId),
-		staleTime: TIME_IN_MILLISECONDS.DAY,
 		enabled: !!expenseId,
 	});
 };

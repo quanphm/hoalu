@@ -12,7 +12,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-const routeApi = getRouteApi("/_dashboard/$slug/expenses");
+const routeApi = getRouteApi("/_dashboard/$slug/_normal/expenses");
 const MOBILE_NAV_HEIGHT = 80;
 
 type ExpenseItem = {

@@ -40,9 +40,11 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
+			const typeParam = c.req.query("type") as "expense" | "income" | undefined;
 
 			const categories = await categoryRepository.findAllByWorkspaceId({
 				workspaceId: workspace.id,
+				type: typeParam,
 			});
 
 			const parsed = CategoriesSchema.safeParse(categories);

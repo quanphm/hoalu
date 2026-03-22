@@ -4,6 +4,7 @@ import {
 	PG_ENUM_REPEAT,
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
+	PG_ENUM_CATEGORY_TYPE,
 } from "#common/enums.ts";
 import * as z from "zod";
 
@@ -24,6 +25,9 @@ export type WalletTypeSchema = z.infer<typeof WalletTypeSchema>;
 
 export const CurrencySchema = z.string().length(3);
 export type CurrencySchema = z.infer<typeof CurrencySchema>;
+
+export const CategoryTypeSchema = z.enum(PG_ENUM_CATEGORY_TYPE);
+export type CategoryTypeSchema = z.infer<typeof CategoryTypeSchema>;
 
 /**
  * Consolidate date/timestamp with `mode: string` from drizzle-orm & openapi.
