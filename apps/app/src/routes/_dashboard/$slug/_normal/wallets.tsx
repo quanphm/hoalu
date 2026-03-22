@@ -12,7 +12,7 @@ import {
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
 
-export const Route = createFileRoute("/_dashboard/$slug/wallets")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/wallets")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
 		await queryClient.ensureQueryData(walletsQueryOptions(slug));
 	},
@@ -38,5 +38,5 @@ function RouteComponent() {
 				<WalletTable data={wallets} />
 			</SectionContent>
 		</Section>
-	);
+	)
 }

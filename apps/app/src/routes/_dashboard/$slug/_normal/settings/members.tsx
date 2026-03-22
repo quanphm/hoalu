@@ -16,7 +16,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/settings/members")({
 	component: RouteComponent,
 });
 
@@ -32,7 +32,7 @@ function RouteComponent() {
 		permission: {
 			invitation: ["create"],
 		},
-	});
+	})
 
 	const membersTableData = workspace.members.map((member) => ({
 		id: member.user.id,
@@ -76,5 +76,5 @@ function RouteComponent() {
 				</SectionContent>
 			</Section>
 		</>
-	);
+	)
 }

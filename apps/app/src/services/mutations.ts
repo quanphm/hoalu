@@ -1,5 +1,11 @@
-import { createExpenseDialogAtom, draftExpenseAtom } from "#app/atoms/index.ts";
+import { draftIncomeAtom } from "#app/atoms/incomes.ts";
+import {
+	createExpenseDialogAtom,
+	draftExpenseAtom,
+	createIncomeDialogAtom,
+} from "#app/atoms/index.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
@@ -263,7 +269,9 @@ export function useCreateExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -293,7 +301,9 @@ export function useEditExpense() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -324,7 +334,9 @@ export function useDeleteExpense() {
 			});
 			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -449,6 +461,34 @@ export function useDeleteIncome() {
 	return mutation;
 }
 
+export function useDuplicateIncome() {
+	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const setDraft = useSetAtom(draftIncomeAtom);
+
+	const mutation = useMutation({
+		mutationFn: async ({ sourceIncome }: { sourceIncome: SyncedIncome }) => {
+			if (!sourceIncome) return;
+
+			setDraft({
+				title: sourceIncome.title,
+				description: sourceIncome.description ?? "",
+				date: new Date().toISOString(),
+				transaction: {
+					value: sourceIncome.amount,
+					currency: sourceIncome.currency,
+				},
+				walletId: sourceIncome.wallet.id,
+				categoryId: sourceIncome.category?.id ?? "",
+			});
+			setDialog({ state: true });
+
+			return sourceIncome;
+		},
+	});
+
+	return mutation;
+}
+
 export function useCreateRecurringBill() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
@@ -465,7 +505,9 @@ export function useCreateRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -528,7 +570,9 @@ export function useSetUpRecurringBill() {
 			});
 			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -558,7 +602,9 @@ export function useEditRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -588,7 +634,9 @@ export function useArchiveRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -618,7 +666,9 @@ export function useUnarchiveRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");
@@ -648,7 +698,9 @@ export function useDeleteRecurringBill() {
 				type: "success",
 			});
 			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"] });
+			queryClient.invalidateQueries({
+				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			});
 		},
 		onError: (error) => {
 			haptics.trigger("error");

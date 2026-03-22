@@ -9,7 +9,7 @@ import { filesQueryOptions } from "#app/services/query-options.ts";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/files")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/files")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {
 		await queryClient.ensureQueryData(filesQueryOptions(slug));
 	},

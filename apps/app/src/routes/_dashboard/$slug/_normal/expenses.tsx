@@ -37,7 +37,7 @@ const searchSchema = z.object({
 	id: z.optional(z.string()),
 });
 
-export const Route = createFileRoute("/_dashboard/$slug/expenses")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/expenses")({
 	validateSearch: searchSchema,
 	component: RouteComponent,
 });
@@ -89,18 +89,18 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
+				className="h-[calc(100vh-84px-46px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-46px)] md:gap-0"
 			>
 				{/* <SectionItem
-					data-slot="expense-filter"
-					desktopSpan="col-span-2"
-					tabletSpan={1}
-					mobileOrder={3}
-					hideOnMobile
-					className="pr-4 pb-4"
-				>
-					<ExpenseFilter expenses={filteredExpenses} categories={categories} />
-				</SectionItem> */}
+          data-slot="expense-filter"
+          desktopSpan="col-span-2"
+          tabletSpan={1}
+          mobileOrder={3}
+          hideOnMobile
+          className="pr-4 pb-4"
+        >
+          <ExpenseFilter expenses={filteredExpenses} categories={categories} />
+        </SectionItem> */}
 
 				<SectionItem
 					data-slot="expense-list"

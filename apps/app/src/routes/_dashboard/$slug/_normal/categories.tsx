@@ -11,7 +11,7 @@ import {
 } from "#app/components/layouts/section.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/categories")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/categories")({
 	component: RouteComponent,
 });
 
@@ -33,5 +33,5 @@ function RouteComponent() {
 				<CategoryTable data={categories} />
 			</SectionContent>
 		</Section>
-	);
+	)
 }

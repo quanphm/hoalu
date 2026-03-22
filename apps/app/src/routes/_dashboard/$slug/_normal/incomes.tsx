@@ -37,7 +37,7 @@ const searchSchema = z.object({
 	id: z.optional(z.string()),
 });
 
-export const Route = createFileRoute("/_dashboard/$slug/incomes")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/incomes")({
 	validateSearch: searchSchema,
 	component: RouteComponent,
 });
@@ -82,7 +82,7 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
+				className="h-[calc(100vh-84px-46px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-46px)] md:gap-0"
 			>
 				<SectionItem
 					data-slot="income-list"

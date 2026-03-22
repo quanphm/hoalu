@@ -43,7 +43,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/_normal/expenses");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date" | "search";
 
@@ -597,7 +597,7 @@ function CategoryFilterView({
 								onCheckedChange={() => toggleCategory(category.id)}
 							/>
 							<span className="flex-1 truncate">{category.name}</span>
-							<span className="text-muted-foreground text-xs tabular-nums">{category.total}</span>
+							{/* <span className="text-muted-foreground text-xs tabular-nums">{category.total}</span> */}
 						</Label>
 					))}
 			</div>

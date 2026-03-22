@@ -36,7 +36,7 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="outline"
-						className="mt-2 w-full justify-start gap-2"
+						className="mt-2 w-full gap-2"
 						onClick={() => setCommandPaletteOpen(true)}
 					>
 						<SearchIcon className="size-4" />

@@ -16,7 +16,7 @@ import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSetAtom } from "jotai";
 
-import { EditIncomeForm } from "./income-actions";
+import { DeleteIncome, DuplicateIncome, EditIncomeForm } from "./income-actions";
 
 interface IncomeDetailsProps {
 	incomes: SyncedIncome[];
@@ -70,21 +70,8 @@ export function IncomeDetails({ incomes }: IncomeDetailsProps) {
 						</Tooltip>
 					</div>
 					<div className="flex items-center justify-center gap-2">
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
-										size="icon"
-										variant="outline"
-										onClick={() => setDeleteDialog({ state: true })}
-									>
-										<Trash2Icon className="size-4" />
-									</Button>
-								}
-							>
-								<TooltipContent side="bottom">Delete</TooltipContent>
-							</TooltipTrigger>
-						</Tooltip>
+						<DuplicateIncome data={currentIncome} />
+						<DeleteIncome id={currentIncome.id} />
 						<Tooltip>
 							<TooltipTrigger
 								render={
@@ -102,7 +89,7 @@ export function IncomeDetails({ incomes }: IncomeDetailsProps) {
 				{currentIncome ? (
 					<EditIncomeForm key={currentIncome.id} data={currentIncome} />
 				) : (
-					<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
+					<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-none p-4 text-center">
 						No income selected
 					</h2>
 				)}

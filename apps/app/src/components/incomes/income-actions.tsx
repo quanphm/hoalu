@@ -1,13 +1,23 @@
-import { createIncomeDialogAtom, deleteIncomeDialogAtom } from "#app/atoms/dialogs.ts";
-import { selectedIncomeAtom } from "#app/atoms/income-filters.ts";
+import {
+	createIncomeDialogAtom,
+	deleteIncomeDialogAtom,
+	draftIncomeAtom,
+} from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
+import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
+import { WarningMessage } from "#app/components/warning-message.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { IncomeFormSchema } from "#app/lib/schema.ts";
-import { useCreateIncome, useDeleteIncome, useEditIncome } from "#app/services/mutations.ts";
+import {
+	useCreateIncome,
+	useDeleteIncome,
+	useDuplicateIncome,
+	useEditIncome,
+} from "#app/services/mutations.ts";
+import { CopyPlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -20,10 +30,11 @@ import {
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { useLocalStorage } from "@hoalu/ui/hooks";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-
-import { WarningMessage } from "../warning-message";
+import { useAtom, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { useEffect } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -60,9 +71,14 @@ function CreateIncomeForm() {
 	const wallets = useLiveQueryWallets();
 	const mutation = useCreateIncome();
 	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const [draft, setDraft] = useAtom(draftIncomeAtom);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_income_wallet_${slug}`,
+		null,
+	);
+	const [lastUsedCategoryId, setLastUsedCategoryId] = useLocalStorage<string | null>(
+		`last_used_income_category_${slug}`,
 		null,
 	);
 
@@ -112,19 +128,20 @@ function CreateIncomeForm() {
 			? lastUsedWalletId
 			: null;
 
-	const initialWallet = validLastWallet || defaultWallet.value;
+	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
+	const initialCategory = draft.categoryId || lastUsedCategoryId;
 
 	const form = useAppForm({
 		defaultValues: {
-			title: "",
-			description: "",
-			date: new Date().toISOString(),
+			title: draft.title,
+			description: draft.description,
+			date: draft.date || new Date().toISOString(),
 			transaction: {
-				value: 0,
-				currency: defaultWallet.currency,
+				value: draft.transaction.value,
+				currency: draft.transaction.currency || defaultWallet.currency,
 			},
 			walletId: initialWallet,
-			categoryId: "",
+			categoryId: initialCategory,
 		} as IncomeFormSchema,
 		validators: {
 			onSubmit: IncomeFormSchema,
@@ -141,17 +158,32 @@ function CreateIncomeForm() {
 					categoryId: value.categoryId,
 				},
 			});
-			setLastUsedWalletId(value.walletId);
+			setDraft(RESET);
 			setDialog({ state: false });
+			setLastUsedWalletId(value.walletId);
+			if (value.categoryId) {
+				setLastUsedCategoryId(value.categoryId);
+			}
 		},
 	});
+
+	useEffect(() => {
+		return () => {
+			if (!form.state.isSubmitted) {
+				setDraft(form.state.values);
+			}
+		};
+	}, [form.state.isSubmitted, setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>
 			<form.Form>
 				<div className="grid grid-cols-12 gap-4">
 					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-7">
-						<form.AppField name="title" children={(field) => <field.InputField label="Title" />} />
+						<form.AppField
+							name="title"
+							children={(field) => <field.InputField label="Title" required />}
+						/>
 						<form.AppField
 							name="transaction"
 							children={(field) => <field.TransactionAmountField label="Amount" />}
@@ -170,7 +202,9 @@ function CreateIncomeForm() {
 						</div>
 						<form.AppField
 							name="description"
-							children={(field) => <field.TiptapField label="Note" />}
+							children={(field) => (
+								<field.TiptapField label="Note" defaultValue={draft.description} />
+							)}
 						/>
 					</FieldGroup>
 					<FieldGroup className="col-span-12 flex flex-col gap-2.5 md:col-span-5">
@@ -193,23 +227,126 @@ function CreateIncomeForm() {
 	);
 }
 
+export function DeleteIncome({ id }: { id: string }) {
+	const setDialog = useSetAtom(deleteIncomeDialogAtom);
+
+	return (
+		<Tooltip>
+			<TooltipTrigger
+				render={
+					<Button
+						size="icon"
+						variant="outline"
+						aria-label="Delete this income"
+						onClick={() => setDialog({ state: true, data: { id } })}
+					/>
+				}
+			>
+				<Trash2Icon className="size-4" />
+			</TooltipTrigger>
+			<TooltipContent side="bottom">Delete</TooltipContent>
+		</Tooltip>
+	);
+}
+
+export function DeleteIncomeDialogContent() {
+	const { onSelectIncome } = useSelectedIncome();
+	const mutation = useDeleteIncome();
+	const [dialog, setDialog] = useAtom(deleteIncomeDialogAtom);
+
+	const onDelete = async () => {
+		if (!dialog?.data?.id) {
+			setDialog({ state: false });
+			return;
+		}
+		await mutation.mutateAsync({ id: dialog.data.id });
+		onSelectIncome(null);
+		setDialog({ state: false });
+	};
+
+	return (
+		<DialogPopup className="sm:max-w-[480px]">
+			<DialogHeader>
+				<DialogTitle>Delete this income?</DialogTitle>
+				<DialogHeaderAction />
+			</DialogHeader>
+			<WarningMessage>
+				The income will be deleted and removed from your history. This action cannot be undone.
+			</WarningMessage>
+			<DialogFooter>
+				<DialogClose render={<Button variant="outline">Cancel</Button>} />
+				<Button variant="destructive" onClick={onDelete}>
+					Delete
+				</Button>
+			</DialogFooter>
+		</DialogPopup>
+	);
+}
+
+export function DuplicateIncome(props: { data: SyncedIncome }) {
+	const mutation = useDuplicateIncome();
+	const onDuplicate = () => {
+		mutation.mutate({ sourceIncome: props.data });
+	};
+
+	return (
+		<Tooltip>
+			<TooltipTrigger
+				render={
+					<Button
+						size="icon"
+						variant="outline"
+						aria-label="Duplicate this income"
+						onClick={onDuplicate}
+					/>
+				}
+			>
+				<CopyPlusIcon className="size-4" />
+			</TooltipTrigger>
+			<TooltipContent side="bottom">Duplicate</TooltipContent>
+		</Tooltip>
+	);
+}
+
 export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 	const mutation = useEditIncome();
 	const wallets = useLiveQueryWallets();
 
-	const walletOptions = wallets
-		.filter((w) => w.isActive)
-		.map((w) => ({
-			label: w.name,
-			value: w.id,
-		}));
+	const walletGroups = wallets.reduce(
+		(result, current) => {
+			const owner = current.owner;
+			if (!result[owner.id]) {
+				result[owner.id] = {
+					name: owner.name,
+					options: [
+						{
+							label: current.name,
+							value: current.id,
+							currency: current.currency,
+						},
+					],
+				};
+			} else {
+				result[owner.id].options.push({
+					label: current.name,
+					value: current.id,
+					currency: current.currency,
+				});
+			}
+			return result;
+		},
+		{} as Record<
+			string,
+			{ name: string; options: { label: string; value: string; currency: string }[] }
+		>,
+	);
 
 	const form = useAppForm({
 		defaultValues: {
 			title: data.title,
 			description: data.description ?? "",
-			transaction: { value: data.amount, currency: data.currency },
 			date: data.date,
+			transaction: { value: data.amount, currency: data.currency },
 			walletId: data.wallet.id,
 			categoryId: data.category?.id ?? "",
 		} as IncomeFormSchema,
@@ -240,7 +377,10 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 						name="date"
 						children={(field) => <field.DatepickerInputField label="Date" />}
 					/>
-					<form.AppField name="title" children={(field) => <field.InputField label="Title" />} />
+					<form.AppField
+						name="title"
+						children={(field) => <field.InputField label="Title" required />}
+					/>
 					<form.AppField
 						name="transaction"
 						children={(field) => <field.TransactionAmountField label="Amount" />}
@@ -248,7 +388,9 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 					<div className="grid grid-cols-2 gap-4">
 						<form.AppField
 							name="walletId"
-							children={(field) => <field.SelectField label="Wallet" options={walletOptions} />}
+							children={(field) => (
+								<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+							)}
 						/>
 						<form.AppField
 							name="categoryId"
@@ -258,7 +400,9 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 
 					<form.AppField
 						name="description"
-						children={(field) => <field.TiptapField label="Description" />}
+						children={(field) => (
+							<field.TiptapField label="Note" defaultValue={data.description ?? ""} />
+						)}
 					/>
 				</FieldGroup>
 
@@ -270,35 +414,5 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 				</Field>
 			</form.Form>
 		</form.AppForm>
-	);
-}
-
-export function DeleteIncomeDialogContent() {
-	const selectedIncome = useAtomValue(selectedIncomeAtom);
-	const deleteMutation = useDeleteIncome();
-	const setDialog = useSetAtom(deleteIncomeDialogAtom);
-
-	const handleDelete = async () => {
-		if (!selectedIncome.id) return;
-		await deleteMutation.mutateAsync({ id: selectedIncome.id });
-		setDialog({ state: false });
-	};
-
-	return (
-		<DialogPopup className="sm:max-w-[420px]">
-			<DialogHeader>
-				<DialogTitle>Delete this income?</DialogTitle>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<WarningMessage>
-				The income will be deleted and removed from your history. This action cannot be undone.
-			</WarningMessage>
-			<DialogFooter>
-				<DialogClose render={<Button variant="outline">Cancel</Button>} />
-				<Button variant="destructive" onClick={handleDelete}>
-					Delete
-				</Button>
-			</DialogFooter>
-		</DialogPopup>
 	);
 }

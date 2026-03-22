@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/settings/")({
+export const Route = createFileRoute("/_dashboard/$slug/_normal/settings/")({
 	component: RouteComponent,
 });
 

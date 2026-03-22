@@ -46,7 +46,7 @@ export function ExpenseItem({
 				</div>
 				<span className="flex shrink-0 items-center gap-3 text-xs tabular-nums">
 					{expense.categoryName && (
-						<div className="flex origin-right scale-90 items-center">
+						<div className="hidden origin-right scale-90 items-center md:flex">
 							<Badge className={createCategoryTheme(expense.categoryColor)}>
 								{expense.categoryName}
 							</Badge>
