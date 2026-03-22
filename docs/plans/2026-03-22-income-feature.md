@@ -73,367 +73,54 @@
 
 ---
 
-## Task 1: Database Schema — Category Type Flag
+## Task 1: Database Schema — Category Type Flag ✅ DONE
 
 **Files:**
 - Modify: `apps/api/src/db/schema.ts`
 
-### Steps
-
-- [ ] **1.1** Open `apps/api/src/db/schema.ts`. Find the existing enum declarations. Add `categoryTypeEnum` after the existing enums:
-
-```typescript
-export const categoryTypeEnum = pgEnum("category_type_enum", ["expense", "income"]);
-```
-
-- [ ] **1.2** Find the `category` table definition. Add the `type` column and replace the old unique constraint with one that includes `type` (allowing the same name in different types):
-
-```typescript
-export const category = pgTable(
-  "category",
-  {
-    id: uuid("id").primaryKey(),
-    name: text("name").notNull(),
-    description: text("description"),
-    color: colorTypeEnum("color").default("gray").notNull(),
-    type: categoryTypeEnum("type").default("expense").notNull(),  // ADD
-    workspaceId: uuid("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (table) => [
-    index("category_workspace_id_idx").on(table.workspaceId),
-    // Replace old unique(workspace_id, name) with this:
-    unique("category_workspace_name_type_unique").on(table.workspaceId, table.name, table.type),
-  ],
-);
-```
-
-- [ ] **1.3** Generate the migration:
-
-```bash
-cd apps/api && bun run db:generate
-```
-
-Expected: new file in `apps/api/migrations/` adding the enum, column, and replacing the unique constraint.
-
-- [ ] **1.4** Inspect the generated SQL. Verify it:
-  - Creates `category_type_enum` with `('expense', 'income')`
-  - Adds `type category_type_enum NOT NULL DEFAULT 'expense'`
-  - Drops old unique and creates new `(workspace_id, name, type)` unique
-
-- [ ] **1.5** Apply the migration:
-
-```bash
-bun run db:migrate
-```
-
-- [ ] **1.6** Commit:
-
-```bash
-git add apps/api/src/db/schema.ts apps/api/migrations/
-git commit -m "feat(db): add category type flag (expense|income)"
-```
+- [x] **1.1** `categoryTypeEnum` added via `PG_ENUM_CATEGORY_TYPE` from `@hoalu/common/enums`
+- [x] **1.2** `type` column added to `category` table with new `(workspace_id, name, type)` unique constraint
+- [x] **1.3–1.5** Migration generated and applied
+- [x] **1.6** Committed
 
 ---
 
-## Task 2: Database Schema — Income Table
+## Task 2: Database Schema — Income Table ✅ DONE
 
 **Files:**
 - Modify: `apps/api/src/db/schema.ts`
 
-### Steps
-
-- [ ] **2.1** Add the `income` table after the `expense` table definition. The `repeat` column is included now (value `"one-time"` is valid per the verified enum) to make the schema future-ready for recurring income without a later migration:
-
-```typescript
-export const income = pgTable(
-  "income",
-  {
-    id: uuid("id").primaryKey(),
-    title: text("title").notNull(),
-    description: text("description"),
-    date: timestamp("date", { withTimezone: true }).defaultNow().notNull(),
-    currency: varchar("currency", { length: 3 }).notNull(),
-    amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
-    repeat: repeatEnum("repeat").default("one-time").notNull(),  // future-ready; UI always sends "one-time" for now
-    creatorId: uuid("creator_id").references(() => user.id, { onDelete: "set null" }),
-    workspaceId: uuid("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
-    walletId: uuid("wallet_id")
-      .notNull()
-      .references(() => wallet.id, { onDelete: "cascade" }),
-    categoryId: uuid("category_id").references(() => category.id, {
-      onDelete: "set null",
-    }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (table) => [
-    index("income_workspace_id_idx").on(table.workspaceId),
-    index("income_wallet_id_idx").on(table.walletId),
-    index("income_date_idx").on(table.date),
-  ],
-);
-```
-
-- [ ] **2.2** Generate and apply the migration:
-
-```bash
-bun run db:generate && bun run db:migrate
-```
-
-- [ ] **2.3** Commit:
-
-```bash
-git add apps/api/src/db/schema.ts apps/api/migrations/
-git commit -m "feat(db): add income table"
-```
+- [x] **2.1** `income` table added with GIN full-text indexes on title/description, plus workspace/wallet/date indexes
+- [x] **2.2** Migration generated and applied
+- [x] **2.3** Committed
 
 ---
 
-## Task 3: Income API Routes
+## Task 3: Income API Routes ✅ DONE
 
 **Files:**
-- Create: `apps/api/src/routes/incomes/schema.ts`
-- Create: `apps/api/src/routes/incomes/repository.ts`
-- Create: `apps/api/src/routes/incomes/index.ts`
-- Modify: `apps/api/src/modules/api.ts`
+- `apps/api/src/routes/incomes/schema.ts` — written by user
+- `apps/api/src/routes/incomes/repository.ts` — written, mirrors expenses pattern with joins
+- `apps/api/src/routes/incomes/index.ts` — written, full CRUD with OpenAPI docs
+- `apps/api/src/modules/api.ts` — income route registered
 
-### Steps
+### Schema notes (user's implementation)
 
-- [ ] **3.1** Create `apps/api/src/routes/incomes/schema.ts`. Use `z.iso.datetime()` for dates (Zod v4). The `repeat` field is included as optional so the API can accept it in future (UI always sends `"one-time"` for now):
+The user wrote `schema.ts` to mirror `expenses/schema.ts` exactly — `BaseIncomeSchema` includes joined `creator`, `wallet`, `category` objects, and `IncomeSchema` applies `monetary.fromRealAmount` transform. Key differences from the plan:
 
-```typescript
-import * as z from "zod";
-import { CurrencySchema, RepeatSchema } from "@hoalu/common/schema";
+- `InsertIncomeSchema` does **not** include `workspaceId` (comes from middleware, added in handler)
+- `LiteIncomeSchema` and `DeleteIncomeSchema` were added by the implementation to match the handler needs
+- `IncomeSchema` is a full joined response (like `ExpenseSchema`), not a flat shape
 
-export const InsertIncomeSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().optional(),
-  date: z.iso.datetime(),
-  currency: CurrencySchema,
-  amount: z.coerce.number().positive(),
-  repeat: RepeatSchema.optional().default("one-time"),
-  walletId: z.uuidv7(),
-  categoryId: z.uuidv7().optional(),
-  workspaceId: z.uuidv7(),
-});
+### Repository notes
 
-export const UpdateIncomeSchema = InsertIncomeSchema.omit({ workspaceId: true }).partial();
+`findAllByWorkspaceId` and `findOne` both use `innerJoin(user)`, `innerJoin(wallet)`, `leftJoin(category)` — matching `ExpenseRepository` exactly. The POST handler fetches the full joined record after insert for the response.
 
-export const IncomeSchema = z.object({
-  id: z.uuidv7(),
-  title: z.string(),
-  description: z.string().nullable(),
-  date: z.string(),
-  currency: CurrencySchema,
-  amount: z.coerce.number(),
-  repeat: RepeatSchema,
-  walletId: z.uuidv7(),
-  categoryId: z.uuidv7().nullable(),
-  workspaceId: z.uuidv7(),
-  creatorId: z.uuidv7().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
-
-export const IncomesSchema = z.array(IncomeSchema);
-
-export const LiteIncomeSchema = z.object({
-  id: z.uuidv7(),
-  title: z.string(),
-  amount: z.coerce.number(),
-  currency: CurrencySchema,
-});
-
-export const DeleteIncomeSchema = z.object({
-  id: z.uuidv7(),
-});
-```
-
-- [ ] **3.2** Create `apps/api/src/routes/incomes/repository.ts` (mirror `expenses/repository.ts`):
-
-```typescript
-import { and, desc, eq } from "drizzle-orm";
-import { db, schema } from "#api/db/index.ts";
-
-type NewIncome = typeof schema.income.$inferInsert;
-
-export class IncomeRepository {
-  async findAllByWorkspaceId(param: { workspaceId: string }) {
-    return db
-      .select()
-      .from(schema.income)
-      .where(eq(schema.income.workspaceId, param.workspaceId))
-      .orderBy(desc(schema.income.date));
-  }
-
-  async findOne(param: { id: string; workspaceId: string }) {
-    const [result] = await db
-      .select()
-      .from(schema.income)
-      .where(and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)));
-    return result ?? null;
-  }
-
-  async insert(param: NewIncome) {
-    try {
-      const [result] = await db.insert(schema.income).values(param).returning();
-      return result;
-    } catch (_error) {
-      return null;
-    }
-  }
-
-  async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-    try {
-      const [result] = await db
-        .update(schema.income)
-        .set({ ...param.payload, updatedAt: new Date() })
-        .where(and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)))
-        .returning();
-      return result ?? null;
-    } catch (_error) {
-      return null;
-    }
-  }
-
-  async delete(param: { id: string; workspaceId: string }) {
-    await db
-      .delete(schema.income)
-      .where(and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)));
-    return { id: param.id };
-  }
-}
-```
-
-- [ ] **3.3** Read `apps/api/src/routes/expenses/index.ts` fully before writing income's `index.ts` — note the exact import paths for `createIssueMsg`, `createHonoInstance`, `idParamValidator`, `jsonBodyValidator`, `workspaceQueryValidator`. Then create `apps/api/src/routes/incomes/index.ts`:
-
-  **Critical patterns verified from expenses route:**
-  - Middleware order: `workspaceQueryValidator` → `workspaceMember` → `jsonBodyValidator` → handler
-  - Creator: `const user = c.get("user")` (not `c.get("session")`)
-  - ID generation: `generateId({ use: "uuid" })` (with argument)
-  - All handlers `safeParse` the response before returning; on failure return `UNPROCESSABLE_ENTITY` with `createIssueMsg(parsed.error.issues)`
-
-```typescript
-import { HTTPException } from "hono/http-exception";
-import { describeRoute } from "hono-openapi";
-
-import { generateId } from "@hoalu/common/generate-id";
-import { HTTPStatus } from "@hoalu/common/http-status";
-// Copy exact createIssueMsg import path from expenses/index.ts
-
-import { createHonoInstance } from "#api/lib/create-app.ts";
-import { workspaceMember } from "#api/middlewares/workspace-member.ts";
-import { IncomeRepository } from "#api/routes/incomes/repository.ts";
-import {
-  DeleteIncomeSchema,
-  IncomesSchema,
-  IncomeSchema,
-  InsertIncomeSchema,
-  LiteIncomeSchema,
-  UpdateIncomeSchema,
-} from "#api/routes/incomes/schema.ts";
-import { idParamValidator } from "#api/validators/id-param.ts";
-import { jsonBodyValidator } from "#api/validators/json-body.ts";
-import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
-
-const app = createHonoInstance();
-const repository = new IncomeRepository();
-const TAGS = ["Incomes"];
-
-const route = app
-  .get("/", describeRoute({ tags: TAGS, summary: "Get all incomes" }),
-    workspaceQueryValidator, workspaceMember,
-    async (c) => {
-      const workspace = c.get("workspace");
-      const data = await repository.findAllByWorkspaceId({ workspaceId: workspace.id });
-      const parsed = IncomesSchema.safeParse(data);
-      if (!parsed.success) return c.json({ message: createIssueMsg(parsed.error.issues) }, HTTPStatus.codes.UNPROCESSABLE_ENTITY);
-      return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
-    })
-  .get("/:id", describeRoute({ tags: TAGS, summary: "Get income by ID" }),
-    idParamValidator, workspaceQueryValidator, workspaceMember,
-    async (c) => {
-      const workspace = c.get("workspace");
-      const { id } = c.req.valid("param");
-      const data = await repository.findOne({ id, workspaceId: workspace.id });
-      if (!data) throw new HTTPException(HTTPStatus.codes.NOT_FOUND, { message: "Income not found" });
-      const parsed = IncomeSchema.safeParse(data);
-      if (!parsed.success) return c.json({ message: createIssueMsg(parsed.error.issues) }, HTTPStatus.codes.UNPROCESSABLE_ENTITY);
-      return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
-    })
-  .post("/", describeRoute({ tags: TAGS, summary: "Create income" }),
-    workspaceQueryValidator, workspaceMember, jsonBodyValidator(InsertIncomeSchema),
-    async (c) => {
-      const user = c.get("user");
-      if (!user) throw new HTTPException(HTTPStatus.codes.UNAUTHORIZED, { message: HTTPStatus.phrases.UNAUTHORIZED });
-      const workspace = c.get("workspace");
-      const body = c.req.valid("json");
-      const income = await repository.insert({
-        ...body,
-        id: generateId({ use: "uuid" }),
-        creatorId: user.id,
-        workspaceId: workspace.id,
-      });
-      if (!income) throw new HTTPException(HTTPStatus.codes.INTERNAL_SERVER_ERROR, { message: "Failed to create income" });
-      const parsed = LiteIncomeSchema.safeParse(income);
-      if (!parsed.success) return c.json({ message: createIssueMsg(parsed.error.issues) }, HTTPStatus.codes.UNPROCESSABLE_ENTITY);
-      return c.json({ data: parsed.data }, HTTPStatus.codes.CREATED);
-    })
-  .patch("/:id", describeRoute({ tags: TAGS, summary: "Update income" }),
-    idParamValidator, workspaceQueryValidator, workspaceMember, jsonBodyValidator(UpdateIncomeSchema),
-    async (c) => {
-      const workspace = c.get("workspace");
-      const { id } = c.req.valid("param");
-      const body = c.req.valid("json");
-      const income = await repository.update({ id, workspaceId: workspace.id, payload: body });
-      if (!income) throw new HTTPException(HTTPStatus.codes.NOT_FOUND, { message: "Income not found" });
-      const parsed = LiteIncomeSchema.safeParse(income);
-      if (!parsed.success) return c.json({ message: createIssueMsg(parsed.error.issues) }, HTTPStatus.codes.UNPROCESSABLE_ENTITY);
-      return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
-    })
-  .delete("/:id", describeRoute({ tags: TAGS, summary: "Delete income" }),
-    idParamValidator, workspaceQueryValidator, workspaceMember,
-    async (c) => {
-      const workspace = c.get("workspace");
-      const { id } = c.req.valid("param");
-      const existing = await repository.findOne({ id, workspaceId: workspace.id });
-      if (!existing) throw new HTTPException(HTTPStatus.codes.NOT_FOUND, { message: "Income not found" });
-      const data = await repository.delete({ id, workspaceId: workspace.id });
-      const parsed = DeleteIncomeSchema.safeParse(data);
-      if (!parsed.success) return c.json({ message: createIssueMsg(parsed.error.issues) }, HTTPStatus.codes.UNPROCESSABLE_ENTITY);
-      return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
-    });
-
-export default route;
-```
-
-- [ ] **3.4** Open `apps/api/src/modules/api.ts`. The app uses `.basePath("/bff")`. Register the income route inside the same chain — use `.route("/incomes", incomeRoute)` (no `/api` prefix):
-
-```typescript
-import incomeRoute from "#api/routes/incomes/index.ts";
-// Inside the createHonoInstance().basePath("/bff") chain:
-.route("/incomes", incomeRoute)
-```
-
-- [ ] **3.5** Restart the dev server and test:
-
-```bash
-# from project root
-bun run dev
-
-# The Caddy proxy maps /api → /bff, so externally this is /api/incomes
-curl "https://hoalu.localhost/api/incomes?workspaceIdOrSlug=<your-slug>" \
-  -H "Cookie: <your session cookie>"
-```
-
-Expected: `{ "data": [] }` HTTP 200.
-
+- [x] **3.1** `schema.ts` created by user — `LiteIncomeSchema` and `DeleteIncomeSchema` added
+- [x] **3.2** `repository.ts` created with joins matching the schema
+- [x] **3.3** `index.ts` created — full CRUD, `monetary.toRealAmount` on insert/patch, `safeParse` on all responses
+- [x] **3.4** Income route registered in `api.ts` as `.route("/incomes", incomesRoute)`
+- [ ] **3.5** Restart dev server and verify `GET /api/incomes?workspaceIdOrSlug=<slug>` returns `{ "data": [] }`
 - [ ] **3.6** Commit:
 
 ```bash
@@ -443,92 +130,22 @@ git commit -m "feat(api): add income CRUD routes"
 
 ---
 
-## Task 4: Update Category API for Type Flag
+## Task 4: Update Category API for Type Flag ✅ DONE
 
 **Files:**
-- Modify: `apps/api/src/routes/categories/schema.ts`
-- Modify: `apps/api/src/routes/categories/repository.ts`
-- Modify: `apps/api/src/routes/categories/index.ts`
+- `apps/api/src/routes/categories/schema.ts` — `CategoryTypeSchema` imported from `@hoalu/common/schema`; `type` field in all schemas
+- `apps/api/src/routes/categories/repository.ts` — `findAllByWorkspaceId` accepts optional `type` filter
+- `apps/api/src/routes/categories/index.ts` — `GET /` passes `?type` query param to repository
 
-### Steps
-
-- [ ] **4.1** Read `apps/api/src/routes/categories/schema.ts` fully. Add `type` to all schemas:
-
-```typescript
-const CategoryTypeSchema = z.enum(["expense", "income"]);
-
-// In InsertCategorySchema add:
-type: CategoryTypeSchema.default("expense"),
-
-// In CategorySchema (response) add:
-type: CategoryTypeSchema,
-
-// In LiteCategorySchema (returned on create/update) add:
-type: CategoryTypeSchema,
-```
-
-- [ ] **4.2** Read `apps/api/src/routes/categories/repository.ts` fully. Update `findAllByWorkspaceId` to accept optional `type` filter. The `total` is a count of linked records — keep it as a combined count across both tables (a category can only be one type, so at most one subquery will return a non-zero count):
-
-```typescript
-async findAllByWorkspaceId(param: { workspaceId: string; type?: "expense" | "income" }) {
-  return db
-    .select({
-      id: schema.category.id,
-      name: schema.category.name,
-      description: schema.category.description,
-      color: schema.category.color,
-      type: schema.category.type,
-      workspaceId: schema.category.workspaceId,
-      total: sql<number>`(
-        SELECT COUNT(*)::int FROM expense
-        WHERE expense.category_id = ${schema.category.id}
-        AND expense.workspace_id = ${param.workspaceId}
-      ) + (
-        SELECT COUNT(*)::int FROM income
-        WHERE income.category_id = ${schema.category.id}
-        AND income.workspace_id = ${param.workspaceId}
-      )`.as("total"),
-    })
-    .from(schema.category)
-    .where(
-      param.type
-        ? and(
-            eq(schema.category.workspaceId, param.workspaceId),
-            eq(schema.category.type, param.type),
-          )
-        : eq(schema.category.workspaceId, param.workspaceId),
-    )
-    .orderBy(schema.category.name);
-}
-```
-
-> Adapt to match the existing Drizzle query structure in the file — `sql` template tag is from `drizzle-orm`.
-
-- [ ] **4.3** In `apps/api/src/routes/categories/index.ts`, update the `GET /` handler to pass the optional `type` query param, and ensure the `POST /` handler passes `body.type` to the insert:
-
-```typescript
-// GET / — add type param:
-const typeParam = c.req.query("type") as "expense" | "income" | undefined;
-const data = await repository.findAllByWorkspaceId({ workspaceId: workspace.id, type: typeParam });
-
-// POST / — body.type is automatically included since InsertCategorySchema now has it
-```
-
-- [ ] **4.4** Verify:
-
-```bash
-curl "https://hoalu.localhost/api/categories?workspaceIdOrSlug=<slug>&type=income"
-# Expected: [] (no income categories yet)
-
-curl "https://hoalu.localhost/api/categories?workspaceIdOrSlug=<slug>&type=expense"
-# Expected: existing categories, each with "type": "expense"
-```
-
+- [x] **4.1** `schema.ts` — `CategoryTypeSchema` imported from `@hoalu/common/schema`; `type` field added to `CategorySchema`, `InsertCategorySchema`, `LiteCategorySchema`
+- [x] **4.2** `repository.ts` — `findAllByWorkspaceId` accepts `type?` filter; uses `and(workspaceId, type)` where clause when type is provided
+- [x] **4.3** `index.ts` — `GET /` extracts `c.req.query("type")` and passes to repository; `POST /` passes `body.type` automatically via spread
+- [ ] **4.4** Verify with curl after dev server restart (see Task 3 step 3.5)
 - [ ] **4.5** Commit:
 
 ```bash
 git add apps/api/src/routes/categories/
-git commit -m "feat(api): add type field to categories"
+git commit -m "feat(api): add type filter to categories"
 ```
 
 ---
@@ -1392,15 +1009,15 @@ git commit -m "feat: income tracking feature complete"
 ## Implementation Order Summary
 
 ```
-Task 1  → DB: category type flag
-Task 2  → DB: income table
-Task 3  → API: income CRUD routes + register in api.ts
+Task 1  → DB: category type flag                      ✅ DONE
+Task 2  → DB: income table                            ✅ DONE
+Task 3  → API: income CRUD routes + register in api.ts ✅ DONE (needs verify + commit)
+Task 4  → API: category type filter                   ✅ DONE (needs verify + commit)
           ↳ RESTART DEV SERVER HERE to regenerate api-client.ts
-Task 4  → API: category type filter
 Task 5  → API: Electric sync for income
-Task 6  → Frontend: category collection + schemas (add RPC-inferred types after Task 3 restart)
+Task 6  → Frontend: category collection + schemas (add RPC-inferred types after restart)
 Task 7  → Frontend: income collection + cleanup exports
-Task 8  → Frontend: apiClient.incomes wrapper + incomeKeys (requires Task 3 restart)
+Task 8  → Frontend: apiClient.incomes wrapper + incomeKeys (requires restart)
 Task 9  → Frontend: category components (useLiveQueryCategories groupBy fix, SelectCategoryField)
 Task 10 → Frontend: income mutations + query options
 Task 11 → Frontend: income live query hook (FX conversion + useIncomeStats reads atoms)
@@ -1414,6 +1031,6 @@ Task 18 → Dashboard: comparison chart
 Task 19 → QA
 ```
 
-**Backend tasks (1–5) can be completed and tested before frontend tasks (6–19).**
+**Next step:** Restart the dev server, verify Tasks 3 & 4 with curl, then commit both. Then proceed with Task 5 (Electric sync) before moving to frontend tasks.
 
-**Critical:** After Task 3, restart the dev server before completing Tasks 6 (RPC type aliases) and 8 (`apiClient.incomes` — requires `honoClient.bff.incomes` to exist).
+**Critical:** After Task 3 is verified and committed, restart the dev server before completing Tasks 6 (RPC type aliases) and 8 (`apiClient.incomes` — requires `honoClient.bff.incomes` to exist in the regenerated client).

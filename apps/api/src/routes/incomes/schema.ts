@@ -51,6 +51,27 @@ export const IncomeSchema = BaseIncomeSchema.transform((val) => ({
 
 export const IncomesSchema = z.array(IncomeSchema);
 
+export const LiteIncomeSchema = BaseIncomeSchema.pick({
+	id: true,
+	title: true,
+	description: true,
+	amount: true,
+	currency: true,
+	repeat: true,
+	date: true,
+	wallet: true,
+	category: true,
+	creator: true,
+}).transform((val) => ({
+	...val,
+	realAmount: val.amount,
+	amount: monetary.fromRealAmount(val.amount, val.currency),
+}));
+
+export const DeleteIncomeSchema = z.object({
+	id: z.uuidv7(),
+});
+
 export const InsertIncomeSchema = z.object({
 	title: z.string().min(1),
 	description: z.string().optional(),

@@ -1,6 +1,10 @@
 import type { ColorSchema } from "@hoalu/common/schema";
 
-export const DEFAULT_CATEGORIES: { name: string; description: string; color: ColorSchema }[] = [
+export const DEFAULT_EXPENSE_CATEGORIES: {
+	name: string;
+	description: string;
+	color: ColorSchema;
+}[] = [
 	{
 		name: "🍲 Food & Drink",
 		color: "yellow",
@@ -45,6 +49,28 @@ export const DEFAULT_CATEGORIES: { name: string; description: string; color: Col
 		name: "❓ Uncategorized",
 		color: "gray",
 		description: "Miscellaneous expenses pending classification",
+	},
+];
+
+export const DEFAULT_INCOME_CATEGORIES: {
+	name: string;
+	description: string;
+	color: ColorSchema;
+}[] = [
+	{
+		name: "💵 Salary",
+		color: "blue",
+		description: "Income from employment or work",
+	},
+	{
+		name: "💰 Investments",
+		color: "green",
+		description: "Income from investment activities",
+	},
+	{
+		name: "🏘️ Passives",
+		color: "yellow",
+		description: "Income from passive sources like rental properties or royalties",
 	},
 ];
 

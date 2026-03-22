@@ -1,10 +1,10 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { redis } from "#api/lib/redis.ts";
-// routes
 import categoriesRoute from "#api/routes/categories/index.ts";
 import exchangeRatesRoute from "#api/routes/exchange-rates/index.ts";
 import expensesRoute from "#api/routes/expenses/index.ts";
 import filesRoute from "#api/routes/files/index.ts";
+import incomesRoute from "#api/routes/incomes/index.ts";
 import recurringBillsRoute from "#api/routes/recurring-bills/index.ts";
 import tasksRoute from "#api/routes/tasks/index.ts";
 import walletsRoute from "#api/routes/wallets/index.ts";
@@ -12,6 +12,7 @@ import workspacesRoute from "#api/routes/workspaces/index.ts";
 import { authGuard, rateLimiter } from "@hoalu/furnace";
 import { openAPIRouteHandler } from "hono-openapi";
 import { cors } from "hono/cors";
+
 import pkg from "../../package.json" with { type: "json" };
 
 const API_VERSION = pkg.version;
@@ -31,6 +32,7 @@ export function apiModule() {
 		.route("/categories", categoriesRoute)
 		.route("/exchange-rates", exchangeRatesRoute)
 		.route("/expenses", expensesRoute)
+		.route("/incomes", incomesRoute)
 		.route("/files", filesRoute)
 		.route("/recurring-bills", recurringBillsRoute)
 		.route("/tasks", tasksRoute)
@@ -41,11 +43,11 @@ export function apiModule() {
 		"/openapi",
 		openAPIRouteHandler(app, {
 			documentation: {
-			info: {
-				title: "Hoalu API",
-				description: "OpenAPI documentation",
-				version: API_VERSION,
-			},
+				info: {
+					title: "Hoalu API",
+					description: "OpenAPI documentation",
+					version: API_VERSION,
+				},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
 		}),

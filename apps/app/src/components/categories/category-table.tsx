@@ -35,6 +35,10 @@ const columns = [
 		header: "Description",
 		cell: (info) => info.getValue(),
 	}),
+	columnHelper.accessor("type", {
+		header: "Type",
+		cell: (info) => info.getValue(),
+	}),
 ];
 
 export function CategoryTable({ data }: { data: CategorySchema[] }) {

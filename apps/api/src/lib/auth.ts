@@ -1,7 +1,11 @@
 import { db } from "#api/db/index.ts";
 import { category, wallet } from "#api/db/schema.ts";
 import { sendEmail } from "#api/lib/email.ts";
-import { DEFAULT_CATEGORIES, WORKSPACE_CREATOR_ROLE } from "#api/utils/constants.ts";
+import {
+	DEFAULT_EXPENSE_CATEGORIES,
+	DEFAULT_INCOME_CATEGORIES,
+	WORKSPACE_CREATOR_ROLE,
+} from "#api/utils/constants.ts";
 import { apiKey } from "@better-auth/api-key";
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
@@ -125,7 +129,7 @@ export const auth = betterAuth({
 						});
 						// default categories
 						await tx.insert(category).values(
-							DEFAULT_CATEGORIES.map((c) => ({
+							[...DEFAULT_EXPENSE_CATEGORIES, ...DEFAULT_INCOME_CATEGORIES].map((c) => ({
 								id: generateId({ use: "uuid" }),
 								name: c.name,
 								description: c.description,

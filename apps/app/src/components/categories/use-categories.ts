@@ -19,12 +19,14 @@ export function useLiveQueryCategories() {
 					category.name,
 					category.description,
 					category.color,
+					category.type,
 				])
 				.select(({ category }) => ({
 					id: category.id,
 					name: category.name,
 					description: category.description,
 					color: category.color,
+					type: category.type,
 					total: count(category.id),
 				}));
 		},
