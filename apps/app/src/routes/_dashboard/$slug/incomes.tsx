@@ -7,7 +7,7 @@ import {
 import { CreateIncomeDialogTrigger } from "#app/components/incomes/income-actions.tsx";
 import { IncomeDetails, MobileIncomeDetails } from "#app/components/incomes/income-details.tsx";
 import { IncomeFilterDropdown } from "#app/components/incomes/income-filter-dropdown.tsx";
-import { IncomeList } from "#app/components/incomes/income-list.tsx";
+import IncomeList from "#app/components/incomes/income-list.tsx";
 import {
 	type IncomeClient,
 	useLiveQueryIncomes,

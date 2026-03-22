@@ -90,8 +90,8 @@ export const KEYBOARD_SHORTCUTS = {
 		enabled: true,
 	},
 	goto_incomes: {
-		label: "I",
-		hotkey: "i",
+		label: "GI",
+		hotkey: "g>i",
 		enabled: true,
 	},
 	goto_tasks: {

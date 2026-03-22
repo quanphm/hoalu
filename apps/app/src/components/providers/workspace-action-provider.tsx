@@ -198,6 +198,17 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	);
 
 	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_incomes.hotkey,
+		() => {
+			navigate({ to: "/$slug/incomes", params: { slug } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
+	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_files.hotkey,
 		() => {
 			navigate({ to: "/$slug/files", params: { slug } });

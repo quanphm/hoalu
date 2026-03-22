@@ -458,7 +458,6 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			onSubmit: ExpenseFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await sleep(5000);
 			await mutation.mutateAsync({
 				id: props.data.id,
 				payload: {
@@ -494,12 +493,10 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		form.reset();
 	}, [props.data.recurring_bill_id, form]);
 
-	console.log(form.state);
-
 	return (
 		<form.AppForm>
 			<form.Form>
-				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
+				<FieldGroup className="p-4">
 					<form.AppField
 						name="date"
 						children={(field) => <field.DatepickerInputField label="Date" />}
@@ -644,8 +641,4 @@ export function ExpenseSearch() {
 			</div>
 		</div>
 	);
-}
-
-function sleep(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
 }

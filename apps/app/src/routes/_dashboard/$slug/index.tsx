@@ -2,7 +2,7 @@ import { useLiveQueryCategories } from "#app/components/categories/use-categorie
 import { CashFlowCard } from "#app/components/charts/cash-flow-card.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
-import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
+// import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 // import { IncomeExpenseComparison } from "#app/components/charts/income-expense-comparison.tsx";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
@@ -76,19 +76,15 @@ function RouteComponent() {
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
+						<RecentExpenses />
 					</div>
 					{/* <div className="col-span-12 flex w-full flex-col gap-4 md:col-span-6">
 						<IncomeExpenseComparison incomes={incomes} expenses={expenses} />
 					</div> */}
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-5">
-						<ExpenseStatsRow expenses={expenses} />
+						{/* <ExpenseStatsRow expenses={expenses} /> */}
 						<CategoryBreakdown expenses={expenses} categories={categories} />
-					</div>
-					<div className="col-span-12 flex w-full flex-col md:col-span-7">
 						<UpcomingBillsWidget />
-					</div>
-					<div className="col-span-12 flex h-full w-full flex-col md:col-span-5">
-						<RecentExpenses />
 					</div>
 				</SectionContent>
 			</Section>
