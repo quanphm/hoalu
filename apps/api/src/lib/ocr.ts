@@ -5,13 +5,40 @@ import * as z from "zod";
 
 import { openRouterImageAdapter } from "./openrouter";
 
+/**
+ * Convert merchant name from ALL CAPS to Title Case
+ * Only transforms if the entire string is uppercase
+ */
+function toTitleCase(name: string): string {
+	// If it's not all uppercase, return as-is
+	if (name !== name.toUpperCase()) {
+		return name;
+	}
+
+	// Split by spaces and common separators
+	return name
+		.split(/([\s&'-]+)/)
+		.map((part) => {
+			// Keep separators as-is
+			if (/^[\s&'-]+$/.test(part)) {
+				return part;
+			}
+			// Capitalize first letter, lowercase the rest
+			return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+		})
+		.join("");
+}
+
 const ReceiptDataSchema = z.object({
 	amount: z.number().describe("Total amount on the receipt"),
 	date: z
 		.string()
 		.regex(/^\d{4}-\d{2}-\d{2}$/)
 		.describe("Receipt date in YYYY-MM-DD format"),
-	merchantName: z.string().describe("Name of the merchant or store"),
+	merchantName: z
+		.string()
+		.transform(toTitleCase)
+		.describe("Name of the merchant or store"),
 	suggestedCategoryId: z
 		.uuid()
 		.nullable()
