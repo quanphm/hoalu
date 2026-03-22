@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/email",
-	"version": "0.25.3",
+	"version": "0.26.0",
 	"private": true,
 	"type": "module",
 	"sideEffects": false,
