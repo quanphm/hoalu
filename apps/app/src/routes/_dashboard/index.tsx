@@ -15,7 +15,7 @@ import {
 } from "#app/services/query-options.ts";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Card } from "@hoalu/ui/card";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 
@@ -25,9 +25,9 @@ export const Route = createFileRoute("/_dashboard/")({
 
 function RouteComponent() {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
-	const { data: summaries } = useSuspenseQuery(listWorkspaceSummariesOptions());
+	const { data: summaries } = useQuery(listWorkspaceSummariesOptions());
 	const setDialog = useSetAtom(createWorkspaceDialogAtom);
-	const summaryMap = new Map(summaries.map((s) => [s.id, s]));
+	const summaryMap = new Map((summaries || []).map((s) => [s.id, s]));
 
 	if (workspaces.length === 0) {
 		return (
