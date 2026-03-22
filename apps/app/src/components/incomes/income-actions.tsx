@@ -2,7 +2,7 @@ import { createIncomeDialogAtom, deleteIncomeDialogAtom } from "#app/atoms/dialo
 import { selectedIncomeAtom } from "#app/atoms/income-filters.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { type IncomeClient } from "#app/components/incomes/use-incomes.ts";
+import { type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
@@ -22,6 +22,8 @@ import { Field, FieldGroup } from "@hoalu/ui/field";
 import { useLocalStorage } from "@hoalu/ui/hooks";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
+
+import { WarningMessage } from "../warning-message";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
@@ -191,7 +193,7 @@ function CreateIncomeForm() {
 	);
 }
 
-export function EditIncomeForm({ data }: { data: IncomeClient }) {
+export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 	const mutation = useEditIncome();
 	const wallets = useLiveQueryWallets();
 
@@ -285,9 +287,12 @@ export function DeleteIncomeDialogContent() {
 	return (
 		<DialogPopup className="sm:max-w-[420px]">
 			<DialogHeader>
-				<DialogTitle>Delete income</DialogTitle>
-				<DialogDescription>Are you sure you want to delete this income?</DialogDescription>
+				<DialogTitle>Delete this income?</DialogTitle>
+				<DialogHeaderAction />
 			</DialogHeader>
+			<WarningMessage>
+				The income will be deleted and removed from your history. This action cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
 				<DialogClose render={<Button variant="outline">Cancel</Button>} />
 				<Button variant="destructive" onClick={handleDelete}>

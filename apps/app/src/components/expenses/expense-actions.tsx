@@ -362,7 +362,7 @@ export function DeleteExpenseDialogContent() {
 				The expense will be deleted and removed from your history. This action cannot be undone.
 			</WarningMessage>
 			<DialogFooter>
-				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
+				<DialogClose render={<Button variant="outline">Cancel</Button>} />
 				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>

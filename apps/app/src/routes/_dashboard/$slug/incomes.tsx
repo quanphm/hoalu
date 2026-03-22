@@ -9,7 +9,7 @@ import { IncomeDetails, MobileIncomeDetails } from "#app/components/incomes/inco
 import { IncomeFilterDropdown } from "#app/components/incomes/income-filter-dropdown.tsx";
 import IncomeList from "#app/components/incomes/income-list.tsx";
 import {
-	type IncomeClient,
+	type SyncedIncome,
 	useLiveQueryIncomes,
 	useSelectedIncome,
 } from "#app/components/incomes/use-incomes.ts";
@@ -110,7 +110,7 @@ function RouteComponent() {
 }
 
 function filter(
-	data: IncomeClient[],
+	data: SyncedIncome[],
 	condition: {
 		selectedCategoryIds: string[];
 		selectedWalletIds: string[];

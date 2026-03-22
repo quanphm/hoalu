@@ -1,7 +1,7 @@
 import { deleteIncomeDialogAtom } from "#app/atoms/dialogs.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useIncomeNavigation } from "#app/components/incomes/use-income-navigation.ts";
-import { type IncomeClient, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
+import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { ChevronDownIcon, ChevronUpIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
@@ -19,7 +19,7 @@ import { useSetAtom } from "jotai";
 import { EditIncomeForm } from "./income-actions";
 
 interface IncomeDetailsProps {
-	incomes: IncomeClient[];
+	incomes: SyncedIncome[];
 }
 
 export function IncomeDetails({ incomes }: IncomeDetailsProps) {

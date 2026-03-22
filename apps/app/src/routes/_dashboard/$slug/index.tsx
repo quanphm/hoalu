@@ -1,5 +1,5 @@
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
-import { CashFlowCard } from "#app/components/charts/cash-flow-card.tsx";
+import { CashFlowSection } from "#app/components/charts/cash-flow.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
 import { ExpenseStatsRow } from "#app/components/charts/expense-stats-row.tsx";
@@ -68,11 +68,11 @@ function RouteComponent() {
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 w-full md:col-span-7">
+					<div className="col-span-12 w-full md:col-span-8">
 						<DashboardDateFilter categories={categories} />
 					</div>
-					<div className="@container/main col-span-12 flex w-full flex-row gap-4">
-						<CashFlowCard incomes={incomes} expenses={expenses} />
+					<div className="col-span-12 flex w-full flex-row gap-4">
+						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />

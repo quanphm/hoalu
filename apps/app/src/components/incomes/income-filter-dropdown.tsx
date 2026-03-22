@@ -492,20 +492,22 @@ function CategoryFilterView({
 			</div>
 
 			<div className="flex flex-col gap-1">
-				{categories.map((category) => (
-					<Label
-						key={category.id}
-						htmlFor={`filter-category-${category.id}`}
-						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
-					>
-						<Checkbox
-							id={`filter-category-${category.id}`}
-							checked={selected.includes(category.id)}
-							onCheckedChange={() => toggleCategory(category.id)}
-						/>
-						<span className="flex-1 truncate">{category.name}</span>
-					</Label>
-				))}
+				{categories
+					.filter((category) => category.type === "income")
+					.map((category) => (
+						<Label
+							key={category.id}
+							htmlFor={`filter-category-${category.id}`}
+							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+						>
+							<Checkbox
+								id={`filter-category-${category.id}`}
+								checked={selected.includes(category.id)}
+								onCheckedChange={() => toggleCategory(category.id)}
+							/>
+							<span className="flex-1 truncate">{category.name}</span>
+						</Label>
+					))}
 			</div>
 		</div>
 	);

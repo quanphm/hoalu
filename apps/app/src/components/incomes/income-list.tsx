@@ -1,6 +1,6 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { IncomeContent } from "#app/components/incomes/income-content.tsx";
-import { type IncomeClient, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
+import IncomeContent from "#app/components/incomes/income-content.tsx";
+import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
@@ -15,14 +15,14 @@ const MOBILE_NAV_HEIGHT = 80;
 
 type IncomeItem = {
 	type: "income";
-	income: IncomeClient;
+	income: SyncedIncome;
 	date: string;
 };
 
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	incomes: IncomeClient[];
+	incomes: SyncedIncome[];
 };
 
 type VirtualItem = IncomeItem | GroupHeaderItem;
@@ -46,7 +46,7 @@ function GroupHeader({ date, incomes }: Omit<GroupHeaderItem, "type">) {
 	);
 }
 
-function TotalIncomeByDate(props: { data: IncomeClient[] }) {
+function TotalIncomeByDate(props: { data: SyncedIncome[] }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -77,13 +77,13 @@ function EmptyState() {
 	);
 }
 
-function IncomeList(props: { incomes: IncomeClient[] }) {
+function IncomeList(props: { incomes: SyncedIncome[] }) {
 	const { income: selectedIncome, onSelectIncome } = useSelectedIncome();
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
 
 	const flattenIncomes = useMemo(() => {
-		const grouped = new Map<string, IncomeClient[]>();
+		const grouped = new Map<string, SyncedIncome[]>();
 		props.incomes.forEach((income) => {
 			const dateKey = income.date;
 			const existing = grouped.get(dateKey);
@@ -221,11 +221,7 @@ function IncomeList(props: { incomes: IncomeClient[] }) {
 								{income.type === "group-header" ? (
 									<GroupHeader date={income.date} incomes={income.incomes} />
 								) : (
-									<IncomeContent
-										income={income.income}
-										selected={selectedIncome.id === income.income.id}
-										onClick={onSelectIncome}
-									/>
+									<IncomeContent {...income.income} onClick={onSelectIncome} />
 								)}
 							</div>
 						);

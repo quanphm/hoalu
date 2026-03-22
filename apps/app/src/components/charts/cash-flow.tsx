@@ -1,27 +1,30 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { IncomeClient } from "#app/components/incomes/use-incomes.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { TrendingUpIcon, TrendingDownIcon } from "@hoalu/icons/lucide";
+import {
+	TrendingUpIcon,
+	// TrendingDownIcon
+} from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import {
 	Card,
 	CardAction,
 	CardDescription,
-	CardFooter,
+	// CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
 import { useAtomValue } from "jotai";
 
-interface CashFlowCardProps {
-	incomes: IncomeClient[];
+interface CashFlowSectionProps {
+	incomes: SyncedIncome[];
 	expenses: SyncedExpense[];
 }
 
-export function CashFlowCard(props: CashFlowCardProps) {
+export function CashFlowSection(props: CashFlowSectionProps) {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
@@ -42,68 +45,62 @@ export function CashFlowCard(props: CashFlowCardProps) {
 	const netCashFlow = totalIncome - totalExpenses;
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
+		<div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription>Net Cash Flow</CardDescription>
-					<CardTitle className="text-xl font-semibold tabular-nums">
-						{formatCurrency(netCashFlow, currency)}
-					</CardTitle>
+					<CardTitle className="text-xl">{formatCurrency(netCashFlow, currency)}</CardTitle>
 					<CardAction>
-						<Badge size="lg" variant="outline">
+						<Badge variant="outline">
 							<TrendingUpIcon />
 							+12.5%
 						</Badge>
 					</CardAction>
 				</CardHeader>
-				<CardFooter className="flex-col items-start gap-1.5 text-sm">
+				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">
 						Trending up this month <TrendingUpIcon className="size-4" />
 					</div>
-					<div className="text-muted-foreground">Visitors for the last 6 months</div>
-				</CardFooter>
+					<div className="text-muted-foreground"></div>
+				</CardFooter> */}
 			</Card>
 
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription>Expenses</CardDescription>
-					<CardTitle className="text-xl font-semibold tabular-nums">
-						{formatCurrency(totalExpenses, currency)}
-					</CardTitle>
+					<CardTitle className="text-xl">{formatCurrency(totalExpenses, currency)}</CardTitle>
 					<CardAction>
-						<Badge size="lg" variant="outline">
+						<Badge variant="outline">
 							<TrendingUpIcon />
 							+12.5%
 						</Badge>
 					</CardAction>
 				</CardHeader>
-				<CardFooter className="flex-col items-start gap-1.5 text-sm">
+				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">
 						Trending up this month <TrendingUpIcon className="size-4" />
 					</div>
 					<div className="text-muted-foreground">Visitors for the last 6 months</div>
-				</CardFooter>
+				</CardFooter> */}
 			</Card>
 
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription>Income</CardDescription>
-					<CardTitle className="text-xl font-semibold tabular-nums">
-						{formatCurrency(totalIncome, currency)}
-					</CardTitle>
+					<CardTitle className="text-xl">{formatCurrency(totalIncome, currency)}</CardTitle>
 					<CardAction>
-						<Badge size="lg" variant="outline">
+						<Badge variant="outline">
 							<TrendingUpIcon />
 							+12.5%
 						</Badge>
 					</CardAction>
 				</CardHeader>
-				<CardFooter className="flex-col items-start gap-1.5 text-sm">
+				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">
 						Trending up this month <TrendingUpIcon className="size-4" />
 					</div>
 					<div className="text-muted-foreground">Visitors for the last 6 months</div>
-				</CardFooter>
+				</CardFooter> */}
 			</Card>
 		</div>
 	);

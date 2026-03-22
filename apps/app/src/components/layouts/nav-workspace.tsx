@@ -61,50 +61,50 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							render={
-								<Link
-									to="/$slug/expenses"
-									params={{ slug }}
-									disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
-								/>
-							}
-							tooltip="Expenses"
-						>
-							<ArrowsExchangeIcon />
-							<span>Expenses</span>
-							<SidebarMenuBadge>
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
-							</SidebarMenuBadge>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/expenses"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
+									/>
+								}
+								tooltip="Expenses"
+							>
+								<ArrowsExchangeIcon />
+								<span>Expenses</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
 
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							render={
-								<Link
-									to="/$slug/incomes"
-									params={{ slug }}
-									disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
-								/>
-							}
-							tooltip="Income"
-						>
-							<TrendingUpIcon />
-							<span>Income</span>
-							<SidebarMenuBadge>
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
-							</SidebarMenuBadge>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/incomes"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
+									/>
+								}
+								tooltip="Income"
+							>
+								<TrendingUpIcon />
+								<span>Income</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
 
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
-							tooltip="Recurring Bills"
-						>
-							<CalendarIcon />
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
+								tooltip="Recurring Bills"
+							>
+								<CalendarIcon />
 								<span>Recurring Bills</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />
@@ -130,7 +130,14 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem> */}
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
 
+			<SidebarGroup>
+				<SidebarGroupLabel>Resources</SidebarGroupLabel>
+				<SidebarGroupContent>
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={
@@ -144,7 +151,6 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileIcon />
@@ -183,7 +189,6 @@ export function NavWorkspace() {
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>
-
 		</>
 	);
 }

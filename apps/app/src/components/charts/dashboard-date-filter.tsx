@@ -154,9 +154,7 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 	return (
 		<div className="flex items-center gap-1">
 			<Popover>
-				<PopoverTrigger
-					render={<Button variant={hasSelection ? "default" : "outline"} className="w-full" />}
-				>
+				<PopoverTrigger render={<Button variant={hasSelection ? "default" : "outline"} />}>
 					<LayersIcon />
 					{hasSelection
 						? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
@@ -175,35 +173,37 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 							categories.length > 6 && "max-h-[200px] overflow-y-auto",
 						)}
 					>
-						{categories.map((category) => {
-							const isSelected = selectedIds.includes(category.id);
-							return (
-								<button
-									key={category.id}
-									type="button"
-									onClick={() => toggleCategory(category.id)}
-									className="hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none"
-								>
-									<div
-										className={cn(
-											"flex size-4 shrink-0 items-center justify-center rounded-xs border",
-											isSelected
-												? "border-primary bg-primary text-primary-foreground"
-												: "border-muted-foreground/30",
-										)}
+						{categories
+							.filter((category) => category.type === "expense")
+							.map((category) => {
+								const isSelected = selectedIds.includes(category.id);
+								return (
+									<button
+										key={category.id}
+										type="button"
+										onClick={() => toggleCategory(category.id)}
+										className="hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none"
 									>
-										{isSelected && <CheckIcon className="size-3" />}
-									</div>
-									<div
-										className={cn(
-											"size-2.5 shrink-0 rounded-full",
-											createChartColor(category.color),
-										)}
-									/>
-									<span className="truncate">{category.name}</span>
-								</button>
-							);
-						})}
+										<div
+											className={cn(
+												"flex size-4 shrink-0 items-center justify-center rounded-xs border",
+												isSelected
+													? "border-primary bg-primary text-primary-foreground"
+													: "border-muted-foreground/30",
+											)}
+										>
+											{isSelected && <CheckIcon className="size-3" />}
+										</div>
+										<div
+											className={cn(
+												"size-2.5 shrink-0 rounded-full",
+												createChartColor(category.color),
+											)}
+										/>
+										<span className="truncate">{category.name}</span>
+									</button>
+								);
+							})}
 					</div>
 				</PopoverContent>
 			</Popover>

@@ -1,42 +1,83 @@
-import type { IncomeClient } from "#app/components/incomes/use-incomes.ts";
+import { useSelectedIncome, type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { formatCurrency } from "#app/helpers/currency.ts";
+import { htmlToText } from "#app/helpers/dom-parser.ts";
+import { useLayoutMode } from "#app/hooks/use-layout-mode.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
+import { memo } from "react";
 
-interface Props {
-	income: IncomeClient;
-	selected?: boolean;
-	onClick?: (id: string) => void;
+import { TransactionAmount } from "../transaction-amount";
+import { WalletBadge } from "../wallets/wallet-badge";
+
+interface IncomeContentProps extends SyncedIncome {
+	onClick(id: string | null): void;
 }
 
-export function IncomeContent({ income, selected, onClick }: Props) {
-	const categoryClassName = income.category?.color
-		? createCategoryTheme(income.category.color)
-		: "bg-gray-100 text-gray-700";
+function IncomeContent(props: IncomeContentProps) {
+	const { income: selectedRow } = useSelectedIncome();
+	const { shouldUseMobileLayout } = useLayoutMode();
+
+	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+		if (event.code === "Enter" || event.code === "Space") {
+			event.preventDefault();
+			event.stopPropagation();
+			props.onClick(props.id);
+		}
+	};
+
+	const handleFocus: React.FocusEventHandler<HTMLDivElement> = () => {
+		// On mobile layout, skip auto-select on focus: when the dialog closes,
+		// the browser restores focus to the last-focused list item, which would
+		// immediately re-open the dialog via this handler.
+		if (shouldUseMobileLayout) {
+			return;
+		}
+		props.onClick(props.id);
+	};
+
+	const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+		props.onClick(props.id);
+		event.currentTarget.focus();
+	};
 
 	return (
 		<div
+			id={props.id}
 			className={cn(
-				"flex cursor-pointer items-center justify-between px-3 py-2 transition-colors",
-				selected ? "bg-muted" : "hover:bg-muted/50",
+				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
+				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
+				selectedRow.id === props.id && "ring-ring ring-2 ring-inset",
+				// Mobile: compact items, Desktop: normal padding
+				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-4 pl-3",
 			)}
-			onClick={() => onClick?.(income.id)}
+			data-slot="expense-item"
+			aria-label={`Select expense ${props.title}`}
+			tabIndex={0}
+			onClick={handleClick}
+			onKeyDown={handleKeyDown}
+			onFocus={handleFocus}
 		>
-			<div className="flex flex-col gap-1">
-				<span className="text-sm font-medium">{income.title}</span>
-				{income.category && (
-					<Badge className={categoryClassName} size="sm">
-						{income.category.name}
-					</Badge>
+			<div className="flex w-2/3 flex-col gap-0.5">
+				<p className="font-medium">{props.title}</p>
+				{props.description && (
+					<div className="text-muted-foreground truncate leading-relaxed">
+						{htmlToText(props.description)}
+					</div>
 				)}
+				<div data-slot="item-tags" className="mt-0.5 flex origin-top-left scale-90 gap-1.5">
+					{props.category.name && props.category.color ? (
+						<Badge className={cn(createCategoryTheme(props.category.color))}>
+							{props.category.name}
+						</Badge>
+					) : null}
+					<WalletBadge {...props.wallet} />
+				</div>
 			</div>
-			<div className="flex flex-col items-end gap-1">
-				<span className="text-sm font-semibold text-green-600">
-					+{formatCurrency(income.convertedAmount > 0 ? income.convertedAmount : 0, "USD")}
-				</span>
-				<span className="text-xs text-muted-foreground">{income.wallet.name}</span>
+			<div className="flex items-end justify-center gap-4 text-right">
+				<TransactionAmount data={props} />
 			</div>
 		</div>
 	);
 }
+
+export default memo(IncomeContent);

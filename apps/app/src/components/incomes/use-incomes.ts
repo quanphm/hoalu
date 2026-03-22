@@ -1,3 +1,4 @@
+import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import { selectedIncomeAtom } from "#app/atoms/income-filters.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
@@ -20,7 +21,6 @@ import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 
 export function useSelectedIncome() {
 	const [income, setSelectedIncome] = useAtom(selectedIncomeAtom);
@@ -144,11 +144,11 @@ export function useLiveQueryIncomes() {
 	return transformedIncomes;
 }
 
-export type IncomesClient = ReturnType<typeof useLiveQueryIncomes>;
-export type IncomeClient = IncomesClient[number];
+export type SyncedIncomes = ReturnType<typeof useLiveQueryIncomes>;
+export type SyncedIncome = SyncedIncomes[number];
 
 interface UseIncomeStatsOptions {
-	incomes: IncomeClient[];
+	incomes: SyncedIncome[];
 }
 
 export function useIncomeStats(options: UseIncomeStatsOptions) {

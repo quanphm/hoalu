@@ -1,14 +1,14 @@
-import type { IncomeClient } from "#app/components/incomes/use-incomes.ts";
+import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
-import { datetime } from "@hoalu/common/datetime";
 
 const chartConfig = {
 	income: {
@@ -22,7 +22,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface IncomeExpenseComparisonProps {
-	incomes: IncomeClient[];
+	incomes: SyncedIncome[];
 	expenses: SyncedExpense[];
 }
 
@@ -89,7 +89,7 @@ export function IncomeExpenseComparison({ incomes, expenses }: IncomeExpenseComp
 					<CardTitle>Income vs Expenses</CardTitle>
 					<CardDescription>Compare your income and expenses over time</CardDescription>
 				</CardHeader>
-				<CardContent className="h-[300px] flex items-center justify-center">
+				<CardContent className="flex h-[300px] items-center justify-center">
 					<p className="text-muted-foreground">No data available for the selected period</p>
 				</CardContent>
 			</Card>
@@ -122,20 +122,18 @@ export function IncomeExpenseComparison({ incomes, expenses }: IncomeExpenseComp
 								axisLine={false}
 								tickMargin={8}
 								fontSize={12}
-								tickFormatter={(value) =>
-									value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
-								}
+								tickFormatter={(value) => (value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value)}
 							/>
 							<ChartTooltip
 								content={({ active, payload, label }) => {
 									if (active && payload && payload.length) {
 										return (
-											<div className="rounded-lg border bg-background p-2 shadow-sm">
+											<div className="bg-background rounded-lg border p-2 shadow-sm">
 												<p className="font-medium">{label}</p>
 												{payload.map((entry, index) => (
 													<p key={`${entry.dataKey}-${index}`} className="text-sm">
 														<span
-															className="inline-block h-2 w-2 rounded-full mr-2"
+															className="mr-2 inline-block h-2 w-2 rounded-full"
 															style={{ backgroundColor: entry.color }}
 														/>
 														{entry.name}: {currency} {Number(entry.value).toLocaleString()}
@@ -143,9 +141,9 @@ export function IncomeExpenseComparison({ incomes, expenses }: IncomeExpenseComp
 												))}
 											</div>
 										);
-										}
-										return null;
-									}}
+									}
+									return null;
+								}}
 							/>
 							<Legend />
 							<Bar
