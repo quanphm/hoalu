@@ -326,6 +326,36 @@ export const expense = pgTable(
 	],
 );
 
+export const income = pgTable(
+	"income",
+	{
+		id: uuid("id").primaryKey(),
+		title: text("title").notNull(),
+		description: text("description"),
+		date: timestamp("date", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+		currency: varchar("currency", { length: 3 }).notNull(),
+		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
+		repeat: repeatEnum("repeat").default("one-time").notNull(),
+		creatorId: uuid("creator_id").references(() => user.id, { onDelete: "set null" }),
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
+		walletId: uuid("wallet_id")
+			.notNull()
+			.references(() => wallet.id, { onDelete: "cascade" }),
+		categoryId: uuid("category_id").references(() => category.id, { onDelete: "set null" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("income_title_idx").using("gin", sql`to_tsvector('simple', ${table.title})`),
+		index("income_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
+		index("income_workspace_id_idx").on(table.workspaceId),
+		index("income_wallet_id_idx").on(table.walletId),
+		index("income_date_idx").on(table.date),
+	],
+);
+
 export const task = pgTable(
 	"task",
 	{

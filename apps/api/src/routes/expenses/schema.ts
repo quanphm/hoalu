@@ -64,19 +64,20 @@ export const InsertExpenseSchema = z.object({
 	recurringBillId: z.uuidv7().optional(),
 });
 
-export const UpdateExpenseSchema = z.object({
-	title: z.string().min(1).optional(),
-	description: z.string().optional(),
-	amount: z.number().optional(),
-	currency: CurrencySchema.optional(),
-	// No .default() here — omitting repeat in a PATCH must not overwrite the DB value
-	repeat: RepeatSchema.optional(),
-	date: z.iso.datetime().optional(),
-	walletId: z.uuidv7().optional(),
-	categoryId: z.uuidv7().optional(),
-	// Allow explicitly unlinking (set to null) or linking to a bill
-	recurringBillId: z.uuidv7().nullable().optional(),
-});
+export const UpdateExpenseSchema = z
+	.object({
+		title: z.string().min(1),
+		description: z.string(),
+		amount: z.number(),
+		currency: CurrencySchema,
+		repeat: RepeatSchema,
+		date: z.iso.datetime(),
+		walletId: z.uuidv7(),
+		categoryId: z.uuidv7(),
+		// Allow explicitly unlinking (set to null) or linking to a bill
+		recurringBillId: z.uuidv7().nullable(),
+	})
+	.partial();
 
 export const DeleteExpenseSchema = z.object({
 	id: z.uuidv7(),
