@@ -11,6 +11,7 @@ import {
 	TrendingUpIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
+	WalletIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -61,6 +62,32 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
+						{/* <SidebarMenuItem>
+							<SidebarMenuButton
+								render={
+									<Link
+										to="/$slug/tasks"
+										params={{ slug }}
+										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
+									/>
+								}
+								tooltip="Tasks"
+							>
+								<AlignBoxTopCenterIcon />
+								<span>Tasks</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem> */}
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
+
+			<SidebarGroup>
+				<SidebarGroupLabel>Finance</SidebarGroupLabel>
+				<SidebarGroupContent>
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={
@@ -111,25 +138,6 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
-						{/* <SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/tasks"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-									/>
-								}
-								tooltip="Tasks"
-							>
-								<AlignBoxTopCenterIcon />
-								<span>Tasks</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem> */}
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>
@@ -139,18 +147,25 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link to="/$slug/library" params={{ slug }} search={{ tab: "categories" }} />
-								}
-							>
+							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
 								<TriangleSquareCircleIcon />
-								<span>Library</span>
+								<span>Categories</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_categories} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+
+						<SidebarMenuItem>
+							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
+								<WalletIcon />
+								<span>Wallets</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_wallets} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileIcon />

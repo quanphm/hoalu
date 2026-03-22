@@ -167,7 +167,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_categories.hotkey,
 		() => {
-			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "categories" } });
+			navigate({ to: "/$slug/categories", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,
@@ -178,7 +178,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_wallets.hotkey,
 		() => {
-			navigate({ to: "/$slug/library", params: { slug }, search: { tab: "wallets" } });
+			navigate({ to: "/$slug/wallets", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,
