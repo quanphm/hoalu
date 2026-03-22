@@ -90,13 +90,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		[runAction, setCreateExpenseDialog, setCreateWalletDialog, setCreateCategoryDialog],
 	);
 
-	// Build unified items array for virtualization
-	// itemIndex tracks the index in autocompleteItems (excludes headers)
 	const virtualizedItems: VirtualizedItem[] = useMemo(() => {
 		const items: VirtualizedItem[] = [];
 		let itemIndex = 0;
 
-		// Show search results when searching, recent expenses otherwise (mutually exclusive)
 		if (hasSearchResults) {
 			items.push({ type: "header", label: "Expenses" });
 			for (const expense of filteredExpenses) {
@@ -111,8 +108,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			}
 		}
 
-		// Upcoming bills (only when not searching)
 		if (hasUpcomingBills) {
+			// Upcoming bills
 			items.push({ type: "header", label: "Upcoming bills" });
 			for (const bill of upcomingBills) {
 				items.push({ type: "upcoming-bill", data: bill, itemIndex });
@@ -120,11 +117,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			}
 		}
 
-		// Always add actions section
-		items.push({ type: "header", label: "Actions" });
-		for (const action of actions) {
-			items.push({ type: "action", data: action, itemIndex });
-			itemIndex++;
+		if (!hasSearchResults) {
+			// Actions section
+			items.push({ type: "header", label: "Actions" });
+			for (const action of actions) {
+				items.push({ type: "action", data: action, itemIndex });
+				itemIndex++;
+			}
 		}
 
 		return items;

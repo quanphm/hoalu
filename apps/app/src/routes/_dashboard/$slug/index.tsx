@@ -62,7 +62,7 @@ function RouteComponent() {
 					<SectionTitle>Overview</SectionTitle>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 w-full">
+					<div className="col-span-12 w-full md:col-span-7">
 						<DashboardDateFilter categories={categories} />
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">

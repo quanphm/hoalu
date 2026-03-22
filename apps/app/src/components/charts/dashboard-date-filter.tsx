@@ -16,7 +16,13 @@ import {
 } from "#app/helpers/constants.ts";
 import { CheckIcon, LayersIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverDescription,
+	PopoverTitle,
+	PopoverTrigger,
+} from "@hoalu/ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -57,7 +63,13 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 	};
 
 	return (
-		<div className="flex items-center gap-4">
+		<div
+			data-slot="chart-date-filter"
+			className={cn(
+				"@container/date-filter grid grid-cols-2 items-center gap-4 md:grid-cols-4",
+				"not-has-data-[slot=chart-group-by]:grid-cols-3",
+			)}
+		>
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
 				<SelectTrigger className="w-auto min-w-0 shrink-0">
 					<SelectValue>
@@ -91,9 +103,13 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 					</SelectItem>
 				</SelectContent>
 			</Select>
-			<ChartCategoryFilter categories={props.categories} />
-			{predefinedDateRange === "custom" && <ChartGroupByFilter />}
 			<DateRangePicker onRangeSelect={handleCustomRangeSelect} className="min-w-0 shrink" />
+			<ChartCategoryFilter categories={props.categories} />
+			{predefinedDateRange === "custom" && (
+				<div data-slot="chart-group-by" className="text-muted-foreground text-sm">
+					<ChartGroupByFilter />
+				</div>
+			)}
 		</div>
 	);
 }
@@ -139,24 +155,19 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 		<div className="flex items-center gap-1">
 			<Popover>
 				<PopoverTrigger
-					render={
-						<Button
-							variant={hasSelection ? "default" : "outline"}
-							className="gap-1.5 px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm"
-						/>
-					}
+					render={<Button variant={hasSelection ? "default" : "outline"} className="w-full" />}
 				>
-					<LayersIcon className="size-3.5" />
-					<span>
-						{hasSelection
-							? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
-							: "By category"}
-					</span>
+					<LayersIcon />
+					{hasSelection
+						? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
+						: "By category"}
 				</PopoverTrigger>
 				<PopoverContent className="w-56 p-0" align="start">
 					<div className="border-b px-3 py-2">
-						<p className="text-sm font-medium">Filter by category</p>
-						<p className="text-muted-foreground text-xs">Select categories to compare</p>
+						<PopoverTitle className="text-sm font-medium">Filter by category</PopoverTitle>
+						<PopoverDescription className="text-muted-foreground text-xs">
+							Select categories to compare
+						</PopoverDescription>
 					</div>
 					<div
 						className={cn(

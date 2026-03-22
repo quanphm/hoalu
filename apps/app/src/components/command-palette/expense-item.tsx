@@ -28,7 +28,7 @@ export function ExpenseItem({
 		<CommandItem
 			value={autocompleteItem.id}
 			index={itemIndex}
-			className="hover:bg-foreground/5 focus-visible:ring-ring absolute top-0 left-0 flex min-h-8 w-full cursor-default scroll-mt-4 items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none focus-visible:ring-2"
+			className="hover:bg-foreground/5 focus-visible:ring-ring absolute top-0 left-0 flex min-h-8 w-full cursor-default scroll-my-8 items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none focus-visible:ring-2"
 			style={style}
 			onClick={onClick}
 		>
