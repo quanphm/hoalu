@@ -260,7 +260,12 @@ export function EditIncomeForm({ data }: { data: IncomeClient }) {
 					/>
 				</FieldGroup>
 
-				<form.SubscribeButton className="w-auto">Update</form.SubscribeButton>
+				<Field
+					orientation="horizontal"
+					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
+				>
+					<form.SubscribeButton>Update</form.SubscribeButton>
+				</Field>
 			</form.Form>
 		</form.AppForm>
 	);

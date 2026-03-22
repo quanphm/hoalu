@@ -11,14 +11,7 @@ import {
 	ComboboxPopup,
 	ComboboxSeparator,
 } from "@hoalu/ui/combobox";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@hoalu/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
 import { useState } from "react";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
@@ -46,8 +39,8 @@ export function SelectCategoryField(props: Props) {
 
 	const allCategories = useLiveQueryCategories();
 	const categories = props.type
-		? allCategories?.filter((c) => c.type === props.type) ?? []
-		: allCategories ?? [];
+		? (allCategories?.filter((c) => c.type === props.type) ?? [])
+		: (allCategories ?? []);
 	const categoryOptions: CategoryOption[] = [...categories]
 		.sort((a, b) => b.total - a.total)
 		.map((c) => ({
@@ -108,7 +101,6 @@ export function SelectCategoryField(props: Props) {
 				<DialogContent className="sm:max-w-[420px]">
 					<DialogHeader>
 						<DialogTitle>Create new category</DialogTitle>
-						<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 					</DialogHeader>
 					<CreateCategoryForm
 						type={props.type}

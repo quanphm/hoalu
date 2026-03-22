@@ -3,7 +3,6 @@ import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { IncomeClient } from "#app/components/incomes/use-incomes.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { formatNumber } from "#app/helpers/number.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { TrendingUpIcon, TrendingDownIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
@@ -31,7 +30,6 @@ export function CashFlowCard(props: CashFlowCardProps) {
 
 	const filteredIncomes = filterDataByRange(props.incomes, dateRange, customRange);
 	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
-	const currentPeriodExpenses = filterDataByRange(props.expenses, dateRange, customRange);
 
 	const totalIncome = filteredIncomes.reduce(
 		(sum, income) => sum + (income.convertedAmount > 0 ? income.convertedAmount : 0),
@@ -42,10 +40,9 @@ export function CashFlowCard(props: CashFlowCardProps) {
 		0,
 	);
 	const netCashFlow = totalIncome - totalExpenses;
-	const totalTransactions = currentPeriodExpenses.length;
 
 	return (
-		<div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid w-full grid-cols-1 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+		<div className="grid w-full grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription>Net Cash Flow</CardDescription>
@@ -108,46 +105,6 @@ export function CashFlowCard(props: CashFlowCardProps) {
 					<div className="text-muted-foreground">Visitors for the last 6 months</div>
 				</CardFooter>
 			</Card>
-
-			<Card className="@container/card">
-				<CardHeader>
-					<CardDescription>Transactions</CardDescription>
-					<CardTitle className="text-xl font-semibold tabular-nums">
-						{formatNumber(totalTransactions)}
-					</CardTitle>
-					<CardAction>
-						<Badge size="lg" variant="outline">
-							<TrendingUpIcon />
-							+12.5%
-						</Badge>
-					</CardAction>
-				</CardHeader>
-				<CardFooter className="flex-col items-start gap-1.5 text-sm">
-					<div className="line-clamp-1 flex gap-2 font-medium">
-						Trending up this month <TrendingUpIcon className="size-4" />
-					</div>
-					<div className="text-muted-foreground">Visitors for the last 6 months</div>
-				</CardFooter>
-			</Card>
-
-			{/* <Card className="@container/card">
-				<CardHeader>
-					<CardDescription>Days</CardDescription>
-					<CardTitle className="text-xl font-semibold tabular-nums">
-						{formatNumber(
-							currentPeriodExpenses.length > 0
-								? new Set(currentPeriodExpenses.map((e) => e.date)).size
-								: 0,
-						)}
-					</CardTitle>
-				</CardHeader>
-				<CardFooter className="flex-col items-start gap-1.5 text-sm">
-					<div className="line-clamp-1 flex gap-2 font-medium">
-						Trending up this month <TrendingUpIcon className="size-4" />
-					</div>
-					<div className="text-muted-foreground">Visitors for the last 6 months</div>
-				</CardFooter>
-			</Card> */}
 		</div>
 	);
 }

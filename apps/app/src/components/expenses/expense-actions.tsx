@@ -255,7 +255,7 @@ function CreateExpenseForm() {
 							/>
 							<form.AppField
 								name="categoryId"
-								children={(field) => <field.SelectCategoryField label="Category" />}
+								children={(field) => <field.SelectCategoryField label="Category" type="expense" />}
 							/>
 						</div>
 						<form.Subscribe

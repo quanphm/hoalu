@@ -30,11 +30,11 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-14px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-14px)]"
+				className="h-[calc(100vh-84px-14px)] gap-0 overflow-hidden max-md:h-[calc(100vh-84px-14px)] md:gap-0"
 			>
 				<SectionItem
 					data-slot="recurring-bill-list"
-					desktopSpan="col-span-4"
+					desktopSpan="col-span-5"
 					tabletSpan={1}
 					mobileOrder={1}
 				>
@@ -43,7 +43,7 @@ function RouteComponent() {
 
 				<SectionItem
 					data-slot="recurring-bill-details"
-					desktopSpan="col-span-8"
+					desktopSpan="col-span-7"
 					tabletSpan={1}
 					mobileOrder={2}
 					hideOnMobile

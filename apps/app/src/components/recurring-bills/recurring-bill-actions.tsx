@@ -213,7 +213,7 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 						/>
 						<form.AppField
 							name="categoryId"
-							children={(field) => <field.SelectCategoryField label="Category" />}
+							children={(field) => <field.SelectCategoryField type="expense" label="Category" />}
 						/>
 					</div>
 
@@ -340,7 +340,7 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 						/>
 						<form.AppField
 							name="categoryId"
-							children={(field) => <field.SelectCategoryField label="Category" />}
+							children={(field) => <field.SelectCategoryField type="expense" label="Category" />}
 						/>
 					</div>
 
