@@ -54,7 +54,7 @@ function RouteComponent() {
 						<DashboardDateFilter categories={categories} />
 					</div>
 
-					<div className="col-span-12 flex w-full flex-row gap-4">
+					<div className="col-span-12 hidden w-full flex-row gap-4 md:flex">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
@@ -66,7 +66,7 @@ function RouteComponent() {
 						<IncomeExpenseComparison incomes={incomes} expenses={expenses} />
 						</div> */}
 
-					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-5">
+					<div className="col-span-12 hidden w-full flex-col gap-4 md:col-span-5 md:flex">
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 						<UpcomingBillsWidget />
 						{/* <ExpenseStatsRow expenses={expenses} /> */}

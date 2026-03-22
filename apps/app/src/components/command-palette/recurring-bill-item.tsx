@@ -36,7 +36,7 @@ export function RecurringBillItem({
 				</div>
 				<span className="flex shrink-0 items-center gap-3 text-xs tabular-nums">
 					{bill.categoryName && bill.categoryColor && (
-						<div className="flex origin-right scale-90 items-center">
+						<div className="hidden origin-right scale-90 items-center md:flex">
 							<Badge className={createCategoryTheme(bill.categoryColor)}>{bill.categoryName}</Badge>
 						</div>
 					)}
