@@ -16,7 +16,6 @@ import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogHeaderAction,
@@ -46,7 +45,6 @@ export function CreateCategoryDialogContent() {
 		<DialogPopup className="sm:max-w-[420px]">
 			<DialogHeader>
 				<DialogTitle>Create new category</DialogTitle>
-				<DialogDescription>Create a new category to organize your expenses.</DialogDescription>
 				<DialogHeaderAction />
 			</DialogHeader>
 			<CreateCategoryForm />
@@ -59,7 +57,13 @@ const CATEGORY_TYPE_OPTIONS = [
 	{ label: "Income", value: "income" },
 ];
 
-export function CreateCategoryForm({ type, callback }: { type?: "expense" | "income"; callback?(): void }) {
+export function CreateCategoryForm({
+	type,
+	callback,
+}: {
+	type?: "expense" | "income";
+	callback?(): void;
+}) {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 	const mutation = useCreateCategory();
 	const form = useAppForm({
@@ -67,7 +71,7 @@ export function CreateCategoryForm({ type, callback }: { type?: "expense" | "inc
 			name: "🔮 Magic",
 			description: "",
 			color: "purple",
-			type: type ?? "expense",
+			type: type ?? null,
 		} as CategoryFormSchema,
 		validators: {
 			onSubmit: CategoryFormSchema,
@@ -184,7 +188,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
 				</FieldGroup>
 
-				<div className="flex items-center justify-center p-2">
+				<div className="flex items-center justify-center p-1">
 					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
 						{([color, name]) => (
 							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>

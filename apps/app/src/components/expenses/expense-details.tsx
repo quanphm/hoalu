@@ -242,7 +242,7 @@ function AttachmentStrip({
 			<Dialog open={open} onOpenChange={(o) => !o && setPreviewIndex(null)}>
 				<DialogContent className="max-w-3xl">
 					<DialogHeader>
-						<DialogTitle>Attachment preview</DialogTitle>
+						<DialogTitle>Preview</DialogTitle>
 						<DialogHeaderAction>
 							{total > 1 && (
 								<>

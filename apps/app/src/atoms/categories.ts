@@ -4,3 +4,5 @@ export const selectedCategoryAtom = atom<{ id: string | null; name: string | nul
 	id: null,
 	name: null,
 });
+
+export const categoryTypeFilterAtom = atom<"expense" | "income">("expense");

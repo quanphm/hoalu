@@ -7,7 +7,7 @@ import {
 	DialogHeaderAction,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ImageItem {
 	id?: string;
@@ -27,9 +27,12 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 	const current = selectedIndex !== null ? data[selectedIndex] : null;
 	const total = data.length;
 
-	function goTo(index: number) {
-		setSelectedIndex((index + total) % total);
-	}
+	const goTo = useCallback(
+		(index: number) => {
+			setSelectedIndex((index + total) % total);
+		},
+		[total],
+	);
 
 	function close() {
 		setSelectedIndex(null);
@@ -45,12 +48,13 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [open, selectedIndex]);
+	}, [open, selectedIndex, goTo]);
 
 	return (
 		<>
-			<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+			<div className="grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 				{data.map((image, index) => (
+					// oxlint-disable-next-line jsx_a11y/no-static-element-interactions
 					<div
 						key={image.id ?? image.name}
 						tabIndex={0}
@@ -75,7 +79,7 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 			<Dialog open={open} onOpenChange={(o) => !o && close()}>
 				<DialogContent className="max-w-3xl">
 					<DialogHeader>
-						<DialogTitle>Attachment preview</DialogTitle>
+						<DialogTitle>Preview</DialogTitle>
 						<DialogHeaderAction>
 							<Button size="icon" variant="outline" onClick={() => goTo((selectedIndex ?? 0) - 1)}>
 								<ChevronLeftIcon className="size-5" />

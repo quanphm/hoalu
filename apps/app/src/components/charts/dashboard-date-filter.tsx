@@ -63,13 +63,7 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 	};
 
 	return (
-		<div
-			data-slot="chart-date-filter"
-			className={cn(
-				"@container/date-filter flex items-center gap-4",
-				// "not-has-data-[slot=chart-group-by]:grid-cols-3",
-			)}
-		>
+		<>
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
 				<SelectTrigger className="w-auto min-w-0 shrink-0">
 					<SelectValue>
@@ -110,7 +104,7 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 					<ChartGroupByFilter />
 				</div>
 			)}
-		</div>
+		</>
 	);
 }
 

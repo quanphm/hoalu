@@ -9,6 +9,7 @@ import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import {
 	Section,
+	SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
@@ -46,13 +47,14 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
-				<SectionHeader className="flex-col items-start">
+				<SectionHeader>
 					<SectionTitle>Financial Overview</SectionTitle>
+					<SectionAction>
+						<DashboardDateFilter categories={categories} />
+					</SectionAction>
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 w-full md:col-span-8">
-						<DashboardDateFilter categories={categories} />
-					</div>
+					<div className="col-span-12 w-full md:col-span-8"></div>
 
 					<div className="col-span-12 hidden w-full flex-row gap-4 md:flex">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
