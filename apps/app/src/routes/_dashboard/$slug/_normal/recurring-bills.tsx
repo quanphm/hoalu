@@ -30,7 +30,7 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-82px)] gap-0 overflow-hidden max-md:h-[calc(100vh-82px)] md:gap-0"
+				className="h-[calc(100vh-90px)] gap-0 overflow-hidden max-md:h-[calc(100vh-90px)] md:gap-0"
 			>
 				<SectionItem
 					data-slot="recurring-bill-list"

@@ -9,7 +9,7 @@ import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import {
 	Section,
-	SectionAction,
+	// SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
@@ -49,19 +49,21 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Financial Overview</SectionTitle>
-					<SectionAction>
+					{/* <SectionAction>
 						<DashboardDateFilter categories={categories} />
-					</SectionAction>
+					</SectionAction> */}
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
-					<div className="col-span-12 w-full md:col-span-8"></div>
+					<div className="col-span-12 w-full md:col-span-8">
+						<DashboardDateFilter categories={categories} />
+					</div>
 
 					<div className="col-span-12 hidden w-full flex-row gap-4 md:flex">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
 						<ExpenseOverview expenses={expenses} categories={categories} />
-						<RecentExpenses />
+						<UpcomingBillsWidget />
 					</div>
 
 					{/* <div className="col-span-12 flex w-full flex-col gap-4 md:col-span-6">
@@ -70,7 +72,7 @@ function RouteComponent() {
 
 					<div className="col-span-12 hidden w-full flex-col gap-4 md:col-span-5 md:flex">
 						<CategoryBreakdown expenses={expenses} categories={categories} />
-						<UpcomingBillsWidget />
+						<RecentExpenses />
 						{/* <ExpenseStatsRow expenses={expenses} /> */}
 					</div>
 				</SectionContent>
