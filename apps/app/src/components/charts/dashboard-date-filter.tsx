@@ -67,7 +67,7 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 			data-slot="chart-date-filter"
 			className={cn(
 				"@container/date-filter flex items-center gap-4",
-				// "not-has-data-[slot=chart-group-by]:grid-cols-3",
+				"not-has-data-[slot=chart-group-by]:grid-cols-3",
 			)}
 		>
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>

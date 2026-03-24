@@ -10,7 +10,9 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { Suspense } from "react";
 
-const columnHelper = createColumnHelper<CategorySchema>();
+type CategoryTableItem = Omit<CategorySchema, "total">;
+
+const columnHelper = createColumnHelper<CategoryTableItem>();
 
 const columns = [
 	columnHelper.accessor("name", {
@@ -35,13 +37,9 @@ const columns = [
 		header: "Description",
 		cell: (info) => info.getValue(),
 	}),
-	columnHelper.accessor("type", {
-		header: "Type",
-		cell: (info) => info.getValue(),
-	}),
 ];
 
-export function CategoryTable({ data }: { data: Omit<CategorySchema, "total">[] }) {
+export function CategoryTable({ data }: { data: CategoryTableItem[] }) {
 	const [selected, setSelected] = useAtom(selectedCategoryAtom);
 	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 

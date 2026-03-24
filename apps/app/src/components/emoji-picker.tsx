@@ -14,7 +14,7 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
-			<PopoverTrigger render={<Button variant="outline" size="icon" className="size-9" />}>
+			<PopoverTrigger render={<Button variant="outline" size="icon" />}>
 				<FacePlusIcon className="size-4" />
 			</PopoverTrigger>
 			<PopoverContent className="w-fit overflow-auto p-0" align="start">
@@ -66,7 +66,7 @@ function Row(props: EmojiPickerListRowProps) {
 function Emoji({ emoji, ...props }: EmojiPickerListEmojiProps) {
 	return (
 		<button
-			className="flex size-8 items-center justify-center rounded-md text-lg data-active:bg-neutral-100 dark:data-active:bg-neutral-800"
+			className="data-active:bg-secondary flex size-8 items-center justify-center text-lg"
 			{...props}
 		>
 			{emoji.emoji}

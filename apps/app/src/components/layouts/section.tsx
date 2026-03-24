@@ -17,7 +17,9 @@ function SectionHeader({ className, ...props }: React.ComponentPropsWithRef<"div
 		<div
 			data-slot="section-header"
 			className={cn(
-				"@container/section-header grid auto-rows-min grid-rows-[auto_auto] gap-1 has-data-[slot=section-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+				"@container/section-header grid auto-rows-min items-start gap-1 [.border-b]:pb-6",
+				"has-data-[slot=section-description]:grid-rows-[auto_auto]",
+				"has-data-[slot=section-action]:grid-cols-[1fr_auto]",
 				className,
 			)}
 			{...props}
@@ -29,7 +31,10 @@ function SectionAction({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="section-action"
-			className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+			className={cn(
+				"col-start-2 row-span-2 row-start-1 flex flex-wrap items-center gap-2 self-start justify-self-end",
+				className,
+			)}
 			{...props}
 		/>
 	);

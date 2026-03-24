@@ -290,7 +290,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	return (
 		<Card ref={chartRef} className="flex flex-col">
 			<CardHeader>
-				<CardTitle>Expenses</CardTitle>
+				<CardDescription className="flex items-center justify-between text-xs uppercase">
+					Expenses
+				</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col gap-1">
 						<div className="flex items-baseline gap-2">
@@ -333,7 +335,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-2 sm:p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[250px] w-full sm:h-[319px] [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[210px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer
