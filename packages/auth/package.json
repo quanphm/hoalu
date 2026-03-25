@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/auth",
-	"version": "0.26.2",
+	"version": "0.26.3",
 	"private": true,
 	"description": "Customizations & Plugins for Better Auth",
 	"type": "module",
