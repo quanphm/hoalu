@@ -342,7 +342,7 @@ function SearchFilterView({
 	return (
 		<div className="flex flex-col gap-4 p-4">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium">Search</h3>
+				<h3 className="leading-8 font-medium">Search</h3>
 				{value && (
 					<Button variant="ghost" size="sm" onClick={() => onChange("")}>
 						Reset
@@ -398,7 +398,7 @@ function AmountFilterView({
 	return (
 		<div className="flex flex-col gap-4 p-4">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium">Amount</h3>
+				<h3 className="leading-8 font-medium">Amount</h3>
 				{(value.min !== null || value.max !== null) && (
 					<Button variant="ghost" size="sm" onClick={resetFilter}>
 						Reset
@@ -483,7 +483,7 @@ function CategoryFilterView({
 	return (
 		<div className="flex flex-col gap-4 p-4">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium">Category</h3>
+				<h3 className="leading-8 font-medium">Category</h3>
 				{selected.length > 0 && (
 					<Button variant="ghost" size="sm" onClick={() => onChange([])}>
 						Reset
@@ -537,7 +537,7 @@ function WalletFilterView({
 	return (
 		<div className="flex flex-col gap-4 p-4">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium">Wallet</h3>
+				<h3 className="leading-8 font-medium">Wallet</h3>
 				{selected.length > 0 && (
 					<Button variant="ghost" size="sm" onClick={() => onChange([])}>
 						Reset

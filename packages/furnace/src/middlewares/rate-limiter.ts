@@ -2,8 +2,8 @@ import { rateLimiter as honoRateLimiter, type Store } from "hono-rate-limiter";
 import { createMiddleware } from "hono/factory";
 import { RedisStore } from "rate-limit-redis";
 
-export const RATE_LIMIT_MAX_CONNECTIONS = 10000;
-export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes;
+export const RATE_LIMIT_MAX_CONNECTIONS = 100_000;
+export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1_000; // 10 minutes;
 
 export const rateLimiter = <T>(client: T) => {
 	return createMiddleware(async (c, next) => {
