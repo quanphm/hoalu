@@ -43,6 +43,8 @@ function ExpenseContent(props: ExpenseContentProps) {
 	return (
 		<div
 			id={props.id}
+			// oxlint-disable-next-line jsx_a11y/prefer-tag-over-role
+			role="button"
 			className={cn(
 				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
 				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
@@ -57,7 +59,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
 		>
-			<div className="flex w-2/3 flex-col gap-0.5">
+			<div className="flex w-3/4 flex-col gap-0.5">
 				<p className="font-medium">{props.title}</p>
 				{props.description && (
 					<div className="text-muted-foreground truncate leading-relaxed">
