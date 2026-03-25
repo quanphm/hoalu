@@ -240,7 +240,7 @@ function CreateExpenseForm() {
 					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-7">
 						<form.AppField
 							name="title"
-							children={(field) => <field.InputField label="Title" required />}
+							children={(field) => <field.InputField label="Title" required autoFocus />}
 						/>
 						<form.AppField
 							name="transaction"

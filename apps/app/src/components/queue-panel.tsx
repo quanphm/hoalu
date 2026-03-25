@@ -205,7 +205,7 @@ function EmptyJobPlaceholder() {
 					<p className="text-muted-foreground/60 truncate text-xs font-medium">No items</p>
 					<div className="flex items-center gap-1">
 						<div className="bg-muted-foreground/20 size-3 rounded-full" />
-						<span className="text-muted-foreground/60 text-[10px]">Add files to scan</span>
+						<span className="text-muted-foreground/60 text-[10px]">Scan receipt / Quick add</span>
 					</div>
 				</div>
 			</div>

@@ -43,9 +43,9 @@ export const AVAILABLE_REPEAT_OPTIONS: {
 }[] = [
 	{ label: "One-time", value: "one-time" },
 	{ label: "Everyday", value: "daily" },
-	{ label: "Every week", value: "weekly" },
-	{ label: "Every month", value: "monthly" },
-	{ label: "Annual", value: "yearly" },
+	{ label: "Weekly", value: "weekly" },
+	{ label: "Monthly", value: "monthly" },
+	{ label: "Yearly", value: "yearly" },
 ];
 
 export const KEYBOARD_SHORTCUTS = {

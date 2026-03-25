@@ -3,12 +3,12 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
-	ArrowsExchangeIcon,
-	CalendarIcon,
+	CashBanknoteMoveIcon,
+	CalendarDollarIcon,
+	CashPlusIcon,
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
-	TrendingUpIcon,
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
 	WalletIcon,
@@ -99,7 +99,7 @@ export function NavWorkspace() {
 								}
 								tooltip="Expenses"
 							>
-								<ArrowsExchangeIcon />
+								<CashBanknoteMoveIcon />
 								<span>Expenses</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
@@ -118,7 +118,7 @@ export function NavWorkspace() {
 								}
 								tooltip="Income"
 							>
-								<TrendingUpIcon />
+								<CashPlusIcon />
 								<span>Income</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
@@ -131,7 +131,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
 							>
-								<CalendarIcon />
+								<CalendarDollarIcon />
 								<span>Recurring Bills</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />

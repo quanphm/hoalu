@@ -32,7 +32,7 @@ function RouteComponent() {
 		permission: {
 			invitation: ["create"],
 		},
-	})
+	});
 
 	const membersTableData = workspace.members.map((member) => ({
 		id: member.user.id,
@@ -76,5 +76,5 @@ function RouteComponent() {
 				</SectionContent>
 			</Section>
 		</>
-	)
+	);
 }

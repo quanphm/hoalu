@@ -23,7 +23,7 @@ export function TransactionAmount(props: { data: TransactionAmountProps }) {
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				prefix={workspaceCurrency !== sourceCurrency ? "~" : undefined}
+				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
 				as="p"
 				className="text-[14px] font-semibold"
 			/>
@@ -31,7 +31,7 @@ export function TransactionAmount(props: { data: TransactionAmountProps }) {
 				<CurrencyValue
 					value={amount}
 					currency={sourceCurrency}
-					prefix="original"
+					prefix="original "
 					className="text-muted-foreground/70 text-[10px]"
 					as="p"
 				/>

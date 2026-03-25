@@ -6,6 +6,7 @@ import {
 	THEME_LABELS,
 } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
+import { useTheme } from "#app/hooks/use-theme.ts";
 import {
 	CheckIcon,
 	KeyRoundIcon,
@@ -28,7 +29,6 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { useTheme } from "#app/hooks/use-theme.ts";
 import { useId } from "react";
 
 import { HotKey } from "../hotkey";
@@ -41,7 +41,7 @@ export function NavUser() {
 	if (!user) return null;
 
 	return (
-		<SidebarGroup id={`${reactId}-nav-user`} className="mt-auto">
+		<SidebarGroup id={`${reactId}-nav-user`} className="mt-auto mb-2">
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<DropdownMenu>

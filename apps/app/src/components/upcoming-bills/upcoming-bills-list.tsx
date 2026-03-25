@@ -237,7 +237,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 					value={bill.amount}
 					currency={bill.currency}
 					className={cn("text-sm font-semibold", isOverdue && "text-destructive")}
-					prefix="~"
+					prefix="≈"
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger
