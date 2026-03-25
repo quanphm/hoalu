@@ -5,7 +5,7 @@ import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constan
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
-import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
+import { CashBanknoteMoveIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -180,7 +180,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<ArrowsExchangeIcon className="size-6" aria-hidden="true" />
+					<CashBanknoteMoveIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Expense</span>
 				</ButtonLink>
 				<ButtonLink

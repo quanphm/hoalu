@@ -82,7 +82,7 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-54px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-54px)] md:gap-0"
+				className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
 			>
 				<SectionItem
 					data-slot="income-list"

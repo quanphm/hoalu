@@ -58,7 +58,7 @@ function RouteComponent() {
 						<DashboardDateFilter categories={categories} />
 					</div>
 
-					<div className="col-span-12 hidden w-full flex-row gap-4 md:flex">
+					<div className="col-span-12 flex w-full flex-row gap-4">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">

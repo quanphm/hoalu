@@ -1,19 +1,21 @@
 import { redactedAmountAtom } from "#app/atoms/index.ts";
 import { EyeIcon, EyeOffIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
 import { useAtom } from "jotai";
 
 export function RedactedAmountToggle() {
-	const [redacted, setRedacted] = useAtom(redactedAmountAtom);
+	const [isRedacted, setRedacted] = useAtom(redactedAmountAtom);
 
 	return (
 		<Button
 			variant="outline"
 			size="icon-lg"
 			onClick={() => setRedacted((v) => !v)}
-			title={redacted ? "Show amounts" : "Hide amounts"}
+			title={isRedacted ? "Show amounts" : "Hide amounts"}
+			className={cn(isRedacted && "border-primary [&_svg]:text-primary")}
 		>
-			{redacted ? <EyeOffIcon /> : <EyeIcon />}
+			{isRedacted ? <EyeOffIcon /> : <EyeIcon />}
 		</Button>
 	);
 }

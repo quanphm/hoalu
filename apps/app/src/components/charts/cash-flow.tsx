@@ -1,6 +1,4 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -9,6 +7,9 @@ import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
 
 import { CurrencyValue } from "../currency-value.tsx";
+
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 interface CashFlowSectionProps {
 	incomes: SyncedIncome[];
@@ -38,7 +39,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const totalTransactions = currentPeriodExpenses.length;
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
+		<div className="grid w-full grid-cols-1 gap-3 md:grid-cols-4 md:gap-4">
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">

@@ -228,6 +228,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 					<Badge
 						className={cn(
 							createCategoryTheme(bill.categoryColor as Parameters<typeof createCategoryTheme>[0]),
+							"hidden md:block",
 						)}
 					>
 						{bill.categoryName}

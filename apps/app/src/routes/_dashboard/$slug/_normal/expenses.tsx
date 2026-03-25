@@ -26,11 +26,12 @@ import {
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import type { RepeatSchema } from "@hoalu/common/schema";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useEffect } from "react";
 import * as z from "zod";
+
+import type { RepeatSchema } from "@hoalu/common/schema";
 
 const searchSchema = z.object({
 	date: z.optional(z.string()),
@@ -89,7 +90,7 @@ function RouteComponent() {
 
 			<SectionContent
 				columns={12}
-				className="h-[calc(100vh-84px-54px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-54px)] md:gap-0"
+				className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
 			>
 				{/* <SectionItem
           data-slot="expense-filter"
