@@ -1,12 +1,11 @@
-import { useState } from "react";
-
+import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { ButtonLink } from "#app/components/button-link.tsx";
-import { CommandPalette } from "#app/components/command-palette/command-palette.tsx";
+import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
-import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
+import { CashBanknoteMoveIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -19,6 +18,7 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -42,7 +42,7 @@ export function MobileLayout({ children }: LayoutProps) {
 function MobileHeader() {
 	const params = useParams({ strict: false });
 	const { mode, setTheme } = useTheme();
-	const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -71,21 +71,21 @@ function MobileHeader() {
 						<ChevronsUpDownIcon className="text-muted-foreground h-3 w-3" aria-hidden="true" />
 					</Button>
 				</div>
-				<div className="flex items-center gap-1">
+				<div className="flex items-center gap-2">
+					<RedactedAmountToggle />
 					<Button
-						variant="ghost"
-						size="icon"
+						variant="outline"
+						size="icon-lg"
 						aria-label="Search"
 						onClick={() => setCommandPaletteOpen(true)}
 					>
-						<SearchIcon className="size-5" />
+						<SearchIcon />
 					</Button>
-					<CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							render={<Button variant="ghost" size="icon" aria-label="Select theme" />}
+							render={<Button variant="outline" size="icon-lg" aria-label="Select theme" />}
 						>
-							<PaletteIcon className="size-5" />
+							<PaletteIcon />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" role="menu">
 							{SYSTEM_THEMES.map((themeName) => {
@@ -180,7 +180,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<ArrowsExchangeIcon className="size-6" aria-hidden="true" />
+					<CashBanknoteMoveIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Expense</span>
 				</ButtonLink>
 				<ButtonLink

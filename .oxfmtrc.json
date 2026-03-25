@@ -11,23 +11,25 @@
 	"arrowParens": "always",
 	"bracketSameLine": false,
 	"bracketSpacing": true,
-	"experimentalSortImports": {
-		"groups": [["builtin"], ["external"], ["internal"], ["parent", "sibling", "index"]],
-		"newlinesBetween": true
+	"sortImports": {
+		"newlinesBetween": true,
+		"partitionByComment": true,
+		"customGroups": [
+			{
+				"groupName": "tanstack",
+				"elementNamePattern": ["@tanstack", "@tanstack/**"]
+			}
+		],
+		"groups": [
+			["value-builtin", "tanstack", "value-external"],
+			["value-internal"],
+			["value-parent", "value-sibling", "value-index"],
+			"unknown"
+		]
 	},
-	"experimentalTailwindcss": {
+	"sortTailwindcss": {
 		"attributes": ["class", "className"],
 		"functions": ["cn", "clsx", "cva"]
 	},
-	"ignorePatterns": ["**/src/routeTree.gen.ts"],
-	"overrides": [
-		{
-			"files": ["apps/app/src/routes/__root.tsx"],
-			"options": {
-				"experimentalSortImports": {
-					"partitionByComment": true
-				}
-			}
-		}
-	]
+	"ignorePatterns": ["**/src/routeTree.gen.ts"]
 }

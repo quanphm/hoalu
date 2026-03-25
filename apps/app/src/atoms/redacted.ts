@@ -1,3 +1,3 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-export const redactedAmountAtom = atom<boolean>(false);
+export const redactedAmountAtom = atomWithStorage("redacted_amount", true);

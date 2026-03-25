@@ -5,7 +5,6 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import {
 	calculateComparisonDateRange,
@@ -20,7 +19,6 @@ import {
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import type { ColorSchema } from "@hoalu/common/schema";
 import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
@@ -40,6 +38,9 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
+
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import type { ColorSchema } from "@hoalu/common/schema";
 
 const chartConfig = {
 	value: {
@@ -335,7 +336,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-2 sm:p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[210px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[221px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer

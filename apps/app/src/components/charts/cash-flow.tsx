@@ -1,19 +1,15 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@hoalu/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
 
 import { CurrencyValue } from "../currency-value.tsx";
+
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 interface CashFlowSectionProps {
 	incomes: SyncedIncome[];
@@ -43,7 +39,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const totalTransactions = currentPeriodExpenses.length;
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
+		<div className="grid w-full grid-cols-1 gap-3 md:grid-cols-4 md:gap-4">
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
@@ -53,11 +49,11 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							+12.5%
 						</Badge> */}
 					</CardDescription>
-				<CardTitle
-					className={cn("text-xl", netCashFlow >= 0 ? "text-success" : "text-destructive")}
-				>
-					<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
-				</CardTitle>
+					<CardTitle
+						className={cn("text-xl", netCashFlow >= 0 ? "text-success" : "text-destructive")}
+					>
+						<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
+					</CardTitle>
 				</CardHeader>
 				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">
@@ -77,8 +73,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 						</Badge> */}
 					</CardDescription>
 					<CardTitle className="text-xl">
-					<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
-				</CardTitle>
+						<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
+					</CardTitle>
 				</CardHeader>
 				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">
@@ -98,8 +94,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 						</Badge> */}
 					</CardDescription>
 					<CardTitle className="text-xl">
-					<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
-				</CardTitle>
+						<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
+					</CardTitle>
 				</CardHeader>
 				{/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
 					<div className="line-clamp-1 flex gap-2 font-medium">

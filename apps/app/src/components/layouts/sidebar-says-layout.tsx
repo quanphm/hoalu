@@ -4,6 +4,7 @@ import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
 import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
+import { Button } from "@hoalu/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -50,28 +51,30 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{!hasSlug && <NavWorkspaceList />}
 					<NavUser />
 				</SidebarContent>
-				<SidebarFooter className="border-t pb-0">
+				<SidebarFooter className="border-t pb-0 text-xs">
 					<div className="flex items-center justify-between">
-						<p className="font-geist-mono text-muted-foreground text-sm leading-none tracking-tight">
+						<p className="font-geist-mono text-muted-foreground leading-none tracking-tight">
 							{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
-						<div className="flex gap-1">
-							<a
-								href="https://github.com/quanphm/hoalu"
-								target="_blank"
-								rel="noreferrer"
-								className="hover:bg-muted rounded-md p-2"
-							>
-								<GithubIcon className="size-4" />
-							</a>
-							<a
-								href="https://x.com/quan_phmn"
-								target="_blank"
-								rel="noreferrer"
-								className="hover:bg-muted rounded-md p-2"
-							>
-								<TwitterXIcon className="size-4" />
-							</a>
+						<div className="flex gap-2">
+							<Button
+								variant="outline"
+								size="icon-sm"
+								render={
+									<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
+										<GithubIcon />
+									</a>
+								}
+							/>
+							<Button
+								variant="outline"
+								size="icon-sm"
+								render={
+									<a href="https://x.com/quanphmm" target="_blank" rel="noreferrer">
+										<TwitterXIcon />
+									</a>
+								}
+							/>
 						</div>
 					</div>
 				</SidebarFooter>

@@ -1,7 +1,7 @@
 import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export function UpcomingBillsWidget() {
@@ -13,15 +13,15 @@ export function UpcomingBillsWidget() {
 	return (
 		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col">
 			<CardHeader className="pb-3">
-				<CardTitle className="flex items-center gap-2">
-					<span>Upcoming Bills</span>
-					{totalCount > 0 && (
-						<span className="bg-primary/20 text-primary rounded-md px-2 py-0.5 text-xs font-normal">
-							{totalCount} scheduled
-						</span>
-					)}
-				</CardTitle>
-				<CardDescription>Overdue, today, next 30 days and annually bills</CardDescription>
+				<CardDescription className="flex items-center justify-between text-xs uppercase">
+					Upcoming Bills
+				</CardDescription>
+				{totalCount > 0 && (
+					<CardDescription>
+						<span className="text-primary-foreground text-3xl font-semibold">{totalCount}</span>
+					</CardDescription>
+				)}
+				<CardDescription>Overdue, today, next 30 days and yearly bills</CardDescription>
 			</CardHeader>
 			<CardContent className="min-h-0 flex-1 overflow-y-auto">
 				<UpcomingBillsList overdue={data.overdue} today={data.today} upcoming={data.upcoming} />

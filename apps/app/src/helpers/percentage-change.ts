@@ -1,11 +1,11 @@
-import { formatCurrency } from "#app/helpers/currency.ts";
 import { cn } from "@hoalu/ui/utils";
 
 export interface PercentageChange {
 	value: number;
 	percentage: number;
-	displayInValue: string;
+	displayInValue: number;
 	displayInPercent: string;
+	currency: string;
 	status: "increase" | "decrease" | "no-change";
 }
 
@@ -18,8 +18,9 @@ export function calculatePercentageChange(
 		return {
 			value: 0,
 			percentage: 0,
-			displayInValue: formatCurrency(0, currency),
+			displayInValue: 0,
 			displayInPercent: "0%",
+			currency,
 			status: "no-change",
 		};
 	}
@@ -28,11 +29,9 @@ export function calculatePercentageChange(
 		return {
 			value: currentValue,
 			percentage: 100,
-			displayInValue:
-				currentValue > 0
-					? `+${formatCurrency(currentValue, currency)}`
-					: `${formatCurrency(currentValue, currency)}`,
+			displayInValue: currentValue,
 			displayInPercent: currentValue > 0 ? "+100%" : "0%",
+			currency,
 			status: currentValue > 0 ? "increase" : "no-change",
 		};
 	}
@@ -42,11 +41,7 @@ export function calculatePercentageChange(
 
 	const percentageRaw = (value / previousValue) * 100;
 	const percentage = Math.abs(percentageRaw);
-
-	const displayInValue =
-		status === "no-change"
-			? `${formatCurrency(0, currency)}`
-			: `${status === "increase" ? "+" : "-"}${formatCurrency(Math.abs(value), currency)}`;
+	const displayInValue = status === "no-change" ? 0 : Math.abs(value);
 
 	const displayInPercent =
 		status === "no-change"
@@ -59,6 +54,7 @@ export function calculatePercentageChange(
 		percentage,
 		displayInValue,
 		displayInPercent,
+		currency,
 	};
 }
 

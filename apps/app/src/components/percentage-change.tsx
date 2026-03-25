@@ -7,6 +7,8 @@ import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useState } from "react";
 
+import { CurrencyValue } from "./currency-value";
+
 const IconComponent: Record<
 	PercentageChange["status"],
 	React.ComponentType<React.SVGProps<SVGSVGElement>> | null
@@ -61,8 +63,17 @@ export function PercentageChangeDisplay({
 				onClick={handleViewModeChange}
 				title="toggle view percent or absolute value"
 			>
-				{viewMode === "percent" && change.displayInPercent}
-				{viewMode === "value" && change.displayInValue}
+				{viewMode === "percent" && <span>{change.displayInPercent}</span>}
+				{viewMode === "value" && (
+					<CurrencyValue
+						value={change.displayInValue}
+						currency={change.currency}
+						className={textClasses}
+						prefix={
+							change.status === "increase" ? "+" : change.status === "decrease" ? "-" : undefined
+						}
+					/>
+				)}
 			</Button>
 			{comparisonText && (
 				<Button

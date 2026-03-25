@@ -228,6 +228,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 					<Badge
 						className={cn(
 							createCategoryTheme(bill.categoryColor as Parameters<typeof createCategoryTheme>[0]),
+							"hidden md:block",
 						)}
 					>
 						{bill.categoryName}
@@ -237,7 +238,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 					value={bill.amount}
 					currency={bill.currency}
 					className={cn("text-sm font-semibold", isOverdue && "text-destructive")}
-					prefix="~"
+					prefix="≈"
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger
