@@ -9,6 +9,7 @@ const client = new Pool({
 	port: process.env.PGBOUNCER_PORT,
 	database: process.env.DB_NAME,
 	max: 20,
+	min: 2,
 });
 
 export const db = drizzle({ client, schema });
