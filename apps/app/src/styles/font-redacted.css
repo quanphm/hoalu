@@ -1,0 +1,16 @@
+@font-face {
+	font-family: "Redacted Script";
+	src: url("/fonts/redacted-script/RedactedScript-Regular.ttf") format("truetype");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--redacted-script:
+		"Redacted Script", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@theme {
+	--font-redacted-script: var(--redacted-script);
+}
