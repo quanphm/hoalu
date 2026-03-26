@@ -33,6 +33,8 @@ Add the ability to group expenses and recurring bills under a named **event** or
 ### New table: `event`
 
 ```sql
+CREATE TYPE event_status_enum AS ENUM ('open', 'closed');
+
 CREATE TABLE event (
   id              uuid PRIMARY KEY,
   title           text NOT NULL,
@@ -40,10 +42,10 @@ CREATE TABLE event (
   start_date      date,
   end_date        date,
   budget          numeric(20, 6),
-  budget_currency currency_enum NOT NULL DEFAULT workspace_currency,
+  budget_currency varchar(3) NOT NULL DEFAULT 'USD',
   status          event_status_enum NOT NULL DEFAULT 'open',
   workspace_id    uuid NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
-  creator_id      uuid REFERENCES user(id) ON DELETE SET NULL,
+  creator_id      uuid REFERENCES "user"(id) ON DELETE SET NULL,
   created_at      timestamp NOT NULL,
   updated_at      timestamp NOT NULL
 );
@@ -51,11 +53,9 @@ CREATE TABLE event (
 CREATE INDEX event_workspace_id_idx ON event(workspace_id);
 ```
 
-New enum:
-
-```sql
-CREATE TYPE event_status_enum AS ENUM ('open', 'closed');
-```
+Notes on the DDL:
+- `budget_currency` uses `varchar(3)` (ISO 4217 code) rather than a custom enum — consistent with how `currency` is stored elsewhere in the schema. The default `'USD'` is a fallback only; the application layer sets this from the workspace's default currency at creation time.
+- `"user"` is quoted because `user` is a reserved keyword in PostgreSQL.
 
 ### Modified tables
 
@@ -91,9 +91,9 @@ Three files following the standard pattern.
 
 | Schema | Fields |
 |--------|--------|
-| `InsertEventSchema` | title (min 1), description?, start_date? (date string), end_date? (date string), budget? (coerce number), budget_currency? (CurrencySchema), workspaceId (uuidv7) |
-| `UpdateEventSchema` | all InsertEventSchema fields partial, plus status (`"open" \| "closed"`) |
-| `EventSchema` | id, title, description, start_date, end_date, budget (coerce), budget_currency, status, workspaceId, creatorId, createdAt, updatedAt + `.transform()` adding `realBudget` via `monetary.fromRealAmount()` |
+| `InsertEventSchema` | title (min 1), description?, start_date? (date string), end_date? (date string), budget? (coerce number), budget_currency? (CurrencySchema, defaults to workspace currency in handler), workspaceId (uuidv7). `.refine()` that `end_date >= start_date` when both are provided. |
+| `UpdateEventSchema` | all `InsertEventSchema` fields omit(workspaceId) partial, plus status (`"open" \| "closed"`) |
+| `EventSchema` | id, title, description\|null, start_date\|null, end_date\|null, budget (coerce)\|null, budget_currency, status, workspaceId, creatorId, createdAt, updatedAt + `.transform()` adding `realBudget: budget != null ? monetary.fromRealAmount(budget, budget_currency) : null` |
 | `EventsSchema` | `z.array(EventSchema)` |
 | `DeleteEventSchema` | `{ id: uuidv7 }` |
 
@@ -113,9 +113,11 @@ Three files following the standard pattern.
 |--------|------|-----------|-------------|
 | `GET` | `/` | workspaceQueryValidator, workspaceMember | List all events |
 | `GET` | `/:id` | workspaceQueryValidator, workspaceMember | Single event |
-| `POST` | `/` | jsonBodyValidator(InsertEventSchema), workspaceMember | Create event |
-| `PATCH` | `/:id` | jsonBodyValidator(UpdateEventSchema), workspaceMember | Update event |
+| `POST` | `/` | workspaceQueryValidator, jsonBodyValidator(InsertEventSchema), workspaceMember | Create event |
+| `PATCH` | `/:id` | workspaceQueryValidator, jsonBodyValidator(UpdateEventSchema), workspaceMember | Update event |
 | `DELETE` | `/:id` | workspaceQueryValidator, workspaceMember | Delete event (creator or owner role only) |
+
+`workspaceQueryValidator` must precede `workspaceMember` on all routes — this is required so `c.var.workspace` is populated before the membership check runs.
 
 All routes include OpenAPI documentation via `describeRoute`.
 
@@ -124,8 +126,10 @@ All routes include OpenAPI documentation via `describeRoute`.
 Add to `apps/api/src/modules/api.ts`:
 ```typescript
 import eventRoute from "#api/routes/events/index.ts";
-app.route("/api/events", eventRoute);
+app.route("/events", eventRoute);
 ```
+
+(Existing routes use no `/api` prefix in `app.route()` — the `/api` base path is set upstream in the module chain.)
 
 ### Modified routes
 
@@ -156,6 +160,8 @@ Exports: `eventCollectionFactory`, `clearEventCollection`
 Sync URL: `${PUBLIC_API_URL}/sync/events?workspaceIdOrSlug=${slug}`
 
 Register in `apps/app/src/lib/collections/index.ts` cleanup functions.
+
+**Sync proxy registration** — `apps/api/src/modules/sync.ts` must add a shape handler for the `event` table so Electric SQL proxies it through the authenticated sync endpoint. Follow the same pattern as the existing `expenses`, `wallets`, and `categories` shape handlers in that file.
 
 ### Updated collections
 
@@ -206,6 +212,30 @@ Exported types: `SyncedEvent`, `SyncedEvents`
 |------|------|-------------|
 | `apps/app/src/routes/_dashboard/$slug/_normal/events.tsx` | `/$slug/events` | Events list page using `EventList` + `CreateEventDialogTrigger` |
 | `apps/app/src/routes/_dashboard/$slug/_normal/events.$id.tsx` | `/$slug/events/$id` | Event detail page using `EventDetails` |
+
+### Mutation hooks: `apps/app/src/services/mutations.ts`
+
+Add the following mutation hooks (following existing patterns in that file):
+
+| Hook | API call | On success |
+|------|----------|------------|
+| `useCreateEvent()` | `POST /api/events` | invalidate `["events", workspaceId]` |
+| `useUpdateEvent()` | `PATCH /api/events/:id` | invalidate `["events", workspaceId]` |
+| `useDeleteEvent()` | `DELETE /api/events/:id` | invalidate `["events", workspaceId]` |
+
+Also update existing mutation hooks:
+- `useCreateExpense()` / `useUpdateExpense()` — accept optional `eventId` in payload
+- `useCreateRecurringBill()` / `useUpdateRecurringBill()` — accept optional `eventId` in payload
+
+### API client
+
+`apps/app/src/lib/api-client.ts` is **auto-generated** from the Hono RPC types. After adding the events route to the API, restart the dev server to regenerate types before writing frontend code that calls event endpoints.
+
+### `totalSpent` computation note
+
+`useLiveQueryEvents()` computes `totalSpent` per event by filtering `expenseCollection` in-process for each event and summing FX-converted amounts. This is O(events × expenses) but acceptable for typical workspace sizes. If performance becomes a concern in the future, this can be moved to a server-side aggregation endpoint.
+
+When `budget` is `null` (no budget set), the event card/detail shows only `totalSpent` with no progress bar — the budget UI elements are hidden.
 
 ### Sidebar navigation
 
