@@ -5,6 +5,7 @@ import {
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
 	PG_ENUM_CATEGORY_TYPE,
+	PG_ENUM_EVENT_STATUS,
 } from "#common/enums.ts";
 import * as z from "zod";
 
@@ -28,6 +29,9 @@ export type CurrencySchema = z.infer<typeof CurrencySchema>;
 
 export const CategoryTypeSchema = z.enum(PG_ENUM_CATEGORY_TYPE);
 export type CategoryTypeSchema = z.infer<typeof CategoryTypeSchema>;
+
+export const EventStatusSchema = z.enum(PG_ENUM_EVENT_STATUS);
+export type EventStatusSchema = z.infer<typeof EventStatusSchema>;
 
 /**
  * Consolidate date/timestamp with `mode: string` from drizzle-orm & openapi.

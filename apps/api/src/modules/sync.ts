@@ -83,6 +83,17 @@ export function syncModule() {
 
 			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
 		})
+		.get("/events", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
+
+			shapeUrl.searchParams.set("table", "event");
+			shapeUrl.searchParams.set("where", whereClause);
+
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
 		.get("/exchange-rates", async (c) => {
 			const shapeUrl = prepareElectricUrl(c.req.url);
 
