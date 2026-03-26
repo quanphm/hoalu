@@ -6,7 +6,7 @@ CREATE TABLE "event" (
 	"start_date" date,
 	"end_date" date,
 	"budget" numeric(20, 6),
-	"budget_currency" varchar(3) DEFAULT 'USD' NOT NULL,
+	"currency" varchar(3) NOT NULL,
 	"status" "event_status_enum" DEFAULT 'open' NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"creator_id" uuid,
@@ -18,6 +18,8 @@ ALTER TABLE "expense" ADD COLUMN "event_id" uuid;--> statement-breakpoint
 ALTER TABLE "recurring_bill" ADD COLUMN "event_id" uuid;--> statement-breakpoint
 ALTER TABLE "event" ADD CONSTRAINT "event_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "event" ADD CONSTRAINT "event_creator_id_user_id_fk" FOREIGN KEY ("creator_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "event_title_idx" ON "event" USING gin (to_tsvector('simple', "title"));--> statement-breakpoint
+CREATE INDEX "event_description_idx" ON "event" USING gin (to_tsvector('simple', "description"));--> statement-breakpoint
 CREATE INDEX "event_workspace_id_idx" ON "event" USING btree ("workspace_id");--> statement-breakpoint
 ALTER TABLE "expense" ADD CONSTRAINT "expense_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "recurring_bill" ADD CONSTRAINT "recurring_bill_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint

@@ -59,10 +59,7 @@ export const InsertExpenseSchema = z.object({
 	date: z.optional(z.iso.datetime()),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7(),
-	// When provided, the expense is linked to this existing recurring bill
-	// and the bill's anchor_date is advanced by one period.
 	recurringBillId: z.uuidv7().optional(),
-	// Link expense to an event (optional)
 	eventId: z.uuidv7().optional(),
 });
 

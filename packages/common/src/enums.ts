@@ -33,3 +33,5 @@ export const PG_ENUM_REPEAT = [
 ] as const;
 
 export const PG_ENUM_CATEGORY_TYPE = ["expense", "income"] as const;
+
+export const PG_ENUM_EVENT_STATUS = ["open", "closed"] as const;

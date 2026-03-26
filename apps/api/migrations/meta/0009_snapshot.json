@@ -1,5 +1,5 @@
 {
-  "id": "0a063bc5-dfe5-47d6-b5de-d91edc9c967f",
+  "id": "3fb2f911-f751-4839-86f6-271493293ef6",
   "prevId": "3f6c9583-e3de-4563-87b6-9faba54f7d77",
   "version": "7",
   "dialect": "postgresql",
@@ -395,12 +395,11 @@
           "primaryKey": false,
           "notNull": false
         },
-        "budget_currency": {
-          "name": "budget_currency",
+        "currency": {
+          "name": "currency",
           "type": "varchar(3)",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'USD'"
+          "notNull": true
         },
         "status": {
           "name": "status",
@@ -438,6 +437,36 @@
         }
       },
       "indexes": {
+        "event_title_idx": {
+          "name": "event_title_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('simple', \"title\")",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "event_description_idx": {
+          "name": "event_description_idx",
+          "columns": [
+            {
+              "expression": "to_tsvector('simple', \"description\")",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
         "event_workspace_id_idx": {
           "name": "event_workspace_id_idx",
           "columns": [

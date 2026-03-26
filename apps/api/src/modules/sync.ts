@@ -71,30 +71,30 @@ export function syncModule() {
 
 			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
 		})
-.get("/incomes", workspaceQueryValidator, workspaceMember, async (c) => {
-		const workspace = c.get("workspace");
-		const shapeUrl = prepareElectricUrl(c.req.url);
-		const whereClause = `workspace_id = '${workspace.id}'`;
+		.get("/incomes", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-		shapeUrl.searchParams.set("table", "income");
-		shapeUrl.searchParams.set("where", whereClause);
+			shapeUrl.searchParams.set("table", "income");
+			shapeUrl.searchParams.set("where", whereClause);
 
-		const [data, headers] = await proxyElectricRequest(shapeUrl);
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
 
-		return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
-	})
-	.get("/events", workspaceQueryValidator, workspaceMember, async (c) => {
-		const workspace = c.get("workspace");
-		const shapeUrl = prepareElectricUrl(c.req.url);
-		const whereClause = `workspace_id = '${workspace.id}'`;
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/events", workspaceQueryValidator, workspaceMember, async (c) => {
+			const workspace = c.get("workspace");
+			const shapeUrl = prepareElectricUrl(c.req.url);
+			const whereClause = `workspace_id = '${workspace.id}'`;
 
-		shapeUrl.searchParams.set("table", "event");
-		shapeUrl.searchParams.set("where", whereClause);
+			shapeUrl.searchParams.set("table", "event");
+			shapeUrl.searchParams.set("where", whereClause);
 
-		const [data, headers] = await proxyElectricRequest(shapeUrl);
-		return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
-	})
-	.get("/exchange-rates", async (c) => {
+			const [data, headers] = await proxyElectricRequest(shapeUrl);
+			return c.json(data, HTTPStatus.codes.OK, headers.toJSON());
+		})
+		.get("/exchange-rates", async (c) => {
 			const shapeUrl = prepareElectricUrl(c.req.url);
 
 			shapeUrl.searchParams.set("table", "fx_rate");

@@ -1,6 +1,7 @@
 import {
 	PG_ENUM_CATEGORY_TYPE,
 	PG_ENUM_COLOR,
+	PG_ENUM_EVENT_STATUS,
 	PG_ENUM_PRIORITY,
 	PG_ENUM_REPEAT,
 	PG_ENUM_TASK_STATUS,
@@ -175,7 +176,7 @@ export const priorityEnum = pgEnum("priority_enum", PG_ENUM_PRIORITY);
 export const taskStatusEnum = pgEnum("task_status_enum", PG_ENUM_TASK_STATUS);
 export const repeatEnum = pgEnum("repeat_enum", PG_ENUM_REPEAT);
 export const categoryTypeEnum = pgEnum("category_type_enum", PG_ENUM_CATEGORY_TYPE);
-export const eventStatusEnum = pgEnum("event_status_enum", ["open", "closed"]);
+export const eventStatusEnum = pgEnum("event_status_enum", PG_ENUM_EVENT_STATUS);
 
 export const fxRate = pgTable(
 	"fx_rate",
@@ -292,27 +293,6 @@ export const recurringBillOccurrence = pgTable(
 	],
 );
 
-export const event = pgTable(
-	"event",
-	{
-		id: uuid("id").primaryKey(),
-		title: text("title").notNull(),
-		description: text("description"),
-		startDate: date("start_date", { mode: "string" }),
-		endDate: date("end_date", { mode: "string" }),
-		budget: numeric("budget", { precision: 20, scale: 6 }),
-		budgetCurrency: varchar("budget_currency", { length: 3 }).notNull().default("USD"),
-		status: eventStatusEnum().default("open").notNull(),
-		workspaceId: uuid("workspace_id")
-			.notNull()
-			.references(() => workspace.id, { onDelete: "cascade" }),
-		creatorId: uuid("creator_id").references(() => user.id, { onDelete: "set null" }),
-		createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-		updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
-	},
-	(table) => [index("event_workspace_id_idx").on(table.workspaceId)],
-);
-
 export const expense = pgTable(
 	"expense",
 	{
@@ -379,6 +359,31 @@ export const income = pgTable(
 		index("income_workspace_id_idx").on(table.workspaceId),
 		index("income_wallet_id_idx").on(table.walletId),
 		index("income_date_idx").on(table.date),
+	],
+);
+
+export const event = pgTable(
+	"event",
+	{
+		id: uuid("id").primaryKey(),
+		title: text("title").notNull(),
+		description: text("description"),
+		startDate: date("start_date", { mode: "string" }),
+		endDate: date("end_date", { mode: "string" }),
+		budget: numeric("budget", { precision: 20, scale: 6 }),
+		currency: varchar("currency", { length: 3 }).notNull(),
+		status: eventStatusEnum().default("open").notNull(),
+		workspaceId: uuid("workspace_id")
+			.notNull()
+			.references(() => workspace.id, { onDelete: "cascade" }),
+		creatorId: uuid("creator_id").references(() => user.id, { onDelete: "set null" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("event_title_idx").using("gin", sql`to_tsvector('simple', ${table.title})`),
+		index("event_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
+		index("event_workspace_id_idx").on(table.workspaceId),
 	],
 );
 
