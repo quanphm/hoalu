@@ -60,6 +60,7 @@ export const InsertRecurringBillSchema = z.object({
 	anchorDate: z.string().optional(),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7().optional(),
+	eventId: z.uuidv7().optional(),
 	workspaceId: z.uuidv7(),
 });
 

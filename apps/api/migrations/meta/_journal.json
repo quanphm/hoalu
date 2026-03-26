@@ -64,6 +64,13 @@
       "when": 1774171139811,
       "tag": "0008_normal_the_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1774509551433,
+      "tag": "0009_opposite_retro_girl",
+      "breakpoints": true
     }
   ]
 }

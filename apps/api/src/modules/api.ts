@@ -1,6 +1,7 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { redis } from "#api/lib/redis.ts";
 import categoriesRoute from "#api/routes/categories/index.ts";
+import eventsRoute from "#api/routes/events/index.ts";
 import exchangeRatesRoute from "#api/routes/exchange-rates/index.ts";
 import expensesRoute from "#api/routes/expenses/index.ts";
 import filesRoute from "#api/routes/files/index.ts";
@@ -31,6 +32,7 @@ export function apiModule() {
 		.use(rateLimiter(redis))
 		.route("/categories", categoriesRoute)
 		.route("/exchange-rates", exchangeRatesRoute)
+		.route("/events", eventsRoute)
 		.route("/expenses", expensesRoute)
 		.route("/incomes", incomesRoute)
 		.route("/files", filesRoute)

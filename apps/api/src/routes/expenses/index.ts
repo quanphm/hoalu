@@ -381,6 +381,7 @@ const route = app
 				if (date !== undefined) expenseSet.date = date;
 				if (walletId !== undefined) expenseSet.walletId = walletId;
 				if (categoryId !== undefined) expenseSet.categoryId = categoryId;
+				if (payload.eventId !== undefined) expenseSet.eventId = payload.eventId;
 
 				// Update the expense row
 				const [updated] = await tx

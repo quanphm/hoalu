@@ -62,6 +62,8 @@ export const InsertExpenseSchema = z.object({
 	// When provided, the expense is linked to this existing recurring bill
 	// and the bill's anchor_date is advanced by one period.
 	recurringBillId: z.uuidv7().optional(),
+	// Link expense to an event (optional)
+	eventId: z.uuidv7().optional(),
 });
 
 export const UpdateExpenseSchema = z
@@ -76,6 +78,8 @@ export const UpdateExpenseSchema = z
 		categoryId: z.uuidv7(),
 		// Allow explicitly unlinking (set to null) or linking to a bill
 		recurringBillId: z.uuidv7().nullable(),
+		// Allow explicitly unlinking (set to null) or linking to an event
+		eventId: z.uuidv7().nullable(),
 	})
 	.partial();
 
