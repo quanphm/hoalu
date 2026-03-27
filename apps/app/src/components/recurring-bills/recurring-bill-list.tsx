@@ -337,7 +337,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flatItems[index];
-			return item?.type === "group-header" ? 32 : shouldUseMobileLayout ? 60 : 81;
+			return item?.type === "group-header" ? 32 : 60;
 		},
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
 	});
@@ -459,4 +459,3 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 }
 
 export default memo(RecurringBillList);
-export { RecurringBillList };

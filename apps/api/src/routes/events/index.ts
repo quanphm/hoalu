@@ -6,6 +6,7 @@ import {
 	EventSchema,
 	EventsSchema,
 	InsertEventSchema,
+	LiteEventSchema,
 	UpdateEventSchema,
 } from "#api/routes/events/schema.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
@@ -99,7 +100,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(z.object({ data: EventSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: LiteEventSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -133,7 +134,7 @@ const route = app
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = EventSchema.safeParse(event);
+			const parsed = LiteEventSchema.safeParse(event);
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -154,7 +155,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(z.object({ data: EventSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: LiteEventSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -206,7 +207,7 @@ const route = app
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = EventSchema.safeParse(event);
+			const parsed = LiteEventSchema.safeParse(event);
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

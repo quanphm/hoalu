@@ -1,4 +1,5 @@
 import { clearCategoryCollection } from "./category.ts";
+import { clearEventCollection } from "./event.ts";
 import { clearExchangeRateCollection } from "./exchange-rate.ts";
 import { clearExpenseCollection } from "./expense.ts";
 import { clearIncomeCollection } from "./income.ts";
@@ -11,6 +12,7 @@ export function clearWorkspaceCollections(slug: string) {
 	clearCategoryCollection(slug);
 	clearWalletCollection(slug);
 	clearRecurringBillCollection(slug);
+	clearEventCollection(slug);
 	clearExchangeRateCollection();
 }
 
@@ -20,10 +22,12 @@ export function clearAllWorkspaceCollections() {
 	clearCategoryCollection();
 	clearWalletCollection();
 	clearRecurringBillCollection();
+	clearEventCollection();
 	clearExchangeRateCollection();
 }
 
 export * from "./category.ts";
+export * from "./event.ts";
 export * from "./exchange-rate.ts";
 export * from "./expense.ts";
 export * from "./income.ts";

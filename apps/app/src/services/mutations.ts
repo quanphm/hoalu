@@ -10,6 +10,7 @@ import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
 	categoryKeys,
+	eventKeys,
 	expenseKeys,
 	fileKeys,
 	incomeKeys,
@@ -20,6 +21,8 @@ import {
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
+	EventPatchSchema,
+	EventPostSchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
 	IncomePatchSchema,
@@ -709,6 +712,77 @@ export function useDeleteRecurringBill() {
 				description: error.message,
 				type: "error",
 			});
+		},
+	});
+	return mutation;
+}
+
+/**
+ * events
+ */
+
+export function useCreateEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: EventPostSchema }) => {
+			const result = await apiClient.events.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({ title: "Event created.", type: "success" });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
+		},
+	});
+	return mutation;
+}
+
+export function useEditEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: EventPatchSchema }) => {
+			const result = await apiClient.events.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({ title: "Event updated.", type: "success" });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.events.delete(slug, id);
+			return result;
+		},
+		onSuccess: (rs) => {
+			haptics.trigger("warning");
+			playDropSound();
+			toastManager.add({ title: "Event deleted.", type: "success" });
+			queryClient.removeQueries({ queryKey: eventKeys.withId(slug, rs.id) });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
 		},
 	});
 	return mutation;

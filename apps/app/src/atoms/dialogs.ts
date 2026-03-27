@@ -31,6 +31,11 @@ const DIALOG_ID = [
 	// income
 	"create-income",
 	"delete-income",
+
+	// event
+	"create-event",
+	"edit-event",
+	"delete-event",
 ] as const;
 export type DialogId = (typeof DIALOG_ID)[number];
 
@@ -133,3 +138,7 @@ export const quickExpenseDialogAtom = createDialogAtom("quick-expense");
 
 export const createIncomeDialogAtom = createDialogAtom("create-income");
 export const deleteIncomeDialogAtom = createDialogAtom("delete-income");
+
+export const createEventDialogAtom = createDialogAtom("create-event");
+export const editEventDialogAtom = createDialogAtom("edit-event");
+export const deleteEventDialogAtom = createDialogAtom("delete-event");

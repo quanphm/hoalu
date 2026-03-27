@@ -1,6 +1,8 @@
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
+	EventPatchSchema,
+	EventPostSchema,
 	ExchangeRatesQuerySchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
@@ -564,6 +566,69 @@ const recurringBills = {
 	},
 };
 
+const events = {
+	list: async (slug: string) => {
+		const response = await honoClient.bff.events.$get({
+			query: { workspaceIdOrSlug: slug },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	get: async (slug: string, id: string) => {
+		const response = await honoClient.bff.events[":id"].$get({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	create: async (slug: string, payload: EventPostSchema) => {
+		const response = await honoClient.bff.events.$post({
+			query: { workspaceIdOrSlug: slug },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	edit: async (slug: string, id: string, payload: EventPatchSchema) => {
+		const response = await honoClient.bff.events[":id"].$patch({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+			json: payload,
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+	delete: async (slug: string, id: string) => {
+		const response = await honoClient.bff.events[":id"].$delete({
+			query: { workspaceIdOrSlug: slug },
+			param: { id },
+		});
+		if (!response.ok) {
+			const { message } = await response.json();
+			throw new Error(message);
+		}
+		const { data } = await response.json();
+		return data;
+	},
+};
+
 export const apiClient = {
 	tasks,
 	wallets,
@@ -574,4 +639,5 @@ export const apiClient = {
 	files,
 	workspaces,
 	recurringBills,
+	events,
 };

@@ -2,6 +2,7 @@ export * from "./align-box-top-center";
 export * from "./arrows-exchange";
 export * from "./building-cottage";
 export * from "./calculator";
+export * from "./calendar-clock";
 export * from "./calendar-dollar";
 export * from "./calendar";
 export * from "./caret-right-filled";

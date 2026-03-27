@@ -9,6 +9,11 @@ import {
 	DeleteCategoryDialogContent,
 } from "#app/components/categories/category-actions.tsx";
 import {
+	CreateEventDialogContent,
+	DeleteEventDialogContent,
+	EditEventDialogContent,
+} from "#app/components/events/event-actions.tsx";
+import {
 	CreateIncomeDialogContent,
 	DeleteIncomeDialogContent,
 } from "#app/components/incomes/income-actions.tsx";
@@ -118,6 +123,13 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 			return <CreateIncomeDialogContent />;
 		case "delete-income":
 			return <DeleteIncomeDialogContent />;
+
+		case "create-event":
+			return <CreateEventDialogContent />;
+		case "edit-event":
+			return <EditEventDialogContent />;
+		case "delete-event":
+			return <DeleteEventDialogContent />;
 
 		default:
 			return <DialogPopup>Not supported dialog</DialogPopup>;

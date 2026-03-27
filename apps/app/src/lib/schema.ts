@@ -147,3 +147,22 @@ export const QuickEntryResultSchema = z.object({
 	confidence: z.number(),
 });
 export type QuickEntryResultSchema = z.infer<typeof QuickEntryResultSchema>;
+
+/**
+ * events
+ */
+export const EventFormSchema = z.object({
+	title: z.string().min(1),
+	description: z.string().optional(),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+	budget: z.coerce.number().optional(),
+	budgetCurrency: z.string().length(3).optional(),
+	status: z.enum(["open", "closed"]).optional(),
+});
+export type EventFormSchema = z.infer<typeof EventFormSchema>;
+export type EventPostSchema = InferRequestType<typeof honoClient.bff.events.$post>["json"];
+export type EventPatchSchema = InferRequestType<
+	(typeof honoClient.bff.events)[":id"]["$patch"]
+>["json"];
+export type EventSchema = InferResponseType<typeof honoClient.bff.events.$get, 200>["data"][number];
