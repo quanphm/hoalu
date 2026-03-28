@@ -1,9 +1,10 @@
 type CollectionWithCleanup = { cleanup: () => void };
 
 const isDev = import.meta.env.DEV;
+const debug = false;
 
 function debugLog(name: string, message: string) {
-	if (isDev) {
+	if (isDev && debug) {
 		console.log(`[collection: ${name}] ${message}`);
 	}
 }

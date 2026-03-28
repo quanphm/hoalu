@@ -4,8 +4,6 @@ import {
 	draftExpenseAtom,
 	createIncomeDialogAtom,
 } from "#app/atoms/index.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
@@ -18,6 +16,15 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "#app/lib/query-key-factory.ts";
+import { playConfirmSound, playDropSound } from "#app/lib/sound-effects.ts";
+import { toastManager } from "@hoalu/ui/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
+import { WebHaptics } from "web-haptics";
+
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
@@ -32,12 +39,6 @@ import type {
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "#app/lib/schema.ts";
-import { playConfirmSound, playDropSound } from "#app/lib/sound-effects.ts";
-import { toastManager } from "@hoalu/ui/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-import { WebHaptics } from "web-haptics";
 
 const haptics = new WebHaptics();
 
@@ -737,7 +738,11 @@ export function useCreateEvent() {
 		},
 		onError: (error) => {
 			haptics.trigger("error");
-			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -759,7 +764,11 @@ export function useEditEvent() {
 		},
 		onError: (error) => {
 			haptics.trigger("error");
-			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;
@@ -782,7 +791,11 @@ export function useDeleteEvent() {
 		},
 		onError: (error) => {
 			haptics.trigger("error");
-			toastManager.add({ title: "Uh oh! Something went wrong.", description: error.message, type: "error" });
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
 		},
 	});
 	return mutation;

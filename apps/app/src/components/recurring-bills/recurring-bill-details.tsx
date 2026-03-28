@@ -64,7 +64,7 @@ function BillDetailsHeader({ bill, bills, onSelectBill }: BillDetailsHeaderProps
 						render={
 							<Button
 								size="icon"
-								variant="ghost"
+								variant="outline"
 								aria-label="Archive bill"
 								onClick={() => setArchiveDialog({ state: true, data: { id: bill.id } })}
 							/>
@@ -76,7 +76,7 @@ function BillDetailsHeader({ bill, bills, onSelectBill }: BillDetailsHeaderProps
 				</Tooltip>
 				<Tooltip>
 					<TooltipTrigger
-						render={<Button size="icon" variant="ghost" onClick={() => onSelectBill(null)} />}
+						render={<Button size="icon" variant="outline" onClick={() => onSelectBill(null)} />}
 					>
 						<XIcon className="size-4" />
 					</TooltipTrigger>

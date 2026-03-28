@@ -4,7 +4,6 @@ import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
-import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import {
 	DeleteExpenseSchema,
 	ExpenseSchema,
@@ -15,6 +14,7 @@ import {
 	QuickEntryResultSchema,
 	UpdateExpenseSchema,
 } from "#api/routes/expenses/schema.ts";
+import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";

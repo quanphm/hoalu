@@ -1,7 +1,8 @@
-import type { honoClient } from "#app/lib/api-client.ts";
 import { ColorSchema, CurrencySchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
-import type { InferRequestType, InferResponseType } from "hono/client";
 import * as z from "zod";
+
+import type { honoClient } from "#app/lib/api-client.ts";
+import type { InferRequestType, InferResponseType } from "hono/client";
 
 /**
  * workspaces
@@ -42,6 +43,7 @@ export const ExpenseFormSchema = z.object({
 	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
 	recurringBillId: z.string().optional(),
+	eventId: z.string().optional(),
 	attachments: z.array(z.file()),
 });
 export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;

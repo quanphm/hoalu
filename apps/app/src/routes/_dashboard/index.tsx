@@ -31,7 +31,7 @@ function RouteComponent() {
 
 	if (workspaces.length === 0) {
 		return (
-			<PageContent className="gap-12 pt-[env(safe-area-inset-top)]">
+			<PageContent className="gap-12">
 				<Greeting />
 				<Section className="gap-2">
 					<SectionHeader>
@@ -48,7 +48,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<PageContent className="pt-[env(safe-area-inset-top, 6em)] gap-12">
+		<PageContent className="gap-12">
 			<Greeting />
 			<Section>
 				<SectionHeader>

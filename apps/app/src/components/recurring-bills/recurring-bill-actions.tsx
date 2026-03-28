@@ -49,6 +49,7 @@ const BillFormSchema = z.object({
 	}),
 	walletId: z.string().min(1),
 	categoryId: z.string().optional(),
+	eventId: z.string().optional(),
 	repeat: z.string().min(1),
 });
 
@@ -218,6 +219,11 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 					</div>
 
 					<form.AppField
+						name="eventId"
+						children={(field) => <field.SelectEventField label="Event" />}
+					/>
+
+					<form.AppField
 						name="description"
 						children={(field) => <field.TiptapField label="Note" defaultValue="" />}
 					/>
@@ -343,6 +349,11 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 							children={(field) => <field.SelectCategoryField type="expense" label="Category" />}
 						/>
 					</div>
+
+					<form.AppField
+						name="eventId"
+						children={(field) => <field.SelectEventField label="Event" />}
+					/>
 
 					<form.AppField
 						name="description"

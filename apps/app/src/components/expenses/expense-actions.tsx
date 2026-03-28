@@ -49,6 +49,7 @@ import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -195,7 +196,9 @@ function CreateExpenseForm() {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
-					...(value.recurringBillId ? { recurringBillId: value.recurringBillId } : {}),
+					eventId: value.eventId,
+					recurringBillId:
+						value.repeat === "one-time" ? undefined : value.recurringBillId || undefined,
 				},
 			});
 
@@ -257,28 +260,32 @@ function CreateExpenseForm() {
 								name="categoryId"
 								children={(field) => <field.SelectCategoryField label="Category" type="expense" />}
 							/>
-						</div>
-						<form.Subscribe
-							selector={(s) => s.values.repeat}
-							children={(repeat) => (
-								<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
-									<form.AppField
-										name="repeat"
-										children={(field) => (
-											<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-										)}
-									/>
-									{repeat !== "one-time" && (
+							<form.Subscribe
+								selector={(s) => s.values.repeat}
+								children={(repeat) => (
+									<>
 										<form.AppField
-											name="recurringBillId"
+											name="repeat"
 											children={(field) => (
-												<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
+												<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
 											)}
 										/>
-									)}
-								</div>
-							)}
-						/>
+										<div className={cn("flex flex-col gap-1.5", repeat === "one-time" && "hidden")}>
+											<form.AppField
+												name="recurringBillId"
+												children={(field) => (
+													<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
+												)}
+											/>
+										</div>
+									</>
+								)}
+							/>
+							<form.AppField
+								name="eventId"
+								children={(field) => <field.SelectEventField label="Event" />}
+							/>
+						</div>
 						<form.AppField
 							name="description"
 							children={(field) => (
@@ -452,6 +459,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 			categoryId: props.data.category?.id ?? "",
 			repeat: props.data.repeat ?? "one-time",
 			recurringBillId: props.data.recurring_bill_id ?? "",
+			eventId: props.data.event_id ?? "",
 			attachments: [],
 		} as ExpenseFormSchema,
 		validators: {
@@ -469,10 +477,8 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					walletId: value.walletId,
 					categoryId: value.categoryId,
 					repeat: value.repeat,
-					// Pass null to unlink, pass id to link, omit if not changed
-					...(value.recurringBillId !== (props.data.recurring_bill_id ?? "")
-						? { recurringBillId: value.recurringBillId || null }
-						: {}),
+					recurringBillId: value.repeat === "one-time" ? null : value.recurringBillId || null,
+					eventId: value.eventId || null,
 				},
 			});
 
@@ -520,19 +526,17 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 							name="categoryId"
 							children={(field) => <field.SelectCategoryField label="Category" type="expense" />}
 						/>
-					</div>
-					<form.Subscribe
-						selector={(s) => s.values.repeat}
-						children={(repeat) => (
-							<div className={repeat === "one-time" ? "" : "grid grid-cols-2 gap-4"}>
-								<form.AppField
-									name="repeat"
-									children={(field) => (
-										<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-									)}
-								/>
-								{repeat !== "one-time" && (
-									<div className="flex flex-col gap-1.5">
+						<form.Subscribe
+							selector={(s) => s.values.repeat}
+							children={(repeat) => (
+								<>
+									<form.AppField
+										name="repeat"
+										children={(field) => (
+											<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
+										)}
+									/>
+									<div className={cn("flex flex-col gap-1.5", repeat === "one-time" && "hidden")}>
 										<form.AppField
 											name="recurringBillId"
 											children={(field) => (
@@ -543,10 +547,14 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 											<WarningMessage>The linked recurring bill has been archived.</WarningMessage>
 										)}
 									</div>
-								)}
-							</div>
-						)}
-					/>
+								</>
+							)}
+						/>
+						<form.AppField
+							name="eventId"
+							children={(field) => <field.SelectEventField label="Event" />}
+						/>
+					</div>
 					<form.AppField
 						name="description"
 						children={(field) => (

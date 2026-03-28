@@ -34,10 +34,10 @@ function RouteComponent() {
 		<>
 			<Section>
 				<SectionHeader className="flex-row items-center gap-2">
-					<SectionTitle className="flex items-center gap-2">
+					<SectionTitle className="flex items-baseline gap-2">
 						Jobs
 						<span className="text-muted-foreground text-sm">
-							{totalActiveJobs} / {MAX_QUEUE_SIZE}
+							{totalActiveJobs}/{MAX_QUEUE_SIZE}
 						</span>
 					</SectionTitle>
 				</SectionHeader>

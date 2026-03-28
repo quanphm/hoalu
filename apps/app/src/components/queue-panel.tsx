@@ -1,8 +1,6 @@
 import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
 import { draftExpenseAtom } from "#app/atoms/expenses.ts";
 import { useReceiptScanQueue, useQuickExpenseQueue } from "#app/hooks/use-queue.ts";
-import type { QuickExpenseJob } from "#app/lib/queues/quick-expense-queue.ts";
-import type { ReceiptScanJob } from "#app/lib/queues/receipt-scan-queue.ts";
 import {
 	Loader2Icon,
 	AlertCircleIcon,
@@ -15,6 +13,9 @@ import { XIcon, CheckIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
+
+import type { QuickExpenseJob } from "#app/lib/queues/quick-expense-queue.ts";
+import type { ReceiptScanJob } from "#app/lib/queues/receipt-scan-queue.ts";
 
 type JobStatus = "pending" | "processing" | "completed" | "failed" | "dismissed";
 
@@ -203,10 +204,6 @@ function EmptyJobPlaceholder() {
 				<div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-sm" />
 				<div className="min-w-0 flex-1">
 					<p className="text-muted-foreground/60 truncate text-xs font-medium">No items</p>
-					<div className="flex items-center gap-1">
-						<div className="bg-muted-foreground/20 size-3 rounded-full" />
-						<span className="text-muted-foreground/60 text-[10px]">Scan receipt / Quick add</span>
-					</div>
 				</div>
 			</div>
 		));
