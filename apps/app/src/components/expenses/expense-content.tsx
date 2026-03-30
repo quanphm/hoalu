@@ -75,7 +75,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 					<WalletBadge {...props.wallet} />
 				</div>
 			</div>
-			<div className="flex items-end justify-center gap-4 text-right">
+			<div className="flex flex-col items-end justify-center gap-4 text-right">
 				<TransactionAmount data={props} />
 			</div>
 		</div>

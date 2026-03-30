@@ -87,26 +87,24 @@ export const FilesCompactUpload = forwardRef<FilesCompactUploadRef, FilesCompact
 				{files.length > 0 && (
 					<ul ref={previewRef} className="grid grid-cols-5 gap-1.5 px-4">
 						{files.map((file, index) => (
-							<li key={file.name} className="bg-muted/50 relative flex rounded-md text-sm">
+							<li key={file.name} className="bg-muted/50 relative">
 								<div className="relative aspect-square w-full overflow-hidden rounded-md">
 									<img src={previewUrls[index]} alt="" />
-									<div className="bg-muted/90 absolute bottom-0 w-full p-1 text-center text-xs">
+									<div className="bg-muted/80 absolute bottom-0 w-full p-1 text-center text-xs">
 										{(file.size / (1024 * 1024)).toFixed(2)}MB
 									</div>
 								</div>
-								<div className="absolute top-1 right-1 flex items-center gap-2">
-									<Button
-										size="icon"
-										variant="secondary"
-										className="size-6 rounded-full"
-										onClick={(e) => {
-											e.stopPropagation();
-											handleRemove(index);
-										}}
-									>
-										<XIcon className="size-4" />
-									</Button>
-								</div>
+								<Button
+									size="icon"
+									variant="secondary"
+									className="absolute top-1 right-1 flex size-6 items-center gap-2 rounded-full"
+									onClick={(e) => {
+										e.stopPropagation();
+										handleRemove(index);
+									}}
+								>
+									<XIcon />
+								</Button>
 							</li>
 						))}
 					</ul>

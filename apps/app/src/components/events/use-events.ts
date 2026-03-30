@@ -36,12 +36,6 @@ function useFxRateData() {
 	return fxRateData;
 }
 
-/**
- * Main list hook — all events for the workspace, with totalSpent computed
- * by summing FX-converted expense amounts per event.
- *
- * Performance note: O(events × expenses) — acceptable for typical workspace sizes.
- */
 export function useLiveQueryEvents() {
 	const workspace = useWorkspace();
 	const collection = eventCollectionFactory(workspace.slug);
@@ -125,12 +119,14 @@ export function useLiveQueryEvents() {
 			totalSpentMap.set(exp.event_id, existing + convertedAmount);
 		}
 
-		return events.map((e) => ({
-			...e,
-			totalSpent: totalSpentMap.get(e.id) ?? 0,
-			realBudget:
-				e.budget != null ? monetary.fromRealAmount(Number(e.budget), e.budget_currency) : null,
-		}));
+		return events.map((e) => {
+			return {
+				...e,
+				totalSpent: totalSpentMap.get(e.id) ?? 0,
+				budget: monetary.fromRealAmount(Number(e.budget), e.budget_currency),
+				realBudget: Number(e.budget),
+			};
+		});
 	}, [events, expenses, fxRateData, workspace.metadata.currency]);
 }
 
@@ -184,7 +180,6 @@ export function useLiveQueryEventExpenses(eventId: string) {
 
 	return useMemo(() => {
 		if (!data) return [];
-		const workspaceCurrency = workspace.metadata.currency as string;
 		return data.map((exp) => {
 			const amount = monetary.fromRealAmount(Number(exp.amount), exp.currency);
 			return {
@@ -194,7 +189,7 @@ export function useLiveQueryEventExpenses(eventId: string) {
 				convertedAmount: amount, // simplified — full FX conversion can be added if needed
 			};
 		});
-	}, [data, workspace.metadata.currency]);
+	}, [data]);
 }
 
 export type SyncedEventExpense = ReturnType<typeof useLiveQueryEventExpenses>[number];

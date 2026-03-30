@@ -10,6 +10,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon, ArchiveIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
+import { Empty, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSetAtom } from "jotai";
 
@@ -90,23 +91,26 @@ function BillDetailsHeader({ bill, bills, onSelectBill }: BillDetailsHeaderProps
 export function RecurringBillDetails() {
 	const bills = useSortedRecurringBills();
 	const { bill: selected, onSelectBill } = useSelectedRecurringBill();
-
 	const currentBill: SyncedRecurringBill | undefined = bills.find((b) => b.id === selected.id);
+
+	if (!currentBill) {
+		return (
+			<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
+				<Empty>
+					<EmptyHeader>
+						<EmptyTitle>Select a bill to view details</EmptyTitle>
+					</EmptyHeader>
+				</Empty>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bg-card text-card-foreground flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
-			{currentBill ? (
-				<>
-					<BillDetailsHeader bill={currentBill} bills={bills} onSelectBill={onSelectBill} />
-					<div data-slot="recurring-bill-details-form">
-						<EditRecurringBillForm key={currentBill.id} bill={currentBill} />
-					</div>
-				</>
-			) : (
-				<h2 className="bg-muted/50 text-muted-foreground m-4 rounded-md p-4 text-center">
-					No bill selected
-				</h2>
-			)}
+			<BillDetailsHeader bill={currentBill} bills={bills} onSelectBill={onSelectBill} />
+			<div data-slot="recurring-bill-details-form">
+				<EditRecurringBillForm key={currentBill.id} bill={currentBill} />
+			</div>
 		</div>
 	);
 }

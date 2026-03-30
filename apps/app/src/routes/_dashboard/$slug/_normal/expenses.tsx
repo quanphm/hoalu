@@ -102,19 +102,17 @@ function RouteComponent() {
         >
           <ExpenseFilter expenses={filteredExpenses} categories={categories} />
         </SectionItem> */}
-
 				<SectionItem
 					data-slot="expense-list"
-					desktopSpan="col-span-6"
+					desktopSpan="col-span-5"
 					tabletSpan={1}
 					mobileOrder={1}
 				>
 					<ExpenseList expenses={filteredExpenses} />
 				</SectionItem>
-
 				<SectionItem
 					data-slot="expense-details"
-					desktopSpan="col-span-6"
+					desktopSpan="col-span-7"
 					tabletSpan={1}
 					mobileOrder={2}
 					hideOnMobile
