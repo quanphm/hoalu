@@ -343,6 +343,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								change={stats.amount.change}
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
+								invertColor={!isIncomeTab}
 							/>
 						)}
 					</div>

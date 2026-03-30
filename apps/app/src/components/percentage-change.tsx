@@ -1,7 +1,4 @@
-import {
-	getPercentageChangeTextClasses,
-	type PercentageChange,
-} from "#app/helpers/percentage-change.ts";
+import { trendChangeVariants, type PercentageChange } from "#app/helpers/percentage-change.ts";
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -23,14 +20,16 @@ const sizeClasses = {
 	md: "text-sm",
 	lg: "text-base",
 };
+
 const iconSizeClasses = {
 	sm: "size-3",
 	md: "size-4",
 	lg: "size-5",
 };
 
-interface PercentageChangeDisplayProps {
+interface PercentageChangeProps {
 	change: PercentageChange;
+	invertColor?: boolean;
 	className?: string;
 	size?: "sm" | "md" | "lg";
 	comparisonText?: string;
@@ -39,13 +38,17 @@ interface PercentageChangeDisplayProps {
 
 export function PercentageChangeDisplay({
 	change,
+	invertColor = false,
 	className,
 	size = "md",
 	comparisonText,
 	onComparisonClick,
-}: PercentageChangeDisplayProps) {
+}: PercentageChangeProps) {
 	const [viewMode, setViewMode] = useState<"percent" | "value">("percent");
-	const textClasses = getPercentageChangeTextClasses(change);
+	const textClasses = trendChangeVariants({
+		trend: change.status,
+		invert: invertColor,
+	});
 	const Icon = IconComponent[change.status];
 
 	function handleViewModeChange() {
@@ -68,7 +71,7 @@ export function PercentageChangeDisplay({
 					<CurrencyValue
 						value={change.displayInValue}
 						currency={change.currency}
-						className={textClasses}
+						className={cn(textClasses, "text-sm")}
 						prefix={
 							change.status === "increase" ? "+" : change.status === "decrease" ? "-" : undefined
 						}
@@ -90,28 +93,24 @@ export function PercentageChangeDisplay({
 	);
 }
 
-interface PercentageChangeBadgeProps {
-	change: PercentageChange;
-	className?: string;
-	comparisonText?: string;
-	onComparisonClick?: () => void;
-}
-
 export function PercentageChangeBadge({
 	change,
+	invertColor = false,
 	className,
 	comparisonText,
 	onComparisonClick,
-}: PercentageChangeBadgeProps) {
-	const textClasses = getPercentageChangeTextClasses(change);
+}: PercentageChangeProps) {
+	const textClasses = trendChangeVariants({
+		trend: change.status,
+		invert: invertColor,
+		background: true,
+	});
 
 	return (
 		<span
 			className={cn(
 				"bg-muted/50 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium",
 				textClasses,
-				change.status === "increase" && "bg-red-50 dark:bg-red-950/30",
-				change.status === "decrease" && "bg-green-50 dark:bg-green-950/30",
 				className,
 			)}
 		>
@@ -121,6 +120,7 @@ export function PercentageChangeBadge({
 				className="text-inherit"
 				comparisonText={comparisonText}
 				onComparisonClick={onComparisonClick}
+				invertColor={invertColor}
 			/>
 		</span>
 	);

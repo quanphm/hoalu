@@ -1,4 +1,5 @@
 import { cn } from "@hoalu/ui/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 
 export interface PercentageChange {
 	value: number;
@@ -58,10 +59,77 @@ export function calculatePercentageChange(
 	};
 }
 
-export function getPercentageChangeTextClasses(change: PercentageChange) {
-	return cn(
-		change.status === "no-change" && "text-muted-foreground",
-		change.status === "increase" && "text-red-600 dark:text-red-400",
-		change.status === "decrease" && "text-green-600 dark:text-green-400",
-	);
-}
+export const trendChangeVariants = cva(["bg-transparent"], {
+	variants: {
+		trend: {
+			"no-change": "text-muted-foreground",
+			increase: "",
+			decrease: "",
+		},
+		background: {
+			true: null,
+			false: null,
+		},
+		invert: {
+			true: null,
+			false: null,
+		},
+	},
+	compoundVariants: [
+		// increase
+		{
+			trend: "increase",
+			background: false,
+			invert: false,
+			class: "text-green-600 dark:text-green-400",
+		},
+		{
+			trend: "increase",
+			background: false,
+			invert: true,
+			class: "text-red-600 dark:text-red-400",
+		},
+		{
+			trend: "increase",
+			background: true,
+			invert: false,
+			class: "bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-400",
+		},
+		{
+			trend: "increase",
+			background: true,
+			invert: true,
+			class: "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
+		},
+		// decrease
+		{
+			trend: "decrease",
+			background: false,
+			invert: false,
+			class: "text-red-600 dark:text-red-400",
+		},
+		{
+			trend: "decrease",
+			background: false,
+			invert: true,
+			class: "text-green-600 dark:text-green-400",
+		},
+		{
+			trend: "decrease",
+			background: true,
+			invert: false,
+			class: "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
+		},
+		{
+			trend: "decrease",
+			background: true,
+			invert: true,
+			class: "bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-400",
+		},
+	],
+	defaultVariants: {
+		trend: "no-change",
+		background: false,
+		invert: false,
+	},
+});
