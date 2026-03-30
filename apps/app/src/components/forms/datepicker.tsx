@@ -12,7 +12,6 @@ interface Props {
 export function DatepickerField(props: Props) {
 	const field = useFieldContext<string | undefined>();
 	const selected = field.state.value ? new Date(field.state.value) : new Date();
-	const [month, setMonth] = useState(selected);
 
 	const handleSelect = (date: Date | undefined) => {
 		if (!date) {
@@ -30,9 +29,8 @@ export function DatepickerField(props: Props) {
 					mode="single"
 					className="min-h-[300px] [--cell-size:--spacing(10)]"
 					selected={selected}
+					month={selected}
 					onSelect={handleSelect}
-					month={month}
-					onMonthChange={setMonth}
 				/>
 			</div>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}

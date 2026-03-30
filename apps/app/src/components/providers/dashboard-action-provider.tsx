@@ -36,7 +36,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 					navigate({ to: "/$slug", params: { slug: ws.slug } });
 				}
 			} catch (error) {
-				console.log(error);
+				console.error(error);
 			}
 		},
 		{

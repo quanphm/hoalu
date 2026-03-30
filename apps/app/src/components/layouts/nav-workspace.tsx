@@ -147,6 +147,9 @@ export function NavWorkspace() {
 							>
 								<CalendarClockIcon />
 								<span>Events</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_events} />
+								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>

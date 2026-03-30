@@ -63,8 +63,6 @@ export const InsertEventSchema = z
 		{ message: "end_date must be >= start_date", path: ["endDate"] },
 	);
 
-// Note: Do NOT use InsertEventSchema.omit() — InsertEventSchema has .refine() which returns
-// a ZodPipe in Zod v4 and does not support .omit(). Define UpdateEventSchema independently.
 export const UpdateEventSchema = z
 	.object({
 		title: z.string().min(1),

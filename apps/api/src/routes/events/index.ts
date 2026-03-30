@@ -180,10 +180,10 @@ const route = app
 				updatePayload.description = payload.description;
 			}
 			if (payload.startDate !== undefined) {
-				updatePayload.startDate = payload.startDate;
+				updatePayload.startDate = payload.startDate ? payload.startDate : null;
 			}
 			if (payload.endDate !== undefined) {
-				updatePayload.endDate = payload.endDate;
+				updatePayload.endDate = payload.endDate ? payload.endDate : null;
 			}
 			if (payload.currency !== undefined) {
 				updatePayload.currency = payload.currency;

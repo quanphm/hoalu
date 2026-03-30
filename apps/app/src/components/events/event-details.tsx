@@ -55,7 +55,7 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 	const remaining = event.realBudget != null ? event.realBudget - event.totalSpent : null;
 	const progress =
 		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : null;
-	const clampedProgress = progress != null ? Math.min(progress, 100) : null;
+	const clampedProgress = Math.min(progress ?? 0, 100);
 
 	const formatDate = (dateStr: string) => {
 		try {
@@ -122,14 +122,14 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 					<CardHeader>
 						<CardDescription className="text-xs uppercase">Budget</CardDescription>
 						<CardTitle className="text-xl">
-							{event.realBudget != null ? (
+							{event.realBudget > 0 ? (
 								<CurrencyValue
 									value={event.realBudget}
 									currency={budgetCurrency}
 									className="text-xl"
 								/>
 							) : (
-								<span className="text-muted-foreground">—</span>
+								<span className="text-muted-foreground">∞</span>
 							)}
 						</CardTitle>
 					</CardHeader>
@@ -148,7 +148,7 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 										: "",
 							)}
 						>
-							{remaining != null ? (
+							{remaining != null && event.realBudget > 0 ? (
 								<CurrencyValue
 									value={remaining}
 									currency={budgetCurrency}
@@ -158,7 +158,7 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 									)}
 								/>
 							) : (
-								<span className="text-muted-foreground">—</span>
+								<span className="text-muted-foreground">∞</span>
 							)}
 						</CardTitle>
 					</CardHeader>
@@ -201,7 +201,6 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 				</div>
 			)}
 
-			{/* Expenses list */}
 			<section className="flex flex-col gap-2">
 				<div className="flex items-center gap-2">
 					<h3 className="text-sm font-medium">Expenses</h3>
@@ -222,7 +221,6 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 				)}
 			</section>
 
-			{/* Recurring bills */}
 			{bills.length > 0 && (
 				<section className="flex flex-col gap-2">
 					<div className="flex items-center gap-2">
@@ -263,17 +261,14 @@ function EventExpenseItem({ expense }: { expense: SyncedEventExpense }) {
 						<Badge
 							className={cn(
 								createCategoryTheme(cat.color as Parameters<typeof createCategoryTheme>[0]),
-								"text-[9px]",
 							)}
 						>
 							{cat.name}
 						</Badge>
 					)}
-					{expense.wallet && (
-						<span className="text-muted-foreground text-[10px]">{expense.wallet.name}</span>
-					)}
+					{expense.wallet && <span className="text-muted-foreground">{expense.wallet.name}</span>}
 					{expense.date && (
-						<span className="text-muted-foreground text-[10px]">
+						<span className="text-muted-foreground">
 							· {datetime.format(new Date(expense.date), "E dd/MM/yyyy")}
 						</span>
 					)}
@@ -283,7 +278,7 @@ function EventExpenseItem({ expense }: { expense: SyncedEventExpense }) {
 				<CurrencyValue
 					value={expense.amount}
 					currency={expense.currency}
-					className="text-[13px] font-semibold"
+					className="text-sm font-semibold"
 				/>
 			</div>
 		</div>
@@ -305,25 +300,20 @@ function EventBillItem({ bill }: { bill: SyncedEventBill }) {
 								createCategoryTheme(
 									bill.category_color as Parameters<typeof createCategoryTheme>[0],
 								),
-								"text-[9px]",
 							)}
 						>
 							{bill.category_name}
 						</Badge>
 					)}
-					{bill.wallet_name && (
-						<span className="text-muted-foreground text-[10px]">{bill.wallet_name}</span>
-					)}
-					<Badge variant="secondary" className="text-[9px]">
-						{bill.repeat}
-					</Badge>
+					{bill.wallet_name && <span className="text-muted-foreground">{bill.wallet_name}</span>}
+					<Badge variant="secondary">{bill.repeat}</Badge>
 				</div>
 			</div>
 			<div className="shrink-0">
 				<CurrencyValue
 					value={bill.amount}
 					currency={bill.currency}
-					className="text-[13px] font-semibold"
+					className="text-sm font-semibold"
 				/>
 			</div>
 		</div>

@@ -68,7 +68,6 @@ export function DateRangeCalendarField({
 
 	return (
 		<div className="flex flex-col gap-2">
-			{/* Date inputs row */}
 			<div className="grid grid-cols-2 gap-4">
 				<Field orientation="vertical" className="gap-2">
 					<FieldLabel>{startLabel}</FieldLabel>
@@ -80,7 +79,7 @@ export function DateRangeCalendarField({
 							className="ps-6"
 							min="1970-01-01"
 						/>
-						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3">
+						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3">
 							<CalendarIcon className="size-4" aria-hidden="true" />
 						</div>
 					</div>
@@ -95,15 +94,14 @@ export function DateRangeCalendarField({
 							className="ps-6"
 							min="1970-01-01"
 						/>
-						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3">
+						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3">
 							<CalendarIcon className="size-4" aria-hidden="true" />
 						</div>
 					</div>
 				</Field>
 			</div>
 
-			{/* Range calendar */}
-			<div className="flex items-center justify-center rounded-md border">
+			<div className="flex items-center justify-center">
 				<Calendar
 					mode="range"
 					className="min-h-[300px] [--cell-size:--spacing(10)]"

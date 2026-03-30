@@ -115,6 +115,11 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "g>w",
 		enabled: true,
 	},
+	goto_events: {
+		label: "GV",
+		hotkey: "g>v",
+		enabled: true,
+	},
 	goto_files: {
 		label: "GF",
 		hotkey: "g>f",

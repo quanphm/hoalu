@@ -99,18 +99,21 @@ function CreateEventForm() {
 		<form.AppForm>
 			<form.Form>
 				<div className="grid grid-cols-12 gap-4">
-					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-7">
+					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
 						<form.AppField
 							name="title"
-							children={(f) => <f.InputField label="Title" required autoFocus />}
+							children={(field) => <field.InputField label="Title" required autoFocus />}
 						/>
 						<form.AppField
 							name="budgetTransaction"
-							children={(f) => <f.TransactionAmountField label="Budget" />}
+							children={(field) => <field.TransactionAmountField label="Budget" />}
 						/>
-						<form.AppField name="description" children={(f) => <f.TiptapField label="Notes" />} />
+						<form.AppField
+							name="description"
+							children={(field) => <field.TiptapField label="Note" />}
+						/>
 					</FieldGroup>
-					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-5">
+					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
 						<form.Subscribe
 							selector={(state) => ({
 								startDate: state.values.startDate,
@@ -118,9 +121,9 @@ function CreateEventForm() {
 							})}
 						>
 							{({ startDate: sd, endDate: ed }) => (
-								<EventDateRangeSection
-									startDate={sd}
-									endDate={ed}
+								<DateRangeCalendarField
+									startValue={sd}
+									endValue={ed}
 									onStartChange={(v) => form.setFieldValue("startDate", v)}
 									onEndChange={(v) => form.setFieldValue("endDate", v)}
 								/>
@@ -145,7 +148,7 @@ export function EditEventDialogContent() {
 	const event = events.find((e) => e.id === dialog?.data?.id) ?? null;
 	if (!event) return null;
 	return (
-		<DialogPopup className="sm:max-w-[600px]">
+		<DialogPopup className="sm:max-w-[800px]">
 			<DialogHeader>
 				<DialogTitle>Edit event</DialogTitle>
 				<DialogHeaderAction />
@@ -156,6 +159,7 @@ export function EditEventDialogContent() {
 }
 
 function EditEventForm({ event }: { event: SyncedEvent }) {
+	const workspace = useWorkspace();
 	const mutation = useEditEvent();
 	const setDialog = useSetAtom(editEventDialogAtom);
 
@@ -166,8 +170,8 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 			startDate: event.start_date ?? "",
 			endDate: event.end_date ?? "",
 			budgetTransaction: {
-				value: event.budget ?? 0,
-				currency: event.budget_currency,
+				value: event.realBudget ?? 0,
+				currency: event.budget_currency ?? workspace.metadata.currency,
 			},
 		} as EventFormSchema,
 		validators: { onSubmit: EventFormSchema },
@@ -177,8 +181,8 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 				payload: {
 					title: value.title,
 					description: value.description,
-					startDate: value.startDate || undefined,
-					endDate: value.endDate || undefined,
+					startDate: value.startDate ?? undefined,
+					endDate: value.endDate ?? undefined,
 					budget: value.budgetTransaction?.value,
 					currency: value.budgetTransaction?.currency,
 				},
@@ -190,65 +194,49 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 	return (
 		<form.AppForm>
 			<form.Form>
-				<FieldGroup className="p-4">
-					<form.AppField name="title" children={(f) => <f.InputField label="Title" required />} />
-					<form.Subscribe
-						selector={(state) => ({
-							startDate: state.values.startDate,
-							endDate: state.values.endDate,
-						})}
-					>
-						{({ startDate: sd, endDate: ed }) => (
-							<EventDateRangeSection
-								startDate={sd}
-								endDate={ed}
-								onStartChange={(v) => form.setFieldValue("startDate", v)}
-								onEndChange={(v) => form.setFieldValue("endDate", v)}
-							/>
-						)}
-					</form.Subscribe>
-					<form.AppField
-						name="budgetTransaction"
-						children={(f) => <f.TransactionAmountField label="Budget (optional)" />}
-					/>
-					<form.AppField
-						name="description"
-						children={(f) => <f.TiptapField label="Notes" defaultValue={event.description ?? ""} />}
-					/>
-				</FieldGroup>
+				<div className="grid grid-cols-12 gap-4">
+					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
+						<form.AppField
+							name="title"
+							children={(field) => <field.InputField label="Title" required autoFocus />}
+						/>
+						<form.AppField
+							name="budgetTransaction"
+							children={(field) => <field.TransactionAmountField label="Budget" />}
+						/>
+						<form.AppField
+							name="description"
+							children={(field) => (
+								<field.TiptapField label="Note" defaultValue={event.description ?? ""} />
+							)}
+						/>
+					</FieldGroup>
+					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
+						<form.Subscribe
+							selector={(state) => ({
+								startDate: state.values.startDate,
+								endDate: state.values.endDate,
+							})}
+						>
+							{({ startDate: sd, endDate: ed }) => (
+								<DateRangeCalendarField
+									startValue={sd}
+									endValue={ed}
+									onStartChange={(v) => form.setFieldValue("startDate", v)}
+									onEndChange={(v) => form.setFieldValue("endDate", v)}
+								/>
+							)}
+						</form.Subscribe>
+					</FieldGroup>
+				</div>
+
 				<DialogFooter>
-					<Field orientation="horizontal" className="justify-end px-4 pb-4">
-						<form.SubscribeButton>Update event</form.SubscribeButton>
+					<Field orientation="horizontal" className="justify-end">
+						<form.SubscribeButton>Update</form.SubscribeButton>
 					</Field>
 				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
-	);
-}
-
-/**
- * Shared date-range section used in both Create and Edit event forms.
- * Subscribes to `startDate` / `endDate` fields and renders a
- * `DateRangeCalendarField` that keeps the inputs and calendar in sync.
- */
-function EventDateRangeSection({
-	startDate,
-	endDate,
-	onStartChange,
-	onEndChange,
-}: {
-	startDate: string | undefined;
-	endDate: string | undefined;
-	onStartChange: (v: string) => void;
-	onEndChange: (v: string) => void;
-}) {
-	return (
-		<DateRangeCalendarField
-			startValue={startDate}
-			endValue={endDate}
-			onStartChange={onStartChange}
-			onEndChange={onEndChange}
-		/>
 	);
 }
 

@@ -25,7 +25,6 @@ export class EventRepository {
 			const [result] = await db.insert(schema.event).values(param).returning();
 			return result;
 		} catch (_error) {
-			console.log(_error);
 			return null;
 		}
 	}

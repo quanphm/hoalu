@@ -10,6 +10,7 @@ import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { IncomeFormSchema } from "#app/lib/schema.ts";
 import {
 	useCreateIncome,
@@ -309,6 +310,7 @@ export function DuplicateIncome(props: { data: SyncedIncome }) {
 }
 
 export function EditIncomeForm({ data }: { data: SyncedIncome }) {
+	const workspace = useWorkspace();
 	const mutation = useEditIncome();
 	const wallets = useLiveQueryWallets();
 
@@ -346,7 +348,10 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 			title: data.title,
 			description: data.description ?? "",
 			date: data.date,
-			transaction: { value: data.amount, currency: data.currency },
+			transaction: {
+				value: data.amount ?? 0,
+				currency: data.currency ?? workspace.metadata.currency,
+			},
 			walletId: data.wallet.id,
 			categoryId: data.category?.id ?? "",
 		} as IncomeFormSchema,
