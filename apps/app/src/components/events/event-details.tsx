@@ -78,20 +78,20 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 							<CalendarRangeIcon className="size-3 shrink-0" />
 							<span>
 								{event.start_date ? formatDate(event.start_date) : "?"}
-								{" – "}
-								{event.end_date ? formatDate(event.end_date) : "ongoing"}
+								{" - "}
+								{event.end_date ? formatDate(event.end_date) : "?"}
 							</span>
 						</div>
 					)}
 				</div>
-				<div className="flex shrink-0 gap-1">
+				<div className="flex gap-2">
 					<Button
 						size="icon"
 						variant="outline"
 						onClick={() => setEditDialog({ state: true, data: { id: event.id } })}
 						aria-label="Edit event"
 					>
-						<PencilIcon className="size-4" />
+						<PencilIcon />
 					</Button>
 					<Button
 						size="icon"
@@ -99,7 +99,7 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 						onClick={() => setDeleteDialog({ state: true, data: { id: event.id } })}
 						aria-label="Delete event"
 					>
-						<Trash2Icon className="size-4" />
+						<Trash2Icon />
 					</Button>
 				</div>
 			</div>

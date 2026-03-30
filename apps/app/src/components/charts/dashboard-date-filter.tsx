@@ -7,7 +7,7 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import { DateRangePicker } from "#app/components/charts/date-range-picker.tsx";
 import { createChartColor } from "#app/helpers/colors.ts";
 import {
 	AVAILABLE_LAST_DAYS_OPTIONS,
@@ -34,7 +34,7 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
-import { DateRangePicker } from "./date-range-picker.tsx";
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 
 const options = [
 	...AVAILABLE_LAST_DAYS_OPTIONS,
@@ -43,11 +43,7 @@ const options = [
 	{ label: "Custom range", value: "custom" },
 ];
 
-interface DashboardDateFilterProps {
-	categories: SyncedCategory[];
-}
-
-export function DashboardDateFilter(props: DashboardDateFilterProps) {
+export function DashboardDateFilter() {
 	const predefinedDateRange = useAtomValue(selectDateRangeAtom);
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 
@@ -104,7 +100,6 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 				</SelectContent>
 			</Select>
 			<DateRangePicker onRangeSelect={handleCustomRangeSelect} className="min-w-0 shrink" />
-			<ChartCategoryFilter categories={props.categories} />
 			{predefinedDateRange === "custom" && (
 				<div data-slot="chart-group-by">
 					<ChartGroupByFilter />
@@ -113,6 +108,8 @@ export function DashboardDateFilter(props: DashboardDateFilterProps) {
 		</div>
 	);
 }
+
+export { ChartCategoryFilter };
 
 function ChartGroupByFilter() {
 	const [groupBy, setGroupBy] = useAtom(chartGroupByAtom);
@@ -152,61 +149,59 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 	const hasSelection = selectedIds.length > 0;
 
 	return (
-		<div className="flex items-center gap-1">
-			<Popover>
-				<PopoverTrigger render={<Button variant={hasSelection ? "default" : "outline"} />}>
-					<LayersIcon />
-					{hasSelection
-						? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
-						: "By category"}
-				</PopoverTrigger>
-				<PopoverContent className="w-56 p-0" align="start">
-					<div className="border-b px-3 py-2">
-						<PopoverTitle className="text-sm font-medium">Filter by category</PopoverTitle>
-						<PopoverDescription className="text-muted-foreground text-xs">
-							Select categories to compare
-						</PopoverDescription>
-					</div>
-					<div
-						className={cn(
-							"divide-border/60 divide-y",
-							categories.length > 6 && "max-h-[200px] overflow-y-auto",
-						)}
-					>
-						{categories
-							.filter((category) => category.type === "expense")
-							.map((category) => {
-								const isSelected = selectedIds.includes(category.id);
-								return (
-									<button
-										key={category.id}
-										type="button"
-										onClick={() => toggleCategory(category.id)}
-										className="hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none"
+		<Popover>
+			<PopoverTrigger render={<Button variant={hasSelection ? "default" : "outline"} />}>
+				<LayersIcon />
+				{hasSelection
+					? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
+					: "By category"}
+			</PopoverTrigger>
+			<PopoverContent className="w-56 p-0" align="start">
+				<div className="border-b px-3 py-2">
+					<PopoverTitle className="text-sm font-medium">Filter by category</PopoverTitle>
+					<PopoverDescription className="text-muted-foreground text-xs">
+						Select categories to compare
+					</PopoverDescription>
+				</div>
+				<div
+					className={cn(
+						"divide-border/60 divide-y",
+						categories.length > 6 && "max-h-[200px] overflow-y-auto",
+					)}
+				>
+					{categories
+						.filter((category) => category.type === "expense")
+						.map((category) => {
+							const isSelected = selectedIds.includes(category.id);
+							return (
+								<button
+									key={category.id}
+									type="button"
+									onClick={() => toggleCategory(category.id)}
+									className="hover:bg-muted/50 flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none"
+								>
+									<div
+										className={cn(
+											"flex size-4 shrink-0 items-center justify-center rounded-xs border",
+											isSelected
+												? "border-primary bg-primary text-primary-foreground"
+												: "border-muted-foreground/30",
+										)}
 									>
-										<div
-											className={cn(
-												"flex size-4 shrink-0 items-center justify-center rounded-xs border",
-												isSelected
-													? "border-primary bg-primary text-primary-foreground"
-													: "border-muted-foreground/30",
-											)}
-										>
-											{isSelected && <CheckIcon className="size-3" />}
-										</div>
-										<div
-											className={cn(
-												"size-2.5 shrink-0 rounded-full",
-												createChartColor(category.color),
-											)}
-										/>
-										<span className="truncate">{category.name}</span>
-									</button>
-								);
-							})}
-					</div>
-				</PopoverContent>
-			</Popover>
-		</div>
+										{isSelected && <CheckIcon className="size-3" />}
+									</div>
+									<div
+										className={cn(
+											"size-2.5 shrink-0 rounded-full",
+											createChartColor(category.color),
+										)}
+									/>
+									<span className="truncate">{category.name}</span>
+								</button>
+							);
+						})}
+				</div>
+			</PopoverContent>
+		</Popover>
 	);
 }
