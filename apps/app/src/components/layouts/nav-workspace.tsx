@@ -12,6 +12,7 @@ import {
 	TriangleSquareCircleIcon,
 	UsersGroupIcon,
 	WalletIcon,
+	CalendarClockIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -135,6 +136,19 @@ export function NavWorkspace() {
 								<span>Recurring Bills</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />
+								</SidebarMenuBadge>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								render={<Link to="/$slug/events" params={{ slug }} />}
+								tooltip="Events"
+							>
+								<CalendarClockIcon />
+								<span>Events</span>
+								<SidebarMenuBadge>
+									<HotKey {...KEYBOARD_SHORTCUTS.goto_events} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

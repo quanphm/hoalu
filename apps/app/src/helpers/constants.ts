@@ -1,5 +1,6 @@
-import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import { getCurrencyList } from "@hoalu/countries";
+
+import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
 export const SYSTEM_THEMES = ["system", "light", "dark"] as const;
 export const CUSTOM_THEMES = ["creamy"] as const;
@@ -114,6 +115,11 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "g>w",
 		enabled: true,
 	},
+	goto_events: {
+		label: "GV",
+		hotkey: "g>v",
+		enabled: true,
+	},
 	goto_files: {
 		label: "GF",
 		hotkey: "g>f",
@@ -147,6 +153,11 @@ export const KEYBOARD_SHORTCUTS = {
 	command_palette: {
 		label: `${kbdSymbols.META} K`,
 		hotkey: "meta+k",
+		enabled: true,
+	},
+	toggle_redacted: {
+		label: `${kbdSymbols.META} \\`,
+		hotkey: "meta+\\",
 		enabled: true,
 	},
 } as const;

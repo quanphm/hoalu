@@ -28,6 +28,7 @@ import { Route as DashboardSlugNormalRecurringBillsRouteImport } from './routes/
 import { Route as DashboardSlugNormalIncomesRouteImport } from './routes/_dashboard/$slug/_normal/incomes'
 import { Route as DashboardSlugNormalFilesRouteImport } from './routes/_dashboard/$slug/_normal/files'
 import { Route as DashboardSlugNormalExpensesRouteImport } from './routes/_dashboard/$slug/_normal/expenses'
+import { Route as DashboardSlugNormalEventsRouteImport } from './routes/_dashboard/$slug/_normal/events'
 import { Route as DashboardSlugNormalCategoriesRouteImport } from './routes/_dashboard/$slug/_normal/categories'
 import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
 import { Route as DashboardSlugNormalSettingsRouteRouteImport } from './routes/_dashboard/$slug/_normal/settings/route'
@@ -136,6 +137,12 @@ const DashboardSlugNormalExpensesRoute =
     path: '/expenses',
     getParentRoute: () => DashboardSlugNormalRouteRoute,
   } as any)
+const DashboardSlugNormalEventsRoute =
+  DashboardSlugNormalEventsRouteImport.update({
+    id: '/events',
+    path: '/events',
+    getParentRoute: () => DashboardSlugNormalRouteRoute,
+  } as any)
 const DashboardSlugNormalCategoriesRoute =
   DashboardSlugNormalCategoriesRouteImport.update({
     id: '/categories',
@@ -184,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/$slug/settings': typeof DashboardSlugNormalSettingsRouteRouteWithChildren
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/$slug/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/$slug/events': typeof DashboardSlugNormalEventsRoute
   '/$slug/expenses': typeof DashboardSlugNormalExpensesRoute
   '/$slug/files': typeof DashboardSlugNormalFilesRoute
   '/$slug/incomes': typeof DashboardSlugNormalIncomesRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
   '/account/tokens': typeof DashboardAccountTokensRoute
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/$slug/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/$slug/events': typeof DashboardSlugNormalEventsRoute
   '/$slug/expenses': typeof DashboardSlugNormalExpensesRoute
   '/$slug/files': typeof DashboardSlugNormalFilesRoute
   '/$slug/incomes': typeof DashboardSlugNormalIncomesRoute
@@ -233,6 +242,7 @@ export interface FileRoutesById {
   '/_dashboard/$slug/_normal/settings': typeof DashboardSlugNormalSettingsRouteRouteWithChildren
   '/_auth/invite/$id/accept': typeof AuthInviteIdAcceptRoute
   '/_dashboard/$slug/_normal/categories': typeof DashboardSlugNormalCategoriesRoute
+  '/_dashboard/$slug/_normal/events': typeof DashboardSlugNormalEventsRoute
   '/_dashboard/$slug/_normal/expenses': typeof DashboardSlugNormalExpensesRoute
   '/_dashboard/$slug/_normal/files': typeof DashboardSlugNormalFilesRoute
   '/_dashboard/$slug/_normal/incomes': typeof DashboardSlugNormalIncomesRoute
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/$slug/settings'
     | '/invite/$id/accept'
     | '/$slug/categories'
+    | '/$slug/events'
     | '/$slug/expenses'
     | '/$slug/files'
     | '/$slug/incomes'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/account/tokens'
     | '/invite/$id/accept'
     | '/$slug/categories'
+    | '/$slug/events'
     | '/$slug/expenses'
     | '/$slug/files'
     | '/$slug/incomes'
@@ -306,6 +318,7 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug/_normal/settings'
     | '/_auth/invite/$id/accept'
     | '/_dashboard/$slug/_normal/categories'
+    | '/_dashboard/$slug/_normal/events'
     | '/_dashboard/$slug/_normal/expenses'
     | '/_dashboard/$slug/_normal/files'
     | '/_dashboard/$slug/_normal/incomes'
@@ -458,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugNormalExpensesRouteImport
       parentRoute: typeof DashboardSlugNormalRouteRoute
     }
+    '/_dashboard/$slug/_normal/events': {
+      id: '/_dashboard/$slug/_normal/events'
+      path: '/events'
+      fullPath: '/$slug/events'
+      preLoaderRoute: typeof DashboardSlugNormalEventsRouteImport
+      parentRoute: typeof DashboardSlugNormalRouteRoute
+    }
     '/_dashboard/$slug/_normal/categories': {
       id: '/_dashboard/$slug/_normal/categories'
       path: '/categories'
@@ -547,6 +567,7 @@ const DashboardSlugNormalSettingsRouteRouteWithChildren =
 interface DashboardSlugNormalRouteRouteChildren {
   DashboardSlugNormalSettingsRouteRoute: typeof DashboardSlugNormalSettingsRouteRouteWithChildren
   DashboardSlugNormalCategoriesRoute: typeof DashboardSlugNormalCategoriesRoute
+  DashboardSlugNormalEventsRoute: typeof DashboardSlugNormalEventsRoute
   DashboardSlugNormalExpensesRoute: typeof DashboardSlugNormalExpensesRoute
   DashboardSlugNormalFilesRoute: typeof DashboardSlugNormalFilesRoute
   DashboardSlugNormalIncomesRoute: typeof DashboardSlugNormalIncomesRoute
@@ -560,6 +581,7 @@ const DashboardSlugNormalRouteRouteChildren: DashboardSlugNormalRouteRouteChildr
     DashboardSlugNormalSettingsRouteRoute:
       DashboardSlugNormalSettingsRouteRouteWithChildren,
     DashboardSlugNormalCategoriesRoute: DashboardSlugNormalCategoriesRoute,
+    DashboardSlugNormalEventsRoute: DashboardSlugNormalEventsRoute,
     DashboardSlugNormalExpensesRoute: DashboardSlugNormalExpensesRoute,
     DashboardSlugNormalFilesRoute: DashboardSlugNormalFilesRoute,
     DashboardSlugNormalIncomesRoute: DashboardSlugNormalIncomesRoute,

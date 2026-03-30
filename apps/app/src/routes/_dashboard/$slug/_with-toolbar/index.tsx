@@ -34,10 +34,10 @@ function RouteComponent() {
 		<>
 			<Section>
 				<SectionHeader className="flex-row items-center gap-2">
-					<SectionTitle className="flex items-center gap-2">
+					<SectionTitle className="flex items-baseline gap-2">
 						Jobs
 						<span className="text-muted-foreground text-sm">
-							{totalActiveJobs} / {MAX_QUEUE_SIZE}
+							{totalActiveJobs}/{MAX_QUEUE_SIZE}
 						</span>
 					</SectionTitle>
 				</SectionHeader>
@@ -49,29 +49,25 @@ function RouteComponent() {
 			<Section>
 				<SectionHeader>
 					<SectionTitle>Financial Overview</SectionTitle>
-					{/* <SectionAction>
-						<DashboardDateFilter categories={categories} />
-					</SectionAction> */}
 				</SectionHeader>
 				<SectionContent columns={12} className="items-start">
 					<div className="col-span-12 w-full md:col-span-8">
-						<DashboardDateFilter categories={categories} />
+						<DashboardDateFilter />
 					</div>
-
 					<div className="col-span-12 flex w-full flex-row gap-4">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
-					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-7">
-						<ExpenseOverview expenses={expenses} categories={categories} />
-						<UpcomingBillsWidget />
+					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-8">
+						<ExpenseOverview expenses={expenses} categories={categories} incomes={incomes} />
 					</div>
-
-					{/* <div className="col-span-12 flex w-full flex-col gap-4 md:col-span-6">
-						<IncomeExpenseComparison incomes={incomes} expenses={expenses} />
-						</div> */}
-
-					<div className="col-span-12 hidden w-full flex-col gap-4 md:col-span-5 md:flex">
+					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-4">
 						<CategoryBreakdown expenses={expenses} categories={categories} />
+					</div>
+					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-4">
+						<UpcomingBillsWidget />
+						{/* <IncomeExpenseComparison incomes={incomes} expenses={expenses} /> */}
+					</div>
+					<div className="col-span-12 w-full flex-col gap-4 md:col-span-4 md:flex">
 						<RecentExpenses />
 						{/* <ExpenseStatsRow expenses={expenses} /> */}
 					</div>

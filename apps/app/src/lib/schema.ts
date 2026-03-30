@@ -1,7 +1,8 @@
-import type { honoClient } from "#app/lib/api-client.ts";
 import { ColorSchema, CurrencySchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
-import type { InferRequestType, InferResponseType } from "hono/client";
 import * as z from "zod";
+
+import type { honoClient } from "#app/lib/api-client.ts";
+import type { InferRequestType, InferResponseType } from "hono/client";
 
 /**
  * workspaces
@@ -42,6 +43,7 @@ export const ExpenseFormSchema = z.object({
 	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
 	recurringBillId: z.string().optional(),
+	eventId: z.string().optional(),
 	attachments: z.array(z.file()),
 });
 export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;
@@ -147,3 +149,22 @@ export const QuickEntryResultSchema = z.object({
 	confidence: z.number(),
 });
 export type QuickEntryResultSchema = z.infer<typeof QuickEntryResultSchema>;
+
+/**
+ * events
+ */
+export const EventFormSchema = z.object({
+	title: z.string().min(1),
+	description: z.string().optional(),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+	budget: z.coerce.number().optional(),
+	budgetCurrency: z.string().length(3).optional(),
+	status: z.enum(["open", "closed"]).optional(),
+});
+export type EventFormSchema = z.infer<typeof EventFormSchema>;
+export type EventPostSchema = InferRequestType<typeof honoClient.bff.events.$post>["json"];
+export type EventPatchSchema = InferRequestType<
+	(typeof honoClient.bff.events)[":id"]["$patch"]
+>["json"];
+export type EventSchema = InferResponseType<typeof honoClient.bff.events.$get, 200>["data"][number];

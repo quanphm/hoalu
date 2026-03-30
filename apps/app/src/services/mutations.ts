@@ -4,12 +4,11 @@ import {
 	draftExpenseAtom,
 	createIncomeDialogAtom,
 } from "#app/atoms/index.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
 	categoryKeys,
+	eventKeys,
 	expenseKeys,
 	fileKeys,
 	incomeKeys,
@@ -17,9 +16,20 @@ import {
 	walletKeys,
 	workspaceKeys,
 } from "#app/lib/query-key-factory.ts";
+import { playConfirmSound, playDropSound } from "#app/lib/sound-effects.ts";
+import { toastManager } from "@hoalu/ui/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
+import { WebHaptics } from "web-haptics";
+
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
+	EventPatchSchema,
+	EventPostSchema,
 	ExpensePatchSchema,
 	ExpensePostSchema,
 	IncomePatchSchema,
@@ -29,12 +39,6 @@ import type {
 	WorkspaceFormSchema,
 	WorkspaceMetadataFormSchema,
 } from "#app/lib/schema.ts";
-import { playConfirmSound, playDropSound } from "#app/lib/sound-effects.ts";
-import { toastManager } from "@hoalu/ui/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-import { WebHaptics } from "web-haptics";
 
 const haptics = new WebHaptics();
 
@@ -701,6 +705,89 @@ export function useDeleteRecurringBill() {
 			queryClient.invalidateQueries({
 				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
 			});
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+/**
+ * events
+ */
+
+export function useCreateEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ payload }: { payload: EventPostSchema }) => {
+			const result = await apiClient.events.create(slug, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({ title: "Event created.", type: "success" });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useEditEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id, payload }: { id: string; payload: EventPatchSchema }) => {
+			const result = await apiClient.events.edit(slug, id, payload);
+			return result;
+		},
+		onSuccess: () => {
+			haptics.trigger("success");
+			playConfirmSound();
+			toastManager.add({ title: "Event updated.", type: "success" });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
+		},
+		onError: (error) => {
+			haptics.trigger("error");
+			toastManager.add({
+				title: "Uh oh! Something went wrong.",
+				description: error.message,
+				type: "error",
+			});
+		},
+	});
+	return mutation;
+}
+
+export function useDeleteEvent() {
+	const queryClient = useQueryClient();
+	const { slug } = routeApi.useParams();
+	const mutation = useMutation({
+		mutationFn: async ({ id }: { id: string }) => {
+			const result = await apiClient.events.delete(slug, id);
+			return result;
+		},
+		onSuccess: (rs) => {
+			haptics.trigger("warning");
+			playDropSound();
+			toastManager.add({ title: "Event deleted.", type: "success" });
+			queryClient.removeQueries({ queryKey: eventKeys.withId(slug, rs.id) });
+			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
 		},
 		onError: (error) => {
 			haptics.trigger("error");

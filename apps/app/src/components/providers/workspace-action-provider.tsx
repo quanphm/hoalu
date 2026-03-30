@@ -219,6 +219,17 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		[slug, allowShortcutNavigate],
 	);
 
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.goto_events.hotkey,
+		() => {
+			navigate({ to: "/$slug/events", params: { slug } });
+		},
+		{
+			enabled: allowShortcutNavigate,
+		},
+		[slug, allowShortcutNavigate],
+	);
+
 	return (
 		<>
 			{children}

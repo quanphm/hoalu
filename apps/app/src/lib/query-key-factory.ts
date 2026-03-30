@@ -70,3 +70,9 @@ export const recurringBillKeys = {
 	all: (slug: string) => recurringBillKeys["~withWorkspace"](slug),
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "recurring-bills"] as const,
 };
+
+export const eventKeys = {
+	all: (slug: string) => eventKeys["~withWorkspace"](slug),
+	withId: (slug: string, id: string) => [...eventKeys.all(slug), "id", id] as const,
+	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "events"] as const,
+};

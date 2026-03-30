@@ -6,6 +6,7 @@ import {
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
+import { useIncomeStats } from "#app/components/incomes/use-incomes.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
@@ -22,24 +23,19 @@ import { datetime } from "@hoalu/common/datetime";
 import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
-import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@hoalu/ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
+import { ChartCategoryFilter } from "./dashboard-date-filter.tsx";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
 
 const chartConfig = {
@@ -74,8 +70,11 @@ const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface ExpenseOverviewProps {
 	expenses: SyncedExpense[];
+	incomes: SyncedIncome[];
 	categories: SyncedCategory[];
 }
+
+type OverviewTab = "expenses" | "income";
 
 type GroupedDateEntry = { date: string; value: number; isMonthly?: boolean };
 
@@ -83,10 +82,31 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
 
-	const stats = useExpenseStats({
+	const [activeTab, setActiveTab] = useState<OverviewTab>("expenses");
+	const isIncomeTab = activeTab === "income";
+
+	const expenseStats = useExpenseStats({
 		expenses: props.expenses,
 		categories: props.categories,
 	});
+
+	const incomeStats = useIncomeStats({
+		incomes: props.incomes ?? [],
+	});
+
+	// Use the appropriate stats based on active tab
+	const stats = isIncomeTab ? incomeStats : expenseStats;
+
+	// For income tab: build byDate aggregation from income data
+	const incomeByDate = useMemo(() => {
+		if (!props.incomes) return [];
+		const map = new Map<string, number>();
+		for (const income of props.incomes) {
+			const amount = income.convertedAmount > 0 ? income.convertedAmount : 0;
+			map.set(income.date, (map.get(income.date) ?? 0) + amount);
+		}
+		return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
+	}, [props.incomes]);
 
 	const dateRange = useAtomValue(selectDateRangeAtom);
 	const customRange = useAtomValue(customDateRangeAtom);
@@ -99,9 +119,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const chartRef = useRef<HTMLDivElement>(null);
 	const { takeScreenshot, status } = useScreenshot();
 
-	const isCategoryMode = selectedCategoryIds.length > 0;
+	const isCategoryMode = selectedCategoryIds.length > 0 && !isIncomeTab;
 
-	const filteredData = filterDataByRange(stats.aggregation.byDate, dateRange, customRange);
+	// Source data for the chart — expenses use aggregation.byDate, income builds it inline
+	const filteredData = isIncomeTab
+		? filterDataByRange(incomeByDate, dateRange, customRange)
+		: filterDataByRange(expenseStats.aggregation.byDate, dateRange, customRange);
 
 	// Apply date grouping logic (shared between total and category mode)
 	const applyDateGrouping = useCallback(
@@ -148,7 +171,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		if (!isCategoryMode) return [];
 
 		// Filter byDateAndCategory to only selected categories
-		const rawByDateCat = stats.aggregation.byDateAndCategory;
+		const rawByDateCat = expenseStats.aggregation.byDateAndCategory;
 
 		// First, build per-category { date, value }[] arrays
 		const perCategoryDateValues: Record<string, { date: string; value: number }[]> = {};
@@ -189,7 +212,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			}
 			return merged;
 		});
-	}, [isCategoryMode, selectedCategoryIds, stats.aggregation.byDateAndCategory, applyDateGrouping]);
+	}, [
+		isCategoryMode,
+		selectedCategoryIds,
+		expenseStats.aggregation.byDateAndCategory,
+		applyDateGrouping,
+	]);
 
 	const data = isCategoryMode ? categoryData : totalData;
 
@@ -246,8 +274,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		}
 
 		const searchQuery = `${startDate.getTime()}-${endDate.getTime()}`;
+
 		navigate({
-			to: "/$slug/expenses",
+			to: isIncomeTab ? "/$slug/incomes" : "/$slug/expenses",
 			params: { slug },
 			search: { date: searchQuery },
 		});
@@ -279,20 +308,20 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	const getCategoryColor = (catId: string): string => {
-		const info = stats.categoryInfoMap[catId];
+		const info = expenseStats.categoryInfoMap[catId];
 		if (!info) return CATEGORY_COLOR_HEX.gray;
 		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
 	};
 
 	const getCategoryName = (catId: string): string => {
-		return stats.categoryInfoMap[catId]?.name ?? "Unknown";
+		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
 	};
 
 	return (
 		<Card ref={chartRef} className="flex flex-col">
 			<CardHeader>
 				<CardDescription className="flex items-center justify-between text-xs uppercase">
-					Expenses
+					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col gap-1">
@@ -314,22 +343,42 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								change={stats.amount.change}
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
+								invertColor={!isIncomeTab}
 							/>
 						)}
 					</div>
 				</CardDescription>
 				<CardAction>
+					{!isIncomeTab && (
+						<div className="hide-in-screenshot">
+							<ChartCategoryFilter categories={props.categories} />
+						</div>
+					)}
+					<div className="hide-in-screenshot flex items-center gap-0">
+						<Button
+							variant={!isIncomeTab ? "outline" : "ghost"}
+							onClick={() => setActiveTab("expenses")}
+						>
+							Expenses
+						</Button>
+						<Button
+							variant={isIncomeTab ? "outline" : "ghost"}
+							onClick={() => setActiveTab("income")}
+						>
+							Incomes
+						</Button>
+					</div>
 					<Button
 						variant="outline"
 						size="icon"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}
-						className="hide-in-screenshot size-8"
+						className="hide-in-screenshot size-9"
 						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
 					>
-						{(status === "idle" || status === "error") && <CameraIcon className="size-4" />}
-						{status === "pending" && <Loader2Icon className="size-4 animate-spin" />}{" "}
-						{status === "success" && <CheckIcon className="size-4 text-green-600" />}{" "}
+						{(status === "idle" || status === "error") && <CameraIcon />}
+						{status === "pending" && <Loader2Icon className="animate-spin" />}{" "}
+						{status === "success" && <CheckIcon className="text-green-600" />}{" "}
 					</Button>
 				</CardAction>
 			</CardHeader>
@@ -471,7 +520,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						) : (
 							<Bar
 								dataKey="value"
-								fill="var(--color-date)"
+								fill={isIncomeTab ? "var(--success)" : "var(--color-date)"}
 								className="cursor-pointer"
 								onClick={handleBarClick}
 								isAnimationActive={false}

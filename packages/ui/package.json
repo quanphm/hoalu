@@ -33,6 +33,7 @@
 		"./number-field": "./src/components/number-field.tsx",
 		"./pagination": "./src/components/pagination.tsx",
 		"./popover": "./src/components/popover.tsx",
+		"./progress": "./src/components/progress.tsx",
 		"./radio-group": "./src/components/radio-group.tsx",
 		"./scroll-area": "./src/components/scroll-area.tsx",
 		"./select-native": "./src/components/select-native.tsx",

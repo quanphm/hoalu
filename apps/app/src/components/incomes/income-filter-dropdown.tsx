@@ -10,8 +10,10 @@ import {
 } from "#app/components/categories/use-categories.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WalletLabel } from "#app/components/wallets/wallet-badge.tsx";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import type { WalletTypeSchema } from "@hoalu/common/schema";
 import {
+	CalendarIcon,
 	CheckIcon,
 	FilterIcon,
 	ListFilterIcon,
@@ -24,6 +26,7 @@ import {
 import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import { Calendar } from "@hoalu/ui/calendar";
 import { Checkbox } from "@hoalu/ui/checkbox";
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
@@ -32,10 +35,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
+import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 
-type FilterMenuView = "main" | "amount" | "category" | "wallet" | "search";
+const incomeRouteApi = getRouteApi("/_dashboard/$slug/_normal/incomes");
+
+type FilterMenuView = "main" | "amount" | "category" | "wallet" | "date" | "search";
 
 interface AmountFilterState {
 	min: number | null;
@@ -53,15 +59,19 @@ export function IncomeFilterDropdown() {
 	const [selectedCategories, setSelectedCategories] = useAtom(incomeCategoryFilterAtom);
 	const [selectedWallets, setSelectedWallets] = useAtom(incomeWalletFilterAtom);
 	const [searchKeywords, setSearchKeywords] = useAtom(incomeSearchKeywordsAtom);
+	const { date: searchByDate } = incomeRouteApi.useSearch();
+	const navigate = incomeRouteApi.useNavigate();
+	const dateRange = toFromToDateObject(searchByDate);
 
 	const activeFiltersCount = useMemo(() => {
 		let count = 0;
 		if (amountFilter.min !== null || amountFilter.max !== null) count++;
 		if (selectedCategories.length > 0) count++;
 		if (selectedWallets.length > 0) count++;
+		if (dateRange) count++;
 		if (searchKeywords) count++;
 		return count;
-	}, [amountFilter, selectedCategories.length, selectedWallets.length, searchKeywords]);
+	}, [amountFilter, selectedCategories.length, selectedWallets.length, dateRange, searchKeywords]);
 
 	const filterSummaries = useMemo(() => {
 		const summaries: { key: string; label: string; onRemove: () => void }[] = [];
@@ -102,6 +112,14 @@ export function IncomeFilterDropdown() {
 			});
 		}
 
+		if (dateRange) {
+			summaries.push({
+				key: "date",
+				label: `${datetime.format(dateRange.from, "MMM dd")} - ${datetime.format(dateRange.to, "MMM dd")}`,
+				onRemove: () => navigate({ search: (s) => ({ ...s, date: undefined }) }),
+			});
+		}
+
 		if (searchKeywords) {
 			summaries.push({
 				key: "search",
@@ -115,6 +133,7 @@ export function IncomeFilterDropdown() {
 		amountFilter,
 		selectedCategories,
 		selectedWallets,
+		dateRange,
 		searchKeywords,
 		categories,
 		wallets,
@@ -122,6 +141,7 @@ export function IncomeFilterDropdown() {
 		setSelectedCategories,
 		setSelectedWallets,
 		setSearchKeywords,
+		navigate,
 	]);
 
 	const resetAllFilters = useCallback(() => {
@@ -129,7 +149,8 @@ export function IncomeFilterDropdown() {
 		setSelectedCategories([]);
 		setSelectedWallets([]);
 		setSearchKeywords("");
-	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSearchKeywords]);
+		navigate({ search: (s) => ({ ...s, date: undefined }) });
+	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSearchKeywords, navigate]);
 
 	const hasActiveFilter = (filter: FilterMenuView) => {
 		switch (filter) {
@@ -139,6 +160,8 @@ export function IncomeFilterDropdown() {
 				return selectedCategories.length > 0;
 			case "wallet":
 				return selectedWallets.length > 0;
+			case "date":
+				return !!dateRange;
 			case "search":
 				return !!searchKeywords;
 			default:
@@ -168,20 +191,27 @@ export function IncomeFilterDropdown() {
 					<div className="flex min-h-[400px]">
 						{/* Left Panel - Filter Menu */}
 						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
-							<FilterMenuItem
-								icon={<SearchIcon className="size-3" />}
-								label="Search"
-								active={hasActiveFilter("search")}
-								selected={currentView === "search"}
-								onClick={() => setCurrentView("search")}
-							/>
-							<FilterMenuItem
-								icon={<DollarSignIcon className="size-3" />}
-								label="Amount"
-								active={hasActiveFilter("amount")}
-								selected={currentView === "amount"}
-								onClick={() => setCurrentView("amount")}
-							/>
+						<FilterMenuItem
+							icon={<SearchIcon className="size-3" />}
+							label="Search"
+							active={hasActiveFilter("search")}
+							selected={currentView === "search"}
+							onClick={() => setCurrentView("search")}
+						/>
+						<FilterMenuItem
+							icon={<CalendarIcon className="size-3" />}
+							label="Date"
+							active={hasActiveFilter("date")}
+							selected={currentView === "date"}
+							onClick={() => setCurrentView("date")}
+						/>
+						<FilterMenuItem
+							icon={<DollarSignIcon className="size-3" />}
+							label="Amount"
+							active={hasActiveFilter("amount")}
+							selected={currentView === "amount"}
+							onClick={() => setCurrentView("amount")}
+						/>
 							<FilterMenuItem
 								icon={<TagIcon className="size-3" />}
 								label="Category"
@@ -219,14 +249,33 @@ export function IncomeFilterDropdown() {
 									onChange={setSelectedCategories}
 								/>
 							)}
-							{currentView === "wallet" && (
-								<WalletFilterView
-									wallets={wallets}
-									selected={selectedWallets}
-									onChange={setSelectedWallets}
-								/>
-							)}
-						</div>
+						{currentView === "wallet" && (
+							<WalletFilterView
+								wallets={wallets}
+								selected={selectedWallets}
+								onChange={setSelectedWallets}
+							/>
+						)}
+						{currentView === "date" && (
+							<DateFilterView
+								value={dateRange}
+								onChange={(range) => {
+									if (!range) {
+										navigate({
+											search: (s) => ({ ...s, date: undefined }),
+										});
+										return;
+									}
+									if (range.from && range.to) {
+										const query = `${range.from.getTime()}-${range.to.getTime()}`;
+										navigate({
+											search: (s) => ({ ...s, date: query }),
+										});
+									}
+								}}
+							/>
+						)}
+					</div>
 					</div>
 					<Separator />
 					<div className="flex items-center justify-end p-2">
@@ -565,6 +614,53 @@ function WalletFilterView({
 					))}
 				</div>
 			</ScrollArea>
+		</div>
+	);
+}
+
+function DateFilterView({
+	value,
+	onChange,
+}: {
+	value: { from: Date; to: Date } | undefined;
+	onChange: (value: { from: Date; to: Date } | undefined) => void;
+}) {
+	const currentYear = datetime.getYear(new Date());
+
+	return (
+		<div className="flex flex-col p-4">
+			<div className="mb-2 flex items-center justify-between">
+				<h3 className="leading-8 font-medium">Date Range</h3>
+				{value && (
+					<Button variant="ghost" size="sm" onClick={() => onChange(undefined)}>
+						Reset
+					</Button>
+				)}
+			</div>
+
+			<Calendar
+				mode="range"
+				captionLayout="dropdown"
+				selected={value}
+				onSelect={(selected) => {
+					if (!selected) {
+						onChange(undefined);
+						return;
+					}
+					if (selected.from && selected.to) {
+						onChange({ from: selected.from, to: selected.to });
+					}
+				}}
+				endMonth={new Date(currentYear + 2, 11)}
+				className="w-full bg-transparent [--cell-size:--spacing(8)]"
+			/>
+
+			{value && (
+				<p className="text-muted-foreground mt-2 text-center text-sm">
+					{datetime.format(value.from, "MMM dd, yyyy")} -{" "}
+					{datetime.format(value.to, "MMM dd, yyyy")}
+				</p>
+			)}
 		</div>
 	);
 }

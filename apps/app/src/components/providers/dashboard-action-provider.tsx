@@ -1,12 +1,14 @@
+import { redactedAmountAtom } from "#app/atoms/index.ts";
 import {
 	AVAILABLE_WORKSPACE_SHORTCUT,
 	KEYBOARD_SHORTCUTS,
 	THEMES,
 } from "#app/helpers/constants.ts";
+import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useTheme } from "#app/hooks/use-theme.ts";
+import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
 
 /**
@@ -15,6 +17,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 export function DashboardActionProvider({ children }: { children: React.ReactNode }) {
 	const navigate = useNavigate();
 	const { mode, setTheme } = useTheme();
+	const setRedacted = useSetAtom(redactedAmountAtom);
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
 	useHotkeys(
@@ -33,7 +36,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 					navigate({ to: "/$slug", params: { slug: ws.slug } });
 				}
 			} catch (error) {
-				console.log(error);
+				console.error(error);
 			}
 		},
 		{
@@ -46,11 +49,28 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 		navigate({ to: "/" });
 	});
 
-	useHotkeys(KEYBOARD_SHORTCUTS.toggle_theme.hotkey, () => {
-		const currentThemeIndex = THEMES.indexOf(mode);
-		const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
-		setTheme(THEMES[nextThemeIndex]);
-	});
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.toggle_theme.hotkey,
+		() => {
+			const currentThemeIndex = THEMES.indexOf(mode);
+			const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+			setTheme(THEMES[nextThemeIndex]);
+		},
+		{
+			enabled: KEYBOARD_SHORTCUTS.toggle_theme.enabled,
+		},
+	);
+
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.toggle_redacted.hotkey,
+		() => {
+			setRedacted((value) => !value);
+		},
+		{
+			enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,
+			useKey: true,
+		},
+	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_preferences.hotkey,

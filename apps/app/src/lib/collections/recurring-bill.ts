@@ -16,6 +16,7 @@ const RecurringBillCollectionSchema = z.object({
 	due_month: z.coerce.number().int().nullable(),
 	wallet_id: z.uuidv7(),
 	category_id: z.uuidv7().nullable(),
+	event_id: z.uuidv7().nullable(),
 	workspace_id: z.uuidv7(),
 	creator_id: z.uuidv7(),
 	is_active: z.boolean(),

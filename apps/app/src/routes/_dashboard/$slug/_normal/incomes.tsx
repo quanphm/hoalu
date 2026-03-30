@@ -1,3 +1,4 @@
+import { type AmountFilterState } from "#app/atoms/filters.ts";
 import {
 	incomeAmountFilterAtom,
 	incomeCategoryFilterAtom,
@@ -23,17 +24,14 @@ import {
 } from "#app/components/layouts/section.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
+import { toFromToDateObject } from "@hoalu/common/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useEffect } from "react";
 import * as z from "zod";
 
-interface AmountFilterState {
-	min: number | null;
-	max: number | null;
-}
-
 const searchSchema = z.object({
+	date: z.optional(z.string()),
 	id: z.optional(z.string()),
 });
 
@@ -43,7 +41,7 @@ export const Route = createFileRoute("/_dashboard/$slug/_normal/incomes")({
 });
 
 function RouteComponent() {
-	const { id: searchById } = Route.useSearch();
+	const { id: searchById, date: searchByDate } = Route.useSearch();
 
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const incomes = useLiveQueryIncomes();
@@ -53,6 +51,8 @@ function RouteComponent() {
 	const selectedWalletIds = useAtomValue(incomeWalletFilterAtom);
 	const amountFilter = useAtomValue(incomeAmountFilterAtom);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
+
+	const dateRange = toFromToDateObject(searchByDate);
 
 	const { onSelectIncome } = useSelectedIncome();
 
@@ -67,6 +67,7 @@ function RouteComponent() {
 		selectedWalletIds,
 		searchKeywords: deferredSearchKeywords,
 		amountFilter,
+		dateRange: dateRange || undefined,
 	});
 
 	return (
@@ -116,9 +117,11 @@ function filter(
 		selectedWalletIds: string[];
 		searchKeywords: string;
 		amountFilter: AmountFilterState;
+		dateRange?: { from: Date; to: Date };
 	},
 ) {
-	const { selectedCategoryIds, selectedWalletIds, searchKeywords, amountFilter } = condition;
+	const { selectedCategoryIds, selectedWalletIds, searchKeywords, amountFilter, dateRange } =
+		condition;
 
 	return data.filter((income) => {
 		// Category filter
@@ -142,6 +145,18 @@ function filter(
 				return false;
 			}
 			if (amountFilter.max !== null && amount > amountFilter.max) {
+				return false;
+			}
+		}
+		// Date filter
+		if (dateRange) {
+			const incomeDate = new Date(income.date);
+			const fromDate = new Date(dateRange.from);
+			fromDate.setHours(0, 0, 0, 0);
+			const toDate = new Date(dateRange.to);
+			toDate.setHours(23, 59, 59, 999);
+
+			if (incomeDate < fromDate || incomeDate > toDate) {
 				return false;
 			}
 		}
