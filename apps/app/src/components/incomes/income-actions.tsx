@@ -347,7 +347,7 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 		defaultValues: {
 			title: data.title,
 			description: data.description ?? "",
-			date: data.date,
+			date: new Date(data.date).toISOString(),
 			transaction: {
 				value: data.amount ?? 0,
 				currency: data.currency ?? workspace.metadata.currency,

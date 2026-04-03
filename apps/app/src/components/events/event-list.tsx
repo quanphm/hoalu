@@ -2,7 +2,7 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { type SyncedEvent, useSelectedEvent } from "#app/components/events/use-events.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { CalendarRangeIcon, CircleDotIcon } from "@hoalu/icons/lucide";
+import { CalendarRangeIcon } from "@hoalu/icons/lucide";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
 import { memo, useMemo } from "react";
@@ -81,7 +81,7 @@ function EventListItem({
 	const progress =
 		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : null;
 
-	const clampedProgress = progress != null ? Math.min(progress, 100) : null;
+	const clampedProgress = progress != null ? progress : null;
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (e.code === "Enter" || e.code === "Space") {
@@ -103,27 +103,15 @@ function EventListItem({
 			data-slot="event-item"
 			aria-label={`Select event ${event.title}`}
 		>
-			<div className="flex items-center justify-between gap-2">
-				<div className="flex min-w-0 items-center gap-2">
-					<CircleDotIcon
-						className={cn(
-							"size-3",
-							event.status === "open"
-								? "text-emerald-500 dark:text-emerald-400"
-								: "text-muted-foreground",
-						)}
-					/>
-					<span className="truncate font-medium">{event.title}</span>
-				</div>
-			</div>
+			<span className="truncate font-medium">{event.title}</span>
 
 			{(event.start_date || event.end_date) && (
 				<div className="text-muted-foreground flex items-center gap-1.5 text-xs">
 					<CalendarRangeIcon className="size-3 shrink-0" />
 					<span>
-						{event.start_date ? datetime.format(new Date(event.start_date), "E dd/MM/yyyy") : "?"}
+						{event.start_date ? datetime.format(new Date(event.start_date), "dd/MM/yyyy") : "?"}
 						{" - "}
-						{event.end_date ? datetime.format(new Date(event.end_date), "E dd/MM/yyyy") : "ongoing"}
+						{event.end_date ? datetime.format(new Date(event.end_date), "dd/MM/yyyy") : "ongoing"}
 					</span>
 				</div>
 			)}
@@ -136,18 +124,21 @@ function EventListItem({
 						currency={event.budget_currency || workspaceCurrency}
 						className="text-[13px] font-semibold"
 					/>
-					<span className="text-muted-foreground text-[11px]">spent</span>
+					{event.realBudget != null && (
+						<div className="flex items-baseline gap-1">
+							<span className="text-muted-foreground text-[11px]">/</span>
+							{event.realBudget ? (
+								<CurrencyValue
+									value={event.realBudget}
+									currency={event.budget_currency || workspaceCurrency}
+									className="text-muted-foreground text-[12px]"
+								/>
+							) : (
+								"∞"
+							)}
+						</div>
+					)}
 				</div>
-				{event.realBudget != null && (
-					<div className="flex items-baseline gap-1">
-						<span className="text-muted-foreground text-[11px]">of</span>
-						<CurrencyValue
-							value={event.realBudget}
-							currency={event.budget_currency || workspaceCurrency}
-							className="text-muted-foreground text-[12px]"
-						/>
-					</div>
-				)}
 			</div>
 
 			{/* Row 4: Progress bar */}
