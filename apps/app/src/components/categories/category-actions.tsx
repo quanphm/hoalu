@@ -150,6 +150,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 			name: category?.name ?? "",
 			description: category?.description ?? "",
 			color: category?.color ?? "gray",
+			type: category?.type ?? "expense",
 		} as CategoryFormSchema,
 		validators: {
 			onSubmit: CategoryFormSchema,

@@ -103,7 +103,7 @@ export function SelectEventField(props: Props) {
 									{item.status && (
 										<Badge
 											size="sm"
-											variant={item.status === "open" ? "success" : "destructive"}
+											variant={item.status === "open" ? "success" : "error"}
 											className="ml-2"
 										>
 											{item.status}

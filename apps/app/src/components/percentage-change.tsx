@@ -92,36 +92,3 @@ export function PercentageChangeDisplay({
 		</span>
 	);
 }
-
-export function PercentageChangeBadge({
-	change,
-	invertColor = false,
-	className,
-	comparisonText,
-	onComparisonClick,
-}: PercentageChangeProps) {
-	const textClasses = trendChangeVariants({
-		trend: change.status,
-		invert: invertColor,
-		background: true,
-	});
-
-	return (
-		<span
-			className={cn(
-				"bg-muted/50 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium",
-				textClasses,
-				className,
-			)}
-		>
-			<PercentageChangeDisplay
-				change={change}
-				size="sm"
-				className="text-inherit"
-				comparisonText={comparisonText}
-				onComparisonClick={onComparisonClick}
-				invertColor={invertColor}
-			/>
-		</span>
-	);
-}

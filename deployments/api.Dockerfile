@@ -7,13 +7,13 @@ RUN turbo prune @hoalu/api --docker
 FROM base AS deps
 WORKDIR /repo
 COPY --from=turbo /repo/out/json/ .
-RUN bun install --frozen-lockfile --production
+RUN bun install --frozen-lockfile --production --ignore-scripts
 
 FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 COPY --from=turbo /repo/out/full/ .
 WORKDIR /repo/apps/api
 RUN bun run build:api

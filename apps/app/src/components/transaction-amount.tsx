@@ -1,4 +1,5 @@
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { cn } from "@hoalu/ui/utils";
 
 import { CurrencyValue } from "./currency-value";
 
@@ -8,7 +9,7 @@ interface TransactionAmountProps {
 	currency: string;
 }
 
-export function TransactionAmount(props: { data: TransactionAmountProps }) {
+export function TransactionAmount(props: { data: TransactionAmountProps; className?: string }) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -25,7 +26,7 @@ export function TransactionAmount(props: { data: TransactionAmountProps }) {
 				currency={workspaceCurrency}
 				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
 				as="p"
-				className="text-[14px] font-semibold"
+				className={cn("text-base font-semibold", props.className)}
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue

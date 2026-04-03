@@ -49,33 +49,33 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 				<SidebarContent className="gap-0">
 					{hasSlug && <NavWorkspace />}
 					{!hasSlug && <NavWorkspaceList />}
-					<NavUser />
 				</SidebarContent>
-				<SidebarFooter className="border-t pb-0 text-xs">
-					<div className="flex items-center justify-between">
-						<p className="font-geist-mono text-muted-foreground leading-none tracking-tight">
+				<SidebarFooter>
+					<NavUser />
+					<div className="mt-1 flex items-center gap-2.5">
+						<p className="font-geist-mono text-muted-foreground text-xs leading-none tracking-tight">
 							{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
-						<div className="flex gap-2">
-							<Button
-								variant="outline"
-								size="icon-sm"
-								render={
-									<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
-										<GithubIcon />
-									</a>
-								}
-							/>
-							<Button
-								variant="outline"
-								size="icon-sm"
-								render={
-									<a href="https://x.com/quanphmm" target="_blank" rel="noreferrer">
-										<TwitterXIcon />
-									</a>
-								}
-							/>
-						</div>
+						<Button
+							variant="link"
+							size="icon-sm"
+							className="size-4 [&_svg:not([class*='size-'])]:size-3"
+							render={
+								<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
+									<GithubIcon />
+								</a>
+							}
+						/>
+						<Button
+							variant="link"
+							size="icon-sm"
+							className="size-4 [&_svg:not([class*='size-'])]:size-3"
+							render={
+								<a href="https://x.com/quanphmm" target="_blank" rel="noreferrer">
+									<TwitterXIcon />
+								</a>
+							}
+						/>
 					</div>
 				</SidebarFooter>
 			</Sidebar>

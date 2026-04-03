@@ -425,11 +425,9 @@ export function UnarchiveRecurringBillDialogContent() {
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
 				<DialogTitle>Restore recurring bill?</DialogTitle>
-				<DialogDescription>
-					This bill will be restored and will appear in your active bills and upcoming payments.
-				</DialogDescription>
 				<DialogHeaderAction />
 			</DialogHeader>
+			This bill will be restored and will appear in your active bills and upcoming payments.
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button onClick={onUnarchive} disabled={mutation.isPending}>

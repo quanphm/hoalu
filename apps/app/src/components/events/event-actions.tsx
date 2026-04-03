@@ -38,8 +38,14 @@ const EventFormSchema = z.object({
 			currency: z.string(),
 		})
 		.optional(),
+	status: z.enum(["open", "closed"]).optional(),
 });
 type EventFormSchema = z.infer<typeof EventFormSchema>;
+
+const EVENT_STATUS_OPTIONS = [
+	{ label: "Open", value: "open" },
+	{ label: "Closed", value: "closed" },
+];
 
 export function CreateEventDialogTrigger({ ...props }: ButtonProps) {
 	const setDialog = useSetAtom(createEventDialogAtom);
@@ -173,6 +179,7 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 				value: event.realBudget ?? 0,
 				currency: event.budget_currency ?? workspace.metadata.currency,
 			},
+			status: event.status ?? "open",
 		} as EventFormSchema,
 		validators: { onSubmit: EventFormSchema },
 		onSubmit: async ({ value }) => {
@@ -185,6 +192,7 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 					endDate: value.endDate ?? undefined,
 					budget: value.budgetTransaction?.value,
 					currency: value.budgetTransaction?.currency,
+					status: value.status,
 				},
 			});
 			setDialog({ state: false });
@@ -199,6 +207,12 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 						<form.AppField
 							name="title"
 							children={(field) => <field.InputField label="Title" required autoFocus />}
+						/>
+						<form.AppField
+							name="status"
+							children={(field) => (
+								<field.SelectField label="Status" options={EVENT_STATUS_OPTIONS} />
+							)}
 						/>
 						<form.AppField
 							name="budgetTransaction"

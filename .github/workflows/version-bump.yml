@@ -97,7 +97,7 @@ jobs:
           bun-version: latest
 
       - name: Update lock file
-        run: bun install
+        run: bun install --ignore-scripts
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8

@@ -157,7 +157,7 @@ export const KEYBOARD_SHORTCUTS = {
 	},
 	toggle_redacted: {
 		label: `${kbdSymbols.META} \\`,
-		hotkey: "meta+\\",
+		hotkey: "meta+backslash",
 		enabled: true,
 	},
 } as const;
