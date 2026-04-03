@@ -2,7 +2,6 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { type SyncedEvent, useSelectedEvent } from "#app/components/events/use-events.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { CalendarRangeIcon } from "@hoalu/icons/lucide";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
 import { memo, useMemo } from "react";
@@ -107,7 +106,6 @@ function EventListItem({
 
 			{(event.start_date || event.end_date) && (
 				<div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-					<CalendarRangeIcon className="size-3 shrink-0" />
 					<span>
 						{event.start_date ? datetime.format(new Date(event.start_date), "dd/MM/yyyy") : "?"}
 						{" - "}

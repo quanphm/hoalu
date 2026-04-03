@@ -1,4 +1,3 @@
-import { CurrencyValue } from "#app/components/currency-value.tsx";
 import IncomeContent from "#app/components/incomes/income-content.tsx";
 import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
@@ -10,6 +9,8 @@ import { cn } from "@hoalu/ui/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import { CurrencyValue } from "../currency-value";
 
 const MOBILE_NAV_HEIGHT = 80;
 
@@ -28,7 +29,8 @@ type GroupHeaderItem = {
 type VirtualItem = IncomeItem | GroupHeaderItem;
 
 function GroupHeader({ date, incomes }: Omit<GroupHeaderItem, "type">) {
-	const isToday = datetime.format(new Date(), "yyyy-MM-dd") === date;
+	// const isToday = datetime.format(new Date(), "yyyy-MM-dd") === date;
+	console.log(date);
 
 	return (
 		<div
@@ -36,8 +38,8 @@ function GroupHeader({ date, incomes }: Omit<GroupHeaderItem, "type">) {
 			className="border-muted bg-muted flex items-center py-2 pr-4 pl-3 text-xs"
 		>
 			<div className="flex items-center gap-2">
-				{datetime.format(new Date(date), "E dd/MM/yyyy")}
-				{isToday && <Badge className="ml-1">Today</Badge>}
+				{datetime.format(date, "MMM yyyy")}
+				{/* {isToday && <Badge className="ml-1">Today</Badge>} */}
 			</div>
 			<div className="ml-auto">
 				<TotalIncomeByDate data={incomes} />
@@ -85,12 +87,12 @@ function IncomeList(props: { incomes: SyncedIncome[] }) {
 	const flattenIncomes = useMemo(() => {
 		const grouped = new Map<string, SyncedIncome[]>();
 		props.incomes.forEach((income) => {
-			const dateKey = income.date;
-			const existing = grouped.get(dateKey);
+			const dateKey = `${new Date(income.date).getMonth() + 1}/1/${new Date(income.date).getFullYear()}`;
+			const existing = grouped.get(`${dateKey}`);
 			if (existing) {
 				existing.push(income);
 			} else {
-				grouped.set(dateKey, [income]);
+				grouped.set(`${dateKey}`, [income]);
 			}
 		});
 

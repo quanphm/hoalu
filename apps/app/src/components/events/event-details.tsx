@@ -107,19 +107,6 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
 				<Card className="@container/card">
 					<CardHeader>
-						<CardDescription className="text-xs uppercase">Spent</CardDescription>
-						<CardTitle className="text-xl">
-							<CurrencyValue
-								value={event.totalSpent}
-								currency={budgetCurrency}
-								className="text-xl"
-							/>
-						</CardTitle>
-					</CardHeader>
-				</Card>
-
-				<Card className="@container/card">
-					<CardHeader>
 						<CardDescription className="text-xs uppercase">Budget</CardDescription>
 						<CardTitle className="text-xl">
 							{event.realBudget > 0 ? (
@@ -131,6 +118,19 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 							) : (
 								<span className="text-muted-foreground">∞</span>
 							)}
+						</CardTitle>
+					</CardHeader>
+				</Card>
+
+				<Card className="@container/card">
+					<CardHeader>
+						<CardDescription className="text-xs uppercase">Spent</CardDescription>
+						<CardTitle className="text-xl">
+							<CurrencyValue
+								value={event.totalSpent}
+								currency={budgetCurrency}
+								className="text-xl"
+							/>
 						</CardTitle>
 					</CardHeader>
 				</Card>
