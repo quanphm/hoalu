@@ -68,7 +68,6 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 		},
 		{
 			enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,
-			useKey: true,
 		},
 	);
 
