@@ -1,7 +1,7 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { EventDateRange } from "#app/components/events/event-date-range.tsx";
 import { type SyncedEvent, useSelectedEvent } from "#app/components/events/use-events.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { datetime } from "@hoalu/common/datetime";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
 import { memo, useMemo } from "react";
@@ -104,15 +104,7 @@ function EventListItem({
 		>
 			<span className="truncate font-medium">{event.title}</span>
 
-			{(event.start_date || event.end_date) && (
-				<div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-					<span>
-						{event.start_date ? datetime.format(new Date(event.start_date), "dd/MM/yyyy") : "?"}
-						{" - "}
-						{event.end_date ? datetime.format(new Date(event.end_date), "dd/MM/yyyy") : "ongoing"}
-					</span>
-				</div>
-			)}
+			<EventDateRange startDate={event.start_date} endDate={event.end_date} />
 
 			{/* Row 3: Spending + Budget */}
 			<div className="flex items-baseline justify-between gap-2">

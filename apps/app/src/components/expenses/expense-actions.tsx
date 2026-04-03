@@ -283,7 +283,7 @@ function CreateExpenseForm() {
 							/>
 							<form.AppField
 								name="eventId"
-								children={(field) => <field.SelectEventField label="Event" />}
+								children={(field) => <field.SelectEventField label="Event" showClosed />}
 							/>
 						</div>
 						<form.AppField
@@ -552,7 +552,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 						/>
 						<form.AppField
 							name="eventId"
-							children={(field) => <field.SelectEventField label="Event" />}
+							children={(field) => <field.SelectEventField label="Event" showClosed />}
 						/>
 					</div>
 					<form.AppField

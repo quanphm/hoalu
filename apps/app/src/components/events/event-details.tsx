@@ -1,5 +1,6 @@
 import { deleteEventDialogAtom, editEventDialogAtom } from "#app/atoms/dialogs.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { EventDateRange } from "#app/components/events/event-date-range.tsx";
 import {
 	type SyncedEvent,
 	type SyncedEventBill,
@@ -13,7 +14,7 @@ import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { CalendarRangeIcon, PencilIcon, RepeatIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { PencilIcon, RepeatIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
@@ -57,32 +58,15 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : null;
 	const clampedProgress = Math.min(progress ?? 0, 100);
 
-	const formatDate = (dateStr: string) => {
-		try {
-			return datetime.format(new Date(dateStr), "dd MMM yyyy");
-		} catch {
-			return dateStr;
-		}
-	};
-
 	return (
 		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-4">
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex min-w-0 flex-col gap-1">
 					<div className="flex items-center gap-2">
 						<h2 className="truncate text-lg font-semibold">{event.title}</h2>
-						<Badge variant={event.status === "open" ? "success" : "outline"}>{event.status}</Badge>
+						<Badge variant={event.status === "open" ? "success" : "error"}>{event.status}</Badge>
 					</div>
-					{(event.start_date || event.end_date) && (
-						<div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-							<CalendarRangeIcon className="size-3 shrink-0" />
-							<span>
-								{event.start_date ? formatDate(event.start_date) : "?"}
-								{" - "}
-								{event.end_date ? formatDate(event.end_date) : "?"}
-							</span>
-						</div>
-					)}
+					<EventDateRange startDate={event.start_date} endDate={event.end_date} />
 				</div>
 				<div className="flex gap-2">
 					<Button

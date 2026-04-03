@@ -43,7 +43,7 @@ curl -fsSL https://bun.sh/install | bash
 brew install caddy
 
 # Install dependencies
-bun install
+bun install --ignore-scripts
 
 # Start local infrastructure (PostgreSQL, Redis, Electric)
 bun run docker:up
@@ -55,7 +55,7 @@ caddy run
 bun dev
 ```
 
-- Run `bun install` & `bun dev`
+- Run `bun install --ignore-scripts` & `bun dev`
 
 ## Deployment
 
