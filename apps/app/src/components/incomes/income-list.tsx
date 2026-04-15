@@ -3,7 +3,6 @@ import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/us
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -30,8 +29,6 @@ type VirtualItem = IncomeItem | GroupHeaderItem;
 
 function GroupHeader({ date, incomes }: Omit<GroupHeaderItem, "type">) {
 	// const isToday = datetime.format(new Date(), "yyyy-MM-dd") === date;
-	console.log(date);
-
 	return (
 		<div
 			data-slot="income-group-title"
