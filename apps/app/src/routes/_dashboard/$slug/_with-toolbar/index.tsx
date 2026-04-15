@@ -63,13 +63,13 @@ function RouteComponent() {
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-4">
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
+					<div className="col-span-12 w-full flex-col gap-4 md:col-span-8 md:flex">
+						<RecentExpenses />
+						{/* <ExpenseStatsRow expenses={expenses} /> */}
+					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-4">
 						<UpcomingBillsWidget />
 						{/* <IncomeExpenseComparison incomes={incomes} expenses={expenses} /> */}
-					</div>
-					<div className="col-span-12 w-full flex-col gap-4 md:col-span-4 md:flex">
-						<RecentExpenses />
-						{/* <ExpenseStatsRow expenses={expenses} /> */}
 					</div>
 				</SectionContent>
 			</Section>
