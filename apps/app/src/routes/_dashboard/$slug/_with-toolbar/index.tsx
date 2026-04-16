@@ -3,13 +3,11 @@ import { CashFlowSection } from "#app/components/charts/cash-flow.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
-// import { IncomeExpenseComparison } from "#app/components/charts/income-expense-comparison.tsx";
-import { RecentExpenses } from "#app/components/expenses/recent-expenses.tsx";
+import { RecentTransactions } from "#app/components/expenses/recent-transactions.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import {
 	Section,
-	// SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
@@ -64,7 +62,7 @@ function RouteComponent() {
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 					</div>
 					<div className="col-span-12 w-full flex-col gap-4 md:col-span-8 md:flex">
-						<RecentExpenses />
+						<RecentTransactions />
 						{/* <ExpenseStatsRow expenses={expenses} /> */}
 					</div>
 					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-4">
