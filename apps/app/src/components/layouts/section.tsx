@@ -32,7 +32,7 @@ function SectionAction({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			data-slot="section-action"
 			className={cn(
-				"col-start-2 row-span-2 row-start-1 flex flex-wrap items-center gap-2 self-start justify-self-end",
+				"col-start-2 row-start-1 flex flex-wrap items-center gap-2 self-start justify-self-end",
 				className,
 			)}
 			{...props}
@@ -71,7 +71,7 @@ function SectionTitle({ className, ref, children, ...props }: React.ComponentPro
 	return (
 		<h2
 			data-slot="section-title"
-			className={cn("text-lg leading-none font-medium", className)}
+			className={cn("self-center text-lg leading-none font-medium", className)}
 			{...props}
 		>
 			{children}

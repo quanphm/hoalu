@@ -36,8 +36,11 @@ function FramePanel({ className, ...props }: React.ComponentProps<"div">) {
 function FrameHeader({ className, ...props }: React.ComponentProps<"header">) {
 	return (
 		<header
-			className={cn("flex flex-col px-5 py-4", className)}
 			data-slot="frame-panel-header"
+			className={cn(
+				"@container/frame-panel-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-0.5 px-5 py-4 has-data-[slot=frame-panel-action]:grid-cols-[1fr_auto] md:gap-1.5 [.border-b]:pb-6",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -46,7 +49,7 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"header">) {
 function FrameTitle({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
-			className={cn("text-sm font-semibold", className)}
+			className={cn("text-lg font-semibold", className)}
 			data-slot="frame-panel-title"
 			{...props}
 		/>
@@ -63,6 +66,19 @@ function FrameDescription({ className, ...props }: React.ComponentProps<"div">) 
 	);
 }
 
+function FrameAction({ className, ...props }: React.ComponentProps<"div">) {
+	return (
+		<div
+			data-slot="frame-panel-action"
+			className={cn(
+				"col-start-2 row-span-2 row-start-1 flex gap-2 self-start justify-self-end",
+				className,
+			)}
+			{...props}
+		/>
+	);
+}
+
 function FrameFooter({ className, ...props }: React.ComponentProps<"footer">) {
 	return (
 		<footer
@@ -73,4 +89,4 @@ function FrameFooter({ className, ...props }: React.ComponentProps<"footer">) {
 	);
 }
 
-export { Frame, FramePanel, FrameHeader, FrameTitle, FrameDescription, FrameFooter };
+export { Frame, FramePanel, FrameHeader, FrameTitle, FrameDescription, FrameAction, FrameFooter };

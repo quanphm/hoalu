@@ -9,7 +9,7 @@ description: |
   monorepo, shares code between apps, runs changed/affected packages, debugs cache,
   or has apps/packages directories.
 metadata:
-  version: 2.8.0
+  version: 2.9.7-canary.7
 ---
 
 # Turborepo Skill
@@ -43,22 +43,22 @@ When creating tasks/scripts/pipelines, you MUST:
 ```json
 // turbo.json - register tasks
 {
-	"tasks": {
-		"build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-		"lint": {},
-		"test": { "dependsOn": ["build"] }
-	}
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "lint": {},
+    "test": { "dependsOn": ["build"] }
+  }
 }
 ```
 
 ```json
 // Root package.json - ONLY delegates, no task logic
 {
-	"scripts": {
-		"build": "turbo run build",
-		"lint": "turbo run lint",
-		"test": "turbo run test"
-	}
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  }
 }
 ```
 
@@ -66,11 +66,11 @@ When creating tasks/scripts/pipelines, you MUST:
 // DO NOT DO THIS - defeats parallelization
 // Root package.json
 {
-	"scripts": {
-		"build": "cd apps/web && next build && cd ../api && tsc",
-		"lint": "eslint apps/ packages/",
-		"test": "vitest"
-	}
+  "scripts": {
+    "build": "cd apps/web && next build && cd ../api && tsc",
+    "lint": "eslint apps/ packages/",
+    "test": "vitest"
+  }
 }
 ```
 
@@ -83,9 +83,9 @@ Root Tasks (`//#taskname`) are ONLY for tasks that truly cannot exist in package
 ```json
 // package.json - ALWAYS "turbo run"
 {
-	"scripts": {
-		"build": "turbo run build"
-	}
+  "scripts": {
+    "build": "turbo run build"
+  }
 }
 ```
 
@@ -105,9 +105,9 @@ Configure a task?
 ├─ Define task dependencies → references/configuration/tasks.md
 ├─ Lint/check-types (parallel + caching) → Use Transit Nodes pattern (see below)
 ├─ Specify build outputs → references/configuration/tasks.md#outputs
-├─ Handle environment variables → references/environment/README.md
+├─ Handle environment variables → references/environment/RULE.md
 ├─ Set up dev/watch tasks → references/configuration/tasks.md#persistent
-├─ Package-specific config → references/configuration/README.md#package-configurations
+├─ Package-specific config → references/configuration/RULE.md#package-configurations
 └─ Global settings (cacheDir, daemon) → references/configuration/global-options.md
 ```
 
@@ -130,7 +130,7 @@ Run only what changed?
 ├─ Changed packages + dependents (RECOMMENDED) → turbo run build --affected
 ├─ Custom base branch → --affected --affected-base=origin/develop
 ├─ Manual git comparison → --filter=...[origin/main]
-└─ See all filter options → references/filtering/README.md
+└─ See all filter options → references/filtering/RULE.md
 ```
 
 **`--affected` is the primary way to run only changed packages.** It automatically compares against the default branch and includes dependents.
@@ -174,7 +174,7 @@ CI setup?
 
 ```
 Watch mode?
-├─ Re-run tasks on change → turbo watch (references/watch/README.md)
+├─ Re-run tasks on change → turbo watch (references/watch/RULE.md)
 ├─ Dev servers with dependencies → Use `with` key (references/configuration/tasks.md#with)
 ├─ Restart dev server on dep change → Use `interruptible: true`
 └─ Persistent dev tasks → Use `persistent: true`
@@ -187,22 +187,22 @@ Package creation/structure?
 ├─ Create an internal package → references/best-practices/packages.md
 ├─ Repository structure → references/best-practices/structure.md
 ├─ Dependency management → references/best-practices/dependencies.md
-├─ Best practices overview → references/best-practices/README.md
+├─ Best practices overview → references/best-practices/RULE.md
 ├─ JIT vs Compiled packages → references/best-practices/packages.md#compilation-strategies
-└─ Sharing code between apps → references/best-practices/README.md#package-types
+└─ Sharing code between apps → references/best-practices/RULE.md#package-types
 ```
 
 ### "How should I structure my monorepo?"
 
 ```
 Monorepo structure?
-├─ Standard layout (apps/, packages/) → references/best-practices/README.md
-├─ Package types (apps vs libraries) → references/best-practices/README.md#package-types
+├─ Standard layout (apps/, packages/) → references/best-practices/RULE.md
+├─ Package types (apps vs libraries) → references/best-practices/RULE.md#package-types
 ├─ Creating internal packages → references/best-practices/packages.md
 ├─ TypeScript configuration → references/best-practices/structure.md#typescript-configuration
 ├─ ESLint configuration → references/best-practices/structure.md#eslint-configuration
 ├─ Dependency management → references/best-practices/dependencies.md
-└─ Enforce package boundaries → references/boundaries/README.md
+└─ Enforce package boundaries → references/boundaries/RULE.md
 ```
 
 ### "I want to enforce architectural boundaries"
@@ -210,9 +210,9 @@ Monorepo structure?
 ```
 Enforce boundaries?
 ├─ Check for violations → turbo boundaries
-├─ Tag packages → references/boundaries/README.md#tags
-├─ Restrict which packages can import others → references/boundaries/README.md#rule-types
-└─ Prevent cross-package file imports → references/boundaries/README.md
+├─ Tag packages → references/boundaries/RULE.md#tags
+├─ Restrict which packages can import others → references/boundaries/RULE.md#rule-types
+└─ Prevent cross-package file imports → references/boundaries/RULE.md
 ```
 
 ## Critical Anti-Patterns
@@ -296,10 +296,10 @@ Scripts like `prebuild` that manually build other packages bypass Turborepo's de
 ```json
 // WRONG - manually building dependencies
 {
-	"scripts": {
-		"prebuild": "cd ../../packages/types && bun run build && cd ../utils && bun run build",
-		"build": "next build"
-	}
+  "scripts": {
+    "prebuild": "cd ../../packages/types && bun run build && cd ../utils && bun run build",
+    "build": "next build"
+  }
 }
 ```
 
@@ -338,7 +338,7 @@ Scripts like `prebuild` that manually build other packages bypass Turborepo's de
 
 ### Overly Broad `globalDependencies`
 
-`globalDependencies` affects ALL tasks in ALL packages. Be specific.
+`globalDependencies` affects ALL tasks in ALL packages via the **global hash** — tasks cannot opt out of specific files, even with negation globs in `inputs`. Be specific.
 
 ```json
 // WRONG - heavy hammer, affects all hashes
@@ -353,6 +353,24 @@ Scripts like `prebuild` that manually build other packages bypass Turborepo's de
     "build": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
+    }
+  }
+}
+```
+
+With `futureFlags.globalConfiguration`, this problem is reduced because `global.inputs` files are folded into each task's inputs (not the global hash). Tasks can exclude specific files:
+
+```json
+// BEST - global.inputs with per-task exclusion
+{
+  "futureFlags": { "globalConfiguration": true },
+  "global": {
+    "inputs": [".env"]
+  },
+  "tasks": {
+    "build": { "outputs": ["dist/**"] },
+    "lint": {
+      "inputs": ["$TURBO_DEFAULT$", "!$TURBO_ROOT$/.env"]
     }
   }
 }
@@ -474,7 +492,7 @@ When multiple packages need different task configurations, use **Package Configu
 - Single package needs a unique dependency (e.g., `"deploy": { "dependsOn": ["web#build"] }`)
 - Temporary override while migrating
 
-See `references/configuration/README.md#package-configurations` for full details.
+See `references/configuration/RULE.md#package-configurations` for full details.
 
 ### Using `../` to Traverse Out of Package in `inputs`
 
@@ -542,11 +560,11 @@ When `incremental: true` in tsconfig.json, `tsc --noEmit` writes `.tsbuildinfo` 
 ```json
 // If tsconfig has incremental: true, tsc --noEmit produces cache files
 {
-	"tasks": {
-		"typecheck": {
-			"outputs": ["node_modules/.cache/tsbuildinfo.json"] // or wherever tsBuildInfoFile points
-		}
-	}
+  "tasks": {
+    "typecheck": {
+      "outputs": ["node_modules/.cache/tsbuildinfo.json"] // or wherever tsBuildInfoFile points
+    }
+  }
 }
 ```
 
@@ -560,20 +578,20 @@ To determine correct outputs for TypeScript tasks:
 
 ```json
 {
-	"tasks": {
-		// ^build = run build in DEPENDENCIES first (other packages this one imports)
-		"build": {
-			"dependsOn": ["^build"]
-		},
-		// build (no ^) = run build in SAME PACKAGE first
-		"test": {
-			"dependsOn": ["build"]
-		},
-		// pkg#task = specific package's task
-		"deploy": {
-			"dependsOn": ["web#build"]
-		}
-	}
+  "tasks": {
+    // ^build = run build in DEPENDENCIES first (other packages this one imports)
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    // build (no ^) = run build in SAME PACKAGE first
+    "test": {
+      "dependsOn": ["build"]
+    },
+    // pkg#task = specific package's task
+    "deploy": {
+      "dependsOn": ["web#build"]
+    }
+  }
 }
 ```
 
@@ -722,17 +740,17 @@ import { Button } from "@repo/ui/button";
 
 ```json
 {
-	"$schema": "https://turborepo.dev/schema.v2.json",
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		}
-	}
+  "$schema": "https://v2-9-7-canary-7.turborepo.dev/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
 }
 ```
 
@@ -777,17 +795,17 @@ A `dev` task with `dependsOn: ["^dev"]` and `persistent: false` in root turbo.js
 
 ```json
 {
-	"tasks": {
-		"prepare": {
-			"dependsOn": ["^prepare"],
-			"outputs": ["dist/**"]
-		},
-		"dev": {
-			"dependsOn": ["prepare"],
-			"cache": false,
-			"persistent": true
-		}
-	}
+  "tasks": {
+    "prepare": {
+      "dependsOn": ["^prepare"],
+      "outputs": ["dist/**"]
+    },
+    "dev": {
+      "dependsOn": ["prepare"],
+      "cache": false,
+      "persistent": true
+    }
+  }
 }
 ```
 
@@ -808,10 +826,10 @@ Some tasks can run in parallel (don't need built output from dependencies) but m
 
 ```json
 {
-	"tasks": {
-		"transit": { "dependsOn": ["^transit"] },
-		"my-task": { "dependsOn": ["transit"] }
-	}
+  "tasks": {
+    "transit": { "dependsOn": ["^transit"] },
+    "my-task": { "dependsOn": ["transit"] }
+  }
 }
 ```
 
@@ -823,15 +841,34 @@ The `transit` task creates dependency relationships without matching any actual 
 
 ```json
 {
-	"globalEnv": ["NODE_ENV"],
-	"globalDependencies": [".env"],
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**"],
-			"env": ["API_URL", "DATABASE_URL"]
-		}
-	}
+  "globalEnv": ["NODE_ENV"],
+  "globalDependencies": [".env"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["API_URL", "DATABASE_URL"]
+    }
+  }
+}
+```
+
+With `futureFlags.globalConfiguration`, the same config moves global settings under `global` — and `.env` becomes a per-task input instead of a global hash input:
+
+```json
+{
+  "futureFlags": { "globalConfiguration": true },
+  "global": {
+    "env": ["NODE_ENV"],
+    "inputs": [".env"]
+  },
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["API_URL", "DATABASE_URL"]
+    }
+  }
 }
 ```
 
@@ -839,18 +876,18 @@ The `transit` task creates dependency relationships without matching any actual 
 
 ### Configuration
 
-| File                                                                            | Purpose                                                  |
-| ------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [configuration/README.md](./references/configuration/README.md)                 | turbo.json overview, Package Configurations              |
-| [configuration/tasks.md](./references/configuration/tasks.md)                   | dependsOn, outputs, inputs, env, cache, persistent       |
-| [configuration/global-options.md](./references/configuration/global-options.md) | globalEnv, globalDependencies, cacheDir, daemon, envMode |
-| [configuration/gotchas.md](./references/configuration/gotchas.md)               | Common configuration mistakes                            |
+| File                                                                            | Purpose                                                                   |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [configuration/RULE.md](./references/configuration/RULE.md)                     | turbo.json overview, Package Configurations                               |
+| [configuration/tasks.md](./references/configuration/tasks.md)                   | dependsOn, outputs, inputs, env, cache, persistent                        |
+| [configuration/global-options.md](./references/configuration/global-options.md) | globalEnv, globalDependencies, global key, futureFlags, cacheDir, envMode |
+| [configuration/gotchas.md](./references/configuration/gotchas.md)               | Common configuration mistakes                                             |
 
 ### Caching
 
 | File                                                            | Purpose                                      |
 | --------------------------------------------------------------- | -------------------------------------------- |
-| [caching/README.md](./references/caching/README.md)             | How caching works, hash inputs               |
+| [caching/RULE.md](./references/caching/RULE.md)                 | How caching works, hash inputs               |
 | [caching/remote-cache.md](./references/caching/remote-cache.md) | Vercel Remote Cache, self-hosted, login/link |
 | [caching/gotchas.md](./references/caching/gotchas.md)           | Debugging cache misses, --summarize, --dry   |
 
@@ -858,7 +895,7 @@ The `transit` task creates dependency relationships without matching any actual 
 
 | File                                                          | Purpose                                   |
 | ------------------------------------------------------------- | ----------------------------------------- |
-| [environment/README.md](./references/environment/README.md)   | env, globalEnv, passThroughEnv            |
+| [environment/RULE.md](./references/environment/RULE.md)       | env, globalEnv, passThroughEnv            |
 | [environment/modes.md](./references/environment/modes.md)     | Strict vs Loose mode, framework inference |
 | [environment/gotchas.md](./references/environment/gotchas.md) | .env files, CI issues                     |
 
@@ -866,14 +903,14 @@ The `transit` task creates dependency relationships without matching any actual 
 
 | File                                                        | Purpose                  |
 | ----------------------------------------------------------- | ------------------------ |
-| [filtering/README.md](./references/filtering/README.md)     | --filter syntax overview |
+| [filtering/RULE.md](./references/filtering/RULE.md)         | --filter syntax overview |
 | [filtering/patterns.md](./references/filtering/patterns.md) | Common filter patterns   |
 
 ### CI/CD
 
 | File                                                      | Purpose                         |
 | --------------------------------------------------------- | ------------------------------- |
-| [ci/README.md](./references/ci/README.md)                 | General CI principles           |
+| [ci/RULE.md](./references/ci/RULE.md)                     | General CI principles           |
 | [ci/github-actions.md](./references/ci/github-actions.md) | Complete GitHub Actions setup   |
 | [ci/vercel.md](./references/ci/vercel.md)                 | Vercel deployment, turbo-ignore |
 | [ci/patterns.md](./references/ci/patterns.md)             | --affected, caching strategies  |
@@ -882,33 +919,33 @@ The `transit` task creates dependency relationships without matching any actual 
 
 | File                                            | Purpose                                       |
 | ----------------------------------------------- | --------------------------------------------- |
-| [cli/README.md](./references/cli/README.md)     | turbo run basics                              |
+| [cli/RULE.md](./references/cli/RULE.md)         | turbo run basics                              |
 | [cli/commands.md](./references/cli/commands.md) | turbo run flags, turbo-ignore, other commands |
 
 ### Best Practices
 
 | File                                                                          | Purpose                                                         |
 | ----------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [best-practices/README.md](./references/best-practices/README.md)             | Monorepo best practices overview                                |
+| [best-practices/RULE.md](./references/best-practices/RULE.md)                 | Monorepo best practices overview                                |
 | [best-practices/structure.md](./references/best-practices/structure.md)       | Repository structure, workspace config, TypeScript/ESLint setup |
 | [best-practices/packages.md](./references/best-practices/packages.md)         | Creating internal packages, JIT vs Compiled, exports            |
 | [best-practices/dependencies.md](./references/best-practices/dependencies.md) | Dependency management, installing, version sync                 |
 
 ### Watch Mode
 
-| File                                            | Purpose                                         |
-| ----------------------------------------------- | ----------------------------------------------- |
-| [watch/README.md](./references/watch/README.md) | turbo watch, interruptible tasks, dev workflows |
+| File                                        | Purpose                                         |
+| ------------------------------------------- | ----------------------------------------------- |
+| [watch/RULE.md](./references/watch/RULE.md) | turbo watch, interruptible tasks, dev workflows |
 
 ### Boundaries (Experimental)
 
-| File                                                      | Purpose                                               |
-| --------------------------------------------------------- | ----------------------------------------------------- |
-| [boundaries/README.md](./references/boundaries/README.md) | Enforce package isolation, tag-based dependency rules |
+| File                                                  | Purpose                                               |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| [boundaries/RULE.md](./references/boundaries/RULE.md) | Enforce package isolation, tag-based dependency rules |
 
 ## Source Documentation
 
 This skill is based on the official Turborepo documentation at:
 
-- Source: `docs/site/content/docs/` in the Turborepo repository
+- Source: `apps/docs/content/docs/` in the Turborepo repository
 - Live: https://turborepo.dev/docs
