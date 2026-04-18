@@ -1,4 +1,9 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import { CurrencyValue } from "#app/components/currency-value.tsx";
+import {
+	// PulseOrb,
+	MoodGlow,
+} from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
@@ -8,8 +13,6 @@ import { datetime } from "@hoalu/common/datetime";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
-
-import { CurrencyValue } from "../currency-value.tsx";
 
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -82,15 +85,29 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const showTrend = comparisonRange !== null;
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-3 md:grid-cols-4 md:gap-4">
-			<Card className="@container/card">
-				<CardHeader>
+		<div
+			className={cn(
+				"grid w-full grid-cols-1 md:grid-cols-4",
+				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-0 *:data-[slot=card]:md:py-3",
+			)}
+		>
+			<Card className="@container/card overflow-hidden">
+				{showTrend && <MoodGlow trend={cashFlowChange.status === "increase"} />}
+				{/* <PulseOrb
+					trend={showTrend ? (cashFlowChange.status === "increase" ? 1 : -1) : 0}
+					corner="bottom-center"
+					size={110}
+				/> */}
+				<CardHeader className="relative">
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Cash Flow</span>
+						<span className="tracking-wider">Cash Flow</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
-							<PercentageChangeDisplay change={cashFlowChange} className="[&>button]:h-1" />
+							<PercentageChangeDisplay
+								change={cashFlowChange}
+								className="[&>*>span]:text-xs [&>button]:h-1"
+							/>
 						)}
 					</CardAction>
 					<CardTitle
@@ -104,11 +121,14 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Income</span>
+						<span className="tracking-wider">Income</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
-							<PercentageChangeDisplay change={incomeChange} className="[&>button]:h-1" />
+							<PercentageChangeDisplay
+								change={incomeChange}
+								className="[&>*>span]:text-xs [&>button]:h-1"
+							/>
 						)}
 					</CardAction>
 					<CardTitle className="text-xl">
@@ -120,14 +140,14 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Expenses</span>
+						<span className="tracking-wider">Expenses</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={expensesChange}
 								invertColor
-								className="[&>button]:h-1"
+								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
 					</CardAction>
@@ -140,7 +160,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Transactions</span>
+						<span className="tracking-wider">Transactions</span>
 					</CardDescription>
 					<CardTitle className="text-xl">{formatNumber(totalTransactions)}</CardTitle>
 				</CardHeader>

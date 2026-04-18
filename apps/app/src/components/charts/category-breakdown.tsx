@@ -3,13 +3,10 @@ import {
 	expenseCategoryFilterAtom,
 	selectDateRangeAtom,
 } from "#app/atoms/filters.ts";
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { createChartColor } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import type { ColorSchema } from "@hoalu/common/schema";
 import { Button } from "@hoalu/ui/button";
 import {
 	Card,
@@ -27,6 +24,10 @@ import { useState } from "react";
 
 import { CurrencyValue } from "../currency-value";
 
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import type { ColorSchema } from "@hoalu/common/schema";
+
 const TOP_N_CATEGORY = 5;
 
 const routeApi = getRouteApi("/_dashboard/$slug");
@@ -40,7 +41,7 @@ interface CategoryData {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-4 w-full items-center justify-center gap-0.5 overflow-hidden rounded-md">
+		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-md">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
@@ -96,15 +97,15 @@ function CategoryListBreakdown(props: {
 			{props.data.map((data) => {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
-					<div key={data.id} className="flex items-center justify-between py-1">
+					<div key={data.id} className="flex items-center justify-between py-0.5">
 						<div className="flex items-center gap-3">
-							<div className={cn("size-3 rounded-sm", createChartColor(data.color))} />
+							<div className={cn("h-4 w-1 rounded-sm", createChartColor(data.color))} />
 							<Button
 								variant="link"
 								onClick={() => handleClick(data.id)}
 								className={cn(
 									"text-foreground h-auto p-0 text-sm",
-									data.id !== "others" && "underline decoration-dotted underline-offset-3",
+									data.id !== "others" && "underline decoration-dotted underline-offset-4",
 								)}
 							>
 								{data.name}
@@ -203,14 +204,14 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
 
 	return (
-		<Card className="h-full pb-3">
+		<Card className="h-full border-t-0 border-r-0 pb-2">
 			<CardHeader>
 				<CardTitle>Categories Breakdown</CardTitle>
 				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
 				<CardAction>
 					{dataToView.length > TOP_N_CATEGORY && (
 						<div className="flex justify-end">
-							<Button variant="outline" size="sm" onClick={handleToggleView}>
+							<Button variant="outline" size="xs" onClick={handleToggleView}>
 								{view === "less" && "View all"}
 								{view === "more" && "View less"}
 							</Button>

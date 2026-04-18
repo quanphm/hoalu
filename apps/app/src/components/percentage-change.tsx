@@ -66,12 +66,16 @@ export function PercentageChangeDisplay({
 				onClick={handleViewModeChange}
 				title="toggle view percent or absolute value"
 			>
-				{viewMode === "percent" && <span>{change.displayInPercent}</span>}
+				{viewMode === "percent" && (
+					<span className="font-geist-mono tracking-tight tabular-nums">
+						{change.displayInPercent}
+					</span>
+				)}
 				{viewMode === "value" && (
 					<CurrencyValue
 						value={change.displayInValue}
 						currency={change.currency}
-						className={cn(textClasses, "text-sm")}
+						className={cn(textClasses, sizeClasses[size])}
 						prefix={
 							change.status === "increase" ? "+" : change.status === "decrease" ? "-" : undefined
 						}

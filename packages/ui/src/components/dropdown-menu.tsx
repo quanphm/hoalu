@@ -31,13 +31,14 @@ function DropdownMenuPositioner({
 function DropdownMenuContent({
 	className,
 	align = "start",
+	side = "bottom",
 	sideOffset = 4,
 	...props
 }: React.ComponentProps<typeof MenuPrimitive.Positioner> &
 	React.ComponentProps<typeof MenuPrimitive.Popup>) {
 	return (
 		<DropdownMenuPortal>
-			<DropdownMenuPositioner sideOffset={sideOffset} align={align}>
+			<DropdownMenuPositioner sideOffset={sideOffset} align={align} side={side}>
 				<MenuPrimitive.Popup
 					data-slot="dropdown-menu-popup"
 					className={cn(

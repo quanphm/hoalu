@@ -25,6 +25,7 @@ import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
+import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -32,21 +33,11 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
-import { ChartCategoryFilter } from "./dashboard-date-filter.tsx";
+import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter.tsx";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
-
-const chartConfig = {
-	value: {
-		label: "Total expense",
-	},
-	date: {
-		label: "Expense",
-		color: "var(--chart-1)",
-	},
-} satisfies ChartConfig;
 
 /**
  * Map category ColorSchema values to hex colors for Recharts fill.
@@ -126,7 +117,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		? filterDataByRange(incomeByDate, dateRange, customRange)
 		: filterDataByRange(expenseStats.aggregation.byDate, dateRange, customRange);
 
-	// Apply date grouping logic (shared between total and category mode)
 	const applyDateGrouping = useCallback(
 		(sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
 			const today = new Date();
@@ -239,7 +229,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		}, 0);
 	}, [isCategoryMode, filteredData, data, selectedCategoryIds]);
 
-	// Dynamic bar size based on number of categories
 	const maxBarSize = useMemo(() => {
 		if (!isCategoryMode) return 32; // Larger bars for total mode
 
@@ -317,14 +306,23 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
 	};
 
+	const chartConfig = {
+		date: {
+			color: isIncomeTab ? "var(--success)" : "var(--destructive)",
+		},
+	} satisfies ChartConfig;
+
 	return (
-		<Card ref={chartRef} className="flex flex-col">
+		<Card
+			ref={chartRef}
+			className={cn("bg-background flex flex-col border-transparent", "gap-2 rounded-none md:py-3")}
+		>
 			<CardHeader>
-				<CardDescription className="flex items-center justify-between text-xs uppercase">
+				<CardDescription className="text-xs tracking-wider uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
 				<CardDescription>
-					<div className="flex flex-col gap-1">
+					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">
 							<CurrencyValue
 								value={totalExpenses}
@@ -349,20 +347,27 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</div>
 				</CardDescription>
 				<CardAction>
+					{dateRange === "custom" && (
+						<div data-slot="chart-group-by">
+							<ChartGroupByFilter />
+						</div>
+					)}
 					{!isIncomeTab && (
 						<div className="hide-in-screenshot">
 							<ChartCategoryFilter categories={props.categories} />
 						</div>
 					)}
-					<div className="hide-in-screenshot flex items-center gap-0">
+					<div className="hide-in-screenshot flex h-auto gap-0">
 						<Button
 							variant={!isIncomeTab ? "outline" : "ghost"}
+							size="sm"
 							onClick={() => setActiveTab("expenses")}
 						>
 							Expenses
 						</Button>
 						<Button
 							variant={isIncomeTab ? "outline" : "ghost"}
+							size="sm"
 							onClick={() => setActiveTab("income")}
 						>
 							Incomes
@@ -370,10 +375,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</div>
 					<Button
 						variant="outline"
-						size="icon"
+						size="icon-sm"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}
-						className="hide-in-screenshot size-9"
+						className="hide-in-screenshot"
 						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
 					>
 						{(status === "idle" || status === "error") && <CameraIcon />}
@@ -382,10 +387,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</Button>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="flex-1 px-2 sm:p-6">
+			<CardContent className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[221px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer
@@ -416,7 +421,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									isMonthBasedRange(dateRange) ||
 									(dateRange === "custom" && chartGroupBy === "month")
 									? datetime.format(date, "MMM yyyy")
-									: datetime.format(date, "dd/MM/yyyy");
+									: datetime.format(date, "MMM dd, yyyy");
 							}}
 						/>
 						<YAxis
@@ -520,7 +525,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						) : (
 							<Bar
 								dataKey="value"
-								fill={isIncomeTab ? "var(--success)" : "var(--color-date)"}
+								fill={chartConfig.date.color}
 								className="cursor-pointer"
 								onClick={handleBarClick}
 								isAnimationActive={false}

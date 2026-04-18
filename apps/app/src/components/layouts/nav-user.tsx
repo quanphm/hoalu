@@ -48,7 +48,7 @@ export function NavUser() {
 						render={
 							<SidebarMenuButton
 								size="lg"
-								className="bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-border/50 border"
+								className="text-sidebar-foreground rounded-none px-4 hover:bg-transparent"
 							/>
 						}
 					>
@@ -59,7 +59,11 @@ export function NavUser() {
 						</div>
 						<MoreVerticalIcon className="ml-auto size-4" />
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className="w-(--anchor-width) min-w-52 rounded-lg" side="top">
+					<DropdownMenuContent
+						className="w-(--anchor-width) min-w-52 rounded-lg"
+						align="end"
+						side="right"
+					>
 						<DropdownMenuSub>
 							<DropdownMenuSubTrigger>
 								<PaletteIcon />

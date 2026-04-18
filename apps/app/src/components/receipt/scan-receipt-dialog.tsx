@@ -16,8 +16,8 @@ export function ScanReceiptDialogTrigger(props: ButtonProps) {
 	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
 
 	return (
-		<Button variant="outline" {...props} onClick={() => setScanDialog({ state: true })}>
-			<ScanIcon className="text-yellow-500" />
+		<Button size="sm" variant="outline" {...props} onClick={() => setScanDialog({ state: true })}>
+			<ScanIcon className="size-3.5 text-yellow-500" />
 			Scan receipt
 		</Button>
 	);

@@ -41,7 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<>
 			{children}
 			<ReloadPromptPwa />
-			<TanStackDevtools
+			{/* <TanStackDevtools
 				plugins={[
 					{
 						name: "Query",
@@ -53,7 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					},
 					formDevtoolsPlugin(),
 				]}
-			/>
+			/> */}
 		</>
 	);
 }

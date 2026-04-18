@@ -37,11 +37,11 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="outline"
-						className="mt-2 w-full gap-2"
+						className="w-full gap-2"
 						onClick={() => setCommandPaletteOpen(true)}
 					>
-						<SearchIcon className="size-4" />
-						<span className="flex-1 text-left">Search...</span>
+						<SearchIcon className="text-muted-foreground size-4" />
+						<span className="text-muted-foreground flex-1 text-left">Search...</span>
 						<HotKey {...KEYBOARD_SHORTCUTS.command_palette} />
 					</Button>
 				</SidebarGroupContent>

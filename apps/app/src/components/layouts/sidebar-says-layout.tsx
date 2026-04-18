@@ -34,8 +34,8 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider>
-			<Sidebar variant="inset">
-				<SidebarHeader className="border-b">
+			<Sidebar>
+				<SidebarHeader>
 					<SidebarMenu>
 						<SidebarMenuItem>
 							{hasSlug && currentWorkspace ? (
@@ -50,11 +50,13 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					{hasSlug && <NavWorkspace />}
 					{!hasSlug && <NavWorkspaceList />}
 				</SidebarContent>
-				<SidebarFooter>
-					<NavUser />
-					<div className="mt-1 flex items-center gap-2.5">
+				<SidebarFooter className="gap-0 p-0">
+					<div className="flex items-center gap-2.5 border-t p-0">
+						<NavUser />
+					</div>
+					<div className="flex items-center gap-2.5 border-t px-4 py-2">
 						<p className="font-geist-mono text-muted-foreground text-xs leading-none tracking-tight">
-							{import.meta.env.PUBLIC_APP_VERSION}
+							v{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
 						<Button
 							variant="link"
@@ -79,9 +81,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset className="scrollbar-thin h-[calc(100vh-1rem)] overflow-auto border">
-				{children}
-			</SidebarInset>
+			<SidebarInset className="scrollbar-thin overflow-auto">{children}</SidebarInset>
 		</SidebarProvider>
 	);
 }

@@ -6,6 +6,7 @@ dist
 dist-ssr
 dev-dist
 out
+design
 pg-data
 .output
 .wrangler

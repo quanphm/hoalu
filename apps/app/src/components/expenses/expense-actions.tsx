@@ -32,7 +32,7 @@ import {
 } from "#app/services/mutations.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
-import { CalendarIcon } from "@hoalu/icons/tabler";
+import { CalendarIcon, CashBanknoteMoveIcon } from "@hoalu/icons/tabler";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
@@ -65,9 +65,15 @@ export function CreateExpenseDialogTrigger({
 	const setDialog = useSetAtom(createExpenseDialogAtom);
 
 	return (
-		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
-			Create expense
-			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_expense} />}
+		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
+			<CashBanknoteMoveIcon className="size-3.5" />
+			New expense
+			{showKbd && (
+				<HotKey
+					{...KEYBOARD_SHORTCUTS.create_expense}
+					className="text-background ml-0.5 bg-black/25 font-bold"
+				/>
+			)}
 		</Button>
 	);
 }

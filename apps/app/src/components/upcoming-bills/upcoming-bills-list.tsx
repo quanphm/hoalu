@@ -209,7 +209,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 			>
 				<span
 					className={cn(
-						"h-8 w-1 shrink-0 rounded-full",
+						"h-4 w-1 shrink-0 rounded-full",
 						isOverdue
 							? "bg-destructive"
 							: bill.categoryColor
