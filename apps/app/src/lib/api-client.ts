@@ -1,3 +1,5 @@
+import { hc } from "hono/client";
+
 import type {
 	CategoryPatchSchema,
 	CategoryPostSchema,
@@ -13,7 +15,6 @@ import type {
 	WalletPostSchema,
 } from "#app/lib/schema.ts";
 import type { ApiRoutes } from "@hoalu/api/types";
-import { hc } from "hono/client";
 
 export const honoClient = hc<ApiRoutes>(`${import.meta.env.PUBLIC_API_URL}`, {
 	init: {
@@ -411,18 +412,6 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
-	parseVoice: async (slug: string, transcription: string, lang: "en-US" | "vi-VN" = "en-US") => {
-		const response = await honoClient.bff.files["parse-voice"].$post({
-			query: { workspaceIdOrSlug: slug },
-			json: { transcription, lang },
-		});
-		if (!response.ok) {
-			const { message } = await response.json();
-			throw new Error(message);
-		}
-		const { data } = await response.json();
-		return data;
-	},
 	getExpenseFiles: async (slug: string, expenseId: string) => {
 		const response = await honoClient.bff.files.workspace.expense[":id"].$get({
 			param: { id: expenseId },
@@ -436,7 +425,9 @@ const files = {
 		return data;
 	},
 	deleteExpenseFile: async (slug: string, expenseId: string, fileId: string) => {
-		const response = await honoClient.bff.files.workspace.expense[":expenseId"].file[":fileId"].$delete({
+		const response = await honoClient.bff.files.workspace.expense[":expenseId"].file[
+			":fileId"
+		].$delete({
 			param: { expenseId, fileId },
 			query: { workspaceIdOrSlug: slug },
 		});

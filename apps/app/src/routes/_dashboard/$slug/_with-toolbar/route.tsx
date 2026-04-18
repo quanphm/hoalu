@@ -21,7 +21,6 @@ function Toolbar() {
 			</div>
 			<div className="flex items-center justify-end gap-3">
 				<ScanReceiptDialogTrigger />
-				{/* <VoiceExpenseDialogTrigger /> */}
 				<QuickExpensesDialogTrigger />
 				<CreateIncomeDialogTrigger />
 				<CreateExpenseDialogTrigger />

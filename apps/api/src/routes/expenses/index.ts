@@ -1,6 +1,6 @@
 import { db, schema } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
-import { parseVoiceExpense } from "#api/lib/voice.ts";
+import { parseExpense } from "#api/lib/parse-with-ai.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
@@ -526,7 +526,7 @@ const route = app
 			const today = new Date().toISOString().split("T")[0];
 			const workspaceCurrency = workspace.metadata?.currency;
 
-			const parsed = await parseVoiceExpense(
+			const parsed = await parseExpense(
 				text,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
 				wallets.map((wallet) => ({ id: wallet.id, name: wallet.name })),
