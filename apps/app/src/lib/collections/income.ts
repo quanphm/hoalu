@@ -14,7 +14,6 @@ const IncomeCollectionSchema = z.object({
 	date: IsoDateSchema,
 	wallet_id: z.uuidv7(),
 	category_id: z.uuidv7().nullable(),
-	creator_id: z.uuidv7(),
 	created_at: IsoDateSchema,
 	updated_at: IsoDateSchema,
 });
