@@ -82,6 +82,7 @@ export const UpdateExpenseSchema = z
 
 export const DeleteExpenseSchema = z.object({
 	id: z.uuidv7(),
+	txid: z.coerce.number(),
 });
 
 export const LiteExpenseSchema = BaseExpenseSchema.pick({
@@ -92,11 +93,15 @@ export const LiteExpenseSchema = BaseExpenseSchema.pick({
 	currency: true,
 	repeat: true,
 	date: true,
-}).transform((val) => ({
-	...val,
-	realAmount: val.amount,
-	amount: monetary.fromRealAmount(val.amount, val.currency),
-}));
+})
+	.extend({
+		txid: z.coerce.number(),
+	})
+	.transform((val) => ({
+		...val,
+		realAmount: val.amount,
+		amount: monetary.fromRealAmount(val.amount, val.currency),
+	}));
 
 export const QuickEntryParseSchema = z.object({
 	text: z.string().min(1).describe("Natural language expense description"),

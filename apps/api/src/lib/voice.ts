@@ -52,8 +52,6 @@ interface Wallet {
 interface ParseContext {
 	today: string;
 	availableCurrencies: string[];
-	/** @deprecated Language is now auto-detected. Kept for backward compatibility with voice endpoint. */
-	lang?: "en-US" | "vi-VN";
 }
 
 export async function parseVoiceExpense(
