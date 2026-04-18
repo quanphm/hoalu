@@ -1,8 +1,9 @@
 import { DEFAULT_DATE_RANGE } from "#app/helpers/constants.ts";
 import { calculateDateRange } from "#app/helpers/date-range.ts";
+import { atom } from "jotai";
+
 import type { CategorySchema, WalletSchema } from "#app/lib/schema.ts";
 import type { RepeatSchema } from "@hoalu/common/schema";
-import { atom } from "jotai";
 
 export const expenseCategoryFilterAtom = atom<CategorySchema["id"][]>([]);
 
@@ -26,7 +27,7 @@ export const searchKeywordsAtom = atom<string>("");
 
 export type ChartGroupBy = "date" | "month";
 
-export const chartGroupByAtom = atom<ChartGroupBy>("date");
+export const chartGroupByAtom = atom<ChartGroupBy>("month");
 
 export type PredefinedDateRange =
 	| "7"

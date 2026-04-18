@@ -12,7 +12,7 @@ export function PageContent({
 	return (
 		<div
 			className={cn(
-				"relative flex w-full flex-1 flex-col gap-4 px-4 py-6 md:gap-8 md:px-8",
+				"scrollbar-none relative flex w-full flex-1 flex-col gap-4 px-4 py-6 md:gap-8 md:px-8",
 				className,
 			)}
 		>

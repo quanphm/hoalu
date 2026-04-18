@@ -18,7 +18,7 @@ import {
 	useDuplicateIncome,
 	useEditIncome,
 } from "#app/services/mutations.ts";
-import { CopyPlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CopyPlusIcon, PlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -46,9 +46,21 @@ export function CreateIncomeDialogTrigger({
 	const setDialog = useSetAtom(createIncomeDialogAtom);
 
 	return (
-		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
-			Create income
-			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_income} />}
+		<Button
+			size="sm"
+			variant="outline"
+			{...props}
+			className="border-green-700 bg-green-700!"
+			onClick={() => setDialog({ state: true })}
+		>
+			<PlusIcon />
+			New income
+			{showKbd && (
+				<HotKey
+					{...KEYBOARD_SHORTCUTS.create_income}
+					className="text-foreground border-foreground ml-0.5 bg-black/15 font-bold"
+				/>
+			)}
 		</Button>
 	);
 }

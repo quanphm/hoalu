@@ -320,7 +320,6 @@ export function DataTable<T extends TableRowData>({
 					</TableBody>
 				</Table>
 			</div>
-
 			{enablePagination && <DataTablePagination table={table} />}
 		</div>
 	);

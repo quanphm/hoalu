@@ -12,17 +12,17 @@ export function UpcomingBillsWidget() {
 		(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
 
 	return (
-		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col">
-			<CardHeader className="pb-3">
+		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col border-t-0 border-b-0">
+			<CardHeader>
 				<CardDescription className="flex items-center justify-between text-xs uppercase">
 					Upcoming Bills
 				</CardDescription>
 				{totalCount > 0 && (
 					<CardDescription>
-						<span className="text-primary text-3xl font-semibold">{totalCount}</span>
+						<span className="text-foreground text-2xl font-semibold">{totalCount}</span>
 					</CardDescription>
 				)}
-				<CardDescription>Overdue, today, next 30 days and yearly bills</CardDescription>
+				{/* <CardDescription>Overdue, today, next 30 days and yearly bills</CardDescription> */}
 			</CardHeader>
 			<CardContent className="min-h-0 flex-1 overflow-y-auto">
 				<UpcomingBillsList

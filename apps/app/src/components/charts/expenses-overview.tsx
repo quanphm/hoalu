@@ -32,7 +32,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
-import { ChartCategoryFilter } from "./dashboard-date-filter.tsx";
+import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter.tsx";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -126,7 +126,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		? filterDataByRange(incomeByDate, dateRange, customRange)
 		: filterDataByRange(expenseStats.aggregation.byDate, dateRange, customRange);
 
-	// Apply date grouping logic (shared between total and category mode)
 	const applyDateGrouping = useCallback(
 		(sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
 			const today = new Date();
@@ -239,7 +238,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		}, 0);
 	}, [isCategoryMode, filteredData, data, selectedCategoryIds]);
 
-	// Dynamic bar size based on number of categories
 	const maxBarSize = useMemo(() => {
 		if (!isCategoryMode) return 32; // Larger bars for total mode
 
@@ -318,7 +316,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	return (
-		<Card ref={chartRef} className="flex flex-col">
+		<Card ref={chartRef} className="bg-background flex flex-col border-transparent">
 			<CardHeader>
 				<CardDescription className="flex items-center justify-between text-xs uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
@@ -349,6 +347,11 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</div>
 				</CardDescription>
 				<CardAction>
+					{dateRange === "custom" && (
+						<div data-slot="chart-group-by">
+							<ChartGroupByFilter />
+						</div>
+					)}
 					{!isIncomeTab && (
 						<div className="hide-in-screenshot">
 							<ChartCategoryFilter categories={props.categories} />
@@ -382,7 +385,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</Button>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="flex-1 px-2 sm:p-6">
+			<CardContent className="flex-1 px-3 pt-4 pb-0">
 				<ChartContainer
 					config={chartConfig}
 					className="aspect-auto h-[221px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"

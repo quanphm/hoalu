@@ -120,12 +120,13 @@ export function RecentTransactions() {
 	}, [expenses, incomes]);
 
 	return (
-		<Section>
-			<SectionHeader>
+		<Section className="border-t">
+			<SectionHeader className="px-4 pt-4">
 				<SectionTitle>Recent Transactions</SectionTitle>
 				<SectionAction>
 					<Button
 						variant="outline"
+						size="xs"
 						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
 					>
 						View all

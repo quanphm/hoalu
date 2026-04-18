@@ -82,7 +82,12 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const showTrend = comparisonRange !== null;
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-3 md:grid-cols-4 md:gap-4">
+		<div
+			className={cn(
+				"grid w-full grid-cols-1 md:grid-cols-4",
+				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-0 *:data-[slot=card]:md:py-3",
+			)}
+		>
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">

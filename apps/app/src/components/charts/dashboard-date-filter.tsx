@@ -62,12 +62,12 @@ export function DashboardDateFilter() {
 		<div
 			data-slot="chart-date-filter"
 			className={cn(
-				"@container/date-filter flex items-center gap-4",
+				"@container/date-filter flex items-center gap-3",
 				"not-has-data-[slot=chart-group-by]:grid-cols-3",
 			)}
 		>
 			<Select<PredefinedDateRange> value={predefinedDateRange} onValueChange={handleRangeChange}>
-				<SelectTrigger className="w-auto min-w-0 shrink-0">
+				<SelectTrigger size="sm" className="w-auto py-[calc(--spacing(1)-1px)]">
 					<SelectValue>
 						{(value: string) => {
 							const find = options.find((v) => v.value === value);
@@ -99,25 +99,15 @@ export function DashboardDateFilter() {
 					</SelectItem>
 				</SelectContent>
 			</Select>
-			<DateRangePicker onRangeSelect={handleCustomRangeSelect} className="min-w-0 shrink" />
-			{predefinedDateRange === "custom" && (
-				<div data-slot="chart-group-by">
-					<ChartGroupByFilter />
-				</div>
-			)}
+			<DateRangePicker onRangeSelect={handleCustomRangeSelect} size="sm" />
 		</div>
 	);
 }
 
-export { ChartCategoryFilter };
-
 function ChartGroupByFilter() {
 	const [groupBy, setGroupBy] = useAtom(chartGroupByAtom);
-
 	const handleGroupByChange = (value: ChartGroupBy | null) => {
-		if (value) {
-			setGroupBy(value);
-		}
+		setGroupBy(value ?? "month");
 	};
 
 	return (
@@ -205,3 +195,5 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 		</Popover>
 	);
 }
+
+export { ChartCategoryFilter, ChartGroupByFilter };

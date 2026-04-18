@@ -1,5 +1,10 @@
-import { cn } from "@hoalu/ui/utils";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+
+const percentFormatter = new Intl.NumberFormat("en-US", {
+	style: "percent",
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2,
+});
 
 export interface PercentageChange {
 	value: number;
@@ -40,14 +45,14 @@ export function calculatePercentageChange(
 	const value = currentValue - previousValue;
 	const status = value === 0 ? "no-change" : value > 0 ? "increase" : "decrease";
 
-	const percentageRaw = (value / previousValue) * 100;
+	const percentageRaw = value / previousValue;
 	const percentage = Math.abs(percentageRaw);
 	const displayInValue = status === "no-change" ? 0 : Math.abs(value);
 
 	const displayInPercent =
 		status === "no-change"
 			? "0%"
-			: `${status === "increase" ? "+" : "-"}${Math.abs(percentageRaw).toFixed(1)}%`;
+			: `${status === "increase" ? "+" : "-"}${percentFormatter.format(percentage)}`;
 
 	return {
 		status,
