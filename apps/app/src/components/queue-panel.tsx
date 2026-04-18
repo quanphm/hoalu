@@ -211,7 +211,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 }
 
 export function QueuePanel() {
-	const [collapsed, setCollapsed] = useState(false);
+	const [collapsed, setCollapsed] = useState(true);
 	const {
 		activeJobs: receiptJobs,
 		processing: receiptProcessing,

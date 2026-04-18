@@ -2,18 +2,13 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import {
-	Section,
-	SectionAction,
-	SectionHeader,
-	SectionTitle,
-} from "#app/components/layouts/section.tsx";
+import { Section } from "#app/components/layouts/section.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Frame } from "@hoalu/ui/frame";
+import { Frame, FrameAction, FrameHeader, FrameTitle } from "@hoalu/ui/frame";
 import { cn } from "@hoalu/ui/utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -121,19 +116,19 @@ export function RecentTransactions() {
 
 	return (
 		<Section className="border-t">
-			<SectionHeader className="px-4 pt-4">
-				<SectionTitle>Recent Transactions</SectionTitle>
-				<SectionAction>
-					<Button
-						variant="outline"
-						size="xs"
-						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
-					>
-						View all
-					</Button>
-				</SectionAction>
-			</SectionHeader>
 			<Frame>
+				<FrameHeader className="pb-0">
+					<FrameTitle>Recent Transactions</FrameTitle>
+					<FrameAction>
+						<Button
+							variant="outline"
+							size="xs"
+							render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
+						>
+							View all
+						</Button>
+					</FrameAction>
+				</FrameHeader>
 				<DataTable data={transactions} columns={columns} />
 			</Frame>
 		</Section>

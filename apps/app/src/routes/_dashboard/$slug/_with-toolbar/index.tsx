@@ -28,18 +28,15 @@ function RouteComponent() {
 			</Section>
 
 			<Section>
-				<SectionContent columns={12} className="items-start gap-0 md:gap-0">
-					{/* <div className="col-span-12 w-full md:col-span-8">
-						<DashboardDateFilter />
-					</div> */}
-					<div className="col-span-12 flex w-full flex-row gap-4">
+				<SectionContent columns={24} className="items-start gap-0 md:gap-0">
+					<div className="col-span-24 flex w-full flex-row gap-4">
 						<CashFlowSection incomes={incomes} expenses={expenses} />
 					</div>
-					<div className="col-span-12 flex w-full flex-col gap-4 md:col-span-8">
+					<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-17">
 						<ExpenseOverview expenses={expenses} categories={categories} incomes={incomes} />
 						<RecentTransactions />
 					</div>
-					<div className="col-span-12 flex w-full flex-col md:col-span-4">
+					<div className="col-span-24 flex w-full flex-col md:col-span-7">
 						<CategoryBreakdown expenses={expenses} categories={categories} />
 						<UpcomingBillsWidget />
 					</div>

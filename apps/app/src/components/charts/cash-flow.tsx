@@ -1,4 +1,9 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import { CurrencyValue } from "#app/components/currency-value.tsx";
+import {
+	// PulseOrb,
+	MoodGlow,
+} from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
@@ -8,8 +13,6 @@ import { datetime } from "@hoalu/common/datetime";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
-
-import { CurrencyValue } from "../currency-value.tsx";
 
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -88,8 +91,14 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-0 *:data-[slot=card]:md:py-3",
 			)}
 		>
-			<Card className="@container/card">
-				<CardHeader>
+			<Card className="@container/card overflow-hidden">
+				{showTrend && <MoodGlow trend={cashFlowChange.status === "increase"} />}
+				{/* <PulseOrb
+					trend={showTrend ? (cashFlowChange.status === "increase" ? 1 : -1) : 0}
+					corner="bottom-center"
+					size={110}
+				/> */}
+				<CardHeader className="relative">
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Cash Flow</span>
 					</CardDescription>

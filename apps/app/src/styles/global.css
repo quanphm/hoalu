@@ -31,14 +31,14 @@
 
 @layer base {
 	body {
-		@apply relative bg-background text-foreground;
+		@apply bg-background text-foreground relative;
 		@apply font-sans;
 		letter-spacing: var(--tracking-normal);
 	}
 
 	html,
 	body {
-		@apply w-full min-h-screen;
+		@apply min-h-screen w-full;
 	}
 
 	button:not(:disabled),

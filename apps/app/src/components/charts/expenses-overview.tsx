@@ -315,7 +315,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	return (
 		<Card
 			ref={chartRef}
-			className={cn("bg-background flex flex-col border-transparent", "gap-6 rounded-none md:py-3")}
+			className={cn("bg-background flex flex-col border-transparent", "gap-2 rounded-none md:py-3")}
 		>
 			<CardHeader>
 				<CardDescription className="text-xs tracking-wider uppercase">
@@ -387,10 +387,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</Button>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="flex-1 px-3 pt-4 pb-0">
+			<CardContent className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[231px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer

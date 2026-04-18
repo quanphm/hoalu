@@ -38,7 +38,7 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"header">) {
 		<header
 			data-slot="frame-panel-header"
 			className={cn(
-				"@container/frame-panel-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-0.5 px-5 py-4 has-data-[slot=frame-panel-action]:grid-cols-[1fr_auto] md:gap-1.5 [.border-b]:pb-6",
+				"@container/frame-panel-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-0.5 px-3 py-3 has-data-[slot=frame-panel-action]:grid-cols-[1fr_auto] md:gap-1.5 [.border-b]:pb-6",
 				className,
 			)}
 			{...props}
