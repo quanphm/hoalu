@@ -34,8 +34,8 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 
 	return (
 		<SidebarProvider>
-			<Sidebar variant="inset">
-				<SidebarHeader className="border-b">
+			<Sidebar>
+				<SidebarHeader>
 					<SidebarMenu>
 						<SidebarMenuItem>
 							{hasSlug && currentWorkspace ? (
@@ -79,7 +79,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset className="scrollbar-thin h-[calc(100vh-1rem)] overflow-auto border">
+			<SidebarInset className="scrollbar-thin h-[calc(100vh-1rem)] overflow-auto">
 				{children}
 			</SidebarInset>
 		</SidebarProvider>
