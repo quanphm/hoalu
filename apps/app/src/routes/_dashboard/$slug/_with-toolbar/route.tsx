@@ -23,8 +23,8 @@ function Toolbar() {
 				<ScanReceiptDialogTrigger />
 				{/* <VoiceExpenseDialogTrigger /> */}
 				<QuickExpensesDialogTrigger />
-				<CreateExpenseDialogTrigger />
 				<CreateIncomeDialogTrigger />
+				<CreateExpenseDialogTrigger />
 				{/* <CreateWalletDialogTrigger /> */}
 				<Separator orientation="vertical" className="data-[orientation=vertical]:h-6" />
 				<RedactedAmountToggle />
@@ -37,7 +37,7 @@ function RouteComponent() {
 	return (
 		<>
 			<Toolbar />
-			<PageContent className="p-0!">
+			<PageContent className="gap-0! p-0!">
 				<Outlet />
 			</PageContent>
 		</>

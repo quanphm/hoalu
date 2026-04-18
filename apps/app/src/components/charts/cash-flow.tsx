@@ -95,7 +95,10 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
-							<PercentageChangeDisplay change={cashFlowChange} className="[&>button]:h-1" />
+							<PercentageChangeDisplay
+								change={cashFlowChange}
+								className="[&>*>span]:text-xs [&>button]:h-1"
+							/>
 						)}
 					</CardAction>
 					<CardTitle
@@ -113,7 +116,10 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
-							<PercentageChangeDisplay change={incomeChange} className="[&>button]:h-1" />
+							<PercentageChangeDisplay
+								change={incomeChange}
+								className="[&>*>span]:text-xs [&>button]:h-1"
+							/>
 						)}
 					</CardAction>
 					<CardTitle className="text-xl">
@@ -132,7 +138,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							<PercentageChangeDisplay
 								change={expensesChange}
 								invertColor
-								className="[&>button]:h-1"
+								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
 					</CardAction>

@@ -10,7 +10,7 @@ export function QuickExpensesDialogTrigger(props: ButtonProps) {
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setQuickDialog({ state: true })}>
-			<ZapIcon className="text-blue-600" />
+			<ZapIcon />
 			Quick add
 		</Button>
 	);

@@ -10,6 +10,19 @@
 
 @theme {
 	--spacing: 0.225rem;
+	--animate-scanline: scanline 1.6s ease-in-out infinite;
+}
+
+@keyframes scanline {
+	0%,
+	100% {
+		top: 2px;
+		opacity: 0.6;
+	}
+	50% {
+		top: calc(100% - 4px);
+		opacity: 1;
+	}
 }
 
 #root {

@@ -5,16 +5,9 @@ import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { RecentTransactions } from "#app/components/expenses/recent-transactions.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import {
-	Section,
-	SectionContent,
-	SectionHeader,
-	SectionTitle,
-} from "#app/components/layouts/section.tsx";
+import { Section, SectionContent } from "#app/components/layouts/section.tsx";
 import { QueuePanel } from "#app/components/queue-panel.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
-import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
-import { useQueueStatus } from "#app/hooks/use-queue.ts";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/_with-toolbar/")({
@@ -25,19 +18,10 @@ function RouteComponent() {
 	const expenses = useLiveQueryExpenses();
 	const incomes = useLiveQueryIncomes();
 	const categories = useLiveQueryCategories();
-	const { totalActiveJobs } = useQueueStatus();
 
 	return (
 		<>
 			<Section>
-				<SectionHeader className="flex-row items-center gap-2">
-					<SectionTitle className="flex items-baseline gap-2">
-						Jobs
-						<span className="text-muted-foreground text-sm">
-							{totalActiveJobs}/{MAX_QUEUE_SIZE}
-						</span>
-					</SectionTitle>
-				</SectionHeader>
 				<SectionContent columns={4}>
 					<QueuePanel />
 				</SectionContent>

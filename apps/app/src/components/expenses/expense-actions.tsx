@@ -31,8 +31,8 @@ import {
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { CopyPlusIcon, PlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
-import { CalendarIcon } from "@hoalu/icons/tabler";
+import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CalendarIcon, CashBanknoteMoveIcon } from "@hoalu/icons/tabler";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
@@ -66,12 +66,12 @@ export function CreateExpenseDialogTrigger({
 
 	return (
 		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
-			<PlusIcon />
+			<CashBanknoteMoveIcon className="size-3.5" />
 			New expense
 			{showKbd && (
 				<HotKey
 					{...KEYBOARD_SHORTCUTS.create_expense}
-					className="text-background ml-0.5 bg-black/15 font-bold"
+					className="text-background ml-0.5 bg-black/25 font-bold"
 				/>
 			)}
 		</Button>
