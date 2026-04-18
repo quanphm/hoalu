@@ -140,7 +140,7 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 
 	return (
 		<Popover>
-			<PopoverTrigger render={<Button variant={hasSelection ? "default" : "outline"} />}>
+			<PopoverTrigger render={<Button size="sm" variant={hasSelection ? "default" : "outline"} />}>
 				<LayersIcon />
 				{hasSelection
 					? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`

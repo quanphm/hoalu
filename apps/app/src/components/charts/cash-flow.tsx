@@ -91,7 +91,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Cash Flow</span>
+						<span className="tracking-wider">Cash Flow</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
@@ -109,7 +109,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Income</span>
+						<span className="tracking-wider">Income</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
@@ -125,7 +125,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Expenses</span>
+						<span className="tracking-wider">Expenses</span>
 					</CardDescription>
 					<CardAction>
 						{showTrend && (
@@ -145,7 +145,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span>Transactions</span>
+						<span className="tracking-wider">Transactions</span>
 					</CardDescription>
 					<CardTitle className="text-xl">{formatNumber(totalTransactions)}</CardTitle>
 				</CardHeader>

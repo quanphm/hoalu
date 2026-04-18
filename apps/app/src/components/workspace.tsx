@@ -315,7 +315,7 @@ const workspaceAvatarVariants = cva("outline-border outline", {
 	variants: {
 		size: {
 			default: "size-8",
-			lg: "size-14 text-xl",
+			lg: "size-14 text-lg",
 			sm: "size-6 text-[9px]",
 		},
 	},

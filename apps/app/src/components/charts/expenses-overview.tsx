@@ -25,6 +25,7 @@ import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
+import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -37,16 +38,6 @@ import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
-
-const chartConfig = {
-	value: {
-		label: "Total expense",
-	},
-	date: {
-		label: "Expense",
-		color: "var(--chart-1)",
-	},
-} satisfies ChartConfig;
 
 /**
  * Map category ColorSchema values to hex colors for Recharts fill.
@@ -315,14 +306,23 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
 	};
 
+	const chartConfig = {
+		date: {
+			color: isIncomeTab ? "var(--success)" : "var(--destructive)",
+		},
+	} satisfies ChartConfig;
+
 	return (
-		<Card ref={chartRef} className="bg-background flex flex-col border-transparent">
+		<Card
+			ref={chartRef}
+			className={cn("bg-background flex flex-col border-transparent", "gap-6 rounded-none md:py-3")}
+		>
 			<CardHeader>
-				<CardDescription className="flex items-center justify-between text-xs uppercase">
+				<CardDescription className="text-xs tracking-wider uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
 				<CardDescription>
-					<div className="flex flex-col gap-1">
+					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">
 							<CurrencyValue
 								value={totalExpenses}
@@ -357,15 +357,17 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							<ChartCategoryFilter categories={props.categories} />
 						</div>
 					)}
-					<div className="hide-in-screenshot flex items-center gap-0">
+					<div className="hide-in-screenshot flex h-auto gap-0">
 						<Button
 							variant={!isIncomeTab ? "outline" : "ghost"}
+							size="sm"
 							onClick={() => setActiveTab("expenses")}
 						>
 							Expenses
 						</Button>
 						<Button
 							variant={isIncomeTab ? "outline" : "ghost"}
+							size="sm"
 							onClick={() => setActiveTab("income")}
 						>
 							Incomes
@@ -373,10 +375,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</div>
 					<Button
 						variant="outline"
-						size="icon"
+						size="icon-sm"
 						onClick={handleScreenshot}
 						disabled={status === "pending"}
-						className="hide-in-screenshot size-9"
+						className="hide-in-screenshot"
 						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
 					>
 						{(status === "idle" || status === "error") && <CameraIcon />}
@@ -388,7 +390,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-3 pt-4 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[221px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[231px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
 				>
 					<BarChart
 						accessibilityLayer
@@ -419,7 +421,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									isMonthBasedRange(dateRange) ||
 									(dateRange === "custom" && chartGroupBy === "month")
 									? datetime.format(date, "MMM yyyy")
-									: datetime.format(date, "dd/MM/yyyy");
+									: datetime.format(date, "MMM dd, yyyy");
 							}}
 						/>
 						<YAxis
@@ -523,7 +525,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						) : (
 							<Bar
 								dataKey="value"
-								fill={isIncomeTab ? "var(--success)" : "var(--color-date)"}
+								fill={chartConfig.date.color}
 								className="cursor-pointer"
 								onClick={handleBarClick}
 								isAnimationActive={false}
