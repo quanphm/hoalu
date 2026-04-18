@@ -3,7 +3,7 @@ import * as z from "zod";
 
 import { openRouterTextAdapter } from "./openrouter";
 
-const VoiceExpenseDataSchema = z.object({
+const ExpenseDataSchema = z.object({
 	title: z
 		.string()
 		.describe("Short descriptive title for the expense (e.g. 'Coffee', 'Grocery shopping')"),
@@ -37,7 +37,7 @@ const VoiceExpenseDataSchema = z.object({
 		),
 });
 
-export type VoiceExpenseData = z.infer<typeof VoiceExpenseDataSchema>;
+export type ExpenseData = z.infer<typeof ExpenseDataSchema>;
 
 interface Category {
 	id: string;
@@ -54,12 +54,12 @@ interface ParseContext {
 	availableCurrencies: string[];
 }
 
-export async function parseVoiceExpense(
+export async function parseExpense(
 	transcription: string,
 	categories: Category[],
 	wallets: Wallet[],
 	context: ParseContext,
-): Promise<VoiceExpenseData | null> {
+): Promise<ExpenseData | null> {
 	const categoryListText =
 		categories.length > 0
 			? `Available categories:\n${categories.map((c) => `- ${c.name} (id: ${c.id})`).join("\n")}`
@@ -75,7 +75,7 @@ export async function parseVoiceExpense(
 	try {
 		const result = await chat({
 			adapter: openRouterTextAdapter,
-			outputSchema: VoiceExpenseDataSchema,
+			outputSchema: ExpenseDataSchema,
 			messages: [
 				{
 					role: "user",
@@ -128,7 +128,7 @@ Text: "${transcription}"`,
 
 		return result;
 	} catch (error) {
-		console.error("Voice expense parsing failed:", error);
+		console.error("Expense parsing failed:", error);
 		return null;
 	}
 }

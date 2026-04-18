@@ -1,12 +1,11 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { batchExtractReceiptData, extractReceiptData } from "#api/lib/ocr.ts";
 import { bunS3Client } from "#api/lib/s3.ts";
-import { parseVoiceExpense } from "#api/lib/voice.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
-import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
+import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { getS3Path, isValidFileType } from "#api/utils/io.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
@@ -265,75 +264,6 @@ const route = app
 			);
 
 			return c.json({ data: result }, HTTPStatus.codes.OK);
-		},
-	)
-	.post(
-		"/parse-voice",
-		describeRoute({
-			tags: TAGS,
-			summary: "Parse voice transcription into structured expense data",
-			responses: {
-				...OpenAPI.unauthorized(),
-				...OpenAPI.bad_request(),
-				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(
-					z.object({
-						data: z
-							.object({
-								title: z.string(),
-								amount: z.number(),
-								currency: z.string(),
-								date: z.string(),
-								suggestedCategoryId: z.uuid().nullable(),
-								repeat: z.enum(["one-time", "daily", "weekly", "monthly", "yearly"]),
-								confidence: z.number(),
-							})
-							.nullable(),
-					}),
-					HTTPStatus.codes.OK,
-				),
-			},
-		}),
-		workspaceQueryValidator,
-		workspaceMember,
-		jsonBodyValidator(
-			z.object({
-				transcription: z.string().min(1),
-				lang: z.enum(["en-US", "vi-VN"]).default("en-US"),
-			}),
-		),
-		async (c) => {
-			const workspace = c.get("workspace");
-			const payload = c.req.valid("json");
-
-			// Fetch workspace categories and wallets for AI matching
-			const [categories, wallets] = await Promise.all([
-				categoryRepository.findAllByWorkspaceId({
-					workspaceId: workspace.id,
-				}),
-				walletRepository.findAllByWorkspaceId({
-					workspaceId: workspace.id,
-				}),
-			]);
-
-			const today = new Date().toISOString().split("T")[0] as string;
-
-			const voiceData = await parseVoiceExpense(
-				payload.transcription,
-				categories.map((cat) => ({ id: cat.id, name: cat.name })),
-				wallets.map((wallet) => ({ id: wallet.id, name: wallet.name })),
-				{
-					today,
-					availableCurrencies: ["USD", "VND", "SGD", "EUR"],
-					lang: payload.lang,
-				},
-			);
-
-			if (voiceData) {
-				console.log(`[Voice] Expense parsed - confidence: ${voiceData.confidence}`);
-			}
-
-			return c.json({ data: voiceData }, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
