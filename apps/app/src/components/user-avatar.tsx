@@ -14,7 +14,7 @@ export function UserAvatar({
 	const userShortName = extractLetterFromName(name);
 	return (
 		<Avatar className={cn("size-8", className)}>
-			<AvatarImage src={image ?? `https://avatar.vercel.sh/${name}`} alt={name} />
+			<AvatarImage src={image ?? ""} alt={name} />
 			<AvatarFallback>{userShortName}</AvatarFallback>
 		</Avatar>
 	);

@@ -380,7 +380,7 @@ function SidebarGroupLabel({
 				"data-slot": "sidebar-group-label",
 				"data-sidebar": "group-label",
 				className: cn(
-					"text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+					"text-sidebar-accent-foreground/64 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium uppercase outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
 					"group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
 					className,
 				),
@@ -450,10 +450,9 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 
 const sidebarMenuButtonVariants = cva(
 	[
-		"peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground active:bg-sidebar-accent/50 active:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-md border border-transparent p-2 text-left text-sm font-medium outline-hidden transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
-		// "data-[active=true]:bg-sidebar-accent/50 data-[active=true]:text-sidebar-accent-foreground",
-		"data-[state=open]:hover:bg-sidebar-accent/50 data-[state=open]:hover:text-sidebar-accent-foreground",
-		"data-[status=active]:bg-sidebar-accent/50 data-[status=active]:text-sidebar-accent-foreground data-[status=active]:border-border",
+		"peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent/50 text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-md border border-transparent p-2 text-left text-sm font-medium outline-hidden transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+		"data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-foreground",
+		"data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-foreground",
 	],
 	{
 		variants: {

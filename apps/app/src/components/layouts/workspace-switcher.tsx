@@ -3,13 +3,12 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
-import { CheckIcon, ChevronDown, PlusIcon } from "@hoalu/icons/lucide";
-import { HouseIcon, LinkIcon } from "@hoalu/icons/nucleo";
+import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { HouseIcon } from "@hoalu/icons/nucleo";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
-	DropdownMenuGroupLabel,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
@@ -37,20 +36,15 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				render={
-					<SidebarMenuButton
-						size="lg"
-						className="border-border/50 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border"
-					/>
-				}
+				render={<SidebarMenuButton size="lg" className="border-border bg-input/32" />}
 			>
 				<S3WorkspaceLogo {...selectedWorkspace} />
 				<div className="grid flex-1 text-left text-sm leading-tight">
 					<span className="truncate font-semibold">{selectedWorkspace.name}</span>
 				</div>
-				<ChevronDown className="ml-auto" />
+				<ChevronsUpDownIcon className="ml-auto" />
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="bottom" sideOffset={4}>
+			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="right" sideOffset={4}>
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
 					<HouseIcon />
 					Home
