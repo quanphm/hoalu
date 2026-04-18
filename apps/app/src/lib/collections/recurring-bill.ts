@@ -18,7 +18,6 @@ const RecurringBillCollectionSchema = z.object({
 	category_id: z.uuidv7().nullable(),
 	event_id: z.uuidv7().nullable(),
 	workspace_id: z.uuidv7(),
-	creator_id: z.uuidv7(),
 	is_active: z.boolean(),
 	created_at: z.string(),
 	updated_at: z.string(),

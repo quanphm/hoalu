@@ -22,6 +22,7 @@ import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { monetary } from "@hoalu/common/monetary";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { tryCatch } from "@hoalu/common/try-catch";
 import { OpenAPI } from "@hoalu/furnace";
 import { and, eq, sql } from "drizzle-orm";
 import { describeRoute } from "hono-openapi";
@@ -137,7 +138,7 @@ const route = app
 			const expenseDate = date || new Date().toISOString();
 			const newAnchorDate = expenseDate.slice(0, 10); // "yyyy-MM-dd"
 
-			const expense = await db.transaction(async (tx) => {
+			const { expense, txid } = await db.transaction(async (tx) => {
 				let bill: typeof schema.recurringBill.$inferSelect | null = null;
 
 				// If a recurringBillId is provided (Log payment flow), fetch bill details
@@ -161,19 +162,31 @@ const route = app
 							.where(eq(schema.recurringBill.id, recurringBillId));
 					}
 				}
-				const expense = await expenseRepository.insert({
-					...rest,
-					id: generateId({ use: "uuid" }),
-					workspaceId: workspace.id,
-					creatorId: user.id,
-					date: expenseDate,
-					amount: `${realAmount}`,
-					currency,
-					recurringBillId: recurringBillId ?? null,
-				});
+
+				const result = await tryCatch.async(
+					tx
+						.insert(schema.expense)
+						.values({
+							...rest,
+							id: generateId({ use: "uuid" }),
+							workspaceId: workspace.id,
+							creatorId: user.id,
+							date: expenseDate,
+							amount: `${realAmount}`,
+							currency,
+							recurringBillId: recurringBillId ?? null,
+						})
+						.returning(),
+				);
+
+				if (result.error) {
+					return { expense: null, txid: 0 };
+				}
+
+				const [expense] = result.data;
 
 				// Track occurrence payment for recurring bills
-				if (recurringBillId && bill && expense) {
+				if (recurringBillId && bill) {
 					// Calculate the correct due date based on bill's schedule
 					// Parse expense date as local date to avoid UTC offset issues
 					const expenseDateLocal = expenseDate.slice(0, 10); // "YYYY-MM-DD"
@@ -236,14 +249,20 @@ const route = app
 					}
 				}
 
-				return expense;
+				const txidResult = await tx.execute<{ txid: number }>(
+					sql`SELECT txid_current()::bigint AS txid`,
+				);
+
+				const txid = txidResult.rows[0]?.txid ?? 0;
+
+				return { expense, txid };
 			});
 
 			if (!expense) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteExpenseSchema.safeParse(expense);
+			const parsed = LiteExpenseSchema.safeParse({ ...expense, txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -310,7 +329,7 @@ const route = app
 			// automatic bill management and just use the explicit value.
 			const explicitBillOverride = !!payload.recurringBillId;
 
-			const queryData = await db.transaction(async (tx) => {
+			const { expense: updatedExpense, txid } = await db.transaction(async (tx) => {
 				let resolvedRecurringBillId: string | null | undefined = expense.recurringBillId ?? null;
 
 				if (explicitBillOverride) {
@@ -383,21 +402,35 @@ const route = app
 				if (categoryId !== undefined) expenseSet.categoryId = categoryId;
 				if (payload.eventId !== undefined) expenseSet.eventId = payload.eventId;
 
-				// Update the expense row
-				const [updated] = await tx
-					.update(schema.expense)
-					.set(expenseSet)
-					.where(and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, workspace.id)))
-					.returning();
+				const result = await tryCatch.async(
+					tx
+						.update(schema.expense)
+						.set(expenseSet)
+						.where(
+							and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, workspace.id)),
+						)
+						.returning(),
+				);
 
-				return updated ?? null;
+				if (result.error) {
+					return { expense: null, txid: 0 };
+				}
+
+				const [updated] = result.data;
+
+				const txidResult = await tx.execute<{ txid: number }>(
+					sql`SELECT txid_current()::bigint AS txid`,
+				);
+				const txid = txidResult.rows[0]?.txid ?? 0;
+
+				return { expense: updated ?? null, txid };
 			});
 
-			if (!queryData) {
+			if (!updatedExpense) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteExpenseSchema.safeParse(queryData);
+			const parsed = LiteExpenseSchema.safeParse({ ...updatedExpense, txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -427,12 +460,31 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const expense = await expenseRepository.delete({
-				id: param.id,
-				workspaceId: workspace.id,
+			const { expense, txid } = await db.transaction(async (tx) => {
+				const result = await tryCatch.async(
+					tx
+						.delete(schema.expense)
+						.where(
+							and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, workspace.id)),
+						)
+						.returning(),
+				);
+
+				if (result.error) {
+					return { expense: null, txid: 0 };
+				}
+
+				const [expense] = result.data;
+
+				const txidResult = await tx.execute<{ txid: number }>(
+					sql`SELECT txid_current()::bigint AS txid`,
+				);
+				const txid = txidResult.rows[0]?.txid ?? 0;
+
+				return { expense: expense ?? null, txid };
 			});
 
-			const parsed = DeleteExpenseSchema.safeParse(expense);
+			const parsed = DeleteExpenseSchema.safeParse({ ...expense, txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

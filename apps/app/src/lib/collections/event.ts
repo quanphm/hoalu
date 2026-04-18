@@ -14,7 +14,6 @@ const EventCollectionSchema = z.object({
 	budget_currency: CurrencySchema,
 	status: z.enum(["open", "closed"]),
 	workspace_id: z.uuidv7(),
-	creator_id: z.uuidv7().nullable(),
 	created_at: IsoDateSchema,
 	updated_at: IsoDateSchema,
 });
