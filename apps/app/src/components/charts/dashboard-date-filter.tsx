@@ -112,7 +112,7 @@ function ChartGroupByFilter() {
 
 	return (
 		<Select<ChartGroupBy> value={groupBy} onValueChange={handleGroupByChange}>
-			<SelectTrigger className="w-auto min-w-0 shrink text-xs sm:text-sm">
+			<SelectTrigger size="sm" className="w-auto min-w-0 shrink text-xs sm:text-sm">
 				<SelectValue>
 					{(value: ChartGroupBy) => {
 						return value === "date" ? "By date" : "By month";

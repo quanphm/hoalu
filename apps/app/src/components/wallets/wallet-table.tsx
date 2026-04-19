@@ -1,12 +1,12 @@
 import { AVAILABLE_WALLET_TYPE_OPTIONS } from "#app/helpers/constants.ts";
-import type { WalletSchema } from "#app/lib/schema.ts";
 import { Badge } from "@hoalu/ui/badge";
-import { Frame } from "@hoalu/ui/frame";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../data-table";
 import { UserAvatar } from "../user-avatar";
 import { WalletDropdownMenuWithModal, WalletIcon } from "./wallet-actions";
+
+import type { WalletSchema } from "#app/lib/schema.ts";
 
 const columnHelper = createColumnHelper<WalletSchema>();
 
@@ -75,9 +75,5 @@ const columns = [
 ];
 
 export function WalletTable({ data }: { data: WalletSchema[] }) {
-	return (
-		<Frame>
-			<DataTable data={data} columns={columns} />
-		</Frame>
-	);
+	return <DataTable data={data} columns={columns} />;
 }

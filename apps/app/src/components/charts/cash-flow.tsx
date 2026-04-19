@@ -1,9 +1,6 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import {
-	// PulseOrb,
-	MoodGlow,
-} from "#app/components/orb-motion.tsx";
+import { MoodGlow, ShineBorder } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
@@ -88,16 +85,11 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		<div
 			className={cn(
 				"grid w-full grid-cols-1 md:grid-cols-4",
-				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-0 *:data-[slot=card]:md:py-3",
+				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 			)}
 		>
-			<Card className="@container/card overflow-hidden">
-				{showTrend && <MoodGlow trend={cashFlowChange.status === "increase"} />}
-				{/* <PulseOrb
-					trend={showTrend ? (cashFlowChange.status === "increase" ? 1 : -1) : 0}
-					corner="bottom-center"
-					size={110}
-				/> */}
+			<Card className="@container/card relative overflow-hidden">
+				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
 				<CardHeader className="relative">
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Cash Flow</span>
@@ -168,5 +160,23 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				</CardHeader>
 			</Card>
 		</div>
+	);
+}
+
+function BoxAnimations({ status }: { status: "increase" | "decrease" | "no-change" }) {
+	if (status === "no-change") return null;
+	if (status === "increase") {
+		return (
+			<>
+				<ShineBorder duration={24} shineColor={["#7bf1a8", "#00a63e", "#032e15"]} />
+				<MoodGlow trend={true} />
+			</>
+		);
+	}
+	return (
+		<>
+			<ShineBorder duration={24} shineColor={["#ffa2a2", "#e7000b", "#460809"]} />
+			<MoodGlow trend={false} />
+		</>
 	);
 }

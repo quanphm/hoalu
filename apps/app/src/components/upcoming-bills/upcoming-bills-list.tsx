@@ -207,21 +207,14 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 				onClick={handleLogPayment}
 				className="flex min-w-0 flex-1 items-center gap-2 text-left"
 			>
-				<span
+				<p
 					className={cn(
-						"h-4 w-1 shrink-0 rounded-full",
-						isOverdue
-							? "bg-destructive"
-							: bill.categoryColor
-								? getCategoryStripeColor(bill.categoryColor)
-								: "bg-muted-foreground/30",
+						"min-w-0 flex-1 truncate text-sm font-medium",
+						isOverdue && "text-destructive",
 					)}
-				/>
-				<div className="min-w-0 flex-1">
-					<p className={cn("truncate text-sm font-medium", isOverdue && "text-destructive")}>
-						{bill.title}
-					</p>
-				</div>
+				>
+					{bill.title}
+				</p>
 			</button>
 			<div className="flex shrink-0 items-center gap-2">
 				{bill.categoryName && bill.categoryColor && (

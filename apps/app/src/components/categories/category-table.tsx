@@ -54,7 +54,7 @@ export function CategoryTable({ data }: { data: CategoryTableItem[] }) {
 
 	return (
 		<>
-			<Frame className="sm:col-span-8">
+			<div className="sm:col-span-8">
 				<DataTable
 					data={data}
 					columns={columns}
@@ -63,8 +63,8 @@ export function CategoryTable({ data }: { data: CategoryTableItem[] }) {
 						rowSelection: initRowSelection,
 					}}
 				/>
-			</Frame>
-			<Frame className="max-h-fit sm:col-span-4">
+			</div>
+			<div className="max-h-fit sm:col-span-4">
 				<FramePanel>
 					{selected.id ? (
 						<Suspense>
@@ -79,7 +79,7 @@ export function CategoryTable({ data }: { data: CategoryTableItem[] }) {
 						</Empty>
 					)}
 				</FramePanel>
-			</Frame>
+			</div>
 		</>
 	);
 }

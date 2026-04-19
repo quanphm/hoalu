@@ -4,17 +4,17 @@ import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expens
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import {
 	Section,
-	SectionAction,
 	SectionContent,
 	SectionHeader,
 	SectionTitle,
+	SectionAction,
 } from "#app/components/layouts/section.tsx";
+import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Frame, FrameAction, FrameHeader, FrameTitle } from "@hoalu/ui/frame";
 import { cn } from "@hoalu/ui/utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -91,6 +91,25 @@ const columns = [
 		cell: (info) => <span className="font-medium">{info.getValue()}</span>,
 	}),
 	columnHelper.display({
+		id: "wallet",
+		header: "Wallet",
+		cell: (info) => {
+			const transaction = info.row.original;
+			if (!transaction.wallet?.name || !transaction.wallet?.type) {
+				return <span className="text-muted-foreground text-sm">—</span>;
+			}
+			return (
+				<div className="flex h-5 items-center">
+					<WalletBadge name={transaction.wallet.name} type={transaction.wallet.type} />
+				</div>
+			);
+		},
+		meta: {
+			headerClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+			cellClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+		},
+	}),
+	columnHelper.display({
 		id: "amount",
 		header: "Amount",
 		cell: (info) => {
@@ -101,7 +120,7 @@ const columns = [
 					currency={transaction.currency}
 					prefix={transaction.type === "expense" ? "-" : "+"}
 					style="currency"
-					className={cn("text-sm", transaction.type === "income" && "text-success")}
+					className={cn("text-sm font-semibold", transaction.type === "income" && "text-success")}
 				/>
 			);
 		},
@@ -135,7 +154,7 @@ export function RecentTransactions() {
 	return (
 		<Section className="gap-0 border-t md:gap-0">
 			<SectionHeader className="px-4 py-3">
-				<SectionTitle className="text-sm">Recent transactions</SectionTitle>
+				<SectionTitle className="text-md">Recent Transactions</SectionTitle>
 				<SectionAction>
 					<Button
 						variant="outline"

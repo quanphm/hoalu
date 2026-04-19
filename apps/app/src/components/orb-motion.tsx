@@ -104,10 +104,63 @@ export function MoodGlow({ trend }: { trend: boolean }) {
 		<div
 			aria-hidden="true"
 			className={cn(
-				"pointer-events-none absolute top-1/2 left-1/2 size-32 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
-				"animation-duration-[4s] animate-pulse",
-				trend ? "bg-success/30" : "bg-destructive/25",
+				"pointer-events-none absolute -top-6 left-1/2 size-30 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
+				"motion-safe:animation-duration-[4s] motion-safe:animate-pulse",
+				trend ? "bg-success/30" : "bg-destructive/30",
 			)}
+		/>
+	);
+}
+
+interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
+	/**
+	 * Width of the border in pixels
+	 * @default 1
+	 */
+	borderWidth?: number;
+	/**
+	 * Duration of the animation in seconds
+	 * @default 14
+	 */
+	duration?: number;
+	/**
+	 * Color of the border, can be a single color or an array of colors
+	 * @default "#000000"
+	 */
+	shineColor?: string | string[];
+}
+
+export function ShineBorder({
+	borderWidth = 1,
+	duration = 14,
+	shineColor = "#000000",
+	className,
+	style,
+	...props
+}: ShineBorderProps) {
+	return (
+		<div
+			style={
+				{
+					"--border-width": `${borderWidth}px`,
+					"--duration": `${duration}s`,
+					backgroundImage: `radial-gradient(transparent,transparent, ${
+						Array.isArray(shineColor) ? shineColor.join(",") : shineColor
+					},transparent,transparent)`,
+					backgroundSize: "300% 300%",
+					mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+					WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+					WebkitMaskComposite: "xor",
+					maskComposite: "exclude",
+					padding: "var(--border-width)",
+					...style,
+				} as React.CSSProperties
+			}
+			className={cn(
+				"motion-safe:animate-shine pointer-events-none absolute inset-0 size-full rounded-[inherit] will-change-[background-position]",
+				className,
+			)}
+			{...props}
 		/>
 	);
 }

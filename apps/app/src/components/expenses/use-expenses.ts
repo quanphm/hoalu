@@ -24,6 +24,8 @@ import { useMemo } from "react";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 
+const zeroDecimalSet = new Set(zeroDecimalCurrencies);
+
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
 	const onSelectExpense = (id: string | null) => {
@@ -229,56 +231,69 @@ export function useLiveQueryExpenses() {
 		}));
 	});
 
+	// Build FX rate indexes once per fxRateData change — O(m), not O(n×m).
+	// byPair: "FROM|TO" → rates (bidirectional) with pre-parsed date ms.
+	// byTo: toCurrency → rates for cross-rate USD→X lookups.
+	const fxRateIndex = useMemo(() => {
+		type IndexedRate = (typeof fxRateData)[number] & { validFromMs: number; validToMs: number };
+		const byPair = new Map<string, IndexedRate[]>();
+		const byTo = new Map<string, IndexedRate[]>();
+
+		for (const rate of fxRateData) {
+			const r: IndexedRate = {
+				...rate,
+				validFromMs: new Date(rate.validFrom).getTime(),
+				validToMs: new Date(rate.validTo).getTime(),
+			};
+
+			for (const key of [`${rate.from}|${rate.to}`, `${rate.to}|${rate.from}`]) {
+				const list = byPair.get(key);
+				if (list) list.push(r);
+				else byPair.set(key, [r]);
+			}
+
+			const toList = byTo.get(rate.to);
+			if (toList) toList.push(r);
+			else byTo.set(rate.to, [r]);
+		}
+
+		return { byPair, byTo };
+	}, [fxRateData]);
+
 	const transformedExpenses = useMemo(() => {
+		const { byPair, byTo } = fxRateIndex;
+
 		const expenses = expensesData.map((expense) => {
+			const dateMs = new Date(expense.created_at).getTime();
+
 			const exchangeRate = lookupExchangeRate(
 				{
-					findDirect: ([from, to], date) => {
-						const maybeCorrectRate = fxRateData.find((rate) => {
-							const betweenValidFromTo =
-								new Date(rate.validFrom) <= new Date(date) &&
-								new Date(date) <= new Date(rate.validTo);
-
-							const correctFromTo =
-								(rate.from === from && rate.to === to) || (rate.from === to && rate.to === from);
-
-							return betweenValidFromTo && correctFromTo;
-						});
-
-						if (!maybeCorrectRate) return null;
-
+					findDirect: ([from, to], _date) => {
+						const match = byPair
+							.get(`${from}|${to}`)
+							?.find((r) => r.validFromMs <= dateMs && dateMs <= r.validToMs);
+						if (!match) return null;
 						return {
-							fromCurrency: maybeCorrectRate.from,
-							toCurrency: maybeCorrectRate.to,
-							exchangeRate: `${maybeCorrectRate.exchangeRate}`,
-							inverseRate: `${maybeCorrectRate.inverseRate}`,
+							fromCurrency: match.from,
+							toCurrency: match.to,
+							exchangeRate: match.exchangeRate,
+							inverseRate: match.inverseRate,
 						};
 					},
-					findCrossRate: ([from, to], date) => {
-						const usdRates = fxRateData.filter((rate) => {
-							const betweenValidFromTo =
-								new Date(rate.validFrom) <= new Date(date) &&
-								new Date(date) <= new Date(rate.validTo);
-
-							const correctTo = rate.to === from || rate.to === to;
-
-							return betweenValidFromTo && correctTo;
-						});
-
-						const rates = calculateCrossRate({
-							pair: [from, to],
-							usdToFrom: usdRates.find((rate) => rate.to === from),
-							usdToTo: usdRates.find((rate) => rate.to === to),
-						});
-
-						return rates;
+					findCrossRate: ([from, to], _date) => {
+						const usdToFrom = byTo
+							.get(from)
+							?.find((r) => r.validFromMs <= dateMs && dateMs <= r.validToMs);
+						const usdToTo = byTo
+							.get(to)
+							?.find((r) => r.validFromMs <= dateMs && dateMs <= r.validToMs);
+						return calculateCrossRate({ pair: [from, to], usdToFrom, usdToTo });
 					},
 				},
 				[expense.currency, workspace.metadata.currency],
 				expense.created_at,
 			);
-			const isNoCent = zeroDecimalCurrencies.find((c) => c === expense.currency);
-			const factor = isNoCent ? 1 : 100;
+			const factor = zeroDecimalSet.has(expense.currency) ? 1 : 100;
 			const convertedAmount =
 				expense.amount * ((exchangeRate ? Number(exchangeRate.exchangeRate) : 0) / factor);
 
@@ -291,7 +306,7 @@ export function useLiveQueryExpenses() {
 			};
 		});
 		return expenses;
-	}, [expensesData, fxRateData, workspace.metadata.currency]);
+	}, [expensesData, fxRateIndex, workspace.metadata.currency]);
 
 	return transformedExpenses;
 }
