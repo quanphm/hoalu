@@ -53,8 +53,9 @@ export function QuickExpensesForm({ onSubmitted }: QuickExpensesFormProps) {
 					name="text"
 					children={(field) => (
 						<field.InputField
-							placeholder="e.g. Coffee 15k yesterday tiền mặt, Cơm trưa 50k hôm qua cash"
+							placeholder="e.g. Coffee 15k yesterday cash, Cơm trưa 50k hôm qua tiền mặt"
 							autoFocus
+							autoComplete="off"
 							disabled={isFull}
 							className={cn(isFull && "opacity-50")}
 						/>

@@ -1,6 +1,5 @@
 import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
-import { draftExpenseAtom } from "#app/atoms/expenses.ts";
-import { formatCurrency } from "#app/helpers/currency.ts";
+import { draftExpenseAtom, quickExpenseJobIdAtom } from "#app/atoms/expenses.ts";
 import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 import {
 	ChevronDownIcon,
@@ -68,7 +67,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 	const currency = data?.currency || "VND";
 
 	return (
-		<div className="bg-card flex min-w-0 gap-2.5 border-r p-3 last:border-r-0">
+		<div className="bg-card flex min-w-0 gap-2.5 border-r p-3 last:border-r-transparent">
 			<div className="bg-muted relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-sm border">
 				{job.input.previewBase64 ? (
 					<img
@@ -99,12 +98,12 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 					</Button>
 				</div>
 
-				<div className="font-geist-mono text-muted-foreground mt-0.5 text-xs">
+				<div className="font-geist-mono text-muted-foreground text-xs">
 					{formatBytes(job.input.fileSize)}
 				</div>
 
 				{job.status === "completed" && data && (
-					<div className="mt-1.5 flex items-center gap-1.5">
+					<div className="mt-1 flex items-center gap-1.5">
 						<span className="text-muted-foreground flex-1 truncate text-xs">
 							{data.merchantName || "Receipt"}
 						</span>
@@ -119,7 +118,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 					</div>
 				)}
 				{job.status === "failed" && (
-					<div className="mt-1.5 flex items-center gap-1">
+					<div className="mt-1 flex items-center gap-1">
 						<span className="text-destructive flex-1 truncate text-xs">
 							{job.errorMessage || "Unknown error"}
 						</span>
@@ -137,6 +136,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	const { retry, remove } = useQuickExpenseQueue();
 	const setDraft = useSetAtom(draftExpenseAtom);
+	const setQuickExpenseJobId = useSetAtom(quickExpenseJobIdAtom);
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 
 	const handleReview = () => {
@@ -151,6 +151,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 			categoryId: job.result!.suggestedCategoryId ?? "",
 			repeat: job.result!.repeat,
 		}));
+		setQuickExpenseJobId(job.id);
 		setCreateDialog({ state: true });
 	};
 
@@ -158,7 +159,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	const currency = result?.currency || "VND";
 
 	return (
-		<div className="bg-card flex min-w-0 gap-2.5 border-r p-3 nth-4:border-r-0">
+		<div className="bg-card flex min-w-0 gap-2.5 border-r p-3 last:border-r-transparent">
 			<div className="bg-muted relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-sm border">
 				<ZapIcon className="text-muted-foreground size-4" />
 				{job.status === "processing" && (
@@ -180,9 +181,9 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 						<XIcon />
 					</Button>
 				</div>
-				<div className="text-muted-foreground mt-0.5 text-xs">Quick entry</div>
+				<div className="text-muted-foreground text-xs">Quick entry</div>
 				{job.status === "completed" && result && (
-					<div className="mt-1.5 flex items-center gap-1.5">
+					<div className="mt-1 flex items-center gap-1.5">
 						<span className="text-muted-foreground flex-1 truncate text-xs">{result.title}</span>
 						<CurrencyValue
 							value={result.amount}
@@ -195,7 +196,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 					</div>
 				)}
 				{job.status === "failed" && (
-					<div className="mt-1.5 flex items-center gap-1">
+					<div className="mt-1 flex items-center gap-1">
 						<span className="text-destructive flex-1 truncate text-xs">
 							{job.errorMessage || "Unknown error"}
 						</span>
@@ -285,7 +286,7 @@ export function QueuePanel() {
 			{!collapsed && (
 				<div className="border-t">
 					{isEmpty ? (
-						<div className="text-muted-foreground flex h-20 w-full items-center justify-center text-xs tracking-wider uppercase">
+						<div className="text-muted-foreground flex h-23 w-full items-center justify-center text-xs tracking-wider uppercase">
 							No active jobs
 						</div>
 					) : (
