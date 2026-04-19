@@ -272,7 +272,11 @@ export function useLiveQueryExpenses() {
 						const match = byPair
 							.get(`${from}|${to}`)
 							?.find((r) => r.validFromMs <= dateMs && dateMs <= r.validToMs);
-						if (!match) return null;
+
+						if (!match) {
+							return null;
+						}
+
 						return {
 							fromCurrency: match.from,
 							toCurrency: match.to,
@@ -287,6 +291,7 @@ export function useLiveQueryExpenses() {
 						const usdToTo = byTo
 							.get(to)
 							?.find((r) => r.validFromMs <= dateMs && dateMs <= r.validToMs);
+
 						return calculateCrossRate({ pair: [from, to], usdToFrom, usdToTo });
 					},
 				},
