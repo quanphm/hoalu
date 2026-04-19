@@ -240,10 +240,10 @@ export function DataTable<T extends TableRowData>({
 			)}
 
 			<div ref={tableContainerRef} className={cn("overflow-hidden", tableClassName)}>
-				<Table>
-					<TableHeader className="sticky top-0">
+				<Table className="w-full">
+					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} className="">
+							<TableRow key={headerGroup.id} className="bg-card border-t hover:bg-transparent">
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
@@ -266,7 +266,7 @@ export function DataTable<T extends TableRowData>({
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									data-row-id={row.id}
-									className="group bg-card"
+									className="group"
 									onClick={(ev) => {
 										if (row.groupingColumnId) return;
 										row.getToggleSelectedHandler()(ev);

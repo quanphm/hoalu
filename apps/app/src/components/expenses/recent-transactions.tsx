@@ -2,7 +2,13 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import { Section } from "#app/components/layouts/section.tsx";
+import {
+	Section,
+	SectionAction,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+} from "#app/components/layouts/section.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
@@ -44,6 +50,12 @@ const columns = [
 			const date = info.getValue();
 			return <span className="text-muted-foreground text-sm">{formatDateLabel(date)}</span>;
 		},
+		meta: {
+			headerClassName:
+				"w-(--date-size) min-w-(--date-size) max-w-(--date-size) text-left whitespace-nowrap",
+			cellClassName:
+				"w-(--date-size) min-w-(--date-size) max-w-(--date-size) text-left whitespace-nowrap",
+		},
 	}),
 	columnHelper.display({
 		id: "category",
@@ -66,6 +78,12 @@ const columns = [
 					</Badge>
 				</div>
 			);
+		},
+		meta: {
+			headerClassName:
+				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
+			cellClassName:
+				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
 		},
 	}),
 	columnHelper.accessor("title", {
@@ -115,22 +133,22 @@ export function RecentTransactions() {
 	}, [expenses, incomes]);
 
 	return (
-		<Section className="border-t">
-			<Frame>
-				<FrameHeader className="pb-0">
-					<FrameTitle>Recent Transactions</FrameTitle>
-					<FrameAction>
-						<Button
-							variant="outline"
-							size="xs"
-							render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
-						>
-							View all
-						</Button>
-					</FrameAction>
-				</FrameHeader>
+		<Section className="gap-0 border-t md:gap-0">
+			<SectionHeader className="px-4 py-3">
+				<SectionTitle className="text-sm">Recent transactions</SectionTitle>
+				<SectionAction>
+					<Button
+						variant="outline"
+						size="xs"
+						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
+					>
+						View all
+					</Button>
+				</SectionAction>
+			</SectionHeader>
+			<SectionContent columns={1}>
 				<DataTable data={transactions} columns={columns} />
-			</Frame>
+			</SectionContent>
 		</Section>
 	);
 }

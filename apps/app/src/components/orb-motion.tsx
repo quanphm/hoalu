@@ -104,8 +104,8 @@ export function MoodGlow({ trend }: { trend: boolean }) {
 		<div
 			aria-hidden="true"
 			className={cn(
-				"pointer-events-none absolute -top-4 left-1/2 size-32 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
-				"animation-duration-[3s] animate-pulse",
+				"pointer-events-none absolute top-1/2 left-1/2 size-32 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
+				"animation-duration-[4s] animate-pulse",
 				trend ? "bg-success/30" : "bg-destructive/25",
 			)}
 		/>

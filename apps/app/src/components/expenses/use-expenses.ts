@@ -1,5 +1,4 @@
 import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
@@ -22,6 +21,8 @@ import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
+
+import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 
 export function useSelectedExpense() {
 	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
