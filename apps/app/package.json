@@ -45,6 +45,7 @@
 		"hono": "catalog:",
 		"html2canvas-pro": "^2.0.2",
 		"jotai": "^2.19.1",
+		"motion": "^12.38.0",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-hotkeys-hook": "^5.2.4",

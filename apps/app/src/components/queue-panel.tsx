@@ -14,6 +14,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 
+import { BrailleSpinner } from "./braille-spinner";
 import { CurrencyValue } from "./currency-value";
 
 import type { QuickExpenseJob } from "#app/lib/queues/quick-expense-queue.ts";
@@ -240,15 +241,10 @@ export function QueuePanel() {
 				onClick={() => setCollapsed((c) => !c)}
 				className="hover:bg-accent/30 flex h-9 w-full items-center gap-4 px-3 text-left transition-colors"
 			>
-				<div className="flex items-center gap-2">
-					<span
-						className={cn(
-							"size-1.5 rounded-full",
-							hasActivity
-								? "bg-primary ring-primary/20 animate-pulse ring-2"
-								: "bg-muted-foreground/60",
-						)}
-					/>
+				<div className="flex items-center gap-0">
+					<span>
+						<BrailleSpinner size={20} active={hasActivity} />
+					</span>
 					<span className="font-geist-mono text-muted-foreground text-xs font-medium tracking-wider uppercase">
 						Jobs
 					</span>

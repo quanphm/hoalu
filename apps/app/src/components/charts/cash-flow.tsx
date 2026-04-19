@@ -162,7 +162,9 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Transactions</span>
 					</CardDescription>
-					<CardTitle className="text-xl">{formatNumber(totalTransactions)}</CardTitle>
+					<CardTitle className="font-geist-mono text-xl tracking-tight tabular-nums">
+						{formatNumber(totalTransactions)}
+					</CardTitle>
 				</CardHeader>
 			</Card>
 		</div>
