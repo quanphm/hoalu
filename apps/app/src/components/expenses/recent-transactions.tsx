@@ -22,6 +22,8 @@ import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 
+const RECENT_TRANSACTIONS_LIMIT = 20;
+
 function formatDateLabel(dateStr: string): string {
 	const date = new Date(`${dateStr.slice(0, 10)}T00:00:00`);
 	const today = new Date();
@@ -161,11 +163,10 @@ export function RecentTransactions() {
 			type: "income" as const,
 		}));
 
-		const allTransactions = [...expenseTransactions, ...incomeTransactions].sort(
-			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-		);
+		const allTransactions = [...expenseTransactions, ...incomeTransactions]
+			.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+			.slice(0, RECENT_TRANSACTIONS_LIMIT);
 
-		// Filter based on active tab (no slice - pagination handles limiting)
 		if (activeTab === "expense") {
 			return allTransactions.filter((t) => t.type === "expense");
 		}
@@ -204,7 +205,16 @@ export function RecentTransactions() {
 				</SectionAction>
 			</SectionHeader>
 			<SectionContent columns={1}>
-				<DataTable data={transactions} columns={columns} enablePagination={true} />
+				<DataTable
+					data={transactions}
+					columns={columns}
+					paginationConfig={{
+						enabled: true,
+						showPerPage: false,
+						showPageNumberInfo: false,
+						showNavigationButtons: true,
+					}}
+				/>
 			</SectionContent>
 		</Section>
 	);
