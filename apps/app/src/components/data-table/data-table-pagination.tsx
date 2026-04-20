@@ -11,36 +11,36 @@ interface DataTablePaginationProps<TData> {
 }
 
 const items = [
-	{ label: "Select number of results", value: null },
-	{ label: "5", value: 5 },
 	{ label: "10", value: 10 },
 	{ label: "25", value: 25 },
 	{ label: "50", value: 50 },
+	{ label: "100", value: 100 },
 ];
 
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
 	const id = useId();
 
 	return (
-		<div className="flex items-center justify-between gap-8">
+		<div className="flex items-center justify-between gap-4">
 			{/* Results per page */}
 			<div className="flex items-center gap-3">
 				<Label htmlFor={id} className="max-sm:sr-only">
-					Rows per page
+					Viewing
 				</Label>
 				<Select
 					items={items}
 					value={table.getState().pagination.pageSize}
 					onValueChange={(value) => {
-						table.setPageSize(Number(value));
+						if (!value) return;
+						table.setPageSize(value);
 					}}
 				>
-					<SelectTrigger id={id} className="w-fit whitespace-nowrap">
+					<SelectTrigger size="sm" id={id} className="w-fit whitespace-nowrap">
 						<SelectValue />
 					</SelectTrigger>
-					<SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
+					<SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:inset-e-2">
 						{items.map((pageSize) => (
-							<SelectItem key={pageSize.value} value={pageSize.toString()}>
+							<SelectItem key={pageSize.value} value={pageSize.value}>
 								{pageSize.label}
 							</SelectItem>
 						))}
@@ -49,7 +49,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 			</div>
 
 			{/* Page number information */}
-			<div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
+			{/* <div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
 				<p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
 					<span className="text-foreground">
 						{table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
@@ -64,7 +64,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 					</span>{" "}
 					of <span className="text-foreground">{table.getRowCount().toString()}</span>
 				</p>
-			</div>
+			</div> */}
 
 			{/* Pagination buttons */}
 			<div>
@@ -72,7 +72,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 					<PaginationContent>
 						<PaginationItem>
 							<Button
-								size="icon"
+								size="icon-sm"
 								variant="outline"
 								className="disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.firstPage()}
@@ -84,7 +84,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 						</PaginationItem>
 						<PaginationItem>
 							<Button
-								size="icon"
+								size="icon-sm"
 								variant="outline"
 								className="disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.previousPage()}
@@ -96,7 +96,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 						</PaginationItem>
 						<PaginationItem>
 							<Button
-								size="icon"
+								size="icon-sm"
 								variant="outline"
 								className="disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.nextPage()}
@@ -108,7 +108,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 						</PaginationItem>
 						<PaginationItem>
 							<Button
-								size="icon"
+								size="icon-sm"
 								variant="outline"
 								className="disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.lastPage()}

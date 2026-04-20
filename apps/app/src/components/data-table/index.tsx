@@ -223,7 +223,7 @@ export function DataTable<T extends TableRowData>({
 	const showToolbar = !!enableGrouping;
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col">
 			{showToolbar && (
 				<div className="flex gap-4">
 					{enableGrouping && (
@@ -238,7 +238,6 @@ export function DataTable<T extends TableRowData>({
 					)}
 				</div>
 			)}
-
 			<div ref={tableContainerRef} className={cn("overflow-hidden", tableClassName)}>
 				<Table className="w-full">
 					<TableHeader>
@@ -279,8 +278,8 @@ export function DataTable<T extends TableRowData>({
 												cell.getIsGrouped() || cell.getIsAggregated() ? "grouped" : "cell"
 											}
 											className={cn(
-												cell.column.columnDef.meta?.cellClassName,
 												"group-has-data-[group=grouped]:bg-accent group-hover:group-has-data-[group=grouped]:bg-accent",
+												cell.column.columnDef.meta?.cellClassName,
 											)}
 										>
 											{cell.getIsGrouped() ? (
@@ -320,7 +319,11 @@ export function DataTable<T extends TableRowData>({
 					</TableBody>
 				</Table>
 			</div>
-			{enablePagination && <DataTablePagination table={table} />}
+			{enablePagination && (
+				<div className="bg-card border-t px-4 py-3">
+					<DataTablePagination table={table} />
+				</div>
+			)}
 		</div>
 	);
 }

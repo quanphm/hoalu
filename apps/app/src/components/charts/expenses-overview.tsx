@@ -463,19 +463,49 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							<ReferenceLine
 								y={medianValue}
 								stroke="var(--foreground)"
-								strokeDasharray="4 4"
-								strokeWidth={1}
+								strokeDasharray="0 4"
+								strokeLinecap="round"
+								strokeWidth={2}
+								opacity={0.72}
 								ifOverflow="extendDomain"
-								opacity={0.8}
-								label={{
-									value: formatCurrency(medianValue, currency, {
+								label={(props: { viewBox?: { x: number; y: number; width: number } }) => {
+									const { viewBox } = props;
+									if (!viewBox) return null;
+									const text = formatCurrency(medianValue, currency, {
 										style: "currency",
 										currencyDisplay: "narrowSymbol",
-									}),
-									position: "insideBottomRight",
-									fill: "var(--foreground)",
-									fontSize: 10,
-									opacity: 0.9,
+									});
+									const px = 5;
+									const textWidth = text.length * 6.5;
+									const rectW = textWidth + px * 2;
+									const rectH = 16;
+									const x = viewBox.x + viewBox.width - rectW - 4;
+									const y = viewBox.y - rectH - 4;
+
+									return (
+										<g>
+											<rect
+												x={x}
+												y={y}
+												width={rectW}
+												height={rectH}
+												rx={3}
+												fill="var(--background)"
+												stroke="var(--border)"
+												strokeWidth={0.5}
+											/>
+											<text
+												x={x + px + 1}
+												y={y + rectH / 2 + 1}
+												dominantBaseline="middle"
+												fill="var(--foreground)"
+												fontSize={10}
+												fontWeight="bold"
+											>
+												{text}
+											</text>
+										</g>
+									);
 								}}
 							/>
 						)}

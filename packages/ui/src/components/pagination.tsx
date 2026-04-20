@@ -1,8 +1,9 @@
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "@hoalu/icons/lucide";
-import type * as React from "react";
 
 import { cn } from "../utils";
 import { type Button, buttonVariants } from "./button";
+
+import type * as React from "react";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
 	return (
@@ -19,7 +20,7 @@ function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) 
 	return (
 		<ul
 			data-slot="pagination-content"
-			className={cn("flex flex-row items-center gap-1", className)}
+			className={cn("flex flex-row items-center gap-2", className)}
 			{...props}
 		/>
 	);
@@ -34,7 +35,13 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
 	React.ComponentProps<"a">;
 
-function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
+function PaginationLink({
+	className,
+	isActive,
+	size = "icon",
+	children,
+	...props
+}: PaginationLinkProps) {
 	return (
 		<a
 			aria-current={isActive ? "page" : undefined}
@@ -48,7 +55,9 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
 				className,
 			)}
 			{...props}
-		/>
+		>
+			{children}
+		</a>
 	);
 }
 

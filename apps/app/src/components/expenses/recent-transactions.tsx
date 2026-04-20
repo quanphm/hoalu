@@ -15,15 +15,12 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@hoalu/ui/select";
 import { Separator } from "@hoalu/ui/separator";
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
 import { cn } from "@hoalu/ui/utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-
-const RECENT_TRANSACTIONS_LIMIT = 10;
 
 function formatDateLabel(dateStr: string): string {
 	const date = new Date(`${dateStr.slice(0, 10)}T00:00:00`);
@@ -91,7 +88,17 @@ const columns = [
 	}),
 	columnHelper.accessor("title", {
 		header: "Title",
-		cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+		cell: (info) => (
+			<span className="font-medium" title={info.getValue()}>
+				{info.getValue()}
+			</span>
+		),
+		meta: {
+			headerClassName:
+				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size)",
+			cellClassName:
+				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size) truncate",
+		},
 	}),
 	columnHelper.display({
 		id: "wallet",
@@ -108,8 +115,10 @@ const columns = [
 			);
 		},
 		meta: {
-			headerClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
-			cellClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+			headerClassName:
+				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size)",
+			cellClassName:
+				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size) ",
 		},
 	}),
 	columnHelper.display({
@@ -156,16 +165,14 @@ export function RecentTransactions() {
 			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 		);
 
-		// Filter based on active tab
+		// Filter based on active tab (no slice - pagination handles limiting)
 		if (activeTab === "expense") {
-			return allTransactions
-				.filter((t) => t.type === "expense")
-				.slice(0, RECENT_TRANSACTIONS_LIMIT);
+			return allTransactions.filter((t) => t.type === "expense");
 		}
 		if (activeTab === "income") {
-			return allTransactions.filter((t) => t.type === "income").slice(0, RECENT_TRANSACTIONS_LIMIT);
+			return allTransactions.filter((t) => t.type === "income");
 		}
-		return allTransactions.slice(0, RECENT_TRANSACTIONS_LIMIT);
+		return allTransactions;
 	}, [expenses, incomes, activeTab]);
 
 	return (
@@ -175,13 +182,13 @@ export function RecentTransactions() {
 				<SectionAction className="flex h-auto items-center gap-2">
 					<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TransactionTab)}>
 						<TabsList>
-							<TabsTab value="all" className="sm:h-7">
+							<TabsTab value="all" className="sm:h-6">
 								All
 							</TabsTab>
-							<TabsTab value="expense" className="sm:h-7">
+							<TabsTab value="expense" className="sm:h-6">
 								Expenses
 							</TabsTab>
-							<TabsTab value="income" className="sm:h-7">
+							<TabsTab value="income" className="sm:h-6">
 								Incomes
 							</TabsTab>
 						</TabsList>
@@ -197,7 +204,7 @@ export function RecentTransactions() {
 				</SectionAction>
 			</SectionHeader>
 			<SectionContent columns={1}>
-				<DataTable data={transactions} columns={columns} />
+				<DataTable data={transactions} columns={columns} enablePagination={true} />
 			</SectionContent>
 		</Section>
 	);
