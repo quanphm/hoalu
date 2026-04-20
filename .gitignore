@@ -1,5 +1,4 @@
 node_modules
-
 build
 dist
 dist-ssr
@@ -13,8 +12,11 @@ pg-data
 .next
 .tanstack
 .react-email
-.claude/worktrees
 references
+
+# claude code
+.claude/worktrees
+.claude/settings.local.json
 
 # debug
 npm-debug.log*

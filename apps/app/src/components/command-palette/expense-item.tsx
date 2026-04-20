@@ -13,7 +13,6 @@ interface ExpenseItemProps {
 	expense: ExpenseSearchResult;
 	autocompleteItem: AutocompleteItem;
 	itemIndex: number;
-	style: React.CSSProperties;
 	onClick: () => void;
 }
 
@@ -21,15 +20,13 @@ export function ExpenseItem({
 	expense,
 	autocompleteItem,
 	itemIndex,
-	style,
 	onClick,
 }: ExpenseItemProps) {
 	return (
 		<CommandItem
 			value={autocompleteItem.id}
 			index={itemIndex}
-			className="hover:bg-foreground/5 focus-visible:ring-ring absolute top-0 left-0 flex min-h-8 w-full cursor-default scroll-my-8 items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none focus-visible:ring-2"
-			style={style}
+			className="hover:bg-foreground/5 focus-visible:ring-ring flex min-h-8 w-full cursor-default scroll-my-8 items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none focus-visible:ring-2"
 			onClick={onClick}
 		>
 			<div className="flex flex-1 items-center justify-between gap-10 overflow-hidden">
