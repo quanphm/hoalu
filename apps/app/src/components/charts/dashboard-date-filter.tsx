@@ -33,6 +33,7 @@ import {
 } from "@hoalu/ui/select";
 import { cn } from "@hoalu/ui/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 
@@ -105,10 +106,20 @@ export function DashboardDateFilter() {
 }
 
 function ChartGroupByFilter() {
+	const dateRangeValue = useAtomValue(syncedDateRangeAtom);
 	const [groupBy, setGroupBy] = useAtom(chartGroupByAtom);
 	const handleGroupByChange = (value: ChartGroupBy | null) => {
 		setGroupBy(value ?? "month");
 	};
+
+	const customFrom = dateRangeValue.custom?.from;
+	const customTo = dateRangeValue.custom?.to;
+
+	useEffect(() => {
+		if (!customFrom || !customTo) return;
+		const diffDays = (customTo.getTime() - customFrom.getTime()) / (1000 * 60 * 60 * 24);
+		setGroupBy(diffDays > 30 ? "month" : "date");
+	}, [customFrom, customTo, setGroupBy]);
 
 	return (
 		<Select<ChartGroupBy> value={groupBy} onValueChange={handleGroupByChange}>

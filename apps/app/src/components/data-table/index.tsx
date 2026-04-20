@@ -35,7 +35,12 @@ interface DataTableProps<T extends TableRowData> {
 	/**
 	 * @default false
 	 */
-	enablePagination?: boolean;
+	paginationConfig?: {
+		enabled: boolean;
+		showPerPage?: boolean;
+		showPageNumberInfo?: boolean;
+		showNavigationButtons?: boolean;
+	};
 	/**
 	 * @default false
 	 */
@@ -58,8 +63,13 @@ export function DataTable<T extends TableRowData>({
 	columns,
 	onRowClick,
 	enableMultiRowSelection = false,
-	enablePagination = false,
 	enableGrouping = false,
+	paginationConfig = {
+		enabled: false,
+		showPerPage: true,
+		showPageNumberInfo: true,
+		showNavigationButtons: true,
+	},
 	initialState = {
 		expanded: true,
 	},
@@ -119,12 +129,12 @@ export function DataTable<T extends TableRowData>({
 		getFilteredRowModel: getFilteredRowModel(),
 		getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
 		getExpandedRowModel: enableGrouping ? getExpandedRowModel() : undefined,
-		getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+		getPaginationRowModel: paginationConfig.enabled ? getPaginationRowModel() : undefined,
 		getRowId: (row) => row.id,
 		enableMultiRowSelection,
 		onGroupingChange: enableGrouping ? setGrouping : () => undefined,
 		// onExpandedChange: enableGrouping ? handleExpendedChange : () => undefined,
-		onPaginationChange: enablePagination ? setPagination : () => undefined,
+		onPaginationChange: paginationConfig.enabled ? setPagination : () => undefined,
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
 		debugTable: false,
@@ -223,7 +233,7 @@ export function DataTable<T extends TableRowData>({
 	const showToolbar = !!enableGrouping;
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col">
 			{showToolbar && (
 				<div className="flex gap-4">
 					{enableGrouping && (
@@ -238,7 +248,6 @@ export function DataTable<T extends TableRowData>({
 					)}
 				</div>
 			)}
-
 			<div ref={tableContainerRef} className={cn("overflow-hidden", tableClassName)}>
 				<Table className="w-full">
 					<TableHeader>
@@ -279,8 +288,8 @@ export function DataTable<T extends TableRowData>({
 												cell.getIsGrouped() || cell.getIsAggregated() ? "grouped" : "cell"
 											}
 											className={cn(
-												cell.column.columnDef.meta?.cellClassName,
 												"group-has-data-[group=grouped]:bg-accent group-hover:group-has-data-[group=grouped]:bg-accent",
+												cell.column.columnDef.meta?.cellClassName,
 											)}
 										>
 											{cell.getIsGrouped() ? (
@@ -320,7 +329,11 @@ export function DataTable<T extends TableRowData>({
 					</TableBody>
 				</Table>
 			</div>
-			{enablePagination && <DataTablePagination table={table} />}
+			{paginationConfig.enabled && (
+				<div className="bg-card border-t px-4 py-3">
+					<DataTablePagination table={table} config={paginationConfig} />
+				</div>
+			)}
 		</div>
 	);
 }

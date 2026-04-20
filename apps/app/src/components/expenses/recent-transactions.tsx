@@ -15,12 +15,14 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import { Separator } from "@hoalu/ui/separator";
+import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
 import { cn } from "@hoalu/ui/utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
-const RECENT_TRANSACTIONS_LIMIT = 10;
+const RECENT_TRANSACTIONS_LIMIT = 20;
 
 function formatDateLabel(dateStr: string): string {
 	const date = new Date(`${dateStr.slice(0, 10)}T00:00:00`);
@@ -88,7 +90,17 @@ const columns = [
 	}),
 	columnHelper.accessor("title", {
 		header: "Title",
-		cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+		cell: (info) => (
+			<span className="font-medium" title={info.getValue()}>
+				{info.getValue()}
+			</span>
+		),
+		meta: {
+			headerClassName:
+				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size)",
+			cellClassName:
+				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size) truncate",
+		},
 	}),
 	columnHelper.display({
 		id: "wallet",
@@ -105,8 +117,10 @@ const columns = [
 			);
 		},
 		meta: {
-			headerClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
-			cellClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+			headerClassName:
+				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size)",
+			cellClassName:
+				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size) ",
 		},
 	}),
 	columnHelper.display({
@@ -131,10 +145,13 @@ const columns = [
 	}),
 ];
 
+type TransactionTab = "all" | "expense" | "income";
+
 export function RecentTransactions() {
 	const workspace = useWorkspace();
 	const expenses = useLiveQueryExpenses();
 	const incomes = useLiveQueryIncomes();
+	const [activeTab, setActiveTab] = useState<TransactionTab>("all");
 
 	const transactions = useMemo<Transaction[]>(() => {
 		const expenseTransactions: Transaction[] = expenses.map((e) => ({
@@ -146,19 +163,41 @@ export function RecentTransactions() {
 			type: "income" as const,
 		}));
 
-		return [...expenseTransactions, ...incomeTransactions]
+		const allTransactions = [...expenseTransactions, ...incomeTransactions]
 			.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 			.slice(0, RECENT_TRANSACTIONS_LIMIT);
-	}, [expenses, incomes]);
+
+		if (activeTab === "expense") {
+			return allTransactions.filter((t) => t.type === "expense");
+		}
+		if (activeTab === "income") {
+			return allTransactions.filter((t) => t.type === "income");
+		}
+		return allTransactions;
+	}, [expenses, incomes, activeTab]);
 
 	return (
 		<Section className="gap-0 border-t md:gap-0">
-			<SectionHeader className="px-4 py-3">
+			<SectionHeader className="p-4">
 				<SectionTitle className="text-md">Recent Transactions</SectionTitle>
-				<SectionAction>
+				<SectionAction className="flex h-auto items-center gap-2">
+					<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TransactionTab)}>
+						<TabsList>
+							<TabsTab value="all" className="sm:h-6">
+								All
+							</TabsTab>
+							<TabsTab value="expense" className="sm:h-6">
+								Expenses
+							</TabsTab>
+							<TabsTab value="income" className="sm:h-6">
+								Incomes
+							</TabsTab>
+						</TabsList>
+					</Tabs>
+					<Separator orientation="vertical" className="data-[orientation=vertical]:h-6" />
 					<Button
 						variant="outline"
-						size="xs"
+						size="sm"
 						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
 					>
 						View all
@@ -166,7 +205,16 @@ export function RecentTransactions() {
 				</SectionAction>
 			</SectionHeader>
 			<SectionContent columns={1}>
-				<DataTable data={transactions} columns={columns} />
+				<DataTable
+					data={transactions}
+					columns={columns}
+					paginationConfig={{
+						enabled: true,
+						showPerPage: false,
+						showPageNumberInfo: false,
+						showNavigationButtons: true,
+					}}
+				/>
 			</SectionContent>
 		</Section>
 	);

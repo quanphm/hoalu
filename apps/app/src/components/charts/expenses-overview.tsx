@@ -7,6 +7,7 @@ import {
 } from "#app/atoms/filters.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import { useIncomeStats } from "#app/components/incomes/use-incomes.ts";
+import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
 	filterDataByRange,
@@ -29,7 +30,7 @@ import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
 import { CurrencyValue } from "../currency-value.tsx";
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
@@ -210,6 +211,35 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	]);
 
 	const data = isCategoryMode ? categoryData : totalData;
+
+	// Calculate median value for the reference line (excluding zero days)
+	const medianValue = useMemo(() => {
+		if (data.length === 0) return 0;
+
+		let values: number[];
+
+		if (isCategoryMode) {
+			// For stacked bars, get total per day
+			values = (data as Record<string, number | string | boolean | undefined>[]).map((item) => {
+				return selectedCategoryIds.reduce((sum, catId) => {
+					return sum + ((item[catId] as number) || 0);
+				}, 0);
+			});
+		} else {
+			// For total mode, get all values
+			values = (data as { value: number }[]).map((item) => item.value);
+		}
+
+		// Filter out zero values (days with no spending)
+		const nonZeroValues = values.filter((v) => v > 0);
+		if (nonZeroValues.length === 0) return 0;
+
+		// Sort and find median
+		const sorted = nonZeroValues.sort((a, b) => a - b);
+		const mid = Math.floor(sorted.length / 2);
+
+		return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+	}, [data, isCategoryMode, selectedCategoryIds]);
 
 	// Calculate total: filtered by selected categories in category mode, or all expenses in total mode
 	const totalExpenses = useMemo(() => {
@@ -429,6 +459,56 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							axisLine={false}
 							tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
 						/>
+						{medianValue > 0 && (
+							<ReferenceLine
+								y={medianValue}
+								stroke="var(--foreground)"
+								strokeDasharray="0 4"
+								strokeLinecap="round"
+								strokeWidth={2}
+								opacity={0.72}
+								ifOverflow="extendDomain"
+								label={(props: { viewBox?: { x: number; y: number; width: number } }) => {
+									const { viewBox } = props;
+									if (!viewBox) return null;
+									const text = formatCurrency(medianValue, currency, {
+										style: "currency",
+										currencyDisplay: "narrowSymbol",
+									});
+									const px = 5;
+									const textWidth = text.length * 6.5;
+									const rectW = textWidth + px * 2;
+									const rectH = 16;
+									const x = viewBox.x + viewBox.width - rectW - 4;
+									const y = viewBox.y - rectH - 4;
+
+									return (
+										<g>
+											<rect
+												x={x}
+												y={y}
+												width={rectW}
+												height={rectH}
+												rx={3}
+												fill="var(--background)"
+												stroke="var(--border)"
+												strokeWidth={0.5}
+											/>
+											<text
+												x={x + px + 1}
+												y={y + rectH / 2 + 1}
+												dominantBaseline="middle"
+												fill="var(--foreground)"
+												fontSize={10}
+												fontWeight="bold"
+											>
+												{text}
+											</text>
+										</g>
+									);
+								}}
+							/>
+						)}
 						<ChartTooltip
 							content={({ active, payload, label }) => {
 								if (active && payload && payload.length && label) {
