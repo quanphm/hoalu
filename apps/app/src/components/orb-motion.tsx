@@ -99,14 +99,18 @@ export function PulseOrb({ corner = "top-right", trend, size = 220 }: PulseOrbPr
 	);
 }
 
-export function MoodGlow({ trend }: { trend: boolean }) {
+export function MoodGlow({ trend }: { trend: "increase" | "decrease" | "no-change" }) {
 	return (
 		<div
 			aria-hidden="true"
 			className={cn(
 				"pointer-events-none absolute -top-6 left-1/2 size-30 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
 				"motion-safe:animation-duration-[4s] motion-safe:animate-pulse",
-				trend ? "bg-success/30" : "bg-destructive/30",
+				trend === "increase"
+					? "bg-success/30"
+					: trend === "decrease"
+						? "bg-destructive/30"
+						: "bg-muted/30",
 			)}
 		/>
 	);

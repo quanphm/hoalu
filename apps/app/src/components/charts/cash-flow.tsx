@@ -168,15 +168,15 @@ function BoxAnimations({ status }: { status: "increase" | "decrease" | "no-chang
 	if (status === "increase") {
 		return (
 			<>
-				<ShineBorder duration={24} shineColor={["#7bf1a8", "#00a63e", "#032e15"]} />
-				<MoodGlow trend={true} />
+				<ShineBorder duration={24} shineColor={["#7bf1a8", "#032e15"]} />
+				<MoodGlow trend="increase" />
 			</>
 		);
 	}
 	return (
 		<>
-			<ShineBorder duration={24} shineColor={["#ffa2a2", "#e7000b", "#460809"]} />
-			<MoodGlow trend={false} />
+			<ShineBorder duration={24} shineColor={["#ffa2a2", "#460809"]} />
+			<MoodGlow trend="decrease" />
 		</>
 	);
 }
