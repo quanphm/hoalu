@@ -9,6 +9,7 @@ import { HEADER_HEIGHT, ITEM_HEIGHT, MAX_LIST_HEIGHT, VIRTUALIZER_OVERSCAN } fro
 import { ExpenseItem } from "./expense-item.tsx";
 import { HeaderItem } from "./header-item.tsx";
 import { RecurringBillItem } from "./recurring-bill-item.tsx";
+
 import type { AutocompleteItem, VirtualizedItem } from "./types.ts";
 
 interface VirtualizedListProps {
@@ -32,6 +33,7 @@ export function VirtualizedList({
 		count: items.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => (items[index].type === "header" ? HEADER_HEIGHT : ITEM_HEIGHT),
+		measureElement: (el) => el.getBoundingClientRect().height,
 		overscan: VIRTUALIZER_OVERSCAN,
 	});
 
@@ -80,72 +82,61 @@ export function VirtualizedList({
 				<div style={{ height: totalHeight }} className="relative w-full">
 					{virtualItems.map((virtualRow) => {
 						const item = items[virtualRow.index];
-						const style = { transform: `translateY(${virtualRow.start}px)` };
 
-						if (item.type === "header") {
-							return <HeaderItem key={`header-${item.label}`} label={item.label} style={style} />;
-						}
-
-						if (item.type === "expense") {
-							const expense = item.data;
-							const autocompleteItem = autocompleteItems[item.itemIndex];
-							return (
-								<ExpenseItem
-									key={expense.id}
-									expense={expense}
-									autocompleteItem={autocompleteItem}
-									itemIndex={item.itemIndex}
-									style={style}
-									onClick={() =>
-										runAction(() =>
-											navigate({
-												to: "/$slug/expenses",
-												params: { slug },
-												search: { id: expense.id },
-											}),
-										)
-									}
-								/>
-							);
-						}
-
-						if (item.type === "action") {
-							const action = item.data;
-							const autocompleteItem = autocompleteItems[item.itemIndex];
-							return (
-								<ActionItem
-									key={action.id}
-									action={action}
-									autocompleteItem={autocompleteItem}
-									itemIndex={item.itemIndex}
-									style={style}
-								/>
-							);
-						}
-
-						if (item.type === "upcoming-bill") {
-							const bill = item.data;
-							const autocompleteItem = autocompleteItems[item.itemIndex];
-							return (
-								<RecurringBillItem
-									key={`${bill.recurringBillId}-${bill.date}`}
-									bill={bill}
-									autocompleteItem={autocompleteItem}
-									itemIndex={item.itemIndex}
-									style={style}
-									onClick={() =>
-										runAction(() =>
-											navigate({
-												to: "/$slug/recurring-bills",
-												params: { slug },
-											}),
-										)
-									}
-								/>
-							);
-						}
-
-						return null;
+						return (
+							<div
+								key={virtualRow.key}
+								data-index={virtualRow.index}
+								ref={virtualizer.measureElement}
+								style={{
+									position: "absolute",
+									top: 0,
+									left: 0,
+									width: "100%",
+									transform: `translateY(${virtualRow.start}px)`,
+								}}
+							>
+								{item.type === "header" && <HeaderItem label={item.label} />}
+								{item.type === "expense" && (
+									<ExpenseItem
+										expense={item.data}
+										autocompleteItem={autocompleteItems[item.itemIndex]}
+										itemIndex={item.itemIndex}
+										onClick={() =>
+											runAction(() =>
+												navigate({
+													to: "/$slug/expenses",
+													params: { slug },
+													search: { id: item.data.id },
+												}),
+											)
+										}
+									/>
+								)}
+								{item.type === "action" && (
+									<ActionItem
+										action={item.data}
+										autocompleteItem={autocompleteItems[item.itemIndex]}
+										itemIndex={item.itemIndex}
+									/>
+								)}
+								{item.type === "upcoming-bill" && (
+									<RecurringBillItem
+										bill={item.data}
+										autocompleteItem={autocompleteItems[item.itemIndex]}
+										itemIndex={item.itemIndex}
+										onClick={() =>
+											runAction(() =>
+												navigate({
+													to: "/$slug/recurring-bills",
+													params: { slug },
+												}),
+											)
+										}
+									/>
+								)}
+							</div>
+						);
 					})}
 				</div>
 			</div>

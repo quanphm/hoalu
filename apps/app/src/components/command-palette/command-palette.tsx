@@ -20,9 +20,10 @@ import { useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { ActionItem, AutocompleteItem, UpcomingBillItem, VirtualizedItem } from "./types.ts";
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
+
+import type { ActionItem, AutocompleteItem, UpcomingBillItem, VirtualizedItem } from "./types.ts";
 
 interface CommandPaletteProps {
 	open: boolean;
@@ -37,7 +38,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const setCreateWalletDialog = useSetAtom(createWalletDialogAtom);
 	const setCreateCategoryDialog = useSetAtom(createCategoryDialogAtom);
 
-	const { filtered: filteredExpenses, recent: recentExpenses } = useExpenseSearch(slug, search);
+	const { filtered: filteredExpenses, recent: recentExpenses } = useExpenseSearch(
+		open ? slug : undefined,
+		search,
+	);
 	const isSearching = search.trim().length > 0;
 	const hasSearchResults = isSearching && filteredExpenses.length > 0;
 	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;

@@ -107,11 +107,12 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
 			const item = flattenExpenses[index];
-			if (shouldUseMobileLayout) {
-				return item.type === "group-header" ? 40 : 60;
-			}
-			return item.type === "group-header" ? 40 : 81;
+			if (item.type === "group-header") return 40;
+			if (shouldUseMobileLayout) return 60;
+			// Items with a description render taller — better cold estimate reduces drift.
+			return item.expense.description ? 81 : 60;
 		},
+		measureElement: (el) => el.getBoundingClientRect().height,
 		// Add padding at the bottom for mobile nav bar
 		paddingEnd: shouldUseMobileLayout ? MOBILE_NAV_HEIGHT : 0,
 	});
@@ -206,25 +207,29 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 			)}
 		>
 			<div style={{ height: `${virtualizer.getTotalSize()}px` }} className="relative w-full">
-				<div
-					style={{
-						transform: `translateY(${virtualExpenses[0]?.start ?? 0}px)`,
-					}}
-					className="absolute top-0 left-0 w-full"
-				>
-					{virtualExpenses.map((virtualRow) => {
-						const expense = flattenExpenses[virtualRow.index];
-						return (
-							<div key={virtualRow.key} data-index={virtualRow.index}>
-								{expense.type === "group-header" ? (
-									<GroupHeader date={expense.date} total={expense.total} />
-								) : (
-									<ExpenseContent {...expense.expense} onClick={onSelectExpense} />
-								)}
-							</div>
-						);
-					})}
-				</div>
+				{virtualExpenses.map((virtualRow) => {
+					const item = flattenExpenses[virtualRow.index];
+					return (
+						<div
+							key={virtualRow.key}
+							data-index={virtualRow.index}
+							ref={virtualizer.measureElement}
+							style={{
+								position: "absolute",
+								top: 0,
+								left: 0,
+								width: "100%",
+								transform: `translateY(${virtualRow.start}px)`,
+							}}
+						>
+							{item.type === "group-header" ? (
+								<GroupHeader date={item.date} total={item.total} />
+							) : (
+								<ExpenseContent {...item.expense} onClick={onSelectExpense} />
+							)}
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);
