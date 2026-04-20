@@ -1,6 +1,7 @@
-import type { ExpenseFormSchema } from "#app/lib/schema.ts";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+
+import type { ExpenseFormSchema } from "#app/lib/schema.ts";
 
 /**
  * Holds the original high-res receipt files captured during OCR scan.
@@ -54,4 +55,21 @@ const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillI
  */
 const scannedReceiptJobIdAtom = atom<string | null>(null);
 
-export { draftExpenseAtom, selectedExpenseAtom, logPaymentAtom, scannedReceiptAtom, scannedReceiptsAtom, scannedReceiptJobIdAtom };
+/**
+ * Tracks the quick expense queue job ID that produced the current draft expense.
+ * Written by QuickExpenseJobItem in queue-panel when the user clicks "Review".
+ * Read and cleared by CreateExpenseForm after the expense is successfully created,
+ * so the originating quick expense job is removed from the queue automatically.
+ * In-memory only — no persistence needed (transient handoff between components).
+ */
+const quickExpenseJobIdAtom = atom<string | null>(null);
+
+export {
+	draftExpenseAtom,
+	selectedExpenseAtom,
+	logPaymentAtom,
+	scannedReceiptAtom,
+	scannedReceiptsAtom,
+	scannedReceiptJobIdAtom,
+	quickExpenseJobIdAtom,
+};

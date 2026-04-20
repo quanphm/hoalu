@@ -6,6 +6,7 @@ import {
 	scannedReceiptsAtom,
 	scannedReceiptJobIdAtom,
 	searchKeywordsAtom,
+	quickExpenseJobIdAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
@@ -21,6 +22,7 @@ import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { quickExpenseQueue } from "#app/lib/queues/quick-expense-queue.ts";
 import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
 import { ExpenseFormSchema } from "#app/lib/schema.ts";
 import {
@@ -104,7 +106,9 @@ function CreateExpenseForm() {
 	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
 	const [scannedReceipts, setScannedReceipts] = useAtom(scannedReceiptsAtom);
 	const [scannedReceiptJobId, setScannedReceiptJobId] = useAtom(scannedReceiptJobIdAtom);
-	const removeJob = useSetAtom(receiptScanQueue.remove);
+	const [quickExpenseJobId, setQuickExpenseJobId] = useAtom(quickExpenseJobIdAtom);
+	const removeReceiptJob = useSetAtom(receiptScanQueue.remove);
+	const removeQuickExpenseJob = useSetAtom(quickExpenseQueue.remove);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
@@ -212,8 +216,12 @@ function CreateExpenseForm() {
 			setLogPayment({ recurringBillId: null });
 			setScannedReceipts([]);
 			if (scannedReceiptJobId) {
-				removeJob(scannedReceiptJobId);
+				removeReceiptJob(scannedReceiptJobId);
 				setScannedReceiptJobId(null);
+			}
+			if (quickExpenseJobId) {
+				removeQuickExpenseJob(quickExpenseJobId);
+				setQuickExpenseJobId(null);
 			}
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);

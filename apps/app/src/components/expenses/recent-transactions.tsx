@@ -2,13 +2,19 @@ import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import { Section } from "#app/components/layouts/section.tsx";
+import {
+	Section,
+	SectionContent,
+	SectionHeader,
+	SectionTitle,
+	SectionAction,
+} from "#app/components/layouts/section.tsx";
+import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import { Frame, FrameAction, FrameHeader, FrameTitle } from "@hoalu/ui/frame";
 import { cn } from "@hoalu/ui/utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -44,6 +50,12 @@ const columns = [
 			const date = info.getValue();
 			return <span className="text-muted-foreground text-sm">{formatDateLabel(date)}</span>;
 		},
+		meta: {
+			headerClassName:
+				"w-(--date-size) min-w-(--date-size) max-w-(--date-size) text-left whitespace-nowrap",
+			cellClassName:
+				"w-(--date-size) min-w-(--date-size) max-w-(--date-size) text-left whitespace-nowrap",
+		},
 	}),
 	columnHelper.display({
 		id: "category",
@@ -67,10 +79,35 @@ const columns = [
 				</div>
 			);
 		},
+		meta: {
+			headerClassName:
+				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
+			cellClassName:
+				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
+		},
 	}),
 	columnHelper.accessor("title", {
 		header: "Title",
 		cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+	}),
+	columnHelper.display({
+		id: "wallet",
+		header: "Wallet",
+		cell: (info) => {
+			const transaction = info.row.original;
+			if (!transaction.wallet?.name || !transaction.wallet?.type) {
+				return <span className="text-muted-foreground text-sm">—</span>;
+			}
+			return (
+				<div className="flex h-5 items-center">
+					<WalletBadge name={transaction.wallet.name} type={transaction.wallet.type} />
+				</div>
+			);
+		},
+		meta: {
+			headerClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+			cellClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+		},
 	}),
 	columnHelper.display({
 		id: "amount",
@@ -83,7 +120,7 @@ const columns = [
 					currency={transaction.currency}
 					prefix={transaction.type === "expense" ? "-" : "+"}
 					style="currency"
-					className={cn("text-sm", transaction.type === "income" && "text-success")}
+					className={cn("text-sm font-semibold", transaction.type === "income" && "text-success")}
 				/>
 			);
 		},
@@ -115,22 +152,22 @@ export function RecentTransactions() {
 	}, [expenses, incomes]);
 
 	return (
-		<Section className="border-t">
-			<Frame>
-				<FrameHeader className="pb-0">
-					<FrameTitle>Recent Transactions</FrameTitle>
-					<FrameAction>
-						<Button
-							variant="outline"
-							size="xs"
-							render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
-						>
-							View all
-						</Button>
-					</FrameAction>
-				</FrameHeader>
+		<Section className="gap-0 border-t md:gap-0">
+			<SectionHeader className="px-4 py-3">
+				<SectionTitle className="text-md">Recent Transactions</SectionTitle>
+				<SectionAction>
+					<Button
+						variant="outline"
+						size="xs"
+						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
+					>
+						View all
+					</Button>
+				</SectionAction>
+			</SectionHeader>
+			<SectionContent columns={1}>
 				<DataTable data={transactions} columns={columns} />
-			</Frame>
+			</SectionContent>
 		</Section>
 	);
 }

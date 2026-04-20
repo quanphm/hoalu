@@ -11,7 +11,6 @@ import { MembersTable } from "#app/components/members-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import { getActiveMemberOptions, listInvitationsOptions } from "#app/services/query-options.ts";
-import { Frame } from "@hoalu/ui/frame";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
@@ -57,9 +56,7 @@ function RouteComponent() {
 					<SectionAction>{canInvite && <InviteDialog />}</SectionAction>
 				</SectionHeader>
 				<SectionContent>
-					<Frame>
-						<MembersTable data={membersTableData} />
-					</Frame>
+					<MembersTable data={membersTableData} />
 				</SectionContent>
 			</Section>
 
@@ -68,11 +65,9 @@ function RouteComponent() {
 					<SectionTitle>Invitations</SectionTitle>
 				</SectionHeader>
 				<SectionContent>
-					<Frame>
-						<Suspense>
-							<InvitationsTable data={invitationTableData || []} />
-						</Suspense>
-					</Frame>
+					<Suspense>
+						<InvitationsTable data={invitationTableData || []} />
+					</Suspense>
 				</SectionContent>
 			</Section>
 		</>

@@ -48,13 +48,19 @@ export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptScanRes
 					input.feedback,
 					input.conversationHistory,
 				);
+				if (!result.data) {
+					throw new Error("Could not extract receipt data. The image may be unclear or not a valid receipt.");
+				}
 				return result as ReceiptScanResult;
 			}
 			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [
 				input.encodedBase64,
 			]);
 			const first = results[0] as ReceiptScanResult | undefined;
-			return first ?? { data: null, conversationHistory: [] };
+			if (!first?.data) {
+				throw new Error("Could not extract receipt data. The image may be unclear or not a valid receipt.");
+			}
+			return first;
 		},
 	},
 });

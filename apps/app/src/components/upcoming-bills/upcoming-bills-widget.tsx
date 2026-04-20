@@ -22,7 +22,7 @@ export function UpcomingBillsWidget() {
 						<span className="text-foreground text-xl font-semibold">{totalCount}</span>
 					</CardDescription>
 				)}
-				{/* <CardDescription>Overdue, today, next 30 days and yearly bills</CardDescription> */}
+				<CardDescription>Next 30 days, yearly and overdue bills</CardDescription>
 			</CardHeader>
 			<CardContent className="min-h-0 flex-1 overflow-y-auto">
 				<UpcomingBillsList

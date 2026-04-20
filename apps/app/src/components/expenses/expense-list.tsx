@@ -24,12 +24,15 @@ type ExpenseItem = {
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	expenses: SyncedExpense[];
+	total: number;
 };
 
 type VirtualItem = ExpenseItem | GroupHeaderItem;
 
-function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
+function GroupHeader({ date, total }: Omit<GroupHeaderItem, "type">) {
+	const {
+		metadata: { currency: workspaceCurrency },
+	} = useWorkspace();
 	const isToday = datetime.format(new Date(), "yyyy-MM-dd") === date;
 
 	return (
@@ -42,29 +45,13 @@ function GroupHeader({ date, expenses }: Omit<GroupHeaderItem, "type">) {
 				{isToday && <Badge className="ml-1">Today</Badge>}
 			</div>
 			<div className="ml-auto">
-				<TotalExpenseByDate data={expenses} />
+				<CurrencyValue
+					value={total}
+					currency={workspaceCurrency}
+					className="text-destructive font-semibold"
+				/>
 			</div>
 		</div>
-	);
-}
-
-function TotalExpenseByDate(props: { data: SyncedExpense[] }) {
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
-	const total = props.data.reduce((sum, current) => {
-		const value = current.convertedAmount;
-		// convertedAmount can be -1 when conversion fails (see expenses query).
-		// Exclude negatives from the total.
-		return sum + (typeof value === "number" && value >= 0 ? value : 0);
-	}, 0);
-
-	return (
-		<CurrencyValue
-			value={total}
-			currency={workspaceCurrency}
-			className="text-destructive font-semibold"
-		/>
 	);
 }
 
@@ -99,17 +86,15 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 
 		const items: VirtualItem[] = [];
 		Array.from(grouped.entries()).forEach(([date, groupExpenses]) => {
-			items.push({
-				type: "group-header",
-				date,
-				expenses: groupExpenses,
-			});
+			let total = 0;
+			for (const e of groupExpenses) {
+				const v = e.convertedAmount;
+				// convertedAmount can be -1 when conversion fails — exclude negatives.
+				if (typeof v === "number" && v >= 0) total += v;
+			}
+			items.push({ type: "group-header", date, total });
 			groupExpenses.forEach((expense) => {
-				items.push({
-					type: "expense",
-					date,
-					expense,
-				});
+				items.push({ type: "expense", date, expense });
 			});
 		});
 
@@ -232,7 +217,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 						return (
 							<div key={virtualRow.key} data-index={virtualRow.index}>
 								{expense.type === "group-header" ? (
-									<GroupHeader date={expense.date} expenses={expense.expenses} />
+									<GroupHeader date={expense.date} total={expense.total} />
 								) : (
 									<ExpenseContent {...expense.expense} onClick={onSelectExpense} />
 								)}

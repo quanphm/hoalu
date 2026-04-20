@@ -1,0 +1,27 @@
+@theme inline {
+	--animate-shine: shine var(--duration) infinite linear;
+	@keyframes shine {
+		0% {
+			background-position: 0% 0%;
+		}
+		50% {
+			background-position: 100% 100%;
+		}
+		to {
+			background-position: 0% 0%;
+		}
+	}
+
+	--animate-scanline: scanline 1.6s ease-in-out infinite;
+	@keyframes scanline {
+		0%,
+		100% {
+			top: 2px;
+			opacity: 0.6;
+		}
+		50% {
+			top: calc(100% - 4px);
+			opacity: 1;
+		}
+	}
+}

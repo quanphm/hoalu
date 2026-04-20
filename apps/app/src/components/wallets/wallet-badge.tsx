@@ -1,7 +1,8 @@
 import { createWalletTheme } from "#app/helpers/colors.ts";
-import type { WalletTypeSchema } from "@hoalu/common/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
+
+import type { WalletTypeSchema } from "@hoalu/common/schema";
 
 interface WalletCommonProps {
 	name: string;
@@ -10,7 +11,7 @@ interface WalletCommonProps {
 
 export function WalletBadge(props: WalletCommonProps) {
 	return (
-		<Badge className="gap-1.5 bg-transparent">
+		<Badge className="flex gap-1.5 bg-transparent">
 			<WalletLabel {...props} />
 		</Badge>
 	);
