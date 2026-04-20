@@ -152,7 +152,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		const billItems = hasUpcomingBills
 			? upcomingBills.map((b) => ({ id: b.recurringBillId, title: b.title }))
 			: [];
-		const actionItems = actions.map((a) => ({ id: a.id, label: a.label }));
+		// Exclude actions from keyboard nav when searching — they aren't rendered in the virtual list
+		const actionItems = !hasSearchResults ? actions.map((a) => ({ id: a.id, label: a.label })) : [];
 		return [...expenseItems, ...billItems, ...actionItems];
 	}, [
 		hasSearchResults,
@@ -166,6 +167,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
 	// Ref to hold the scroll function from VirtualizedList
 	const scrollToItemRef = useRef<((itemIndex: number) => void) | null>(null);
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+	const highlightedIndexRef = useRef<number>(-1);
 
 	// Use ref to avoid recreating callback on autocompleteItems changes (rerender-defer-reads)
 	const autocompleteItemsRef = useRef(autocompleteItems);
@@ -173,20 +176,32 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		autocompleteItemsRef.current = autocompleteItems;
 	}, [autocompleteItems]);
 
-	// Handle keyboard navigation - scroll to highlighted item
-	const handleItemHighlighted = useCallback(
-		(highlightedValue: unknown, eventDetails: { reason: string }) => {
-			if (eventDetails.reason === "keyboard" && highlightedValue) {
-				const itemId = highlightedValue as string;
-				// Find the index of the highlighted item in autocompleteItems
-				const itemIndex = autocompleteItemsRef.current.findIndex((item) => item.id === itemId);
-				if (itemIndex !== -1 && scrollToItemRef.current) {
-					scrollToItemRef.current(itemIndex);
-				}
-			}
-		},
-		[],
-	);
+	const handleItemHighlighted = useCallback((highlightedValue: unknown) => {
+		if (!highlightedValue) {
+			highlightedIndexRef.current = -1;
+			return;
+		}
+		// highlightedValue is the full AutocompleteItem object from the items array
+		const id = (highlightedValue as { id?: string }).id;
+		const idx = autocompleteItemsRef.current.findIndex((item) => item.id === id);
+		highlightedIndexRef.current = idx;
+	}, []);
+
+	// Fires in capture phase — before base-ui processes the arrow key.
+	// Scrolls the virtual list to show the wrap target before the highlight moves.
+	const handleWrapScroll = useCallback((e: React.KeyboardEvent) => {
+		if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+		const container = scrollContainerRef.current;
+		if (!container) return;
+		const total = autocompleteItemsRef.current.length;
+		if (total === 0) return;
+		const idx = highlightedIndexRef.current;
+		if (e.key === "ArrowUp" && idx === 0) {
+			container.scrollTop = container.scrollHeight;
+		} else if (e.key === "ArrowDown" && idx === total - 1) {
+			container.scrollTop = 0;
+		}
+	}, []);
 
 	return (
 		<CommandDialog
@@ -196,7 +211,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 				if (!openState) setSearch("");
 			}}
 		>
-			<CommandDialogPopup className="max-w-2xl">
+			<CommandDialogPopup className="max-w-2xl" onKeyDownCapture={handleWrapScroll}>
 				<Command
 					items={autocompleteItems}
 					value={search}
@@ -212,6 +227,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 							autocompleteItems={autocompleteItems}
 							runAction={runAction}
 							scrollToItemRef={scrollToItemRef}
+							scrollContainerRef={scrollContainerRef}
 						/>
 					</CommandPanel>
 

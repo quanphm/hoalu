@@ -17,6 +17,7 @@ interface VirtualizedListProps {
 	autocompleteItems: AutocompleteItem[];
 	runAction: (action: () => void) => void;
 	scrollToItemRef: React.MutableRefObject<((itemIndex: number) => void) | null>;
+	scrollContainerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export function VirtualizedList({
@@ -24,6 +25,7 @@ export function VirtualizedList({
 	autocompleteItems,
 	runAction,
 	scrollToItemRef,
+	scrollContainerRef,
 }: VirtualizedListProps) {
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
@@ -45,7 +47,7 @@ export function VirtualizedList({
 				(item) => item.type !== "header" && item.itemIndex === itemIndex,
 			);
 			if (virtualIndex !== -1) {
-				virtualizer.scrollToIndex(virtualIndex, { align: "auto" });
+				virtualizer.scrollToIndex(virtualIndex, { align: "center", behavior: "instant" });
 			}
 		};
 
@@ -72,7 +74,10 @@ export function VirtualizedList({
 	return (
 		<CommandList className="p-0!">
 			<div
-				ref={parentRef}
+				ref={(el) => {
+					parentRef.current = el;
+					scrollContainerRef.current = el;
+				}}
 				style={{ height: containerHeight }}
 				className={cn(
 					"relative w-full overflow-x-hidden p-2",
