@@ -5,20 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
 
 const buttonVariants = cva(
-	"focus-visible:ring-ring focus-visible:ring-offset-background relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] focus-visible:ring-2 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+	"focus-visible:ring-ring focus-visible:ring-offset-background relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] focus-visible:ring-2 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 transition duration-150 ease-out active:scale-[0.97]",
 	{
 		variants: {
 			variant: {
-				default: "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
+				default:
+					"border-primary bg-primary text-primary-foreground [@media(hover:hover)_and_(pointer:fine)]:hover:bg-primary/90 data-pressed:bg-primary/90",
 				outline:
-					"border-input bg-background dark:bg-input/32 [&:is(:hover,[data-pressed])]:bg-accent/50 dark:[&:is(:hover,[data-pressed])]:bg-input/64",
+					"border-input bg-background dark:bg-input/32 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-accent/50 dark:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-input/64 data-pressed:bg-accent/50 dark:data-pressed:bg-input/64",
 				secondary:
-					"border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 data-pressed:bg-secondary/90",
-				destructive: "border-destructive bg-destructive hover:bg-destructive/90 text-white",
+					"border-secondary bg-secondary text-secondary-foreground [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary/90 data-pressed:bg-secondary/90",
+				destructive:
+					"border-destructive bg-destructive [@media(hover:hover)_and_(pointer:fine)]:hover:bg-destructive/90 data-pressed:bg-destructive/90 text-white",
 				"destructive-outline":
-					"border-border text-destructive-foreground dark:bg-input/32 [&:is(:hover,[data-pressed])]:border-destructive/32 [&:is(:hover,[data-pressed])]:bg-destructive/4 bg-transparent",
-				ghost: "hover:bg-accent data-pressed:bg-accent border-transparent",
-				link: "border-transparent underline-offset-4 hover:underline",
+					"border-border text-destructive-foreground dark:bg-input/32 [@media(hover:hover)_and_(pointer:fine)]:hover:border-destructive/32 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-destructive/4 data-pressed:border-destructive/32 data-pressed:bg-destructive/4 bg-transparent",
+				ghost: "[@media(hover:hover)_and_(pointer:fine)]:hover:bg-accent data-pressed:bg-accent border-transparent",
+				link: "border-transparent underline-offset-4 [@media(hover:hover)_and_(pointer:fine)]:hover:underline",
 			},
 			size: {
 				default: "h-9 px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)]",

@@ -71,7 +71,7 @@ function SectionTitle({ className, ref, children, ...props }: React.ComponentPro
 	return (
 		<h2
 			data-slot="section-title"
-			className={cn("self-center text-lg leading-none font-medium", className)}
+			className={cn("self-center text-lg leading-none font-medium text-balance", className)}
 			{...props}
 		>
 			{children}
@@ -83,7 +83,7 @@ function SectionDescription({ className, ref, ...props }: React.ComponentPropsWi
 	return (
 		<p
 			data-slot="section-description"
-			className={cn("text-muted-foreground text-sm", className)}
+			className={cn("text-muted-foreground text-sm text-pretty", className)}
 			{...props}
 		/>
 	);
