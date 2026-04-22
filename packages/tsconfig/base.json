@@ -12,13 +12,14 @@
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
-		"noUnusedParameters": false,
 		"preserveWatchOutput": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"strictNullChecks": true,
 		"noEmit": true,
-		"noUnusedLocals": false
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true
 	},
 	"exclude": ["node_modules"]
 }
