@@ -63,7 +63,7 @@ function DialogPopup({
 		<DialogPrimitive.Popup
 			data-slot="dialog-popup"
 			className={cn(
-				"bg-background relative z-50 row-start-2 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border p-6 shadow-lg transition-[transform,opacity] duration-200 ease-out data-closed:duration-150 data-ending-style:scale-[0.95] data-ending-style:opacity-0 data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] data-starting-style:scale-[0.95] data-starting-style:opacity-0 sm:max-w-lg dark:outline-gray-300",
+				"bg-background relative z-50 row-start-2 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border p-6 shadow-lg transition-[scale,opacity] duration-200 ease-out data-closed:duration-150 data-ending-style:scale-[0.95] data-ending-style:opacity-0 data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] data-starting-style:scale-[0.95] data-starting-style:opacity-0 sm:max-w-lg dark:outline-gray-300",
 				"data-nested-dialog-open:after:bg-black/20 data-nested-dialog-open:after:backdrop-blur-xs sm:scale-[calc(1-0.1*var(--nested-dialogs))]",
 				className,
 			)}
