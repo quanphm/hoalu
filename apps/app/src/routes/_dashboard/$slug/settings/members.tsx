@@ -1,5 +1,6 @@
 import { InvitationsTable } from "#app/components/invitations-table.tsx";
 import { InviteDialog } from "#app/components/invite.tsx";
+import { PageContent } from "#app/components/layouts/page-content.tsx";
 import {
 	Section,
 	SectionAction,
@@ -7,6 +8,12 @@ import {
 	SectionHeader,
 	SectionTitle,
 } from "#app/components/layouts/section.tsx";
+import {
+	Toolbar,
+	ToolbarActions,
+	ToolbarGroup,
+	ToolbarTitle,
+} from "#app/components/layouts/toolbar.tsx";
 import { MembersTable } from "#app/components/members-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { authClient } from "#app/lib/auth-client.ts";
@@ -15,7 +22,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-export const Route = createFileRoute("/_dashboard/$slug/_normal/settings/members")({
+export const Route = createFileRoute("/_dashboard/$slug/settings/members")({
 	component: RouteComponent,
 });
 
@@ -50,26 +57,34 @@ function RouteComponent() {
 
 	return (
 		<>
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Members</SectionTitle>
-					<SectionAction>{canInvite && <InviteDialog />}</SectionAction>
-				</SectionHeader>
-				<SectionContent>
-					<MembersTable data={membersTableData} />
-				</SectionContent>
-			</Section>
+			<Toolbar>
+				<ToolbarGroup>
+					<ToolbarTitle>Members</ToolbarTitle>
+				</ToolbarGroup>
+				<ToolbarActions>{canInvite && <InviteDialog />}</ToolbarActions>
+			</Toolbar>
 
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Invitations</SectionTitle>
-				</SectionHeader>
-				<SectionContent>
-					<Suspense>
-						<InvitationsTable data={invitationTableData || []} />
-					</Suspense>
-				</SectionContent>
-			</Section>
+			<PageContent>
+				<Section>
+					<SectionHeader>
+						<SectionTitle>Members</SectionTitle>
+					</SectionHeader>
+					<SectionContent>
+						<MembersTable data={membersTableData} />
+					</SectionContent>
+				</Section>
+
+				<Section>
+					<SectionHeader>
+						<SectionTitle>Invitations</SectionTitle>
+					</SectionHeader>
+					<SectionContent>
+						<Suspense>
+							<InvitationsTable data={invitationTableData || []} />
+						</Suspense>
+					</SectionContent>
+				</Section>
+			</PageContent>
 		</>
 	);
 }

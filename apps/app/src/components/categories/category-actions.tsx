@@ -11,7 +11,6 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CategoryFormSchema } from "#app/lib/schema.ts";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
 import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
-import type { ColorSchema } from "@hoalu/common/schema";
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -29,11 +28,13 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 import { WarningMessage } from "../warning-message";
 
+import type { ColorSchema } from "@hoalu/common/schema";
+
 export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 
 	return (
-		<Button variant="outline" onClick={() => setDialog({ state: true })}>
+		<Button size="sm" variant="outline" onClick={() => setDialog({ state: true })}>
 			Create category
 			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
 		</Button>

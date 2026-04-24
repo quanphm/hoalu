@@ -5,6 +5,7 @@ import {
 	incomeWalletFilterAtom,
 	incomeSearchKeywordsAtom,
 } from "#app/atoms/income-filters.ts";
+import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { CreateIncomeDialogTrigger } from "#app/components/incomes/income-actions.tsx";
 import { IncomeDetails, MobileIncomeDetails } from "#app/components/incomes/income-details.tsx";
 import { IncomeFilterDropdown } from "#app/components/incomes/income-filter-dropdown.tsx";
@@ -14,15 +15,19 @@ import {
 	useLiveQueryIncomes,
 	useSelectedIncome,
 } from "#app/components/incomes/use-incomes.ts";
+import { PageContent } from "#app/components/layouts/page-content.tsx";
+import { Section, SectionContent, SectionItem } from "#app/components/layouts/section.tsx";
 import {
-	Section,
-	SectionAction,
-	SectionContent,
-	SectionHeader,
-	SectionItem,
-	SectionTitle,
-} from "#app/components/layouts/section.tsx";
+	Toolbar,
+	ToolbarActions,
+	ToolbarGroup,
+	ToolbarSeparator,
+	ToolbarTitle,
+} from "#app/components/layouts/toolbar.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
+import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
+import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { toFromToDateObject } from "@hoalu/common/datetime";
 import { createFileRoute } from "@tanstack/react-router";
@@ -35,7 +40,7 @@ const searchSchema = z.object({
 	id: z.optional(z.string()),
 });
 
-export const Route = createFileRoute("/_dashboard/$slug/_normal/incomes")({
+export const Route = createFileRoute("/_dashboard/$slug/incomes")({
 	validateSearch: searchSchema,
 	component: RouteComponent,
 });
@@ -71,42 +76,52 @@ function RouteComponent() {
 	});
 
 	return (
-		<Section className="-mb-8">
-			<SectionHeader>
-				<SectionTitle>Income</SectionTitle>
-				<SectionAction className="flex items-center gap-2">
+		<>
+			<Toolbar>
+				<ToolbarGroup>
+					<ToolbarTitle>Incomes</ToolbarTitle>
+				</ToolbarGroup>
+				<ToolbarActions>
+					<ScanReceiptDialogTrigger />
+					<QuickExpensesDialogTrigger />
 					<CreateIncomeDialogTrigger />
-				</SectionAction>
-			</SectionHeader>
+					<CreateExpenseDialogTrigger />
+					<ToolbarSeparator />
+					<RedactedAmountToggle />
+				</ToolbarActions>
+			</Toolbar>
 
-			<IncomeFilterDropdown />
+			<PageContent>
+				<Section>
+					<IncomeFilterDropdown />
+					<SectionContent
+						columns={12}
+						className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
+					>
+						<SectionItem
+							data-slot="income-list"
+							desktopSpan="col-span-6"
+							tabletSpan={1}
+							mobileOrder={1}
+						>
+							<IncomeList incomes={filteredIncomes} />
+						</SectionItem>
 
-			<SectionContent
-				columns={12}
-				className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden max-md:h-[calc(100vh-84px-62px)] md:gap-0"
-			>
-				<SectionItem
-					data-slot="income-list"
-					desktopSpan="col-span-6"
-					tabletSpan={1}
-					mobileOrder={1}
-				>
-					<IncomeList incomes={filteredIncomes} />
-				</SectionItem>
+						<SectionItem
+							data-slot="income-details"
+							desktopSpan="col-span-6"
+							tabletSpan={1}
+							mobileOrder={2}
+							hideOnMobile
+						>
+							<IncomeDetails incomes={filteredIncomes} />
+						</SectionItem>
+					</SectionContent>
 
-				<SectionItem
-					data-slot="income-details"
-					desktopSpan="col-span-6"
-					tabletSpan={1}
-					mobileOrder={2}
-					hideOnMobile
-				>
-					<IncomeDetails incomes={filteredIncomes} />
-				</SectionItem>
-			</SectionContent>
-
-			{shouldUseMobileLayout && <MobileIncomeDetails incomes={filteredIncomes} />}
-		</Section>
+					{shouldUseMobileLayout && <MobileIncomeDetails incomes={filteredIncomes} />}
+				</Section>
+			</PageContent>
+		</>
 	);
 }
 

@@ -16,7 +16,6 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
 import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
-import type { WalletTypeSchema } from "@hoalu/common/schema";
 import {
 	BitcoinIcon,
 	WalletIcon as CashIcon,
@@ -45,11 +44,13 @@ import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
+import type { WalletTypeSchema } from "@hoalu/common/schema";
+
 export function CreateWalletDialogTrigger() {
 	const setDialog = useSetAtom(createWalletDialogAtom);
 
 	return (
-		<Button variant="outline" onClick={() => setDialog({ state: true })}>
+		<Button size="sm" variant="outline" onClick={() => setDialog({ state: true })}>
 			Create wallet
 			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
 		</Button>

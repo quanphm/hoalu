@@ -62,25 +62,6 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
-						{/* <SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/tasks"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-									/>
-								}
-								tooltip="Tasks"
-							>
-								<AlignBoxTopCenterIcon />
-								<span>Tasks</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem> */}
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>
