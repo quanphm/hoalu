@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_dashboard/$slug/_normal")({
 
 function RouteComponent() {
 	return (
-		<PageContent>
+		<PageContent className="gap-0! p-0!">
 			<Outlet />
 		</PageContent>
 	);

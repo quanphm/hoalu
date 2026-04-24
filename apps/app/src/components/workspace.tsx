@@ -15,8 +15,9 @@ import {
 import { workspaceLogoOptions } from "#app/services/query-options.ts";
 import { slugify } from "@hoalu/common/slugify";
 import { tryCatch } from "@hoalu/common/try-catch";
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
-import { Button } from "@hoalu/ui/button";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
@@ -26,6 +27,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { useSetAtom } from "jotai";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
+
+export function CreateWorkspaceTrigger({
+	showKbd = true,
+	...props
+}: ButtonProps & { showKbd?: boolean }) {
+	const setDialog = useSetAtom(createWorkspaceDialogAtom);
+
+	return (
+		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
+			<PlusIcon className="size-3.5" />
+			New workspace
+		</Button>
+	);
+}
 
 export function CreateWorkspaceDialogContent() {
 	return (

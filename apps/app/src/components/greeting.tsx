@@ -26,13 +26,13 @@ export function Greeting() {
 
 	const icon =
 		currentHours > 4 && currentHours < 12 ? (
-			<ClearDayIcon className="-ml-2 inline size-10" />
+			<ClearDayIcon className="-ml-2 inline size-8" />
 		) : currentHours < 18 ? (
-			<PartlyCloudyDayIcon className="-ml-2 inline size-10" />
+			<PartlyCloudyDayIcon className="-ml-2 inline size-8" />
 		) : currentHours < 21 ? (
-			<PartlyCloudyNightIcon className="-ml-2 inline size-10" />
+			<PartlyCloudyNightIcon className="-ml-2 inline size-8" />
 		) : (
-			<StarryNightIcon className="-ml-2 inline size-10" />
+			<StarryNightIcon className="-ml-2 inline size-8" />
 		);
 
 	const message =
@@ -47,7 +47,7 @@ export function Greeting() {
 	const today = Date.now();
 
 	return (
-		<div className="space-y-2">
+		<div className="space-y-0">
 			<p className="text-muted-foreground text-base tracking-wide">
 				{icon} {datetime.format(today, "EEEE, d MMM HH:mm")}
 			</p>

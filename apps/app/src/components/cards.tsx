@@ -1,9 +1,5 @@
-import { formatNumber } from "#app/helpers/number.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { monetary } from "@hoalu/common/monetary";
-import { AlertTriangleIcon, WalletIcon as WalletLucideIcon } from "@hoalu/icons/lucide";
-import { ArrowsExchangeIcon } from "@hoalu/icons/tabler";
-import { Badge } from "@hoalu/ui/badge";
+import { ArrowRightIcon } from "@hoalu/icons/lucide";
 import {
 	Card,
 	CardAction,
@@ -13,9 +9,10 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
+import { cn } from "@hoalu/ui/utils";
 
-import { UserAvatar } from "./user-avatar";
-import { WalletIcon, type WalletIconProps } from "./wallets/wallet-actions";
+import { CurrencyValue } from "./currency-value";
+import { WorkspaceLogo } from "./workspace";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
 	title?: React.ReactNode;
@@ -49,6 +46,12 @@ export function ContentCard({
 	);
 }
 
+function formatLastActive(dateStr: string) {
+	const date = new Date(dateStr);
+	const isToday = date.toDateString() === new Date().toDateString();
+	return isToday ? `Today, ${datetime.format(date, "HH:mm")}` : datetime.format(date, "d MMM yyyy");
+}
+
 interface WorkspaceCardProps {
 	id: string;
 	name: string;
@@ -69,63 +72,58 @@ interface WorkspaceCardProps {
 export function WorkspaceCard(props: WorkspaceCardProps) {
 	const { summary } = props;
 
-	const formattedTotal = summary
-		? new Intl.NumberFormat("en-US", {
-				style: "currency",
-				currency: summary.primaryCurrency,
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 2,
-			}).format(monetary.fromRealAmount(summary.totalExpensesThisMonth, summary.primaryCurrency))
-		: null;
+	const lastActive = summary?.lastActivityAt
+		? formatLastActive(summary.lastActivityAt)
+		: datetime.format(props.createdAt, "d MMM yyyy");
 
 	return (
-		<Card className="hover:border-foreground/20 h-full gap-4">
-			<CardHeader>
-				<CardTitle>{props.name}</CardTitle>
+		<Card className="gap-0 rounded-md py-3">
+			<CardHeader className="pb-2.5">
+				<CardTitle className="flex items-center gap-3 text-base font-semibold">
+					<WorkspaceLogo logo={null} name={props.name} />
+					{props.name}
+				</CardTitle>
 			</CardHeader>
-			<CardContent className="space-y-3">
-				{summary && (
-					<>
-						<div>
-							<p className="text-muted-foreground text-xs">This month</p>
-							<div className="flex items-baseline gap-2">
-								<p className="text-lg font-semibold">{formattedTotal}</p>
-							</div>
-						</div>
-
-						<div className="text-muted-foreground flex items-center gap-4 text-xs">
-							<div className="flex items-center gap-1">
-								<ArrowsExchangeIcon className="size-3.5" />
-								<span>{formatNumber(summary.transactionCount)} transactions</span>
-							</div>
-							<div className="flex items-center gap-1">
-								<WalletLucideIcon className="size-3.5" />
-								<span>{summary.activeWalletsCount} wallets</span>
-							</div>
-						</div>
-					</>
-				)}
-			</CardContent>
-			<CardFooter className="flex-col items-start gap-3">
-				{summary && (
-					<>
-						{summary.lastActivityAt ? (
-							<p className="text-muted-foreground text-xs">
-								Last activity: {datetime.format(summary.lastActivityAt, "d MMM yyyy")}
-							</p>
-						) : (
-							<p className="text-muted-foreground text-xs">
-								Created at {datetime.format(props.createdAt, "d MMM yyyy")}
-							</p>
-						)}
-						{summary.hasMissingRates && (
-							<div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-500">
-								<AlertTriangleIcon className="size-3.5" />
-								<span>Some exchange rates unavailable</span>
-							</div>
-						)}
-					</>
-				)}
+			<div className="border-border border-t" />
+			{summary && (
+				<CardContent
+					className={cn("grid grid-cols-2 py-0", "*:py-2.5 *:last:border-l *:last:pl-4")}
+				>
+					<div>
+						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
+							Expenses • MTD
+						</p>
+						<CurrencyValue
+							style="currency"
+							value={summary.totalExpensesThisMonth}
+							currency={summary.primaryCurrency}
+							className="text-lg font-semibold"
+						/>
+					</div>
+					<div>
+						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
+							Incomes • MTD
+						</p>
+						<CurrencyValue
+							style="currency"
+							value={summary.totalExpensesThisMonth}
+							currency={summary.primaryCurrency}
+							className="text-lg font-semibold"
+						/>
+					</div>
+				</CardContent>
+			)}
+			<div className="border-border border-t" />
+			<CardFooter className="flex items-center justify-between pt-2.5">
+				<p className="text-muted-foreground text-xs">
+					Last activity <span className="text-foreground ml-1">{lastActive}</span>
+				</p>
+				<div
+					data-slot="card-footer-action"
+					className="text-muted-foreground group-hover:text-primary flex items-center gap-1 text-xs transition-colors"
+				>
+					Open <ArrowRightIcon className="size-3" />
+				</div>
 			</CardFooter>
 		</Card>
 	);
@@ -169,58 +167,6 @@ export function ErrorCard({
 				<pre className="bg-destructive/5 text-destructive rounded-sm p-2 text-sm">{message}</pre>
 			}
 			footer={props.footer}
-		/>
-	);
-}
-
-interface WalletCardProps {
-	type: WalletIconProps["type"];
-	name: string;
-	description: string | null;
-	owner: {
-		name: string;
-		image: string | null;
-	};
-	isActive?: boolean;
-	actions?: React.ReactNode;
-}
-
-export function WalletCard(props: WalletCardProps) {
-	return (
-		<ContentCard
-			className="flex flex-col justify-between gap-3"
-			title={
-				<p className="flex items-center gap-1.5">
-					<WalletIcon type={props.type} />
-					{props.name}
-				</p>
-			}
-			description={props.description}
-			content={
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-1.5">
-						<UserAvatar className="size-4" name={props.owner.name} image={props.owner.image} />
-						<p className="text-muted-foreground text-xs leading-0">{props.owner.name}</p>
-					</div>
-					<Badge
-						variant="outline"
-						className="pointer-events-non bg-card gap-1.5 rounded-full select-none"
-					>
-						{props.isActive ? (
-							<>
-								<span className="size-1.5 rounded-full bg-green-500" aria-hidden="true" />
-								In use
-							</>
-						) : (
-							<>
-								<span className="size-1.5 rounded-full bg-red-500" aria-hidden="true" />
-								Unused
-							</>
-						)}
-					</Badge>
-				</div>
-			}
-			actions={props.actions}
 		/>
 	);
 }

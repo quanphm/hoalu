@@ -20,7 +20,7 @@ import {
 	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
-import { Button, ButtonProps } from "@hoalu/ui/button";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
 	DialogDescription,
