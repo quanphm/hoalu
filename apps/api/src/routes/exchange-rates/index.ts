@@ -1,11 +1,11 @@
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
 import { ExchangeRateSchema } from "#api/routes/exchange-rates/schema.ts";
+import { zValidator } from "#api/validators/validator-wrapper.ts";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 import { createIssueMsg } from "@hoalu/common/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
-import { zValidator } from "@hono/zod-validator";
 import { describeRoute } from "hono-openapi";
 import * as z from "zod";
 
@@ -31,11 +31,7 @@ const route = app.get(
 			...OpenAPI.response(z.object({ data: ExchangeRateSchema }), HTTPStatus.codes.OK),
 		},
 	}),
-	zValidator("query", ExchangeRateQuerySchema, (result, c) => {
-		if (!result.success) {
-			return c.json({ message: "Invalid query" }, HTTPStatus.codes.BAD_REQUEST);
-		}
-	}),
+	zValidator("query", ExchangeRateQuerySchema),
 	async (c) => {
 		const { from, to, date } = c.req.valid("query");
 		const lookupISODate = date || new Date().toISOString();

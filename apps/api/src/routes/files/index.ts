@@ -5,7 +5,6 @@ import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
 import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
-import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { getS3Path, isValidFileType } from "#api/utils/io.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
@@ -22,7 +21,6 @@ import * as z from "zod";
 const app = createHonoInstance();
 const fileRepository = new FileRepository();
 const categoryRepository = new CategoryRepository();
-const walletRepository = new WalletRepository();
 const TAGS = ["Files"];
 
 // Shared Zod schemas for OCR response shapes

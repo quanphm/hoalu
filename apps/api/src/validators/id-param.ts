@@ -1,13 +1,16 @@
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { zValidator } from "@hono/zod-validator";
+import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
 const IdSchema = z.object({
 	id: z.uuidv7(),
 });
 
-export const idParamValidator = zValidator("param", IdSchema, (result, c) => {
+export const idParamValidator = zValidator("param", IdSchema, (result) => {
 	if (!result.success) {
-		return c.json({ message: "Invalid id param type" }, HTTPStatus.codes.BAD_REQUEST);
+		throw new HTTPException(HTTPStatus.codes.BAD_REQUEST, {
+			message: "Invalid id param type",
+		});
 	}
 });
