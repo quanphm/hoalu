@@ -1,7 +1,6 @@
 {
 	"extends": "@hoalu/tsconfig/bun.json",
 	"compilerOptions": {
-		"target": "ES2022",
 		"noImplicitAny": false
 	},
 	"include": ["src"]

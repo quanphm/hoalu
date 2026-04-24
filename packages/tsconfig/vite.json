@@ -3,14 +3,10 @@
 	"display": "Vite",
 	"extends": "./base.json",
 	"compilerOptions": {
-		"target": "ES2020",
 		"module": "ESNext",
+		"target": "ES2020",
 		"useDefineForClassFields": true,
 		"sourceMap": true,
-		"resolveJsonModule": true,
-		"noEmit": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"resolveJsonModule": true
 	}
 }
