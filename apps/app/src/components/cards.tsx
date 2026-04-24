@@ -61,11 +61,10 @@ interface WorkspaceCardProps {
 	logo?: string | null | undefined;
 	summary?: {
 		totalExpensesThisMonth: number;
-		transactionCount: number;
+		totalIncomeThisMonth: number;
 		activeWalletsCount: number;
 		primaryCurrency: string;
 		lastActivityAt: string | null;
-		hasMissingRates?: boolean;
 	};
 }
 
@@ -102,11 +101,11 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 					</div>
 					<div>
 						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
-							Incomes • MTD
+							Income • MTD
 						</p>
 						<CurrencyValue
 							style="currency"
-							value={summary.totalExpensesThisMonth}
+							value={summary.totalIncomeThisMonth}
 							currency={summary.primaryCurrency}
 							className="text-lg font-semibold"
 						/>
