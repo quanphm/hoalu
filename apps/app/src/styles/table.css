@@ -1,6 +1,4 @@
 @theme inline {
-	--top-height: 200px;
-
 	/** common */
 	--header-name-size: 200px;
 	--col-name-size: 200px;
@@ -16,7 +14,8 @@
 	/** Expense table */
 	--expense-category-size: 160px;
 	--expense-title-size: 300px;
-	--expense-wallet-size: 130px;
+	--expense-wallet-size: 150px;
+	--expense-amount-size: 200px;
 
 	/** Category table */
 	--header-category-name-size: 200px;

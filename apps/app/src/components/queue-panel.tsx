@@ -30,7 +30,7 @@ function formatBytes(bytes: number): string {
 
 function JobStatusBadge({ status, retryCount }: { status: JobStatus; retryCount: number }) {
 	const base =
-		"font-geist-mono inline-flex shrink-0 origin-left scale-85 items-center gap-1 rounded-sm px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider";
+		"font-mono inline-flex shrink-0 origin-left scale-85 items-center gap-1 rounded-sm px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider";
 
 	if (status === "processing") {
 		return (
@@ -99,7 +99,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 					</Button>
 				</div>
 
-				<div className="font-geist-mono text-muted-foreground text-xs">
+				<div className="text-muted-foreground font-mono text-xs">
 					{formatBytes(job.input.fileSize)}
 				</div>
 
@@ -245,12 +245,12 @@ export function QueuePanel() {
 					<span>
 						<BrailleSpinner size={20} active={hasActivity} />
 					</span>
-					<span className="font-geist-mono text-muted-foreground text-xs font-medium tracking-wider uppercase">
+					<span className="text-muted-foreground font-mono text-xs font-medium tracking-wider uppercase">
 						Jobs
 					</span>
 				</div>
 
-				<div className="font-geist-mono flex items-center gap-4 text-xs tracking-tight">
+				<div className="flex items-center gap-4 font-mono text-xs tracking-tight">
 					<span className={processingCount > 0 ? "text-primary" : "text-muted-foreground"}>
 						<b className="font-semibold tabular-nums">{processingCount}</b> processing
 					</span>

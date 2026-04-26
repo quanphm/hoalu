@@ -12,7 +12,7 @@ interface CurrencyValueProps {
 	as?: "span" | "p";
 }
 
-const DEFAULT_CLASSNAME = "font-geist-mono text-foreground text-base tracking-tight tabular-nums";
+const DEFAULT_CLASSNAME = "font-mono text-foreground text-base tracking-tight tabular-nums";
 
 export function CurrencyValue({
 	as: Component = "span",
@@ -35,7 +35,7 @@ export function CurrencyValue({
 		return (
 			<Component className={cn(DEFAULT_CLASSNAME, props.className)}>
 				{formattedValue}
-				<span className="text-muted-foreground ml-1 text-[9px] font-normal tracking-wider">
+				<span className="text-muted-foreground text-2xs ml-1 font-normal tracking-wider">
 					{props.currency}
 				</span>
 			</Component>

@@ -103,6 +103,26 @@ const columns = [
 		},
 	}),
 	columnHelper.display({
+		id: "amount",
+		header: "Amount",
+		cell: (info) => {
+			const transaction = info.row.original;
+			return (
+				<CurrencyValue
+					value={transaction.amount}
+					currency={transaction.currency}
+					prefix={transaction.type === "expense" ? "-" : "+"}
+					style="currency"
+					className={cn("text-sm font-medium", transaction.type === "income" && "text-success")}
+				/>
+			);
+		},
+		meta: {
+			headerClassName: "text-right",
+			cellClassName: "text-right",
+		},
+	}),
+	columnHelper.display({
 		id: "wallet",
 		header: "Wallet",
 		cell: (info) => {
@@ -121,26 +141,6 @@ const columns = [
 				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size)",
 			cellClassName:
 				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size) ",
-		},
-	}),
-	columnHelper.display({
-		id: "amount",
-		header: "Amount",
-		cell: (info) => {
-			const transaction = info.row.original;
-			return (
-				<CurrencyValue
-					value={transaction.amount}
-					currency={transaction.currency}
-					prefix={transaction.type === "expense" ? "-" : "+"}
-					style="currency"
-					className={cn("text-sm font-semibold", transaction.type === "income" && "text-success")}
-				/>
-			);
-		},
-		meta: {
-			headerClassName: "text-right",
-			cellClassName: "text-right",
 		},
 	}),
 ];

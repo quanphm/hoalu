@@ -22,7 +22,6 @@ function ExpenseContent(props: SyncedExpense) {
 					)}
 				</div>
 			</div>
-
 			<div className="flex items-baseline-last justify-start gap-2 truncate px-4 py-3">
 				<p className="text-sm font-medium" title={props.title}>
 					{props.title}
@@ -31,13 +30,11 @@ function ExpenseContent(props: SyncedExpense) {
 					<p className="text-muted-foreground text-xs">{htmlToText(props.description)}</p>
 				)}
 			</div>
-
-			<div className="flex items-center px-4 py-3">
-				<WalletBadge {...props.wallet} />
-			</div>
-
 			<div className="flex items-center justify-end px-4 py-3">
 				<TransactionAmount type="expense" data={props} />
+			</div>
+			<div className="flex items-center px-4 py-3">
+				<WalletBadge {...props.wallet} />
 			</div>
 		</>
 	);

@@ -13,6 +13,8 @@ import type { Range } from "@tanstack/react-virtual";
 import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
 
 const THEAD_HEIGHT = 32;
+const GRID_TEMPLATE =
+	"grid grid-cols-[var(--expense-category-size)_1fr_var(--expense-amount-size)_var(--expense-wallet-size)]";
 
 type ExpenseItem = {
 	type: "expense";
@@ -31,7 +33,6 @@ type VirtualItem = ExpenseItem | GroupHeaderItem;
 const columns: ColumnDef<SyncedExpense>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
-	{ id: "wallet", header: "Wallet" },
 	{
 		id: "amount",
 		header: "Amount",
@@ -39,6 +40,7 @@ const columns: ColumnDef<SyncedExpense>[] = [
 			headerClassName: "justify-end",
 		},
 	},
+	{ id: "wallet", header: "Wallet" },
 ];
 
 function buildFlatItems(expenses: SyncedExpense[]): VirtualItem[] {
@@ -71,17 +73,19 @@ function GroupHeader({ date, total }: Omit<GroupHeaderItem, "type">) {
 	return (
 		<div
 			data-slot="expense-group-title"
-			className="bg-muted flex w-full items-center border-b px-4 py-1 text-xs"
+			className={cn("bg-muted flex w-full items-center border-b px-4 py-1 text-xs", GRID_TEMPLATE)}
 		>
 			<div className="flex items-center gap-2">
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
 				{isToday && <Badge className="ml-1">Today</Badge>}
 			</div>
+			{/* empty to fill the column */}
+			<div />
 			<div className="ml-auto">
 				<CurrencyValue
 					value={total}
 					currency={workspaceCurrency}
-					className="text-destructive font-semibold"
+					className="text-destructive text-sm font-semibold"
 				/>
 			</div>
 		</div>
@@ -178,9 +182,9 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 			data-slot="expense-list-container"
 			className="scrollbar-thin h-full w-full overflow-y-auto border-t contain-strict"
 		>
-			{/* Sticky column headers */}
+			{/* Sticky headers */}
 			<div
-				className="bg-card sticky top-0 z-20 grid grid-cols-[var(--expense-category-size)_1fr_var(--expense-wallet-size)_160px] border-b"
+				className={cn("bg-card sticky top-0 z-20 border-b", GRID_TEMPLATE)}
 				style={{ height: THEAD_HEIGHT }}
 			>
 				{table.getHeaderGroups().map((headerGroup) =>
@@ -188,8 +192,6 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 						const headerClassName = header.column.columnDef.meta?.headerClassName as {
 							headerClassName?: string;
 						};
-						console.log(headerClassName);
-
 						return (
 							<div
 								key={header.id}
@@ -242,8 +244,8 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 							id={item.expense.public_id}
 							role="row"
 							className={cn(
-								"grid cursor-pointer grid-cols-[var(--expense-category-size)_1fr_var(--expense-wallet-size)_160px] border-b outline-none",
-								"hover:bg-muted/60 focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
+								"hover:bg-muted/60 focus-visible:ring-ring cursor-pointer border-b outline-none focus-visible:ring-2 focus-visible:ring-inset",
+								GRID_TEMPLATE,
 								props.selectedId === item.expense.public_id && "ring-ring ring-2 ring-inset",
 							)}
 							style={{
