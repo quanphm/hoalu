@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/app",
-	"version": "0.28.6",
+	"version": "0.28.7",
 	"private": true,
 	"type": "module",
 	"imports": {
