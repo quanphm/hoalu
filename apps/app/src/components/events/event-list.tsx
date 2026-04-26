@@ -38,7 +38,7 @@ function EventList({ events }: EventListProps) {
 	const groups = useMemo(() => groupEvents(events), [events]);
 
 	return (
-		<div className="scrollbar-thin h-full w-full overflow-y-auto rounded-tl-lg border-t border-l">
+		<div className="h-full w-full overflow-y-auto rounded-tl-lg border-t border-l">
 			{groups.map((group) => (
 				<div key={group.label}>
 					<div

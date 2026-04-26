@@ -25,6 +25,9 @@ export const expenseAmountFilterAtom = atom<AmountFilterState>({
 
 export const searchKeywordsAtom = atom<string>("");
 
+export type TransactionKindFilter = "all" | "expense" | "income";
+export const transactionKindFilterAtom = atom<TransactionKindFilter>("all");
+
 export type ChartGroupBy = "date" | "month";
 
 export const chartGroupByAtom = atom<ChartGroupBy>("month");

@@ -4,7 +4,6 @@ import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
 	CalendarDollarIcon,
-	CashPlusIcon,
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
@@ -89,24 +88,6 @@ export function NavWorkspace() {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/incomes"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
-									/>
-								}
-								tooltip="Income"
-							>
-								<CashPlusIcon />
-								<span>Income</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
 
 						<SidebarMenuItem>
 							<SidebarMenuButton

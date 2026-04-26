@@ -29,7 +29,8 @@
 
 	html,
 	body {
-		@apply min-h-screen w-full;
+		@apply scrollbar-thin min-h-screen w-full;
+		scrollbar-color: gray transparent;
 	}
 
 	button:not(:disabled),

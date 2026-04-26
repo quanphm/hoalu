@@ -395,7 +395,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 			<div
 				data-slot="recurring-bills-list-container"
 				className={cn(
-					"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+					"h-full w-full overflow-y-auto contain-strict",
 					shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
 				)}
 			>
@@ -411,7 +411,7 @@ function RecurringBillList({ bills }: RecurringBillListProps) {
 		<div
 			data-slot="recurring-bills-list-container"
 			className={cn(
-				"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+				"h-full w-full overflow-y-auto contain-strict",
 				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
 			)}
 			ref={parentRef}

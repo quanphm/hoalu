@@ -16,12 +16,12 @@ import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import {
 	CalendarIcon,
 	CheckIcon,
+	DollarSignIcon,
 	FilterIcon,
 	ListFilterIcon,
 	RefreshCwIcon,
 	TagIcon,
 	WalletIcon,
-	DollarSignIcon,
 	XIcon,
 } from "@hoalu/icons/lucide";
 import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
@@ -158,7 +158,6 @@ export function ExpenseFilterDropdown() {
 		navigate({ search: (s) => ({ ...s, date: undefined }) });
 	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSelectedRepeats, navigate]);
 
-	// Check if filter has active value
 	const hasActiveFilter = (filter: FilterMenuView) => {
 		switch (filter) {
 			case "amount":

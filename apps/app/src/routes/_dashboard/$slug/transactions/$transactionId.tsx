@@ -1,6 +1,6 @@
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
-import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -14,7 +14,7 @@ function RouteComponent() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 	const { shouldUseMobileLayout } = useLayoutMode();
-	const filtered = useFilteredExpenses();
+	const filtered = useFilteredTransactions();
 
 	const filteredRef = useRef(filtered);
 	filteredRef.current = filtered;
@@ -66,6 +66,11 @@ function RouteComponent() {
 	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
 
 	if (!currentExpense) {
+		return null;
+	}
+
+	// Income detail panel not yet implemented — skip
+	if (currentExpense.kind === "income") {
 		return null;
 	}
 

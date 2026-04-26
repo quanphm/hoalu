@@ -1,4 +1,4 @@
-import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
@@ -8,7 +8,7 @@ import { memo } from "react";
 
 import { WalletBadge } from "../wallets/wallet-badge";
 
-function ExpenseContent(props: SyncedExpense) {
+function ExpenseContent(props: SyncedTransaction) {
 	return (
 		<>
 			<div className="flex items-center px-4 py-3">
@@ -31,7 +31,11 @@ function ExpenseContent(props: SyncedExpense) {
 				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
-				<TransactionAmount type="expense" data={props} />
+				<TransactionAmount
+					type={props.kind}
+					data={props}
+					className={props.kind === "income" ? "text-success" : undefined}
+				/>
 			</div>
 			<div className="flex items-center px-4 py-3">
 				<WalletBadge {...props.wallet} />
