@@ -6,6 +6,7 @@ import * as z from "zod";
 
 const EventCollectionSchema = z.object({
 	id: z.uuidv7(),
+	public_id: z.string(),
 	title: z.string(),
 	description: z.string().nullable(),
 	start_date: z.string().nullable(),

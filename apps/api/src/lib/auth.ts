@@ -166,7 +166,7 @@ export const auth = betterAuth({
 				expirationTime: "7d",
 			},
 		}),
-		apiKey(),
+		apiKey() as any,
 		openAPI(),
 	],
 	telemetry: {

@@ -67,7 +67,7 @@ function LayoutComponent() {
 						<Outlet />
 					) : (
 						<>
-							<div className="flex items-center justify-between px-4 py-2">
+							<div className="flex items-center justify-between border-b px-4 py-2">
 								<div className="flex flex-wrap items-center gap-2">
 									<ExpenseSearch />
 									<ExpenseFilterDropdown />
@@ -91,10 +91,10 @@ function LayoutComponent() {
 							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100vh-93px)] grid-cols-1 overflow-hidden md:gap-0"
+								className="h-[calc(100vh-96px)] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-									<ExpenseList expenses={filteredExpenses} selectedId={null} />
+									<ExpenseList expenses={filteredExpenses} />
 								</SectionItem>
 							</SectionContent>
 						</>

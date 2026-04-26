@@ -35,10 +35,7 @@ const ReceiptDataSchema = z.object({
 		.string()
 		.regex(/^\d{4}-\d{2}-\d{2}$/)
 		.describe("Receipt date in YYYY-MM-DD format"),
-	merchantName: z
-		.string()
-		.transform(toTitleCase)
-		.describe("Name of the merchant or store"),
+	merchantName: z.string().transform(toTitleCase).describe("Name of the merchant or store"),
 	suggestedCategoryId: z
 		.uuid()
 		.nullable()

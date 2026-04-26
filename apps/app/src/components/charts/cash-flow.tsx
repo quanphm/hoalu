@@ -39,7 +39,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		0,
 	);
 	const netCashFlow = totalIncome - totalExpenses;
-	const totalTransactions = filteredExpenses.length;
+	const totalTransactions = filteredExpenses.length + filteredIncomes.length;
 
 	// Previous (comparison) period
 	const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
@@ -67,17 +67,13 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			0,
 		);
 		prevNetCashFlow = prevIncome - prevExpenses;
-		prevTransactions = prevExp.length;
+		prevTransactions = prevExp.length + prevIncomes.length;
 	}
 
 	const incomeChange = calculatePercentageChange(totalIncome, prevIncome, currency);
 	const expensesChange = calculatePercentageChange(totalExpenses, prevExpenses, currency);
 	const cashFlowChange = calculatePercentageChange(netCashFlow, prevNetCashFlow, currency);
-	// const transactionsChange = calculatePercentageChange(
-	// 	totalTransactions,
-	// 	prevTransactions,
-	// 	currency,
-	// );
+	const transactionsDiff = totalTransactions - prevTransactions;
 
 	const showTrend = comparisonRange !== null;
 
@@ -154,6 +150,19 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Transactions</span>
 					</CardDescription>
+					<CardAction>
+						{showTrend && transactionsDiff !== 0 && (
+							<span
+								className={cn(
+									"text-xs font-medium tabular-nums",
+									transactionsDiff > 0 ? "text-success" : "text-destructive",
+								)}
+							>
+								{transactionsDiff > 0 ? "+" : ""}
+								{transactionsDiff}
+							</span>
+						)}
+					</CardAction>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{formatNumber(totalTransactions)}
 					</CardTitle>

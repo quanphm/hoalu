@@ -3,11 +3,8 @@ import {
 	deleteEventDialogAtom,
 	editEventDialogAtom,
 } from "#app/atoms/dialogs.ts";
-import {
-	type SyncedEvent,
-	useLiveQueryEvents,
-	useSelectedEvent,
-} from "#app/components/events/use-events.ts";
+import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { DateRangeCalendarField } from "#app/components/forms/date-range-calendar.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
@@ -255,7 +252,8 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 }
 
 export function DeleteEventDialogContent() {
-	const { onSelectEvent } = useSelectedEvent();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useDeleteEvent();
 	const [dialog, setDialog] = useAtom(deleteEventDialogAtom);
 
@@ -265,7 +263,7 @@ export function DeleteEventDialogContent() {
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		onSelectEvent(null);
+		navigate({ to: "/$slug/events", params: { slug } });
 		setDialog({ state: false });
 	};
 

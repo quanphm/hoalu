@@ -1,165 +1,172 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { EventDateRange } from "#app/components/events/event-date-range.tsx";
-import { type SyncedEvent, useSelectedEvent } from "#app/components/events/use-events.ts";
+import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { Badge } from "@hoalu/ui/badge";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
-import { memo, useMemo } from "react";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { type ColumnDef } from "@tanstack/react-table";
+import { memo, useCallback, useMemo } from "react";
 
-interface EventListProps {
-	events: SyncedEvent[];
-}
+const GRID_TEMPLATE =
+	"grid grid-cols-[1fr_var(--date-range-size)_var(--status-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)]";
 
-type EventGroup = {
-	label: string;
-	events: SyncedEvent[];
-};
+const columns: ColumnDef<SyncedEvent>[] = [
+	{ id: "name", header: "Name" },
+	{ id: "date", header: "Date" },
+	{ id: "status", header: "Status" },
+	{ id: "budget", header: "Budget", meta: { headerClassName: "justify-end" } },
+	{ id: "spent", header: "Spent", meta: { headerClassName: "justify-end" } },
+	{ id: "progress", header: "Progress" },
+];
 
-function groupEvents(events: SyncedEvent[]): EventGroup[] {
-	const open: SyncedEvent[] = [];
-	const closed: SyncedEvent[] = [];
-
-	for (const e of events) {
-		if (e.status === "open") {
-			open.push(e);
-		} else {
-			closed.push(e);
-		}
-	}
-
-	const groups: EventGroup[] = [];
-	if (open.length > 0) groups.push({ label: "Open", events: open });
-	if (closed.length > 0) groups.push({ label: "Closed", events: closed });
-	return groups;
-}
-
-function EventList({ events }: EventListProps) {
-	const { event: selected, onSelectEvent } = useSelectedEvent();
-	const groups = useMemo(() => groupEvents(events), [events]);
-
-	return (
-		<div className="h-full w-full overflow-y-auto rounded-tl-lg border-t border-l">
-			{groups.map((group) => (
-				<div key={group.label}>
-					<div
-						data-slot="event-group-title"
-						className="border-muted bg-muted flex items-center py-2 pr-4 pl-3 text-xs"
-					>
-						<div className="flex items-center gap-2">
-							<span className="font-medium tracking-wide">{group.label}</span>
-							<span>{group.events.length}</span>
-						</div>
-					</div>
-					{group.events.map((e) => (
-						<EventListItem
-							key={e.id}
-							event={e}
-							isSelected={selected.id === e.id}
-							onSelect={() => onSelectEvent(e.id)}
-						/>
-					))}
-				</div>
-			))}
-		</div>
-	);
-}
-
-function EventListItem({
-	event,
-	isSelected,
-	onSelect,
-}: {
-	event: SyncedEvent;
-	isSelected: boolean;
-	onSelect: () => void;
-}) {
+function EventContent(event: SyncedEvent) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
 
 	const progress =
-		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : null;
+		event.realBudget && event.realBudget > 0
+			? Math.min((event.totalSpent / event.realBudget) * 100, 999)
+			: null;
 
-	const clampedProgress = progress != null ? progress : null;
+	const progressColor =
+		progress == null
+			? ""
+			: progress >= 100
+				? "bg-destructive"
+				: progress >= 80
+					? "bg-orange-400 dark:bg-orange-500"
+					: "bg-emerald-500 dark:bg-emerald-400";
 
-	const handleKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
-		if (e.code === "Enter" || e.code === "Space") {
-			e.preventDefault();
-			onSelect();
-		}
-	};
+	const progressTextColor =
+		progress == null
+			? ""
+			: progress >= 100
+				? "text-destructive"
+				: progress >= 80
+					? "text-orange-500 dark:text-orange-400"
+					: "text-muted-foreground";
 
 	return (
-		<button
-			type="button"
-			onClick={onSelect}
-			onKeyDown={handleKeyDown}
-			className={cn(
-				"border-b-border/50 hover:bg-muted/60 flex w-full flex-col gap-2 border-b py-3 pr-4 pl-3 text-left text-sm transition-colors outline-none",
-				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
-				isSelected && "ring-ring ring-2 ring-inset",
-			)}
-			data-slot="event-item"
-			aria-label={`Select event ${event.title}`}
-		>
-			<span className="truncate font-medium">{event.title}</span>
-
-			<EventDateRange startDate={event.start_date} endDate={event.end_date} />
-
-			{/* Row 3: Spending + Budget */}
-			<div className="flex items-baseline justify-between gap-2">
-				<div className="flex items-baseline gap-1">
-					<CurrencyValue
-						value={event.totalSpent}
-						currency={event.budget_currency || workspaceCurrency}
-						className="text-[13px] font-semibold"
-					/>
-					{event.realBudget != null && (
-						<div className="flex items-baseline gap-1">
-							<span className="text-muted-foreground text-[11px]">/</span>
-							{event.realBudget ? (
-								<CurrencyValue
-									value={event.realBudget}
-									currency={event.budget_currency || workspaceCurrency}
-									className="text-muted-foreground text-[12px]"
-								/>
-							) : (
-								"∞"
-							)}
-						</div>
-					)}
-				</div>
+		<>
+			<div className="flex items-center truncate px-4 py-3">
+				<p className="truncate text-sm font-medium" title={event.title}>
+					{event.title}
+				</p>
 			</div>
-
-			{/* Row 4: Progress bar */}
-			{clampedProgress != null && (
-				<Progress value={clampedProgress} className="flex-row items-center gap-2">
-					<ProgressTrack className="h-1.5 flex-1">
-						<ProgressIndicator
+			<div className="flex items-center px-4 py-3">
+				<EventDateRange startDate={event.start_date} endDate={event.end_date} />
+			</div>
+			<div className="flex items-center px-4 py-3">
+				{event.status === "open" ? (
+					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
+						Open
+					</Badge>
+				) : (
+					<Badge variant="outline" className="text-muted-foreground">
+						Closed
+					</Badge>
+				)}
+			</div>
+			<div className="flex items-center justify-end px-4 py-3">
+				{event.realBudget ? (
+					<CurrencyValue
+						value={event.budget}
+						currency={event.budget_currency || workspaceCurrency}
+						className="text-sm font-medium"
+					/>
+				) : (
+					<span className="text-muted-foreground text-sm">∞</span>
+				)}
+			</div>
+			<div className="flex items-center justify-end px-4 py-3">
+				<CurrencyValue
+					value={event.totalSpent}
+					currency={event.budget_currency || workspaceCurrency}
+					prefix="-"
+					className="text-sm font-semibold"
+				/>
+			</div>
+			<div className="flex items-center gap-2 px-4 py-3">
+				{progress != null ? (
+					<Progress value={Math.min(progress, 100)} className="flex-row items-center gap-1.5">
+						<ProgressTrack className="h-1.5 flex-1">
+							<ProgressIndicator className={progressColor} />
+						</ProgressTrack>
+						<span
 							className={cn(
-								clampedProgress >= 100
-									? "bg-destructive"
-									: clampedProgress >= 80
-										? "bg-orange-400 dark:bg-orange-500"
-										: "bg-emerald-500 dark:bg-emerald-400",
+								"w-8 text-right text-[10px] font-medium tabular-nums",
+								progressTextColor,
 							)}
-						/>
-					</ProgressTrack>
-					<span
-						className={cn(
-							"w-9 text-right text-[10px] font-medium tabular-nums",
-							clampedProgress >= 100
-								? "text-destructive"
-								: clampedProgress >= 80
-									? "text-orange-500 dark:text-orange-400"
-									: "text-muted-foreground",
-						)}
-					>
-						{Math.round(clampedProgress)}%
-					</span>
-				</Progress>
-			)}
-		</button>
+						>
+							{Math.round(progress)}%
+						</span>
+					</Progress>
+				) : (
+					<span className="text-muted-foreground text-sm">—</span>
+				)}
+			</div>
+		</>
+	);
+}
+
+const emptyState = (
+	<Empty>
+		<EmptyHeader>
+			<EmptyTitle>No events</EmptyTitle>
+			<EmptyDescription>Create your first event to group expenses and bills.</EmptyDescription>
+		</EmptyHeader>
+	</Empty>
+);
+
+function EventList() {
+	const events = useLiveQueryEvents();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+
+	const sortedEvents = useMemo(
+		() =>
+			[...events].sort((a, b) => {
+				if (!a.start_date && !b.start_date) return 0;
+				if (!a.start_date) return 1;
+				if (!b.start_date) return -1;
+				return b.start_date.localeCompare(a.start_date);
+			}),
+		[events],
+	);
+
+	const handleSelect = useCallback(
+		(id: string | null) => {
+			if (!id) {
+				navigate({ to: "/$slug/events", params: { slug } });
+				return;
+			}
+			navigate({ to: "/$slug/events/$eventId", params: { slug, eventId: id } }); // id is public_id via getItemId
+		},
+		[navigate, slug],
+	);
+
+	const renderRow = useCallback(
+		(item: SyncedEvent, _isSelected: boolean) => <EventContent {...item} />,
+		[],
+	);
+
+	return (
+		<GroupedVirtualTable<SyncedEvent>
+			items={sortedEvents}
+			getItemId={(e) => e.public_id}
+			columns={columns}
+			gridTemplate={GRID_TEMPLATE}
+			renderRow={renderRow}
+			estimateRowSize={45}
+			onSelectItem={handleSelect}
+			enableKeyboardNav={true}
+			emptyState={emptyState}
+		/>
 	);
 }
 
