@@ -25,16 +25,18 @@ const searchSchema = z.object({
 	date: z.optional(z.string()),
 });
 
-export const Route = createFileRoute("/_dashboard/$slug/expenses")({
+export const Route = createFileRoute("/_dashboard/$slug/transactions")({
 	validateSearch: searchSchema,
 	component: LayoutComponent,
 });
 
 function LayoutComponent() {
 	const matches = useMatches();
-	const expenseMatch = matches.find((m) => m.routeId === "/_dashboard/$slug/expenses/$expenseId");
-	const expenseId = expenseMatch
-		? (expenseMatch.params as Record<string, string>).expenseId
+	const transactionMatch = matches.find(
+		(m) => m.routeId === "/_dashboard/$slug/transactions/$transactionId",
+	);
+	const transactionId = transactionMatch
+		? (transactionMatch.params as Record<string, string>).transactionId
 		: undefined;
 
 	const filteredExpenses = useFilteredExpenses();
@@ -43,7 +45,7 @@ function LayoutComponent() {
 		<>
 			<Toolbar>
 				<ToolbarGroup>
-					<ToolbarTitle>Expenses</ToolbarTitle>
+					<ToolbarTitle>Transactions</ToolbarTitle>
 				</ToolbarGroup>
 				<ToolbarActions>
 					<ScanReceiptDialogTrigger />
@@ -57,7 +59,7 @@ function LayoutComponent() {
 
 			<PageContent>
 				<Section className="gap-0">
-					{expenseId ? (
+					{transactionId ? (
 						<Outlet />
 					) : (
 						<>

@@ -74,15 +74,15 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={
 									<Link
-										to="/$slug/expenses"
+										to="/$slug/transactions"
 										params={{ slug }}
 										disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 									/>
 								}
-								tooltip="Expenses"
+								tooltip="Transactions"
 							>
 								<CashBanknoteMoveIcon />
-								<span>Expenses</span>
+								<span>Transactions</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
 								</SidebarMenuBadge>

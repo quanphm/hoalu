@@ -295,7 +295,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		const searchQuery = `${startDate.getTime()}-${endDate.getTime()}`;
 
 		navigate({
-			to: isIncomeTab ? "/$slug/incomes" : "/$slug/expenses",
+			to: "/$slug/transactions",
 			params: { slug },
 			search: { date: searchQuery },
 		});

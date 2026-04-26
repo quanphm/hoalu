@@ -41,7 +41,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date";
 

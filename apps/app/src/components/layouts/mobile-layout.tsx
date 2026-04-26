@@ -170,7 +170,7 @@ function MobileBottomNav() {
 					<span className="truncate text-xs leading-none">Dashboard</span>
 				</ButtonLink>
 				<ButtonLink
-					to="/$slug/expenses"
+					to="/$slug/transactions"
 					params={{ slug }}
 					size="sm"
 					variant="ghost"

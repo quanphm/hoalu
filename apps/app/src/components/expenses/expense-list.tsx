@@ -112,10 +112,10 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 	const handleSelectExpense = useCallback(
 		(id: string | null) => {
 			if (!id) {
-				navigate({ to: "/$slug/expenses", params: { slug } });
+				navigate({ to: "/$slug/transactions", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/expenses/$expenseId", params: { slug, expenseId: id } });
+			navigate({ to: "/$slug/transactions/$transactionId", params: { slug, transactionId: id } });
 		},
 		[navigate, slug],
 	);

@@ -79,13 +79,13 @@ function CategoryListBreakdown(props: {
 
 		if (!customDateRange) {
 			navigate({
-				to: "/$slug/expenses",
+				to: "/$slug/transactions",
 				params: { slug },
 			});
 		} else {
 			const searchQuery = `${customDateRange.from.getTime()}-${customDateRange.to.getTime()}`;
 			navigate({
-				to: "/$slug/expenses",
+				to: "/$slug/transactions",
 				params: { slug },
 				search: { date: searchQuery },
 			});

@@ -198,7 +198,7 @@ export function RecentTransactions() {
 					<Button
 						variant="outline"
 						size="sm"
-						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
+						render={<Link to="/$slug/transactions" params={{ slug: workspace.slug }} />}
 					>
 						View all
 					</Button>
