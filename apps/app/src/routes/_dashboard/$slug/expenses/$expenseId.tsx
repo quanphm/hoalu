@@ -20,7 +20,7 @@ function RouteComponent() {
 	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
 
 	const resolveExpenseId = useCallback(
-		(expense: (typeof filtered)[number]) => expense.public_id || expense.id,
+		(expense: (typeof filtered)[number]) => expense.public_id,
 		[],
 	);
 

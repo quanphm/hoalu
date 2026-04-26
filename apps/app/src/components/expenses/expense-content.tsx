@@ -36,13 +36,13 @@ function ExpenseContent(props: ExpenseContentProps) {
 	};
 
 	const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-		props.onClick(props.public_id || props.id);
+		props.onClick(props.public_id);
 		event.currentTarget.focus();
 	};
 
 	return (
 		<div
-			id={props.id}
+			id={props.public_id}
 			// oxlint-disable-next-line jsx_a11y/prefer-tag-over-role
 			role="button"
 			className={cn(

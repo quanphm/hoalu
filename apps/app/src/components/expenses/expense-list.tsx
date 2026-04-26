@@ -131,7 +131,8 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 
 	const scrollToExpense = useEffectEvent((id: string) => {
 		const index = flattenExpenses.findIndex(
-			(item) => item.type === "expense" && item.expense.id === id,
+			(item) =>
+				item.type === "expense" && (item.expense.public_id === id || item.expense.id === id),
 		);
 		if (index >= 0) {
 			virtualizer.scrollToIndex(index, { align: "auto" });
@@ -186,10 +187,7 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 							) : (
 								<ExpenseContent
 									{...item.expense}
-									isSelected={
-										props.selectedId === item.expense.public_id ||
-										props.selectedId === item.expense.id
-									}
+									isSelected={props.selectedId === item.expense.public_id}
 									onClick={handleSelectExpense}
 								/>
 							)}
