@@ -90,6 +90,7 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 				.orderBy(({ expense }) => expense.date, "desc")
 				.select(({ expense, category }) => ({
 					id: expense.id,
+					public_id: expense.public_id,
 					title: expense.title,
 					description: expense.description,
 					amount: expense.amount,

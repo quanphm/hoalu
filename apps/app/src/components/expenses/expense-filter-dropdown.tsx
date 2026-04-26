@@ -4,7 +4,6 @@ import {
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
-	searchKeywordsAtom,
 } from "#app/atoms/index.ts";
 import {
 	useLiveQueryCategories,
@@ -20,7 +19,6 @@ import {
 	FilterIcon,
 	ListFilterIcon,
 	RefreshCwIcon,
-	SearchIcon,
 	TagIcon,
 	WalletIcon,
 	DollarSignIcon,
@@ -31,7 +29,6 @@ import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Checkbox } from "@hoalu/ui/checkbox";
-import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
@@ -46,20 +43,19 @@ import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date" | "search";
+type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date";
 
 export function ExpenseFilterDropdown() {
 	const wallets = useLiveQueryWallets();
 	const categories = useLiveQueryCategories();
 
 	const [open, setOpen] = useState(false);
-	const [currentView, setCurrentView] = useState<FilterMenuView>("search");
+	const [currentView, setCurrentView] = useState<FilterMenuView>("main");
 
 	const [amountFilter, setAmountFilter] = useAtom(expenseAmountFilterAtom);
 	const [selectedCategories, setSelectedCategories] = useAtom(expenseCategoryFilterAtom);
 	const [selectedWallets, setSelectedWallets] = useAtom(expenseWalletFilterAtom);
 	const [selectedRepeats, setSelectedRepeats] = useAtom(expenseRepeatFilterAtom);
-	const [searchKeywords, setSearchKeywords] = useAtom(searchKeywordsAtom);
 	const { date: searchByDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
 	const dateRange = toFromToDateObject(searchByDate);
@@ -71,7 +67,6 @@ export function ExpenseFilterDropdown() {
 		if (selectedWallets.length > 0) count++;
 		if (selectedRepeats.length > 0) count++;
 		if (dateRange) count++;
-		if (searchKeywords) count++;
 		return count;
 	}, [
 		amountFilter,
@@ -79,7 +74,6 @@ export function ExpenseFilterDropdown() {
 		selectedWallets.length,
 		selectedRepeats.length,
 		dateRange,
-		searchKeywords,
 	]);
 
 	const filterSummaries = useMemo(() => {
@@ -140,14 +134,6 @@ export function ExpenseFilterDropdown() {
 			});
 		}
 
-		if (searchKeywords) {
-			summaries.push({
-				key: "search",
-				label: `"${searchKeywords}"`,
-				onRemove: () => setSearchKeywords(""),
-			});
-		}
-
 		return summaries;
 	}, [
 		amountFilter,
@@ -155,7 +141,6 @@ export function ExpenseFilterDropdown() {
 		selectedWallets,
 		selectedRepeats,
 		dateRange,
-		searchKeywords,
 		categories,
 		wallets,
 		navigate,
@@ -163,7 +148,6 @@ export function ExpenseFilterDropdown() {
 		setSelectedCategories,
 		setSelectedWallets,
 		setSelectedRepeats,
-		setSearchKeywords,
 	]);
 
 	const resetAllFilters = useCallback(() => {
@@ -171,16 +155,8 @@ export function ExpenseFilterDropdown() {
 		setSelectedCategories([]);
 		setSelectedWallets([]);
 		setSelectedRepeats([]);
-		setSearchKeywords("");
 		navigate({ search: (s) => ({ ...s, date: undefined }) });
-	}, [
-		setAmountFilter,
-		setSelectedCategories,
-		setSelectedWallets,
-		setSelectedRepeats,
-		setSearchKeywords,
-		navigate,
-	]);
+	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSelectedRepeats, navigate]);
 
 	// Check if filter has active value
 	const hasActiveFilter = (filter: FilterMenuView) => {
@@ -195,8 +171,6 @@ export function ExpenseFilterDropdown() {
 				return selectedRepeats.length > 0;
 			case "date":
 				return !!dateRange;
-			case "search":
-				return !!searchKeywords;
 			default:
 				return false;
 		}
@@ -208,29 +182,20 @@ export function ExpenseFilterDropdown() {
 				open={open}
 				onOpenChange={(isOpen) => {
 					setOpen(isOpen);
-					if (!isOpen) setCurrentView("search");
+					if (!isOpen) setCurrentView("main");
 				}}
 			>
-				<PopoverTrigger render={<Button variant="outline" />}>
-					<ListFilterIcon className="size-4" />
+				<PopoverTrigger
+					render={<Button size="sm" variant="outline" className="active:scale-none" />}
+				>
+					<ListFilterIcon />
 					<span>Filters ({activeFiltersCount})</span>
 				</PopoverTrigger>
 
-				<PopoverContent
-					className="w-xs overflow-hidden p-0 md:w-[540px]"
-					align="start"
-					side="right"
-				>
+				<PopoverContent className="w-xs overflow-hidden p-0 md:w-150" align="start" side="bottom">
 					<div className="flex min-h-[400px]">
 						{/* Left Panel - Filter Menu */}
-						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
-							<FilterMenuItem
-								icon={<SearchIcon className="size-3" />}
-								label="Search"
-								active={hasActiveFilter("search")}
-								selected={currentView === "search"}
-								onClick={() => setCurrentView("search")}
-							/>
+						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-50">
 							<FilterMenuItem
 								icon={<CalendarIcon className="size-3" />}
 								label="Date"
@@ -275,9 +240,6 @@ export function ExpenseFilterDropdown() {
 									activeFiltersCount={activeFiltersCount}
 									filterSummaries={filterSummaries}
 								/>
-							)}
-							{currentView === "search" && (
-								<SearchFilterView value={searchKeywords} onChange={setSearchKeywords} />
 							)}
 							{currentView === "amount" && (
 								<AmountFilterView value={amountFilter} onChange={setAmountFilter} />
@@ -420,38 +382,6 @@ function MainFilterView({
 					</div>
 				</>
 			)}
-		</div>
-	);
-}
-
-function SearchFilterView({
-	value,
-	onChange,
-}: {
-	value: string;
-	onChange: (value: string) => void;
-}) {
-	return (
-		<div className="flex flex-col gap-4 p-4">
-			<div className="flex items-center justify-between">
-				<h3 className="leading-8 font-medium">Search</h3>
-				{value && (
-					<Button variant="ghost" size="sm" onClick={() => onChange("")}>
-						Reset
-					</Button>
-				)}
-			</div>
-			<div className="relative">
-				<Input
-					type="text"
-					placeholder="Search by title, description, or amount"
-					value={value}
-					onChange={(e) => onChange(e.target.value)}
-					className="ps-6"
-					autoFocus
-				/>
-				<SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-			</div>
 		</div>
 	);
 }

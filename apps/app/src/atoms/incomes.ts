@@ -1,6 +1,7 @@
-import type { IncomeFormSchema } from "#app/lib/schema.ts";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+
+import type { IncomeFormSchema } from "#app/lib/schema.ts";
 
 type IncomeAtomSchema = IncomeFormSchema;
 const basedIncome: IncomeAtomSchema = {
@@ -22,3 +23,11 @@ export const selectedIncomeAtom = atom<{
 }>({
 	id: null,
 });
+
+export const incomeCategoryFilterAtom = atom<string[]>([]);
+export const incomeWalletFilterAtom = atom<string[]>([]);
+export const incomeAmountFilterAtom = atom<{ min: number | null; max: number | null }>({
+	min: null,
+	max: null,
+});
+export const incomeSearchKeywordsAtom = atom<string>("");

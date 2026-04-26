@@ -169,6 +169,7 @@ const route = app
 						.values({
 							...rest,
 							id: generateId({ use: "uuid" }),
+							publicId: generateId({ use: "nanoid", kind: "expense" }),
 							workspaceId: workspace.id,
 							creatorId: user.id,
 							date: expenseDate,

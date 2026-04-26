@@ -165,7 +165,7 @@ function EventDetailPanel({ event }: { event: SyncedEvent }) {
 					</ProgressTrack>
 					<span
 						className={cn(
-							"font-geist-mono text-xs font-medium tabular-nums",
+							"font-mono text-xs font-medium tabular-nums",
 							progress! >= 100
 								? "text-destructive"
 								: progress! >= 80

@@ -3,12 +3,7 @@ import { cn } from "@hoalu/ui/utils";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
 	return (
-		<div
-			ref={ref}
-			data-slot="section"
-			className={cn("flex flex-col gap-3 md:gap-4", className)}
-			{...props}
-		/>
+		<div ref={ref} data-slot="section" className={cn("flex flex-col", className)} {...props} />
 	);
 }
 

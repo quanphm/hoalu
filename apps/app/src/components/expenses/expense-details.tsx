@@ -3,8 +3,7 @@ import {
 	DuplicateExpense,
 	EditExpenseForm,
 } from "#app/components/expenses/expense-actions.tsx";
-import { useExpenseNavigation } from "#app/components/expenses/use-expense-navigation.ts";
-import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useSetUpRecurringBill, useDeleteExpenseFile } from "#app/services/mutations.ts";
@@ -218,17 +217,22 @@ function AttachmentStrip({
 }
 
 interface ExpenseDetailsProps {
-	expenses: SyncedExpense[];
+	currentExpense: SyncedExpense | undefined;
+	onClose: () => void;
+	onGoUp: () => void;
+	onGoDown: () => void;
+	canGoUp: boolean;
+	canGoDown: boolean;
 }
 
-export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
-	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	const { currentExpense, handleGoUp, handleGoDown, canGoUp, canGoDown } = useExpenseNavigation({
-		expenses,
-		selectedId: selectedRow.id,
-		onSelectExpense,
-	});
-
+export function ExpenseDetails({
+	currentExpense,
+	onClose,
+	onGoUp,
+	onGoDown,
+	canGoUp,
+	canGoDown,
+}: ExpenseDetailsProps) {
 	if (!currentExpense) {
 		return (
 			<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
@@ -254,7 +258,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 								<Button
 									size="icon"
 									variant="outline"
-									onClick={handleGoDown}
+									onClick={onGoDown}
 									disabled={!canGoDown}
 								/>
 							}
@@ -268,7 +272,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp} />
+								<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
 							<ChevronUpIcon className="size-4" />
@@ -284,7 +288,7 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={() => onSelectExpense(null)} />
+								<Button size="icon" variant="outline" onClick={onClose} />
 							}
 						>
 							<XIcon className="size-4" />
@@ -306,18 +310,18 @@ export function ExpenseDetails({ expenses }: ExpenseDetailsProps) {
 	);
 }
 
-export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
-	const { expense: selectedRow, onSelectExpense } = useSelectedExpense();
-	const { currentExpense, handleGoUp, handleGoDown, canGoUp, canGoDown } = useExpenseNavigation({
-		expenses,
-		selectedId: selectedRow.id,
-		onSelectExpense,
-	});
-
+export function MobileExpenseDetails({
+	currentExpense,
+	onClose,
+	onGoUp,
+	onGoDown,
+	canGoUp,
+	canGoDown,
+}: ExpenseDetailsProps) {
 	const isOpen = !!currentExpense;
 
 	function handleClose() {
-		onSelectExpense(null);
+		onClose();
 	}
 
 	return (
@@ -326,10 +330,10 @@ export function MobileExpenseDetails({ expenses }: ExpenseDetailsProps) {
 				<DialogHeader>
 					<DialogTitle>Expense Details</DialogTitle>
 					<DialogHeaderAction>
-						<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
+						<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
 							<ChevronUpIcon className="size-4" />
 						</Button>
-						<Button size="icon" variant="outline" onClick={handleGoDown} disabled={!canGoDown}>
+						<Button size="icon" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
 							<ChevronDownIcon className="size-4" />
 						</Button>
 						{currentExpense && (

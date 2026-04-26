@@ -8,6 +8,10 @@ const nanoid = customAlphabet(DEFAULT_ALPHABET, DEFAULT_SIZE);
 const prefixes = {
 	user: "u_",
 	workspace: "ws_",
+	expense: "ex_",
+	income: "in_",
+	event: "ev_",
+	recurring_bill: "rb_",
 	image: "img_",
 	pdf: "pdf_",
 } as const;

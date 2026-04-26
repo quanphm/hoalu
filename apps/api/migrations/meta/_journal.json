@@ -71,6 +71,27 @@
       "when": 1774512952274,
       "tag": "0009_lonely_sir_ram",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1777193707501,
+      "tag": "0010_tan_leo",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1777195174024,
+      "tag": "0011_slim_mockingbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1777195332119,
+      "tag": "0012_old_true_believers",
+      "breakpoints": true
     }
   ]
 }

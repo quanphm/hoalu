@@ -76,7 +76,7 @@ function IncomeContent(props: IncomeContentProps) {
 				</div>
 			</div>
 			<div className="flex items-end justify-center gap-4 text-right">
-				<TransactionAmount data={props} />
+				<TransactionAmount type="income" data={props} />
 			</div>
 		</div>
 	);

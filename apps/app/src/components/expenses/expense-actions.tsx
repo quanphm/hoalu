@@ -9,7 +9,7 @@ import {
 	quickExpenseJobIdAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
-import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import {
 	FilesCompactUpload,
 	type FilesCompactUploadRef,
@@ -52,7 +52,7 @@ import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
@@ -359,7 +359,8 @@ export function DeleteExpense({ id }: { id: string }) {
 }
 
 export function DeleteExpenseDialogContent() {
-	const { onSelectExpense } = useSelectedExpense();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const navigate = useNavigate();
 	const mutation = useDeleteExpense();
 	const [dialog, setDialog] = useAtom(deleteExpenseDialogAtom);
 
@@ -369,8 +370,8 @@ export function DeleteExpenseDialogContent() {
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		onSelectExpense(null);
 		setDialog({ state: false });
+		navigate({ to: "/$slug/expenses", params: { slug } });
 	};
 
 	return (
@@ -648,10 +649,11 @@ export function ExpenseSearch() {
 	const [value, setValue] = useAtom(searchKeywordsAtom);
 
 	return (
-		<div className="relative">
+		<div className="relative w-80">
 			<Input
 				type="search"
-				placeholder="Search"
+				size="sm"
+				placeholder="Search title, description..."
 				className="peer ps-6 focus-visible:ring-0"
 				value={value}
 				onChange={(e) => {
@@ -659,7 +661,7 @@ export function ExpenseSearch() {
 				}}
 			/>
 			<div className="pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-				<SearchIcon size={16} aria-hidden="true" />
+				<SearchIcon className="text-muted-foreground size-3" aria-hidden="true" />
 			</div>
 		</div>
 	);

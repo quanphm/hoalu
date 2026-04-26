@@ -9,11 +9,18 @@ interface TransactionAmountProps {
 	currency: string;
 }
 
-export function TransactionAmount(props: { data: TransactionAmountProps; className?: string }) {
+export function TransactionAmount({
+	type = "expense",
+	data: { amount, convertedAmount, currency: sourceCurrency },
+	className,
+}: {
+	type?: "expense" | "income";
+	data: TransactionAmountProps;
+	className?: string;
+}) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const { amount, convertedAmount, currency: sourceCurrency } = props.data;
 
 	if (convertedAmount === -1) {
 		return <p className="text-destructive">Error</p>;
@@ -24,16 +31,16 @@ export function TransactionAmount(props: { data: TransactionAmountProps; classNa
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				prefix={workspaceCurrency !== sourceCurrency ? "≈" : undefined}
+				prefix={workspaceCurrency !== sourceCurrency ? "≈" : type === "expense" ? "-" : "+"}
 				as="p"
-				className={cn("text-base font-semibold", props.className)}
+				className={cn("text-sm font-medium", className)}
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue
 					value={amount}
 					currency={sourceCurrency}
 					prefix="original "
-					className="text-muted-foreground/70 text-[10px]"
+					className="text-muted-foreground text-xs"
 					as="p"
 				/>
 			)}

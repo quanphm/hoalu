@@ -124,6 +124,7 @@ const route = app
 			const event = await repository.insert({
 				...rest,
 				id: generateId({ use: "uuid" }),
+				publicId: generateId({ use: "nanoid", kind: "event" }),
 				workspaceId: workspace.id,
 				creatorId: user.id,
 				budget: realAmount ? `${realAmount}` : null,

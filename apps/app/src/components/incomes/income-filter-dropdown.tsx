@@ -3,7 +3,7 @@ import {
 	incomeCategoryFilterAtom,
 	incomeWalletFilterAtom,
 	incomeSearchKeywordsAtom,
-} from "#app/atoms/income-filters.ts";
+} from "#app/atoms/index.ts";
 import {
 	useLiveQueryCategories,
 	type SyncedCategory,

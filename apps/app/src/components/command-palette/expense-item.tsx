@@ -7,6 +7,7 @@ import { Badge } from "@hoalu/ui/badge";
 import { CommandItem } from "@hoalu/ui/command";
 
 import { HighlightedText } from "./highlighted-text.tsx";
+
 import type { AutocompleteItem, ExpenseSearchResult } from "./types.ts";
 
 interface ExpenseItemProps {
@@ -16,12 +17,7 @@ interface ExpenseItemProps {
 	onClick: () => void;
 }
 
-export function ExpenseItem({
-	expense,
-	autocompleteItem,
-	itemIndex,
-	onClick,
-}: ExpenseItemProps) {
+export function ExpenseItem({ expense, autocompleteItem, itemIndex, onClick }: ExpenseItemProps) {
 	return (
 		<CommandItem
 			value={autocompleteItem.id}

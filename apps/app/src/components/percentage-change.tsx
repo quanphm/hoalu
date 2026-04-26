@@ -67,9 +67,7 @@ export function PercentageChangeDisplay({
 				title="toggle view percent or absolute value"
 			>
 				{viewMode === "percent" && (
-					<span className="font-geist-mono tracking-tight tabular-nums">
-						{change.displayInPercent}
-					</span>
+					<span className="font-mono tracking-tight tabular-nums">{change.displayInPercent}</span>
 				)}
 				{viewMode === "value" && (
 					<CurrencyValue
