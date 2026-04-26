@@ -111,7 +111,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 						<CurrencyValue
 							value={data.amount}
 							currency={currency}
-							className="text-xs font-semibold"
+							className="text-xs font-medium"
 						/>
 						<Button variant="default" size="xs" onClick={handleReview}>
 							Review
@@ -189,9 +189,9 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 						<CurrencyValue
 							value={result.amount}
 							currency={currency}
-							className="text-xs font-semibold"
+							className="text-xs font-medium"
 						/>
-						<Button variant="default" size="xs" onClick={handleReview}>
+						<Button size="xs" onClick={handleReview}>
 							Review
 						</Button>
 					</div>

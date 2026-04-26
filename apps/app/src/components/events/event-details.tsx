@@ -12,7 +12,13 @@ import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { ChevronDownIcon, ChevronUpIcon, PencilIcon, RepeatIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import {
+	ChevronDownIcon,
+	ChevronUpIcon,
+	PencilIcon,
+	RepeatIcon,
+	Trash2Icon,
+} from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -70,9 +76,7 @@ export function EventDetailPanel({
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger
-							render={
-								<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
-							}
+							render={<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />}
 						>
 							<ChevronUpIcon className="size-4" />
 						</TooltipTrigger>
@@ -140,7 +144,7 @@ export function EventDetailPanel({
 										className="text-xl"
 									/>
 								) : (
-									<span className="text-muted-foreground">∞</span>
+									<span className="text-muted-foreground">-</span>
 								)}
 							</CardTitle>
 						</CardHeader>
@@ -182,7 +186,7 @@ export function EventDetailPanel({
 										)}
 									/>
 								) : (
-									<span className="text-muted-foreground">∞</span>
+									<span className="text-muted-foreground">-</span>
 								)}
 							</CardTitle>
 						</CardHeader>
@@ -301,7 +305,7 @@ function EventExpenseItem({ expense }: { expense: SyncedEventExpense }) {
 				<CurrencyValue
 					value={expense.amount}
 					currency={expense.currency}
-					className="text-sm font-semibold"
+					className="text-sm font-medium"
 				/>
 			</div>
 		</div>
@@ -336,7 +340,7 @@ function EventBillItem({ bill }: { bill: SyncedEventBill }) {
 				<CurrencyValue
 					value={bill.amount}
 					currency={bill.currency}
-					className="text-sm font-semibold"
+					className="text-sm font-medium"
 				/>
 			</div>
 		</div>

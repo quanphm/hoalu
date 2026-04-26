@@ -96,7 +96,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 							style="currency"
 							value={summary.totalExpensesThisMonth}
 							currency={summary.primaryCurrency}
-							className="text-lg font-semibold"
+							className="text-lg font-medium"
 						/>
 					</div>
 					<div>
@@ -107,7 +107,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 							style="currency"
 							value={summary.totalIncomeThisMonth}
 							currency={summary.primaryCurrency}
-							className="text-lg font-semibold"
+							className="text-lg font-medium"
 						/>
 					</div>
 				</CardContent>

@@ -357,7 +357,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							<CurrencyValue
 								value={totalExpenses}
 								currency={currency}
-								className="text-3xl font-semibold"
+								className="text-3xl font-medium"
 							/>
 							{isCategoryMode && (
 								<span className="text-muted-foreground text-sm">
@@ -534,7 +534,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 													</span>
 													{payload.map((entry) => (
 														<div
-															key={entry.dataKey}
+															key={entry.dataKey as any}
 															className="flex items-center justify-between gap-4"
 														>
 															<div className="flex items-center gap-1.5">
@@ -547,7 +547,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 																</span>
 															</div>
 															<CurrencyValue
-																value={entry.value}
+																value={entry.value as any}
 																currency={currency}
 																className="text-sm font-medium"
 															/>
@@ -560,7 +560,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 																<CurrencyValue
 																	value={total}
 																	currency={currency}
-																	className="text-sm font-bold"
+																	className="text-sm font-medium"
 																/>
 															</div>
 														</div>
@@ -578,9 +578,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 														{formattedDate}
 													</span>
 													<CurrencyValue
-														value={payload[0].value}
+														value={payload[0].value as any}
 														currency={currency}
-														className="font-bold"
+														className="font-medium"
 													/>
 												</div>
 											</div>

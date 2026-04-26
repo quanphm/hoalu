@@ -93,10 +93,6 @@ const columns = [
 				{info.getValue()}
 			</span>
 		),
-		meta: {
-			headerClassName: "w-(--title-size) min-w-(--title-size) max-w-(--title-size)",
-			cellClassName: "w-(--title-size) min-w-(--title-size) max-w-(--title-size) truncate",
-		},
 	}),
 	columnHelper.display({
 		id: "amount",
@@ -108,14 +104,13 @@ const columns = [
 					value={transaction.amount}
 					currency={transaction.currency}
 					prefix={transaction.type === "expense" ? "-" : "+"}
-					style="currency"
 					className={cn("text-sm font-medium", transaction.type === "income" && "text-success")}
 				/>
 			);
 		},
 		meta: {
-			headerClassName: "text-right",
-			cellClassName: "text-right",
+			headerClassName: "text-right w-(--amount-size) min-w-(--amount-size) max-w-(--amount-size)",
+			cellClassName: "text-right w-(--amount-size) min-w-(--amount-size) max-w-(--amount-size)",
 		},
 	}),
 	columnHelper.display({

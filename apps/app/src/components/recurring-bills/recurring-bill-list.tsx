@@ -9,6 +9,7 @@ import {
 	type SyncedAllRecurringBill,
 	useAllRecurringBills,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
@@ -74,7 +75,7 @@ function BillGroupHeader({
 					<CurrencyValue
 						value={total}
 						currency={workspaceCurrency}
-						className="text-destructive text-sm font-semibold"
+						className="text-destructive text-sm font-medium"
 					/>
 				)}
 			</div>
@@ -83,11 +84,6 @@ function BillGroupHeader({
 }
 
 function RecurringBillContent(props: SyncedAllRecurringBill) {
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
-	const isForeignCurrency = props.currency !== workspaceCurrency;
-
 	const setArchiveDialog = useSetAtom(archiveRecurringBillDialogAtom);
 	const setUnarchiveDialog = useSetAtom(unarchiveRecurringBillDialogAtom);
 	const setDeleteDialog = useSetAtom(deleteRecurringBillDialogAtom);
@@ -139,21 +135,14 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 				)}
 			</div>
 			<div className="flex flex-col items-end justify-center px-4 py-3">
-				<CurrencyValue
-					value={isForeignCurrency ? props.convertedAmount : props.amount}
-					currency={isForeignCurrency ? workspaceCurrency : props.currency}
-					prefix={isForeignCurrency ? "≈" : undefined}
-					className={cn("text-sm font-semibold", !props.is_active && "text-muted-foreground")}
+				<TransactionAmount
+					data={{
+						amount: props.amount,
+						convertedAmount: props.convertedAmount,
+						currency: props.currency,
+					}}
+					className={cn("text-sm font-medium", !props.is_active && "text-muted-foreground")}
 				/>
-				{isForeignCurrency && (
-					<CurrencyValue
-						value={props.amount}
-						currency={props.currency}
-						prefix="original "
-						className="text-muted-foreground/70 text-[10px]"
-						as="p"
-					/>
-				)}
 			</div>
 			<div className="flex items-center px-4 py-3">
 				<WalletBadge name={props.wallet_name} type={props.wallet_type} />
