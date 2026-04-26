@@ -25,15 +25,15 @@ import { useSetAtom } from "jotai";
 import { memo, useCallback, useMemo } from "react";
 
 const GRID_TEMPLATE =
-	"grid grid-cols-[var(--category-size)_1fr_var(--date-size)_var(--wallet-size)_var(--amount-size)_var(--status-size)_var(--action-size)]";
+	"grid grid-cols-[var(--category-size)_1fr_var(--date-size)_var(--status-size)_var(--amount-size)_var(--wallet-size)_var(--action-size)]";
 
 const columns: ColumnDef<SyncedAllRecurringBill>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "name", header: "Name" },
 	{ id: "repeat", header: "Repeat" },
-	{ id: "wallet", header: "Wallet" },
-	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
 	{ id: "status", header: "Status" },
+	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
+	{ id: "wallet", header: "Wallet" },
 	{ id: "actions", header: "" },
 ];
 
@@ -74,7 +74,7 @@ function BillGroupHeader({
 					<CurrencyValue
 						value={total}
 						currency={workspaceCurrency}
-						className="text-destructive font-semibold"
+						className="text-destructive text-sm font-semibold"
 					/>
 				)}
 			</div>
@@ -117,7 +117,7 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 				<p
 					className={cn(
 						"truncate text-sm font-medium",
-						!props.is_active && "text-muted-foreground line-through",
+						!props.is_active && "text-muted-foreground",
 					)}
 					title={props.title}
 				>
@@ -128,7 +128,15 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 				<span className="text-muted-foreground text-sm">{repeatLabel}</span>
 			</div>
 			<div className="flex items-center px-4 py-3">
-				<WalletBadge name={props.wallet_name} type={props.wallet_type} />
+				{props.is_active ? (
+					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
+						Active
+					</Badge>
+				) : (
+					<Badge variant="outline" className="text-muted-foreground">
+						Archived
+					</Badge>
+				)}
 			</div>
 			<div className="flex flex-col items-end justify-center px-4 py-3">
 				<CurrencyValue
@@ -148,55 +156,45 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 				)}
 			</div>
 			<div className="flex items-center px-4 py-3">
-				{props.is_active ? (
-					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
-						Active
-					</Badge>
-				) : (
-					<Badge variant="outline" className="text-muted-foreground">
-						Archived
-					</Badge>
-				)}
+				<WalletBadge name={props.wallet_name} type={props.wallet_type} />
 			</div>
-			<div className="flex items-center justify-center px-1 py-3">
+
+			<div className="flex items-center justify-end px-4">
 				{props.is_active ? (
 					<Button
-						size="icon"
+						size="icon-sm"
 						variant="ghost"
-						className="size-8"
 						aria-label={`Archive ${props.title}`}
 						onClick={(e) => {
 							e.stopPropagation();
 							setArchiveDialog({ state: true, data: { id: props.id } });
 						}}
 					>
-						<ArchiveIcon className="size-4" />
+						<ArchiveIcon />
 					</Button>
 				) : (
 					<div className="flex items-center gap-0.5">
 						<Button
-							size="icon"
+							size="icon-sm"
 							variant="ghost"
-							className="size-8"
 							aria-label={`Restore ${props.title}`}
 							onClick={(e) => {
 								e.stopPropagation();
 								setUnarchiveDialog({ state: true, data: { id: props.id } });
 							}}
 						>
-							<ArchiveRestoreIcon className="size-4" />
+							<ArchiveRestoreIcon />
 						</Button>
 						<Button
-							size="icon"
-							variant="ghost"
-							className="size-8"
+							size="icon-sm"
+							variant="destructive"
 							aria-label={`Delete ${props.title}`}
 							onClick={(e) => {
 								e.stopPropagation();
 								setDeleteDialog({ state: true, data: { id: props.id, title: props.title } });
 							}}
 						>
-							<Trash2Icon className="size-4" />
+							<Trash2Icon />
 						</Button>
 					</div>
 				)}

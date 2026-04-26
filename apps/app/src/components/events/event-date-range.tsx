@@ -35,9 +35,5 @@ export function EventDateRange({ startDate, endDate, format = "dd/MM/yyyy" }: Ev
 		label = <>Until {formatDate(endDate!, format)}</>;
 	}
 
-	return (
-		<div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-			<span>{label}</span>
-		</div>
-	);
+	return <div className="text-muted-foreground flex items-center text-sm">{label}</div>;
 }

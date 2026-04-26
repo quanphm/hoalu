@@ -69,7 +69,7 @@ function TransactionGroupHeader({
 						value={incomeTotal}
 						currency={workspaceCurrency}
 						prefix="+"
-						className="text-success font-semibold"
+						className="text-success text-sm font-semibold"
 					/>
 				)}
 			</div>
@@ -79,7 +79,7 @@ function TransactionGroupHeader({
 						value={expenseTotal}
 						currency={workspaceCurrency}
 						prefix="-"
-						className="text-destructive font-semibold"
+						className="text-destructive text-sm font-semibold"
 					/>
 				)}
 			</div>

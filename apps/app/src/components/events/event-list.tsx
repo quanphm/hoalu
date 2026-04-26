@@ -12,15 +12,15 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 
 const GRID_TEMPLATE =
-	"grid grid-cols-[1fr_var(--wallet-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)_var(--status-size)]";
+	"grid grid-cols-[1fr_var(--date-range-size)_var(--status-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)]";
 
 const columns: ColumnDef<SyncedEvent>[] = [
 	{ id: "name", header: "Name" },
 	{ id: "date", header: "Date" },
+	{ id: "status", header: "Status" },
 	{ id: "budget", header: "Budget", meta: { headerClassName: "justify-end" } },
 	{ id: "spent", header: "Spent", meta: { headerClassName: "justify-end" } },
 	{ id: "progress", header: "Progress" },
-	{ id: "status", header: "Status" },
 ];
 
 function EventContent(event: SyncedEvent) {
@@ -61,6 +61,17 @@ function EventContent(event: SyncedEvent) {
 			<div className="flex items-center px-4 py-3">
 				<EventDateRange startDate={event.start_date} endDate={event.end_date} />
 			</div>
+			<div className="flex items-center px-4 py-3">
+				{event.status === "open" ? (
+					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
+						Open
+					</Badge>
+				) : (
+					<Badge variant="outline" className="text-muted-foreground">
+						Closed
+					</Badge>
+				)}
+			</div>
 			<div className="flex items-center justify-end px-4 py-3">
 				{event.realBudget ? (
 					<CurrencyValue
@@ -76,6 +87,7 @@ function EventContent(event: SyncedEvent) {
 				<CurrencyValue
 					value={event.totalSpent}
 					currency={event.budget_currency || workspaceCurrency}
+					prefix="-"
 					className="text-sm font-semibold"
 				/>
 			</div>
@@ -96,17 +108,6 @@ function EventContent(event: SyncedEvent) {
 					</Progress>
 				) : (
 					<span className="text-muted-foreground text-sm">—</span>
-				)}
-			</div>
-			<div className="flex items-center px-4 py-3">
-				{event.status === "open" ? (
-					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
-						Open
-					</Badge>
-				) : (
-					<Badge variant="outline" className="text-muted-foreground">
-						Closed
-					</Badge>
 				)}
 			</div>
 		</>

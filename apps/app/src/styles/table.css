@@ -1,12 +1,13 @@
 @theme inline {
 	--name-size: 200px;
 	--link-size: 400px;
-	--action-size: 48px;
 	--date-size: 100px;
+	--date-range-size: 300px;
 	--amount-size: 150px;
 	--category-size: 160px;
 	--wallet-size: 200px;
 	--title-size: 300px;
 	--status-size: 100px;
-	--progress-size: 120px;
+	--progress-size: 180px;
+	--action-size: 100px;
 }
