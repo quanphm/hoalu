@@ -111,7 +111,7 @@ export function VirtualizedList({
 											runAction(() =>
 												navigate({
 													to: "/$slug/expenses/$expenseId",
-													params: { slug, expenseId: item.data.id },
+													params: { slug, expenseId: item.data.public_id },
 												}),
 											)
 										}

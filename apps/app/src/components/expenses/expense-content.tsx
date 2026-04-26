@@ -21,7 +21,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 		if (event.code === "Enter" || event.code === "Space") {
 			event.preventDefault();
 			event.stopPropagation();
-			props.onClick(props.id);
+			props.onClick(props.public_id);
 		}
 	};
 
@@ -32,11 +32,11 @@ function ExpenseContent(props: ExpenseContentProps) {
 		if (shouldUseMobileLayout) {
 			return;
 		}
-		props.onClick(props.id);
+		props.onClick(props.public_id);
 	};
 
 	const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-		props.onClick(props.id);
+		props.onClick(props.public_id || props.id);
 		event.currentTarget.focus();
 	};
 

@@ -184,7 +184,14 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 							{item.type === "group-header" ? (
 								<GroupHeader date={item.date} total={item.total} />
 							) : (
-								<ExpenseContent {...item.expense} isSelected={props.selectedId === item.expense.id} onClick={handleSelectExpense} />
+								<ExpenseContent
+									{...item.expense}
+									isSelected={
+										props.selectedId === item.expense.public_id ||
+										props.selectedId === item.expense.id
+									}
+									onClick={handleSelectExpense}
+								/>
 							)}
 						</div>
 					);

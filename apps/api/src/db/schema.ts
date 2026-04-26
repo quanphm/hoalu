@@ -297,6 +297,7 @@ export const expense = pgTable(
 	"expense",
 	{
 		id: uuid("id").primaryKey(),
+		publicId: text("public_id").notNull().unique(),
 		title: text("title").notNull(),
 		description: text("description"),
 		date: timestamp("date", { mode: "string", withTimezone: true })

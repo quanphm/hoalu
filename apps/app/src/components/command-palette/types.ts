@@ -2,6 +2,7 @@ import type { ColorSchema } from "@hoalu/common/schema";
 
 export interface ExpenseSearchResult {
 	id: string;
+	public_id: string;
 	title: string;
 	description: string | null;
 	amount: number;
@@ -49,7 +50,10 @@ export type AutocompleteUpcomingBillItem = {
 	title: string;
 };
 
-export type AutocompleteItem = AutocompleteExpenseItem | AutocompleteActionItem | AutocompleteUpcomingBillItem;
+export type AutocompleteItem =
+	| AutocompleteExpenseItem
+	| AutocompleteActionItem
+	| AutocompleteUpcomingBillItem;
 
 export type VirtualizedItem =
 	| { type: "header"; label: string; itemIndex?: never }

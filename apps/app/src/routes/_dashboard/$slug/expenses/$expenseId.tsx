@@ -1,5 +1,5 @@
-import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
+import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback } from "react";
@@ -16,8 +16,13 @@ function RouteComponent() {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const filtered = useFilteredExpenses();
 
-	const currentIndex = filtered.findIndex((e) => e.id === expenseId);
+	const currentIndex = filtered.findIndex((e) => e.public_id === expenseId || e.id === expenseId);
 	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
+
+	const resolveExpenseId = useCallback(
+		(expense: (typeof filtered)[number]) => expense.public_id || expense.id,
+		[],
+	);
 
 	const canGoUp = currentIndex > 0;
 	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
@@ -27,18 +32,18 @@ function RouteComponent() {
 		if (!prev) return;
 		navigate({
 			to: "/$slug/expenses/$expenseId",
-			params: { slug, expenseId: prev.id },
+			params: { slug, expenseId: resolveExpenseId(prev) },
 		});
-	}, [currentIndex, filtered, navigate, slug]);
+	}, [currentIndex, filtered, navigate, slug, resolveExpenseId]);
 
 	const handleGoDown = useCallback(() => {
 		const next = filtered[currentIndex + 1];
 		if (!next) return;
 		navigate({
 			to: "/$slug/expenses/$expenseId",
-			params: { slug, expenseId: next.id },
+			params: { slug, expenseId: resolveExpenseId(next) },
 		});
-	}, [currentIndex, filtered, navigate, slug]);
+	}, [currentIndex, filtered, navigate, slug, resolveExpenseId]);
 
 	const handleClose = useCallback(() => {
 		navigate({ to: "/$slug/expenses", params: { slug } });
