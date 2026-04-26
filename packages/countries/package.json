@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/countries",
-	"version": "0.28.5",
+	"version": "0.28.6",
 	"private": true,
 	"sideEffects": false,
 	"exports": {
