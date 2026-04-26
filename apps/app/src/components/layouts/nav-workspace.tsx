@@ -3,7 +3,6 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
-	CashBanknoteMoveIcon,
 	CalendarDollarIcon,
 	CashPlusIcon,
 	FileIcon,
@@ -13,6 +12,7 @@ import {
 	UsersGroupIcon,
 	WalletIcon,
 	CalendarClockIcon,
+	ArrowsExchangeIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -81,7 +81,7 @@ export function NavWorkspace() {
 								}
 								tooltip="Transactions"
 							>
-								<CashBanknoteMoveIcon />
+								<ArrowsExchangeIcon />
 								<span>Transactions</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
