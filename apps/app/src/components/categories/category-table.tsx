@@ -28,10 +28,8 @@ const columns = [
 			);
 		},
 		meta: {
-			headerClassName:
-				"w-(--header-category-name-size) min-w-(--header-category-name-size) max-w-(--header-category-name-size)",
-			cellClassName:
-				"w-(--col-category-name-size) min-w-(--col-category-name-size) max-w-(--col-category-name-size)",
+			headerClassName: "w-(--category-size) min-w-(--category-size) max-w-(--category-size)",
+			cellClassName: "w-(--category-size) min-w-(--category-size) max-w-(--category-size)",
 		},
 	}),
 	columnHelper.accessor("description", {

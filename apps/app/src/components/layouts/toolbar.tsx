@@ -5,7 +5,7 @@ function Toolbar({ className, ...props }: React.ComponentPropsWithRef<"div">) {
 		<div
 			data-slot="toolbar"
 			className={cn(
-				"bg-card relative flex min-h-14 w-full flex-col items-start justify-between gap-3 border-b px-4 py-2.5 md:flex-row md:items-center",
+				"bg-card relative flex min-h-7 w-full flex-col items-start justify-between gap-3 border-b px-4 py-2.5 md:flex-row md:items-center",
 				className,
 			)}
 			{...props}
@@ -17,7 +17,7 @@ function ToolbarGroup({ className, ...props }: React.ComponentPropsWithRef<"div"
 	return (
 		<div
 			data-slot="toolbar-group"
-			className={cn("flex items-center gap-2", className)}
+			className={cn("flex min-h-7 items-center gap-2", className)}
 			{...props}
 		/>
 	);

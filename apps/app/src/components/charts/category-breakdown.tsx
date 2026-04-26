@@ -79,13 +79,13 @@ function CategoryListBreakdown(props: {
 
 		if (!customDateRange) {
 			navigate({
-				to: "/$slug/expenses",
+				to: "/$slug/transactions",
 				params: { slug },
 			});
 		} else {
 			const searchQuery = `${customDateRange.from.getTime()}-${customDateRange.to.getTime()}`;
 			navigate({
-				to: "/$slug/expenses",
+				to: "/$slug/transactions",
 				params: { slug },
 				search: { date: searchQuery },
 			});
@@ -135,11 +135,6 @@ function EmptyData() {
 					You haven&apos;t created any expenses in this period yet.
 				</EmptyDescription>
 			</EmptyHeader>
-			<EmptyContent>
-				<div className="flex gap-2">
-					<CreateExpenseDialogTrigger variant="default" showKbd={false} />
-				</div>
-			</EmptyContent>
 		</Empty>
 	);
 }

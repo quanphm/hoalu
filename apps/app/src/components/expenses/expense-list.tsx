@@ -1,6 +1,6 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
@@ -14,28 +14,36 @@ import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "r
 
 const THEAD_HEIGHT = 32;
 const GRID_TEMPLATE =
-	"grid grid-cols-[var(--expense-category-size)_1fr_var(--expense-amount-size)_var(--expense-wallet-size)]";
+	"grid grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)]";
 
-type ExpenseItem = {
-	type: "expense";
-	expense: SyncedExpense;
+type TransactionItem = {
+	type: "transaction";
+	transaction: SyncedTransaction;
 	date: string;
 };
 
 type GroupHeaderItem = {
 	type: "group-header";
 	date: string;
-	total: number;
+	expenseTotal: number;
+	incomeTotal: number;
 };
 
-type VirtualItem = ExpenseItem | GroupHeaderItem;
+type VirtualItem = TransactionItem | GroupHeaderItem;
 
-const columns: ColumnDef<SyncedExpense>[] = [
+const columns: ColumnDef<SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{
-		id: "amount",
-		header: "Amount",
+		id: "income-amount",
+		header: "Income",
+		meta: {
+			headerClassName: "justify-end",
+		},
+	},
+	{
+		id: "expense-amount",
+		header: "Expense",
 		meta: {
 			headerClassName: "justify-end",
 		},
@@ -43,28 +51,32 @@ const columns: ColumnDef<SyncedExpense>[] = [
 	{ id: "wallet", header: "Wallet" },
 ];
 
-function buildFlatItems(expenses: SyncedExpense[]): VirtualItem[] {
-	const grouped = new Map<string, SyncedExpense[]>();
-	expenses.forEach((expense) => {
-		const existing = grouped.get(expense.date);
-		if (existing) existing.push(expense);
-		else grouped.set(expense.date, [expense]);
-	});
+function buildFlatItems(transactions: SyncedTransaction[]): VirtualItem[] {
+	const grouped = new Map<string, SyncedTransaction[]>();
+	for (const tx of transactions) {
+		const existing = grouped.get(tx.date);
+		if (existing) existing.push(tx);
+		else grouped.set(tx.date, [tx]);
+	}
 
 	const items: VirtualItem[] = [];
-	for (const [date, groupExpenses] of grouped.entries()) {
-		let total = 0;
-		for (const e of groupExpenses) {
-			const v = e.convertedAmount;
-			if (typeof v === "number" && v >= 0) total += v;
+	for (const [date, group] of grouped.entries()) {
+		let expenseTotal = 0;
+		let incomeTotal = 0;
+		for (const tx of group) {
+			const v = tx.convertedAmount;
+			if (typeof v === "number" && v >= 0) {
+				if (tx.kind === "expense") expenseTotal += v;
+				else incomeTotal += v;
+			}
 		}
-		items.push({ type: "group-header", date, total });
-		groupExpenses.forEach((expense) => items.push({ type: "expense", date, expense }));
+		items.push({ type: "group-header", date, expenseTotal, incomeTotal });
+		for (const tx of group) items.push({ type: "transaction", date, transaction: tx });
 	}
 	return items;
 }
 
-function GroupHeader({ date, total }: Omit<GroupHeaderItem, "type">) {
+function GroupHeader({ date, expenseTotal, incomeTotal }: Omit<GroupHeaderItem, "type">) {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
@@ -79,14 +91,27 @@ function GroupHeader({ date, total }: Omit<GroupHeaderItem, "type">) {
 				{datetime.format(new Date(date), "E dd/MM/yyyy")}
 				{isToday && <Badge className="ml-1">Today</Badge>}
 			</div>
-			{/* empty to fill the column */}
+			{/* empty to fill title column */}
 			<div />
-			<div className="ml-auto">
-				<CurrencyValue
-					value={total}
-					currency={workspaceCurrency}
-					className="text-destructive text-sm font-semibold"
-				/>
+			<div className="ml-auto flex items-center gap-3">
+				{incomeTotal > 0 && (
+					<CurrencyValue
+						value={incomeTotal}
+						currency={workspaceCurrency}
+						prefix="+"
+						className="text-success text-sm font-semibold"
+					/>
+				)}
+			</div>
+			<div className="ml-auto flex items-center gap-3">
+				{expenseTotal > 0 && (
+					<CurrencyValue
+						value={expenseTotal}
+						currency={workspaceCurrency}
+						prefix="-"
+						className="text-destructive text-sm font-semibold"
+					/>
+				)}
 			</div>
 		</div>
 	);
@@ -96,26 +121,26 @@ function EmptyState() {
 	return (
 		<Empty>
 			<EmptyHeader>
-				<EmptyTitle>No expenses</EmptyTitle>
-				<EmptyDescription>Create your first expense to track your spending.</EmptyDescription>
+				<EmptyTitle>No transactions</EmptyTitle>
+				<EmptyDescription>Create your first expense or income to get started.</EmptyDescription>
 			</EmptyHeader>
 		</Empty>
 	);
 }
 
-function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | null }) {
+function ExpenseList(props: { expenses: SyncedTransaction[]; selectedId: string | null }) {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 	const parentRef = useRef<HTMLDivElement>(null);
 	const activeStickyIndexRef = useRef(0);
 
-	const handleSelectExpense = useCallback(
+	const handleSelectTransaction = useCallback(
 		(id: string | null) => {
 			if (!id) {
-				navigate({ to: "/$slug/expenses", params: { slug } });
+				navigate({ to: "/$slug/transactions", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/expenses/$expenseId", params: { slug, expenseId: id } });
+			navigate({ to: "/$slug/transactions/$transactionId", params: { slug, transactionId: id } });
 		},
 		[navigate, slug],
 	);
@@ -126,23 +151,23 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 		getCoreRowModel: getCoreRowModel(),
 	});
 
-	const flattenExpenses = useMemo(() => buildFlatItems(props.expenses), [props.expenses]);
+	const flatItems = useMemo(() => buildFlatItems(props.expenses), [props.expenses]);
 
 	const stickyIndexes = useMemo(
 		() =>
-			flattenExpenses.reduce<number[]>((acc, item, index) => {
+			flatItems.reduce<number[]>((acc, item, index) => {
 				if (item.type === "group-header") acc.push(index);
 				return acc;
 			}, []),
-		[flattenExpenses],
+		[flatItems],
 	);
 
 	const virtualizer = useVirtualizer({
-		count: flattenExpenses.length,
+		count: flatItems.length,
 		overscan: 10,
 		getScrollElement: () => parentRef.current,
 		estimateSize: (index) => {
-			const item = flattenExpenses[index];
+			const item = flatItems[index];
 			if (item.type === "group-header") return 32;
 			return 45;
 		},
@@ -160,9 +185,9 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 		),
 	});
 
-	const scrollToExpense = useEffectEvent((id: string) => {
-		const index = flattenExpenses.findIndex(
-			(item) => item.type === "expense" && item.expense.public_id === id,
+	const scrollToTransaction = useEffectEvent((id: string) => {
+		const index = flatItems.findIndex(
+			(item) => item.type === "transaction" && item.transaction.public_id === id,
 		);
 		if (index >= 0) {
 			virtualizer.scrollToIndex(index, { align: "auto" });
@@ -171,7 +196,7 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 	});
 
 	useEffect(() => {
-		if (props.selectedId) scrollToExpense(props.selectedId);
+		if (props.selectedId) scrollToTransaction(props.selectedId);
 	}, [props.selectedId]);
 
 	if (props.expenses.length === 0) return <EmptyState />;
@@ -210,7 +235,7 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 			{/* Virtualizer body */}
 			<div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
 				{virtualizer.getVirtualItems().map((virtualRow) => {
-					const item = flattenExpenses[virtualRow.index];
+					const item = flatItems[virtualRow.index];
 					const isActiveSticky = activeStickyIndexRef.current === virtualRow.index;
 
 					if (item.type === "group-header") {
@@ -231,22 +256,27 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 											}
 								}
 							>
-								<GroupHeader date={item.date} total={item.total} />
+								<GroupHeader
+									date={item.date}
+									expenseTotal={item.expenseTotal}
+									incomeTotal={item.incomeTotal}
+								/>
 							</div>
 						);
 					}
 
+					const tx = item.transaction;
 					return (
 						<div
 							key={virtualRow.key}
 							data-index={virtualRow.index}
 							ref={virtualizer.measureElement}
-							id={item.expense.public_id}
+							id={tx.public_id}
 							role="row"
 							className={cn(
 								"hover:bg-muted/60 focus-visible:ring-ring cursor-pointer border-b outline-none focus-visible:ring-2 focus-visible:ring-inset",
 								GRID_TEMPLATE,
-								props.selectedId === item.expense.public_id && "ring-ring ring-2 ring-inset",
+								props.selectedId === tx.public_id && "ring-ring ring-2 ring-inset",
 							)}
 							style={{
 								position: "absolute",
@@ -255,15 +285,15 @@ function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | nu
 								width: "100%",
 								transform: `translateY(${virtualRow.start}px)`,
 							}}
-							onClick={() => handleSelectExpense(item.expense.public_id)}
+							onClick={() => handleSelectTransaction(tx.public_id)}
 							onKeyDown={(e) => {
 								if (e.code === "Enter" || e.code === "Space") {
 									e.preventDefault();
-									handleSelectExpense(item.expense.public_id);
+									handleSelectTransaction(tx.public_id);
 								}
 							}}
 						>
-							<ExpenseContent {...item.expense} />
+							<ExpenseContent {...tx} />
 						</div>
 					);
 				})}

@@ -5,7 +5,7 @@ import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constan
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
-import { CashBanknoteMoveIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
+import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -170,7 +170,7 @@ function MobileBottomNav() {
 					<span className="truncate text-xs leading-none">Dashboard</span>
 				</ButtonLink>
 				<ButtonLink
-					to="/$slug/expenses"
+					to="/$slug/transactions"
 					params={{ slug }}
 					size="sm"
 					variant="ghost"
@@ -180,8 +180,8 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<CashBanknoteMoveIcon className="size-6" aria-hidden="true" />
-					<span className="truncate text-xs leading-none">Expense</span>
+					<ArrowsExchangeIcon className="size-6" aria-hidden="true" />
+					<span className="truncate text-xs leading-none">Transactions</span>
 				</ButtonLink>
 				<ButtonLink
 					to="/$slug/settings/workspace"

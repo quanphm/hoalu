@@ -1,9 +1,11 @@
 import {
 	type AmountFilterState,
+	type TransactionKindFilter,
 	expenseAmountFilterAtom,
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
+	transactionKindFilterAtom,
 } from "#app/atoms/index.ts";
 import {
 	useLiveQueryCategories,
@@ -16,12 +18,12 @@ import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import {
 	CalendarIcon,
 	CheckIcon,
+	DollarSignIcon,
 	FilterIcon,
 	ListFilterIcon,
 	RefreshCwIcon,
 	TagIcon,
 	WalletIcon,
-	DollarSignIcon,
 	XIcon,
 } from "@hoalu/icons/lucide";
 import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
@@ -41,7 +43,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date";
 
@@ -56,6 +58,7 @@ export function ExpenseFilterDropdown() {
 	const [selectedCategories, setSelectedCategories] = useAtom(expenseCategoryFilterAtom);
 	const [selectedWallets, setSelectedWallets] = useAtom(expenseWalletFilterAtom);
 	const [selectedRepeats, setSelectedRepeats] = useAtom(expenseRepeatFilterAtom);
+	const [kindFilter] = useAtom(transactionKindFilterAtom);
 	const { date: searchByDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
 	const dateRange = toFromToDateObject(searchByDate);
@@ -158,7 +161,6 @@ export function ExpenseFilterDropdown() {
 		navigate({ search: (s) => ({ ...s, date: undefined }) });
 	}, [setAmountFilter, setSelectedCategories, setSelectedWallets, setSelectedRepeats, navigate]);
 
-	// Check if filter has active value
 	const hasActiveFilter = (filter: FilterMenuView) => {
 		switch (filter) {
 			case "amount":
@@ -247,6 +249,7 @@ export function ExpenseFilterDropdown() {
 							{currentView === "category" && (
 								<CategoryFilterView
 									categories={categories}
+									kindFilter={kindFilter}
 									selected={selectedCategories}
 									onChange={setSelectedCategories}
 								/>
@@ -487,10 +490,12 @@ function AmountFilterView({
 
 function CategoryFilterView({
 	categories,
+	kindFilter,
 	selected,
 	onChange,
 }: {
 	categories: SyncedCategory[];
+	kindFilter: TransactionKindFilter;
 	selected: string[];
 	onChange: (value: string[]) => void;
 }) {
@@ -501,6 +506,11 @@ function CategoryFilterView({
 			onChange([...selected, id]);
 		}
 	};
+
+	const visibleCategories =
+		kindFilter === "all"
+			? categories
+			: categories.filter((c) => c.type === kindFilter);
 
 	return (
 		<div className="flex flex-col gap-4 p-4">
@@ -514,8 +524,7 @@ function CategoryFilterView({
 			</div>
 
 			<div className="flex flex-col gap-1">
-				{categories
-					.filter((category) => category.type === "expense")
+				{visibleCategories
 					.map((category) => (
 						<Label
 							key={category.id}

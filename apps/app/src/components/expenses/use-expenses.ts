@@ -37,7 +37,7 @@ import type { SyncedCategory } from "#app/components/categories/use-categories.t
 import type { RepeatSchema } from "@hoalu/common/schema";
 
 const zeroDecimalSet = new Set(zeroDecimalCurrencies);
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
 
 export function useFilteredExpenses() {
 	const expenses = useLiveQueryExpenses();

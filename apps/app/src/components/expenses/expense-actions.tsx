@@ -58,7 +58,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
 
 export function CreateExpenseDialogTrigger({
 	showKbd = true,
@@ -371,7 +371,7 @@ export function DeleteExpenseDialogContent() {
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
 		setDialog({ state: false });
-		navigate({ to: "/$slug/expenses", params: { slug } });
+		navigate({ to: "/$slug/transactions", params: { slug } });
 	};
 
 	return (

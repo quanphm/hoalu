@@ -1,23 +1,10 @@
 @theme inline {
-	/** common */
-	--header-name-size: 200px;
-	--col-name-size: 200px;
-
+	--name-size: 200px;
+	--link-size: 400px;
+	--action-size: 48px;
 	--date-size: 100px;
-
-	--header-link-size: 400px;
-	--col-link-size: 400px;
-
-	--header-action-size: 48px;
-	--col-action-size: 48px;
-
-	/** Expense table */
-	--expense-category-size: 160px;
-	--expense-title-size: 300px;
-	--expense-wallet-size: 150px;
-	--expense-amount-size: 200px;
-
-	/** Category table */
-	--header-category-name-size: 200px;
-	--col-category-name-size: 200px;
+	--amount-size: 150px;
+	--category-size: 160px;
+	--wallet-size: 200px;
+	--title-size: 300px;
 }

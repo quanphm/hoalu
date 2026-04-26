@@ -3,9 +3,7 @@ import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
-	CashBanknoteMoveIcon,
 	CalendarDollarIcon,
-	CashPlusIcon,
 	FileIcon,
 	LayoutDashboardIcon,
 	TentIcon,
@@ -13,6 +11,7 @@ import {
 	UsersGroupIcon,
 	WalletIcon,
 	CalendarClockIcon,
+	ArrowsExchangeIcon,
 } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -74,39 +73,21 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={
 									<Link
-										to="/$slug/expenses"
+										to="/$slug/transactions"
 										params={{ slug }}
 										disabled={!KEYBOARD_SHORTCUTS.goto_expenses.enabled}
 									/>
 								}
-								tooltip="Expenses"
+								tooltip="Transactions"
 							>
-								<CashBanknoteMoveIcon />
-								<span>Expenses</span>
+								<ArrowsExchangeIcon />
+								<span>Transactions</span>
 								<SidebarMenuBadge>
 									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/incomes"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_incomes.enabled}
-									/>
-								}
-								tooltip="Income"
-							>
-								<CashPlusIcon />
-								<span>Income</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_incomes} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
 
 						<SidebarMenuItem>
 							<SidebarMenuButton

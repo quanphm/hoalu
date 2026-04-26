@@ -202,7 +202,7 @@ function IncomeList(props: { incomes: SyncedIncome[] }) {
 			ref={parentRef}
 			data-slot="income-list-container"
 			className={cn(
-				"scrollbar-thin h-full w-full overflow-y-auto contain-strict",
+				"h-full w-full overflow-y-auto contain-strict",
 				shouldUseMobileLayout ? "" : "rounded-tl-lg border-t border-l",
 			)}
 		>

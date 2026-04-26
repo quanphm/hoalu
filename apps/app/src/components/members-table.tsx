@@ -44,9 +44,8 @@ const columns = [
 		header: "Name",
 		cell: (info) => <NameCell row={info.row} />,
 		meta: {
-			headerClassName:
-				"w-(--header-name-size) min-w-(--header-name-size) max-w-(--header-name-size)",
-			cellClassName: "w-(--col-name-size) min-w-(--col-name-size) max-w-(--col-name-size)",
+			headerClassName: "w-(--name-size) min-w-(--name-size) max-w-(--name-size)",
+			cellClassName: "w-(--name-size) min-w-(--name-size) max-w-(--name-size)",
 		},
 	}),
 	columnHelper.accessor("email", {
@@ -73,9 +72,8 @@ const columns = [
 		header: () => <span className="sr-only">Actions</span>,
 		cell: (info) => <RowActions row={info.row} />,
 		meta: {
-			headerClassName:
-				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+			headerClassName: "w-(--action-size) min-w-(--action-size) max-w-(--action-size)",
+			cellClassName: "w-(--action-size) min-w-(--action-size) max-w-(--action-size)",
 		},
 	}),
 ];

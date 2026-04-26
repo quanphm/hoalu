@@ -1,28 +1,32 @@
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
-import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import {
+	IncomeDetailsPanel,
+	MobileIncomeDetailsPanel,
+} from "#app/components/transactions/income-details-panel.tsx";
+import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-export const Route = createFileRoute("/_dashboard/$slug/expenses/$expenseId")({
+export const Route = createFileRoute("/_dashboard/$slug/transactions/$transactionId")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { expenseId } = Route.useParams();
+	const { transactionId } = Route.useParams();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 	const { shouldUseMobileLayout } = useLayoutMode();
-	const filtered = useFilteredExpenses();
+	const filtered = useFilteredTransactions();
 
 	const filteredRef = useRef(filtered);
 	filteredRef.current = filtered;
 	const slugRef = useRef(slug);
 	slugRef.current = slug;
 
-	const currentIndex = filtered.findIndex((e) => e.public_id === expenseId);
-	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
+	const currentIndex = filtered.findIndex((e) => e.public_id === transactionId);
+	const current = currentIndex >= 0 ? filtered[currentIndex] : undefined;
 
 	const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const pendingRef = useRef<"up" | "down" | null>(null);
@@ -30,7 +34,7 @@ function RouteComponent() {
 	const flushNav = useEffectEvent(() => {
 		const f = filteredRef.current;
 		const s = slugRef.current;
-		const idx = f.findIndex((e) => e.public_id === expenseId);
+		const idx = f.findIndex((e) => e.public_id === transactionId);
 		if (idx < 0) return;
 
 		const targetIdx = pendingRef.current === "down" ? idx + 1 : idx - 1;
@@ -38,8 +42,8 @@ function RouteComponent() {
 		if (!target) return;
 
 		navigate({
-			to: "/$slug/expenses/$expenseId",
-			params: { slug: s, expenseId: target.public_id },
+			to: "/$slug/transactions/$transactionId",
+			params: { slug: s, transactionId: target.public_id },
 			replace: true,
 		});
 		pendingRef.current = null;
@@ -55,7 +59,7 @@ function RouteComponent() {
 	const handleGoDown = useCallback(() => debouncedNav("down"), []);
 
 	const handleClose = useCallback(() => {
-		navigate({ to: "/$slug/expenses", params: { slug } });
+		navigate({ to: "/$slug/transactions", params: { slug } });
 	}, [navigate, slug]);
 
 	useHotkeys("j", handleGoDown, [handleGoDown]);
@@ -65,31 +69,21 @@ function RouteComponent() {
 	const canGoUp = currentIndex > 0;
 	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
 
-	if (!currentExpense) {
-		return null;
-	}
+	if (!current) return null;
 
-	if (shouldUseMobileLayout) {
-		return (
-			<MobileExpenseDetails
-				currentExpense={currentExpense}
-				onClose={handleClose}
-				onGoUp={handleGoUp}
-				onGoDown={handleGoDown}
-				canGoUp={canGoUp}
-				canGoDown={canGoDown}
-			/>
+	const sharedProps = { onClose: handleClose, onGoUp: handleGoUp, onGoDown: handleGoDown, canGoUp, canGoDown };
+
+	if (current.kind === "income") {
+		return shouldUseMobileLayout ? (
+			<MobileIncomeDetailsPanel currentIncome={current} {...sharedProps} />
+		) : (
+			<IncomeDetailsPanel currentIncome={current} {...sharedProps} />
 		);
 	}
 
-	return (
-		<ExpenseDetails
-			currentExpense={currentExpense}
-			onClose={handleClose}
-			onGoUp={handleGoUp}
-			onGoDown={handleGoDown}
-			canGoUp={canGoUp}
-			canGoDown={canGoDown}
-		/>
+	return shouldUseMobileLayout ? (
+		<MobileExpenseDetails currentExpense={current} {...sharedProps} />
+	) : (
+		<ExpenseDetails currentExpense={current} {...sharedProps} />
 	);
 }

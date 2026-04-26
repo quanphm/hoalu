@@ -82,10 +82,8 @@ const columns = [
 			);
 		},
 		meta: {
-			headerClassName:
-				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
-			cellClassName:
-				"w-(--expense-category-size) min-w-(--expense-category-size) max-w-(--expense-category-size)",
+			headerClassName: "w-(--category-size) min-w-(--category-size) max-w-(--category-size)",
+			cellClassName: "w-(--category-size) min-w-(--category-size) max-w-(--category-size)",
 		},
 	}),
 	columnHelper.accessor("title", {
@@ -96,10 +94,8 @@ const columns = [
 			</span>
 		),
 		meta: {
-			headerClassName:
-				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size)",
-			cellClassName:
-				"w-(--expense-title-size) min-w-(--expense-title-size) max-w-(--expense-title-size) truncate",
+			headerClassName: "w-(--title-size) min-w-(--title-size) max-w-(--title-size)",
+			cellClassName: "w-(--title-size) min-w-(--title-size) max-w-(--title-size) truncate",
 		},
 	}),
 	columnHelper.display({
@@ -137,10 +133,8 @@ const columns = [
 			);
 		},
 		meta: {
-			headerClassName:
-				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size)",
-			cellClassName:
-				"w-(--expense-wallet-size) min-w-(--expense-wallet-size) max-w-(--expense-wallet-size) ",
+			headerClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size)",
+			cellClassName: "w-(--wallet-size) min-w-(--wallet-size) max-w-(--wallet-size) ",
 		},
 	}),
 ];
@@ -186,11 +180,11 @@ export function RecentTransactions() {
 							<TabsTab value="all" className="sm:h-6">
 								All
 							</TabsTab>
-							<TabsTab value="expense" className="sm:h-6">
-								Expenses
-							</TabsTab>
 							<TabsTab value="income" className="sm:h-6">
 								Incomes
+							</TabsTab>
+							<TabsTab value="expense" className="sm:h-6">
+								Expenses
 							</TabsTab>
 						</TabsList>
 					</Tabs>
@@ -198,7 +192,7 @@ export function RecentTransactions() {
 					<Button
 						variant="outline"
 						size="sm"
-						render={<Link to="/$slug/expenses" params={{ slug: workspace.slug }} />}
+						render={<Link to="/$slug/transactions" params={{ slug: workspace.slug }} />}
 					>
 						View all
 					</Button>

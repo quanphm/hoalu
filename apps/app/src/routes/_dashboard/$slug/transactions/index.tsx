@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Empty, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 
-export const Route = createFileRoute("/_dashboard/$slug/expenses/")({
+export const Route = createFileRoute("/_dashboard/$slug/transactions/")({
 	component: RouteComponent,
 });
 

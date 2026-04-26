@@ -110,7 +110,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_expenses.hotkey,
 		() => {
-			navigate({ to: "/$slug/expenses", params: { slug } });
+			navigate({ to: "/$slug/transactions", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_expenses.enabled,
