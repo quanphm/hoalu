@@ -96,7 +96,7 @@ const emptyState = (
 	</Empty>
 );
 
-function ExpenseList(props: { expenses: SyncedTransaction[]; selectedId: string | null }) {
+function ExpenseList(props: { expenses: SyncedTransaction[] }) {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 
@@ -134,7 +134,6 @@ function ExpenseList(props: { expenses: SyncedTransaction[]; selectedId: string 
 			gridTemplate={GRID_TEMPLATE}
 			renderRow={renderRow}
 			estimateRowSize={45}
-			selectedId={props.selectedId}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={false}
 			emptyState={emptyState}

@@ -5,10 +5,8 @@ import {
 	unarchiveRecurringBillDialogAtom,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import {
-	type SyncedRecurringBill,
-	useSelectedRecurringBill,
-} from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -379,7 +377,8 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 }
 
 export function ArchiveRecurringBillDialogContent() {
-	const { onSelectBill } = useSelectedRecurringBill();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useArchiveRecurringBill();
 	const [dialog, setDialog] = useAtom(archiveRecurringBillDialogAtom);
 
@@ -389,7 +388,7 @@ export function ArchiveRecurringBillDialogContent() {
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		onSelectBill(null);
+		navigate({ to: "/$slug/recurring-bills", params: { slug } });
 		setDialog({ state: false });
 	};
 
@@ -444,7 +443,8 @@ export function UnarchiveRecurringBillDialogContent() {
 }
 
 export function DeleteRecurringBillDialogContent() {
-	const { onSelectBill } = useSelectedRecurringBill();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useDeleteRecurringBill();
 	const [dialog, setDialog] = useAtom(deleteRecurringBillDialogAtom);
 
@@ -457,7 +457,7 @@ export function DeleteRecurringBillDialogContent() {
 		}
 		try {
 			await mutation.mutateAsync({ id: dialog.data.id });
-			onSelectBill(null);
+			navigate({ to: "/$slug/recurring-bills", params: { slug } });
 		} finally {
 			setDialog({ state: false });
 		}

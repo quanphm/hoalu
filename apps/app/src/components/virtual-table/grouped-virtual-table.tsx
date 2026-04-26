@@ -3,7 +3,6 @@ import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tan
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import type { Range } from "@tanstack/react-virtual";
 import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
-import type { ReactNode } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 const THEAD_HEIGHT = 32;
@@ -64,8 +63,6 @@ function buildFlatItems<TRow, TGroupKey extends string>(
 	return flat;
 }
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
 export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = string> {
 	// Data
 	items: TRow[];
@@ -74,13 +71,13 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	// Grouping — omit for ungrouped (Events)
 	groupBy?: (item: TRow) => TGroupKey;
 	groupOrder?: TGroupKey[] | ((a: TGroupKey, b: TGroupKey) => number);
-	renderGroupHeader?: (groupKey: TGroupKey, items: TRow[]) => ReactNode;
+	renderGroupHeader?: (groupKey: TGroupKey, items: TRow[]) => React.ReactNode;
 	estimateGroupHeaderSize?: number;
 
 	// Columns + layout
 	columns: ColumnDef<TRow>[];
 	gridTemplate: string;
-	renderRow: (item: TRow, isSelected: boolean) => ReactNode;
+	renderRow: (item: TRow, isSelected: boolean) => React.ReactNode;
 	estimateRowSize?: number;
 
 	// Selection
@@ -91,10 +88,8 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	enableKeyboardNav?: boolean;
 
 	// Empty state
-	emptyState?: ReactNode;
+	emptyState?: React.ReactNode;
 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	items,
@@ -261,6 +256,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 							ref={virtualizer.measureElement}
 							id={id}
 							role="row"
+							// oxlint-disable-next-line jsx_a11y/no-noninteractive-tabindex
 							tabIndex={0}
 							className={cn(
 								"hover:bg-muted/60 focus-visible:ring-ring cursor-pointer border-b outline-none focus-visible:ring-2 focus-visible:ring-inset",
@@ -291,7 +287,6 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	);
 }
 
-// memo doesn't preserve generic type params — cast back to the generic signature
 export const GroupedVirtualTable = memo(
 	GroupedVirtualTableInner,
 ) as typeof GroupedVirtualTableInner;

@@ -8,7 +8,6 @@ import {
 	REPEAT_ORDER,
 	type SyncedAllRecurringBill,
 	useAllRecurringBills,
-	useSelectedRecurringBill,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
@@ -20,6 +19,7 @@ import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useSetAtom } from "jotai";
 import { memo, useCallback, useMemo } from "react";
@@ -218,20 +218,18 @@ const emptyState = (
 
 function RecurringBillList() {
 	const bills = useAllRecurringBills();
-	const { bill: selected, onSelectBill } = useSelectedRecurringBill();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	const handleSelect = useCallback(
 		(id: string | null) => {
 			if (!id) {
-				onSelectBill(null);
+				navigate({ to: "/$slug/recurring-bills", params: { slug } });
 				return;
 			}
-			const bill = bills.find((b) => b.id === id);
-			if (bill?.is_active) {
-				onSelectBill(id);
-			}
+			navigate({ to: "/$slug/recurring-bills/$billId", params: { slug, billId: id } });
 		},
-		[bills, onSelectBill],
+		[navigate, slug],
 	);
 
 	const renderGroupHeader = useCallback(
@@ -246,27 +244,23 @@ function RecurringBillList() {
 		[],
 	);
 
-	const groupOrder = useCallback(
-		(a: string, b: string) => {
-			const ai = REPEAT_ORDER.indexOf(a);
-			const bi = REPEAT_ORDER.indexOf(b);
-			return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-		},
-		[],
-	);
+	const groupOrder = useCallback((a: string, b: string) => {
+		const ai = REPEAT_ORDER.indexOf(a);
+		const bi = REPEAT_ORDER.indexOf(b);
+		return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+	}, []);
 
 	return (
 		<GroupedVirtualTable<SyncedAllRecurringBill, string>
 			items={bills}
-			getItemId={(b) => b.id}
+			getItemId={(b) => b.public_id}
 			groupBy={(b) => b.repeat}
 			groupOrder={groupOrder}
 			renderGroupHeader={renderGroupHeader}
 			columns={columns}
 			gridTemplate={GRID_TEMPLATE}
 			renderRow={renderRow}
-			estimateRowSize={52}
-			selectedId={selected.id}
+			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={true}
 			emptyState={emptyState}

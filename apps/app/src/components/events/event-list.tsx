@@ -1,16 +1,13 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { EventDateRange } from "#app/components/events/event-date-range.tsx";
-import {
-	type SyncedEvent,
-	useLiveQueryEvents,
-	useSelectedEvent,
-} from "#app/components/events/use-events.ts";
+import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 
@@ -127,7 +124,8 @@ const emptyState = (
 
 function EventList() {
 	const events = useLiveQueryEvents();
-	const { event: selected, onSelectEvent } = useSelectedEvent();
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	const sortedEvents = useMemo(
 		() =>
@@ -142,9 +140,13 @@ function EventList() {
 
 	const handleSelect = useCallback(
 		(id: string | null) => {
-			onSelectEvent(id);
+			if (!id) {
+				navigate({ to: "/$slug/events", params: { slug } });
+				return;
+			}
+			navigate({ to: "/$slug/events/$eventId", params: { slug, eventId: id } }); // id is public_id via getItemId
 		},
-		[onSelectEvent],
+		[navigate, slug],
 	);
 
 	const renderRow = useCallback(
@@ -155,12 +157,11 @@ function EventList() {
 	return (
 		<GroupedVirtualTable<SyncedEvent>
 			items={sortedEvents}
-			getItemId={(e) => e.id}
+			getItemId={(e) => e.public_id}
 			columns={columns}
 			gridTemplate={GRID_TEMPLATE}
 			renderRow={renderRow}
-			estimateRowSize={52}
-			selectedId={selected.id}
+			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={true}
 			emptyState={emptyState}

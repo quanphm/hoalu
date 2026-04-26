@@ -91,10 +91,10 @@ function LayoutComponent() {
 							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100vh-93px)] grid-cols-1 overflow-hidden md:gap-0"
+								className="h-[calc(100vh-88px)] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-									<ExpenseList expenses={filteredExpenses} selectedId={null} />
+									<ExpenseList expenses={filteredExpenses} />
 								</SectionItem>
 							</SectionContent>
 						</>
