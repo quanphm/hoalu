@@ -61,9 +61,14 @@ export function CreateRecurringBillDialogTrigger({
 }: ButtonProps & { showKbd?: boolean }) {
 	const setDialog = useSetAtom(createRecurringBillDialogAtom);
 	return (
-		<Button size="sm" variant="outline" {...props} onClick={() => setDialog({ state: true })}>
-			Create bill
-			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_recurring_bill} />}
+		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
+			New bill
+			{showKbd && (
+				<HotKey
+					{...KEYBOARD_SHORTCUTS.create_recurring_bill}
+					className="text-background ml-0.5 bg-black/25 font-bold"
+				/>
+			)}
 		</Button>
 	);
 }
