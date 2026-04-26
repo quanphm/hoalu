@@ -60,7 +60,7 @@ function TotalIncomeByDate(props: { data: SyncedIncome[] }) {
 		<CurrencyValue
 			value={total}
 			currency={workspaceCurrency}
-			className="font-semibold text-green-600"
+			className="text-success font-medium"
 		/>
 	);
 }
@@ -76,6 +76,9 @@ function EmptyState() {
 	);
 }
 
+/**
+ * @deprecated
+ */
 function IncomeList(props: { incomes: SyncedIncome[] }) {
 	const { income: selectedIncome, onSelectIncome } = useSelectedIncome();
 	const { shouldUseMobileLayout } = useLayoutMode();

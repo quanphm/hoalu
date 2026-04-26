@@ -1,6 +1,6 @@
-import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { EventDateRange } from "#app/components/events/event-date-range.tsx";
+import { EventDateRange, EventDateRangeColumn } from "#app/components/events/event-date-range.tsx";
 import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { Badge } from "@hoalu/ui/badge";
@@ -11,12 +11,17 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 
+const percentFormatter = new Intl.NumberFormat("en-US", {
+	style: "percent",
+});
+
 const GRID_TEMPLATE =
-	"grid grid-cols-[1fr_var(--date-range-size)_var(--status-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)]";
+	"grid grid-cols-[1fr_var(--date-size)_var(--date-size)_var(--status-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)]";
 
 const columns: ColumnDef<SyncedEvent>[] = [
 	{ id: "name", header: "Name" },
-	{ id: "date", header: "Date" },
+	{ id: "from_date", header: "From" },
+	{ id: "to_date", header: "To" },
 	{ id: "status", header: "Status" },
 	{ id: "budget", header: "Budget", meta: { headerClassName: "justify-end" } },
 	{ id: "spent", header: "Spent", meta: { headerClassName: "justify-end" } },
@@ -54,13 +59,21 @@ function EventContent(event: SyncedEvent) {
 	return (
 		<>
 			<div className="flex items-center truncate px-4 py-3">
-				<p className="truncate text-sm font-medium" title={event.title}>
+				<p
+					className={cn(
+						"truncate text-sm font-medium",
+						event.status === "closed" && "text-muted-foreground",
+					)}
+					title={event.title}
+				>
 					{event.title}
 				</p>
 			</div>
-			<div className="flex items-center px-4 py-3">
-				<EventDateRange startDate={event.start_date} endDate={event.end_date} />
-			</div>
+			<EventDateRangeColumn
+				startDate={event.start_date}
+				endDate={event.end_date}
+				className={cn(event.status === "closed" && "text-muted-foreground")}
+			/>
 			<div className="flex items-center px-4 py-3">
 				{event.status === "open" ? (
 					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
@@ -74,21 +87,33 @@ function EventContent(event: SyncedEvent) {
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
 				{event.realBudget ? (
-					<CurrencyValue
-						value={event.budget}
-						currency={event.budget_currency || workspaceCurrency}
-						className="text-sm font-medium"
+					<TransactionAmount
+						data={{
+							amount: event.budget,
+							convertedAmount: event.realBudget,
+							currency: event.budget_currency || workspaceCurrency,
+						}}
+						className={cn(
+							"text-sm font-medium",
+							event.status === "closed" && "text-muted-foreground",
+						)}
 					/>
 				) : (
-					<span className="text-muted-foreground text-sm">∞</span>
+					<span className="text-muted-foreground text-sm">-</span>
 				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
-				<CurrencyValue
-					value={event.totalSpent}
-					currency={event.budget_currency || workspaceCurrency}
-					prefix="-"
-					className="text-sm font-semibold"
+				<TransactionAmount
+					type="expense"
+					data={{
+						amount: event.totalSpent,
+						convertedAmount: event.totalSpent,
+						currency: event.budget_currency || workspaceCurrency,
+					}}
+					className={cn(
+						"text-sm font-medium",
+						event.status === "closed" && "text-muted-foreground",
+					)}
 				/>
 			</div>
 			<div className="flex items-center gap-2 px-4 py-3">
@@ -103,11 +128,11 @@ function EventContent(event: SyncedEvent) {
 								progressTextColor,
 							)}
 						>
-							{Math.round(progress)}%
+							{percentFormatter.format(progress / 100)}
 						</span>
 					</Progress>
 				) : (
-					<span className="text-muted-foreground text-sm">—</span>
+					<span className="text-muted-foreground text-sm">-</span>
 				)}
 			</div>
 		</>

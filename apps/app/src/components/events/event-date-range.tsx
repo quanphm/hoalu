@@ -1,9 +1,11 @@
 import { datetime } from "@hoalu/common/datetime";
+import { cn } from "@hoalu/ui/utils";
 
 interface EventDateRangeProps {
 	startDate: string | null | undefined;
 	endDate: string | null | undefined;
 	format?: string;
+	className?: string;
 }
 
 function formatDate(dateStr: string, format: string): string {
@@ -36,4 +38,22 @@ export function EventDateRange({ startDate, endDate, format = "dd/MM/yyyy" }: Ev
 	}
 
 	return <div className="text-muted-foreground flex items-center text-sm">{label}</div>;
+}
+
+export function EventDateRangeColumn({
+	startDate,
+	endDate,
+	format = "dd/MM/yyyy",
+	className,
+}: EventDateRangeProps) {
+	return (
+		<>
+			<div className={cn("flex items-center px-4 py-3 text-sm", className)}>
+				{startDate ? formatDate(startDate, format) : "-"}
+			</div>
+			<div className={cn("flex items-center px-4 py-3 text-sm", className)}>
+				{endDate ? formatDate(endDate, format) : "-"}
+			</div>
+		</>
+	);
 }

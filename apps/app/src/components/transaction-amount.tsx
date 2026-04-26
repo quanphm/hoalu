@@ -10,11 +10,11 @@ interface TransactionAmountProps {
 }
 
 export function TransactionAmount({
-	type = "expense",
+	type = "neutral",
 	data: { amount, convertedAmount, currency: sourceCurrency },
 	className,
 }: {
-	type?: "expense" | "income";
+	type?: "expense" | "income" | "neutral";
 	data: TransactionAmountProps;
 	className?: string;
 }) {
@@ -26,12 +26,14 @@ export function TransactionAmount({
 		return <p className="text-destructive">Error</p>;
 	}
 
+	const prefix = `${workspaceCurrency !== sourceCurrency ? "≈" : ""}${type === "expense" ? "-" : type === "income" ? "+" : ""}`;
+
 	return (
 		<div className="flex flex-col items-end gap-0.5 leading-tight">
 			<CurrencyValue
 				value={convertedAmount}
 				currency={workspaceCurrency}
-				prefix={workspaceCurrency !== sourceCurrency ? "≈" : type === "expense" ? "-" : "+"}
+				prefix={prefix}
 				as="p"
 				className={cn("text-sm font-medium", type === "income" && "text-success", className)}
 			/>
