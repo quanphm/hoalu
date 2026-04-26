@@ -1,4 +1,4 @@
-import { useSelectedExpense, type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
@@ -11,10 +11,10 @@ import { WalletBadge } from "../wallets/wallet-badge";
 
 interface ExpenseContentProps extends SyncedExpense {
 	onClick(id: string | null): void;
+	isSelected: boolean;
 }
 
 function ExpenseContent(props: ExpenseContentProps) {
-	const { expense: selectedRow } = useSelectedExpense();
 	const { shouldUseMobileLayout } = useLayoutMode();
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -48,7 +48,7 @@ function ExpenseContent(props: ExpenseContentProps) {
 			className={cn(
 				"border-b-border/50 hover:bg-muted/60 flex items-start justify-between gap-4 border-b text-sm outline-none",
 				"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
-				selectedRow.id === props.id && "ring-ring ring-2 ring-inset",
+				props.isSelected && "ring-ring ring-2 ring-inset",
 				// Mobile: compact items, Desktop: normal padding
 				shouldUseMobileLayout ? "px-3 py-2.5" : "py-2 pr-4 pl-3",
 			)}

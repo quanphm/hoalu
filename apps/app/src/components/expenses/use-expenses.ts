@@ -1,4 +1,13 @@
-import { customDateRangeAtom, selectDateRangeAtom, selectedExpenseAtom } from "#app/atoms/index.ts";
+import {
+	type AmountFilterState,
+	customDateRangeAtom,
+	expenseAmountFilterAtom,
+	expenseCategoryFilterAtom,
+	expenseRepeatFilterAtom,
+	expenseWalletFilterAtom,
+	searchKeywordsAtom,
+	selectDateRangeAtom,
+} from "#app/atoms/index.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
@@ -7,6 +16,7 @@ import {
 	getComparisonPeriodText,
 } from "#app/helpers/date-range.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
+import { matchesSearch } from "#app/helpers/normalize-search.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
@@ -14,24 +24,124 @@ import {
 	expenseCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
 import { monetary } from "@hoalu/common/monetary";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
+import { getRouteApi } from "@tanstack/react-router";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useAtom, useAtomValue } from "jotai";
-import { useMemo } from "react";
+import { useAtomValue } from "jotai";
+import { useDeferredValue, useMemo } from "react";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
+import type { RepeatSchema } from "@hoalu/common/schema";
 
 const zeroDecimalSet = new Set(zeroDecimalCurrencies);
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
-export function useSelectedExpense() {
-	const [expense, setSelectedExpense] = useAtom(selectedExpenseAtom);
-	const onSelectExpense = (id: string | null) => {
-		setSelectedExpense({ id });
-	};
-	return { expense, onSelectExpense };
+export function useFilteredExpenses() {
+	const expenses = useLiveQueryExpenses();
+	const { date: searchByDate } = expenseRouteApi.useSearch();
+	const range = toFromToDateObject(searchByDate);
+	const searchKeywords = useAtomValue(searchKeywordsAtom);
+	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
+	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
+	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
+	const amountFilter = useAtomValue(expenseAmountFilterAtom);
+	const deferredSearchKeywords = useDeferredValue(searchKeywords);
+
+	const filtered = useMemo(
+		() =>
+			filterExpenses(expenses, {
+				selectedCategoryIds,
+				selectedWalletIds,
+				selectedRepeat,
+				searchKeywords: deferredSearchKeywords,
+				range,
+				amountFilter,
+			}),
+		[
+			expenses,
+			selectedCategoryIds,
+			selectedWalletIds,
+			selectedRepeat,
+			deferredSearchKeywords,
+			range,
+			amountFilter,
+		],
+	);
+
+	return filtered;
+}
+
+function filterExpenses(
+	data: SyncedExpense[],
+	condition: {
+		selectedCategoryIds: string[];
+		selectedWalletIds: string[];
+		selectedRepeat: RepeatSchema[];
+		searchKeywords: string;
+		range:
+			| {
+					from: Date;
+					to: Date;
+			  }
+			| undefined;
+		amountFilter: AmountFilterState;
+	},
+) {
+	const {
+		selectedCategoryIds,
+		selectedWalletIds,
+		selectedRepeat,
+		searchKeywords,
+		range,
+		amountFilter,
+	} = condition;
+	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
+	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
+
+	return data.filter((expense) => {
+		if (fromDate && toDate) {
+			if (expense.date < fromDate || expense.date > toDate) {
+				return false;
+			}
+		}
+		if (selectedCategoryIds.length > 0) {
+			const categoryId = expense.category?.id;
+			if (!categoryId || !selectedCategoryIds.includes(categoryId)) {
+				return false;
+			}
+		}
+		if (selectedWalletIds.length > 0) {
+			const walletId = expense.wallet?.id;
+			if (!walletId || !selectedWalletIds.includes(walletId)) {
+				return false;
+			}
+		}
+		if (selectedRepeat.length > 0) {
+			if (!selectedRepeat.includes(expense.repeat)) {
+				return false;
+			}
+		}
+		if (amountFilter.min !== null || amountFilter.max !== null) {
+			const amount = expense.realAmount;
+			if (amountFilter.min !== null && amount < amountFilter.min) {
+				return false;
+			}
+			if (amountFilter.max !== null && amount > amountFilter.max) {
+				return false;
+			}
+		}
+		if (searchKeywords) {
+			return matchesSearch(searchKeywords, {
+				textFields: [expense.title, expense.description],
+				numericFields: [expense.realAmount],
+			});
+		}
+
+		return true;
+	});
 }
 
 interface UseExpenseStatsOptions {

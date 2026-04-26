@@ -9,7 +9,7 @@ import {
 	quickExpenseJobIdAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
-import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import {
 	FilesCompactUpload,
 	type FilesCompactUploadRef,
@@ -52,7 +52,7 @@ import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
@@ -359,7 +359,8 @@ export function DeleteExpense({ id }: { id: string }) {
 }
 
 export function DeleteExpenseDialogContent() {
-	const { onSelectExpense } = useSelectedExpense();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const navigate = useNavigate();
 	const mutation = useDeleteExpense();
 	const [dialog, setDialog] = useAtom(deleteExpenseDialogAtom);
 
@@ -369,8 +370,8 @@ export function DeleteExpenseDialogContent() {
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
-		onSelectExpense(null);
 		setDialog({ state: false });
+		navigate({ to: "/$slug/expenses", params: { slug } });
 	};
 
 	return (

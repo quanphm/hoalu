@@ -110,9 +110,8 @@ export function VirtualizedList({
 										onClick={() =>
 											runAction(() =>
 												navigate({
-													to: "/$slug/expenses",
-													params: { slug },
-													search: { id: item.data.id },
+													to: "/$slug/expenses/$expenseId",
+													params: { slug, expenseId: item.data.id },
 												}),
 											)
 										}

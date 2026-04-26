@@ -33,12 +33,6 @@ const basedExpense: ExpenseAtomSchema = {
 };
 const draftExpenseAtom = atomWithStorage("draft_expense", basedExpense);
 
-const selectedExpenseAtom = atom<{
-	id: string | null;
-}>({
-	id: null,
-});
-
 /**
  * Used by the "Log payment" flow from upcoming bills.
  * When set, CreateExpenseForm will include this recurringBillId in the POST payload
@@ -66,7 +60,6 @@ const quickExpenseJobIdAtom = atom<string | null>(null);
 
 export {
 	draftExpenseAtom,
-	selectedExpenseAtom,
 	logPaymentAtom,
 	scannedReceiptAtom,
 	scannedReceiptsAtom,

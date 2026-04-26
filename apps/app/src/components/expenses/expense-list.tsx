@@ -1,18 +1,16 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
-import { type SyncedExpense, useSelectedExpense } from "#app/components/expenses/use-expenses.ts";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { getRouteApi } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
 
-const routeApi = getRouteApi("/_dashboard/$slug/expenses");
 const MOBILE_NAV_HEIGHT = 80;
 
 type ExpenseItem = {
@@ -66,11 +64,25 @@ function EmptyState() {
 	);
 }
 
-function ExpenseList(props: { expenses: SyncedExpense[] }) {
-	const { id: searchById } = routeApi.useSearch();
-	const { expense: selectedExpense, onSelectExpense } = useSelectedExpense();
+function ExpenseList(props: { expenses: SyncedExpense[]; selectedId: string | null }) {
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const navigate = useNavigate();
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const parentRef = useRef<HTMLDivElement>(null);
+
+	const handleSelectExpense = useCallback(
+		(id: string | null) => {
+			if (!id) {
+				navigate({ to: "/$slug/expenses", params: { slug } });
+				return;
+			}
+			navigate({
+				to: "/$slug/expenses/$expenseId",
+				params: { slug, expenseId: id },
+			});
+		},
+		[navigate, slug],
+	);
 
 	const flattenExpenses = useMemo(() => {
 		const grouped = new Map<string, SyncedExpense[]>();
@@ -118,13 +130,11 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 	});
 
 	const scrollToExpense = useEffectEvent((id: string) => {
-		// Find the index in the flattened list (which includes group headers)
 		const index = flattenExpenses.findIndex(
 			(item) => item.type === "expense" && item.expense.id === id,
 		);
 		if (index >= 0) {
 			virtualizer.scrollToIndex(index, { align: "auto" });
-			// After virtualizer scrolls, focus the element once it's rendered
 			requestAnimationFrame(() => {
 				const element = document.getElementById(id);
 				if (element) {
@@ -134,62 +144,11 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 		}
 	});
 
-	const onSelectExpenseEvent = useEffectEvent((id: string | null) => {
-		onSelectExpense(id);
-	});
-
-	useHotkeys(
-		"j",
-		() => {
-			if (!selectedExpense.id) return;
-
-			const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
-			const nextIndex = currentIndex + 1;
-			const nextRowData = props.expenses[nextIndex];
-
-			if (!nextRowData) return;
-
-			onSelectExpenseEvent(nextRowData.id);
-			scrollToExpense(nextRowData.id);
-		},
-		[selectedExpense.id, props.expenses],
-	);
-
-	useHotkeys(
-		"k",
-		() => {
-			if (!selectedExpense.id) return;
-
-			const currentIndex = props.expenses.findIndex((item) => item.id === selectedExpense.id);
-			const prevIndex = currentIndex - 1;
-			const prevRowData = props.expenses[prevIndex];
-
-			if (!prevRowData) return;
-
-			onSelectExpenseEvent(prevRowData.id);
-			scrollToExpense(prevRowData.id);
-		},
-		[selectedExpense.id, props.expenses],
-	);
-
-	// Auto-scroll to the selected expense when it changes (e.g. from URL ?id= param)
 	useEffect(() => {
-		if (!searchById) return;
-		const index = flattenExpenses.findIndex(
-			(item) => item.type === "expense" && item.expense.id === searchById,
-		);
-		if (index >= 0) {
-			virtualizer.scrollToIndex(index, { align: "center" });
+		if (props.selectedId) {
+			scrollToExpense(props.selectedId);
 		}
-	}, [searchById, flattenExpenses, virtualizer]);
-
-	useEffect(() => {
-		return () => {
-			onSelectExpenseEvent(null);
-		};
-	}, []);
-
-	useHotkeys("esc", () => onSelectExpenseEvent(null), []);
+	}, [props.selectedId]);
 
 	if (props.expenses.length === 0) {
 		return <EmptyState />;
@@ -225,7 +184,7 @@ function ExpenseList(props: { expenses: SyncedExpense[] }) {
 							{item.type === "group-header" ? (
 								<GroupHeader date={item.date} total={item.total} />
 							) : (
-								<ExpenseContent {...item.expense} onClick={onSelectExpense} />
+								<ExpenseContent {...item.expense} isSelected={props.selectedId === item.expense.id} onClick={handleSelectExpense} />
 							)}
 						</div>
 					);
