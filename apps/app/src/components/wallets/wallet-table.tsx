@@ -67,9 +67,8 @@ const columns = [
 		header: () => <span className="sr-only">Actions</span>,
 		cell: (info) => <WalletDropdownMenuWithModal id={info.row.original.id} />,
 		meta: {
-			headerClassName:
-				"w-(--header-action-size) min-w-(--header-action-size) max-w-(--header-action-size)",
-			cellClassName: "w-(--col-action-size) min-w-(--col-action-size) max-w-(--col-action-size)",
+			headerClassName: "w-(--action-size) min-w-(--action-size) max-w-(--action-size)",
+			cellClassName: "w-(--action-size) min-w-(--action-size) max-w-(--action-size)",
 		},
 	}),
 ];

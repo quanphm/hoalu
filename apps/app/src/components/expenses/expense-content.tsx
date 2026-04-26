@@ -1,5 +1,5 @@
-import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
+import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { Badge } from "@hoalu/ui/badge";
@@ -31,11 +31,18 @@ function ExpenseContent(props: SyncedTransaction) {
 				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
-				<TransactionAmount
-					type={props.kind}
-					data={props}
-					className={props.kind === "income" ? "text-success" : undefined}
-				/>
+				{props.kind === "expense" ? (
+					<TransactionAmount type={props.kind} data={props} />
+				) : (
+					<span className="text-muted-foreground text-sm">-</span>
+				)}
+			</div>
+			<div className="flex items-center justify-end px-4 py-3">
+				{props.kind === "income" ? (
+					<TransactionAmount type={props.kind} data={props} />
+				) : (
+					<span className="text-muted-foreground text-sm">-</span>
+				)}
 			</div>
 			<div className="flex items-center px-4 py-3">
 				<WalletBadge {...props.wallet} />

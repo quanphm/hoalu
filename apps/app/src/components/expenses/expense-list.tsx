@@ -14,7 +14,7 @@ import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "r
 
 const THEAD_HEIGHT = 32;
 const GRID_TEMPLATE =
-	"grid grid-cols-[var(--expense-category-size)_1fr_var(--expense-amount-size)_var(--expense-wallet-size)]";
+	"grid grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)]";
 
 type TransactionItem = {
 	type: "transaction";
@@ -35,8 +35,15 @@ const columns: ColumnDef<SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{
-		id: "amount",
-		header: "Amount",
+		id: "expense-amount",
+		header: "Expense",
+		meta: {
+			headerClassName: "justify-end",
+		},
+	},
+	{
+		id: "income-amount",
+		header: "Income",
 		meta: {
 			headerClassName: "justify-end",
 		},
@@ -91,13 +98,17 @@ function GroupHeader({ date, expenseTotal, incomeTotal }: Omit<GroupHeaderItem, 
 					<CurrencyValue
 						value={expenseTotal}
 						currency={workspaceCurrency}
+						prefix="-"
 						className="text-destructive text-sm font-semibold"
 					/>
 				)}
+			</div>
+			<div className="ml-auto flex items-center gap-3">
 				{incomeTotal > 0 && (
 					<CurrencyValue
 						value={incomeTotal}
 						currency={workspaceCurrency}
+						prefix="+"
 						className="text-success text-sm font-semibold"
 					/>
 				)}
