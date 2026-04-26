@@ -11,6 +11,7 @@ import * as z from "zod";
 export const RecurringBillSchema = z
 	.object({
 		id: z.uuidv7(),
+		publicId: z.string(),
 		title: z.string(),
 		description: z.string().nullable(),
 		amount: z.coerce.number(),

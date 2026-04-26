@@ -129,6 +129,7 @@ const route = app
 			const inserted = await incomeRepository.insert({
 				...rest,
 				id: generateId({ use: "uuid" }),
+				publicId: generateId({ use: "nanoid", kind: "income" }),
 				workspaceId: workspace.id,
 				creatorId: user.id,
 				date: incomeDate,

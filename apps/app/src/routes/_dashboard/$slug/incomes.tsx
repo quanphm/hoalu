@@ -4,7 +4,7 @@ import {
 	incomeCategoryFilterAtom,
 	incomeWalletFilterAtom,
 	incomeSearchKeywordsAtom,
-} from "#app/atoms/income-filters.ts";
+} from "#app/atoms/index.ts";
 import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { CreateIncomeDialogTrigger } from "#app/components/incomes/income-actions.tsx";
 import { IncomeDetails, MobileIncomeDetails } from "#app/components/incomes/income-details.tsx";

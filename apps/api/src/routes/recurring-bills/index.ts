@@ -180,6 +180,7 @@ const route = app
 
 		const bill = await repository.insert({
 			id: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "recurring_bill" }),
 			...rest,
 			repeat,
 			amount: `${realAmount}`,

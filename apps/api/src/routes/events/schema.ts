@@ -4,6 +4,7 @@ import * as z from "zod";
 
 const BasedEventSchema = z.object({
 	id: z.uuidv7(),
+	publicId: z.string(),
 	title: z.string(),
 	description: z.string().nullable(),
 	startDate: z.string().nullable(),

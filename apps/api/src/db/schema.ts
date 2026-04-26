@@ -240,6 +240,7 @@ export const recurringBill = pgTable(
 	"recurring_bill",
 	{
 		id: uuid("id").primaryKey(),
+		publicId: text("public_id").notNull().unique(),
 		title: text("title").notNull(),
 		description: text("description"),
 		amount: numeric("amount", { precision: 20, scale: 6 }).notNull(),
@@ -337,6 +338,7 @@ export const income = pgTable(
 	"income",
 	{
 		id: uuid("id").primaryKey(),
+		publicId: text("public_id").notNull().unique(),
 		title: text("title").notNull(),
 		description: text("description"),
 		date: timestamp("date", { mode: "string", withTimezone: true }).defaultNow().notNull(),
@@ -367,6 +369,7 @@ export const event = pgTable(
 	"event",
 	{
 		id: uuid("id").primaryKey(),
+		publicId: text("public_id").notNull().unique(),
 		title: text("title").notNull(),
 		description: text("description"),
 		startDate: date("start_date", { mode: "string" }),

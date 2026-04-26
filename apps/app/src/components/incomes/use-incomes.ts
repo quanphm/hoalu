@@ -1,5 +1,5 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
-import { selectedIncomeAtom } from "#app/atoms/income-filters.ts";
+import { selectedIncomeAtom } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,

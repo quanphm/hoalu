@@ -16,7 +16,7 @@ function RouteComponent() {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const filtered = useFilteredExpenses();
 
-	const currentIndex = filtered.findIndex((e) => e.public_id === expenseId || e.id === expenseId);
+	const currentIndex = filtered.findIndex((e) => e.public_id === expenseId);
 	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
 
 	const resolveExpenseId = useCallback(
