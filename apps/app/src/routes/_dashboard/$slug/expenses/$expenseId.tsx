@@ -2,7 +2,7 @@ import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/e
 import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 export const Route = createFileRoute("/_dashboard/$slug/expenses/$expenseId")({
@@ -16,34 +16,43 @@ function RouteComponent() {
 	const { shouldUseMobileLayout } = useLayoutMode();
 	const filtered = useFilteredExpenses();
 
+	const filteredRef = useRef(filtered);
+	filteredRef.current = filtered;
+	const slugRef = useRef(slug);
+	slugRef.current = slug;
+
 	const currentIndex = filtered.findIndex((e) => e.public_id === expenseId);
 	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
 
-	const resolveExpenseId = useCallback(
-		(expense: (typeof filtered)[number]) => expense.public_id,
-		[],
-	);
+	const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const pendingRef = useRef<"up" | "down" | null>(null);
 
-	const canGoUp = currentIndex > 0;
-	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
+	const flushNav = useEffectEvent(() => {
+		const f = filteredRef.current;
+		const s = slugRef.current;
+		const idx = f.findIndex((e) => e.public_id === expenseId);
+		if (idx < 0) return;
 
-	const handleGoUp = useCallback(() => {
-		const prev = filtered[currentIndex - 1];
-		if (!prev) return;
+		const targetIdx = pendingRef.current === "down" ? idx + 1 : idx - 1;
+		const target = f[targetIdx];
+		if (!target) return;
+
 		navigate({
 			to: "/$slug/expenses/$expenseId",
-			params: { slug, expenseId: resolveExpenseId(prev) },
+			params: { slug: s, expenseId: target.public_id },
+			replace: true,
 		});
-	}, [currentIndex, filtered, navigate, slug, resolveExpenseId]);
+		pendingRef.current = null;
+	});
 
-	const handleGoDown = useCallback(() => {
-		const next = filtered[currentIndex + 1];
-		if (!next) return;
-		navigate({
-			to: "/$slug/expenses/$expenseId",
-			params: { slug, expenseId: resolveExpenseId(next) },
-		});
-	}, [currentIndex, filtered, navigate, slug, resolveExpenseId]);
+	const debouncedNav = useEffectEvent((direction: "up" | "down") => {
+		pendingRef.current = direction;
+		clearTimeout(timerRef.current);
+		timerRef.current = setTimeout(flushNav, 60);
+	});
+
+	const handleGoUp = useCallback(() => debouncedNav("up"), []);
+	const handleGoDown = useCallback(() => debouncedNav("down"), []);
 
 	const handleClose = useCallback(() => {
 		navigate({ to: "/$slug/expenses", params: { slug } });
@@ -52,6 +61,9 @@ function RouteComponent() {
 	useHotkeys("j", handleGoDown, [handleGoDown]);
 	useHotkeys("k", handleGoUp, [handleGoUp]);
 	useHotkeys("esc", handleClose, [handleClose]);
+
+	const canGoUp = currentIndex > 0;
+	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
 
 	if (!currentExpense) {
 		return null;
