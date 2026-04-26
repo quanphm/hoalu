@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/ui",
-	"version": "0.28.4",
+	"version": "0.28.5",
 	"private": true,
 	"sideEffects": false,
 	"exports": {

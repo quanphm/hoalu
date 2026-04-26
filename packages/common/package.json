@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/common",
-	"version": "0.28.4",
+	"version": "0.28.5",
 	"private": true,
 	"description": "Shared utilities for Hoalu server & client",
 	"type": "module",
