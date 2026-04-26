@@ -1,6 +1,5 @@
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog";
 import { SearchIcon } from "@hoalu/icons/lucide";
-import type * as React from "react";
 
 import { cn } from "../utils";
 import {
@@ -29,7 +28,7 @@ function CommandDialogBackdrop({ className, ...props }: CommandDialogPrimitive.B
 	return (
 		<CommandDialogPrimitive.Backdrop
 			className={cn(
-				"fixed inset-0 z-50 bg-black/32 backdrop-blur-md transition-all duration-200",
+				"fixed inset-0 z-50 bg-black/32 backdrop-blur-xs transition-all duration-200",
 				"data-ending-style:opacity-0 data-starting-style:opacity-0",
 				className,
 			)}
