@@ -50,7 +50,7 @@ const EVENT_STATUS_OPTIONS = [
 export function CreateEventDialogTrigger({ ...props }: ButtonProps) {
 	const setDialog = useSetAtom(createEventDialogAtom);
 	return (
-		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
+		<Button size="sm" variant="outline" {...props} onClick={() => setDialog({ state: true })}>
 			Create event
 		</Button>
 	);

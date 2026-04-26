@@ -5,10 +5,18 @@ import { PageContent } from "#app/components/layouts/page-content.tsx";
 import {
 	Section,
 	SectionContent,
+	SectionDescription,
 	SectionHeader,
-	SectionTitle,
 } from "#app/components/layouts/section.tsx";
-import { CreateWorkspaceForm } from "#app/components/workspace.tsx";
+import {
+	Toolbar,
+	ToolbarActions,
+	ToolbarGroup,
+	ToolbarSeparator,
+	ToolbarTitle,
+} from "#app/components/layouts/toolbar.tsx";
+import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
+import { CreateWorkspaceForm, CreateWorkspaceTrigger } from "#app/components/workspace.tsx";
 import {
 	listWorkspaceSummariesOptions,
 	listWorkspacesOptions,
@@ -29,54 +37,59 @@ function RouteComponent() {
 	const setDialog = useSetAtom(createWorkspaceDialogAtom);
 	const summaryMap = new Map((summaries || []).map((s) => [s.id, s]));
 
-	if (workspaces.length === 0) {
-		return (
-			<PageContent className="gap-12">
-				<Greeting />
-				<Section className="gap-2">
-					<SectionHeader>
-						<h3 className="text-lg font-semibold">Create a new workspace</h3>
-					</SectionHeader>
-					<SectionContent columns={12}>
-						<div className="col-span-6">
-							<CreateWorkspaceForm />
-						</div>
-					</SectionContent>
-				</Section>
-			</PageContent>
-		);
-	}
-
 	return (
-		<PageContent className="gap-12">
-			<Greeting />
-			<Section>
-				<SectionHeader>
-					<SectionTitle>Workspaces</SectionTitle>
-				</SectionHeader>
-				<SectionContent columns={4} className="grid-cols-1">
-					{workspaces.map((ws) => {
-						const summary = summaryMap.get(ws.id);
-						return (
-							<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="h-full">
-								<WorkspaceCard {...ws} summary={summary} />
-							</Link>
-						);
-					})}
-					<button
-						type="button"
-						onClick={() => setDialog({ state: true })}
-						className="h-full cursor-pointer text-left"
-					>
-						<Card className="bg-muted/50 hover:border-foreground/40 hover:bg-muted h-full justify-center border-dashed">
-							<div className="flex flex-col items-center justify-center gap-2">
-								<PlusIcon className="size-5" />
-								<span className="text-muted-foreground text-sm">Add another workspace</span>
+		<>
+			<Toolbar>
+				<ToolbarGroup>
+					<ToolbarTitle>Home</ToolbarTitle>
+				</ToolbarGroup>
+				{workspaces.length !== 0 && (
+					<ToolbarActions>
+						<CreateWorkspaceTrigger />
+						<ToolbarSeparator />
+						<RedactedAmountToggle />
+					</ToolbarActions>
+				)}
+			</Toolbar>
+			<PageContent className="gap-8 p-6">
+				<Greeting />
+				{workspaces.length === 0 ? (
+					<Section className="gap-2">
+						<SectionHeader>
+							<h3 className="text-lg font-semibold">Create a new workspace</h3>
+						</SectionHeader>
+						<SectionContent columns={12}>
+							<div className="col-span-6">
+								<CreateWorkspaceForm />
 							</div>
-						</Card>
-					</button>
-				</SectionContent>
-			</Section>
-		</PageContent>
+						</SectionContent>
+					</Section>
+				) : (
+					<Section className="md:gap-2">
+						<SectionHeader>
+							<SectionDescription>Select a workspace to continue</SectionDescription>
+						</SectionHeader>
+						<SectionContent columns={3} className="grid-cols-1">
+							{workspaces.map((ws) => {
+								const summary = summaryMap.get(ws.id);
+								return (
+									<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="group h-full">
+										<WorkspaceCard {...ws} summary={summary} />
+									</Link>
+								);
+							})}
+							<button type="button" onClick={() => setDialog({ state: true })}>
+								<Card className="hover:border-foreground/40 h-full justify-center rounded-md border-dashed bg-transparent">
+									<div className="flex flex-col items-center justify-center gap-3">
+										<PlusIcon className="text-muted-foreground size-4" />
+										<span className="text-muted-foreground text-sm">New workspace</span>
+									</div>
+								</Card>
+							</button>
+						</SectionContent>
+					</Section>
+				)}
+			</PageContent>
+		</>
 	);
 }

@@ -14,7 +14,6 @@ import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WalletLabel } from "#app/components/wallets/wallet-badge.tsx";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 import {
 	CalendarIcon,
 	CheckIcon,
@@ -43,7 +42,9 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/_normal/expenses");
+import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/expenses");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date" | "search";
 

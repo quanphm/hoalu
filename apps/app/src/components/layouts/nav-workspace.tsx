@@ -37,7 +37,7 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="outline"
-						className="w-full gap-2"
+						className="w-full gap-2 rounded-md"
 						onClick={() => setCommandPaletteOpen(true)}
 					>
 						<SearchIcon className="text-muted-foreground size-4" />
@@ -62,25 +62,6 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
-						{/* <SidebarMenuItem>
-							<SidebarMenuButton
-								render={
-									<Link
-										to="/$slug/tasks"
-										params={{ slug }}
-										disabled={!KEYBOARD_SHORTCUTS.goto_tasks.enabled}
-									/>
-								}
-								tooltip="Tasks"
-							>
-								<AlignBoxTopCenterIcon />
-								<span>Tasks</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_tasks} />
-								</SidebarMenuBadge>
-							</SidebarMenuButton>
-						</SidebarMenuItem> */}
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>

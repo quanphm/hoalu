@@ -11,7 +11,6 @@ import {
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WalletLabel } from "#app/components/wallets/wallet-badge.tsx";
 import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import type { WalletTypeSchema } from "@hoalu/common/schema";
 import {
 	CalendarIcon,
 	CheckIcon,
@@ -39,7 +38,9 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 
-const incomeRouteApi = getRouteApi("/_dashboard/$slug/_normal/incomes");
+import type { WalletTypeSchema } from "@hoalu/common/schema";
+
+const incomeRouteApi = getRouteApi("/_dashboard/$slug/incomes");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "date" | "search";
 
@@ -191,27 +192,27 @@ export function IncomeFilterDropdown() {
 					<div className="flex min-h-[400px]">
 						{/* Left Panel - Filter Menu */}
 						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-[180px]">
-						<FilterMenuItem
-							icon={<SearchIcon className="size-3" />}
-							label="Search"
-							active={hasActiveFilter("search")}
-							selected={currentView === "search"}
-							onClick={() => setCurrentView("search")}
-						/>
-						<FilterMenuItem
-							icon={<CalendarIcon className="size-3" />}
-							label="Date"
-							active={hasActiveFilter("date")}
-							selected={currentView === "date"}
-							onClick={() => setCurrentView("date")}
-						/>
-						<FilterMenuItem
-							icon={<DollarSignIcon className="size-3" />}
-							label="Amount"
-							active={hasActiveFilter("amount")}
-							selected={currentView === "amount"}
-							onClick={() => setCurrentView("amount")}
-						/>
+							<FilterMenuItem
+								icon={<SearchIcon className="size-3" />}
+								label="Search"
+								active={hasActiveFilter("search")}
+								selected={currentView === "search"}
+								onClick={() => setCurrentView("search")}
+							/>
+							<FilterMenuItem
+								icon={<CalendarIcon className="size-3" />}
+								label="Date"
+								active={hasActiveFilter("date")}
+								selected={currentView === "date"}
+								onClick={() => setCurrentView("date")}
+							/>
+							<FilterMenuItem
+								icon={<DollarSignIcon className="size-3" />}
+								label="Amount"
+								active={hasActiveFilter("amount")}
+								selected={currentView === "amount"}
+								onClick={() => setCurrentView("amount")}
+							/>
 							<FilterMenuItem
 								icon={<TagIcon className="size-3" />}
 								label="Category"
@@ -249,33 +250,33 @@ export function IncomeFilterDropdown() {
 									onChange={setSelectedCategories}
 								/>
 							)}
-						{currentView === "wallet" && (
-							<WalletFilterView
-								wallets={wallets}
-								selected={selectedWallets}
-								onChange={setSelectedWallets}
-							/>
-						)}
-						{currentView === "date" && (
-							<DateFilterView
-								value={dateRange}
-								onChange={(range) => {
-									if (!range) {
-										navigate({
-											search: (s) => ({ ...s, date: undefined }),
-										});
-										return;
-									}
-									if (range.from && range.to) {
-										const query = `${range.from.getTime()}-${range.to.getTime()}`;
-										navigate({
-											search: (s) => ({ ...s, date: query }),
-										});
-									}
-								}}
-							/>
-						)}
-					</div>
+							{currentView === "wallet" && (
+								<WalletFilterView
+									wallets={wallets}
+									selected={selectedWallets}
+									onChange={setSelectedWallets}
+								/>
+							)}
+							{currentView === "date" && (
+								<DateFilterView
+									value={dateRange}
+									onChange={(range) => {
+										if (!range) {
+											navigate({
+												search: (s) => ({ ...s, date: undefined }),
+											});
+											return;
+										}
+										if (range.from && range.to) {
+											const query = `${range.from.getTime()}-${range.to.getTime()}`;
+											navigate({
+												search: (s) => ({ ...s, date: query }),
+											});
+										}
+									}}
+								/>
+							)}
+						</div>
 					</div>
 					<Separator />
 					<div className="flex items-center justify-end p-2">

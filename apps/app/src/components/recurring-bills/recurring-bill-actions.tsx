@@ -20,7 +20,7 @@ import {
 	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
-import { Button, ButtonProps } from "@hoalu/ui/button";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
 	DialogDescription,
@@ -61,7 +61,7 @@ export function CreateRecurringBillDialogTrigger({
 }: ButtonProps & { showKbd?: boolean }) {
 	const setDialog = useSetAtom(createRecurringBillDialogAtom);
 	return (
-		<Button variant="outline" {...props} onClick={() => setDialog({ state: true })}>
+		<Button size="sm" variant="outline" {...props} onClick={() => setDialog({ state: true })}>
 			Create bill
 			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_recurring_bill} />}
 		</Button>

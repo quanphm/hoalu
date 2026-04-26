@@ -35,66 +35,42 @@ export class WorkspaceRepository {
 	 * @param conversionDate - Date to use for exchange rate lookup (typically month-end)
 	 * @returns Total in minor units of target currency + flag for missing rates
 	 */
-	private async convertAndSumExpenses(
-		expenses: Array<{ amount: string; currency: string; date: string }>,
+	private async convertAndSum(
+		rows: Array<{ amount: string; currency: string; date: string }>,
 		targetCurrency: string,
 		conversionDate: string,
-	): Promise<{ total: number; hasMissingRates: boolean }> {
-		if (expenses.length === 0) {
-			return { total: 0, hasMissingRates: false };
-		}
+	): Promise<number> {
+		if (rows.length === 0) return 0;
 
 		let totalInMinorUnits = 0;
-		let hasMissingRates = false;
 
-		// Get unique currencies and fetch rates upfront for better performance
-		const uniqueCurrencies = [...new Set(expenses.map((e) => e.currency))];
+		const uniqueCurrencies = [...new Set(rows.map((e) => e.currency))];
 		const rates = new Map<string, number>();
 
-		// Batch fetch all exchange rates
 		for (const currency of uniqueCurrencies) {
 			if (currency !== targetCurrency) {
 				const rate = await this.exchangeRateRepo.lookup([currency, targetCurrency], conversionDate);
 				if (rate) {
 					rates.set(currency, Number.parseFloat(rate.exchangeRate));
-				} else {
-					hasMissingRates = true;
-					console.warn(
-						`[WorkspaceRepository] Missing exchange rate: ${currency} → ${targetCurrency} on ${conversionDate}`,
-					);
 				}
 			}
 		}
 
-		// Process each expense
-		for (const expense of expenses) {
-			const amountInMinorUnits = Number.parseFloat(expense.amount);
+		for (const row of rows) {
+			const amountInMinorUnits = Number.parseFloat(row.amount);
+			const realAmount = monetary.fromRealAmount(amountInMinorUnits, row.currency);
 
-			// Step 1: Convert from minor units to real amount
-			const realAmount = monetary.fromRealAmount(amountInMinorUnits, expense.currency);
-
-			// Step 2: Apply currency conversion if needed
 			let convertedRealAmount = realAmount;
-			if (expense.currency !== targetCurrency) {
-				const rate = rates.get(expense.currency);
-				if (rate) {
-					convertedRealAmount = realAmount * rate;
-				} else {
-					// Skip this expense if no rate available
-					continue;
-				}
+			if (row.currency !== targetCurrency) {
+				const rate = rates.get(row.currency);
+				if (!rate) continue;
+				convertedRealAmount = realAmount * rate;
 			}
 
-			// Step 3: Convert back to minor units in target currency
-			const convertedMinorUnits = monetary.toRealAmount(convertedRealAmount, targetCurrency);
-
-			totalInMinorUnits += convertedMinorUnits;
+			totalInMinorUnits += monetary.toRealAmount(convertedRealAmount, targetCurrency);
 		}
 
-		return {
-			total: Math.round(totalInMinorUnits),
-			hasMissingRates,
-		};
+		return Math.round(totalInMinorUnits);
 	}
 
 	/**
@@ -127,53 +103,38 @@ export class WorkspaceRepository {
 		const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 		const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
-		// STEP 2: Fetch expenses for this month with currency information
-		const thisMonthExpenses = await db
-			.select({
-				amount: schema.expense.amount,
-				currency: schema.expense.currency,
-				date: schema.expense.date,
-			})
-			.from(schema.expense)
-			.where(
-				and(
-					eq(schema.expense.workspaceId, param.workspaceId),
-					gte(schema.expense.date, thisMonthStart.toISOString()),
-				),
-			);
+		// STEP 2: Fetch expenses and income for this month
+		const [thisMonthExpenses, thisMonthIncome] = await Promise.all([
+			db
+				.select({ amount: schema.expense.amount, currency: schema.expense.currency, date: schema.expense.date })
+				.from(schema.expense)
+				.where(and(eq(schema.expense.workspaceId, param.workspaceId), gte(schema.expense.date, thisMonthStart.toISOString()))),
+			db
+				.select({ amount: schema.income.amount, currency: schema.income.currency, date: schema.income.date })
+				.from(schema.income)
+				.where(and(eq(schema.income.workspaceId, param.workspaceId), gte(schema.income.date, thisMonthStart.toISOString()))),
+		]);
 
-		// STEP 3: Convert and sum expenses with proper currency handling
-		const { total: totalExpensesThisMonth, hasMissingRates: thisMonthMissingRates } =
-			await this.convertAndSumExpenses(
-				thisMonthExpenses,
-				primaryCurrency,
-				thisMonthEnd.toISOString(),
-			);
+		// STEP 3: Fetch expenses and income for last month
+		const [lastMonthExpenses, lastMonthIncome] = await Promise.all([
+			db
+				.select({ amount: schema.expense.amount, currency: schema.expense.currency, date: schema.expense.date })
+				.from(schema.expense)
+				.where(and(eq(schema.expense.workspaceId, param.workspaceId), gte(schema.expense.date, lastMonthStart.toISOString()), sql`${schema.expense.date} < ${lastMonthEnd.toISOString()}`)),
+			db
+				.select({ amount: schema.income.amount, currency: schema.income.currency, date: schema.income.date })
+				.from(schema.income)
+				.where(and(eq(schema.income.workspaceId, param.workspaceId), gte(schema.income.date, lastMonthStart.toISOString()), sql`${schema.income.date} < ${lastMonthEnd.toISOString()}`)),
+		]);
 
-		const transactionCount = thisMonthExpenses.length;
-
-		// STEP 4: Fetch and convert last month's expenses
-		const lastMonthExpenses = await db
-			.select({
-				amount: schema.expense.amount,
-				currency: schema.expense.currency,
-				date: schema.expense.date,
-			})
-			.from(schema.expense)
-			.where(
-				and(
-					eq(schema.expense.workspaceId, param.workspaceId),
-					gte(schema.expense.date, lastMonthStart.toISOString()),
-					sql`${schema.expense.date} < ${lastMonthEnd.toISOString()}`,
-				),
-			);
-
-		const { total: totalExpensesLastMonth, hasMissingRates: lastMonthMissingRates } =
-			await this.convertAndSumExpenses(
-				lastMonthExpenses,
-				primaryCurrency,
-				lastMonthEnd.toISOString(),
-			);
+		// STEP 4: Convert and sum all four buckets
+		const [totalExpensesThisMonth, totalExpensesLastMonth, totalIncomeThisMonth, totalIncomeLastMonth] =
+			await Promise.all([
+				this.convertAndSum(thisMonthExpenses, primaryCurrency, thisMonthEnd.toISOString()),
+				this.convertAndSum(lastMonthExpenses, primaryCurrency, lastMonthEnd.toISOString()),
+				this.convertAndSum(thisMonthIncome, primaryCurrency, thisMonthEnd.toISOString()),
+				this.convertAndSum(lastMonthIncome, primaryCurrency, lastMonthEnd.toISOString()),
+			]);
 
 		// Get active wallets count
 		const [walletsData] = await db
@@ -183,23 +144,37 @@ export class WorkspaceRepository {
 				and(eq(schema.wallet.workspaceId, param.workspaceId), eq(schema.wallet.isActive, true)),
 			);
 
-		const [lastActivity] = await db
-			.select({ date: schema.expense.date })
-			.from(schema.expense)
-			.where(eq(schema.expense.workspaceId, param.workspaceId))
-			.orderBy(sql`${schema.expense.date} DESC`)
-			.limit(1);
+		// Last activity across both expenses and income
+		const [lastExpense, lastIncome] = await Promise.all([
+			db
+				.select({ date: schema.expense.date })
+				.from(schema.expense)
+				.where(eq(schema.expense.workspaceId, param.workspaceId))
+				.orderBy(sql`${schema.expense.date} DESC`)
+				.limit(1),
+			db
+				.select({ date: schema.income.date })
+				.from(schema.income)
+				.where(eq(schema.income.workspaceId, param.workspaceId))
+				.orderBy(sql`${schema.income.date} DESC`)
+				.limit(1),
+		]);
 
-		// Calculate trend percentage
+		const expenseDate = lastExpense[0]?.date ?? null;
+		const incomeDate = lastIncome[0]?.date ?? null;
+		const lastActivityAt =
+			expenseDate && incomeDate
+				? expenseDate > incomeDate ? expenseDate : incomeDate
+				: expenseDate ?? incomeDate;
+
+		// Calculate trend percentage based on expenses
 		let trendPercentage = 0;
 		if (totalExpensesLastMonth > 0) {
 			trendPercentage =
 				((totalExpensesThisMonth - totalExpensesLastMonth) / totalExpensesLastMonth) * 100;
 		} else if (totalExpensesThisMonth > 0) {
-			trendPercentage = 100; // If no expenses last month but have this month
+			trendPercentage = 100;
 		}
-
-		const hasMissingRates = thisMonthMissingRates || lastMonthMissingRates;
 
 		return {
 			id: workspace.id,
@@ -208,12 +183,12 @@ export class WorkspaceRepository {
 			logo: workspace.logo,
 			totalExpensesThisMonth,
 			totalExpensesLastMonth,
-			transactionCount,
+			totalIncomeThisMonth,
+			totalIncomeLastMonth,
 			activeWalletsCount: walletsData.count,
 			trendPercentage: Math.round(trendPercentage * 100) / 100,
-			lastActivityAt: lastActivity?.date || null,
+			lastActivityAt,
 			primaryCurrency,
-			hasMissingRates: hasMissingRates || undefined,
 		};
 	}
 
