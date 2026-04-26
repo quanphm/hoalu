@@ -1,12 +1,5 @@
 import { PageContent } from "#app/components/layouts/page-content.tsx";
-import {
-	Section,
-	SectionAction,
-	SectionContent,
-	SectionHeader,
-	SectionItem,
-	SectionTitle,
-} from "#app/components/layouts/section.tsx";
+import { Section, SectionContent, SectionItem } from "#app/components/layouts/section.tsx";
 import {
 	Toolbar,
 	ToolbarActions,
@@ -17,7 +10,6 @@ import {
 import { CreateRecurringBillDialogTrigger } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 import { RecurringBillDetails } from "#app/components/recurring-bills/recurring-bill-details.tsx";
 import RecurringBillList from "#app/components/recurring-bills/recurring-bill-list.tsx";
-import { useSortedRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -26,8 +18,6 @@ export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 });
 
 function RouteComponent() {
-	const bills = useSortedRecurringBills();
-
 	return (
 		<>
 			<Toolbar>
@@ -53,7 +43,7 @@ function RouteComponent() {
 							tabletSpan={1}
 							mobileOrder={1}
 						>
-							<RecurringBillList bills={bills} />
+							<RecurringBillList />
 						</SectionItem>
 
 						<SectionItem

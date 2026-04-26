@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/react";
 
 const authClient = createAuthClient({
 	baseURL: `${import.meta.env.PUBLIC_API_URL}/auth`,
-	plugins: [workspaceClient(), apiKeyClient()],
+	plugins: [workspaceClient(), apiKeyClient() as any],
 });
 
 type AuthClientInfer = typeof authClient.$Infer;
