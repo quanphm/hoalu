@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/furnace",
-	"version": "0.28.6",
+	"version": "0.28.7",
 	"private": true,
 	"description": "Hono server utilities",
 	"type": "module",
