@@ -87,7 +87,7 @@ function RouteComponent() {
 			</Toolbar>
 
 			<PageContent>
-				<Section>
+				<Section className="gap-3 p-4">
 					<SectionContent columns={12}>
 						<div className="col-span-8">
 							<SectionContent className="grid-cols-1">

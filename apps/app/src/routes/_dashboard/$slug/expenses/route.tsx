@@ -1,4 +1,7 @@
-import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
+import {
+	CreateExpenseDialogTrigger,
+	ExpenseSearch,
+} from "#app/components/expenses/expense-actions.tsx";
 import { ExpenseFilterDropdown } from "#app/components/expenses/expense-filter-dropdown.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
 import { useFilteredExpenses } from "#app/components/expenses/use-expenses.ts";
@@ -12,7 +15,6 @@ import {
 	ToolbarSeparator,
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
-import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
@@ -35,7 +37,6 @@ function LayoutComponent() {
 		? (expenseMatch.params as Record<string, string>).expenseId
 		: undefined;
 
-	const { shouldUseMobileLayout } = useLayoutMode();
 	const filteredExpenses = useFilteredExpenses();
 
 	return (
@@ -55,21 +56,18 @@ function LayoutComponent() {
 			</Toolbar>
 
 			<PageContent>
-				<Section>
-					{shouldUseMobileLayout ? (
-						<>
-							<ExpenseFilterDropdown />
-							<ExpenseList expenses={filteredExpenses} selectedId={expenseId ?? null} />
-							<Outlet />
-						</>
-					) : expenseId ? (
+				<Section className="gap-0">
+					{expenseId ? (
 						<Outlet />
 					) : (
 						<>
-							<ExpenseFilterDropdown />
+							<div className="flex flex-wrap items-center gap-2 px-4 py-2">
+								<ExpenseSearch />
+								<ExpenseFilterDropdown />
+							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100vh-84px-62px)] grid-cols-1 overflow-hidden md:gap-0"
+								className="h-[calc(100vh-100px)] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 									<ExpenseList expenses={filteredExpenses} selectedId={null} />

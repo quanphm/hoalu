@@ -649,10 +649,11 @@ export function ExpenseSearch() {
 	const [value, setValue] = useAtom(searchKeywordsAtom);
 
 	return (
-		<div className="relative">
+		<div className="relative w-80">
 			<Input
 				type="search"
-				placeholder="Search"
+				size="sm"
+				placeholder="Search title, description..."
 				className="peer ps-6 focus-visible:ring-0"
 				value={value}
 				onChange={(e) => {
@@ -660,7 +661,7 @@ export function ExpenseSearch() {
 				}}
 			/>
 			<div className="pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-				<SearchIcon size={16} aria-hidden="true" />
+				<SearchIcon className="text-muted-foreground size-3" aria-hidden="true" />
 			</div>
 		</div>
 	);

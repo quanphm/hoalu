@@ -1,7 +1,7 @@
 import { HotKey } from "#app/components/hotkey.tsx";
 import { AVAILABLE_WORKSPACE_SHORTCUT } from "#app/helpers/constants.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
-import { FolderIcon } from "@hoalu/icons/nucleo";
+import { FolderIcon } from "@hoalu/icons/tabler";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
