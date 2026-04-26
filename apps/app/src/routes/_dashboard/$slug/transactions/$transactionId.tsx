@@ -1,5 +1,9 @@
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import {
+	IncomeDetailsPanel,
+	MobileIncomeDetailsPanel,
+} from "#app/components/transactions/income-details-panel.tsx";
 import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffectEvent, useRef } from "react";
@@ -22,7 +26,7 @@ function RouteComponent() {
 	slugRef.current = slug;
 
 	const currentIndex = filtered.findIndex((e) => e.public_id === transactionId);
-	const currentExpense = currentIndex >= 0 ? filtered[currentIndex] : undefined;
+	const current = currentIndex >= 0 ? filtered[currentIndex] : undefined;
 
 	const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const pendingRef = useRef<"up" | "down" | null>(null);
@@ -65,36 +69,21 @@ function RouteComponent() {
 	const canGoUp = currentIndex > 0;
 	const canGoDown = currentIndex >= 0 && currentIndex < filtered.length - 1;
 
-	if (!currentExpense) {
-		return null;
-	}
+	if (!current) return null;
 
-	// Income detail panel not yet implemented — skip
-	if (currentExpense.kind === "income") {
-		return null;
-	}
+	const sharedProps = { onClose: handleClose, onGoUp: handleGoUp, onGoDown: handleGoDown, canGoUp, canGoDown };
 
-	if (shouldUseMobileLayout) {
-		return (
-			<MobileExpenseDetails
-				currentExpense={currentExpense}
-				onClose={handleClose}
-				onGoUp={handleGoUp}
-				onGoDown={handleGoDown}
-				canGoUp={canGoUp}
-				canGoDown={canGoDown}
-			/>
+	if (current.kind === "income") {
+		return shouldUseMobileLayout ? (
+			<MobileIncomeDetailsPanel currentIncome={current} {...sharedProps} />
+		) : (
+			<IncomeDetailsPanel currentIncome={current} {...sharedProps} />
 		);
 	}
 
-	return (
-		<ExpenseDetails
-			currentExpense={currentExpense}
-			onClose={handleClose}
-			onGoUp={handleGoUp}
-			onGoDown={handleGoDown}
-			canGoUp={canGoUp}
-			canGoDown={canGoDown}
-		/>
+	return shouldUseMobileLayout ? (
+		<MobileExpenseDetails currentExpense={current} {...sharedProps} />
+	) : (
+		<ExpenseDetails currentExpense={current} {...sharedProps} />
 	);
 }

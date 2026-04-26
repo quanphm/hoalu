@@ -35,15 +35,15 @@ const columns: ColumnDef<SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{
-		id: "expense-amount",
-		header: "Expense",
+		id: "income-amount",
+		header: "Income",
 		meta: {
 			headerClassName: "justify-end",
 		},
 	},
 	{
-		id: "income-amount",
-		header: "Income",
+		id: "expense-amount",
+		header: "Expense",
 		meta: {
 			headerClassName: "justify-end",
 		},
@@ -94,22 +94,22 @@ function GroupHeader({ date, expenseTotal, incomeTotal }: Omit<GroupHeaderItem, 
 			{/* empty to fill title column */}
 			<div />
 			<div className="ml-auto flex items-center gap-3">
-				{expenseTotal > 0 && (
-					<CurrencyValue
-						value={expenseTotal}
-						currency={workspaceCurrency}
-						prefix="-"
-						className="text-destructive text-sm font-semibold"
-					/>
-				)}
-			</div>
-			<div className="ml-auto flex items-center gap-3">
 				{incomeTotal > 0 && (
 					<CurrencyValue
 						value={incomeTotal}
 						currency={workspaceCurrency}
 						prefix="+"
 						className="text-success text-sm font-semibold"
+					/>
+				)}
+			</div>
+			<div className="ml-auto flex items-center gap-3">
+				{expenseTotal > 0 && (
+					<CurrencyValue
+						value={expenseTotal}
+						currency={workspaceCurrency}
+						prefix="-"
+						className="text-destructive text-sm font-semibold"
 					/>
 				)}
 			</div>
@@ -121,8 +121,8 @@ function EmptyState() {
 	return (
 		<Empty>
 			<EmptyHeader>
-				<EmptyTitle>No expenses</EmptyTitle>
-				<EmptyDescription>Create your first expense to track your spending.</EmptyDescription>
+				<EmptyTitle>No transactions</EmptyTitle>
+				<EmptyDescription>Create your first expense or income to get started.</EmptyDescription>
 			</EmptyHeader>
 		</Empty>
 	);

@@ -1,9 +1,11 @@
 import {
 	type AmountFilterState,
+	type TransactionKindFilter,
 	expenseAmountFilterAtom,
 	expenseCategoryFilterAtom,
 	expenseRepeatFilterAtom,
 	expenseWalletFilterAtom,
+	transactionKindFilterAtom,
 } from "#app/atoms/index.ts";
 import {
 	useLiveQueryCategories,
@@ -56,6 +58,7 @@ export function ExpenseFilterDropdown() {
 	const [selectedCategories, setSelectedCategories] = useAtom(expenseCategoryFilterAtom);
 	const [selectedWallets, setSelectedWallets] = useAtom(expenseWalletFilterAtom);
 	const [selectedRepeats, setSelectedRepeats] = useAtom(expenseRepeatFilterAtom);
+	const [kindFilter] = useAtom(transactionKindFilterAtom);
 	const { date: searchByDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
 	const dateRange = toFromToDateObject(searchByDate);
@@ -246,6 +249,7 @@ export function ExpenseFilterDropdown() {
 							{currentView === "category" && (
 								<CategoryFilterView
 									categories={categories}
+									kindFilter={kindFilter}
 									selected={selectedCategories}
 									onChange={setSelectedCategories}
 								/>
@@ -486,10 +490,12 @@ function AmountFilterView({
 
 function CategoryFilterView({
 	categories,
+	kindFilter,
 	selected,
 	onChange,
 }: {
 	categories: SyncedCategory[];
+	kindFilter: TransactionKindFilter;
 	selected: string[];
 	onChange: (value: string[]) => void;
 }) {
@@ -500,6 +506,11 @@ function CategoryFilterView({
 			onChange([...selected, id]);
 		}
 	};
+
+	const visibleCategories =
+		kindFilter === "all"
+			? categories
+			: categories.filter((c) => c.type === kindFilter);
 
 	return (
 		<div className="flex flex-col gap-4 p-4">
@@ -513,8 +524,7 @@ function CategoryFilterView({
 			</div>
 
 			<div className="flex flex-col gap-1">
-				{categories
-					.filter((category) => category.type === "expense")
+				{visibleCategories
 					.map((category) => (
 						<Label
 							key={category.id}

@@ -31,14 +31,14 @@ function ExpenseContent(props: SyncedTransaction) {
 				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
-				{props.kind === "expense" ? (
+				{props.kind === "income" ? (
 					<TransactionAmount type={props.kind} data={props} />
 				) : (
 					<span className="text-muted-foreground text-sm">-</span>
 				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
-				{props.kind === "income" ? (
+				{props.kind === "expense" ? (
 					<TransactionAmount type={props.kind} data={props} />
 				) : (
 					<span className="text-muted-foreground text-sm">-</span>

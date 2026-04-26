@@ -135,11 +135,6 @@ function EmptyData() {
 					You haven&apos;t created any expenses in this period yet.
 				</EmptyDescription>
 			</EmptyHeader>
-			<EmptyContent>
-				<div className="flex gap-2">
-					<CreateExpenseDialogTrigger variant="default" showKbd={false} />
-				</div>
-			</EmptyContent>
 		</Empty>
 	);
 }

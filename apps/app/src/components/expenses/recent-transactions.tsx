@@ -180,11 +180,11 @@ export function RecentTransactions() {
 							<TabsTab value="all" className="sm:h-6">
 								All
 							</TabsTab>
-							<TabsTab value="expense" className="sm:h-6">
-								Expenses
-							</TabsTab>
 							<TabsTab value="income" className="sm:h-6">
 								Incomes
+							</TabsTab>
+							<TabsTab value="expense" className="sm:h-6">
+								Expenses
 							</TabsTab>
 						</TabsList>
 					</Tabs>
