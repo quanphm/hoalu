@@ -16,7 +16,7 @@
     },
     "apps/api": {
       "name": "@hoalu/api",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@better-auth/api-key": "catalog:",
         "@better-auth/core": "catalog:",
@@ -52,7 +52,7 @@
     },
     "apps/app": {
       "name": "@hoalu/app",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@better-auth/api-key": "catalog:",
         "@electric-sql/pglite": "^0.4.4",
@@ -112,7 +112,7 @@
     },
     "packages/auth": {
       "name": "@hoalu/auth",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@better-auth/core": "catalog:",
         "@hoalu/common": "workspace:*",
@@ -126,7 +126,7 @@
     },
     "packages/common": {
       "name": "@hoalu/common",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@hoalu/countries": "workspace:*",
         "@standard-schema/spec": "^1.1.0",
@@ -141,14 +141,14 @@
     },
     "packages/countries": {
       "name": "@hoalu/countries",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "devDependencies": {
         "@hoalu/tsconfig": "workspace:*",
       },
     },
     "packages/email": {
       "name": "@hoalu/email",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@react-email/components": "^1.0.12",
       },
@@ -164,7 +164,7 @@
     },
     "packages/furnace": {
       "name": "@hoalu/furnace",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@hoalu/common": "workspace:*",
         "hono-openapi": "^1.2.0",
@@ -184,7 +184,7 @@
     },
     "packages/icons": {
       "name": "@hoalu/icons",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "lucide-react": "^1.11.0",
       },
@@ -196,7 +196,7 @@
     },
     "packages/themes": {
       "name": "@hoalu/themes",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@tailwindcss/typography": "^0.5.19",
         "tailwindcss": "catalog:",
@@ -211,7 +211,7 @@
     },
     "packages/ui": {
       "name": "@hoalu/ui",
-      "version": "0.28.7",
+      "version": "0.28.8",
       "dependencies": {
         "@base-ui/react": "^1.4.1",
         "@hoalu/icons": "workspace:*",
