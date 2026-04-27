@@ -62,7 +62,7 @@ export function PercentageChangeDisplay({
 			{Icon && <Icon className={cn(textClasses, iconSizeClasses[size])} />}
 			<Button
 				variant="link"
-				className={cn("p-0 decoration-dotted", textClasses)}
+				className={cn("p-0 text-right decoration-dotted", textClasses)}
 				onClick={handleViewModeChange}
 				title="toggle view percent or absolute value"
 			>

@@ -7,7 +7,7 @@ import { formatNumber } from "#app/helpers/number.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
@@ -132,15 +132,13 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Cash Flow</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={cashFlowChange}
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="text-xl">
 						<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
 					</CardTitle>
@@ -151,15 +149,13 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Income</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={incomeChange}
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="text-xl">
 						<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
 					</CardTitle>
@@ -170,8 +166,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Expenses</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={expensesChange}
@@ -179,7 +173,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="text-xl">
 						<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
 					</CardTitle>
@@ -190,8 +184,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Transactions</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && transactionsDiff !== 0 && (
 							<span
 								className={cn(
@@ -203,7 +195,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								{transactionsDiff}
 							</span>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{formatNumber(totalTransactions)}
 					</CardTitle>

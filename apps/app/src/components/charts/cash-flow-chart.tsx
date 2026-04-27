@@ -328,7 +328,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
 							strokeWidth={2}
-							opacity={0.5}
+							opacity={0.64}
 							isAnimationActive={false}
 						/>
 					</AreaChart>
