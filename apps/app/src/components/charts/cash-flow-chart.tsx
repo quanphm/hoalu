@@ -1,4 +1,8 @@
-import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import {
+	customDateRangeAtom,
+	PredefinedDateRange,
+	selectDateRangeAtom,
+} from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import {
 	filterDataByRange,
@@ -256,7 +260,7 @@ function TooltipContent({
 }: {
 	active?: boolean;
 	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
-	dateRange: string;
+	dateRange: PredefinedDateRange;
 	currency: string;
 	setHoveredBalance: (value: number | null) => void;
 }) {
