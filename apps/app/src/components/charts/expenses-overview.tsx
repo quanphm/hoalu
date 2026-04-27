@@ -117,7 +117,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const [activeTab, setActiveTab] = useState<OverviewTab>("expenses");
 	const isIncomeTab = activeTab === "income";
-	const [clampOutliers, setClampOutliers] = useState(true);
+	const [clampOutliers, setClampOutliers] = useState(false);
 
 	const expenseStats = useExpenseStats({
 		expenses: props.expenses,
@@ -436,6 +436,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						</div>
 						{stats.hasComparison && (
 							<PercentageChangeDisplay
+								size="sm"
 								change={stats.amount.change}
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
@@ -457,18 +458,18 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					)}
 					<div className="hide-in-screenshot flex h-auto gap-0">
 						<Button
-							variant={!isIncomeTab ? "outline" : "ghost"}
-							size="sm"
-							onClick={() => setActiveTab("expenses")}
-						>
-							Expenses
-						</Button>
-						<Button
 							variant={isIncomeTab ? "outline" : "ghost"}
 							size="sm"
 							onClick={() => setActiveTab("income")}
 						>
 							Incomes
+						</Button>
+						<Button
+							variant={!isIncomeTab ? "outline" : "ghost"}
+							size="sm"
+							onClick={() => setActiveTab("expenses")}
+						>
+							Expenses
 						</Button>
 					</div>
 					{axisDomainCap && (

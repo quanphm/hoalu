@@ -76,8 +76,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const cashFlowChange = calculatePercentageChange(netCashFlow, prevNetCashFlow, currency);
 	const transactionsDiff = totalTransactions - prevTransactions;
 
-	const showTrend = comparisonRange !== null;
-
 	const periodInfo = useMemo(() => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -105,8 +103,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			start.setDate(today.getDate() - days + 1);
 		}
 
-		const totalDays =
-			Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+		const totalDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
 		const y = Math.floor(totalDays / 365);
 		const afterYears = totalDays - y * 365;
@@ -120,6 +117,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 
 		return { label: parts.length > 0 ? parts.join(" ") : "1d", totalDays };
 	}, [dateRange, customRange]);
+
+	const showTrend = comparisonRange !== null;
 
 	return (
 		<div
@@ -215,7 +214,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 
 			<Card className="@container/card">
 				<CardHeader>
-					<CardDescription className="text-xs uppercase tracking-wider">Period</CardDescription>
+					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{periodInfo.label}
 						{periodInfo.totalDays !== null && (

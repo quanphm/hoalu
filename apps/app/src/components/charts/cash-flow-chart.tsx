@@ -12,11 +12,16 @@ import {
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
+import { type ChartConfig, ChartContainer } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
-import { useMemo, useState } from "react";
-import { Area, AreaChart, ReferenceLine } from "recharts";
+import { useEffect, useMemo, useState } from "react";
+import {
+	Area,
+	AreaChart,
+	// ReferenceLine,
+	Tooltip,
+} from "recharts";
 
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -38,6 +43,70 @@ interface CashFlowDataPoint {
 	net: number;
 	balance: number;
 	isMonthly?: boolean;
+}
+
+function TooltipContent({
+	active,
+	payload,
+	dateRange,
+	currency,
+	setHoveredBalance,
+}: {
+	active?: boolean;
+	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
+	dateRange: string;
+	currency: string;
+	setHoveredBalance: (value: number | null) => void;
+}) {
+	useEffect(() => {
+		if (active && payload && payload.length) {
+			setHoveredBalance((payload[0].payload as CashFlowDataPoint).balance);
+		} else {
+			setHoveredBalance(null);
+		}
+	}, [active, payload, setHoveredBalance]);
+
+	if (active && payload && payload.length) {
+		const dataPoint = payload[0].payload as CashFlowDataPoint;
+		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
+		const formattedDate =
+			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
+				? datetime.format(date, "MMMM yyyy")
+				: datetime.format(date, "dd/MM/yyyy");
+
+		const balance = (payload[0].value as number) ?? 0;
+		const net = dataPoint.net;
+
+		return (
+			<div className="bg-background rounded-md border p-3 shadow-sm">
+				<div className="grid gap-2">
+					<span className="text-muted-foreground text-xs tracking-wider uppercase">
+						{formattedDate}
+					</span>
+					<div className="flex items-center justify-between gap-4">
+						<span className="text-sm font-semibold">Balance</span>
+						<CurrencyValue
+							value={balance}
+							currency={currency}
+							className={cn(
+								"text-sm font-medium",
+								balance >= 0 ? "text-primary" : "text-destructive",
+							)}
+						/>
+					</div>
+					<div className="flex items-center justify-between gap-4">
+						<span className="text-muted-foreground text-xs">Net this period</span>
+						<CurrencyValue
+							value={net}
+							currency={currency}
+							className={cn("text-xs", net >= 0 ? "text-success" : "text-destructive")}
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
+	return null;
 }
 
 export function CashFlowChart(props: CashFlowChartProps) {
@@ -184,93 +253,59 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							<CurrencyValue
 								value={displayBalance}
 								currency={currency}
-								className={cn("text-3xl font-medium")}
+								className={cn(
+									"text-3xl font-medium",
+									// displayBalance >= 0 ? "text-foreground" : "text-destructive",
+								)}
 							/>
 						</div>
 					</div>
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="flex-1 p-0">
-				<ChartContainer config={chartConfig} className="aspect-auto h-[239px] w-full">
-					<AreaChart
-						accessibilityLayer
-						data={data}
-						margin={{ left: -12, right: 12, top: 12 }}
-						onMouseMove={(state: any) => {
-							if (state && state.activePayload && state.activePayload.length > 0) {
-								setHoveredBalance(state.activePayload[0].payload.balance as number);
-							}
-						}}
-						onMouseLeave={() => setHoveredBalance(null)}
-					>
+			<CardContent className="-ml-px flex-1 p-0">
+				<ChartContainer
+					config={chartConfig}
+					className="aspect-auto h-[239px] w-full [&_svg]:focus:outline-none"
+				>
+					<AreaChart accessibilityLayer data={data} margin={{ left: -12, right: 12, top: 12 }}>
 						<defs>
 							<linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
 								<stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
 								<stop offset="95%" stopColor="var(--primary)" stopOpacity={0.02} />
 							</linearGradient>
+							<pattern
+								id="dotted-background-pattern-balance"
+								x="0"
+								y="0"
+								width="7"
+								height="7"
+								patternUnits="userSpaceOnUse"
+							>
+								<circle cx="5" cy="5" r="1.5" fill="var(--primary)" opacity={0.5} />
+							</pattern>
 						</defs>
-						<ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-						<ChartTooltip
+						{/* <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} /> */}
+						<Tooltip
 							cursor={{ stroke: "var(--border)", strokeWidth: 1, strokeDasharray: "4 4" }}
-							content={({ active, payload, label }) => {
-								if (active && payload && payload.length && label) {
-									let date: Date;
-									if (label instanceof Date) {
-										date = label;
-									} else if (typeof label === "number") {
-										date = new Date(label);
-									} else {
-										date = datetime.parse(String(label), "yyyy-MM-dd", new Date());
+							content={({ active, payload }) => (
+								<TooltipContent
+									active={active}
+									payload={
+										payload as unknown as Array<{ payload: CashFlowDataPoint; value: number }>
 									}
-									const formattedDate =
-										dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
-											? datetime.format(date, "MMMM yyyy")
-											: datetime.format(date, "dd/MM/yyyy");
-
-									const balance = (payload[0].value as number) ?? 0;
-									const net = payload[0].payload.net as number;
-
-									return (
-										<div className="bg-background rounded-md border p-3 shadow-sm">
-											<div className="grid gap-2">
-												<span className="text-muted-foreground text-xs tracking-wider uppercase">
-													{formattedDate}
-												</span>
-												<div className="flex items-center justify-between gap-4">
-													<span className="text-sm font-semibold">Balance</span>
-													<CurrencyValue
-														value={balance}
-														currency={currency}
-														className={cn(
-															"text-sm font-medium",
-															balance >= 0 ? "text-primary" : "text-destructive",
-														)}
-													/>
-												</div>
-												<div className="flex items-center justify-between gap-4">
-													<span className="text-muted-foreground text-xs">Net this period</span>
-													<CurrencyValue
-														value={net}
-														currency={currency}
-														className={cn(
-															"text-xs",
-															net >= 0 ? "text-success" : "text-destructive",
-														)}
-													/>
-												</div>
-											</div>
-										</div>
-									);
-								}
-								return null;
-							}}
+									dateRange={dateRange}
+									currency={currency}
+									setHoveredBalance={setHoveredBalance}
+								/>
+							)}
 						/>
 						<Area
 							type="monotone"
 							dataKey="balance"
 							stroke="var(--primary)"
 							strokeWidth={2}
-							fill="url(#balanceGradient)"
+							fill="url(#dotted-background-pattern-balance)"
+							fillOpacity={0.4}
 							isAnimationActive={false}
 							dot={false}
 							activeDot={{ r: 4, fill: "var(--primary)" }}

@@ -64,10 +64,10 @@ function RouteComponent() {
 						<div className="col-span-24 flex w-full flex-row gap-4">
 							<CashFlowSection incomes={incomes} expenses={expenses} />
 						</div>
-						<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-12">
+						<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-15">
 							<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
 						</div>
-						<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-12">
+						<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-9">
 							<CashFlowChart incomes={incomes} expenses={expenses} />
 						</div>
 						<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-17">
