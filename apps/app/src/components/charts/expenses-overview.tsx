@@ -326,13 +326,13 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		]);
 	};
 
-	const getCategoryColor = (catId: string): string => {
+	const getCategoryColor = (catId: string) => {
 		const info = expenseStats.categoryInfoMap[catId];
 		if (!info) return CATEGORY_COLOR_HEX.gray;
 		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
 	};
 
-	const getCategoryName = (catId: string): string => {
+	const getCategoryName = (catId: string) => {
 		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
 	};
 
@@ -420,7 +420,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/5"
 				>
 					<BarChart
 						accessibilityLayer
@@ -428,7 +428,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						maxBarSize={maxBarSize}
 						margin={{ left: -12, right: 12, top: 12 }}
 					>
-						<CartesianGrid vertical={false} strokeDasharray="2 2" />
+						<CartesianGrid vertical={false} />
 						<XAxis
 							dataKey="date"
 							tickLine={false}
@@ -591,24 +591,36 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							}}
 						/>
 						{isCategoryMode ? (
-							selectedCategoryIds.map((catId) => (
-								<Bar
-									key={catId}
-									dataKey={catId}
-									fill={getCategoryColor(catId)}
-									className="cursor-pointer"
-									onClick={handleBarClick}
-									isAnimationActive={false}
-									stackId={selectedCategoryIds.length >= 2 ? "categories" : undefined}
-								/>
-							))
+							selectedCategoryIds.map((catId, catIdx) => {
+								return (
+									<Bar
+										key={catId}
+										dataKey={catId}
+										fill={getCategoryColor(catId)}
+										className="cursor-pointer"
+										onClick={handleBarClick}
+										isAnimationActive={true}
+										radius={
+											selectedCategoryIds.length >= 2
+												? catIdx === 0
+													? [0, 0, 2, 2]
+													: catIdx === selectedCategoryIds.length - 1
+														? [2, 2, 0, 0]
+														: [0, 0, 0, 0]
+												: [2, 2, 0, 0]
+										}
+										stackId={selectedCategoryIds.length >= 2 ? "categories" : undefined}
+									/>
+								);
+							})
 						) : (
 							<Bar
 								dataKey="value"
 								fill={chartConfig.date.color}
 								className="cursor-pointer"
 								onClick={handleBarClick}
-								isAnimationActive={false}
+								isAnimationActive={true}
+								radius={[2, 2, 0, 0]}
 							/>
 						)}
 					</BarChart>

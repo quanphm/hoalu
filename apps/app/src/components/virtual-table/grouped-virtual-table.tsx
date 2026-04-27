@@ -188,7 +188,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	if (items.length === 0) return <>{emptyState ?? null}</>;
 
 	return (
-		<div ref={parentRef} className="scrollbar-thin h-full w-full overflow-y-auto contain-strict">
+		<div ref={parentRef} className="h-full w-full overflow-y-auto contain-strict">
 			{/* Sticky column header */}
 			<div
 				className={cn("bg-card sticky top-0 z-20 border-b", gridTemplate)}

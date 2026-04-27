@@ -21,6 +21,14 @@
 }
 
 @layer base {
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--border) transparent;
+	}
+
 	body {
 		@apply bg-background text-foreground relative;
 		@apply font-sans;
@@ -29,8 +37,7 @@
 
 	html,
 	body {
-		@apply scrollbar-thin min-h-screen w-full;
-		scrollbar-color: gray transparent;
+		@apply min-h-screen w-full;
 	}
 
 	button:not(:disabled),
