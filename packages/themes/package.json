@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/themes",
-	"version": "0.28.7",
+	"version": "0.28.8",
 	"private": true,
 	"sideEffects": false,
 	"exports": {
