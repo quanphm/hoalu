@@ -1,6 +1,6 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { MoodGlow, ShineBorder } from "#app/components/orb-motion.tsx";
+import { BoxAnimations } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
@@ -129,7 +129,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		>
 			<Card className="@container/card relative overflow-hidden">
 				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
-				<CardHeader className="relative">
+				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Cash Flow</span>
 					</CardDescription>
@@ -141,9 +141,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							/>
 						)}
 					</CardAction>
-					<CardTitle
-						className={cn("text-xl", netCashFlow >= 0 ? "text-success" : "text-destructive")}
-					>
+					<CardTitle className="text-xl">
 						<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
 					</CardTitle>
 				</CardHeader>
@@ -226,23 +224,5 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				</CardHeader>
 			</Card>
 		</div>
-	);
-}
-
-function BoxAnimations({ status }: { status: "increase" | "decrease" | "no-change" }) {
-	if (status === "no-change") return null;
-	if (status === "increase") {
-		return (
-			<>
-				<ShineBorder duration={24} shineColor={["#7bf1a8", "#032e15"]} />
-				<MoodGlow trend="increase" />
-			</>
-		);
-	}
-	return (
-		<>
-			<ShineBorder duration={24} shineColor={["#ffa2a2", "#460809"]} />
-			<MoodGlow trend="decrease" />
-		</>
 	);
 }

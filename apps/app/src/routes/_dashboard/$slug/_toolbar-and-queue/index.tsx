@@ -31,7 +31,7 @@ function RouteComponent() {
 				<div className="col-span-24 flex h-full w-full flex-col gap-4 md:col-span-8">
 					<CashFlowChart incomes={incomes} expenses={expenses} />
 				</div>
-				<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-17">
+				<div className="col-span-24 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
 					<RecentTransactions />
 				</div>
 				<div className="col-span-24 flex w-full flex-col md:col-span-7">
