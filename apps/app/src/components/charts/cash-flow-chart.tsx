@@ -176,6 +176,12 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	const [hoveredBalance, setHoveredBalance] = useState<number | null>(null);
 	const displayBalance = hoveredBalance ?? finalBalance;
 
+	// Calculate zero-line ratio for split gradient
+	const minBalance = data.length > 0 ? Math.min(...data.map((d) => d.balance)) : 0;
+	const maxBalance = data.length > 0 ? Math.max(...data.map((d) => d.balance)) : 0;
+	const balanceRange = maxBalance - minBalance;
+	const zeroRatio = balanceRange === 0 ? 0.5 : Math.max(0, Math.min(1, maxBalance / balanceRange));
+
 	return (
 		<Card
 			className={cn(
@@ -204,11 +210,17 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					config={chartConfig}
 					className="aspect-auto h-full w-full **:focus:outline-none"
 				>
-					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 5, top: 0 }}>
+					<AreaChart accessibilityLayer data={data} margin={{ left: 5, right: 5, top: 0 }}>
 						<defs>
 							<linearGradient id="gradient-rounded-chart-desktop" x1="0" y1="0" x2="0" y2="1">
-								<stop offset="5%" stopColor="var(--primary)" stopOpacity={0.5} />
-								<stop offset="95%" stopColor="var(--primary)" stopOpacity={0.1} />
+								<stop offset="0%" stopColor="var(--success)" stopOpacity={0.5} />
+								<stop offset={`${zeroRatio * 100}%`} stopColor="var(--success)" stopOpacity={0.5} />
+								<stop
+									offset={`${zeroRatio * 100}%`}
+									stopColor="var(--destructive)"
+									stopOpacity={0.5}
+								/>
+								<stop offset="100%" stopColor="var(--destructive)" stopOpacity={0.5} />
 							</linearGradient>
 						</defs>
 						<rect x="0" y="0" width="100%" height="120%" fill="url(#default-pattern-dots)" />
@@ -241,8 +253,9 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							dataKey="balance"
 							fill="url(#gradient-rounded-chart-desktop)"
 							fillOpacity={0.4}
-							stroke="var(--primary)"
+							stroke="var(--foreground)"
 							strokeWidth={2}
+							opacity={0.5}
 						/>
 					</AreaChart>
 				</ChartContainer>
@@ -300,12 +313,15 @@ function TooltipContent({
 							)}
 						/>
 					</div> */}
-					<div className="flex items-baseline justify-between gap-2">
+					<div className="flex items-baseline justify-between gap-1">
 						<p className="text-muted-foreground text-xs">Net</p>
 						<CurrencyValue
 							value={net}
 							currency={currency}
-							className={cn("text-xs", net >= 0 ? "text-success" : "text-destructive")}
+							className={cn(
+								"text-sm font-medium",
+								// net >= 0 ? "text-success" : "text-destructive"
+							)}
 						/>
 					</div>
 				</div>
