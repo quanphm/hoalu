@@ -35,7 +35,7 @@ export function TransactionAmount({
 				currency={workspaceCurrency}
 				prefix={prefix}
 				as="p"
-				className={cn("text-sm font-medium", type === "income" && "text-success", className)}
+				className={cn("text-sm font-medium", className)}
 			/>
 			{workspaceCurrency !== sourceCurrency && (
 				<CurrencyValue

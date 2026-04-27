@@ -12,7 +12,7 @@ import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { BrailleSpinner } from "./braille-spinner";
 import { CurrencyValue } from "./currency-value";
@@ -239,6 +239,14 @@ export function QueuePanel() {
 	const totalActive = receiptJobs.length + quickJobs.length;
 	const hasActivity = processingCount > 0;
 	const isEmpty = totalActive === 0;
+	const didAutoExpand = useRef(false);
+
+	useEffect(() => {
+		if (!didAutoExpand.current && totalActive > 0) {
+			setCollapsed(false);
+			didAutoExpand.current = true;
+		}
+	}, [totalActive]);
 
 	return (
 		<div className="bg-card col-span-full overflow-hidden">
