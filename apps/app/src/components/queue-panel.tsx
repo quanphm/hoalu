@@ -105,7 +105,10 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 
 				{job.status === "completed" && data && (
 					<div className="mt-1 flex items-center gap-1.5">
-						<span className="text-muted-foreground flex-1 truncate text-xs">
+						<span
+							className="text-muted-foreground flex-1 truncate text-xs"
+							title={data.merchantName || "Receipt"}
+						>
 							{data.merchantName || "Receipt"}
 						</span>
 						<CurrencyValue
@@ -120,7 +123,10 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 				)}
 				{job.status === "failed" && (
 					<div className="mt-1 flex items-center gap-1">
-						<span className="text-destructive flex-1 truncate text-xs">
+						<span
+							className="text-destructive flex-1 truncate text-xs"
+							title={job.errorMessage || "Unknown error"}
+						>
 							{job.errorMessage || "Unknown error"}
 						</span>
 						<Button variant="outline" size="xs" onClick={() => retry(job.id)}>

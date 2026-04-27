@@ -118,7 +118,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		return { label: parts.length > 0 ? parts.join(" ") : "1d", totalDays };
 	}, [dateRange, customRange]);
 
-	const showTrend = comparisonRange !== null;
+	const showTrend = dateRange === "all" || comparisonRange !== null;
 
 	return (
 		<div

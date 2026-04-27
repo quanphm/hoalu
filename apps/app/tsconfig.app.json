@@ -2,9 +2,6 @@
 	"extends": "@hoalu/tsconfig/vite.json",
 	"compilerOptions": {
 		"rootDir": "./src",
-		"exactOptionalPropertyTypes": false,
-		"declaration": false,
-		"declarationMap": false,
 		"jsx": "react-jsx",
 		"allowJs": true
 	},

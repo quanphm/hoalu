@@ -117,7 +117,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const [activeTab, setActiveTab] = useState<OverviewTab>("expenses");
 	const isIncomeTab = activeTab === "income";
-	const [clampOutliers, setClampOutliers] = useState(false);
+	const [clampOutliers, setClampOutliers] = useState(true);
 
 	const expenseStats = useExpenseStats({
 		expenses: props.expenses,
@@ -504,7 +504,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/5"
+					className="aspect-auto h-[250px] w-full **:focus:outline-none [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/5"
 				>
 					<BarChart
 						accessibilityLayer

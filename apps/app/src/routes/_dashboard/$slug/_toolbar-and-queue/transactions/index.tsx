@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { Empty, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_dashboard/$slug/transactions/")({
+export const Route = createFileRoute("/_dashboard/$slug/_toolbar-and-queue/transactions/")({
 	component: RouteComponent,
 });
 

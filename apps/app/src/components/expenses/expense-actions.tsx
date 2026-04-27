@@ -58,7 +58,7 @@ import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
 export function CreateExpenseDialogTrigger({
 	showKbd = true,

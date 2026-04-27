@@ -48,6 +48,8 @@ interface DataTableProps<T extends TableRowData> {
 		showPerPage?: boolean;
 		showPageNumberInfo?: boolean;
 		showNavigationButtons?: boolean;
+		pageIndex?: number;
+		pageSize?: number;
 	};
 	/**
 	 * @default false
@@ -77,6 +79,8 @@ export function DataTable<T extends TableRowData>({
 		showPerPage: true,
 		showPageNumberInfo: true,
 		showNavigationButtons: true,
+		pageIndex: 0,
+		pageSize: 10,
 	},
 	initialState = {
 		expanded: true,
@@ -91,8 +95,8 @@ export function DataTable<T extends TableRowData>({
 	 * Controlled states
 	 */
 	const [pagination, setPagination] = useState({
-		pageIndex: 0,
-		pageSize: 10,
+		pageIndex: paginationConfig.pageIndex ?? 0,
+		pageSize: paginationConfig.pageSize ?? 10,
 	});
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>(
 		controlledState?.rowSelection ?? {},

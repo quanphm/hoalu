@@ -278,7 +278,7 @@ export function ReceiptScanner() {
 						{pendingFiles.map((p, idx) => (
 							<div
 								key={`${p.file.name}-${p.file.size}`}
-								className="group relative size-24 shrink-0"
+								className="group relative size-20 shrink-0"
 							>
 								<div className="border-muted bg-muted/50 size-full overflow-hidden rounded-md border">
 									{p.previewUrl ? (

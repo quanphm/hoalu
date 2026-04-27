@@ -6,7 +6,7 @@ import {
 	DEFAULT_INCOME_CATEGORIES,
 	WORKSPACE_CREATOR_ROLE,
 } from "#api/utils/constants.ts";
-import { apiKey } from "@better-auth/api-key";
+// import { apiKey } from "@better-auth/api-key";
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
@@ -166,7 +166,7 @@ export const auth = betterAuth({
 				expirationTime: "7d",
 			},
 		}),
-		apiKey() as any,
+		// apiKey(),
 		openAPI(),
 	],
 	telemetry: {

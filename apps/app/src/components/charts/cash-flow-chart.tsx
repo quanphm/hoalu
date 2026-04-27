@@ -16,12 +16,7 @@ import { type ChartConfig, ChartContainer } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
 import { useEffect, useMemo, useState } from "react";
-import {
-	Area,
-	AreaChart,
-	// ReferenceLine,
-	Tooltip,
-} from "recharts";
+import { Area, AreaChart, ReferenceLine, Tooltip } from "recharts";
 
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -43,70 +38,6 @@ interface CashFlowDataPoint {
 	net: number;
 	balance: number;
 	isMonthly?: boolean;
-}
-
-function TooltipContent({
-	active,
-	payload,
-	dateRange,
-	currency,
-	setHoveredBalance,
-}: {
-	active?: boolean;
-	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
-	dateRange: string;
-	currency: string;
-	setHoveredBalance: (value: number | null) => void;
-}) {
-	useEffect(() => {
-		if (active && payload && payload.length) {
-			setHoveredBalance((payload[0].payload as CashFlowDataPoint).balance);
-		} else {
-			setHoveredBalance(null);
-		}
-	}, [active, payload, setHoveredBalance]);
-
-	if (active && payload && payload.length) {
-		const dataPoint = payload[0].payload as CashFlowDataPoint;
-		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
-		const formattedDate =
-			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
-				? datetime.format(date, "MMMM yyyy")
-				: datetime.format(date, "dd/MM/yyyy");
-
-		const balance = (payload[0].value as number) ?? 0;
-		const net = dataPoint.net;
-
-		return (
-			<div className="bg-background rounded-md border p-3 shadow-sm">
-				<div className="grid gap-2">
-					<span className="text-muted-foreground text-xs tracking-wider uppercase">
-						{formattedDate}
-					</span>
-					<div className="flex items-center justify-between gap-4">
-						<span className="text-sm font-semibold">Balance</span>
-						<CurrencyValue
-							value={balance}
-							currency={currency}
-							className={cn(
-								"text-sm font-medium",
-								balance >= 0 ? "text-primary" : "text-destructive",
-							)}
-						/>
-					</div>
-					<div className="flex items-center justify-between gap-4">
-						<span className="text-muted-foreground text-xs">Net this period</span>
-						<CurrencyValue
-							value={net}
-							currency={currency}
-							className={cn("text-xs", net >= 0 ? "text-success" : "text-destructive")}
-						/>
-					</div>
-				</div>
-			</div>
-		);
-	}
-	return null;
 }
 
 export function CashFlowChart(props: CashFlowChartProps) {
@@ -243,7 +174,9 @@ export function CashFlowChart(props: CashFlowChartProps) {
 
 	return (
 		<Card
-			className={cn("bg-background flex flex-col border-transparent", "gap-2 rounded-none md:py-3")}
+			className={cn(
+				"bg-background flex h-full flex-col gap-2 rounded-none border-transparent md:py-3",
+			)}
 		>
 			<CardHeader>
 				<CardDescription className="text-xs tracking-wider uppercase">Balance</CardDescription>
@@ -262,31 +195,31 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					</div>
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="-ml-px flex-1 p-0">
+			<CardContent className="h-full flex-1 overflow-hidden p-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[239px] w-full [&_svg]:focus:outline-none"
+					className="aspect-auto h-full w-full **:focus:outline-none"
 				>
-					<AreaChart accessibilityLayer data={data} margin={{ left: -12, right: 12, top: 12 }}>
+					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 5, top: 0 }}>
 						<defs>
-							<linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-								<stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
-								<stop offset="95%" stopColor="var(--primary)" stopOpacity={0.02} />
+							<linearGradient id="gradient-rounded-chart-desktop" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="5%" stopColor="var(--primary)" stopOpacity={0.5} />
+								<stop offset="95%" stopColor="var(--primary)" stopOpacity={0.1} />
 							</linearGradient>
-							<pattern
-								id="dotted-background-pattern-balance"
-								x="0"
-								y="0"
-								width="7"
-								height="7"
-								patternUnits="userSpaceOnUse"
-							>
-								<circle cx="5" cy="5" r="1.5" fill="var(--primary)" opacity={0.5} />
-							</pattern>
 						</defs>
-						{/* <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} /> */}
+						<rect x="0" y="0" width="100%" height="120%" fill="url(#default-pattern-dots)" />
+						<defs>
+							<DottedBackgroundPattern />
+						</defs>
+						<ReferenceLine
+							y={0}
+							stroke="var(--foreground)"
+							strokeWidth={1}
+							strokeDasharray="5 5"
+							opacity={0.15}
+						/>
 						<Tooltip
-							cursor={{ stroke: "var(--border)", strokeWidth: 1, strokeDasharray: "4 4" }}
+							cursor={{ stroke: "var(--primary)", strokeWidth: 0, strokeDasharray: "none" }}
 							content={({ active, payload }) => (
 								<TooltipContent
 									active={active}
@@ -302,17 +235,93 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						<Area
 							type="monotone"
 							dataKey="balance"
+							fill="url(#gradient-rounded-chart-desktop)"
+							fillOpacity={0.4}
 							stroke="var(--primary)"
 							strokeWidth={2}
-							fill="url(#dotted-background-pattern-balance)"
-							fillOpacity={0.4}
-							isAnimationActive={false}
-							dot={false}
-							activeDot={{ r: 4, fill: "var(--primary)" }}
 						/>
 					</AreaChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
+	);
+}
+
+function TooltipContent({
+	active,
+	payload,
+	dateRange,
+	currency,
+	setHoveredBalance,
+}: {
+	active?: boolean;
+	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
+	dateRange: string;
+	currency: string;
+	setHoveredBalance: (value: number | null) => void;
+}) {
+	useEffect(() => {
+		if (active && payload && payload.length) {
+			setHoveredBalance((payload[0].payload as CashFlowDataPoint).balance);
+		} else {
+			setHoveredBalance(null);
+		}
+	}, [active, payload, setHoveredBalance]);
+
+	if (active && payload && payload.length) {
+		const dataPoint = payload[0].payload as CashFlowDataPoint;
+		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
+		const formattedDate =
+			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
+				? datetime.format(date, "MMMM yyyy")
+				: datetime.format(date, "dd/MM/yyyy");
+
+		// const balance = (payload[0].value as number) ?? 0;
+		const net = dataPoint.net;
+
+		return (
+			<div className="bg-background rounded-md border p-3 shadow-sm">
+				<div className="grid gap-2">
+					<span className="text-muted-foreground text-xs tracking-wider uppercase">
+						{formattedDate}
+					</span>
+					{/* <div className="flex items-baseline-last justify-between gap-2">
+						<span className="text-sm font-semibold">Balance</span>
+						<CurrencyValue
+							value={balance}
+							currency={currency}
+							className={cn(
+								"text-sm font-medium",
+								balance >= 0 ? "text-primary" : "text-destructive",
+							)}
+						/>
+					</div> */}
+					<div className="flex items-baseline justify-between gap-2">
+						<p className="text-muted-foreground text-xs">Net</p>
+						<CurrencyValue
+							value={net}
+							currency={currency}
+							className={cn("text-xs", net >= 0 ? "text-success" : "text-destructive")}
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
+	return null;
+}
+
+function DottedBackgroundPattern() {
+	return (
+		<pattern
+			id="default-pattern-dots"
+			x="0"
+			y="0"
+			width="10"
+			height="10"
+			patternUnits="userSpaceOnUse"
+		>
+			<circle className="dark:text-muted/40 text-muted" cx="2" cy="2" r="1" fill="currentColor" />
+		</pattern>
 	);
 }
