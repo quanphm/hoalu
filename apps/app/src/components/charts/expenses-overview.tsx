@@ -418,7 +418,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				"border-r-border gap-2 rounded-none md:py-3",
 			)}
 		>
-			<CardHeader>
+			<CardHeader className="flex flex-col md:grid">
 				<CardDescription className="text-xs tracking-wider uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
@@ -449,12 +449,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				</CardDescription>
 				<CardAction>
 					{dateRange === "custom" && (
-						<div data-slot="chart-group-by">
+						<div data-slot="chart-group-by hidden md:block">
 							<ChartGroupByFilter />
 						</div>
 					)}
 					{!isIncomeTab && (
-						<div className="hide-in-screenshot">
+						<div className="hide-in-screenshot hidden md:block">
 							<ChartCategoryFilter categories={props.categories} />
 						</div>
 					)}

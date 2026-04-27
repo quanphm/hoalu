@@ -1,6 +1,5 @@
 import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
 import { ButtonLink } from "#app/components/button-link.tsx";
-import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
@@ -72,7 +71,6 @@ function MobileHeader() {
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
-					<RedactedAmountToggle />
 					<Button
 						variant="outline"
 						size="icon-lg"

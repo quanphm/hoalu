@@ -12,7 +12,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback } from "react";
 
 const GRID_TEMPLATE =
-	"grid grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)]";
+	"grid md:grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)] grid-cols-[var(--category-size)_var(--title-size)_var(--amount-size)_var(--amount-size)_var(--wallet-size)]";
 
 const columns: ColumnDef<SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },

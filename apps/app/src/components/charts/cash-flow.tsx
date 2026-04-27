@@ -123,7 +123,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	return (
 		<div
 			className={cn(
-				"grid w-full grid-cols-1 md:grid-cols-5",
+				"grid w-full grid-cols-2 md:grid-cols-5",
 				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 			)}
 		>
@@ -202,7 +202,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				</CardHeader>
 			</Card>
 
-			<Card className="@container/card">
+			<Card className="@container/card hidden md:block">
 				<CardHeader>
 					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">

@@ -35,7 +35,7 @@ const columns: ColumnDef<SyncedAllRecurringBill>[] = [
 	{ id: "status", header: "Status" },
 	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
 	{ id: "wallet", header: "Wallet" },
-	{ id: "actions", header: "" },
+	{ id: "actions", header: "Action", meta: { headerClassName: "justify-end" } },
 ];
 
 function BillGroupHeader({
