@@ -1,13 +1,13 @@
 import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { MoodGlow, ShineBorder } from "#app/components/orb-motion.tsx";
+import { BoxAnimations } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
@@ -123,27 +123,23 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	return (
 		<div
 			className={cn(
-				"grid w-full grid-cols-1 md:grid-cols-5",
+				"grid w-full grid-cols-2 md:grid-cols-5",
 				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 			)}
 		>
 			<Card className="@container/card relative overflow-hidden">
 				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
-				<CardHeader className="relative">
+				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Cash Flow</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={cashFlowChange}
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
-					<CardTitle
-						className={cn("text-xl", netCashFlow >= 0 ? "text-success" : "text-destructive")}
-					>
+					</CardDescription>
+					<CardTitle className="text-xl">
 						<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
 					</CardTitle>
 				</CardHeader>
@@ -153,15 +149,13 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Income</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={incomeChange}
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="text-xl">
 						<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
 					</CardTitle>
@@ -172,8 +166,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Expenses</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={expensesChange}
@@ -181,7 +173,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								className="[&>*>span]:text-xs [&>button]:h-1"
 							/>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="text-xl">
 						<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
 					</CardTitle>
@@ -192,8 +184,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
 						<span className="tracking-wider">Transactions</span>
-					</CardDescription>
-					<CardAction>
 						{showTrend && transactionsDiff !== 0 && (
 							<span
 								className={cn(
@@ -205,14 +195,14 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								{transactionsDiff}
 							</span>
 						)}
-					</CardAction>
+					</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{formatNumber(totalTransactions)}
 					</CardTitle>
 				</CardHeader>
 			</Card>
 
-			<Card className="@container/card">
+			<Card className="@container/card hidden md:block">
 				<CardHeader>
 					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
@@ -226,23 +216,5 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				</CardHeader>
 			</Card>
 		</div>
-	);
-}
-
-function BoxAnimations({ status }: { status: "increase" | "decrease" | "no-change" }) {
-	if (status === "no-change") return null;
-	if (status === "increase") {
-		return (
-			<>
-				<ShineBorder duration={24} shineColor={["#7bf1a8", "#032e15"]} />
-				<MoodGlow trend="increase" />
-			</>
-		);
-	}
-	return (
-		<>
-			<ShineBorder duration={24} shineColor={["#ffa2a2", "#460809"]} />
-			<MoodGlow trend="decrease" />
-		</>
 	);
 }

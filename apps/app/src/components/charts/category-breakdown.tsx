@@ -3,7 +3,6 @@ import {
 	expenseCategoryFilterAtom,
 	selectDateRangeAtom,
 } from "#app/atoms/filters.ts";
-import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
 import { createChartColor } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -16,7 +15,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -41,7 +40,7 @@ interface CategoryData {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-md">
+		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-sm">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
@@ -218,7 +217,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 				{dataToView.length === 0 ? (
 					<EmptyData />
 				) : (
-					<div className="space-y-4">
+					<div className="space-y-2">
 						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
 						<CategoryListBreakdown
 							data={dataToView}

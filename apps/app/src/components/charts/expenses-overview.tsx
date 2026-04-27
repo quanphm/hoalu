@@ -5,6 +5,7 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
+import { redactedAmountAtom } from "#app/atoms/redacted.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import { useIncomeStats } from "#app/components/incomes/use-incomes.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
@@ -147,6 +148,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const selectedCategoryIds = useAtomValue(chartCategoryFilterAtom);
 	const chartGroupBy = useAtomValue(chartGroupByAtom);
+	const isRedacted = useAtomValue(redactedAmountAtom);
+
 	const {
 		metadata: { currency },
 	} = useWorkspace();
@@ -415,7 +418,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				"border-r-border gap-2 rounded-none md:py-3",
 			)}
 		>
-			<CardHeader>
+			<CardHeader className="flex flex-col md:grid">
 				<CardDescription className="text-xs tracking-wider uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
@@ -436,7 +439,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						</div>
 						{stats.hasComparison && (
 							<PercentageChangeDisplay
-								size="sm"
 								change={stats.amount.change}
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
@@ -447,12 +449,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				</CardDescription>
 				<CardAction>
 					{dateRange === "custom" && (
-						<div data-slot="chart-group-by">
+						<div data-slot="chart-group-by hidden md:block">
 							<ChartGroupByFilter />
 						</div>
 					)}
 					{!isIncomeTab && (
-						<div className="hide-in-screenshot">
+						<div className="hide-in-screenshot hidden md:block">
 							<ChartCategoryFilter categories={props.categories} />
 						</div>
 					)}
@@ -597,6 +599,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 												fill="var(--foreground)"
 												fontSize={10}
 												fontWeight="bold"
+												className={cn(isRedacted && "font-redacted-script")}
 											>
 												{text}
 											</text>

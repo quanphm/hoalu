@@ -35,7 +35,7 @@ function LayoutComponent() {
 				<Outlet />
 			) : (
 				<>
-					<div className="flex items-center justify-between border-b px-4 py-2">
+					<div className="flex flex-col items-center justify-between border-b px-4 py-2 md:flex-row">
 						<div className="flex flex-wrap items-center gap-2">
 							<ExpenseSearch />
 							<ExpenseFilterDropdown />

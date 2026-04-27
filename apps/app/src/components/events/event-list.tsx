@@ -1,4 +1,4 @@
-import { EventDateRange, EventDateRangeColumn } from "#app/components/events/event-date-range.tsx";
+import { EventDateRangeColumn } from "#app/components/events/event-date-range.tsx";
 import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";

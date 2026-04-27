@@ -12,7 +12,8 @@ interface CurrencyValueProps {
 	as?: "span" | "p";
 }
 
-const DEFAULT_CLASSNAME = "font-mono text-foreground text-base tracking-tight tabular-nums";
+const DEFAULT_CLASSNAME =
+	"font-mono text-foreground text-base tracking-tight tabular-nums whitespace-nowrap";
 
 export function CurrencyValue({
 	as: Component = "span",

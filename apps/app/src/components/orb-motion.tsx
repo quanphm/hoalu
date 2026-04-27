@@ -99,13 +99,20 @@ export function PulseOrb({ corner = "top-right", trend, size = 220 }: PulseOrbPr
 	);
 }
 
-export function MoodGlow({ trend }: { trend: "increase" | "decrease" | "no-change" }) {
+export function MoodGlow({
+	trend,
+	className,
+}: {
+	trend: "increase" | "decrease" | "no-change";
+	className?: string;
+}) {
 	return (
 		<div
 			aria-hidden="true"
 			className={cn(
 				"pointer-events-none absolute -top-6 left-1/2 size-30 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
 				"motion-safe:animation-duration-[4s] motion-safe:animate-pulse",
+				className,
 				trend === "increase"
 					? "bg-success/30"
 					: trend === "decrease"
@@ -166,5 +173,23 @@ export function ShineBorder({
 			)}
 			{...props}
 		/>
+	);
+}
+
+export function BoxAnimations({ status }: { status: "increase" | "decrease" | "no-change" }) {
+	if (status === "no-change") return null;
+	if (status === "increase") {
+		return (
+			<>
+				<ShineBorder duration={24} shineColor={["#7bf1a8", "#032e15"]} />
+				<MoodGlow trend="increase" />
+			</>
+		);
+	}
+	return (
+		<>
+			<ShineBorder duration={24} shineColor={["#ffa2a2", "#460809"]} />
+			<MoodGlow trend="decrease" />
+		</>
 	);
 }

@@ -35,7 +35,7 @@ const columns: ColumnDef<SyncedAllRecurringBill>[] = [
 	{ id: "status", header: "Status" },
 	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
 	{ id: "wallet", header: "Wallet" },
-	{ id: "actions", header: "" },
+	{ id: "actions", header: "Action", meta: { headerClassName: "justify-end" } },
 ];
 
 function BillGroupHeader({
@@ -67,7 +67,10 @@ function BillGroupHeader({
 	return (
 		<div
 			data-slot="recurring-bill-group-header"
-			className={cn("bg-muted flex w-full items-center border-b px-4 py-1 text-xs", GRID_TEMPLATE)}
+			className={cn(
+				"bg-muted flex w-full items-center border-b px-4 py-1 font-mono text-xs",
+				GRID_TEMPLATE,
+			)}
 		>
 			<div className="col-span-4 font-medium">{label}</div>
 			<div className="ml-auto flex items-center">
@@ -75,7 +78,7 @@ function BillGroupHeader({
 					<CurrencyValue
 						value={total}
 						currency={workspaceCurrency}
-						className="text-destructive text-sm font-medium"
+						className="text-destructive text-sm font-semibold"
 					/>
 				)}
 			</div>
