@@ -189,7 +189,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			)}
 		>
 			<CardHeader>
-				<CardDescription className="text-xs tracking-wider uppercase">Balance</CardDescription>
+				<CardDescription className="text-xs tracking-wider uppercase">Cash Flow</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">
