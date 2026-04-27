@@ -213,14 +213,12 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					<AreaChart accessibilityLayer data={data} margin={{ left: 5, right: 5, top: 0 }}>
 						<defs>
 							<linearGradient id="gradient-rounded-chart-desktop" x1="0" y1="0" x2="0" y2="1">
-								<stop offset="0%" stopColor="var(--success)" stopOpacity={0.5} />
-								<stop offset={`${zeroRatio * 100}%`} stopColor="var(--success)" stopOpacity={0.5} />
+								<stop offset={`${zeroRatio * 100}%`} stopColor="var(--success)" stopOpacity={1} />
 								<stop
 									offset={`${zeroRatio * 100}%`}
 									stopColor="var(--destructive)"
-									stopOpacity={0.5}
+									stopOpacity={1}
 								/>
-								<stop offset="100%" stopColor="var(--destructive)" stopOpacity={0.5} />
 							</linearGradient>
 						</defs>
 						<rect x="0" y="0" width="100%" height="120%" fill="url(#default-pattern-dots)" />

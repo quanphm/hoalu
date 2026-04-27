@@ -217,11 +217,11 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{periodInfo.label}
-						{periodInfo.totalDays !== null && (
+						{/* {periodInfo.totalDays !== null && (
 							<span className="text-muted-foreground ml-1.5 text-sm font-normal">
 								({periodInfo.totalDays})
 							</span>
-						)}
+						)} */}
 					</CardTitle>
 				</CardHeader>
 			</Card>
