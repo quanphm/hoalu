@@ -21,7 +21,7 @@ export type SyncedTransaction =
 	| (SyncedExpense & { kind: "expense" })
 	| (SyncedIncome & { kind: "income" });
 
-const transactionRouteApi = getRouteApi("/_dashboard/$slug/transactions");
+const transactionRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
 export function useFilteredTransactions(): SyncedTransaction[] {
 	const expenses = useLiveQueryExpenses();
@@ -57,7 +57,15 @@ export function useFilteredTransactions(): SyncedTransaction[] {
 				range,
 				amountFilter,
 			}),
-		[merged, selectedCategoryIds, selectedWalletIds, selectedRepeat, deferredSearchKeywords, range, amountFilter],
+		[
+			merged,
+			selectedCategoryIds,
+			selectedWalletIds,
+			selectedRepeat,
+			deferredSearchKeywords,
+			range,
+			amountFilter,
+		],
 	);
 
 	return filtered;
@@ -74,8 +82,14 @@ function filterTransactions(
 		amountFilter: AmountFilterState;
 	},
 ): SyncedTransaction[] {
-	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, searchKeywords, range, amountFilter } =
-		condition;
+	const {
+		selectedCategoryIds,
+		selectedWalletIds,
+		selectedRepeat,
+		searchKeywords,
+		range,
+		amountFilter,
+	} = condition;
 
 	const fromDate = range ? range.from.toISOString().slice(0, 10) : undefined;
 	const toDate = range ? range.to.toISOString().slice(0, 10) : undefined;

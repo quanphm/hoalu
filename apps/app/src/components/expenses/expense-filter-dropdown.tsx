@@ -43,7 +43,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
 type FilterMenuView = "main" | "amount" | "category" | "wallet" | "repeat" | "date";
 
@@ -508,9 +508,7 @@ function CategoryFilterView({
 	};
 
 	const visibleCategories =
-		kindFilter === "all"
-			? categories
-			: categories.filter((c) => c.type === kindFilter);
+		kindFilter === "all" ? categories : categories.filter((c) => c.type === kindFilter);
 
 	return (
 		<div className="flex flex-col gap-4 p-4">
@@ -524,22 +522,21 @@ function CategoryFilterView({
 			</div>
 
 			<div className="flex flex-col gap-1">
-				{visibleCategories
-					.map((category) => (
-						<Label
-							key={category.id}
-							htmlFor={`filter-category-${category.id}`}
-							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
-						>
-							<Checkbox
-								id={`filter-category-${category.id}`}
-								checked={selected.includes(category.id)}
-								onCheckedChange={() => toggleCategory(category.id)}
-							/>
-							<span className="flex-1 truncate">{category.name}</span>
-							{/* <span className="text-muted-foreground text-xs tabular-nums">{category.total}</span> */}
-						</Label>
-					))}
+				{visibleCategories.map((category) => (
+					<Label
+						key={category.id}
+						htmlFor={`filter-category-${category.id}`}
+						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+					>
+						<Checkbox
+							id={`filter-category-${category.id}`}
+							checked={selected.includes(category.id)}
+							onCheckedChange={() => toggleCategory(category.id)}
+						/>
+						<span className="flex-1 truncate">{category.name}</span>
+						{/* <span className="text-muted-foreground text-xs tabular-nums">{category.total}</span> */}
+					</Label>
+				))}
 			</div>
 		</div>
 	);

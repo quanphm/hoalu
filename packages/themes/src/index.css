@@ -8,6 +8,5 @@
 @import "./theme.css";
 
 @plugin "@tailwindcss/typography";
-@plugin "tailwind-scrollbar";
 
 @custom-variant dark (&:is(.dark *));

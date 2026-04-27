@@ -15,8 +15,8 @@ import {
 	filterDataByRange,
 	getComparisonPeriodText,
 } from "#app/helpers/date-range.ts";
-import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
+import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
@@ -28,8 +28,8 @@ import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
 import { monetary } from "@hoalu/common/monetary";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
-import { getRouteApi } from "@tanstack/react-router";
 import { eq, useLiveQuery } from "@tanstack/react-db";
+import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
 
@@ -37,7 +37,7 @@ import type { SyncedCategory } from "#app/components/categories/use-categories.t
 import type { RepeatSchema } from "@hoalu/common/schema";
 
 const zeroDecimalSet = new Set(zeroDecimalCurrencies);
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/transactions");
+const expenseRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
 export function useFilteredExpenses() {
 	const expenses = useLiveQueryExpenses();

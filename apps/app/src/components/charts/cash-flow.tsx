@@ -10,6 +10,7 @@ import { datetime } from "@hoalu/common/datetime";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
+import { useMemo } from "react";
 
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
@@ -75,12 +76,54 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const cashFlowChange = calculatePercentageChange(netCashFlow, prevNetCashFlow, currency);
 	const transactionsDiff = totalTransactions - prevTransactions;
 
-	const showTrend = comparisonRange !== null;
+	const periodInfo = useMemo(() => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		let start: Date;
+		let end: Date = new Date(today);
+
+		if (dateRange === "all") return { label: "All time", totalDays: null };
+
+		if (dateRange === "custom" && customRange) {
+			start = new Date(customRange.from);
+			end = new Date(customRange.to);
+			start.setHours(0, 0, 0, 0);
+			end.setHours(0, 0, 0, 0);
+		} else if (dateRange === "mtd") {
+			start = new Date(today.getFullYear(), today.getMonth(), 1);
+		} else if (dateRange === "ytd") {
+			start = new Date(today.getFullYear(), 0, 1);
+		} else if (dateRange === "wtd") {
+			const dow = today.getDay();
+			start = new Date(today);
+			start.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+		} else {
+			const days = parseInt(dateRange, 10) || 30;
+			start = new Date(today);
+			start.setDate(today.getDate() - days + 1);
+		}
+
+		const totalDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+		const y = Math.floor(totalDays / 365);
+		const afterYears = totalDays - y * 365;
+		const m = Math.floor(afterYears / 30);
+		const d = afterYears - m * 30;
+
+		const parts: string[] = [];
+		if (y > 0) parts.push(`${y}y`);
+		if (m > 0) parts.push(`${m}m`);
+		if (d > 0) parts.push(`${d}d`);
+
+		return { label: parts.length > 0 ? parts.join(" ") : "1d", totalDays };
+	}, [dateRange, customRange]);
+
+	const showTrend = dateRange === "all" || comparisonRange !== null;
 
 	return (
 		<div
 			className={cn(
-				"grid w-full grid-cols-1 md:grid-cols-4",
+				"grid w-full grid-cols-1 md:grid-cols-5",
 				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 			)}
 		>
@@ -165,6 +208,20 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					</CardAction>
 					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
 						{formatNumber(totalTransactions)}
+					</CardTitle>
+				</CardHeader>
+			</Card>
+
+			<Card className="@container/card">
+				<CardHeader>
+					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
+					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
+						{periodInfo.label}
+						{/* {periodInfo.totalDays !== null && (
+							<span className="text-muted-foreground ml-1.5 text-sm font-normal">
+								({periodInfo.totalDays})
+							</span>
+						)} */}
 					</CardTitle>
 				</CardHeader>
 			</Card>

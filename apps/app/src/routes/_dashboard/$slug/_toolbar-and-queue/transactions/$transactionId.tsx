@@ -9,7 +9,9 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-export const Route = createFileRoute("/_dashboard/$slug/transactions/$transactionId")({
+export const Route = createFileRoute(
+	"/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId",
+)({
 	component: RouteComponent,
 });
 
@@ -71,7 +73,13 @@ function RouteComponent() {
 
 	if (!current) return null;
 
-	const sharedProps = { onClose: handleClose, onGoUp: handleGoUp, onGoDown: handleGoDown, canGoUp, canGoDown };
+	const sharedProps = {
+		onClose: handleClose,
+		onGoUp: handleGoUp,
+		onGoDown: handleGoDown,
+		canGoUp,
+		canGoDown,
+	};
 
 	if (current.kind === "income") {
 		return shouldUseMobileLayout ? (

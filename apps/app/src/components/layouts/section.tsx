@@ -66,7 +66,7 @@ function SectionTitle({ className, ref, children, ...props }: React.ComponentPro
 	return (
 		<h2
 			data-slot="section-title"
-			className={cn("self-center text-lg leading-none font-medium text-balance", className)}
+			className={cn("self-center text-lg leading-none font-semibold text-balance", className)}
 			{...props}
 		>
 			{children}

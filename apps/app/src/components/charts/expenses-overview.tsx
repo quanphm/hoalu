@@ -21,7 +21,7 @@ import {
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
-import { CheckIcon, Loader2Icon } from "@hoalu/icons/lucide";
+import { CheckIcon, Loader2Icon, ZapIcon } from "@hoalu/icons/lucide";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
@@ -39,6 +39,47 @@ import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type { ColorSchema } from "@hoalu/common/schema";
+
+function ClippedBarShape(props: Record<string, unknown>) {
+	const x = (props.x as number) ?? 0;
+	const y = (props.y as number) ?? 0;
+	const width = (props.width as number) ?? 0;
+	const height = (props.height as number) ?? 0;
+	const fill = (props.fill as string) ?? "currentColor";
+	const radiusProp = props.radius as number | number[] | undefined;
+	const rx = Array.isArray(radiusProp) ? radiusProp[0] : (radiusProp ?? 2);
+
+	if (width <= 0) return null;
+
+	// Normal bar — render with rounded top corners
+	if (y >= 0) return <rect x={x} y={y} width={width} height={height} fill={fill} rx={rx} />;
+
+	// Outlier bar clipped at domain cap — hatch fill signals truncation
+	const visibleHeight = y + height;
+	if (visibleHeight <= 0) return null;
+
+	const patternId = `clipped-hatch-${fill.replace(/[^a-z0-9]/gi, "_")}`;
+
+	return (
+		<>
+			<defs>
+				<pattern
+					id={patternId}
+					x="0"
+					y="0"
+					width="5"
+					height="5"
+					patternUnits="userSpaceOnUse"
+					patternTransform="rotate(-45)"
+				>
+					<rect width="10" height="10" fill={fill} opacity={0.35} />
+					<rect width="2" height="10" fill={fill} />
+				</pattern>
+			</defs>
+			<rect x={x} y={0} width={width} height={visibleHeight} fill={`url(#${patternId})`} />
+		</>
+	);
+}
 
 /**
  * Map category ColorSchema values to hex colors for Recharts fill.
@@ -76,6 +117,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const [activeTab, setActiveTab] = useState<OverviewTab>("expenses");
 	const isIncomeTab = activeTab === "income";
+	const [clampOutliers, setClampOutliers] = useState(true);
 
 	const expenseStats = useExpenseStats({
 		expenses: props.expenses,
@@ -269,6 +311,29 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		return 14; // 4+ categories
 	}, [isCategoryMode, selectedCategoryIds.length]);
 
+	// IQR-based outlier cap: Tukey's fence (Q3 + 1.5×IQR) works on small datasets
+	// unlike percentile approaches which collapse to the max value with <30 data points.
+	const axisDomainCap = useMemo(() => {
+		const values = isCategoryMode
+			? (data as Record<string, number | string | boolean | undefined>[]).map((item) =>
+					selectedCategoryIds.reduce((sum, catId) => sum + ((item[catId] as number) || 0), 0),
+				)
+			: (data as { value: number }[]).map((item) => item.value);
+		const nonZero = values.filter((v) => v > 0);
+		if (nonZero.length < 4) return null;
+		const sorted = [...nonZero].sort((a, b) => a - b);
+		const q1 = sorted[Math.floor(sorted.length * 0.25)];
+		const q3 = sorted[Math.floor(sorted.length * 0.75)];
+		const iqr = q3 - q1;
+		if (iqr === 0) return null;
+		const upperFence = q3 + 1.5 * iqr;
+		const maxVal = sorted[sorted.length - 1];
+		if (maxVal <= upperFence) return null;
+		return Math.ceil(upperFence * 1.3);
+	}, [data, isCategoryMode, selectedCategoryIds]);
+
+	const activeDomainCap = clampOutliers ? axisDomainCap : null;
+
 	const handleBarClick = (barData: {
 		payload?: { date: string; value: number; isMonthly?: boolean };
 	}) => {
@@ -326,13 +391,13 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		]);
 	};
 
-	const getCategoryColor = (catId: string): string => {
+	const getCategoryColor = (catId: string) => {
 		const info = expenseStats.categoryInfoMap[catId];
 		if (!info) return CATEGORY_COLOR_HEX.gray;
 		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
 	};
 
-	const getCategoryName = (catId: string): string => {
+	const getCategoryName = (catId: string) => {
 		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
 	};
 
@@ -345,7 +410,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	return (
 		<Card
 			ref={chartRef}
-			className={cn("bg-background flex flex-col border-transparent", "gap-2 rounded-none md:py-3")}
+			className={cn(
+				"bg-background flex flex-col border-transparent",
+				"border-r-border gap-2 rounded-none md:py-3",
+			)}
 		>
 			<CardHeader>
 				<CardDescription className="text-xs tracking-wider uppercase">
@@ -368,6 +436,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						</div>
 						{stats.hasComparison && (
 							<PercentageChangeDisplay
+								size="sm"
 								change={stats.amount.change}
 								comparisonText={stats.comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
@@ -389,20 +458,35 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					)}
 					<div className="hide-in-screenshot flex h-auto gap-0">
 						<Button
-							variant={!isIncomeTab ? "outline" : "ghost"}
-							size="sm"
-							onClick={() => setActiveTab("expenses")}
-						>
-							Expenses
-						</Button>
-						<Button
 							variant={isIncomeTab ? "outline" : "ghost"}
 							size="sm"
 							onClick={() => setActiveTab("income")}
 						>
 							Incomes
 						</Button>
+						<Button
+							variant={!isIncomeTab ? "outline" : "ghost"}
+							size="sm"
+							onClick={() => setActiveTab("expenses")}
+						>
+							Expenses
+						</Button>
 					</div>
+					{axisDomainCap && (
+						<Button
+							variant={clampOutliers ? "outline" : "ghost"}
+							size="icon-sm"
+							onClick={() => setClampOutliers((v) => !v)}
+							className="hide-in-screenshot"
+							title={
+								clampOutliers
+									? "Smart scale on — click to see full range"
+									: "Full scale — click to restore smart scale"
+							}
+						>
+							<ZapIcon />
+						</Button>
+					)}
 					<Button
 						variant="outline"
 						size="icon-sm"
@@ -420,7 +504,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			<CardContent className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[239px] w-full [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--chart-1)/15"
+					className={cn(
+						"aspect-auto h-[250px] w-full **:focus:outline-none",
+						isIncomeTab
+							? "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--success)/5"
+							: "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--destructive)/5",
+					)}
 				>
 					<BarChart
 						accessibilityLayer
@@ -428,7 +517,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						maxBarSize={maxBarSize}
 						margin={{ left: -12, right: 12, top: 12 }}
 					>
-						<CartesianGrid vertical={false} strokeDasharray="2 2" />
+						<CartesianGrid
+							vertical={false}
+							strokeDasharray="0 4"
+							strokeLinecap="round"
+							strokeWidth={2}
+						/>
 						<XAxis
 							dataKey="date"
 							tickLine={false}
@@ -458,6 +552,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							tickLine={false}
 							axisLine={false}
 							tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
+							domain={activeDomainCap ? ([0, activeDomainCap] as [number, number]) : undefined}
+							allowDataOverflow={!!activeDomainCap}
 						/>
 						{medianValue > 0 && (
 							<ReferenceLine
@@ -591,24 +687,38 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							}}
 						/>
 						{isCategoryMode ? (
-							selectedCategoryIds.map((catId) => (
-								<Bar
-									key={catId}
-									dataKey={catId}
-									fill={getCategoryColor(catId)}
-									className="cursor-pointer"
-									onClick={handleBarClick}
-									isAnimationActive={false}
-									stackId={selectedCategoryIds.length >= 2 ? "categories" : undefined}
-								/>
-							))
+							selectedCategoryIds.map((catId, catIdx) => {
+								return (
+									<Bar
+										key={catId}
+										dataKey={catId}
+										fill={getCategoryColor(catId)}
+										className="cursor-pointer"
+										onClick={handleBarClick}
+										isAnimationActive={true}
+										radius={
+											selectedCategoryIds.length >= 2
+												? catIdx === 0
+													? [0, 0, 2, 2]
+													: catIdx === selectedCategoryIds.length - 1
+														? [2, 2, 0, 0]
+														: [0, 0, 0, 0]
+												: [2, 2, 0, 0]
+										}
+										stackId={selectedCategoryIds.length >= 2 ? "categories" : undefined}
+										shape={activeDomainCap ? (ClippedBarShape as any) : undefined}
+									/>
+								);
+							})
 						) : (
 							<Bar
 								dataKey="value"
 								fill={chartConfig.date.color}
 								className="cursor-pointer"
 								onClick={handleBarClick}
-								isAnimationActive={false}
+								isAnimationActive={true}
+								radius={[2, 2, 0, 0]}
+								shape={activeDomainCap ? (ClippedBarShape as any) : undefined}
 							/>
 						)}
 					</BarChart>
