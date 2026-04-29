@@ -21,26 +21,23 @@ function RouteComponent() {
 
 	return (
 		<>
-			<SectionContent columns={24} className="items-start gap-0 md:gap-0">
-				<div className="col-span-24 flex w-full flex-row gap-4">
+			<SectionContent columns={25} className="items-start gap-0 md:gap-0">
+				<div className="col-span-25 flex w-full flex-row gap-4">
 					<CashFlowSection incomes={incomes} expenses={expenses} />
 				</div>
-				<div className="col-span-24 flex w-full flex-col gap-4 md:col-span-16">
+				<div className="col-span-25 flex w-full flex-col gap-4 md:col-span-17">
 					<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
 				</div>
-				<div className="col-span-24 flex h-full w-full flex-col gap-4 md:col-span-8">
+				<div className="col-span-25 flex h-full w-full flex-col gap-4 md:col-span-8">
 					<CashFlowChart incomes={incomes} expenses={expenses} />
 				</div>
-				<div className="col-span-24 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
+				<div className="col-span-25 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
 					<RecentTransactions />
 				</div>
-				<div className="col-span-24 flex w-full flex-col md:col-span-7">
+				<div className="col-span-25 flex w-full flex-col md:col-span-8">
 					<CategoryBreakdown expenses={expenses} categories={categories} />
 					<UpcomingBillsWidget />
 				</div>
-				{/* <div className="col-span-12 flex w-full flex-col gap-4 md:col-span-12">
-							<IncomeExpenseComparison incomes={incomes} expenses={expenses} />
-						</div> */}
 			</SectionContent>
 		</>
 	);

@@ -26,7 +26,6 @@ import {
 import { Button } from "@hoalu/ui/button";
 import {
 	DialogClose,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogHeaderAction,

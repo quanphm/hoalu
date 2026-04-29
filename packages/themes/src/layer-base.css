@@ -1,6 +1,6 @@
 @layer base {
 	* {
-		@apply box-border border-border outline-ring/50 antialiased;
+		@apply border-border outline-ring/50 box-border antialiased;
 	}
 
 	html,
@@ -29,5 +29,9 @@
 	pre {
 		scrollbar-width: thin;
 		scrollbar-color: var(--border) transparent;
+	}
+
+	.glass {
+		@apply bg-background/60 border backdrop-blur-sm;
 	}
 }

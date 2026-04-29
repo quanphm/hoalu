@@ -198,7 +198,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
 
 	return (
-		<Card className="h-full border-r-0 pb-2">
+		<Card className="h-full border-x-0 pb-2">
 			<CardHeader>
 				<CardTitle>Categories Breakdown</CardTitle>
 				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>

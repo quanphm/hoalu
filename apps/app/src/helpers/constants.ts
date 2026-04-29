@@ -90,16 +90,6 @@ export const KEYBOARD_SHORTCUTS = {
 		hotkey: "e",
 		enabled: true,
 	},
-	goto_incomes: {
-		label: "GI",
-		hotkey: "g>i",
-		enabled: true,
-	},
-	goto_tasks: {
-		label: "GT",
-		hotkey: "g>t",
-		enabled: false,
-	},
 	goto_recurring_bills: {
 		label: "GR",
 		hotkey: "g>r",
