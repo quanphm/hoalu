@@ -301,7 +301,7 @@ export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
+			<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
 				<span className="sr-only">Open menu</span>
 				<MoreVerticalIcon className="size-4" />
 			</DropdownMenuTrigger>

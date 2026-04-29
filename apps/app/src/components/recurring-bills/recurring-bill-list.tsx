@@ -15,9 +15,15 @@ import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { ArchiveIcon, ArchiveRestoreIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -35,7 +41,7 @@ const columns: ColumnDef<SyncedAllRecurringBill>[] = [
 	{ id: "status", header: "Status" },
 	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
 	{ id: "wallet", header: "Wallet" },
-	{ id: "actions", header: "Action", meta: { headerClassName: "justify-end" } },
+	{ id: "actions", header: "", meta: { headerClassName: "justify-end" } },
 ];
 
 function BillGroupHeader({
@@ -150,9 +156,57 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 			<div className="flex items-center px-4 py-3">
 				<WalletBadge name={props.wallet_name} type={props.wallet_type} />
 			</div>
-
 			<div className="flex items-center justify-end px-4">
-				{props.is_active ? (
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={(e) => {
+									e.stopPropagation();
+								}}
+							/>
+						}
+					>
+						<span className="sr-only">Open menu</span>
+						<MoreVerticalIcon className="size-4" />
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						{props.is_active && (
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.stopPropagation();
+									setArchiveDialog({ state: true, data: { id: props.id } });
+								}}
+							>
+								Archive
+							</DropdownMenuItem>
+						)}
+						{!props.is_active && (
+							<>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.stopPropagation();
+										setUnarchiveDialog({ state: true, data: { id: props.id } });
+									}}
+								>
+									Restore
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={(e) => {
+										e.stopPropagation();
+										setDeleteDialog({ state: true, data: { id: props.id, title: props.title } });
+									}}
+								>
+									Delete
+								</DropdownMenuItem>
+							</>
+						)}
+					</DropdownMenuContent>
+				</DropdownMenu>
+				{/* {props.is_active ? (
 					<Button
 						size="icon-sm"
 						variant="ghost"
@@ -189,7 +243,7 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 							<Trash2Icon />
 						</Button>
 					</div>
-				)}
+				)} */}
 			</div>
 		</>
 	);
