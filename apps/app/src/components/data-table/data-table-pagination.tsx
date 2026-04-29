@@ -1,4 +1,9 @@
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeft, ChevronRight } from "@hoalu/icons/lucide";
+import {
+	// ChevronFirstIcon,
+	// ChevronLastIcon,
+	ChevronLeft,
+	ChevronRight,
+} from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { Label } from "@hoalu/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@hoalu/ui/pagination";
@@ -82,7 +87,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 				{config.showNavigationButtons && (
 					<Pagination>
 						<PaginationContent>
-							<PaginationItem>
+							{/* <PaginationItem>
 								<Button
 									size="icon-sm"
 									variant="outline"
@@ -93,7 +98,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 								>
 									<ChevronFirstIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
-							</PaginationItem>
+							</PaginationItem> */}
 							<PaginationItem>
 								<Button
 									size="icon-sm"
@@ -118,7 +123,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									<ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem>
-							<PaginationItem>
+							{/* <PaginationItem>
 								<Button
 									size="icon-sm"
 									variant="outline"
@@ -129,7 +134,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 								>
 									<ChevronLastIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
-							</PaginationItem>
+							</PaginationItem> */}
 						</PaginationContent>
 					</Pagination>
 				)}

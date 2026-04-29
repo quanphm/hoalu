@@ -111,12 +111,12 @@ export function MoodGlow({
 			aria-hidden="true"
 			className={cn(
 				"pointer-events-none absolute -top-6 left-1/2 size-30 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
-				"motion-safe:animation-duration-[4s] motion-safe:animate-pulse",
+				"motion-safe:animate-pulse",
 				className,
 				trend === "increase"
-					? "bg-success/30"
+					? "bg-success/30 motion-safe:animation-duration-[4s]"
 					: trend === "decrease"
-						? "bg-destructive/30"
+						? "bg-destructive/30 motion-safe:animation-duration-[3s]"
 						: "bg-muted/30",
 			)}
 		/>
