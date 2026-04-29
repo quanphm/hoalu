@@ -63,7 +63,7 @@ export function DashboardDateFilter() {
 		<div
 			data-slot="chart-date-filter"
 			className={cn(
-				"@container/date-filter flex items-center gap-3",
+				"@container/date-filter flex items-center gap-2",
 				"not-has-data-[slot=chart-group-by]:grid-cols-3",
 			)}
 		>

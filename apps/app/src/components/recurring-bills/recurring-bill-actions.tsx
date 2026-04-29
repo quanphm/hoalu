@@ -6,7 +6,6 @@ import {
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
-import { useNavigate, useParams } from "@tanstack/react-router";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -29,6 +28,7 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
 
@@ -60,7 +60,7 @@ export function CreateRecurringBillDialogTrigger({
 	const setDialog = useSetAtom(createRecurringBillDialogAtom);
 	return (
 		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
-			New bill
+			New recurring bill
 			{showKbd && (
 				<HotKey
 					{...KEYBOARD_SHORTCUTS.create_recurring_bill}

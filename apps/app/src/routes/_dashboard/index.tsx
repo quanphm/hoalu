@@ -67,7 +67,7 @@ function RouteComponent() {
 				) : (
 					<Section className="md:gap-2">
 						<SectionHeader>
-							<SectionDescription>Select a workspace to continue</SectionDescription>
+							<SectionDescription>Select a workspace</SectionDescription>
 						</SectionHeader>
 						<SectionContent columns={3} className="grid-cols-1">
 							{workspaces.map((ws) => {
