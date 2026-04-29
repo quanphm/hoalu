@@ -119,17 +119,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	);
 
 	useHotkeys(
-		KEYBOARD_SHORTCUTS.goto_tasks.hotkey,
-		() => {
-			navigate({ to: "/$slug/tasks", params: { slug } });
-		},
-		{
-			enabled: allowShortcutNavigate && KEYBOARD_SHORTCUTS.goto_tasks.enabled,
-		},
-		[slug, allowShortcutNavigate],
-	);
-
-	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_workspace.hotkey,
 		() => {
 			navigate({ to: "/$slug/settings/workspace", params: { slug } });
@@ -190,17 +179,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.goto_recurring_bills.hotkey,
 		() => {
 			navigate({ to: "/$slug/recurring-bills", params: { slug } });
-		},
-		{
-			enabled: allowShortcutNavigate,
-		},
-		[slug, allowShortcutNavigate],
-	);
-
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.goto_incomes.hotkey,
-		() => {
-			navigate({ to: "/$slug/incomes", params: { slug } });
 		},
 		{
 			enabled: allowShortcutNavigate,

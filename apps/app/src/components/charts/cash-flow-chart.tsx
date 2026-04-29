@@ -251,7 +251,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	return (
 		<Card
 			className={cn(
-				"bg-background flex h-full flex-col gap-2 overflow-hidden rounded-none border-transparent md:py-3",
+				"bg-background flex h-full flex-col gap-2 overflow-hidden rounded-none border-x-0 border-y-0 md:py-3",
 			)}
 		>
 			<CardHeader>
@@ -371,7 +371,7 @@ function TooltipContent({
 		const net = dataPoint.net;
 
 		return (
-			<div className="bg-background rounded-md border p-3 shadow-sm">
+			<div className="glass rounded-md p-3">
 				<div className="grid gap-2">
 					<span className="text-muted-foreground text-xs tracking-wider uppercase">
 						{formattedDate}

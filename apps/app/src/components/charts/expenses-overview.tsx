@@ -414,8 +414,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		<Card
 			ref={chartRef}
 			className={cn(
-				"bg-background flex flex-col border-transparent",
-				"border-r-border gap-2 rounded-none md:py-3",
+				"bg-background flex flex-col gap-2 rounded-none border-y-0 border-r border-l-0 md:py-3",
 			)}
 		>
 			<CardHeader className="flex flex-col md:grid">
@@ -626,7 +625,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 										const showTotal = selectedCategoryIds.length >= 2;
 
 										return (
-											<div className="bg-background rounded-md border p-3 shadow-sm">
+											<div className="glass rounded-md p-3">
 												<div className="grid gap-2">
 													<span className="text-muted-foreground text-xs tracking-wider uppercase">
 														{formattedDate}
@@ -670,7 +669,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									}
 
 									return (
-										<div className="bg-background rounded-md border p-3 shadow-sm">
+										<div className="glass rounded-md p-3">
 											<div className="grid gap-2">
 												<div className="flex flex-col">
 													<span className="text-muted-foreground text-xs tracking-wider uppercase">

@@ -166,7 +166,7 @@ export function RecentTransactions() {
 	}, [expenses, incomes, activeTab]);
 
 	return (
-		<Section className="gap-0 border-t md:gap-0">
+		<Section className="gap-0 border-t border-r border-b md:gap-0">
 			<SectionHeader className="bg-card px-4 py-2.5">
 				<SectionTitle className="text-md">Recent Transactions</SectionTitle>
 				<SectionAction className="flex h-auto items-center gap-2">
