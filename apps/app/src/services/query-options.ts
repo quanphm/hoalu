@@ -212,7 +212,9 @@ export const expensesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: expenseKeys.all(slug),
 		queryFn: async () => {
-			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const workspace = queryClient.getQueryData<{
+				metadata: Record<string, any>;
+			}>(workspaceKeys.withSlug(slug));
 			const expenses = await apiClient.expenses.list(slug);
 			const promises = expenses.map(async (expense) => {
 				const { realAmount, currency: sourceCurrency } = expense;
@@ -220,7 +222,7 @@ export const expensesQueryOptions = (slug: string) => {
 					const result = await queryClient.fetchQuery(
 						exchangeRatesQueryOptions({
 							from: sourceCurrency,
-							to: (workspace as any).metadata.currency,
+							to: workspace?.metadata.currency,
 						}),
 					);
 					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
@@ -264,7 +266,9 @@ export const incomesQueryOptions = (slug: string) => {
 	return queryOptions({
 		queryKey: incomeKeys.all(slug),
 		queryFn: async () => {
-			const workspace = queryClient.getQueryData(workspaceKeys.withSlug(slug));
+			const workspace = queryClient.getQueryData<{
+				metadata: Record<string, any>;
+			}>(workspaceKeys.withSlug(slug));
 			const incomes = await apiClient.incomes.list(slug);
 			const promises = incomes.map(async (income) => {
 				const { realAmount, currency: sourceCurrency } = income;
@@ -272,7 +276,7 @@ export const incomesQueryOptions = (slug: string) => {
 					const result = await queryClient.fetchQuery(
 						exchangeRatesQueryOptions({
 							from: sourceCurrency,
-							to: (workspace as any).metadata.currency,
+							to: workspace?.metadata.currency,
 						}),
 					);
 					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);

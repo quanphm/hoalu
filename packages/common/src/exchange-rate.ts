@@ -1,7 +1,7 @@
 function calculateCrossRate(params: {
 	pair: [string, string];
-	usdToFrom?: { exchangeRate: string; inverseRate: string };
-	usdToTo?: { exchangeRate: string; inverseRate: string };
+	usdToFrom: { exchangeRate: string; inverseRate: string } | undefined;
+	usdToTo: { exchangeRate: string; inverseRate: string } | undefined;
 }) {
 	const { usdToFrom, usdToTo } = params;
 

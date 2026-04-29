@@ -1,15 +1,17 @@
-import { zValidator as zv } from "@hono/zod-validator";
-import { HTTPException } from "hono/http-exception";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { zValidator } from "@hono/zod-validator";
 import * as z from "zod";
 
 import type { ValidationTargets } from "hono";
 
-export const zValidator = <T extends z.ZodSchema, Target extends keyof ValidationTargets>(
+export const zValidatorWrapper = <T extends z.ZodSchema, Target extends keyof ValidationTargets>(
 	target: Target,
 	schema: T,
 ) =>
-	zv(target, schema, (result) => {
+	zValidator(target, schema, (result, c) => {
 		if (!result.success) {
-			throw new HTTPException(400, { cause: result.error });
+			return c.json({ message: createIssueMsg(result.error.issues) }, HTTPStatus.codes.BAD_REQUEST);
 		}
+		return;
 	});

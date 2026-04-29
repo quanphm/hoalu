@@ -1,0 +1,16 @@
+{
+	"name": "@hoalu/typekit",
+	"version": "0.28.9",
+	"description": "A collection of essential TypeScript types - inspired by sindresorhus/type-fest",
+	"files": [
+		"index.d.ts"
+	],
+	"type": "module",
+	"sideEffects": false,
+	"types": "./index.d.ts",
+	"exports": {
+		".": {
+			"types": "./index.d.ts"
+		}
+	}
+}

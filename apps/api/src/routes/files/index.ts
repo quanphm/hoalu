@@ -23,7 +23,6 @@ const fileRepository = new FileRepository();
 const categoryRepository = new CategoryRepository();
 const TAGS = ["Files"];
 
-// Shared Zod schemas for OCR response shapes
 const ConversationTurnSchema = z.object({
 	role: z.enum(["user", "assistant"]),
 	content: z.string(),
@@ -205,12 +204,6 @@ const route = app
 			const results = await batchExtractReceiptData(
 				payload.imagesBase64,
 				categories.map((cat) => ({ id: cat.id, name: cat.name })),
-			);
-
-			// Log summary
-			const successCount = results.filter((r) => r.data !== null).length;
-			console.log(
-				`[OCR] Scanned ${payload.imagesBase64.length} image(s), ${successCount} succeeded`,
 			);
 
 			return c.json({ data: results }, HTTPStatus.codes.OK);

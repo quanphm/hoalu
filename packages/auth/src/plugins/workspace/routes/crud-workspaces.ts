@@ -2,13 +2,14 @@ import { APIError } from "@better-auth/core/error";
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createAuthEndpoint, requestOnlySessionMiddleware } from "better-auth/api";
-import type { AccessControl } from "better-auth/plugins/access";
 import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 
-import type { defaultStatements } from "../access";
 import { getAdapter } from "../adapter";
 import { workspaceMiddleware, workspaceSessionMiddleware } from "../call";
 import { WORKSPACE_ERROR_CODES } from "../error-codes";
+
+import type { defaultStatements } from "../access";
+import type { AccessControl } from "better-auth/plugins/access";
 
 export const createWorkspace = createAuthEndpoint(
 	"/workspace/create",
