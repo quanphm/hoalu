@@ -1,3 +1,4 @@
+import { cn } from "@hoalu/ui/utils";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -51,7 +52,8 @@ export function BrailleSpinner({
 		<motion.span
 			animate={{ opacity: active ? 1 : 0.25 }}
 			transition={{ duration: 0.3, ease: "easeInOut" }}
-			style={{ fontSize: size, lineHeight: 1, color, display: "inline-block", width: size }}
+			className={cn("inline-block leading-1")}
+			style={{ fontSize: size, color, width: size }}
 		>
 			{active ? frame : INACTIVE_CHAR}
 		</motion.span>

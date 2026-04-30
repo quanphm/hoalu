@@ -9,7 +9,7 @@ import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, type MutableRefObject } from "react";
 
 const percentFormatter = new Intl.NumberFormat("en-US", {
 	style: "percent",
@@ -148,7 +148,7 @@ const emptyState = (
 	</Empty>
 );
 
-function EventList() {
+function EventList({ scrollRef }: { scrollRef?: MutableRefObject<number> }) {
 	const events = useLiveQueryEvents();
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
@@ -170,7 +170,11 @@ function EventList() {
 				navigate({ to: "/$slug/events", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/events/$eventId", params: { slug, eventId: id } }); // id is public_id via getItemId
+			navigate({
+				to: "/$slug/events/$eventId",
+				params: { slug, eventId: id },
+				resetScroll: false,
+			});
 		},
 		[navigate, slug],
 	);
@@ -190,6 +194,7 @@ function EventList() {
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={true}
+			scrollPositionRef={scrollRef}
 			emptyState={emptyState}
 		/>
 	);

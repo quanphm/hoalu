@@ -29,7 +29,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useSetAtom } from "jotai";
-import { memo, useCallback, useMemo, type ReactNode } from "react";
+import { memo, useCallback, useMemo, type MutableRefObject, type ReactNode } from "react";
 
 const GRID_TEMPLATE =
 	"grid grid-cols-[var(--category-size)_1fr_var(--date-size)_var(--status-size)_var(--amount-size)_var(--wallet-size)_var(--action-size)]";
@@ -281,7 +281,13 @@ const emptyStates: Record<RecurringBillStatusFilter, ReactNode> = {
 	),
 };
 
-function RecurringBillList({ statusFilter }: { statusFilter: RecurringBillStatusFilter }) {
+function RecurringBillList({
+	statusFilter,
+	scrollRef,
+}: {
+	statusFilter: RecurringBillStatusFilter;
+	scrollRef?: MutableRefObject<number>;
+}) {
 	const allBills = useAllRecurringBills();
 	const bills = useMemo(() => {
 		if (statusFilter === "all") return allBills;
@@ -296,7 +302,11 @@ function RecurringBillList({ statusFilter }: { statusFilter: RecurringBillStatus
 				navigate({ to: "/$slug/recurring-bills", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/recurring-bills/$billId", params: { slug, billId: id } });
+			navigate({
+				to: "/$slug/recurring-bills/$billId",
+				params: { slug, billId: id },
+				resetScroll: false,
+			});
 		},
 		[navigate, slug],
 	);
@@ -332,6 +342,7 @@ function RecurringBillList({ statusFilter }: { statusFilter: RecurringBillStatus
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={true}
+			scrollPositionRef={scrollRef}
 			emptyState={emptyStates[statusFilter]}
 		/>
 	);

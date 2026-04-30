@@ -112,6 +112,7 @@ function ExpenseList(props: {
 			navigate({
 				to: "/$slug/transactions/$transactionId",
 				params: { slug, transactionId: id },
+				resetScroll: false,
 			});
 		},
 		[navigate, slug],

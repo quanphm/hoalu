@@ -14,7 +14,7 @@ import RecurringBillList, {
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 	component: LayoutComponent,
@@ -25,6 +25,7 @@ function LayoutComponent() {
 	const billMatch = matches.find((m) => m.routeId === "/_dashboard/$slug/recurring-bills/$billId");
 	const billId = billMatch ? (billMatch.params as Record<string, string>).billId : undefined;
 	const [statusFilter, setStatusFilter] = useState<RecurringBillStatusFilter>("active");
+	const listScrollRef = useRef(0);
 
 	return (
 		<>
@@ -68,7 +69,7 @@ function LayoutComponent() {
 								className="h-[calc(100vh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-									<RecurringBillList statusFilter={statusFilter} />
+									<RecurringBillList statusFilter={statusFilter} scrollRef={listScrollRef} />
 								</SectionItem>
 							</SectionContent>
 						</>

@@ -11,6 +11,7 @@ import {
 } from "#app/components/layouts/toolbar.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/events")({
 	component: LayoutComponent,
@@ -20,6 +21,7 @@ function LayoutComponent() {
 	const matches = useMatches();
 	const eventMatch = matches.find((m) => m.routeId === "/_dashboard/$slug/events/$eventId");
 	const eventId = eventMatch ? (eventMatch.params as Record<string, string>).eventId : undefined;
+	const listScrollRef = useRef(0);
 
 	return (
 		<>
@@ -44,7 +46,7 @@ function LayoutComponent() {
 							className="h-[calc(100vh-49px)] grid-cols-1 overflow-hidden md:gap-0"
 						>
 							<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-								<EventList />
+								<EventList scrollRef={listScrollRef} />
 							</SectionItem>
 						</SectionContent>
 					)}
