@@ -4,6 +4,7 @@ import { BoxAnimations } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
+import { trendChangeVariants } from "#app/helpers/percentage-change.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
@@ -209,7 +210,9 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							<span
 								className={cn(
 									"text-xs font-medium tabular-nums",
-									transactionsDiff > 0 ? "text-success" : "text-destructive",
+									transactionsDiff > 0
+										? trendChangeVariants({ trend: "increase" })
+										: trendChangeVariants({ trend: "decrease" }),
 								)}
 							>
 								{transactionsDiff > 0 ? "+" : ""}

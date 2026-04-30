@@ -16,6 +16,7 @@ import {
 	groupDataByMonth,
 	isMonthBasedRange,
 } from "#app/helpers/date-range.ts";
+import { trendChangeVariants } from "#app/helpers/percentage-change.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
@@ -259,9 +260,13 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						{isHovering && displayNet !== null ? (
 							<div className="flex min-h-9 items-center gap-1">
 								{displayNet > 0 ? (
-									<TrendingUpIcon className="size-4 text-green-600 dark:text-green-400" />
+									<TrendingUpIcon
+										className={cn("size-4", trendChangeVariants({ trend: "increase" }))}
+									/>
 								) : displayNet < 0 ? (
-									<TrendingDownIcon className="size-4 text-red-600 dark:text-red-400" />
+									<TrendingDownIcon
+										className={cn("size-4", trendChangeVariants({ trend: "decrease" }))}
+									/>
 								) : null}
 								<CurrencyValue
 									value={displayNet}
@@ -269,10 +274,10 @@ export function CashFlowChart(props: CashFlowChartProps) {
 									className={cn(
 										"text-sm font-medium",
 										displayNet > 0
-											? "text-green-600 dark:text-green-400"
+											? trendChangeVariants({ trend: "increase" })
 											: displayNet < 0
-												? "text-red-600 dark:text-red-400"
-												: "text-muted-foreground",
+												? trendChangeVariants({ trend: "decrease" })
+												: trendChangeVariants({ trend: "no-change" }),
 									)}
 								/>
 							</div>

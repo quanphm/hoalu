@@ -527,7 +527,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							dataKey="date"
 							padding={{ right: 10 }}
 							axisLine={false}
-							tickLine={true}
+							tickLine={false}
 							tickMargin={8}
 							// ticks={
 							// 	data.length === 0
