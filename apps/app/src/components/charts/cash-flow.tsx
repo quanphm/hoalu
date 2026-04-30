@@ -152,7 +152,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Cash Flow</span>
+						<span className="font-mono tracking-wider">Cumulative Net</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={cashFlowChange}

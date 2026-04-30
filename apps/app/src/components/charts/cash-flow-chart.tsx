@@ -19,6 +19,7 @@ import {
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
+import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
@@ -256,7 +257,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 		>
 			<CardHeader>
 				<CardDescription className="font-mono text-xs tracking-wider uppercase">
-					Cash Flow
+					Cumulative Net
 				</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col">
@@ -327,7 +328,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
 							strokeWidth={1.5}
-							opacity={0.72}
 							isAnimationActive={false}
 						/>
 					</AreaChart>
@@ -364,30 +364,21 @@ function TooltipContent({
 		const formattedDate =
 			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 				? datetime.format(date, "MMMM yyyy")
-				: datetime.format(date, "dd/MM/yyyy");
+				: datetime.format(date, "MMMM dd");
 
 		// const balance = (payload[0].value as number) ?? 0;
 		const net = dataPoint.net;
 
 		return (
 			<div className="glass rounded-md p-3">
-				<div className="grid gap-2">
-					<span className="text-muted-foreground text-xs tracking-wider uppercase">
-						{formattedDate}
-					</span>
-					{/* <div className="flex items-baseline-last justify-between gap-2">
-						<span className="text-sm font-semibold">Balance</span>
-						<CurrencyValue
-							value={balance}
-							currency={currency}
-							className={cn(
-								"text-sm font-medium",
-								balance >= 0 ? "text-primary" : "text-destructive",
-							)}
-						/>
-					</div> */}
-					<div className="flex items-baseline justify-between gap-1">
-						<p className="text-muted-foreground text-xs">Net value</p>
+				<div className="grid gap-1">
+					<span className="text-muted-foreground text-xs tracking-wider">{formattedDate}</span>
+					<div className="flex items-center gap-1">
+						{net > 0 ? (
+							<TrendingUpIcon className="text-success size-4" />
+						) : net < 0 ? (
+							<TrendingDownIcon className="text-destructive size-4" />
+						) : null}
 						<CurrencyValue
 							value={net}
 							currency={currency}
