@@ -40,7 +40,7 @@ interface CategoryData {
 
 function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
 	return (
-		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-sm">
+		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-xs">
 			{props.data.map((data) => {
 				const widthPercentage = (data.value / props.totalAmount) * 100;
 				return (
@@ -97,8 +97,8 @@ function CategoryListBreakdown(props: {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
 					<div key={data.id} className="flex items-center justify-between py-0.5">
-						<div className="flex items-center gap-3">
-							<div className={cn("h-4 w-1 rounded-sm", createChartColor(data.color))} />
+						<div className="flex items-center gap-2">
+							<div className={cn("h-4 w-1 rounded-xs", createChartColor(data.color))} />
 							<Button
 								variant="link"
 								onClick={() => handleClick(data.id)}

@@ -218,7 +218,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const comparisonText = getComparisonPeriodText(dateRange, customRange);
-	const hasComparison = comparisonRange !== null;
+	// const hasComparison = comparisonRange !== null;
 	const handleComparisonClick = () => {
 		if (comparisonRange) {
 			setSyncedDateRange({
@@ -255,17 +255,16 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			)}
 		>
 			<CardHeader>
-				<CardDescription className="text-xs tracking-wider uppercase">Cash Flow</CardDescription>
+				<CardDescription className="font-mono text-xs tracking-wider uppercase">
+					Cash Flow
+				</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">
 							<CurrencyValue
 								value={displayBalance}
 								currency={currency}
-								className={cn(
-									"text-3xl font-medium",
-									// displayBalance >= 0 ? "text-foreground" : "text-destructive",
-								)}
+								className={cn("text-3xl font-medium")}
 							/>
 						</div>
 						{displayNet !== null && hoveredNetChange ? (
@@ -305,7 +304,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							stroke="var(--foreground)"
 							strokeWidth={1}
 							strokeDasharray="5 5"
-							opacity={0.15}
+							opacity={0.3}
 						/>
 						<Tooltip
 							cursor={{ stroke: "var(--primary)", strokeWidth: 0, strokeDasharray: "none" }}
@@ -327,7 +326,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fill="url(#gradient-rounded-chart-desktop)"
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
-							strokeWidth={2}
+							strokeWidth={1.2}
 							opacity={0.72}
 							isAnimationActive={false}
 						/>

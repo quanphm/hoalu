@@ -6,7 +6,7 @@ import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/da
 import { formatNumber } from "#app/helpers/number.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
@@ -77,6 +77,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const transactionsDiff = totalTransactions - prevTransactions;
 
 	const periodInfo = useMemo(() => {
+		console.log(dateRange);
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		let start: Date;
@@ -97,13 +98,33 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			const dow = today.getDay();
 			start = new Date(today);
 			start.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+		} else if (dateRange.endsWith("m")) {
+			const months = parseInt(dateRange, 10);
+			const today = new Date();
+
+			// End date is last day of current month
+			// Using day 0 of next month gives us the last day of current month
+			// This handles months with different lengths (28-31 days) automatically
+			const lastDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+			end = datetime.endOfDay(lastDayOfCurrentMonth);
+
+			// Start date is first day of the month (months - 1) ago
+			// Example: for 12 months in Jan 2026: month 0 - (12 - 1) = month -11 = Feb 2025
+			// JavaScript Date handles negative month values correctly (rolls back years)
+			// Using day 1 avoids leap year issues (e.g., Feb 29 → Mar 1 in non-leap years)
+			const firstDayOfStartMonth = new Date(
+				today.getFullYear(),
+				today.getMonth() - (months - 1),
+				1, // Always use day 1 to avoid month overflow edge cases
+			);
+			start = datetime.startOfDay(firstDayOfStartMonth);
 		} else {
 			const days = parseInt(dateRange, 10) || 30;
 			start = new Date(today);
 			start.setDate(today.getDate() - days + 1);
 		}
 
-		const totalDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+		const totalDays = Math.round((end.getTime() - start.getTime()) / TIME_IN_MILLISECONDS.DAY) + 1;
 
 		const y = Math.floor(totalDays / 365);
 		const afterYears = totalDays - y * 365;
@@ -111,11 +132,11 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		const d = afterYears - m * 30;
 
 		const parts: string[] = [];
-		if (y > 0) parts.push(`${y}y`);
-		if (m > 0) parts.push(`${m}m`);
-		if (d > 0) parts.push(`${d}d`);
+		if (y > 0) parts.push(`${y}Y`);
+		if (m > 0) parts.push(`${m}M`);
+		if (d > 0) parts.push(`${d}D`);
 
-		return { label: parts.length > 0 ? parts.join(" ") : "1d", totalDays };
+		return { label: parts.length > 0 ? parts.join(" ") : "1D", totalDays };
 	}, [dateRange, customRange]);
 
 	const showTrend = dateRange === "all" || comparisonRange !== null;
@@ -131,7 +152,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="tracking-wider">Cash Flow</span>
+						<span className="font-mono tracking-wider">Cash Flow</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={cashFlowChange}
@@ -148,7 +169,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="tracking-wider">Income</span>
+						<span className="font-mono tracking-wider">Income</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={incomeChange}
@@ -165,7 +186,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="tracking-wider">Expenses</span>
+						<span className="font-mono tracking-wider">Expenses</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={expensesChange}
@@ -183,7 +204,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 			<Card className="@container/card">
 				<CardHeader>
 					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="tracking-wider">Transactions</span>
+						<span className="font-mono tracking-wider">Transactions</span>
 						{showTrend && transactionsDiff !== 0 && (
 							<span
 								className={cn(

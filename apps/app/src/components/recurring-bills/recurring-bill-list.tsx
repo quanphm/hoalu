@@ -133,13 +133,9 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 			</div>
 			<div className="flex items-center px-4 py-3">
 				{props.is_active ? (
-					<Badge variant="outline" className="text-success border-success/30 bg-success/10">
-						Active
-					</Badge>
+					<Badge variant="success">Active</Badge>
 				) : (
-					<Badge variant="outline" className="text-muted-foreground">
-						Archived
-					</Badge>
+					<Badge variant="muted">Archived</Badge>
 				)}
 			</div>
 			<div className="flex flex-col items-end justify-center px-4 py-3">
