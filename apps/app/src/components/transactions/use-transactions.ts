@@ -10,7 +10,7 @@ import {
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import { matchesSearch } from "#app/helpers/normalize-search.ts";
-import { toFromToDateObject } from "@hoalu/common/datetime";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
@@ -91,8 +91,8 @@ function filterTransactions(
 		amountFilter,
 	} = condition;
 
-	const fromDate = range ? range.from.toISOString().slice(0, 10) : undefined;
-	const toDate = range ? range.to.toISOString().slice(0, 10) : undefined;
+	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
+	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
 	return data.filter((tx) => {
 		if (fromDate && toDate) {

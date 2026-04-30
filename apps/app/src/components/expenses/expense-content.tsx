@@ -22,13 +22,15 @@ function ExpenseContent(props: SyncedTransaction) {
 					)}
 				</div>
 			</div>
-			<div className="flex items-baseline-last justify-start gap-2 truncate px-4 py-3">
-				<p className="text-sm font-medium" title={props.title}>
+			<div className="flex items-center justify-start gap-2 truncate px-4 py-3">
+				<p className="overflow-hidden text-sm font-medium" title={props.title}>
 					{props.title}
+					{props.description && (
+						<span className="text-muted-foreground ml-2 inline-block text-xs">
+							{htmlToText(props.description)}
+						</span>
+					)}
 				</p>
-				{props.description && (
-					<p className="text-muted-foreground text-xs">{htmlToText(props.description)}</p>
-				)}
 			</div>
 			<div className="flex items-center justify-end px-4 py-3">
 				{props.kind === "income" ? (
