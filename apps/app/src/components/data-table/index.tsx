@@ -342,7 +342,7 @@ export function DataTable<T extends TableRowData>({
 				</Table>
 			</div>
 			{paginationConfig.enabled && (
-				<div className="bg-card border-t px-4 py-3">
+				<div className="bg-card border-t px-4 py-2.5">
 					<DataTablePagination table={table} config={paginationConfig} />
 				</div>
 			)}

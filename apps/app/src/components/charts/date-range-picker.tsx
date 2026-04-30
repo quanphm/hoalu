@@ -38,7 +38,7 @@ export function DateRangePicker({
 
 	const formatDateRange = () => {
 		if (customRange?.from && customRange?.to) {
-			return `${datetime.format(customRange.from, "MMM dd")} - ${datetime.format(customRange.to, "MMM dd, yyyy")}`;
+			return `${datetime.format(customRange.from, "MMM dd yyyy")} - ${datetime.format(customRange.to, "MMM dd, yyyy")}`;
 		}
 		return "Select date";
 	};
@@ -54,7 +54,7 @@ export function DateRangePicker({
 					/>
 				}
 			>
-				<CalendarIcon className="size-4 shrink-0" />
+				<CalendarIcon className="shrink-0" />
 				<span className="truncate">{formatDateRange()}</span>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">

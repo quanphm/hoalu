@@ -418,7 +418,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			)}
 		>
 			<CardHeader className="flex flex-col md:grid">
-				<CardDescription className="text-xs tracking-wider uppercase">
+				<CardDescription className="font-mono text-xs tracking-wider uppercase">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
 				<CardDescription>
@@ -504,7 +504,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				<ChartContainer
 					config={chartConfig}
 					className={cn(
-						"aspect-auto h-[250px] w-full **:focus:outline-none",
+						"aspect-auto h-[250px] w-full select-none **:focus:outline-none",
 						isIncomeTab
 							? "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--success)/5"
 							: "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--destructive)/5",
@@ -514,29 +514,31 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						accessibilityLayer
 						data={data}
 						maxBarSize={maxBarSize}
-						margin={{ left: -12, right: 12, top: 12 }}
+						margin={{ left: -12, right: 0, top: 12 }}
 					>
 						<CartesianGrid
 							vertical={false}
 							strokeDasharray="0 4"
 							strokeLinecap="round"
 							strokeWidth={2}
+							opacity={0.9}
 						/>
 						<XAxis
 							dataKey="date"
-							tickLine={false}
+							padding={{ right: 10 }}
 							axisLine={false}
+							tickLine={false}
 							tickMargin={8}
-							ticks={
-								data.length === 0
-									? []
-									: data.length === 1
-										? [(data[0] as { date: string }).date]
-										: [
-												(data[0] as { date: string }).date,
-												(data[data.length - 1] as { date: string }).date,
-											]
-							}
+							// ticks={
+							// 	data.length === 0
+							// 		? []
+							// 		: data.length === 1
+							// 			? [(data[0] as { date: string }).date]
+							// 			: [
+							// 					(data[0] as { date: string }).date,
+							// 					(data[data.length - 1] as { date: string }).date,
+							// 				]
+							// }
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
 								return dateRange === "ytd" ||
@@ -544,24 +546,25 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									isMonthBasedRange(dateRange) ||
 									(dateRange === "custom" && chartGroupBy === "month")
 									? datetime.format(date, "MMM yyyy")
-									: datetime.format(date, "MMM dd, yyyy");
+									: datetime.format(date, "MMM dd");
 							}}
+							interval="preserveStartEnd"
 						/>
 						<YAxis
 							tickLine={false}
 							axisLine={false}
 							tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
-							domain={activeDomainCap ? ([0, activeDomainCap] as [number, number]) : undefined}
+							domain={activeDomainCap ? [0, activeDomainCap] : undefined}
 							allowDataOverflow={!!activeDomainCap}
 						/>
 						{medianValue > 0 && (
 							<ReferenceLine
 								y={medianValue}
 								stroke="var(--foreground)"
-								strokeDasharray="0 4"
+								strokeDasharray="4 4"
 								strokeLinecap="round"
-								strokeWidth={2}
-								opacity={0.72}
+								strokeWidth={1}
+								opacity={0.7}
 								ifOverflow="extendDomain"
 								label={(props: { viewBox?: { x: number; y: number; width: number } }) => {
 									const { viewBox } = props;
@@ -596,7 +599,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 												fill="var(--foreground)"
 												fontSize={10}
 												fontWeight="bold"
-												className={cn(isRedacted && "font-redacted-script")}
+												className={cn("font-mono", isRedacted && "font-redacted-script")}
 											>
 												{text}
 											</text>

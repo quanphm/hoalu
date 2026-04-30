@@ -20,15 +20,16 @@ const badgeVariants = cva(
 			},
 			variant: {
 				default: "bg-primary text-primary-foreground [button,a&]:hover:bg-primary/90",
+				secondary: "bg-secondary text-secondary-foreground [button,a&]:hover:bg-secondary/90",
 				destructive: "bg-destructive [button,a&]:hover:bg-destructive/90 text-white",
-				error: "bg-destructive/8 text-destructive-foreground dark:bg-destructive/16",
-				info: "bg-info/8 text-info-foreground dark:bg-info/16",
 				outline:
 					"border-border dark:bg-input/32 [button,a&]:hover:bg-accent/50 dark:[button,a&]:hover:bg-input/48 bg-transparent",
-				secondary: "bg-secondary text-secondary-foreground [button,a&]:hover:bg-secondary/90",
-				success:
-					"border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400",
-				warning: "bg-warning/8 text-warning-foreground dark:bg-warning/16",
+				muted: "text-muted-foreground border-muted [button,a&]:hover:bg-muted/90 bg-transparent",
+				info: "text-info border-info/30 bg-info/8 [button,a&]:hover:bg-info/90",
+				warning: "text-warning border-warning/30 bg-warning/8 [button,a&]:hover:bg-warning/90",
+				error:
+					"text-destructive border-destructive/30 bg-destructive/8 [button,a&]:hover:bg-destructive/90",
+				success: "text-success border-success/30 bg-success/10 [button,a&]:hover:bg-success/90",
 			},
 		},
 	},

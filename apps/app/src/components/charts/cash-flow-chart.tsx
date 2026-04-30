@@ -16,9 +16,11 @@ import {
 	groupDataByMonth,
 	isMonthBasedRange,
 } from "#app/helpers/date-range.ts";
+import { trendChangeVariants } from "#app/helpers/percentage-change.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
+import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
@@ -33,7 +35,6 @@ import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 const chartConfig = {
 	balance: {
-		label: "Cash Flow",
 		color: "var(--primary)",
 	},
 } satisfies ChartConfig;
@@ -182,6 +183,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	const [hoveredDataPoint, setHoveredDataPoint] = useState<CashFlowDataPoint | null>(null);
 	const displayBalance = hoveredDataPoint?.balance ?? finalBalance;
 	const displayNet = hoveredDataPoint?.net ?? null;
+	const isHovering = hoveredDataPoint !== null;
 
 	// Comparison period logic
 	const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
@@ -218,7 +220,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const comparisonText = getComparisonPeriodText(dateRange, customRange);
-	const hasComparison = comparisonRange !== null;
 	const handleComparisonClick = () => {
 		if (comparisonRange) {
 			setSyncedDateRange({
@@ -230,17 +231,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			});
 		}
 	};
-
-	// Calculate hovered point's net change vs previous data point
-	const hoveredNetChange = useMemo(() => {
-		if (!hoveredDataPoint || !data.length) return null;
-		const hoveredIndex = data.findIndex((d) => d.date === hoveredDataPoint.date);
-		if (hoveredIndex <= 0) {
-			return calculatePercentageChange(hoveredDataPoint.net, 0, currency);
-		}
-		const prevPoint = data[hoveredIndex - 1];
-		return calculatePercentageChange(hoveredDataPoint.net, prevPoint.net, currency);
-	}, [hoveredDataPoint, data, currency]);
 
 	// Calculate zero-line ratio for split gradient
 	const minBalance = data.length > 0 ? Math.min(...data.map((d) => d.balance)) : 0;
@@ -255,21 +245,42 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			)}
 		>
 			<CardHeader>
-				<CardDescription className="text-xs tracking-wider uppercase">Cash Flow</CardDescription>
+				<CardDescription className="font-mono text-xs tracking-wider uppercase">
+					Cumulative Net
+				</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">
 							<CurrencyValue
 								value={displayBalance}
 								currency={currency}
-								className={cn(
-									"text-3xl font-medium",
-									// displayBalance >= 0 ? "text-foreground" : "text-destructive",
-								)}
+								className={cn("text-3xl font-medium")}
 							/>
 						</div>
-						{displayNet !== null && hoveredNetChange ? (
-							<PercentageChangeDisplay change={hoveredNetChange} />
+						{isHovering && displayNet !== null ? (
+							<div className="flex min-h-9 items-center gap-1">
+								{displayNet > 0 ? (
+									<TrendingUpIcon
+										className={cn("size-4", trendChangeVariants({ trend: "increase" }))}
+									/>
+								) : displayNet < 0 ? (
+									<TrendingDownIcon
+										className={cn("size-4", trendChangeVariants({ trend: "decrease" }))}
+									/>
+								) : null}
+								<CurrencyValue
+									value={displayNet}
+									currency={currency}
+									className={cn(
+										"text-sm font-medium",
+										displayNet > 0
+											? trendChangeVariants({ trend: "increase" })
+											: displayNet < 0
+												? trendChangeVariants({ trend: "decrease" })
+												: trendChangeVariants({ trend: "no-change" }),
+									)}
+								/>
+							</div>
 						) : (
 							<PercentageChangeDisplay
 								change={netChange}
@@ -283,7 +294,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			<CardContent className="h-full flex-1 overflow-hidden p-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-full w-full **:focus:outline-none"
+					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
 				>
 					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 0, top: 0 }}>
 						<defs>
@@ -305,10 +316,12 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							stroke="var(--foreground)"
 							strokeWidth={1}
 							strokeDasharray="5 5"
-							opacity={0.15}
+							opacity={0.5}
 						/>
 						<Tooltip
-							cursor={{ stroke: "var(--primary)", strokeWidth: 0, strokeDasharray: "none" }}
+							cursor={{
+								strokeWidth: 1,
+							}}
 							content={({ active, payload }) => (
 								<TooltipContent
 									active={active}
@@ -316,7 +329,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 										payload as unknown as Array<{ payload: CashFlowDataPoint; value: number }>
 									}
 									dateRange={dateRange}
-									currency={currency}
 									setHoveredDataPoint={setHoveredDataPoint}
 								/>
 							)}
@@ -328,7 +340,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
 							strokeWidth={2}
-							opacity={0.72}
 							isAnimationActive={false}
 						/>
 					</AreaChart>
@@ -342,13 +353,11 @@ function TooltipContent({
 	active,
 	payload,
 	dateRange,
-	currency,
 	setHoveredDataPoint,
 }: {
 	active?: boolean;
 	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
 	dateRange: PredefinedDateRange;
-	currency: string;
 	setHoveredDataPoint: (value: CashFlowDataPoint | null) => void;
 }) {
 	useEffect(() => {
@@ -365,40 +374,11 @@ function TooltipContent({
 		const formattedDate =
 			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 				? datetime.format(date, "MMMM yyyy")
-				: datetime.format(date, "dd/MM/yyyy");
-
-		// const balance = (payload[0].value as number) ?? 0;
-		const net = dataPoint.net;
+				: datetime.format(date, "MMMM dd");
 
 		return (
-			<div className="glass rounded-md p-3">
-				<div className="grid gap-2">
-					<span className="text-muted-foreground text-xs tracking-wider uppercase">
-						{formattedDate}
-					</span>
-					{/* <div className="flex items-baseline-last justify-between gap-2">
-						<span className="text-sm font-semibold">Balance</span>
-						<CurrencyValue
-							value={balance}
-							currency={currency}
-							className={cn(
-								"text-sm font-medium",
-								balance >= 0 ? "text-primary" : "text-destructive",
-							)}
-						/>
-					</div> */}
-					<div className="flex items-baseline justify-between gap-1">
-						<p className="text-muted-foreground text-xs">Net value</p>
-						<CurrencyValue
-							value={net}
-							currency={currency}
-							className={cn(
-								"text-sm font-medium",
-								// net >= 0 ? "text-success" : "text-destructive"
-							)}
-						/>
-					</div>
-				</div>
+			<div className="glass text-muted-foreground px-3 py-2 text-xs tracking-wider uppercase">
+				{formattedDate}
 			</div>
 		);
 	}
