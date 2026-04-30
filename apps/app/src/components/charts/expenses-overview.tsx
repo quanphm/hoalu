@@ -504,7 +504,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				<ChartContainer
 					config={chartConfig}
 					className={cn(
-						"aspect-auto h-[250px] w-full **:focus:outline-none",
+						"aspect-auto h-[250px] w-full select-none **:focus:outline-none",
 						isIncomeTab
 							? "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--success)/5"
 							: "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--destructive)/5",
