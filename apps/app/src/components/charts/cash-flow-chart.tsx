@@ -326,7 +326,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fill="url(#gradient-rounded-chart-desktop)"
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
-							strokeWidth={1.2}
+							strokeWidth={1.5}
 							opacity={0.72}
 							isAnimationActive={false}
 						/>
