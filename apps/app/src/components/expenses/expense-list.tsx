@@ -96,7 +96,10 @@ const emptyState = (
 	</Empty>
 );
 
-function ExpenseList(props: { expenses: SyncedTransaction[] }) {
+function ExpenseList(props: {
+	expenses: SyncedTransaction[];
+	scrollRef?: React.MutableRefObject<number>;
+}) {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 
@@ -106,7 +109,10 @@ function ExpenseList(props: { expenses: SyncedTransaction[] }) {
 				navigate({ to: "/$slug/transactions", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/transactions/$transactionId", params: { slug, transactionId: id } });
+			navigate({
+				to: "/$slug/transactions/$transactionId",
+				params: { slug, transactionId: id },
+			});
 		},
 		[navigate, slug],
 	);
@@ -136,6 +142,7 @@ function ExpenseList(props: { expenses: SyncedTransaction[] }) {
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={false}
+			scrollPositionRef={props.scrollRef}
 			emptyState={emptyState}
 		/>
 	);

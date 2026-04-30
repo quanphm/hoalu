@@ -87,6 +87,9 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	// Set false when a detail panel owns those keys (e.g. Transactions URL routing).
 	enableKeyboardNav?: boolean;
 
+	// Scroll position persistence (survives unmount)
+	scrollPositionRef?: React.MutableRefObject<number>;
+
 	// Empty state
 	emptyState?: React.ReactNode;
 }
@@ -105,6 +108,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	selectedId,
 	onSelectItem,
 	enableKeyboardNav = false,
+	scrollPositionRef,
 	emptyState,
 }: GroupedVirtualTableProps<TRow, TGroupKey>) {
 	const parentRef = useRef<HTMLDivElement>(null);
@@ -184,6 +188,23 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	useHotkeys("j", () => navigate("down"), { enabled: enableKeyboardNav });
 	useHotkeys("k", () => navigate("up"), { enabled: enableKeyboardNav });
 	useHotkeys("esc", () => onSelectItem?.(null), { enabled: enableKeyboardNav });
+
+	// Restore scroll position on mount
+	useEffect(() => {
+		if (!scrollPositionRef?.current || !parentRef.current) return;
+		parentRef.current.scrollTop = scrollPositionRef.current;
+	}, [scrollPositionRef]);
+
+	// Persist scroll position as user scrolls
+	useEffect(() => {
+		const el = parentRef.current;
+		if (!el || !scrollPositionRef) return;
+		const onScroll = () => {
+			scrollPositionRef.current = el.scrollTop;
+		};
+		el.addEventListener("scroll", onScroll, { passive: true });
+		return () => el.removeEventListener("scroll", onScroll);
+	}, [scrollPositionRef]);
 
 	if (items.length === 0) return <>{emptyState ?? null}</>;
 

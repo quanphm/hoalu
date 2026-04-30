@@ -7,6 +7,7 @@ import { useFilteredTransactions } from "#app/components/transactions/use-transa
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
 import { useAtom } from "jotai";
+import { useRef } from "react";
 import * as z from "zod";
 
 const searchSchema = z.object({
@@ -28,6 +29,7 @@ function LayoutComponent() {
 
 	const filteredExpenses = useFilteredTransactions();
 	const [kindFilter, setKindFilter] = useAtom(transactionKindFilterAtom);
+	const listScrollRef = useRef(0);
 
 	return (
 		<Section>
@@ -62,7 +64,7 @@ function LayoutComponent() {
 						className="h-[calc(100vh-(--spacing(33)))] grid-cols-1 overflow-hidden md:gap-0"
 					>
 						<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-							<ExpenseList expenses={filteredExpenses} />
+							<ExpenseList expenses={filteredExpenses} scrollRef={listScrollRef} />
 						</SectionItem>
 					</SectionContent>
 				</>
