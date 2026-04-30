@@ -289,7 +289,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 			<CardContent className="h-full flex-1 overflow-hidden p-0">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-full w-full **:focus:outline-none"
+					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
 				>
 					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 0, top: 0 }}>
 						<defs>
@@ -315,9 +315,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						/>
 						<Tooltip
 							cursor={{
-								stroke: "var(--foreground)",
-								strokeWidth: 2,
-								strokeDasharray: "4 4",
+								strokeWidth: 1,
 							}}
 							content={({ active, payload }) => (
 								<TooltipContent
