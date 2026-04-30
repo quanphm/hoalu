@@ -49,9 +49,12 @@ export function CreateWalletDialogTrigger() {
 	const setDialog = useSetAtom(createWalletDialogAtom);
 
 	return (
-		<Button size="sm" variant="outline" onClick={() => setDialog({ state: true })}>
+		<Button size="sm" onClick={() => setDialog({ state: true })}>
 			Create wallet
-			<HotKey {...KEYBOARD_SHORTCUTS.create_wallet} />
+			<HotKey
+				{...KEYBOARD_SHORTCUTS.create_wallet}
+				className="text-background ml-0.5 bg-black/25 font-bold"
+			/>
 		</Button>
 	);
 }

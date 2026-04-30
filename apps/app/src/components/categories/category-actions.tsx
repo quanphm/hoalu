@@ -34,9 +34,12 @@ export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);
 
 	return (
-		<Button size="sm" variant="outline" onClick={() => setDialog({ state: true })}>
+		<Button size="sm" onClick={() => setDialog({ state: true })}>
 			Create category
-			<HotKey {...KEYBOARD_SHORTCUTS.create_category} />
+			<HotKey
+				{...KEYBOARD_SHORTCUTS.create_category}
+				className="text-background ml-0.5 bg-black/25 font-bold"
+			/>
 		</Button>
 	);
 }

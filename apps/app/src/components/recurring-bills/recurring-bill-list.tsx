@@ -29,7 +29,7 @@ import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useSetAtom } from "jotai";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, type MutableRefObject, type ReactNode } from "react";
 
 const GRID_TEMPLATE =
 	"grid grid-cols-[var(--category-size)_1fr_var(--date-size)_var(--status-size)_var(--amount-size)_var(--wallet-size)_var(--action-size)]";
@@ -60,7 +60,6 @@ function BillGroupHeader({
 	const total = useMemo(() => {
 		let sum = 0;
 		for (const bill of items) {
-			if (!bill.is_active) continue;
 			if (bill.currency === workspaceCurrency) {
 				sum += bill.amount;
 			} else if (bill.convertedAmount > 0) {
@@ -249,19 +248,51 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 	);
 }
 
-const emptyState = (
-	<Empty>
-		<EmptyHeader>
-			<EmptyTitle>No recurring bills</EmptyTitle>
-			<EmptyDescription>
-				Set up your first recurring bill to track subscriptions and regular payments.
-			</EmptyDescription>
-		</EmptyHeader>
-	</Empty>
-);
+export type RecurringBillStatusFilter = "all" | "active" | "archived";
 
-function RecurringBillList() {
-	const bills = useAllRecurringBills();
+const emptyStates: Record<RecurringBillStatusFilter, ReactNode> = {
+	all: (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No recurring bills</EmptyTitle>
+				<EmptyDescription>
+					Set up your first recurring bill to track subscriptions and regular payments.
+				</EmptyDescription>
+			</EmptyHeader>
+		</Empty>
+	),
+	active: (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No active recurring bills</EmptyTitle>
+				<EmptyDescription>
+					Set up your first recurring bill to track subscriptions and regular payments.
+				</EmptyDescription>
+			</EmptyHeader>
+		</Empty>
+	),
+	archived: (
+		<Empty>
+			<EmptyHeader>
+				<EmptyTitle>No archived recurring bills</EmptyTitle>
+				<EmptyDescription>Archived bills will appear here.</EmptyDescription>
+			</EmptyHeader>
+		</Empty>
+	),
+};
+
+function RecurringBillList({
+	statusFilter,
+	scrollRef,
+}: {
+	statusFilter: RecurringBillStatusFilter;
+	scrollRef?: MutableRefObject<number>;
+}) {
+	const allBills = useAllRecurringBills();
+	const bills = useMemo(() => {
+		if (statusFilter === "all") return allBills;
+		return allBills.filter((b) => (statusFilter === "active" ? b.is_active : !b.is_active));
+	}, [allBills, statusFilter]);
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
@@ -271,7 +302,11 @@ function RecurringBillList() {
 				navigate({ to: "/$slug/recurring-bills", params: { slug } });
 				return;
 			}
-			navigate({ to: "/$slug/recurring-bills/$billId", params: { slug, billId: id } });
+			navigate({
+				to: "/$slug/recurring-bills/$billId",
+				params: { slug, billId: id },
+				resetScroll: false,
+			});
 		},
 		[navigate, slug],
 	);
@@ -307,7 +342,8 @@ function RecurringBillList() {
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={true}
-			emptyState={emptyState}
+			scrollPositionRef={scrollRef}
+			emptyState={emptyStates[statusFilter]}
 		/>
 	);
 }

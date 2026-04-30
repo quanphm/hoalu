@@ -8,9 +8,13 @@ import {
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
 import { CreateRecurringBillDialogTrigger } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
-import RecurringBillList from "#app/components/recurring-bills/recurring-bill-list.tsx";
+import RecurringBillList, {
+	type RecurringBillStatusFilter,
+} from "#app/components/recurring-bills/recurring-bill-list.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
+import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
+import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 	component: LayoutComponent,
@@ -20,6 +24,8 @@ function LayoutComponent() {
 	const matches = useMatches();
 	const billMatch = matches.find((m) => m.routeId === "/_dashboard/$slug/recurring-bills/$billId");
 	const billId = billMatch ? (billMatch.params as Record<string, string>).billId : undefined;
+	const [statusFilter, setStatusFilter] = useState<RecurringBillStatusFilter>("active");
+	const listScrollRef = useRef(0);
 
 	return (
 		<>
@@ -39,14 +45,34 @@ function LayoutComponent() {
 					{billId ? (
 						<Outlet />
 					) : (
-						<SectionContent
-							columns={12}
-							className="h-[calc(100vh-49px)] grid-cols-1 overflow-hidden md:gap-0"
-						>
-							<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
-								<RecurringBillList />
-							</SectionItem>
-						</SectionContent>
+						<>
+							<div className="flex items-center justify-end border-b px-4 py-2">
+								<Tabs
+									value={statusFilter}
+									onValueChange={(v) => setStatusFilter(v as RecurringBillStatusFilter)}
+								>
+									<TabsList>
+										<TabsTab value="all" className="sm:h-6">
+											All
+										</TabsTab>
+										<TabsTab value="active" className="sm:h-6">
+											Active
+										</TabsTab>
+										<TabsTab value="archived" className="sm:h-6">
+											Archived
+										</TabsTab>
+									</TabsList>
+								</Tabs>
+							</div>
+							<SectionContent
+								columns={12}
+								className="h-[calc(100vh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
+							>
+								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
+									<RecurringBillList statusFilter={statusFilter} scrollRef={listScrollRef} />
+								</SectionItem>
+							</SectionContent>
+						</>
 					)}
 				</Section>
 			</PageContent>

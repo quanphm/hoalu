@@ -1,3 +1,4 @@
+import { useScrollRestoration } from "#app/hooks/use-scroll-restoration.ts";
 import { cn } from "@hoalu/ui/utils";
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
@@ -87,6 +88,9 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	// Set false when a detail panel owns those keys (e.g. Transactions URL routing).
 	enableKeyboardNav?: boolean;
 
+	// Scroll position persistence (survives unmount)
+	scrollPositionRef?: React.MutableRefObject<number>;
+
 	// Empty state
 	emptyState?: React.ReactNode;
 }
@@ -105,6 +109,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	selectedId,
 	onSelectItem,
 	enableKeyboardNav = false,
+	scrollPositionRef,
 	emptyState,
 }: GroupedVirtualTableProps<TRow, TGroupKey>) {
 	const parentRef = useRef<HTMLDivElement>(null);
@@ -184,6 +189,8 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	useHotkeys("j", () => navigate("down"), { enabled: enableKeyboardNav });
 	useHotkeys("k", () => navigate("up"), { enabled: enableKeyboardNav });
 	useHotkeys("esc", () => onSelectItem?.(null), { enabled: enableKeyboardNav });
+
+	useScrollRestoration(parentRef, scrollPositionRef);
 
 	if (items.length === 0) return <>{emptyState ?? null}</>;
 

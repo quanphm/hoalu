@@ -9,8 +9,9 @@ import {
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import { matchesSearch } from "#app/helpers/normalize-search.ts";
-import { toFromToDateObject } from "@hoalu/common/datetime";
+import { htmlToText } from "#app/helpers/dom-parser.ts";
+import { useFuzzyFilter } from "#app/hooks/use-fuzzy-search.ts";
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
@@ -22,6 +23,9 @@ export type SyncedTransaction =
 	| (SyncedIncome & { kind: "income" });
 
 const transactionRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
+
+const getTransactionTextFields = (tx: SyncedTransaction) => [tx.title, htmlToText(tx.description)];
+const getTransactionNumericValue = (tx: SyncedTransaction) => tx.realAmount;
 
 export function useFilteredTransactions(): SyncedTransaction[] {
 	const expenses = useLiveQueryExpenses();
@@ -47,28 +51,15 @@ export function useFilteredTransactions(): SyncedTransaction[] {
 		});
 	}, [expenses, incomes, kindFilter]);
 
-	const filtered = useMemo(
-		() =>
-			filterTransactions(merged, {
-				selectedCategoryIds,
-				selectedWalletIds,
-				selectedRepeat,
-				searchKeywords: deferredSearchKeywords,
-				range,
-				amountFilter,
-			}),
-		[
-			merged,
-			selectedCategoryIds,
-			selectedWalletIds,
-			selectedRepeat,
-			deferredSearchKeywords,
-			range,
-			amountFilter,
-		],
+	const structurallyFiltered = useMemo(
+		() => filterTransactions(merged, { selectedCategoryIds, selectedWalletIds, selectedRepeat, range, amountFilter }),
+		[merged, selectedCategoryIds, selectedWalletIds, selectedRepeat, range, amountFilter],
 	);
 
-	return filtered;
+	return useFuzzyFilter(structurallyFiltered, deferredSearchKeywords, {
+		getTextFields: getTransactionTextFields,
+		getNumericValue: getTransactionNumericValue,
+	});
 }
 
 function filterTransactions(
@@ -77,22 +68,14 @@ function filterTransactions(
 		selectedCategoryIds: string[];
 		selectedWalletIds: string[];
 		selectedRepeat: RepeatSchema[];
-		searchKeywords: string;
 		range: { from: Date; to: Date } | undefined;
 		amountFilter: AmountFilterState;
 	},
 ): SyncedTransaction[] {
-	const {
-		selectedCategoryIds,
-		selectedWalletIds,
-		selectedRepeat,
-		searchKeywords,
-		range,
-		amountFilter,
-	} = condition;
+	const { selectedCategoryIds, selectedWalletIds, selectedRepeat, range, amountFilter } = condition;
 
-	const fromDate = range ? range.from.toISOString().slice(0, 10) : undefined;
-	const toDate = range ? range.to.toISOString().slice(0, 10) : undefined;
+	const fromDate = range ? datetime.format(range.from, "yyyy-MM-dd") : undefined;
+	const toDate = range ? datetime.format(range.to, "yyyy-MM-dd") : undefined;
 
 	return data.filter((tx) => {
 		if (fromDate && toDate) {
@@ -113,12 +96,6 @@ function filterTransactions(
 			const amount = tx.realAmount;
 			if (amountFilter.min !== null && amount < amountFilter.min) return false;
 			if (amountFilter.max !== null && amount > amountFilter.max) return false;
-		}
-		if (searchKeywords) {
-			return matchesSearch(searchKeywords, {
-				textFields: [tx.title, tx.description],
-				numericFields: [tx.realAmount],
-			});
 		}
 		return true;
 	});

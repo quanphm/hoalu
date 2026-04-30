@@ -1,5 +1,5 @@
 import { Calendar } from "@hoalu/ui/calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
@@ -12,12 +12,20 @@ interface Props {
 export function DatepickerField(props: Props) {
 	const field = useFieldContext<string | undefined>();
 	const selected = field.state.value ? new Date(field.state.value) : new Date();
+	const [month, setMonth] = useState(selected);
+
+	useEffect(() => {
+		if (field.state.value) {
+			setMonth(new Date(field.state.value));
+		}
+	}, [field.state.value]);
 
 	const handleSelect = (date: Date | undefined) => {
 		if (!date) {
 			field.setValue(new Date().toISOString());
 		} else {
 			field.setValue(date.toISOString());
+			setMonth(date);
 		}
 	};
 
@@ -27,9 +35,11 @@ export function DatepickerField(props: Props) {
 			<div className="flex items-center justify-center rounded-md border">
 				<Calendar
 					mode="single"
+					captionLayout="dropdown"
 					className="min-h-[300px] [--cell-size:--spacing(10)]"
 					selected={selected}
-					month={selected}
+					month={month}
+					onMonthChange={setMonth}
 					onSelect={handleSelect}
 				/>
 			</div>
