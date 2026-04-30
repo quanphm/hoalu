@@ -34,7 +34,6 @@ import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 const chartConfig = {
 	balance: {
-		label: "Cash Flow",
 		color: "var(--primary)",
 	},
 } satisfies ChartConfig;
@@ -312,10 +311,14 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							stroke="var(--foreground)"
 							strokeWidth={1}
 							strokeDasharray="5 5"
-							opacity={0.3}
+							opacity={0.5}
 						/>
 						<Tooltip
-							cursor={{ stroke: "var(--primary)", strokeWidth: 0, strokeDasharray: "none" }}
+							cursor={{
+								stroke: "var(--foreground)",
+								strokeWidth: 2,
+								strokeDasharray: "4 4",
+							}}
 							content={({ active, payload }) => (
 								<TooltipContent
 									active={active}
@@ -333,7 +336,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fill="url(#gradient-rounded-chart-desktop)"
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
-							strokeWidth={1.5}
+							strokeWidth={2}
 							isAnimationActive={false}
 						/>
 					</AreaChart>
