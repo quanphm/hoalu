@@ -1,3 +1,4 @@
+import { useScrollRestoration } from "#app/hooks/use-scroll-restoration.ts";
 import { cn } from "@hoalu/ui/utils";
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
@@ -189,22 +190,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	useHotkeys("k", () => navigate("up"), { enabled: enableKeyboardNav });
 	useHotkeys("esc", () => onSelectItem?.(null), { enabled: enableKeyboardNav });
 
-	// Restore scroll position on mount
-	useEffect(() => {
-		if (!scrollPositionRef?.current || !parentRef.current) return;
-		parentRef.current.scrollTop = scrollPositionRef.current;
-	}, [scrollPositionRef]);
-
-	// Persist scroll position as user scrolls
-	useEffect(() => {
-		const el = parentRef.current;
-		if (!el || !scrollPositionRef) return;
-		const onScroll = () => {
-			scrollPositionRef.current = el.scrollTop;
-		};
-		el.addEventListener("scroll", onScroll, { passive: true });
-		return () => el.removeEventListener("scroll", onScroll);
-	}, [scrollPositionRef]);
+	useScrollRestoration(parentRef, scrollPositionRef);
 
 	if (items.length === 0) return <>{emptyState ?? null}</>;
 
