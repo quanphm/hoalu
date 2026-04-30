@@ -11,7 +11,6 @@ import {
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
 import { extensions } from "#app/components/tiptap.tsx";
 import { formatCurrency } from "#app/helpers/currency.ts";
-import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
 import { categoriesQueryOptions } from "#app/services/query-options.ts";
@@ -33,6 +32,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
+
+import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 
 // function ConfidenceBadge({ confidence }: { confidence: number }) {
 // 	const color = confidence >= 0.8 ? "green" : confidence >= 0.5 ? "yellow" : "red";
@@ -246,10 +247,10 @@ export function ScanQueueReviewDialogContent() {
 				<DialogHeaderAction>
 					{completedJobs.length > 1 && (
 						<>
-							<Button variant="outline" size="icon" onClick={handlePrev} disabled={!hasPrev}>
+							<Button variant="outline" size="icon-sm" onClick={handlePrev} disabled={!hasPrev}>
 								<ChevronLeftIcon />
 							</Button>
-							<Button variant="outline" size="icon" onClick={handleNext} disabled={!hasNext}>
+							<Button variant="outline" size="icon-sm" onClick={handleNext} disabled={!hasNext}>
 								<ChevronRightIcon />
 							</Button>
 						</>

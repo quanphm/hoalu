@@ -6,7 +6,13 @@ import {
 import { HotKey } from "#app/components/hotkey.tsx";
 import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 import { type SyncedAllRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
-import { ArchiveIcon, ArchiveRestoreIcon, ChevronDownIcon, ChevronUpIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import {
+	ArchiveIcon,
+	ArchiveRestoreIcon,
+	ChevronDownIcon,
+	ChevronUpIcon,
+	Trash2Icon,
+} from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -43,10 +49,10 @@ export function RecurringBillDetailPanel({
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
+								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon className="size-4" />
+							<ChevronDownIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Down <HotKey className="ml-2" label="J" />
@@ -55,10 +61,10 @@ export function RecurringBillDetailPanel({
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
+								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon className="size-4" />
+							<ChevronUpIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Up <HotKey className="ml-2" label="K" />
@@ -71,14 +77,14 @@ export function RecurringBillDetailPanel({
 							<TooltipTrigger
 								render={
 									<Button
-										size="icon"
+										size="icon-sm"
 										variant="outline"
 										aria-label="Archive bill"
 										onClick={() => setArchiveDialog({ state: true, data: { id: bill.id } })}
 									/>
 								}
 							>
-								<ArchiveIcon className="size-4" />
+								<ArchiveIcon />
 							</TooltipTrigger>
 							<TooltipContent side="bottom">Archive</TooltipContent>
 						</Tooltip>
@@ -88,14 +94,14 @@ export function RecurringBillDetailPanel({
 								<TooltipTrigger
 									render={
 										<Button
-											size="icon"
+											size="icon-sm"
 											variant="outline"
 											aria-label="Restore bill"
 											onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
 										/>
 									}
 								>
-									<ArchiveRestoreIcon className="size-4" />
+									<ArchiveRestoreIcon />
 								</TooltipTrigger>
 								<TooltipContent side="bottom">Restore</TooltipContent>
 							</Tooltip>
@@ -103,7 +109,7 @@ export function RecurringBillDetailPanel({
 								<TooltipTrigger
 									render={
 										<Button
-											size="icon"
+											size="icon-sm"
 											variant="outline"
 											aria-label="Delete bill"
 											onClick={() =>
@@ -112,15 +118,15 @@ export function RecurringBillDetailPanel({
 										/>
 									}
 								>
-									<Trash2Icon className="size-4" />
+									<Trash2Icon />
 								</TooltipTrigger>
 								<TooltipContent side="bottom">Delete</TooltipContent>
 							</Tooltip>
 						</>
 					)}
 					<Tooltip>
-						<TooltipTrigger render={<Button size="icon" variant="outline" onClick={onClose} />}>
-							<XIcon className="size-4" />
+						<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
+							<XIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Close</TooltipContent>
 					</Tooltip>

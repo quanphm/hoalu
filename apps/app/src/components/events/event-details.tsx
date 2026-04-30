@@ -67,18 +67,20 @@ export function EventDetailPanel({
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
+								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon className="size-4" />
+							<ChevronDownIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Down (J)</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger
-							render={<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />}
+							render={
+								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
+							}
 						>
-							<ChevronUpIcon className="size-4" />
+							<ChevronUpIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Up (K)</TooltipContent>
 					</Tooltip>
@@ -88,14 +90,14 @@ export function EventDetailPanel({
 						<TooltipTrigger
 							render={
 								<Button
-									size="icon"
+									size="icon-sm"
 									variant="outline"
 									aria-label="Edit event"
 									onClick={() => setEditDialog({ state: true, data: { id: event.id } })}
 								/>
 							}
 						>
-							<PencilIcon className="size-4" />
+							<PencilIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Edit</TooltipContent>
 					</Tooltip>
@@ -103,20 +105,20 @@ export function EventDetailPanel({
 						<TooltipTrigger
 							render={
 								<Button
-									size="icon"
+									size="icon-sm"
 									variant="outline"
 									aria-label="Delete event"
 									onClick={() => setDeleteDialog({ state: true, data: { id: event.id } })}
 								/>
 							}
 						>
-							<Trash2Icon className="size-4" />
+							<Trash2Icon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Delete</TooltipContent>
 					</Tooltip>
 					<Tooltip>
-						<TooltipTrigger render={<Button size="icon" variant="outline" onClick={onClose} />}>
-							<XIcon className="size-4" />
+						<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
+							<XIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Close</TooltipContent>
 					</Tooltip>
@@ -127,7 +129,15 @@ export function EventDetailPanel({
 				<div className="flex min-w-0 flex-col gap-1">
 					<div className="flex items-center gap-2">
 						<h2 className="truncate text-lg font-semibold">{event.title}</h2>
-						<Badge variant={event.status === "open" ? "success" : "error"}>{event.status}</Badge>
+						{event.status === "open" ? (
+							<Badge variant="outline" className="text-success border-success/30 bg-success/10">
+								Open
+							</Badge>
+						) : (
+							<Badge variant="outline" className="text-muted-foreground">
+								Closed
+							</Badge>
+						)}
 					</div>
 					<EventDateRange startDate={event.start_date} endDate={event.end_date} />
 				</div>

@@ -37,7 +37,7 @@ function LayoutComponent() {
 				<Outlet />
 			) : (
 				<>
-					<div className="flex flex-col items-center justify-between border-b px-4 py-2 md:flex-row">
+					<div className="flex flex-col items-center justify-between border-t border-b px-4 py-2 md:flex-row">
 						<div className="flex flex-wrap items-center gap-2">
 							<ExpenseSearch />
 							<ExpenseFilterDropdown />
@@ -59,9 +59,10 @@ function LayoutComponent() {
 							</TabsList>
 						</Tabs>
 					</div>
+
 					<SectionContent
 						columns={12}
-						className="h-[calc(100vh-(--spacing(33)))] grid-cols-1 overflow-hidden md:gap-0"
+						className="h-[calc(100vh-(--spacing(33)+1px))] grid-cols-1 overflow-hidden md:gap-0"
 					>
 						<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 							<ExpenseList expenses={filteredExpenses} scrollRef={listScrollRef} />

@@ -1,27 +1,66 @@
 :root {
 	--radius: 0.5rem;
-	--spacing: 0.25rem;
 	--tracking-normal: 0em;
 
-	--shadow-x: 0;
-	--shadow-y: 1px;
-	--shadow-blur: 3px;
-	--shadow-spread: 0px;
-	--shadow-opacity: 0.1;
-	--shadow-color: oklch(0 0 0);
+	/* Flexoki accent colors */
+	--flexoki-red-50: #ffe1d5;
+	--flexoki-red-100: #ffcabb;
+	--flexoki-red-200: #f89a8a;
+	--flexoki-red-400: #d14d41;
+	--flexoki-red-600: #af3029;
+	--flexoki-red-900: #3e1715;
 
-	--shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-	--shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-	--shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-	--shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-	--shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-	--shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-	--shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+	--flexoki-orange-50: #ffe7ce;
+	--flexoki-orange-100: #fed3af;
+	--flexoki-orange-200: #f9ae77;
+	--flexoki-orange-400: #da702c;
+	--flexoki-orange-600: #bc5215;
+	--flexoki-orange-900: #40200d;
+
+	--flexoki-yellow-50: #faeec6;
+	--flexoki-yellow-100: #f6e2a0;
+	--flexoki-yellow-200: #eccb60;
+	--flexoki-yellow-400: #d0a215;
+	--flexoki-yellow-600: #ad8301;
+	--flexoki-yellow-900: #3a2d04;
+
+	--flexoki-green-50: #edeecf;
+	--flexoki-green-100: #dde2b2;
+	--flexoki-green-200: #bec97e;
+	--flexoki-green-400: #879a39;
+	--flexoki-green-600: #66800b;
+	--flexoki-green-900: #252d09;
+
+	--flexoki-cyan-50: #ddf1e4;
+	--flexoki-cyan-100: #bfe8d9;
+	--flexoki-cyan-200: #87d3c3;
+	--flexoki-cyan-400: #3aa99f;
+	--flexoki-cyan-600: #24837b;
+	--flexoki-cyan-900: #122f2c;
+
+	--flexoki-blue-50: #e1eceb;
+	--flexoki-blue-100: #c6dde8;
+	--flexoki-blue-200: #92bfdb;
+	--flexoki-blue-400: #4385be;
+	--flexoki-blue-600: #205ea6;
+	--flexoki-blue-900: #12253b;
+
+	--flexoki-purple-50: #f0eaec;
+	--flexoki-purple-100: #e2d9e9;
+	--flexoki-purple-200: #c4b9e0;
+	--flexoki-purple-400: #8b7ec8;
+	--flexoki-purple-600: #5e409d;
+	--flexoki-purple-900: #261c39;
+
+	--flexoki-magenta-50: #fee4e5;
+	--flexoki-magenta-100: #fccfda;
+	--flexoki-magenta-200: #f4a4c2;
+	--flexoki-magenta-400: #ce5d97;
+	--flexoki-magenta-600: #a02f6f;
+	--flexoki-magenta-900: #39172b;
 }
 
-:root,
-.light {
+.flexoki {
 	--background: #fffcf0;
 	--foreground: #100f0f;
 
@@ -72,7 +111,8 @@
 	--sidebar-ring: #24837b;
 }
 
-.dark {
+.flexoki.dark,
+.dark .flexoki {
 	--background: #100f0f;
 	--foreground: #cecdc3;
 

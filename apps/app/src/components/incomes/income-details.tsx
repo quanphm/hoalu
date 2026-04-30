@@ -119,11 +119,11 @@ export function MobileIncomeDetails({ incomes }: IncomeDetailsProps) {
 				<DialogHeader>
 					<DialogTitle>Income Details</DialogTitle>
 					<DialogHeaderAction>
-						<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
-							<ChevronUpIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
+							<ChevronUpIcon />
 						</Button>
-						<Button size="icon" variant="outline" onClick={handleGoDown} disabled={!canGoDown}>
-							<ChevronDownIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={handleGoDown} disabled={!canGoDown}>
+							<ChevronDownIcon />
 						</Button>
 					</DialogHeaderAction>
 				</DialogHeader>

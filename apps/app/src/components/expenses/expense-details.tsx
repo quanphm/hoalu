@@ -21,7 +21,6 @@ import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogFooter,
 	DialogHeader,
 	DialogHeaderAction,
 	DialogTitle,
@@ -163,7 +162,7 @@ function AttachmentStrip({
 						<DialogHeaderAction>
 							{current && (
 								<Button
-									size="icon"
+									size="icon-sm"
 									variant="outline"
 									onClick={() => {
 										if (confirm("Delete this attachment?")) {
@@ -183,14 +182,14 @@ function AttachmentStrip({
 							{total > 1 && (
 								<>
 									<Button
-										size="icon"
+										size="icon-sm"
 										variant="outline"
 										onClick={() => goTo((previewIndex ?? 0) - 1)}
 									>
 										<ChevronLeftIcon className="size-5" />
 									</Button>
 									<Button
-										size="icon"
+										size="icon-sm"
 										variant="outline"
 										onClick={() => goTo((previewIndex ?? 0) + 1)}
 									>
@@ -246,52 +245,39 @@ export function ExpenseDetails({
 	}
 
 	return (
-		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border border-b-0 p-0">
+		<div className="flex h-full flex-col gap-x-6 gap-y-4 overflow-auto rounded-none border-y p-0">
 			<div
 				data-slot="expense-details-actions"
-				className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2"
+				className="bg-card z-10 flex justify-between border-b px-4 py-2"
 			>
 				<div className="flex items-center justify-center gap-2">
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button
-									size="icon"
-									variant="outline"
-									onClick={onGoDown}
-									disabled={!canGoDown}
-								/>
+								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon className="size-4" />
+							<ChevronDownIcon />
 						</TooltipTrigger>
-						<TooltipContent side="bottom">
-							Down <HotKey className="ml-2" label="J" />
-						</TooltipContent>
+						<TooltipContent side="bottom">Down (J)</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger
 							render={
-								<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
+								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon className="size-4" />
+							<ChevronUpIcon />
 						</TooltipTrigger>
-						<TooltipContent side="bottom">
-							Up <HotKey className="ml-2" label="K" />
-						</TooltipContent>
+						<TooltipContent side="bottom">Up (K)</TooltipContent>
 					</Tooltip>
 				</div>
 				<div className="flex items-center justify-center gap-2">
 					<DuplicateExpense data={currentExpense} />
 					<DeleteExpense id={currentExpense.id} />
 					<Tooltip>
-						<TooltipTrigger
-							render={
-								<Button size="icon" variant="outline" onClick={onClose} />
-							}
-						>
-							<XIcon className="size-4" />
+						<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
+							<XIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Close</TooltipContent>
 					</Tooltip>
@@ -330,11 +316,11 @@ export function MobileExpenseDetails({
 				<DialogHeader>
 					<DialogTitle>Expense Details</DialogTitle>
 					<DialogHeaderAction>
-						<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
-							<ChevronUpIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
+							<ChevronUpIcon />
 						</Button>
-						<Button size="icon" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
-							<ChevronDownIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
+							<ChevronDownIcon />
 						</Button>
 						{currentExpense && (
 							<>
