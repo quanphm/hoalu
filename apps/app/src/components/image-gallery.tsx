@@ -57,6 +57,7 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 					// oxlint-disable-next-line jsx_a11y/no-static-element-interactions
 					<div
 						key={image.id ?? image.name}
+						// oxlint-disable-next-line
 						tabIndex={0}
 						className="group bg-muted/50 hover:border-primary/50 relative aspect-square cursor-pointer overflow-hidden rounded-md border transition-all hover:shadow-md"
 						onClick={() => setSelectedIndex(index)}
@@ -81,10 +82,18 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 					<DialogHeader>
 						<DialogTitle>Preview</DialogTitle>
 						<DialogHeaderAction>
-							<Button size="icon" variant="outline" onClick={() => goTo((selectedIndex ?? 0) - 1)}>
+							<Button
+								size="icon-sm"
+								variant="outline"
+								onClick={() => goTo((selectedIndex ?? 0) - 1)}
+							>
 								<ChevronLeftIcon className="size-5" />
 							</Button>
-							<Button size="icon" variant="outline" onClick={() => goTo((selectedIndex ?? 0) + 1)}>
+							<Button
+								size="icon-sm"
+								variant="outline"
+								onClick={() => goTo((selectedIndex ?? 0) + 1)}
+							>
 								<ChevronRightIcon className="size-5" />
 							</Button>
 						</DialogHeaderAction>

@@ -1,5 +1,9 @@
 import { HotKey } from "#app/components/hotkey.tsx";
-import { DeleteIncome, DuplicateIncome, EditIncomeForm } from "#app/components/incomes/income-actions.tsx";
+import {
+	DeleteIncome,
+	DuplicateIncome,
+	EditIncomeForm,
+} from "#app/components/incomes/income-actions.tsx";
 import { type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
@@ -52,9 +56,7 @@ export function IncomeDetailsPanel({
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger
-							render={
-								<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
-							}
+							render={<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp} />}
 						>
 							<ChevronUpIcon className="size-4" />
 						</TooltipTrigger>
@@ -95,11 +97,11 @@ export function MobileIncomeDetailsPanel({
 				<DialogHeader>
 					<DialogTitle>Income Details</DialogTitle>
 					<DialogHeaderAction>
-						<Button size="icon" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
-							<ChevronUpIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
+							<ChevronUpIcon />
 						</Button>
-						<Button size="icon" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
-							<ChevronDownIcon className="size-4" />
+						<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
+							<ChevronDownIcon />
 						</Button>
 					</DialogHeaderAction>
 				</DialogHeader>

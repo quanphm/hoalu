@@ -270,13 +270,13 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						</div>
 						{displayNet !== null && hoveredNetChange ? (
 							<PercentageChangeDisplay change={hoveredNetChange} />
-						) : hasComparison ? (
+						) : (
 							<PercentageChangeDisplay
 								change={netChange}
 								comparisonText={comparisonText || undefined}
 								onComparisonClick={handleComparisonClick}
 							/>
-						) : null}
+						)}
 					</div>
 				</CardDescription>
 			</CardHeader>
@@ -296,7 +296,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 								/>
 							</linearGradient>
 						</defs>
-						<rect x="0" y="0" width="100%" height="120%" fill="url(#default-pattern-dots)" />
+						<rect x="0" y="0" width="100%" height="120%" fill="url(#pattern-dots)" />
 						<defs>
 							<DottedBackgroundPattern />
 						</defs>
@@ -328,7 +328,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							fillOpacity={0.4}
 							stroke="var(--foreground)"
 							strokeWidth={2}
-							opacity={0.64}
+							opacity={0.72}
 							isAnimationActive={false}
 						/>
 					</AreaChart>
@@ -407,15 +407,14 @@ function TooltipContent({
 
 function DottedBackgroundPattern() {
 	return (
-		<pattern
-			id="default-pattern-dots"
-			x="0"
-			y="0"
-			width="10"
-			height="10"
-			patternUnits="userSpaceOnUse"
-		>
-			<circle className="dark:text-muted/40 text-muted" cx="2" cy="2" r="1" fill="currentColor" />
+		<pattern id="pattern-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+			<circle
+				className="dark:text-muted/24 text-muted/80"
+				cx="2"
+				cy="2"
+				r="1"
+				fill="currentColor"
+			/>
 		</pattern>
 	);
 }

@@ -436,14 +436,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								</span>
 							)}
 						</div>
-						{stats.hasComparison && (
-							<PercentageChangeDisplay
-								change={stats.amount.change}
-								comparisonText={stats.comparisonText || undefined}
-								onComparisonClick={handleComparisonClick}
-								invertColor={!isIncomeTab}
-							/>
-						)}
+						<PercentageChangeDisplay
+							change={stats.amount.change}
+							comparisonText={stats.comparisonText || undefined}
+							onComparisonClick={handleComparisonClick}
+							invertColor={!isIncomeTab}
+						/>
 					</div>
 				</CardDescription>
 				<CardAction>

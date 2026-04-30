@@ -114,10 +114,10 @@ export function MoodGlow({
 				"motion-safe:animate-pulse",
 				className,
 				trend === "increase"
-					? "bg-success/30 motion-safe:animation-duration-[4s]"
+					? "bg-success/50 motion-safe:animation-duration-[4s]"
 					: trend === "decrease"
-						? "bg-destructive/30 motion-safe:animation-duration-[3s]"
-						: "bg-muted/30",
+						? "bg-destructive/50 motion-safe:animation-duration-[3s]"
+						: "bg-muted/50",
 			)}
 		/>
 	);
@@ -181,14 +181,14 @@ export function BoxAnimations({ status }: { status: "increase" | "decrease" | "n
 	if (status === "increase") {
 		return (
 			<>
-				<ShineBorder duration={24} shineColor={["#7bf1a8", "#032e15"]} />
+				<ShineBorder duration={24} shineColor={["#bec97e", "#66800b"]} />
 				<MoodGlow trend="increase" />
 			</>
 		);
 	}
 	return (
 		<>
-			<ShineBorder duration={24} shineColor={["#ffa2a2", "#460809"]} />
+			<ShineBorder duration={24} shineColor={["#f89a8a", "#af3029"]} />
 			<MoodGlow trend="decrease" />
 		</>
 	);

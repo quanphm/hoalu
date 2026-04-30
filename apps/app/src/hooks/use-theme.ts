@@ -8,8 +8,8 @@ const STORAGE_KEY = "theme";
 const DEFAULT_MODE: ThemeMode = "system";
 
 const THEME_COLORS: Record<ResolvedTheme, string> = {
-	light: "#f9f7f3",
-	dark: "#242a3a",
+	light: "#fffcf0",
+	dark: "#100f0f",
 	creamy: "#f8f4eb",
 };
 

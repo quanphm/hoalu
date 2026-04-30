@@ -139,7 +139,7 @@ function DialogHeaderAction({
 		>
 			{children}
 			{showCloseButton && (
-				<DialogClose render={<Button size="icon" variant="outline" />}>
+				<DialogClose render={<Button size="icon-sm" variant="outline" />}>
 					<XIcon />
 					<span className="sr-only">Close</span>
 				</DialogClose>

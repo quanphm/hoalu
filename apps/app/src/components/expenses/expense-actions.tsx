@@ -344,14 +344,14 @@ export function DeleteExpense({ id }: { id: string }) {
 			<TooltipTrigger
 				render={
 					<Button
-						size="icon"
+						size="icon-sm"
 						variant="outline"
 						aria-label="Delete this expense"
 						onClick={() => setDialog({ state: true, data: { id } })}
 					/>
 				}
 			>
-				<Trash2Icon className="size-4" />
+				<Trash2Icon />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Delete</TooltipContent>
 		</Tooltip>
@@ -404,14 +404,14 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 			<TooltipTrigger
 				render={
 					<Button
-						size="icon"
+						size="icon-sm"
 						variant="outline"
 						aria-label="Duplicate this expense"
 						onClick={onDuplicate}
 					/>
 				}
 			>
-				<CopyPlusIcon className="size-4" />
+				<CopyPlusIcon />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>
 		</Tooltip>
