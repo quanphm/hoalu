@@ -2,6 +2,7 @@ import { type AuthContext, BetterAuthError } from "better-auth";
 import * as z from "zod";
 
 import { getDate } from "../../utils/date";
+
 import type { User } from "../../utils/types";
 import type { WorkspaceOptions } from "./index";
 import type {
@@ -12,6 +13,7 @@ import type {
 	Workspace,
 	WorkspaceInput,
 } from "./schema";
+import type { WithUndefined } from "@hoalu/typekit";
 
 export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => {
 	const adapter = context.adapter;
@@ -291,7 +293,7 @@ export const getAdapter = (context: AuthContext, options?: WorkspaceOptions) => 
 			});
 			return userId;
 		},
-		async updateWorkspace(workspaceId: string, data: Partial<Workspace>) {
+		async updateWorkspace(workspaceId: string, data: WithUndefined<Partial<Workspace>>) {
 			const workspace = await adapter.update<Workspace>({
 				model: "workspace",
 				where: [

@@ -2,7 +2,8 @@
 	"extends": "@hoalu/tsconfig/bun.json",
 	"compilerOptions": {
 		"rootDir": "./src",
-		"jsxImportSource": "react"
+		"jsxImportSource": "react",
+		"exactOptionalPropertyTypes": true
 	},
 	"include": ["src"]
 }

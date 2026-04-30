@@ -4,7 +4,7 @@ import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { RepeatSchema } from "@hoalu/common/schema";
-import { ArchiveIcon, MoreVerticalIcon, PlusIcon } from "@hoalu/icons/lucide";
+import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -240,12 +240,8 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 						<MoreVerticalIcon />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={handleLogPayment}>
-							<PlusIcon className="mr-2" />
-							Log payment
-						</DropdownMenuItem>
+						<DropdownMenuItem onClick={handleLogPayment}>Log payment</DropdownMenuItem>
 						<DropdownMenuItem onClick={handleDelete} disabled={archive.isPending}>
-							<ArchiveIcon className="mr-2" />
 							Archive
 						</DropdownMenuItem>
 					</DropdownMenuContent>

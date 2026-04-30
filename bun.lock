@@ -122,6 +122,7 @@
       },
       "devDependencies": {
         "@hoalu/tsconfig": "workspace:*",
+        "@hoalu/typekit": "workspace:*",
       },
     },
     "packages/common": {
@@ -208,6 +209,10 @@
     },
     "packages/tsconfig": {
       "name": "@hoalu/tsconfig",
+    },
+    "packages/typekit": {
+      "name": "@hoalu/typekit",
+      "version": "0.28.9",
     },
     "packages/ui": {
       "name": "@hoalu/ui",
@@ -565,6 +570,8 @@
     "@hoalu/themes": ["@hoalu/themes@workspace:packages/themes"],
 
     "@hoalu/tsconfig": ["@hoalu/tsconfig@workspace:packages/tsconfig"],
+
+    "@hoalu/typekit": ["@hoalu/typekit@workspace:packages/typekit"],
 
     "@hoalu/ui": ["@hoalu/ui@workspace:packages/ui"],
 

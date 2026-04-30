@@ -17,6 +17,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@hoalu/tsconfig": "workspace:*"
+		"@hoalu/tsconfig": "workspace:*",
+		"@hoalu/typekit": "workspace:*"
 	}
 }

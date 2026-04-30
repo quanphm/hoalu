@@ -6,7 +6,10 @@ const schemaColumns = getTableColumns(schema.category);
 type NewCategory = typeof schema.category.$inferInsert;
 
 export class CategoryRepository {
-	async findAllByWorkspaceId(param: { workspaceId: string; type?: "expense" | "income" }) {
+	async findAllByWorkspaceId(param: {
+		workspaceId: string;
+		type?: "expense" | "income" | undefined;
+	}) {
 		const whereClause = param.type
 			? and(
 					eq(schema.category.workspaceId, param.workspaceId),

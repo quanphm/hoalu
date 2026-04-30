@@ -395,7 +395,7 @@ export function ArchiveRecurringBillDialogContent() {
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
-				<DialogTitle>Remove recurring bill?</DialogTitle>
+				<DialogTitle>Archive this recurring bill?</DialogTitle>
 				<DialogHeaderAction />
 			</DialogHeader>
 			<WarningMessage>
@@ -428,10 +428,12 @@ export function UnarchiveRecurringBillDialogContent() {
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
-				<DialogTitle>Restore recurring bill?</DialogTitle>
+				<DialogTitle>Restore this recurring bill?</DialogTitle>
 				<DialogHeaderAction />
 			</DialogHeader>
-			This bill will be restored and will appear in your active bills and upcoming payments.
+			<p className="text-sm">
+				This bill will be restored and will appear in your active bills and upcoming payments.
+			</p>
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
 				<Button onClick={onUnarchive} disabled={mutation.isPending}>
