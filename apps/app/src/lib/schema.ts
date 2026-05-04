@@ -38,7 +38,7 @@ export const ExpenseFormSchema = z.object({
 		value: z.number(),
 		currency: z.string(),
 	}),
-	date: z.iso.datetime(),
+	date: z.iso.datetime({ offset: true }),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
@@ -69,7 +69,7 @@ export const IncomeFormSchema = z.object({
 		value: z.number().positive(),
 		currency: z.string(),
 	}),
-	date: z.iso.datetime(),
+	date: z.iso.datetime({ offset: true }),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7().optional(),
 });

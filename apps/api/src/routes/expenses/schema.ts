@@ -57,7 +57,7 @@ export const InsertExpenseSchema = z.object({
 	amount: z.number(),
 	currency: CurrencySchema,
 	repeat: RepeatSchema.default("one-time"),
-	date: z.optional(z.iso.datetime()),
+	date: z.optional(z.iso.datetime({ offset: true })),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7(),
 	recurringBillId: z.uuidv7().optional(),
@@ -71,7 +71,7 @@ export const UpdateExpenseSchema = z
 		amount: z.number(),
 		currency: CurrencySchema,
 		repeat: RepeatSchema,
-		date: z.iso.datetime(),
+		date: z.iso.datetime({ offset: true }),
 		walletId: z.uuidv7(),
 		categoryId: z.uuidv7(),
 		// Allow explicitly unlinking (set to null) or linking to a bill

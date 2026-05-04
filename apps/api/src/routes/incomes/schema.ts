@@ -76,7 +76,7 @@ export const DeleteIncomeSchema = z.object({
 export const InsertIncomeSchema = z.object({
 	title: z.string().min(1),
 	description: z.string().optional(),
-	date: z.optional(z.iso.datetime()),
+	date: z.optional(z.iso.datetime({ offset: true })),
 	currency: CurrencySchema,
 	repeat: RepeatSchema.default("one-time"),
 	amount: z.coerce.number(),
@@ -88,7 +88,7 @@ export const UpdateIncomeSchema = z
 	.object({
 		title: z.string().min(1),
 		description: z.string(),
-		date: z.optional(z.iso.datetime()),
+		date: z.optional(z.iso.datetime({ offset: true })),
 		currency: CurrencySchema,
 		repeat: RepeatSchema.default("one-time"),
 		amount: z.number(),

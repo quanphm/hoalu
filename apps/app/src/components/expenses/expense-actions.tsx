@@ -32,7 +32,7 @@ import {
 	useEditExpense,
 	useUploadExpenseFiles,
 } from "#app/services/mutations.ts";
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import { datetime, extractDateFromISO, toFromToDateObject, toLocalISOString } from "@hoalu/common/datetime";
 import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
 import { CalendarIcon, CashBanknoteMoveIcon } from "@hoalu/icons/tabler";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
@@ -180,7 +180,7 @@ function CreateExpenseForm() {
 		defaultValues: {
 			title: draft.title,
 			description: draft.description,
-			date: draft.date || new Date().toISOString(),
+			date: draft.date || toLocalISOString(datetime.format(new Date(), "yyyy-MM-dd")),
 			transaction: {
 				value: draft.transaction.value,
 				currency: draft.transaction.currency || defaultWallet.currency,
@@ -465,7 +465,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 		defaultValues: {
 			title: props.data.title ?? "",
 			description: props.data.description ?? "",
-			date: new Date(props.data.date).toISOString() ?? "",
+			date: toLocalISOString(datetime.format(new Date(props.data.date), "yyyy-MM-dd")),
 			transaction: {
 				value: props.data.amount ?? 0,
 				currency: props.data.currency ?? workspace.metadata.currency,

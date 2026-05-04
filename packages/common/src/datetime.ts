@@ -31,6 +31,44 @@ export const datetime = {
 };
 
 /**
+ * Convert a YYYY-MM-DD date string to an ISO 8601 datetime string
+ * with the local timezone offset preserved.
+ *
+ * Unlike `new Date(dateStr).toISOString()` which converts to UTC and can
+ * shift the date by a day for users in positive UTC offsets, this preserves
+ * the intended date in the ISO string.
+ *
+ * Use on the FRONTEND when creating dates for the API.
+ *
+ * @example
+ * toLocalISOString("2026-05-01")  // UTC+7 → "2026-05-01T00:00:00.000+07:00"
+ *                                // UTC-5 → "2026-05-01T00:00:00.000-05:00"
+ */
+export function toLocalISOString(dateStr: string): string {
+	const offset = -new Date().getTimezoneOffset();
+	const hours = Math.floor(Math.abs(offset) / 60);
+	const minutes = Math.abs(offset) % 60;
+	const sign = offset >= 0 ? "+" : "-";
+	const tz = `${sign}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+	return `${dateStr}T00:00:00.000${tz}`;
+}
+
+/**
+ * Extract the YYYY-MM-DD date from an ISO 8601 string by reading the
+ * date portion directly — NOT through `new Date()` which would convert
+ * using the server's timezone.
+ *
+ * When the frontend sends a timezone-aware ISO string like
+ * `"2026-05-01T00:00:00.000+07:00"`, the date portion preserves the
+ * user's intended date. This extracts it without timezone interference.
+ *
+ * Use on the BACKEND when you need the date the user intended.
+ */
+export function extractDateFromISO(isoString: string): string {
+	return isoString.slice(0, 10);
+}
+
+/**
  *
  * Convert `1753030800000-1753376400000` to `{ from, to }` object
  */

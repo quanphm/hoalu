@@ -2,7 +2,7 @@ import { createExpenseDialogAtom, draftExpenseAtom, logPaymentAtom } from "#app/
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, toLocalISOString } from "@hoalu/common/datetime";
 import { RepeatSchema } from "@hoalu/common/schema";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
@@ -180,7 +180,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 		setDraft({
 			title: bill.title,
 			description: "",
-			date: new Date(`${bill.date}T00:00:00`).toISOString(),
+			date: toLocalISOString(bill.date),
 			transaction: {
 				value: bill.amount,
 				currency: bill.currency,
