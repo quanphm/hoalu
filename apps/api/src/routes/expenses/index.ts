@@ -18,6 +18,7 @@ import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
+import { datetime, extractDateFromISO } from "@hoalu/common/datetime";
 import { generateId } from "@hoalu/common/generate-id";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { monetary } from "@hoalu/common/monetary";
@@ -136,7 +137,7 @@ const route = app
 			const { amount, currency, date, recurringBillId, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 			const expenseDate = date || new Date().toISOString();
-			const newAnchorDate = expenseDate.slice(0, 10); // "yyyy-MM-dd"
+			const newAnchorDate = extractDateFromISO(expenseDate);
 
 			const { expense, txid } = await db.transaction(async (tx) => {
 				let bill: typeof schema.recurringBill.$inferSelect | null = null;
@@ -190,21 +191,25 @@ const route = app
 				if (recurringBillId && bill) {
 					// Calculate the correct due date based on bill's schedule
 					// Parse expense date as local date to avoid UTC offset issues
-					const expenseDateLocal = expenseDate.slice(0, 10); // "YYYY-MM-DD"
+					const expenseDateLocal = extractDateFromISO(expenseDate);
 					const [year, month, day] = expenseDateLocal.split("-").map(Number);
 					let dueDateStr: string;
 
 					if (bill.repeat === "monthly" && bill.dueDay) {
 						// For monthly bills, use the due_day from the expense's month
-						dueDateStr = `${year}-${String(month).padStart(2, "0")}-${String(bill.dueDay).padStart(2, "0")}`;
+						// Handle month-end overflow (e.g. dueDay=31 in April → clamp to 30)
+						const occ = new Date(year, month - 1, bill.dueDay);
+						if (occ.getMonth() !== month - 1) occ.setDate(0);
+						dueDateStr = datetime.format(occ, "yyyy-MM-dd");
 					} else if (bill.repeat === "weekly" && bill.dueDay !== null) {
-						// For weekly bills, find the nearest occurrence of the due day
+						// For weekly bills, find the most recent occurrence of the due day
+						// relative to the expense date (backward, not forward)
 						const expenseDateObj = new Date(year, month - 1, day);
 						const expenseDayOfWeek = expenseDateObj.getDay();
 						const targetDayOfWeek = bill.dueDay;
-						const daysDiff = (targetDayOfWeek - expenseDayOfWeek + 7) % 7;
-						const dueDate = new Date(year, month - 1, day + daysDiff);
-						dueDateStr = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, "0")}-${String(dueDate.getDate()).padStart(2, "0")}`;
+						const daysSinceDue = (expenseDayOfWeek - targetDayOfWeek + 7) % 7;
+						const dueDate = new Date(year, month - 1, day - daysSinceDue);
+						dueDateStr = datetime.format(dueDate, "yyyy-MM-dd");
 					} else if (bill.repeat === "yearly") {
 						// For yearly bills, use the anchor_date month/day
 						const anchorDate = new Date(bill.anchorDate);

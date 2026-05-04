@@ -1,3 +1,4 @@
+import { toLocalISOString } from "@hoalu/common/datetime";
 import { Calendar } from "@hoalu/ui/calendar";
 import { useEffect, useState } from "react";
 
@@ -22,9 +23,16 @@ export function DatepickerField(props: Props) {
 
 	const handleSelect = (date: Date | undefined) => {
 		if (!date) {
-			field.setValue(new Date().toISOString());
+			const today = new Date();
+			const y = today.getFullYear();
+			const m = String(today.getMonth() + 1).padStart(2, "0");
+			const d = String(today.getDate()).padStart(2, "0");
+			field.setValue(toLocalISOString(`${y}-${m}-${d}`));
 		} else {
-			field.setValue(date.toISOString());
+			const y = date.getFullYear();
+			const m = String(date.getMonth() + 1).padStart(2, "0");
+			const d = String(date.getDate()).padStart(2, "0");
+			field.setValue(toLocalISOString(`${y}-${m}-${d}`));
 			setMonth(date);
 		}
 	};

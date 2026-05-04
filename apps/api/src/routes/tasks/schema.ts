@@ -20,7 +20,7 @@ export const InsertTaskSchema = z.object({
 	description: z.optional(z.string()),
 	status: TaskStatusSchema.default("todo"),
 	priority: PrioritySchema.default("none"),
-	dueDate: z.optional(z.iso.datetime()),
+	dueDate: z.optional(z.iso.datetime({ offset: true })),
 });
 
 export const UpdateTaskSchema = InsertTaskSchema.partial();

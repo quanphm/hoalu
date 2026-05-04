@@ -413,9 +413,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	return (
 		<Card
 			ref={chartRef}
-			className={cn(
-				"bg-background flex flex-col gap-2 rounded-none border-y-0 border-r border-l-0 md:py-3",
-			)}
+			className={cn("bg-background flex flex-col gap-2 rounded-none border-x-0 border-y-0 md:py-3")}
 		>
 			<CardHeader className="flex flex-col md:grid">
 				<CardDescription className="font-mono text-xs tracking-wider uppercase">
@@ -445,6 +443,21 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					</div>
 				</CardDescription>
 				<CardAction>
+					{axisDomainCap && (
+						<Button
+							variant={clampOutliers ? "outline" : "ghost"}
+							size="icon-sm"
+							onClick={() => setClampOutliers((v) => !v)}
+							className="hide-in-screenshot"
+							title={
+								clampOutliers
+									? "Smart scale on — click to see full range"
+									: "Full scale — click to restore smart scale"
+							}
+						>
+							<ZapIcon />
+						</Button>
+					)}
 					{dateRange === "custom" && (
 						<div data-slot="chart-group-by hidden md:block">
 							<ChartGroupByFilter />
@@ -471,21 +484,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							Expenses
 						</Button>
 					</div>
-					{axisDomainCap && (
-						<Button
-							variant={clampOutliers ? "outline" : "ghost"}
-							size="icon-sm"
-							onClick={() => setClampOutliers((v) => !v)}
-							className="hide-in-screenshot"
-							title={
-								clampOutliers
-									? "Smart scale on — click to see full range"
-									: "Full scale — click to restore smart scale"
-							}
-						>
-							<ZapIcon />
-						</Button>
-					)}
+
 					<Button
 						variant="outline"
 						size="icon-sm"

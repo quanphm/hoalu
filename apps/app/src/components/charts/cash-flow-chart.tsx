@@ -241,7 +241,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	return (
 		<Card
 			className={cn(
-				"bg-background flex h-full flex-col gap-2 overflow-hidden rounded-none border-x-0 border-y-0 md:py-3",
+				"bg-background flex h-full flex-col gap-2 overflow-hidden rounded-none border-0 border-r md:py-3",
 			)}
 		>
 			<CardHeader>
@@ -291,10 +291,10 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					</div>
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="h-full flex-1 overflow-hidden p-0">
+			<CardContent className="h-full flex-1 overflow-hidden">
 				<ChartContainer
 					config={chartConfig}
-					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
+					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-muted-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
 				>
 					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 0, top: 0 }}>
 						<defs>
@@ -308,12 +308,10 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							</linearGradient>
 						</defs>
 						<rect x="0" y="0" width="100%" height="120%" fill="url(#pattern-dots)" />
-						<defs>
-							<DottedBackgroundPattern />
-						</defs>
+						<DottedBackgroundPattern />
 						<ReferenceLine
 							y={0}
-							stroke="var(--foreground)"
+							stroke="var(--muted-foreground)"
 							strokeWidth={1}
 							strokeDasharray="5 5"
 							opacity={0.5}
@@ -321,6 +319,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						<Tooltip
 							cursor={{
 								strokeWidth: 1,
+								strokeDasharray: "4 4",
 							}}
 							content={({ active, payload }) => (
 								<TooltipContent
@@ -338,7 +337,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							dataKey="balance"
 							fill="url(#gradient-rounded-chart-desktop)"
 							fillOpacity={0.4}
-							stroke="var(--foreground)"
+							stroke="var(--muted-foreground)"
 							strokeWidth={2}
 							isAnimationActive={false}
 						/>

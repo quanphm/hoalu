@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, toLocalISOString } from "@hoalu/common/datetime";
 import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Input } from "@hoalu/ui/input";
 
@@ -18,7 +18,7 @@ export function DatepickerInputField(props: Props) {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		if (value) {
-			field.setValue(new Date(value).toISOString());
+			field.setValue(toLocalISOString(value));
 		}
 	};
 
