@@ -46,7 +46,7 @@ function LayoutComponent() {
 						<Outlet />
 					) : (
 						<>
-							<div className="flex items-center justify-end border-b px-4 py-2">
+							<div className="flex items-center justify-start border-b px-4 py-2">
 								<Tabs
 									value={statusFilter}
 									onValueChange={(v) => setStatusFilter(v as RecurringBillStatusFilter)}

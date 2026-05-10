@@ -26,7 +26,7 @@ import {
 	WalletIcon,
 	XIcon,
 } from "@hoalu/icons/lucide";
-import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
+import { CaretRightFilledIcon, TriangleSquareCircleIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -39,7 +39,7 @@ import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
 
@@ -199,10 +199,10 @@ export function ExpenseFilterDropdown() {
 					<span>Filters ({activeFiltersCount})</span>
 				</PopoverTrigger>
 
-				<PopoverContent className="w-xs overflow-hidden p-0 md:w-150" align="start" side="bottom">
-					<div className="flex min-h-[400px]">
+				<PopoverContent className="w-100 overflow-hidden p-0" align="start" side="bottom">
+					<div className="flex min-h-100">
 						{/* Left Panel - Filter Menu */}
-						<div className="bg-accent w-[120px] shrink-0 border-r p-1 md:w-50">
+						<div className="bg-accent w-30 shrink-0 border-r p-1 md:w-40">
 							<FilterMenuItem
 								icon={<CalendarIcon className="size-3" />}
 								label="Date"
@@ -218,7 +218,7 @@ export function ExpenseFilterDropdown() {
 								onClick={() => setCurrentView("amount")}
 							/>
 							<FilterMenuItem
-								icon={<TagIcon className="size-3" />}
+								icon={<TriangleSquareCircleIcon />}
 								label="Category"
 								active={hasActiveFilter("category")}
 								selected={currentView === "category"}
@@ -241,7 +241,7 @@ export function ExpenseFilterDropdown() {
 						</div>
 
 						{/* Right Panel - Filter Content */}
-						<div className="flex h-[400px] flex-1 flex-col overflow-scroll">
+						<div className="flex h-100 flex-1 flex-col overflow-scroll">
 							{currentView === "main" && (
 								<MainFilterView
 									activeFiltersCount={activeFiltersCount}
@@ -342,10 +342,7 @@ function FilterMenuItem({
 		<Button
 			variant="ghost"
 			onClick={onClick}
-			className={cn(
-				"flex w-full px-2 md:px-3",
-				selected ? "bg-background hover:bg-background" : "hover:bg-background",
-			)}
+			className={cn("hover:bg-background! flex w-full px-2 md:px-3", selected && "bg-background")}
 		>
 			<span
 				className={cn(
@@ -353,7 +350,7 @@ function FilterMenuItem({
 					active ? "text-primary" : "text-muted-foreground",
 				)}
 			>
-				{active ? <CheckIcon className="size-4" /> : icon}
+				{active ? <CheckIcon /> : icon}
 			</span>
 			<span className="min-w-0 flex-1 truncate text-left text-sm">{label}</span>
 			<CaretRightFilledIcon className="text-muted-foreground hidden size-4 shrink-0 md:block" />
@@ -401,6 +398,10 @@ function AmountFilterView({
 	value: AmountFilterState;
 	onChange: (value: AmountFilterState) => void;
 }) {
+	const equalId = useId();
+	const minId = useId();
+	const maxId = useId();
+
 	const handleMinChange = useCallback(
 		(newValue: number | null) => {
 			onChange({
@@ -440,7 +441,7 @@ function AmountFilterView({
 	}, [onChange]);
 
 	return (
-		<div className="flex flex-col gap-4 p-4">
+		<div className="flex flex-col gap-3 p-4">
 			<div className="flex items-center justify-between">
 				<h3 className="leading-8 font-medium">Amount</h3>
 				{(value.min !== null || value.max !== null || value.equal !== null) && (
@@ -452,33 +453,34 @@ function AmountFilterView({
 
 			<div className="flex flex-col gap-3">
 				<div>
-					<Label className="text-muted-foreground mb-1.5 block text-xs">Specific amount</Label>
+					<Label htmlFor={equalId} className="text-muted-foreground mb-1.5 block text-xs">
+						Specific amount
+					</Label>
 					<div className="flex rounded-md">
 						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
 							=
 						</span>
 						<NumberField
 							value={value.equal ?? undefined}
-							format={{
-								style: "currency",
-								currency: "USD",
-								currencyDisplay: "symbol",
-								currencySign: "accounting",
-							}}
 							onValueChange={handleEqualChange}
 							min={0}
 							step={0.01}
 							className="flex-1"
 						>
 							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
-								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+								<NumberFieldInput
+									id={equalId}
+									className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none"
+								/>
 							</NumberFieldGroup>
 						</NumberField>
 					</div>
 				</div>
 
 				<div>
-					<Label className="text-muted-foreground mb-1.5 block text-xs">At least...</Label>
+					<Label htmlFor={minId} className="text-muted-foreground mb-1.5 block text-xs">
+						At least...
+					</Label>
 					<div className="flex rounded-md">
 						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
 							≥
@@ -497,14 +499,19 @@ function AmountFilterView({
 							className="flex-1"
 						>
 							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
-								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+								<NumberFieldInput
+									id={minId}
+									className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none"
+								/>
 							</NumberFieldGroup>
 						</NumberField>
 					</div>
 				</div>
 
 				<div>
-					<Label className="text-muted-foreground mb-1.5 block text-xs">No more than...</Label>
+					<Label htmlFor={maxId} className="text-muted-foreground mb-1.5 block text-xs">
+						No more than...
+					</Label>
 					<div className="flex rounded-md">
 						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
 							≤
@@ -523,7 +530,10 @@ function AmountFilterView({
 							className="flex-1"
 						>
 							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
-								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+								<NumberFieldInput
+									id={maxId}
+									className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none"
+								/>
 							</NumberFieldGroup>
 						</NumberField>
 					</div>
@@ -556,7 +566,7 @@ function CategoryFilterView({
 		kindFilter === "all" ? categories : categories.filter((c) => c.type === kindFilter);
 
 	return (
-		<div className="flex flex-col gap-4 p-4">
+		<div className="flex flex-col gap-3 p-4">
 			<div className="flex items-center justify-between">
 				<h3 className="leading-8 font-medium">Category</h3>
 				{selected.length > 0 && (
@@ -566,12 +576,12 @@ function CategoryFilterView({
 				)}
 			</div>
 
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-0.5">
 				{visibleCategories.map((category) => (
 					<Label
 						key={category.id}
 						htmlFor={`filter-category-${category.id}`}
-						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm"
 					>
 						<Checkbox
 							id={`filter-category-${category.id}`}
@@ -610,7 +620,7 @@ function WalletFilterView({
 	};
 
 	return (
-		<div className="flex flex-col gap-4 p-4">
+		<div className="flex flex-col gap-3 p-4">
 			<div className="flex items-center justify-between">
 				<h3 className="leading-8 font-medium">Wallet</h3>
 				{selected.length > 0 && (
@@ -626,7 +636,7 @@ function WalletFilterView({
 						<Label
 							key={wallet.id}
 							htmlFor={`filter-wallet-${wallet.id}`}
-							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+							className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm"
 						>
 							<Checkbox
 								id={`filter-wallet-${wallet.id}`}
@@ -661,7 +671,7 @@ function RepeatFilterView({
 	};
 
 	return (
-		<div className="flex flex-col gap-4 p-4">
+		<div className="flex flex-col gap-3 p-4">
 			<div className="flex items-center justify-between">
 				<h3 className="leading-8 font-medium">Repeat</h3>
 				{selected.length > 0 && (
@@ -676,7 +686,7 @@ function RepeatFilterView({
 					<Label
 						key={option.value}
 						htmlFor={`filter-repeat-${option.value}`}
-						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+						className="hover:bg-accent/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm"
 					>
 						<Checkbox
 							id={`filter-repeat-${option.value}`}

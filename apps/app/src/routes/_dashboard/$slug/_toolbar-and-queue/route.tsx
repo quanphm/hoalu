@@ -27,8 +27,10 @@ function RouteComponent() {
 	);
 
 	return (
-		<>
-			<Toolbar>
+		<PageContent>
+			<QueuePanel />
+
+			<Toolbar className="border-b-0">
 				<ToolbarGroup>
 					{dashboardMatch && (
 						<>
@@ -53,10 +55,7 @@ function RouteComponent() {
 				</ToolbarActions>
 			</Toolbar>
 
-			<PageContent>
-				<QueuePanel />
-				<Outlet />
-			</PageContent>
-		</>
+			<Outlet />
+		</PageContent>
 	);
 }
