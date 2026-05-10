@@ -608,13 +608,22 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							/>
 						)}
 						<ChartTooltip
-							content={({ active, payload, label }) => {
-								if (active && payload && payload.length && label) {
+							content={({ active, payload, label, coordinate }) => {
+								if (active && payload && payload.length && label && coordinate) {
 									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
 									const formattedDate =
 										dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
 											? datetime.format(date, "MMMM yyyy")
 											: datetime.format(date, "dd/MM/yyyy");
+
+									const tooltipStyle: React.CSSProperties = {
+										position: "absolute",
+										left: coordinate.x,
+										top: 225,
+										transform: "translateX(-80%)",
+										pointerEvents: "none",
+										zIndex: 9999,
+									};
 
 									if (isCategoryMode) {
 										// Calculate total for stacked bars (2+ categories)
@@ -625,63 +634,57 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 										const showTotal = selectedCategoryIds.length >= 2;
 
 										return (
-											<div className="glass rounded-md p-3">
-												<div className="grid gap-2">
-													<span className="text-muted-foreground text-xs tracking-wider uppercase">
-														{formattedDate}
-													</span>
-													{payload.map((entry) => (
-														<div
-															key={entry.dataKey as any}
-															className="flex items-center justify-between gap-4"
-														>
-															<div className="flex items-center gap-1.5">
-																<div
-																	className="size-2.5 rounded-full"
-																	style={{ backgroundColor: entry.color }}
-																/>
-																<span className="text-sm">
-																	{getCategoryName(entry.dataKey as string)}
-																</span>
-															</div>
+											<div className="glass grid min-w-max gap-2 p-2" style={tooltipStyle}>
+												<span className="text-muted-foreground text-xs tracking-wider">
+													{formattedDate}
+												</span>
+												{payload.map((entry) => (
+													<div
+														key={entry.dataKey as any}
+														className="flex items-center justify-between gap-4"
+													>
+														<div className="flex items-center gap-1.5">
+															<div
+																className="size-2.5 rounded-full"
+																style={{ backgroundColor: entry.color }}
+															/>
+															<span className="text-sm">
+																{getCategoryName(entry.dataKey as string)}
+															</span>
+														</div>
+														<CurrencyValue
+															value={entry.value as any}
+															currency={currency}
+															className="text-sm font-medium"
+														/>
+													</div>
+												))}
+												{showTotal && (
+													<div className="border-t pt-2">
+														<div className="flex items-center justify-between gap-4">
+															<span className="text-sm font-semibold">Total</span>
 															<CurrencyValue
-																value={entry.value as any}
+																value={total}
 																currency={currency}
 																className="text-sm font-medium"
 															/>
 														</div>
-													))}
-													{showTotal && (
-														<div className="border-t pt-2">
-															<div className="flex items-center justify-between gap-4">
-																<span className="text-sm font-semibold">Total</span>
-																<CurrencyValue
-																	value={total}
-																	currency={currency}
-																	className="text-sm font-medium"
-																/>
-															</div>
-														</div>
-													)}
-												</div>
+													</div>
+												)}
 											</div>
 										);
 									}
 
 									return (
-										<div className="glass rounded-md p-3">
-											<div className="grid gap-2">
-												<div className="flex flex-col">
-													<span className="text-muted-foreground text-xs tracking-wider uppercase">
-														{formattedDate}
-													</span>
-													<CurrencyValue
-														value={payload[0].value as any}
-														currency={currency}
-														className="font-medium"
-													/>
-												</div>
-											</div>
+										<div className="glass grid min-w-max gap-2 p-2" style={tooltipStyle}>
+											<span className="text-muted-foreground text-xs tracking-wider">
+												{formattedDate}
+											</span>
+											<CurrencyValue
+												value={payload[0].value as any}
+												currency={currency}
+												className="font-medium"
+											/>
 										</div>
 									);
 								}
