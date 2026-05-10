@@ -25,7 +25,7 @@ function RouteComponent() {
 				<div className="col-span-25 flex w-full flex-row gap-4">
 					<CashFlowSection incomes={incomes} expenses={expenses} />
 				</div>
-				<div className="col-span-25 flex h-full w-full flex-col gap-4 md:col-span-8">
+				<div className="col-span-25 hidden h-full w-full flex-col gap-4 md:col-span-8 md:flex">
 					<CashFlowChart incomes={incomes} expenses={expenses} />
 				</div>
 				<div className="col-span-25 flex w-full flex-col gap-4 md:col-span-17">
@@ -34,7 +34,7 @@ function RouteComponent() {
 				<div className="col-span-25 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
 					<RecentTransactions />
 				</div>
-				<div className="col-span-25 flex w-full flex-col md:col-span-8">
+				<div className="col-span-25 hidden w-full flex-col md:col-span-8 md:flex">
 					<CategoryBreakdown expenses={expenses} categories={categories} />
 					<UpcomingBillsWidget />
 				</div>

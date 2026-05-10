@@ -83,7 +83,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">): 
 	return (
 		<th
 			className={cn(
-				"text-muted-foreground h-8 px-4 text-left align-middle text-xs leading-none font-medium whitespace-nowrap uppercase has-[[role=checkbox]]:w-px first:has-[[role=checkbox]]:pe-0 last:has-[[role=checkbox]]:ps-0",
+				"text-muted-foreground h-8 px-4 text-left align-middle text-xs leading-none font-medium whitespace-nowrap capitalize has-[[role=checkbox]]:w-px first:has-[[role=checkbox]]:pe-0 last:has-[[role=checkbox]]:ps-0",
 				className,
 			)}
 			data-slot="table-head"

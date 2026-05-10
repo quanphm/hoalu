@@ -22,11 +22,11 @@ import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer } from "@hoalu/ui/chart";
+import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
-import { Area, AreaChart, ReferenceLine, Tooltip } from "recharts";
+import { Area, AreaChart, ReferenceLine } from "recharts";
 
 import { PercentageChangeDisplay } from "../percentage-change.tsx";
 
@@ -239,11 +239,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	const zeroRatio = balanceRange === 0 ? 0.5 : Math.max(0, Math.min(1, maxBalance / balanceRange));
 
 	return (
-		<Card
-			className={cn(
-				"bg-background flex h-full flex-col gap-2 overflow-hidden rounded-none border-0 border-r md:py-3",
-			)}
-		>
+		<Card className={cn("bg-background flex h-full flex-col gap-2 border-0 border-r md:py-3")}>
 			<CardHeader>
 				<CardDescription className="font-mono text-xs tracking-wider uppercase">
 					Cumulative Net
@@ -291,7 +287,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					</div>
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="h-full flex-1 overflow-hidden">
+			<CardContent className="h-full flex-1">
 				<ChartContainer
 					config={chartConfig}
 					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-muted-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
@@ -316,17 +312,18 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							strokeDasharray="5 5"
 							opacity={0.5}
 						/>
-						<Tooltip
+						<ChartTooltip
 							cursor={{
 								strokeWidth: 1,
 								strokeDasharray: "4 4",
 							}}
-							content={({ active, payload }) => (
+							content={({ active, payload, coordinate }) => (
 								<TooltipContent
 									active={active}
 									payload={
 										payload as unknown as Array<{ payload: CashFlowDataPoint; value: number }>
 									}
+									coordinate={coordinate}
 									dateRange={dateRange}
 									setHoveredDataPoint={setHoveredDataPoint}
 								/>
@@ -351,11 +348,13 @@ export function CashFlowChart(props: CashFlowChartProps) {
 function TooltipContent({
 	active,
 	payload,
+	coordinate,
 	dateRange,
 	setHoveredDataPoint,
 }: {
 	active?: boolean;
 	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
+	coordinate?: { x: number; y: number };
 	dateRange: PredefinedDateRange;
 	setHoveredDataPoint: (value: CashFlowDataPoint | null) => void;
 }) {
@@ -367,7 +366,7 @@ function TooltipContent({
 		}
 	}, [active, payload, setHoveredDataPoint]);
 
-	if (active && payload && payload.length) {
+	if (active && payload && payload.length && coordinate) {
 		const dataPoint = payload[0].payload as CashFlowDataPoint;
 		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
 		const formattedDate =
@@ -375,8 +374,20 @@ function TooltipContent({
 				? datetime.format(date, "MMMM yyyy")
 				: datetime.format(date, "MMMM dd");
 
+		const tooltipStyle: React.CSSProperties = {
+			position: "absolute",
+			left: coordinate.x,
+			top: 0,
+			transform: "translateX(-50%)",
+			pointerEvents: "none",
+			zIndex: 9999,
+		};
+
 		return (
-			<div className="glass text-muted-foreground px-3 py-2 text-xs tracking-wider uppercase">
+			<div
+				className="glass text-muted-foreground min-w-max p-2 text-xs tracking-wider"
+				style={tooltipStyle}
+			>
 				{formattedDate}
 			</div>
 		);

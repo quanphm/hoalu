@@ -249,7 +249,7 @@ export function QueuePanel() {
 	}, [totalActive]);
 
 	return (
-		<div className="bg-card col-span-full overflow-hidden">
+		<div className="bg-card col-span-full overflow-hidden border-b">
 			<button
 				type="button"
 				onClick={() => setCollapsed((c) => !c)}
@@ -282,15 +282,15 @@ export function QueuePanel() {
 
 				<div className="flex-1" />
 
-				<span className="text-muted-foreground text-xs uppercase">
+				<p className="text-muted-foreground flex items-center gap-1 text-xs uppercase">
 					{collapsed ? "Show" : "Hide"}
-				</span>
-				<ChevronDownIcon
-					className={cn(
-						"text-muted-foreground size-3 transition-transform",
-						collapsed && "-rotate-90",
-					)}
-				/>
+					<ChevronDownIcon
+						className={cn(
+							"text-muted-foreground size-3 transition-transform",
+							collapsed && "-rotate-90",
+						)}
+					/>
+				</p>
 			</button>
 
 			{!collapsed && (

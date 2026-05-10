@@ -39,30 +39,30 @@ function LayoutComponent() {
 				<>
 					<div className="flex flex-col items-center justify-between border-t border-b px-4 py-2 md:flex-row">
 						<div className="flex flex-wrap items-center gap-2">
+							<Tabs
+								value={kindFilter}
+								onValueChange={(v) => setKindFilter(v as TransactionKindFilter)}
+							>
+								<TabsList>
+									<TabsTab value="all" className="h-5.5!">
+										All
+									</TabsTab>
+									<TabsTab value="income" className="h-5.5!">
+										Incomes
+									</TabsTab>
+									<TabsTab value="expense" className="h-5.5!">
+										Expenses
+									</TabsTab>
+								</TabsList>
+							</Tabs>
 							<ExpenseSearch />
 							<ExpenseFilterDropdown />
 						</div>
-						<Tabs
-							value={kindFilter}
-							onValueChange={(v) => setKindFilter(v as TransactionKindFilter)}
-						>
-							<TabsList>
-								<TabsTab value="all" className="sm:h-6">
-									All
-								</TabsTab>
-								<TabsTab value="income" className="sm:h-6">
-									Incomes
-								</TabsTab>
-								<TabsTab value="expense" className="sm:h-6">
-									Expenses
-								</TabsTab>
-							</TabsList>
-						</Tabs>
 					</div>
 
 					<SectionContent
 						columns={12}
-						className="h-[calc(100vh-(--spacing(33)+1px))] grid-cols-1 overflow-hidden md:gap-0"
+						className="h-[calc(100vh-(--spacing(33)-1px))] grid-cols-1 overflow-hidden md:gap-0"
 					>
 						<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 							<ExpenseList expenses={filteredExpenses} scrollRef={listScrollRef} />

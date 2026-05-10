@@ -1,5 +1,6 @@
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import ExpenseContent from "#app/components/expenses/expense-content.tsx";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -12,9 +13,9 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback } from "react";
 
 const GRID_TEMPLATE =
-	"grid md:grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)] grid-cols-[var(--category-size)_var(--title-size)_var(--amount-size)_var(--amount-size)_var(--wallet-size)]";
+	"grid md:grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)] grid-cols-[auto_1fr_auto]";
 
-const columns: ColumnDef<SyncedTransaction>[] = [
+const columnsDesktop: ColumnDef<SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{
@@ -30,17 +31,17 @@ const columns: ColumnDef<SyncedTransaction>[] = [
 	{ id: "wallet", header: "Wallet" },
 ];
 
-function TransactionGroupHeader({
-	groupKey,
-	items,
-}: {
-	groupKey: string;
-	items: SyncedTransaction[];
-}) {
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
+const columnsMobile: ColumnDef<SyncedTransaction>[] = [
+	{ id: "category", header: "Category" },
+	{ id: "title", header: "Title" },
+	{
+		id: "amount",
+		header: "Amount",
+		meta: { headerClassName: "justify-end" },
+	},
+];
 
+function useTransactionGroupTotals(items: SyncedTransaction[]) {
 	let expenseTotal = 0;
 	let incomeTotal = 0;
 	for (const tx of items) {
@@ -50,7 +51,16 @@ function TransactionGroupHeader({
 			else incomeTotal += v;
 		}
 	}
+	return { expenseTotal, incomeTotal };
+}
 
+function TransactionGroupHeaderBase({
+	groupKey,
+	children,
+}: {
+	groupKey: string;
+	children: React.ReactNode;
+}) {
 	const isToday = datetime.format(new Date(), "yyyy-MM-dd") === groupKey;
 
 	return (
@@ -60,9 +70,68 @@ function TransactionGroupHeader({
 		>
 			<div className="flex items-center gap-2 font-mono font-medium">
 				{datetime.format(new Date(groupKey), "E dd/MM/yyyy")}
-				{isToday && <Badge className="ml-1">Today</Badge>}
+				{isToday && (
+					<Badge size="sm" className="ml-1">
+						Today
+					</Badge>
+				)}
 			</div>
 			<div />
+			{children}
+		</div>
+	);
+}
+
+function TransactionGroupHeaderMobile({
+	groupKey,
+	items,
+}: {
+	groupKey: string;
+	items: SyncedTransaction[];
+}) {
+	const {
+		metadata: { currency: workspaceCurrency },
+	} = useWorkspace();
+	const { incomeTotal, expenseTotal } = useTransactionGroupTotals(items);
+
+	return (
+		<TransactionGroupHeaderBase groupKey={groupKey}>
+			<div className="ml-auto flex flex-col items-end gap-0.5">
+				{incomeTotal > 0 && (
+					<CurrencyValue
+						value={incomeTotal}
+						currency={workspaceCurrency}
+						prefix="+"
+						className="text-success text-sm font-semibold"
+					/>
+				)}
+				{expenseTotal > 0 && (
+					<CurrencyValue
+						value={expenseTotal}
+						currency={workspaceCurrency}
+						prefix="-"
+						className="text-destructive text-sm font-semibold"
+					/>
+				)}
+			</div>
+		</TransactionGroupHeaderBase>
+	);
+}
+
+function TransactionGroupHeaderDesktop({
+	groupKey,
+	items,
+}: {
+	groupKey: string;
+	items: SyncedTransaction[];
+}) {
+	const {
+		metadata: { currency: workspaceCurrency },
+	} = useWorkspace();
+	const { incomeTotal, expenseTotal } = useTransactionGroupTotals(items);
+
+	return (
+		<TransactionGroupHeaderBase groupKey={groupKey}>
 			<div className="ml-auto flex items-center">
 				{incomeTotal > 0 && (
 					<CurrencyValue
@@ -83,7 +152,7 @@ function TransactionGroupHeader({
 					/>
 				)}
 			</div>
-		</div>
+		</TransactionGroupHeaderBase>
 	);
 }
 
@@ -102,6 +171,7 @@ function ExpenseList(props: {
 }) {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
+	const { shouldUseMobileLayout } = useLayoutMode();
 
 	const handleSelect = useCallback(
 		(id: string | null) => {
@@ -119,10 +189,13 @@ function ExpenseList(props: {
 	);
 
 	const renderGroupHeader = useCallback(
-		(groupKey: string, items: SyncedTransaction[]) => (
-			<TransactionGroupHeader groupKey={groupKey} items={items} />
-		),
-		[],
+		(groupKey: string, items: SyncedTransaction[]) =>
+			shouldUseMobileLayout ? (
+				<TransactionGroupHeaderMobile groupKey={groupKey} items={items} />
+			) : (
+				<TransactionGroupHeaderDesktop groupKey={groupKey} items={items} />
+			),
+		[shouldUseMobileLayout],
 	);
 
 	const renderRow = useCallback(
@@ -136,15 +209,15 @@ function ExpenseList(props: {
 			getItemId={(tx) => tx.public_id}
 			groupBy={(tx) => tx.date}
 			groupOrder={(a, b) => b.localeCompare(a)}
-			renderGroupHeader={renderGroupHeader}
-			columns={columns}
+			columns={shouldUseMobileLayout ? columnsMobile : columnsDesktop}
 			gridTemplate={GRID_TEMPLATE}
-			renderRow={renderRow}
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={false}
 			scrollPositionRef={props.scrollRef}
 			emptyState={emptyState}
+			renderGroupHeader={renderGroupHeader}
+			renderRow={renderRow}
 		/>
 	);
 }

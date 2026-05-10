@@ -52,7 +52,7 @@ export function BrailleSpinner({
 		<motion.span
 			animate={{ opacity: active ? 1 : 0.25 }}
 			transition={{ duration: 0.3, ease: "easeInOut" }}
-			className={cn("inline-block leading-1")}
+			className={cn("inline-block")}
 			style={{ fontSize: size, color, width: size }}
 		>
 			{active ? frame : INACTIVE_CHAR}

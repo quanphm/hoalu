@@ -27,8 +27,10 @@ function RouteComponent() {
 	);
 
 	return (
-		<>
-			<Toolbar>
+		<PageContent>
+			<QueuePanel />
+
+			<Toolbar className="border-b-0">
 				<ToolbarGroup>
 					{dashboardMatch && (
 						<>
@@ -43,19 +45,17 @@ function RouteComponent() {
 					)}
 				</ToolbarGroup>
 				<ToolbarActions>
+					<CreateExpenseDialogTrigger />
 					<ScanReceiptDialogTrigger />
 					<QuickExpensesDialogTrigger />
+					<ToolbarSeparator />
 					<CreateIncomeDialogTrigger />
-					<CreateExpenseDialogTrigger />
 					<ToolbarSeparator />
 					<RedactedAmountToggle />
 				</ToolbarActions>
 			</Toolbar>
 
-			<PageContent>
-				<QueuePanel />
-				<Outlet />
-			</PageContent>
-		</>
+			<Outlet />
+		</PageContent>
 	);
 }

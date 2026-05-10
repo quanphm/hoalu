@@ -92,7 +92,9 @@ function filterTransactions(
 		if (selectedRepeat.length > 0) {
 			if (!selectedRepeat.includes(tx.repeat)) return false;
 		}
-		if (amountFilter.min !== null || amountFilter.max !== null) {
+		if (amountFilter.equal !== null) {
+			if (tx.realAmount !== amountFilter.equal) return false;
+		} else if (amountFilter.min !== null || amountFilter.max !== null) {
 			const amount = tx.realAmount;
 			if (amountFilter.min !== null && amount < amountFilter.min) return false;
 			if (amountFilter.max !== null && amount > amountFilter.max) return false;

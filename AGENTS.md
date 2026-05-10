@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-03-06
-TECH_STACK: Bun, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
+LAST_UPDATED: 2026-05-10
+TECH_STACK: Bun 1.3.9, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
 # AGENTS.md
@@ -14,63 +14,74 @@ When debug with browser, please refer to these addresses to access the applicati
 
 - **Frontend runs on** `https://hoalu.localhost`
 - **Backend API runs on** `https://hoalu.localhost/api`
+- **API Docs (Scalar)** `https://hoalu.localhost/api/docs`
 
 ### Common Tasks Cheat Sheet
 
 - **Add new API route**: Follow 3-file pattern in `apps/api/src/routes/[resource]/` (index.ts, repository.ts, schema.ts)
-- **Add database table**: Update `apps/api/src/db/schema.ts:1-346` → `bun run db:generate` → `bun run db:migrate`
+- **Add database table**: Update `apps/api/src/db/schema.ts:1-480` → `bun run db:generate` → `bun run db:migrate`
 - **Add frontend route**: Create file in `apps/app/src/routes/` (file-based routing with TanStack Router)
 - **Add UI component**: Place in `apps/app/src/components/` or `packages/ui/src/components/` if reusable
 - **Add collection**: Create in `apps/app/src/lib/collections/[resource].ts` with Electric SQL
 - **Fix type errors**: Restart dev servers to regenerate RPC types and route definitions
+- **Run lint**: `bun run lint` (oxlint) or `bun run format` (oxfmt)
 
 ### File Location Quick Lookup
 
-| What                 | Where                                                           | Lines                               |
-| -------------------- | --------------------------------------------------------------- | ----------------------------------- |
-| Database schema      | `apps/api/src/db/schema.ts`                                     | 346                                 |
-| API client types     | `apps/app/src/lib/api-client.ts`                                | 313                                 |
-| Frontend schemas     | `apps/app/src/lib/schema.ts`                                    | 111                                 |
-| Expense API routes   | `apps/api/src/routes/expenses/`                                 | 3 files (index, repository, schema) |
-| Expense components   | `apps/app/src/components/expenses/`                             | 6 files                             |
-| Expense live queries | `apps/app/src/components/expenses/use-expenses.ts`              | 255                                 |
-| Category components  | `apps/app/src/components/categories/`                           | 3 files                             |
-| Wallet components    | `apps/app/src/components/wallets/`                              | 2 files                             |
-| Bills components     | `apps/app/src/components/bills/`                                | 4 files                             |
-| Auth setup           | `apps/api/src/lib/auth.ts`                                      | -                                   |
-| Sync proxy           | `apps/api/src/modules/sync.ts`                                  | -                                   |
-| PGlite provider      | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                                   |
-| Collections          | `apps/app/src/lib/collections/*.ts`                             | -                                   |
-| Collection factory   | `apps/app/src/lib/collections/create-collection-factory.ts`     | -                                   |
-| Query options        | `apps/app/src/services/query-options.ts`                        | -                                   |
-| Mutations            | `apps/app/src/services/mutations.ts`                            | -                                   |
-| Recurring bills      | `apps/api/src/routes/recurring-bills/`                          | -                                   |
-| Bills widget         | `apps/app/src/components/upcoming-bills/`                       | -                                   |
+| What                        | Where                                                           | Lines                       |
+| --------------------------- | --------------------------------------------------------------- | --------------------------- |
+| Database schema             | `apps/api/src/db/schema.ts`                                     | 480                         |
+| API client types            | `apps/app/src/lib/api-client.ts`                                | 634                         |
+| Frontend schemas            | `apps/app/src/lib/schema.ts`                                    | 170                         |
+| Expense API routes          | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)         |
+| Expense components          | `apps/app/src/components/expenses/`                             | 7 files                     |
+| Expense live queries        | `apps/app/src/components/expenses/use-expenses.ts`              | 430                         |
+| Category components         | `apps/app/src/components/categories/`                           | 3 files                     |
+| Wallet components           | `apps/app/src/components/wallets/`                              | 4 files                     |
+| Recurring bills components  | `apps/app/src/components/recurring-bills/`                      | 5 files                     |
+| Upcoming bills components   | `apps/app/src/components/upcoming-bills/`                       | 3 files                     |
+| Income components           | `apps/app/src/components/incomes/`                              | 6 files                     |
+| Event components            | `apps/app/src/components/events/`                               | 5 files                     |
+| Transactions components     | `apps/app/src/components/transactions/`                         | 2 files                     |
+| Auth setup                  | `apps/api/src/lib/auth.ts`                                      | 175                         |
+| Sync proxy                  | `apps/api/src/modules/sync.ts`                                  | -                           |
+| PGlite provider             | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                           |
+| Collections                 | `apps/app/src/lib/collections/*.ts`                             | 9 files (index + 8 items)   |
+| Collection factory          | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                          |
+| Query options               | `apps/app/src/services/query-options.ts`                        | 370                         |
+| Mutations                   | `apps/app/src/services/mutations.ts`                            | 1082                        |
+| Recurring bills API routes  | `apps/api/src/routes/recurring-bills/`                          | 3 files                     |
+| Events API routes           | `apps/api/src/routes/events/`                                   | 3 files                     |
+| Incomes API routes          | `apps/api/src/routes/incomes/`                                  | 3 files                     |
+| Workspaces API routes       | `apps/api/src/routes/workspaces/`                               | 3 files                     |
 
 ### Critical Constraints
 
 **NEVER do these:**
 
-- ❌ Modify `apps/app/src/lib/api-client.ts` - auto-generated from Hono RPC
+- ❌ Modify `apps/app/src/lib/api-client.ts` - auto-generated from Hono RPC (hono/client hc)
 - ❌ Edit `apps/app/src/routeTree.gen.ts` - generated by TanStack Router
 - ❌ Use relative imports like `../../` - use path aliases instead
 - ❌ Omit `.ts`/`.tsx` extensions in imports - Bun requirement
 - ❌ Skip migrations after schema changes - data loss risk
 - ❌ Modify database directly without migrations - Electric SQL will break
 - ❌ Create routes without workspace scoping - security issue
+- ❌ Edit `apps/api/src/db/meta/` - internal Drizzle Kit state
 
 **ALWAYS do these:**
 
 - ✅ Use path aliases (`#app/*`, `#api/*`) instead of relative imports
 - ✅ Include `.ts`/`.tsx` extensions in all imports (Bun requirement)
 - ✅ Run migrations after schema changes: `db:generate` → `db:migrate`
-- ✅ Validate with Zod before database operations
+- ✅ Validate with Zod v4 before database operations
 - ✅ Scope all data by `workspace_id` foreign key (multi-tenancy)
 - ✅ Use middleware chain: `workspaceQueryValidator` → `workspaceMember` → handler
-- ✅ Return typed results from repository functions
-- ✅ Include OpenAPI documentation for all API routes
+- ✅ Return typed results from repository functions (class-based repositories)
+- ✅ Include OpenAPI documentation for all API routes (using `describeRoute` from `hono-openapi`)
 - ✅ Use `z.coerce.number()` for Electric SQL numeric fields
 - ✅ Restart dev servers after API changes to regenerate types
+- ✅ Use `z.iso.datetime({ offset: true })` for date fields
+- ✅ Use `generateId({ use: "uuid" })` from `@hoalu/common/generate-id` for IDs
 
 ### Recurring Bills Data Model
 
@@ -85,8 +96,8 @@ When a recurring bill is created, the system calculates expected occurrences. Wh
 **Migration Strategy:**
 If adding occurrence tracking to existing data:
 
-1. Create the new table via migration (see `0006_occurrence_tracking.sql`)
-2. Backfill from existing expenses (see `0007_backfill_occurrences.sql`)
+1. Create the new table via migration
+2. Backfill from existing expenses
 3. Future expenses automatically create occurrence records on payment
 
 **API Endpoints:**
@@ -97,92 +108,64 @@ If adding occurrence tracking to existing data:
 
 ## Development Workflow
 
+### Linting & Formatting
+
+- **Lint**: `bun run lint` (oxlint) — no ESLint/Prettier
+- **Format**: `bun run format` (oxfmt) — automatic code formatter
+- **Dead code**: `bun run knip` (knip-bun)
+
 ### Authentication & Authorization
 
 #### Better Auth Setup
 
 **Server** (`apps/api/src/lib/auth.ts`):
-
-```typescript
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { workspacePlugin } from "@hoalu/auth/plugins/workspace";
-
-export const auth = betterAuth({
-	database: drizzleAdapter(db, {
-		provider: "pg",
-	}),
-	plugins: [
-		workspacePlugin({
-			// Custom workspace management
-			createWorkspaceOnSignup: true,
-			roleHierarchy: ["owner", "admin", "member"],
-		}),
-	],
-	session: {
-		expiresIn: 60 * 60 * 24 * 7, // 7 days
-		updateAge: 60 * 60 * 24, // 1 day
-	},
-	emailAndPassword: {
-		enabled: true,
-		requireEmailVerification: true,
-	},
-});
-```
+- Uses `better-auth` with `drizzleAdapter` (PostgreSQL provider)
+- Plugins: `userPublicId()` + `workspace()` from `@hoalu/auth/plugins`
+- Custom `afterCreate` on workspace creation: creates default wallet ("Cash wallet"), default expense categories and income categories
+- `jwt()` plugin with 7d expiry, custom payload
+- `openAPI()` plugin for OpenAPI schema generation
+- Password hashing: argon2id (memoryCost: 19456, timeCost: 2)
+- Session: 4 weeks expiry, 1 day update age, cookie caching enabled
+- Email verification: enabled on sign up, autoSignIn after verification
+- Reset password and verification emails via `@hoalu/email` React Email templates
+- Custom `generateId` in database config using `generateId({ use: "uuid" })`
+- Telemetry: disabled
+- Cookie prefix: "hoalu"
 
 **Client** (`apps/app/src/lib/auth-client.ts`):
+- `createAuthClient` from `better-auth/react` with `workspaceClient()` plugin
+- `baseURL: "PUBLIC_API_URL/auth"`
+- Exports typed `User`, `Session`, `SessionData` types
+- User type includes `publicId` field
 
-```typescript
-import { createAuthClient } from "better-auth/react";
+**Middlewares:**
+- `user-session.ts` — gets session from auth API, sets `c.get("user")` and `c.get("session")`
+- `workspace-member.ts` — looks up workspace by `workspaceIdOrSlug` (slug or publicId), finds current member, sets `c.get("workspace")` and `c.get("membership")`
 
-export const authClient = createAuthClient({
-	baseURL: import.meta.env.PUBLIC_API_URL,
-});
+### Key Libraries & Versions
 
-export const { useSession, signIn, signOut } = authClient;
-```
+| Package                    | Version (catalog)  |
+| -------------------------- | ------------------ |
+| bun                        | 1.3.9              |
+| typescript                 | ^6.0.3             |
+| vite                       | ^8.0.10            |
+| hono                       | ^4.12.15           |
+| better-auth                | ^1.6.9             |
+| zod                        | ^4.3.6             |
+| react / react-dom          | ^19.2.5            |
+| tailwindcss                | ^4.2.4             |
+| drizzle-orm                | ~0.44+             |
+| turbo                      | ^2.9.6             |
 
-**Middleware** (`apps/api/src/middlewares/workspace-member.ts`):
+### Workspace Lifecycle
 
-```typescript
-export const workspaceMember = createMiddleware(async (c, next) => {
-	const session = c.var.session;
-	const { workspaceId } = c.var.workspace;
+On workspace creation:
+1. `userPublicId()` generates a public ID for the user
+2. `workspace()` plugin creates the workspace and membership
+3. `afterCreate` hook runs: inserts a default "Cash wallet" and default categories (both expense and income types) via db.transaction
+4. Invitation system: `sendInvitationEmail` callback sends email via `@hoalu/email` `JoinWorkspace` template
 
-	const member = await db
-		.select()
-		.from(memberTable)
-		.where(and(eq(memberTable.workspaceId, workspaceId), eq(memberTable.userId, session.userId)))
-		.limit(1);
-
-	if (!member.length) {
-		return c.json({ error: "Not a workspace member" }, 403);
-	}
-
-	c.set("member", member[0]);
-	await next();
-});
-```
-
-#### Workspace Management
-
-**Multi-tenancy Pattern:**
-
-- All data scoped by `workspace_id` foreign key
-- Slug-based routing: `/dashboard/:slug/expenses`
-- Member roles: `owner`, `admin`, `member`
-- Invitation system with expiration
-
-**Workspace Context:**
-
-```typescript
-// hooks/use-workspace.ts
-export function useWorkspace() {
-	const params = Route.useParams(); // TanStack Router
-	const { data: workspace } = useSuspenseQuery(getWorkspaceQueryOptions(params.slug));
-	return workspace;
-}
-```
+Roles: `owner`, `admin`, `member` (configured via `creatorRole` setting)
 
 ## Code Conventions
 
@@ -218,7 +201,6 @@ export function useWorkspace() {
 ```
 
 **Why it's used:**
-
 - Electric SQL sends numeric values as strings for precision
 - Zod coerces them back to JavaScript numbers
 - Maintains type safety throughout the pipeline
@@ -239,7 +221,7 @@ Always include `.ts` or `.tsx` extensions in imports:
 
 ### Zod v4 Coercion
 
-**`z.coerce.number()`** - Automatically converts string inputs to numbers:
+**`z.coerce.number()`** — Automatically converts string inputs to numbers:
 
 ```typescript
 const schema = z.object({
@@ -249,6 +231,19 @@ const schema = z.object({
 
 schema.parse({ amount: "123.45", quantity: "5" });
 // → { amount: 123.45, quantity: 5 }
+```
+
+### Hono App Pattern
+
+Use `createHonoInstance()` from `#api/lib/create-app.ts` (not `createHonoApp` from `@hoalu/furnace`):
+
+```typescript
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { workspaceMember } from "#api/middlewares/workspace-member.ts";
+import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
+import { jsonBodyValidator } from "#api/validators/json-body.ts";
+
+const app = createHonoInstance();
 ```
 
 ### TypeScript Conventions
@@ -278,35 +273,28 @@ export function Button({ children, variant = "primary", onClick }: ButtonProps) 
 ```typescript
 export function useExpenses(workspaceId: string) {
 	const { data, isLoading, error } = useQuery(getExpensesQueryOptions(workspaceId));
-
 	return { expenses: data ?? [], isLoading, error };
 }
-```
-
-**Type Inference from Functions:**
-
-```typescript
-export function useExpenseLiveQuery() {
-	// ... implementation
-}
-
-// Export inferred types
-export type ExpensesClient = ReturnType<typeof useExpenseLiveQuery>;
-export type ExpenseClient = ExpensesClient[number];
 ```
 
 **Zod Schema Patterns:**
 
 ```typescript
-// Define schema
+// Define schema (actual ExpenseFormSchema pattern)
 export const ExpenseFormSchema = z.object({
 	title: z.string().min(1),
-	amount: z.coerce.number(), // Coerce string to number
-	currency: CurrencySchema,
-	date: z.iso.datetime(),
+	description: z.optional(z.string()),
+	transaction: z.object({
+		value: z.number(),
+		currency: z.string(),
+	}),
+	date: z.iso.datetime({ offset: true }),
 	walletId: z.uuidv7(),
 	categoryId: z.uuidv7(),
 	repeat: RepeatSchema,
+	recurringBillId: z.string().optional(),
+	eventId: z.string().optional(),
+	attachments: z.array(z.file()),
 });
 
 // Infer TypeScript type
@@ -316,20 +304,20 @@ export type ExpenseFormSchema = z.infer<typeof ExpenseFormSchema>;
 export const UpdateExpenseSchema = ExpenseFormSchema.partial();
 ```
 
-**Hono RPC Client Types:**
+**Hono RPC Client Types (BFF pattern):**
 
 ```typescript
 import type { InferRequestType, InferResponseType } from "hono/client";
 import type { honoClient } from "#app/lib/api-client.ts";
 
-// Infer response type
+// Infer response type (uses bff routes)
 export type ExpenseSchema = InferResponseType<
-	typeof honoClient.api.expenses.$get,
+	typeof honoClient.bff.expenses.$get,
 	200
 >["data"][number];
 
 // Infer request type
-export type ExpensePostSchema = InferRequestType<typeof honoClient.api.expenses.$post>["json"];
+export type ExpensePostSchema = InferRequestType<typeof honoClient.bff.expenses.$post>["json"];
 ```
 
 ### Component Patterns
@@ -354,26 +342,19 @@ export function ExpenseList() {
 }
 ```
 
-**Compound Components:**
+## Packages
 
-```typescript
-export function ExpenseDetails({ expense }: { expense: ExpenseClient }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{expense.title}</CardTitle>
-        <CardDescription>{expense.category?.name}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <CurrencyValue
-          value={expense.amount}
-          currency={expense.currency}
-        />
-      </CardContent>
-      <CardFooter>
-        <ExpenseActions expenseId={expense.id} />
-      </CardFooter>
-    </Card>
-  )
-}
-```
+| Package              | Path                      | Purpose                                         |
+| -------------------- | ------------------------- | ----------------------------------------------- |
+| `@hoalu/api`         | `apps/api`                | Backend Hono API                                |
+| `@hoalu/app`         | `apps/app`                | Frontend React app                              |
+| `@hoalu/auth`        | `packages/auth`           | Better Auth plugins (workspace, userPublicId)   |
+| `@hoalu/common`      | `packages/common`         | Shared utilities (enums, schema, datetime, etc) |
+| `@hoalu/countries`   | `packages/countries`      | Country/currency data                           |
+| `@hoalu/email`       | `packages/email`          | React Email templates                           |
+| `@hoalu/furnace`     | `packages/furnace`        | Hono helpers (logger, error handlers, OpenAPI)  |
+| `@hoalu/icons`       | `packages/icons`          | Icon sets (Lucide, Tabler, Nucleo)              |
+| `@hoalu/themes`      | `packages/themes`         | CSS theme layers                                |
+| `@hoalu/tsconfig`    | `packages/tsconfig`       | Shared TypeScript configs                       |
+| `@hoalu/typekit`     | `packages/typekit`        | Type utilities                                  |
+| `@hoalu/ui`          | `packages/ui`             | Shared UI components (~42 components)           |

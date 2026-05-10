@@ -52,14 +52,14 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 
 	return (
 		<>
-			<div className="grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+			<div className="grid grid-cols-2 gap-0.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 				{data.map((image, index) => (
 					// oxlint-disable-next-line jsx_a11y/no-static-element-interactions
 					<div
 						key={image.id ?? image.name}
 						// oxlint-disable-next-line
 						tabIndex={0}
-						className="group bg-muted/50 hover:border-primary/50 relative aspect-square cursor-pointer overflow-hidden rounded-md border transition-all hover:shadow-md"
+						className="group bg-muted/50 relative aspect-square cursor-pointer overflow-hidden rounded-md transition-all"
 						onClick={() => setSelectedIndex(index)}
 						onKeyUp={(e) => e.key === "Enter" && setSelectedIndex(index)}
 					>

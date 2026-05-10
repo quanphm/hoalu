@@ -16,11 +16,13 @@ export const expenseRepeatFilterAtom = atom<RepeatSchema[]>([]);
 export interface AmountFilterState {
 	min: number | null;
 	max: number | null;
+	equal: number | null;
 }
 
 export const expenseAmountFilterAtom = atom<AmountFilterState>({
 	min: null,
 	max: null,
+	equal: null,
 });
 
 export const searchKeywordsAtom = atom<string>("");
