@@ -136,15 +136,15 @@ function ExpenseList(props: {
 			getItemId={(tx) => tx.public_id}
 			groupBy={(tx) => tx.date}
 			groupOrder={(a, b) => b.localeCompare(a)}
-			renderGroupHeader={renderGroupHeader}
 			columns={columns}
 			gridTemplate={GRID_TEMPLATE}
-			renderRow={renderRow}
 			estimateRowSize={45}
 			onSelectItem={handleSelect}
 			enableKeyboardNav={false}
 			scrollPositionRef={props.scrollRef}
 			emptyState={emptyState}
+			renderGroupHeader={renderGroupHeader}
+			renderRow={renderRow}
 		/>
 	);
 }

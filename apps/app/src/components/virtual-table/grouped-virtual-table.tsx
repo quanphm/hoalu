@@ -210,7 +210,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 							<div
 								key={header.id}
 								className={cn(
-									"text-muted-foreground flex items-center px-4 text-xs font-medium uppercase",
+									"text-muted-foreground flex items-center px-4 text-xs font-medium capitalize",
 									headerClassName,
 								)}
 							>
