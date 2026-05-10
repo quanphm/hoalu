@@ -110,7 +110,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	onSelectItem,
 	enableKeyboardNav = false,
 	scrollPositionRef,
-	emptyState,
+	emptyState = null,
 }: GroupedVirtualTableProps<TRow, TGroupKey>) {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const activeStickyIndexRef = useRef(0);
@@ -189,10 +189,11 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	useHotkeys("j", () => navigate("down"), { enabled: enableKeyboardNav });
 	useHotkeys("k", () => navigate("up"), { enabled: enableKeyboardNav });
 	useHotkeys("esc", () => onSelectItem?.(null), { enabled: enableKeyboardNav });
-
 	useScrollRestoration(parentRef, scrollPositionRef);
 
-	if (items.length === 0) return <>{emptyState ?? null}</>;
+	if (items.length === 0) {
+		return emptyState;
+	}
 
 	return (
 		<div ref={parentRef} className="h-full w-full overflow-y-scroll">

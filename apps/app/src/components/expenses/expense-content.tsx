@@ -1,3 +1,4 @@
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
@@ -9,43 +10,73 @@ import { memo } from "react";
 import { WalletBadge } from "../wallets/wallet-badge";
 
 function ExpenseContent(props: SyncedTransaction) {
+	const { shouldUseMobileLayout } = useLayoutMode();
+
+	if (shouldUseMobileLayout) {
+		return (
+			<>
+				<CategoryCell category={props.category} />
+				<TitleCell title={props.title} description={props.description} />
+				<AmountCell data={props} />
+			</>
+		);
+	}
+
 	return (
 		<>
-			<div className="flex items-center px-4 py-3">
-				<div className="flex items-center gap-2">
-					{props.category.name ? (
-						<Badge className={cn(createCategoryTheme(props.category.color))}>
-							{props.category.name}
-						</Badge>
-					) : (
-						<span className="text-muted-foreground text-sm">—</span>
-					)}
-				</div>
-			</div>
-			<div className="flex min-w-0 items-center justify-start gap-2 overflow-hidden px-4 py-3">
-				<p className="text-muted-foreground truncate text-xs" title={props.title}>
-					<span className="text-foreground mr-2 text-sm font-medium">{props.title}</span>
-					{props.description && htmlToText(props.description)}
-				</p>
-			</div>
-			<div className="flex items-center justify-end px-4 py-3">
-				{props.kind === "income" ? (
-					<TransactionAmount type={props.kind} data={props} />
-				) : (
-					<span className="text-muted-foreground text-sm">-</span>
-				)}
-			</div>
-			<div className="flex items-center justify-end px-4 py-3">
-				{props.kind === "expense" ? (
-					<TransactionAmount type={props.kind} data={props} />
-				) : (
-					<span className="text-muted-foreground text-sm">-</span>
-				)}
-			</div>
-			<div className="flex items-center px-4 py-3">
-				<WalletBadge {...props.wallet} />
-			</div>
+			<CategoryCell category={props.category} />
+			<TitleCell title={props.title} description={props.description} />
+			{props.kind === "income" ? <AmountCell data={props} /> : <AmountEmptyCell />}
+			{props.kind === "expense" ? <AmountCell data={props} /> : <AmountEmptyCell />}
+			<WalletCell wallet={props.wallet} />
 		</>
+	);
+}
+
+function CategoryCell({ category }: { category: SyncedTransaction["category"] }) {
+	return (
+		<div className="flex items-center px-4 py-3">
+			{category.name ? (
+				<Badge className={cn(createCategoryTheme(category.color))}>{category.name}</Badge>
+			) : (
+				<span className="text-muted-foreground text-sm">—</span>
+			)}
+		</div>
+	);
+}
+
+function TitleCell({ title, description }: { title: string; description?: string | null }) {
+	return (
+		<div className="flex min-w-0 items-center justify-start gap-2 overflow-hidden px-4 py-3">
+			<p className="text-muted-foreground truncate text-xs" title={title}>
+				<span className="text-foreground mr-2 text-sm font-medium">{title}</span>
+				{description && htmlToText(description)}
+			</p>
+		</div>
+	);
+}
+
+function AmountCell({ data }: { data: SyncedTransaction }) {
+	return (
+		<div className="flex items-center justify-end px-4 py-3">
+			<TransactionAmount type={data.kind} data={data} />
+		</div>
+	);
+}
+
+function AmountEmptyCell() {
+	return (
+		<div className="flex items-center justify-end px-4 py-3">
+			<span className="text-muted-foreground text-sm">-</span>
+		</div>
+	);
+}
+
+function WalletCell({ wallet }: { wallet: SyncedTransaction["wallet"] }) {
+	return (
+		<div className="flex items-center px-4 py-3">
+			<WalletBadge {...wallet} />
+		</div>
 	);
 }
 
