@@ -124,7 +124,11 @@ function filterExpenses(
 				return false;
 			}
 		}
-		if (amountFilter.min !== null || amountFilter.max !== null) {
+		if (amountFilter.equal !== null) {
+			if (expense.realAmount !== amountFilter.equal) {
+				return false;
+			}
+		} else if (amountFilter.min !== null || amountFilter.max !== null) {
 			const amount = expense.realAmount;
 			if (amountFilter.min !== null && amount < amountFilter.min) {
 				return false;

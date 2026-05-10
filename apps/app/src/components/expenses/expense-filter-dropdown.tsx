@@ -65,7 +65,8 @@ export function ExpenseFilterDropdown() {
 
 	const activeFiltersCount = useMemo(() => {
 		let count = 0;
-		if (amountFilter.min !== null || amountFilter.max !== null) count++;
+		if (amountFilter.min !== null || amountFilter.max !== null || amountFilter.equal !== null)
+			count++;
 		if (selectedCategories.length > 0) count++;
 		if (selectedWallets.length > 0) count++;
 		if (selectedRepeats.length > 0) count++;
@@ -82,9 +83,11 @@ export function ExpenseFilterDropdown() {
 	const filterSummaries = useMemo(() => {
 		const summaries: { key: string; label: string; onRemove: () => void }[] = [];
 
-		if (amountFilter.min !== null || amountFilter.max !== null) {
+		if (amountFilter.min !== null || amountFilter.max !== null || amountFilter.equal !== null) {
 			let label = "";
-			if (amountFilter.min !== null && amountFilter.max !== null) {
+			if (amountFilter.equal !== null) {
+				label = `= ${amountFilter.equal}`;
+			} else if (amountFilter.min !== null && amountFilter.max !== null) {
 				label = `${amountFilter.min} - ${amountFilter.max}`;
 			} else if (amountFilter.min !== null) {
 				label = `≥ ${amountFilter.min}`;
@@ -94,7 +97,7 @@ export function ExpenseFilterDropdown() {
 			summaries.push({
 				key: "amount",
 				label,
-				onRemove: () => setAmountFilter({ min: null, max: null }),
+				onRemove: () => setAmountFilter({ min: null, max: null, equal: null }),
 			});
 		}
 
@@ -154,7 +157,7 @@ export function ExpenseFilterDropdown() {
 	]);
 
 	const resetAllFilters = useCallback(() => {
-		setAmountFilter({ min: null, max: null });
+		setAmountFilter({ min: null, max: null, equal: null });
 		setSelectedCategories([]);
 		setSelectedWallets([]);
 		setSelectedRepeats([]);
@@ -164,7 +167,9 @@ export function ExpenseFilterDropdown() {
 	const hasActiveFilter = (filter: FilterMenuView) => {
 		switch (filter) {
 			case "amount":
-				return amountFilter.min !== null || amountFilter.max !== null;
+				return (
+					amountFilter.min !== null || amountFilter.max !== null || amountFilter.equal !== null
+				);
 			case "category":
 				return selectedCategories.length > 0;
 			case "wallet":
@@ -401,6 +406,7 @@ function AmountFilterView({
 			onChange({
 				...value,
 				min: newValue,
+				equal: null,
 			});
 		},
 		[value, onChange],
@@ -411,20 +417,33 @@ function AmountFilterView({
 			onChange({
 				...value,
 				max: newValue,
+				equal: null,
+			});
+		},
+		[value, onChange],
+	);
+
+	const handleEqualChange = useCallback(
+		(newValue: number | null) => {
+			onChange({
+				...value,
+				min: null,
+				max: null,
+				equal: newValue,
 			});
 		},
 		[value, onChange],
 	);
 
 	const resetFilter = useCallback(() => {
-		onChange({ min: null, max: null });
+		onChange({ min: null, max: null, equal: null });
 	}, [onChange]);
 
 	return (
 		<div className="flex flex-col gap-4 p-4">
 			<div className="flex items-center justify-between">
 				<h3 className="leading-8 font-medium">Amount</h3>
-				{(value.min !== null || value.max !== null) && (
+				{(value.min !== null || value.max !== null || value.equal !== null) && (
 					<Button variant="ghost" size="sm" onClick={resetFilter}>
 						Reset
 					</Button>
@@ -432,6 +451,32 @@ function AmountFilterView({
 			</div>
 
 			<div className="flex flex-col gap-3">
+				<div>
+					<Label className="text-muted-foreground mb-1.5 block text-xs">Specific amount</Label>
+					<div className="flex rounded-md">
+						<span className="border-input bg-muted text-muted-foreground inline-flex items-center rounded-s-md border border-e-0 px-3 text-sm">
+							=
+						</span>
+						<NumberField
+							value={value.equal ?? undefined}
+							format={{
+								style: "currency",
+								currency: "USD",
+								currencyDisplay: "symbol",
+								currencySign: "accounting",
+							}}
+							onValueChange={handleEqualChange}
+							min={0}
+							step={0.01}
+							className="flex-1"
+						>
+							<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md rounded-s-none border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]">
+								<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
+							</NumberFieldGroup>
+						</NumberField>
+					</div>
+				</div>
+
 				<div>
 					<Label className="text-muted-foreground mb-1.5 block text-xs">At least...</Label>
 					<div className="flex rounded-md">

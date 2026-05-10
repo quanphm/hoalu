@@ -43,10 +43,11 @@ function RouteComponent() {
 					)}
 				</ToolbarGroup>
 				<ToolbarActions>
+					<CreateExpenseDialogTrigger />
 					<ScanReceiptDialogTrigger />
 					<QuickExpensesDialogTrigger />
+					<ToolbarSeparator />
 					<CreateIncomeDialogTrigger />
-					<CreateExpenseDialogTrigger />
 					<ToolbarSeparator />
 					<RedactedAmountToggle />
 				</ToolbarActions>

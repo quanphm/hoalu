@@ -60,7 +60,11 @@ function TransactionGroupHeader({
 		>
 			<div className="flex items-center gap-2 font-mono font-medium">
 				{datetime.format(new Date(groupKey), "E dd/MM/yyyy")}
-				{isToday && <Badge className="ml-1">Today</Badge>}
+				{isToday && (
+					<Badge size="sm" className="ml-1">
+						Today
+					</Badge>
+				)}
 			</div>
 			<div />
 			<div className="ml-auto flex items-center">
