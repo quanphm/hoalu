@@ -321,12 +321,13 @@ export function CashFlowChart(props: CashFlowChartProps) {
 								strokeWidth: 1,
 								strokeDasharray: "4 4",
 							}}
-							content={({ active, payload }) => (
+							content={({ active, payload, coordinate }) => (
 								<TooltipContent
 									active={active}
 									payload={
 										payload as unknown as Array<{ payload: CashFlowDataPoint; value: number }>
 									}
+									coordinate={coordinate}
 									dateRange={dateRange}
 									setHoveredDataPoint={setHoveredDataPoint}
 								/>
@@ -351,11 +352,13 @@ export function CashFlowChart(props: CashFlowChartProps) {
 function TooltipContent({
 	active,
 	payload,
+	coordinate,
 	dateRange,
 	setHoveredDataPoint,
 }: {
 	active?: boolean;
 	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
+	coordinate?: { x: number; y: number };
 	dateRange: PredefinedDateRange;
 	setHoveredDataPoint: (value: CashFlowDataPoint | null) => void;
 }) {
@@ -367,7 +370,7 @@ function TooltipContent({
 		}
 	}, [active, payload, setHoveredDataPoint]);
 
-	if (active && payload && payload.length) {
+	if (active && payload && payload.length && coordinate) {
 		const dataPoint = payload[0].payload as CashFlowDataPoint;
 		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
 		const formattedDate =
@@ -375,8 +378,19 @@ function TooltipContent({
 				? datetime.format(date, "MMMM yyyy")
 				: datetime.format(date, "MMMM dd");
 
+		const tooltipStyle: React.CSSProperties = {
+			position: "absolute",
+			left: coordinate.x,
+			top: 0,
+			transform: "translateX(-50%)",
+			pointerEvents: "none",
+		};
+
 		return (
-			<div className="glass text-muted-foreground px-3 py-2 text-xs tracking-wider uppercase">
+			<div
+				className="glass text-muted-foreground min-w-max p-2 text-xs tracking-wider"
+				style={tooltipStyle}
+			>
 				{formattedDate}
 			</div>
 		);
