@@ -66,17 +66,17 @@ function RouteComponent() {
 
 			<PageContent>
 				<Section>
-					<SectionHeader>
-						<SectionTitle>Members</SectionTitle>
+					<SectionHeader className="bg-card px-4 py-2.5">
+						<SectionTitle className="text-base">Active</SectionTitle>
 					</SectionHeader>
 					<SectionContent>
 						<MembersTable data={membersTableData} />
 					</SectionContent>
 				</Section>
 
-				<Section>
-					<SectionHeader>
-						<SectionTitle>Invitations</SectionTitle>
+				<Section className="border-t">
+					<SectionHeader className="bg-card px-4 py-2.5">
+						<SectionTitle className="text-base">Invitations</SectionTitle>
 					</SectionHeader>
 					<SectionContent>
 						<Suspense>
