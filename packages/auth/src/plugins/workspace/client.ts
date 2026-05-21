@@ -1,11 +1,12 @@
 import { useAuthQuery } from "better-auth/client";
-import type { AccessControl, Role } from "better-auth/plugins/access";
-import type { BetterAuthClientPlugin } from "better-auth/types";
 import { atom } from "nanostores";
 
 import { adminAc, type defaultStatements, memberAc, ownerAc } from "./access";
+
 import type { workspace } from "./index";
 import type { Invitation, Member, Workspace } from "./schema";
+import type { AccessControl, Role } from "better-auth/plugins/access";
+import type { BetterAuthClientPlugin } from "better-auth/types";
 
 interface WorkspaceClientOptions {
 	ac: AccessControl;

@@ -1,15 +1,4 @@
-import {
-	createEventDialogAtom,
-	deleteEventDialogAtom,
-	editEventDialogAtom,
-} from "#app/atoms/dialogs.ts";
-import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { DateRangeCalendarField } from "#app/components/forms/date-range-calendar.tsx";
-import { useAppForm } from "#app/components/forms/index.tsx";
-import { WarningMessage } from "#app/components/warning-message.tsx";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { useCreateEvent, useDeleteEvent, useEditEvent } from "#app/services/mutations.ts";
+import { datetime, toLocalISOString } from "@hoalu/common/datetime";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -21,8 +10,21 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
+
+import {
+	createEventDialogAtom,
+	deleteEventDialogAtom,
+	editEventDialogAtom,
+} from "#app/atoms/dialogs.ts";
+import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { DateRangeCalendarField } from "#app/components/forms/date-range-calendar.tsx";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { useCreateEvent, useDeleteEvent, useEditEvent } from "#app/services/mutations.ts";
 
 const EventFormSchema = z.object({
 	title: z.string().min(1),
@@ -75,8 +77,8 @@ function CreateEventForm() {
 		defaultValues: {
 			title: "",
 			description: "",
-			startDate: new Date().toISOString(),
-			endDate: new Date().toISOString(),
+			startDate: toLocalISOString(datetime.format(new Date(), "yyyy-MM-dd")),
+			endDate: toLocalISOString(datetime.format(new Date(), "yyyy-MM-dd")),
 			budgetTransaction: {
 				value: 0,
 				currency: (workspace.metadata?.currency as string) ?? "USD",

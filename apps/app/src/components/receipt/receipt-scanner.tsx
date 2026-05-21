@@ -1,3 +1,10 @@
+import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
+import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
+import { useSetAtom } from "jotai";
+import { useCallback, useRef, useState } from "react";
+
 import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import {
@@ -6,12 +13,6 @@ import {
 	type ReceiptScanInput,
 } from "#app/hooks/use-queue.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
-import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
-import { Button } from "@hoalu/ui/button";
-import { cn } from "@hoalu/ui/utils";
-import { useSetAtom } from "jotai";
-import { useCallback, useRef, useState } from "react";
 
 const MAX_FILES = MAX_QUEUE_SIZE;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "application/pdf"];

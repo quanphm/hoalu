@@ -1,13 +1,14 @@
-import IncomeContent from "#app/components/incomes/income-content.tsx";
-import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
-import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import IncomeContent from "#app/components/incomes/income-content.tsx";
+import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 import { CurrencyValue } from "../currency-value";
 

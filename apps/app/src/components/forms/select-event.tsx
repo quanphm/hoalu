@@ -1,8 +1,3 @@
-import {
-	CreateEventDialogContent,
-	CreateEventDialogTrigger,
-} from "#app/components/events/event-actions.tsx";
-import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -24,6 +19,12 @@ import {
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
 import { useState } from "react";
+
+import {
+	CreateEventDialogContent,
+	CreateEventDialogTrigger,
+} from "#app/components/events/event-actions.tsx";
+import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";

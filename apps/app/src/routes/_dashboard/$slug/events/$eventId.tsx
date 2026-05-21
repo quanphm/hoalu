@@ -1,8 +1,9 @@
-import { EventDetailPanel } from "#app/components/events/event-details.tsx";
-import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import { EventDetailPanel } from "#app/components/events/event-details.tsx";
+import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/events/$eventId")({
 	component: RouteComponent,

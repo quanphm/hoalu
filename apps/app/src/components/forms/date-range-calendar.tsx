@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime, toLocalISOString } from "@hoalu/common/datetime";
 import { CalendarIcon } from "@hoalu/icons/tabler";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Field, FieldLabel } from "@hoalu/ui/field";
@@ -40,7 +40,7 @@ export function DateRangeCalendarField({
 		const value = e.target.value;
 		if (value) {
 			const date = new Date(value);
-			onStartChange(date.toISOString());
+			onStartChange(toLocalISOString(value));
 			setMonth(date);
 		} else {
 			onStartChange("");
@@ -50,7 +50,7 @@ export function DateRangeCalendarField({
 	const handleEndInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		if (value) {
-			onEndChange(new Date(value).toISOString());
+			onEndChange(toLocalISOString(value));
 		} else {
 			onEndChange("");
 		}
@@ -59,10 +59,10 @@ export function DateRangeCalendarField({
 	const handleRangeSelect = (range: { from?: Date; to?: Date } | undefined) => {
 		if (!range) return;
 		if (range.from) {
-			onStartChange(range.from.toISOString());
+			onStartChange(toLocalISOString(datetime.format(range.from, "yyyy-MM-dd")));
 		}
 		if (range.to) {
-			onEndChange(range.to.toISOString());
+			onEndChange(toLocalISOString(datetime.format(range.to, "yyyy-MM-dd")));
 		}
 	};
 

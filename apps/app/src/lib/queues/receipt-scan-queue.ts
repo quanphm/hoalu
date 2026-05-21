@@ -1,8 +1,9 @@
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
-import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 
 import { createTaskQueue } from "./create-task-queue.ts";
+
+import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 
 export interface ConversationTurn {
 	role: "user" | "assistant";
@@ -49,16 +50,18 @@ export const receiptScanQueue = createTaskQueue<ReceiptScanInput, ReceiptScanRes
 					input.conversationHistory,
 				);
 				if (!result.data) {
-					throw new Error("Could not extract receipt data. The image may be unclear or not a valid receipt.");
+					throw new Error(
+						"Could not extract receipt data. The image may be unclear or not a valid receipt.",
+					);
 				}
 				return result as ReceiptScanResult;
 			}
-			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [
-				input.encodedBase64,
-			]);
+			const results = await apiClient.files.scanReceipt(input.workspaceSlug, [input.encodedBase64]);
 			const first = results[0] as ReceiptScanResult | undefined;
 			if (!first?.data) {
-				throw new Error("Could not extract receipt data. The image may be unclear or not a valid receipt.");
+				throw new Error(
+					"Could not extract receipt data. The image may be unclear or not a valid receipt.",
+				);
 			}
 			return first;
 		},

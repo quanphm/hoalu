@@ -19,12 +19,12 @@ Brand primitives so they can't be mixed up. Validate once at the boundary; downs
 type PhoneNumber = string & { __brand: "PhoneNumber" };
 
 function parsePhone(input: string): PhoneNumber {
-  if (!/^\+?\d{10,15}$/.test(input)) throw new Error(`Invalid: ${input}`);
-  return input as PhoneNumber;
+	if (!/^\+?\d{10,15}$/.test(input)) throw new Error(`Invalid: ${input}`);
+	return input as PhoneNumber;
 }
 
 function sendSMS(to: PhoneNumber, body: string) {
-  /* input is trusted */
+	/* input is trusted */
 }
 ```
 
@@ -38,9 +38,9 @@ type State = { loading: boolean; user?: User; error?: string };
 
 // Do — only valid states exist
 type State =
-  | { status: "loading" }
-  | { status: "success"; user: User }
-  | { status: "error"; error: string };
+	| { status: "loading" }
+	| { status: "success"; user: User }
+	| { status: "error"; error: string };
 ```
 
 ## Let the types flow end-to-end
@@ -53,13 +53,13 @@ Don't restate types you can derive. Reach for `Pick`, `Omit`, `Parameters`, `Ret
 // Don't — duplicate shape, drifts when the row changes
 type UserSummary = { id: string; email: Email };
 function renderUser(u: UserSummary) {
-  /* ... */
+	/* ... */
 }
 
 // Do — derive from the source of truth
 type User = Awaited<ReturnType<typeof db.query.users.findFirst>>;
 function renderUser(u: Pick<User, "id" | "email">) {
-  /* ... */
+	/* ... */
 }
 ```
 

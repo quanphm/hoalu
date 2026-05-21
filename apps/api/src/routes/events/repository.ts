@@ -1,5 +1,6 @@
-import { db, schema } from "#api/db/index.ts";
 import { and, desc, eq, sql } from "drizzle-orm";
+
+import { db, schema } from "#api/db/index.ts";
 
 type NewEvent = typeof schema.event.$inferInsert;
 

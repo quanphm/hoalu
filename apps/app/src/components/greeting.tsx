@@ -1,4 +1,3 @@
-import { useAuth } from "#app/hooks/use-auth.ts";
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
 import {
 	ClearDayIcon,
@@ -7,6 +6,8 @@ import {
 	StarryNightIcon,
 } from "@hoalu/icons/meteocons";
 import { useEffect, useState } from "react";
+
+import { useAuth } from "#app/hooks/use-auth.ts";
 
 export function Greeting() {
 	const { user } = useAuth();

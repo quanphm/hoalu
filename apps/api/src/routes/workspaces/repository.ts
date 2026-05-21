@@ -1,7 +1,8 @@
-import { db, schema } from "#api/db/index.ts";
-import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
 import { monetary } from "@hoalu/common/monetary";
 import { and, count, eq, gte, sql } from "drizzle-orm";
+
+import { db, schema } from "#api/db/index.ts";
+import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
 
 export class WorkspaceRepository {
 	private exchangeRateRepo = new ExchangeRateRepository();
@@ -106,35 +107,77 @@ export class WorkspaceRepository {
 		// STEP 2: Fetch expenses and income for this month
 		const [thisMonthExpenses, thisMonthIncome] = await Promise.all([
 			db
-				.select({ amount: schema.expense.amount, currency: schema.expense.currency, date: schema.expense.date })
+				.select({
+					amount: schema.expense.amount,
+					currency: schema.expense.currency,
+					date: schema.expense.date,
+				})
 				.from(schema.expense)
-				.where(and(eq(schema.expense.workspaceId, param.workspaceId), gte(schema.expense.date, thisMonthStart.toISOString()))),
+				.where(
+					and(
+						eq(schema.expense.workspaceId, param.workspaceId),
+						gte(schema.expense.date, thisMonthStart.toISOString()),
+					),
+				),
 			db
-				.select({ amount: schema.income.amount, currency: schema.income.currency, date: schema.income.date })
+				.select({
+					amount: schema.income.amount,
+					currency: schema.income.currency,
+					date: schema.income.date,
+				})
 				.from(schema.income)
-				.where(and(eq(schema.income.workspaceId, param.workspaceId), gte(schema.income.date, thisMonthStart.toISOString()))),
+				.where(
+					and(
+						eq(schema.income.workspaceId, param.workspaceId),
+						gte(schema.income.date, thisMonthStart.toISOString()),
+					),
+				),
 		]);
 
 		// STEP 3: Fetch expenses and income for last month
 		const [lastMonthExpenses, lastMonthIncome] = await Promise.all([
 			db
-				.select({ amount: schema.expense.amount, currency: schema.expense.currency, date: schema.expense.date })
+				.select({
+					amount: schema.expense.amount,
+					currency: schema.expense.currency,
+					date: schema.expense.date,
+				})
 				.from(schema.expense)
-				.where(and(eq(schema.expense.workspaceId, param.workspaceId), gte(schema.expense.date, lastMonthStart.toISOString()), sql`${schema.expense.date} < ${lastMonthEnd.toISOString()}`)),
+				.where(
+					and(
+						eq(schema.expense.workspaceId, param.workspaceId),
+						gte(schema.expense.date, lastMonthStart.toISOString()),
+						sql`${schema.expense.date} < ${lastMonthEnd.toISOString()}`,
+					),
+				),
 			db
-				.select({ amount: schema.income.amount, currency: schema.income.currency, date: schema.income.date })
+				.select({
+					amount: schema.income.amount,
+					currency: schema.income.currency,
+					date: schema.income.date,
+				})
 				.from(schema.income)
-				.where(and(eq(schema.income.workspaceId, param.workspaceId), gte(schema.income.date, lastMonthStart.toISOString()), sql`${schema.income.date} < ${lastMonthEnd.toISOString()}`)),
+				.where(
+					and(
+						eq(schema.income.workspaceId, param.workspaceId),
+						gte(schema.income.date, lastMonthStart.toISOString()),
+						sql`${schema.income.date} < ${lastMonthEnd.toISOString()}`,
+					),
+				),
 		]);
 
 		// STEP 4: Convert and sum all four buckets
-		const [totalExpensesThisMonth, totalExpensesLastMonth, totalIncomeThisMonth, totalIncomeLastMonth] =
-			await Promise.all([
-				this.convertAndSum(thisMonthExpenses, primaryCurrency, thisMonthEnd.toISOString()),
-				this.convertAndSum(lastMonthExpenses, primaryCurrency, lastMonthEnd.toISOString()),
-				this.convertAndSum(thisMonthIncome, primaryCurrency, thisMonthEnd.toISOString()),
-				this.convertAndSum(lastMonthIncome, primaryCurrency, lastMonthEnd.toISOString()),
-			]);
+		const [
+			totalExpensesThisMonth,
+			totalExpensesLastMonth,
+			totalIncomeThisMonth,
+			totalIncomeLastMonth,
+		] = await Promise.all([
+			this.convertAndSum(thisMonthExpenses, primaryCurrency, thisMonthEnd.toISOString()),
+			this.convertAndSum(lastMonthExpenses, primaryCurrency, lastMonthEnd.toISOString()),
+			this.convertAndSum(thisMonthIncome, primaryCurrency, thisMonthEnd.toISOString()),
+			this.convertAndSum(lastMonthIncome, primaryCurrency, lastMonthEnd.toISOString()),
+		]);
 
 		// Get active wallets count
 		const [walletsData] = await db
@@ -164,8 +207,10 @@ export class WorkspaceRepository {
 		const incomeDate = lastIncome[0]?.date ?? null;
 		const lastActivityAt =
 			expenseDate && incomeDate
-				? expenseDate > incomeDate ? expenseDate : incomeDate
-				: expenseDate ?? incomeDate;
+				? expenseDate > incomeDate
+					? expenseDate
+					: incomeDate
+				: (expenseDate ?? incomeDate);
 
 		// Calculate trend percentage based on expenses
 		let trendPercentage = 0;

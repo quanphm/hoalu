@@ -1,3 +1,10 @@
+import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
+import { monetary } from "@hoalu/common/monetary";
+import { zeroDecimalCurrencies } from "@hoalu/countries";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { atom, useAtom } from "jotai";
+import { useMemo } from "react";
+
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	eventCollectionFactory,
@@ -7,12 +14,6 @@ import {
 	categoryCollectionFactory,
 	exchangeRateCollection,
 } from "#app/lib/collections/index.ts";
-import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
-import { monetary } from "@hoalu/common/monetary";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { atom, useAtom } from "jotai";
-import { useMemo } from "react";
 
 export const selectedEventAtom = atom<{ id: string | null }>({ id: null });
 

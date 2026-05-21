@@ -1,6 +1,3 @@
-import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { SearchIcon } from "@hoalu/icons/lucide";
 import {
 	CalendarDollarIcon,
@@ -25,6 +22,10 @@ import {
 } from "@hoalu/ui/sidebar";
 import { Link, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+
+import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
@@ -87,7 +88,6 @@ export function NavWorkspace() {
 								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
 
 						<SidebarMenuItem>
 							<SidebarMenuButton

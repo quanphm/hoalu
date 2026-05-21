@@ -1,3 +1,8 @@
+import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtomValue } from "jotai";
+import { useDeferredValue, useMemo } from "react";
+
 import {
 	type AmountFilterState,
 	expenseAmountFilterAtom,
@@ -11,10 +16,6 @@ import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expens
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useFuzzyFilter } from "#app/hooks/use-fuzzy-search.ts";
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
-import { useDeferredValue, useMemo } from "react";
 
 import type { RepeatSchema } from "@hoalu/common/schema";
 
@@ -52,7 +53,14 @@ export function useFilteredTransactions(): SyncedTransaction[] {
 	}, [expenses, incomes, kindFilter]);
 
 	const structurallyFiltered = useMemo(
-		() => filterTransactions(merged, { selectedCategoryIds, selectedWalletIds, selectedRepeat, range, amountFilter }),
+		() =>
+			filterTransactions(merged, {
+				selectedCategoryIds,
+				selectedWalletIds,
+				selectedRepeat,
+				range,
+				amountFilter,
+			}),
 		[merged, selectedCategoryIds, selectedWalletIds, selectedRepeat, range, amountFilter],
 	);
 

@@ -1,5 +1,6 @@
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
+
 import type { JSX } from "react";
 
 export async function sendEmail({

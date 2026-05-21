@@ -1,5 +1,6 @@
-import { db, schema } from "#api/db/index.ts";
 import { and, eq, inArray } from "drizzle-orm";
+
+import { db, schema } from "#api/db/index.ts";
 
 type NewFile = typeof schema.file.$inferInsert;
 type NewFileExpense = typeof schema.fileExpense.$inferInsert;
@@ -101,13 +102,15 @@ export class FileRepository {
 			return null;
 		}
 
-		await db.delete(schema.fileExpense).where(
-			and(
-				eq(schema.fileExpense.fileId, param.fileId),
-				eq(schema.fileExpense.expenseId, param.expenseId),
-				eq(schema.fileExpense.workspaceId, param.workspaceId),
-			),
-		);
+		await db
+			.delete(schema.fileExpense)
+			.where(
+				and(
+					eq(schema.fileExpense.fileId, param.fileId),
+					eq(schema.fileExpense.expenseId, param.expenseId),
+					eq(schema.fileExpense.workspaceId, param.workspaceId),
+				),
+			);
 
 		await db.delete(schema.file).where(eq(schema.file.id, param.fileId));
 

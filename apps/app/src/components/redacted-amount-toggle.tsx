@@ -1,8 +1,9 @@
-import { redactedAmountAtom } from "#app/atoms/index.ts";
 import { EyeIcon, EyeOffIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useAtom } from "jotai";
+
+import { redactedAmountAtom } from "#app/atoms/index.ts";
 
 export function RedactedAmountToggle() {
 	const [isRedacted, setRedacted] = useAtom(redactedAmountAtom);

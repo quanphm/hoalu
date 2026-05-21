@@ -1,14 +1,4 @@
 import {
-	DeleteExpense,
-	DuplicateExpense,
-	EditExpenseForm,
-} from "#app/components/expenses/expense-actions.tsx";
-import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { useSetUpRecurringBill, useDeleteExpenseFile } from "#app/services/mutations.ts";
-import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
-import {
 	ChevronDownIcon,
 	ChevronUpIcon,
 	ChevronLeftIcon,
@@ -30,6 +20,17 @@ import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense, useEffect, useEffectEvent, useState } from "react";
+
+import {
+	DeleteExpense,
+	DuplicateExpense,
+	EditExpenseForm,
+} from "#app/components/expenses/expense-actions.tsx";
+import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { useSetUpRecurringBill, useDeleteExpenseFile } from "#app/services/mutations.ts";
+import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
 
 function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
 	const workspace = useWorkspace();

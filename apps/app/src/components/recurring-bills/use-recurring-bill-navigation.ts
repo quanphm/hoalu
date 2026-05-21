@@ -1,5 +1,6 @@
-import type { SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { useMemo } from "react";
+
+import type { SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 
 interface UseRecurringBillNavigationProps {
 	bills: SyncedRecurringBill[];

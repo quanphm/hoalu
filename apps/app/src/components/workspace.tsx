@@ -1,3 +1,16 @@
+import { slugify } from "@hoalu/common/slugify";
+import { tryCatch } from "@hoalu/common/try-catch";
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
+import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
+import { cn } from "@hoalu/ui/utils";
+import { useQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { cva, type VariantProps } from "class-variance-authority";
+import { useSetAtom } from "jotai";
+
 import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
@@ -13,18 +26,6 @@ import {
 	useEditWorkspaceMetadata,
 } from "#app/services/mutations.ts";
 import { workspaceLogoOptions } from "#app/services/query-options.ts";
-import { slugify } from "@hoalu/common/slugify";
-import { tryCatch } from "@hoalu/common/try-catch";
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
-import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
-import { cn } from "@hoalu/ui/utils";
-import { useQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { cva, type VariantProps } from "class-variance-authority";
-import { useSetAtom } from "jotai";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

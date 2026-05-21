@@ -1,19 +1,3 @@
-import {
-	currentDialogAtom,
-	createExpenseDialogAtom,
-	scanQueueReviewDialogAtom,
-} from "#app/atoms/dialogs.ts";
-import {
-	scannedReceiptsAtom,
-	draftExpenseAtom,
-	scannedReceiptJobIdAtom,
-} from "#app/atoms/expenses.ts";
-import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
-import { extensions } from "#app/components/tiptap.tsx";
-import { formatCurrency } from "#app/helpers/currency.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
-import { categoriesQueryOptions } from "#app/services/query-options.ts";
 import { FileTextIcon, ChevronRightIcon, ChevronLeftIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -32,6 +16,23 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
+
+import {
+	currentDialogAtom,
+	createExpenseDialogAtom,
+	scanQueueReviewDialogAtom,
+} from "#app/atoms/dialogs.ts";
+import {
+	scannedReceiptsAtom,
+	draftExpenseAtom,
+	scannedReceiptJobIdAtom,
+} from "#app/atoms/expenses.ts";
+import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
+import { extensions } from "#app/components/tiptap.tsx";
+import { formatCurrency } from "#app/helpers/currency.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { receiptScanQueue } from "#app/lib/queues/receipt-scan-queue.ts";
+import { categoriesQueryOptions } from "#app/services/query-options.ts";
 
 import type { ReceiptData } from "#app/hooks/use-receipt-scan.ts";
 

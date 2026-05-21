@@ -1,6 +1,3 @@
-import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
-import { draftExpenseAtom, quickExpenseJobIdAtom } from "#app/atoms/expenses.ts";
-import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 import {
 	ChevronDownIcon,
 	Loader2Icon,
@@ -13,6 +10,10 @@ import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
+
+import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
+import { draftExpenseAtom, quickExpenseJobIdAtom } from "#app/atoms/expenses.ts";
+import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 
 import { BrailleSpinner } from "./braille-spinner";
 import { CurrencyValue } from "./currency-value";

@@ -1,10 +1,3 @@
-import { HotKey } from "#app/components/hotkey.tsx";
-import {
-	DeleteIncome,
-	DuplicateIncome,
-	EditIncomeForm,
-} from "#app/components/incomes/income-actions.tsx";
-import { type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
@@ -17,6 +10,14 @@ import {
 } from "@hoalu/ui/dialog";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
+import { HotKey } from "#app/components/hotkey.tsx";
+import {
+	DeleteIncome,
+	DuplicateIncome,
+	EditIncomeForm,
+} from "#app/components/incomes/income-actions.tsx";
+import { type SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 interface IncomeDetailsPanelProps {
 	currentIncome: SyncedIncome;

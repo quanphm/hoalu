@@ -1,9 +1,11 @@
-import { createHonoInstance } from "#api/lib/create-app.ts";
-import { redis } from "#api/lib/redis.ts";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { OpenAPI, RATE_LIMIT_MAX_CONNECTIONS, rateLimiter } from "@hoalu/furnace";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
 import * as z from "zod";
+
+import { createHonoInstance } from "#api/lib/create-app.ts";
+import { redis } from "#api/lib/redis.ts";
+
 import pkg from "../../package.json" with { type: "json" };
 
 const API_VERSION = pkg.version;
@@ -73,11 +75,11 @@ export function healthModule() {
 		"/openapi",
 		openAPIRouteHandler(app, {
 			documentation: {
-			info: {
-				title: "Hoalu API",
-				description: "OpenAPI documentation",
-				version: API_VERSION,
-			},
+				info: {
+					title: "Hoalu API",
+					description: "OpenAPI documentation",
+					version: API_VERSION,
+				},
 				servers: [{ url: process.env.PUBLIC_API_URL }],
 			},
 		}),

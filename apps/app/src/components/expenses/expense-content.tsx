@@ -1,11 +1,12 @@
+import { Badge } from "@hoalu/ui/badge";
+import { cn } from "@hoalu/ui/utils";
+import { memo } from "react";
+
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { htmlToText } from "#app/helpers/dom-parser.ts";
-import { Badge } from "@hoalu/ui/badge";
-import { cn } from "@hoalu/ui/utils";
-import { memo } from "react";
 
 import { WalletBadge } from "../wallets/wallet-badge";
 

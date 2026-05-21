@@ -71,18 +71,18 @@ Hoalu backend api.
 
 ### API Routes (`apps/api/src/routes/`)
 
-| Resource           | Files                              | Endpoints                                        | Repository Pattern                              |
-| ------------------ | ---------------------------------- | ------------------------------------------------ | ----------------------------------------------- |
-| **categories**     | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **expenses**       | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **events**         | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **exchange-rates** | index.ts, repository.ts, schema.ts | GET /, POST /                                    | findAll, insertMany                             |
-| **files**          | index.ts, repository.ts, schema.ts | GET /, POST /, DELETE /:id                       | findAllByWorkspaceId, upload, delete            |
-| **incomes**        | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **recurring-bills**| index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **tasks**          | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **wallets**        | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository                          |
-| **workspaces**     | index.ts, repository.ts, schema.ts | GET /, PATCH /                                   | Workspace details, update                       |
+| Resource            | Files                              | Endpoints                                        | Repository Pattern                   |
+| ------------------- | ---------------------------------- | ------------------------------------------------ | ------------------------------------ |
+| **categories**      | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **expenses**        | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **events**          | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **exchange-rates**  | index.ts, repository.ts, schema.ts | GET /, POST /                                    | findAll, insertMany                  |
+| **files**           | index.ts, repository.ts, schema.ts | GET /, POST /, DELETE /:id                       | findAllByWorkspaceId, upload, delete |
+| **incomes**         | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **recurring-bills** | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **tasks**           | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **wallets**         | index.ts, repository.ts, schema.ts | GET /, GET /:id, POST /, PATCH /:id, DELETE /:id | Class-based repository               |
+| **workspaces**      | index.ts, repository.ts, schema.ts | GET /, PATCH /                                   | Workspace details, update            |
 
 ## Architecture Patterns
 
@@ -176,28 +176,28 @@ Request
 
 All custom validators live in `#api/validators/`:
 
-| Validator                   | Purpose                                      |
-| --------------------------- | -------------------------------------------- |
-| `workspace-query.ts`        | Validates `?workspaceIdOrSlug` query param   |
-| `id-param.ts`               | Validates `/:id` path param                  |
-| `json-body.ts`              | Validates JSON request body against Zod      |
-| `validator-wrapper.ts`      | Wrapper for standard-validate pattern        |
+| Validator              | Purpose                                    |
+| ---------------------- | ------------------------------------------ |
+| `workspace-query.ts`   | Validates `?workspaceIdOrSlug` query param |
+| `id-param.ts`          | Validates `/:id` path param                |
+| `json-body.ts`         | Validates JSON request body against Zod    |
+| `validator-wrapper.ts` | Wrapper for standard-validate pattern      |
 
 ### Middlewares
 
-| Middleware              | Purpose                                              |
-| ----------------------- | ---------------------------------------------------- |
-| `user-session.ts`       | Reads session from auth API, sets user + session ctx |
-| `workspace-member.ts`   | Looks up workspace by slug/publicId, validates member|
+| Middleware            | Purpose                                               |
+| --------------------- | ----------------------------------------------------- |
+| `user-session.ts`     | Reads session from auth API, sets user + session ctx  |
+| `workspace-member.ts` | Looks up workspace by slug/publicId, validates member |
 
 ### Auth Helpers from `@hoalu/furnace`
 
-| Export          | Purpose                                           |
-| --------------- | ------------------------------------------------- |
-| `logger`        | Pino logger middleware (pretty in dev)             |
-| `notFound`      | Global 404 handler                                 |
-| `onError`       | Global error handler                               |
-| `OpenAPI`       | Helper for OpenAPI responses (unauthorized, bad_request, not_found, server_parse_error, response) |
+| Export     | Purpose                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| `logger`   | Pino logger middleware (pretty in dev)                                                            |
+| `notFound` | Global 404 handler                                                                                |
+| `onError`  | Global error handler                                                                              |
+| `OpenAPI`  | Helper for OpenAPI responses (unauthorized, bad_request, not_found, server_parse_error, response) |
 
 ### Error Handling
 
@@ -240,16 +240,16 @@ app.get(
 
 ## Utility Modules
 
-| Module / Lib            | Description                                      |
-| ----------------------- | ------------------------------------------------ |
-| `lib/redis.ts`          | Redis client (ioredis)                           |
-| `lib/email.ts`          | Nodemailer email transport                       |
-| `lib/s3.ts`             | S3-compatible file storage                       |
-| `lib/env.ts`            | Environment variable validation                  |
-| `lib/ocr.ts`            | Receipt OCR parsing                              |
-| `lib/openrouter.ts`     | OpenRouter API client for AI features            |
-| `lib/parse-with-ai.ts`  | AI-powered expense parsing                       |
-| `lib/electric.ts`       | Electric SQL client setup                        |
+| Module / Lib           | Description                           |
+| ---------------------- | ------------------------------------- |
+| `lib/redis.ts`         | Redis client (ioredis)                |
+| `lib/email.ts`         | Nodemailer email transport            |
+| `lib/s3.ts`            | S3-compatible file storage            |
+| `lib/env.ts`           | Environment variable validation       |
+| `lib/ocr.ts`           | Receipt OCR parsing                   |
+| `lib/openrouter.ts`    | OpenRouter API client for AI features |
+| `lib/parse-with-ai.ts` | AI-powered expense parsing            |
+| `lib/electric.ts`      | Electric SQL client setup             |
 
 ## Database
 
@@ -264,12 +264,12 @@ app.get(
 
 ### Enum Types (from `@hoalu/common/enums`)
 
-| Enum              | Values                                                             |
-| ----------------- | ------------------------------------------------------------------ |
-| COLOR             | red, green, teal, blue, yellow, orange, purple, pink, gray, stone |
-| WALLET_TYPE       | cash, bank-account, credit-card, debit-card, digital-account       |
-| PRIORITY          | urgent, high, medium, low, none                                    |
-| TASK_STATUS       | todo, in-progress, done, blocked, canceled                         |
-| REPEAT            | one-time, daily, weekly, monthly, yearly, custom                   |
-| CATEGORY_TYPE     | expense, income                                                    |
-| EVENT_STATUS      | open, closed                                                       |
+| Enum          | Values                                                            |
+| ------------- | ----------------------------------------------------------------- |
+| COLOR         | red, green, teal, blue, yellow, orange, purple, pink, gray, stone |
+| WALLET_TYPE   | cash, bank-account, credit-card, debit-card, digital-account      |
+| PRIORITY      | urgent, high, medium, low, none                                   |
+| TASK_STATUS   | todo, in-progress, done, blocked, canceled                        |
+| REPEAT        | one-time, daily, weekly, monthly, yearly, custom                  |
+| CATEGORY_TYPE | expense, income                                                   |
+| EVENT_STATUS  | open, closed                                                      |

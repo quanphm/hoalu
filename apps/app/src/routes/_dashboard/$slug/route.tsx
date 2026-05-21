@@ -1,3 +1,6 @@
+import { toastManager } from "@hoalu/ui/toast";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
 import {
 	categoryCollectionFactory,
@@ -6,8 +9,6 @@ import {
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
 import { getWorkspaceDetailsOptions } from "#app/services/query-options.ts";
-import { toastManager } from "@hoalu/ui/toast";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

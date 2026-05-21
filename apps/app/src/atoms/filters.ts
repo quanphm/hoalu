@@ -1,6 +1,7 @@
+import { atom } from "jotai";
+
 import { DEFAULT_DATE_RANGE } from "#app/helpers/constants.ts";
 import { calculateDateRange } from "#app/helpers/date-range.ts";
-import { atom } from "jotai";
 
 import type { CategorySchema, WalletSchema } from "#app/lib/schema.ts";
 import type { RepeatSchema } from "@hoalu/common/schema";

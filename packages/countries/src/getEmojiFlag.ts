@@ -1,4 +1,5 @@
 import { countriesEmoji } from "./data/countries.emoji";
+
 import type { TCountryCode } from "./types";
 
 // Country code should contain exactly 2 uppercase characters from A..Z

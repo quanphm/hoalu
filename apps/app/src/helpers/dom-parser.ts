@@ -19,11 +19,7 @@ export function htmlToText(html: string | null) {
 	while ((node = walker.nextNode() as Element | null)) {
 		const tag = node.tagName.toLowerCase();
 		const isBlock =
-			tag === "p" ||
-			tag === "li" ||
-			tag === "div" ||
-			tag === "blockquote" ||
-			tag.match(/^h[1-6]$/);
+			tag === "p" || tag === "li" || tag === "div" || tag === "blockquote" || tag.match(/^h[1-6]$/);
 
 		if (!isBlock) continue;
 

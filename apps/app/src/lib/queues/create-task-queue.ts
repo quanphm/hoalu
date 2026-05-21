@@ -1,7 +1,8 @@
-import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import { generateId } from "@hoalu/common/generate-id";
 import { atom, type Atom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
 import { useEffect, useMemo } from "react";
+
+import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 
 import type { TaskJob, TaskQueueConfig } from "./types.ts";
 

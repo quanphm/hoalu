@@ -1,3 +1,7 @@
+import { authGuard, rateLimiter } from "@hoalu/furnace";
+import { openAPIRouteHandler } from "hono-openapi";
+import { cors } from "hono/cors";
+
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { redis } from "#api/lib/redis.ts";
 import categoriesRoute from "#api/routes/categories/index.ts";
@@ -10,9 +14,6 @@ import recurringBillsRoute from "#api/routes/recurring-bills/index.ts";
 import tasksRoute from "#api/routes/tasks/index.ts";
 import walletsRoute from "#api/routes/wallets/index.ts";
 import workspacesRoute from "#api/routes/workspaces/index.ts";
-import { authGuard, rateLimiter } from "@hoalu/furnace";
-import { openAPIRouteHandler } from "hono-openapi";
-import { cors } from "hono/cors";
 
 import pkg from "../../package.json" with { type: "json" };
 

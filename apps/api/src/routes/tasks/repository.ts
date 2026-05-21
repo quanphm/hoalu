@@ -1,5 +1,6 @@
-import { db, schema } from "#api/db/index.ts";
 import { and, desc, eq, getTableColumns, sql } from "drizzle-orm";
+
+import { db, schema } from "#api/db/index.ts";
 
 const schemaColumns = getTableColumns(schema.task);
 

@@ -1,8 +1,9 @@
-import type { AppBindings } from "#api/types.ts";
 import { logger, notFound, onError } from "@hoalu/furnace";
 import { Hono } from "hono";
 import { etag } from "hono/etag";
 import { requestId } from "hono/request-id";
+
+import type { AppBindings } from "#api/types.ts";
 
 export function createHonoInstance() {
 	return new Hono<AppBindings>();

@@ -1,6 +1,7 @@
-import { compareNumeric, normalizeSearch, parseQuery } from "#app/helpers/normalize-search.ts";
 import uFuzzy from "@leeoniya/ufuzzy";
 import { useMemo, useRef } from "react";
+
+import { compareNumeric, normalizeSearch, parseQuery } from "#app/helpers/normalize-search.ts";
 
 const uf = new uFuzzy({
 	intraMode: 1,
@@ -105,7 +106,10 @@ export function useFuzzyFilter<T>(
 	getNumericValueRef.current = options.getNumericValue;
 
 	const haystack = useMemo(
-		() => (items?.length ? buildHaystack(items, getTextFieldsRef.current) : { normalized: [], fieldCount: 0 }),
+		() =>
+			items?.length
+				? buildHaystack(items, getTextFieldsRef.current)
+				: { normalized: [], fieldCount: 0 },
 		[items],
 	);
 
@@ -182,7 +186,10 @@ export function useFuzzySearch<T>(
 	getNumericValueRef.current = options.getNumericValue;
 
 	const haystack = useMemo(
-		() => (items?.length ? buildHaystack(items, getTextFieldsRef.current) : { normalized: [], fieldCount: 0 }),
+		() =>
+			items?.length
+				? buildHaystack(items, getTextFieldsRef.current)
+				: { normalized: [], fieldCount: 0 },
 		[items],
 	);
 

@@ -1,9 +1,11 @@
-import { db } from "#api/db/index.ts";
-import type { AppBindings } from "#api/types.ts";
 import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
 import { HTTPStatus } from "@hoalu/common/http-status";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+
+import { db } from "#api/db/index.ts";
+
+import type { AppBindings } from "#api/types.ts";
 
 interface Member {
 	id: string;

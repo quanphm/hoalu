@@ -1,3 +1,9 @@
+import { PlusIcon } from "@hoalu/icons/lucide";
+import { Card } from "@hoalu/ui/card";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
+
 import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
 import { WorkspaceCard } from "#app/components/cards.tsx";
 import { Greeting } from "#app/components/greeting.tsx";
@@ -21,11 +27,6 @@ import {
 	listWorkspaceSummariesOptions,
 	listWorkspacesOptions,
 } from "#app/services/query-options.ts";
-import { PlusIcon } from "@hoalu/icons/lucide";
-import { Card } from "@hoalu/ui/card";
-import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 
 export const Route = createFileRoute("/_dashboard/")({
 	component: RouteComponent,

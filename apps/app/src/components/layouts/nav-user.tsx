@@ -1,12 +1,3 @@
-import { UserAvatar } from "#app/components/user-avatar.tsx";
-import {
-	CUSTOM_THEMES,
-	KEYBOARD_SHORTCUTS,
-	SYSTEM_THEMES,
-	THEME_LABELS,
-} from "#app/helpers/constants.ts";
-import { useAuth } from "#app/hooks/use-auth.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
 import {
 	CheckIcon,
 	KeyRoundIcon,
@@ -30,6 +21,16 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 import { useId } from "react";
+
+import { UserAvatar } from "#app/components/user-avatar.tsx";
+import {
+	CUSTOM_THEMES,
+	KEYBOARD_SHORTCUTS,
+	SYSTEM_THEMES,
+	THEME_LABELS,
+} from "#app/helpers/constants.ts";
+import { useAuth } from "#app/hooks/use-auth.ts";
+import { useTheme } from "#app/hooks/use-theme.ts";
 
 import { HotKey } from "../hotkey";
 

@@ -1,5 +1,6 @@
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useMemo } from "react";
+
+import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 
 interface UseIncomeNavigationProps {
 	incomes: SyncedIncome[];

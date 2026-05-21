@@ -1,13 +1,15 @@
-import type { UpcomingBill } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
+import { monetary } from "@hoalu/common/monetary";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useMemo } from "react";
+
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
 	recurringBillCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
-import { monetary } from "@hoalu/common/monetary";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useMemo } from "react";
+
+import type { UpcomingBill } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
 
 function formatDate(d: Date): string {
 	const y = d.getFullYear();

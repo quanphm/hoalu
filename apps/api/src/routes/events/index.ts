@@ -1,3 +1,13 @@
+import { datetime, extractDateFromISO } from "@hoalu/common/datetime";
+import { generateId } from "@hoalu/common/generate-id";
+import { HTTPStatus } from "@hoalu/common/http-status";
+import { monetary } from "@hoalu/common/monetary";
+import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { OpenAPI } from "@hoalu/furnace";
+import { describeRoute } from "hono-openapi";
+import { HTTPException } from "hono/http-exception";
+import * as z from "zod";
+
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { EventRepository } from "#api/routes/events/repository.ts";
@@ -12,14 +22,6 @@ import {
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
-import { generateId } from "@hoalu/common/generate-id";
-import { HTTPStatus } from "@hoalu/common/http-status";
-import { monetary } from "@hoalu/common/monetary";
-import { createIssueMsg } from "@hoalu/common/standard-validate";
-import { OpenAPI } from "@hoalu/furnace";
-import { describeRoute } from "hono-openapi";
-import { HTTPException } from "hono/http-exception";
-import * as z from "zod";
 
 const app = createHonoInstance();
 const repository = new EventRepository();
@@ -127,6 +129,8 @@ const route = app
 				publicId: generateId({ use: "nanoid", kind: "event" }),
 				workspaceId: workspace.id,
 				creatorId: user.id,
+				startDate: rest.startDate ? extractDateFromISO(rest.startDate) : null,
+				endDate: rest.endDate ? extractDateFromISO(rest.endDate) : null,
 				budget: realAmount ? `${realAmount}` : null,
 				currency: currency ?? workspaceCurrency,
 			});
@@ -181,10 +185,10 @@ const route = app
 				updatePayload.description = payload.description;
 			}
 			if (payload.startDate !== undefined) {
-				updatePayload.startDate = payload.startDate ? payload.startDate : null;
+				updatePayload.startDate = payload.startDate ? extractDateFromISO(payload.startDate) : null;
 			}
 			if (payload.endDate !== undefined) {
-				updatePayload.endDate = payload.endDate ? payload.endDate : null;
+				updatePayload.endDate = payload.endDate ? extractDateFromISO(payload.endDate) : null;
 			}
 			if (payload.currency !== undefined) {
 				updatePayload.currency = payload.currency;

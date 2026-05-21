@@ -1,3 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import { Section, SectionContent } from "#app/components/layouts/section.tsx";
 import {
@@ -9,8 +12,6 @@ import {
 import { CreateWalletDialogTrigger } from "#app/components/wallets/wallet-actions.tsx";
 import { WalletTable } from "#app/components/wallets/wallet-table.tsx";
 import { walletsQueryOptions } from "#app/services/query-options.ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useParams } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/wallets")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

@@ -186,7 +186,7 @@ const DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
-  '/$slug': typeof DashboardSlugToolbarAndQueueRouteRouteWithChildren
+  '/$slug': typeof DashboardSlugRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute

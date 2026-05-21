@@ -1,9 +1,6 @@
-import type { AuthContext, BetterAuthPlugin } from "better-auth";
 import { getSessionFromCtx } from "better-auth/api";
-import type { AccessControl, Role } from "better-auth/plugins/access";
 
 import { shimContext } from "../../utils/shim";
-import type { User } from "../../utils/types";
 import { defaultRoles } from "./access";
 import { WORKSPACE_ERROR_CODES } from "./error-codes";
 import {
@@ -24,7 +21,11 @@ import {
 	listWorkspaces,
 	updateWorkspace,
 } from "./routes/crud-workspaces";
+
+import type { User } from "../../utils/types";
 import type { Invitation, Member, Workspace } from "./schema";
+import type { AuthContext, BetterAuthPlugin } from "better-auth";
+import type { AccessControl, Role } from "better-auth/plugins/access";
 
 export interface WorkspaceOptions {
 	/**

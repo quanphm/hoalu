@@ -1,5 +1,6 @@
-import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { cn } from "@hoalu/ui/utils";
+
+import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 
 function Section({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) {
 	return (

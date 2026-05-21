@@ -1,12 +1,4 @@
 import {
-	archiveRecurringBillDialogAtom,
-	deleteRecurringBillDialogAtom,
-	unarchiveRecurringBillDialogAtom,
-} from "#app/atoms/index.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
-import { type SyncedAllRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
-import {
 	ArchiveIcon,
 	ArchiveRestoreIcon,
 	ChevronDownIcon,
@@ -17,6 +9,15 @@ import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useSetAtom } from "jotai";
+
+import {
+	archiveRecurringBillDialogAtom,
+	deleteRecurringBillDialogAtom,
+	unarchiveRecurringBillDialogAtom,
+} from "#app/atoms/index.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
+import { type SyncedAllRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 
 interface RecurringBillDetailPanelProps {
 	bill: SyncedAllRecurringBill;
