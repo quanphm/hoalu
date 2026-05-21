@@ -1,6 +1,6 @@
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
-import { Frame, FramePanel } from "@hoalu/ui/frame";
+import { FramePanel } from "@hoalu/ui/frame";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { Suspense } from "react";
