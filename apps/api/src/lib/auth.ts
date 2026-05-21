@@ -1,3 +1,12 @@
+import { apiKey } from "@better-auth/api-key";
+import { userPublicId, workspace } from "@hoalu/auth/plugins";
+import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
+import { generateId } from "@hoalu/common/generate-id";
+import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { jwt, openAPI } from "better-auth/plugins";
+
 import { db } from "#api/db/index.ts";
 import { category, wallet } from "#api/db/schema.ts";
 import { sendEmail } from "#api/lib/email.ts";
@@ -6,14 +15,6 @@ import {
 	DEFAULT_INCOME_CATEGORIES,
 	WORKSPACE_CREATOR_ROLE,
 } from "#api/utils/constants.ts";
-// import { apiKey } from "@better-auth/api-key";
-import { userPublicId, workspace } from "@hoalu/auth/plugins";
-import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
-import { generateId } from "@hoalu/common/generate-id";
-import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { jwt, openAPI } from "better-auth/plugins";
 
 export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL,
@@ -97,7 +98,7 @@ export const auth = betterAuth({
 				const inviteLink = `${process.env.PUBLIC_APP_BASE_URL}/invite/${data.id}/accept`;
 
 				if (process.env.NODE_ENV === "development") {
-					console.log("Inviation Link:", inviteLink);
+					console.log("Invitation Link:", inviteLink);
 					return;
 				}
 
@@ -166,7 +167,7 @@ export const auth = betterAuth({
 				expirationTime: "7d",
 			},
 		}),
-		// apiKey(),
+		apiKey(),
 		openAPI(),
 	],
 	telemetry: {

@@ -3,8 +3,8 @@
 	"display": "Default",
 	"compilerOptions": {
 		"composite": false,
-		"declaration": false,
-		"declarationMap": false,
+		"declaration": true,
+		"declarationMap": true,
 		"esModuleInterop": true,
 		"allowImportingTsExtensions": true,
 		"inlineSources": false,
@@ -12,14 +12,13 @@
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"noUnusedParameters": false,
 		"preserveWatchOutput": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"strictNullChecks": true,
 		"noEmit": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"noUnusedLocals": false
 	},
 	"exclude": ["node_modules"]
 }
