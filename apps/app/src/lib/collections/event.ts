@@ -1,8 +1,9 @@
-import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
 import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
+
+import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
 
 const EventCollectionSchema = z.object({
 	id: z.uuidv7(),

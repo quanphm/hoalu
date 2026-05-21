@@ -1,3 +1,7 @@
+import { Tabs, TabsContent, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { createFileRoute } from "@tanstack/react-router";
+import { useAtom } from "jotai";
+
 import { categoryTypeFilterAtom } from "#app/atoms/categories.ts";
 import { CreateCategoryDialogTrigger } from "#app/components/categories/category-actions.tsx";
 import { CategoryTable } from "#app/components/categories/category-table.tsx";
@@ -10,9 +14,6 @@ import {
 	ToolbarGroup,
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
-import { Tabs, TabsContent, TabsList, TabsTab } from "@hoalu/ui/tabs";
-import { createFileRoute } from "@tanstack/react-router";
-import { useAtom } from "jotai";
 
 export const Route = createFileRoute("/_dashboard/$slug/categories")({
 	component: RouteComponent,

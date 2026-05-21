@@ -1,9 +1,10 @@
-import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
 import { PaperclipIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { type ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+
+import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
 
 interface FilesCompactUploadProps {
 	onFilesSelectedUpdate?: (files: File[]) => void;

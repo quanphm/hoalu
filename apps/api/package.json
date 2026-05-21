@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@better-auth/api-key": "catalog:",
+		"@better-auth/core": "catalog:",
 		"@electric-sql/client": "^1.5.18",
 		"@hoalu/auth": "workspace:*",
 		"@hoalu/common": "workspace:*",
@@ -34,7 +35,6 @@
 		"@scalar/hono-api-reference": "^0.10.16",
 		"@tanstack/ai": "^0.20.1",
 		"@tanstack/ai-openrouter": "^0.8.5",
-		"@better-auth/core": "catalog:",
 		"better-auth": "catalog:",
 		"drizzle-orm": "^0.45.2",
 		"hono": "catalog:",

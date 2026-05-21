@@ -1,8 +1,9 @@
+import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
+import { useQuery } from "@tanstack/react-query";
+
 import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
-import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
-import { useQuery } from "@tanstack/react-query";
 
 export function UpcomingBillsWidget() {
 	const workspace = useWorkspace();

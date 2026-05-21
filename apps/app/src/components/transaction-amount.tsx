@@ -1,5 +1,6 @@
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { cn } from "@hoalu/ui/utils";
+
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 import { CurrencyValue } from "./currency-value";
 

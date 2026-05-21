@@ -1,7 +1,8 @@
-import { redactedAmountAtom } from "#app/atoms/index.ts";
-import { formatCurrency } from "#app/helpers/currency.ts";
 import { cn } from "@hoalu/ui/utils";
 import { useAtomValue } from "jotai";
+
+import { redactedAmountAtom } from "#app/atoms/index.ts";
+import { formatCurrency } from "#app/helpers/currency.ts";
 
 interface CurrencyValueProps {
 	value: number;

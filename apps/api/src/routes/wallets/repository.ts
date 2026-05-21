@@ -1,8 +1,9 @@
-import { db, schema } from "#api/db/index.ts";
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm";
-import type * as z from "zod";
+
+import { db, schema } from "#api/db/index.ts";
 
 import type { UpdateWalletSchema } from "./schema";
+import type * as z from "zod";
 
 const schemaColumns = getTableColumns(schema.wallet);
 

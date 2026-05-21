@@ -1,5 +1,3 @@
-import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
-import { formatCurrency } from "#app/helpers/currency.ts";
 import { CalculatorIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Input } from "@hoalu/ui/input";
@@ -7,6 +5,9 @@ import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/numbe
 import { SelectNative } from "@hoalu/ui/select-native";
 import { cn } from "@hoalu/ui/utils";
 import { useEffect, useRef, useState } from "react";
+
+import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
+import { formatCurrency } from "#app/helpers/currency.ts";
 
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";

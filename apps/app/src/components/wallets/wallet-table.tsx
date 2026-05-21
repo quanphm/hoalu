@@ -1,6 +1,7 @@
-import { AVAILABLE_WALLET_TYPE_OPTIONS } from "#app/helpers/constants.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { createColumnHelper } from "@tanstack/react-table";
+
+import { AVAILABLE_WALLET_TYPE_OPTIONS } from "#app/helpers/constants.ts";
 
 import { DataTable } from "../data-table";
 import { UserAvatar } from "../user-avatar";

@@ -1,8 +1,3 @@
-import { AppLogo } from "#app/components/layouts/app-logo.tsx";
-import { NavUser } from "#app/components/layouts/nav-user.tsx";
-import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
-import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -17,6 +12,12 @@ import {
 } from "@hoalu/ui/sidebar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+
+import { AppLogo } from "#app/components/layouts/app-logo.tsx";
+import { NavUser } from "#app/components/layouts/nav-user.tsx";
+import { NavWorkspace } from "#app/components/layouts/nav-workspace.tsx";
+import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 import { NavWorkspaceList } from "./nav-workspace-list";
 

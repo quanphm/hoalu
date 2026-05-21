@@ -1,10 +1,3 @@
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import {
-	categoryCollectionFactory,
-	exchangeRateCollection,
-	recurringBillCollectionFactory,
-	walletCollectionFactory,
-} from "#app/lib/collections/index.ts";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/common/exchange-rate";
 import { monetary } from "@hoalu/common/monetary";
 import { zeroDecimalCurrencies } from "@hoalu/countries";
@@ -12,6 +5,14 @@ import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useAtom } from "jotai";
 import { atom } from "jotai";
 import { useMemo } from "react";
+
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import {
+	categoryCollectionFactory,
+	exchangeRateCollection,
+	recurringBillCollectionFactory,
+	walletCollectionFactory,
+} from "#app/lib/collections/index.ts";
 
 export const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
 
@@ -179,11 +180,9 @@ export function useAllRecurringBills() {
 						findDirect: ([from, to], d) => {
 							const match = fxRateData.find((rate) => {
 								const inRange =
-									new Date(rate.validFrom) <= new Date(d) &&
-									new Date(d) <= new Date(rate.validTo);
+									new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
 								const correctPair =
-									(rate.from === from && rate.to === to) ||
-									(rate.from === to && rate.to === from);
+									(rate.from === from && rate.to === to) || (rate.from === to && rate.to === from);
 								return inRange && correctPair;
 							});
 							if (!match) return null;
@@ -197,8 +196,7 @@ export function useAllRecurringBills() {
 						findCrossRate: ([from, to], d) => {
 							const usdRates = fxRateData.filter((rate) => {
 								const inRange =
-									new Date(rate.validFrom) <= new Date(d) &&
-									new Date(d) <= new Date(rate.validTo);
+									new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
 								return inRange && (rate.to === from || rate.to === to);
 							});
 							return calculateCrossRate({

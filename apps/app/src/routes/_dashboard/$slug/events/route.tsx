@@ -1,3 +1,6 @@
+import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
+import { useRef } from "react";
+
 import { CreateEventDialogTrigger } from "#app/components/events/event-actions.tsx";
 import EventList from "#app/components/events/event-list.tsx";
 import { PageContent } from "#app/components/layouts/page-content.tsx";
@@ -10,8 +13,6 @@ import {
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
-import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { useRef } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/events")({
 	component: LayoutComponent,

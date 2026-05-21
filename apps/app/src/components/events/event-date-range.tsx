@@ -10,7 +10,8 @@ interface EventDateRangeProps {
 
 function formatDate(dateStr: string, format: string): string {
 	try {
-		return datetime.format(new Date(dateStr), format);
+		const parsed = datetime.parse(dateStr, "yyyy-MM-dd", new Date());
+		return datetime.format(parsed, format);
 	} catch {
 		return dateStr;
 	}

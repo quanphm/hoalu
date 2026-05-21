@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
+import { useHotkeys } from "react-hotkeys-hook";
+
 import { redactedAmountAtom } from "#app/atoms/index.ts";
 import {
 	AVAILABLE_WORKSPACE_SHORTCUT,
@@ -6,10 +11,6 @@ import {
 } from "#app/helpers/constants.ts";
 import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-import { useHotkeys } from "react-hotkeys-hook";
 
 /**
  * All global actions that can be use in "/_dashboard" route.

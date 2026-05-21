@@ -28,32 +28,32 @@ When debug with browser, please refer to these addresses to access the applicati
 
 ### File Location Quick Lookup
 
-| What                        | Where                                                           | Lines                       |
-| --------------------------- | --------------------------------------------------------------- | --------------------------- |
-| Database schema             | `apps/api/src/db/schema.ts`                                     | 480                         |
-| API client types            | `apps/app/src/lib/api-client.ts`                                | 634                         |
-| Frontend schemas            | `apps/app/src/lib/schema.ts`                                    | 170                         |
-| Expense API routes          | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)         |
-| Expense components          | `apps/app/src/components/expenses/`                             | 7 files                     |
-| Expense live queries        | `apps/app/src/components/expenses/use-expenses.ts`              | 430                         |
-| Category components         | `apps/app/src/components/categories/`                           | 3 files                     |
-| Wallet components           | `apps/app/src/components/wallets/`                              | 4 files                     |
-| Recurring bills components  | `apps/app/src/components/recurring-bills/`                      | 5 files                     |
-| Upcoming bills components   | `apps/app/src/components/upcoming-bills/`                       | 3 files                     |
-| Income components           | `apps/app/src/components/incomes/`                              | 6 files                     |
-| Event components            | `apps/app/src/components/events/`                               | 5 files                     |
-| Transactions components     | `apps/app/src/components/transactions/`                         | 2 files                     |
-| Auth setup                  | `apps/api/src/lib/auth.ts`                                      | 175                         |
-| Sync proxy                  | `apps/api/src/modules/sync.ts`                                  | -                           |
-| PGlite provider             | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                           |
-| Collections                 | `apps/app/src/lib/collections/*.ts`                             | 9 files (index + 8 items)   |
-| Collection factory          | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                          |
-| Query options               | `apps/app/src/services/query-options.ts`                        | 370                         |
-| Mutations                   | `apps/app/src/services/mutations.ts`                            | 1082                        |
-| Recurring bills API routes  | `apps/api/src/routes/recurring-bills/`                          | 3 files                     |
-| Events API routes           | `apps/api/src/routes/events/`                                   | 3 files                     |
-| Incomes API routes          | `apps/api/src/routes/incomes/`                                  | 3 files                     |
-| Workspaces API routes       | `apps/api/src/routes/workspaces/`                               | 3 files                     |
+| What                       | Where                                                           | Lines                     |
+| -------------------------- | --------------------------------------------------------------- | ------------------------- |
+| Database schema            | `apps/api/src/db/schema.ts`                                     | 480                       |
+| API client types           | `apps/app/src/lib/api-client.ts`                                | 634                       |
+| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 170                       |
+| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)       |
+| Expense components         | `apps/app/src/components/expenses/`                             | 7 files                   |
+| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 430                       |
+| Category components        | `apps/app/src/components/categories/`                           | 3 files                   |
+| Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                   |
+| Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                   |
+| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 3 files                   |
+| Income components          | `apps/app/src/components/incomes/`                              | 6 files                   |
+| Event components           | `apps/app/src/components/events/`                               | 5 files                   |
+| Transactions components    | `apps/app/src/components/transactions/`                         | 2 files                   |
+| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 175                       |
+| Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                         |
+| PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                         |
+| Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (index + 8 items) |
+| Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                        |
+| Query options              | `apps/app/src/services/query-options.ts`                        | 370                       |
+| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1082                      |
+| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files                   |
+| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files                   |
+| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files                   |
+| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files                   |
 
 ### Critical Constraints
 
@@ -119,6 +119,7 @@ If adding occurrence tracking to existing data:
 #### Better Auth Setup
 
 **Server** (`apps/api/src/lib/auth.ts`):
+
 - Uses `better-auth` with `drizzleAdapter` (PostgreSQL provider)
 - Plugins: `userPublicId()` + `workspace()` from `@hoalu/auth/plugins`
 - Custom `afterCreate` on workspace creation: creates default wallet ("Cash wallet"), default expense categories and income categories
@@ -133,33 +134,36 @@ If adding occurrence tracking to existing data:
 - Cookie prefix: "hoalu"
 
 **Client** (`apps/app/src/lib/auth-client.ts`):
+
 - `createAuthClient` from `better-auth/react` with `workspaceClient()` plugin
 - `baseURL: "PUBLIC_API_URL/auth"`
 - Exports typed `User`, `Session`, `SessionData` types
 - User type includes `publicId` field
 
 **Middlewares:**
+
 - `user-session.ts` — gets session from auth API, sets `c.get("user")` and `c.get("session")`
 - `workspace-member.ts` — looks up workspace by `workspaceIdOrSlug` (slug or publicId), finds current member, sets `c.get("workspace")` and `c.get("membership")`
 
 ### Key Libraries & Versions
 
-| Package                    | Version (catalog)  |
-| -------------------------- | ------------------ |
-| bun                        | 1.3.9              |
-| typescript                 | ^6.0.3             |
-| vite                       | ^8.0.10            |
-| hono                       | ^4.12.15           |
-| better-auth                | ^1.6.9             |
-| zod                        | ^4.3.6             |
-| react / react-dom          | ^19.2.5            |
-| tailwindcss                | ^4.2.4             |
-| drizzle-orm                | ~0.44+             |
-| turbo                      | ^2.9.6             |
+| Package           | Version (catalog) |
+| ----------------- | ----------------- |
+| bun               | 1.3.9             |
+| typescript        | ^6.0.3            |
+| vite              | ^8.0.10           |
+| hono              | ^4.12.15          |
+| better-auth       | ^1.6.9            |
+| zod               | ^4.3.6            |
+| react / react-dom | ^19.2.5           |
+| tailwindcss       | ^4.2.4            |
+| drizzle-orm       | ~0.44+            |
+| turbo             | ^2.9.6            |
 
 ### Workspace Lifecycle
 
 On workspace creation:
+
 1. `userPublicId()` generates a public ID for the user
 2. `workspace()` plugin creates the workspace and membership
 3. `afterCreate` hook runs: inserts a default "Cash wallet" and default categories (both expense and income types) via db.transaction
@@ -201,6 +205,7 @@ Roles: `owner`, `admin`, `member` (configured via `creatorRole` setting)
 ```
 
 **Why it's used:**
+
 - Electric SQL sends numeric values as strings for precision
 - Zod coerces them back to JavaScript numbers
 - Maintains type safety throughout the pipeline
@@ -344,17 +349,17 @@ export function ExpenseList() {
 
 ## Packages
 
-| Package              | Path                      | Purpose                                         |
-| -------------------- | ------------------------- | ----------------------------------------------- |
-| `@hoalu/api`         | `apps/api`                | Backend Hono API                                |
-| `@hoalu/app`         | `apps/app`                | Frontend React app                              |
-| `@hoalu/auth`        | `packages/auth`           | Better Auth plugins (workspace, userPublicId)   |
-| `@hoalu/common`      | `packages/common`         | Shared utilities (enums, schema, datetime, etc) |
-| `@hoalu/countries`   | `packages/countries`      | Country/currency data                           |
-| `@hoalu/email`       | `packages/email`          | React Email templates                           |
-| `@hoalu/furnace`     | `packages/furnace`        | Hono helpers (logger, error handlers, OpenAPI)  |
-| `@hoalu/icons`       | `packages/icons`          | Icon sets (Lucide, Tabler, Nucleo)              |
-| `@hoalu/themes`      | `packages/themes`         | CSS theme layers                                |
-| `@hoalu/tsconfig`    | `packages/tsconfig`       | Shared TypeScript configs                       |
-| `@hoalu/typekit`     | `packages/typekit`        | Type utilities                                  |
-| `@hoalu/ui`          | `packages/ui`             | Shared UI components (~42 components)           |
+| Package            | Path                 | Purpose                                         |
+| ------------------ | -------------------- | ----------------------------------------------- |
+| `@hoalu/api`       | `apps/api`           | Backend Hono API                                |
+| `@hoalu/app`       | `apps/app`           | Frontend React app                              |
+| `@hoalu/auth`      | `packages/auth`      | Better Auth plugins (workspace, userPublicId)   |
+| `@hoalu/common`    | `packages/common`    | Shared utilities (enums, schema, datetime, etc) |
+| `@hoalu/countries` | `packages/countries` | Country/currency data                           |
+| `@hoalu/email`     | `packages/email`     | React Email templates                           |
+| `@hoalu/furnace`   | `packages/furnace`   | Hono helpers (logger, error handlers, OpenAPI)  |
+| `@hoalu/icons`     | `packages/icons`     | Icon sets (Lucide, Tabler, Nucleo)              |
+| `@hoalu/themes`    | `packages/themes`    | CSS theme layers                                |
+| `@hoalu/tsconfig`  | `packages/tsconfig`  | Shared TypeScript configs                       |
+| `@hoalu/typekit`   | `packages/typekit`   | Type utilities                                  |
+| `@hoalu/ui`        | `packages/ui`        | Shared UI components (~42 components)           |

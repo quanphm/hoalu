@@ -1,8 +1,9 @@
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useMemo } from "react";
+
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useFuzzySearch } from "#app/hooks/use-fuzzy-search.ts";
 import { categoryCollectionFactory, expenseCollectionFactory } from "#app/lib/collections/index.ts";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useMemo } from "react";
 
 import type { ExpenseSearchResult } from "./types.ts";
 

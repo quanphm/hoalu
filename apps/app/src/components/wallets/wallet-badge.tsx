@@ -1,6 +1,7 @@
-import { createWalletTheme } from "#app/helpers/colors.ts";
 import { Badge } from "@hoalu/ui/badge";
 import { cn } from "@hoalu/ui/utils";
+
+import { createWalletTheme } from "#app/helpers/colors.ts";
 
 import type { WalletTypeSchema } from "@hoalu/common/schema";
 

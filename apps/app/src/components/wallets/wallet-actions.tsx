@@ -1,22 +1,4 @@
 import {
-	createWalletDialogAtom,
-	deleteWalletDialogAtom,
-	editWalletDialogAtom,
-} from "#app/atoms/index.ts";
-import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { WarningMessage } from "#app/components/warning-message.tsx";
-import { createWalletTheme } from "#app/helpers/colors.ts";
-import {
-	AVAILABLE_CURRENCY_OPTIONS,
-	AVAILABLE_WALLET_TYPE_OPTIONS,
-	KEYBOARD_SHORTCUTS,
-} from "#app/helpers/constants.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
-import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
-import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
-import {
 	BitcoinIcon,
 	WalletIcon as CashIcon,
 	CreditCardIcon,
@@ -42,6 +24,25 @@ import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+
+import {
+	createWalletDialogAtom,
+	deleteWalletDialogAtom,
+	editWalletDialogAtom,
+} from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
+import { createWalletTheme } from "#app/helpers/colors.ts";
+import {
+	AVAILABLE_CURRENCY_OPTIONS,
+	AVAILABLE_WALLET_TYPE_OPTIONS,
+	KEYBOARD_SHORTCUTS,
+} from "#app/helpers/constants.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
+import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
+import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
 
 import type { WalletTypeSchema } from "@hoalu/common/schema";
 

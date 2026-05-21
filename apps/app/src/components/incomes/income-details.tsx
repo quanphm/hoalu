@@ -1,6 +1,3 @@
-import { HotKey } from "#app/components/hotkey.tsx";
-import { useIncomeNavigation } from "#app/components/incomes/use-income-navigation.ts";
-import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
@@ -14,6 +11,10 @@ import {
 import { Empty, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+
+import { HotKey } from "#app/components/hotkey.tsx";
+import { useIncomeNavigation } from "#app/components/incomes/use-income-navigation.ts";
+import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 
 import { DeleteIncome, DuplicateIncome, EditIncomeForm } from "./income-actions";
 

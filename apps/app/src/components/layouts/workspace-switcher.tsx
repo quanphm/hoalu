@@ -1,8 +1,3 @@
-import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
 import { HouseIcon } from "@hoalu/icons/nucleo";
 import {
@@ -19,6 +14,12 @@ import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+
+import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface Props {
 	selectedWorkspace: {

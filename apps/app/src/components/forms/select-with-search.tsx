@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
 	Combobox,
 	ComboboxEmpty,
@@ -7,6 +6,7 @@ import {
 	ComboboxList,
 	ComboboxPopup,
 } from "@hoalu/ui/combobox";
+import { useState } from "react";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components.tsx";
 import { useFieldContext } from "./context.ts";

@@ -1,8 +1,9 @@
-import { RecurringBillDetailPanel } from "#app/components/recurring-bills/recurring-bill-details.tsx";
-import { useAllRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import { RecurringBillDetailPanel } from "#app/components/recurring-bills/recurring-bill-details.tsx";
+import { useAllRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug/recurring-bills/$billId")({
 	component: RouteComponent,

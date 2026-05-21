@@ -1,3 +1,7 @@
+import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
+import { useRef, useState } from "react";
+
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import { Section, SectionContent, SectionItem } from "#app/components/layouts/section.tsx";
 import {
@@ -12,9 +16,6 @@ import RecurringBillList, {
 	type RecurringBillStatusFilter,
 } from "#app/components/recurring-bills/recurring-bill-list.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
-import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
-import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 	component: LayoutComponent,

@@ -1,16 +1,3 @@
-import { deleteEventDialogAtom, editEventDialogAtom } from "#app/atoms/dialogs.ts";
-import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { EventDateRange } from "#app/components/events/event-date-range.tsx";
-import {
-	type SyncedEvent,
-	type SyncedEventBill,
-	type SyncedEventExpense,
-	useLiveQueryEventExpenses,
-	useLiveQueryEventRecurringBills,
-} from "#app/components/events/use-events.ts";
-import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { htmlToText } from "#app/helpers/dom-parser.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { datetime } from "@hoalu/common/datetime";
 import {
 	ChevronDownIcon,
@@ -27,6 +14,20 @@ import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
+
+import { deleteEventDialogAtom, editEventDialogAtom } from "#app/atoms/dialogs.ts";
+import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { EventDateRange } from "#app/components/events/event-date-range.tsx";
+import {
+	type SyncedEvent,
+	type SyncedEventBill,
+	type SyncedEventExpense,
+	useLiveQueryEventExpenses,
+	useLiveQueryEventRecurringBills,
+} from "#app/components/events/use-events.ts";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { htmlToText } from "#app/helpers/dom-parser.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 interface EventDetailPanelProps {
 	event: SyncedEvent;

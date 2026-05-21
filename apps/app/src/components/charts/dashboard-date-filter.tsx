@@ -1,19 +1,3 @@
-import {
-	type ChartGroupBy,
-	type CustomDateRange,
-	chartCategoryFilterAtom,
-	chartGroupByAtom,
-	type PredefinedDateRange,
-	selectDateRangeAtom,
-	syncedDateRangeAtom,
-} from "#app/atoms/filters.ts";
-import { DateRangePicker } from "#app/components/charts/date-range-picker.tsx";
-import { createChartColor } from "#app/helpers/colors.ts";
-import {
-	AVAILABLE_LAST_DAYS_OPTIONS,
-	AVAILABLE_LAST_MONTHS_OPTIONS,
-	AVAILABLE_TO_DATE_RANGE_OPTIONS,
-} from "#app/helpers/constants.ts";
 import { CheckIcon, LayersIcon } from "@hoalu/icons/lucide";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -34,6 +18,23 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
+
+import {
+	type ChartGroupBy,
+	type CustomDateRange,
+	chartCategoryFilterAtom,
+	chartGroupByAtom,
+	type PredefinedDateRange,
+	selectDateRangeAtom,
+	syncedDateRangeAtom,
+} from "#app/atoms/filters.ts";
+import { DateRangePicker } from "#app/components/charts/date-range-picker.tsx";
+import { createChartColor } from "#app/helpers/colors.ts";
+import {
+	AVAILABLE_LAST_DAYS_OPTIONS,
+	AVAILABLE_LAST_MONTHS_OPTIONS,
+	AVAILABLE_TO_DATE_RANGE_OPTIONS,
+} from "#app/helpers/constants.ts";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 

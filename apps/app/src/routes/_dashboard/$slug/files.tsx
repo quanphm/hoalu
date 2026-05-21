@@ -1,3 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+
 import { ImageGallery } from "#app/components/image-gallery.tsx";
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import {
@@ -8,8 +11,6 @@ import {
 } from "#app/components/layouts/section.tsx";
 import { Toolbar, ToolbarGroup, ToolbarTitle } from "#app/components/layouts/toolbar.tsx";
 import { filesQueryOptions } from "#app/services/query-options.ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/$slug/files")({
 	loader: async ({ context: { queryClient }, params: { slug } }) => {

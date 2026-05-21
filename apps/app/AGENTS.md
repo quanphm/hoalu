@@ -178,22 +178,23 @@ Uses structured query keys for all resources: workspaceKeys, expenseKeys, income
 
 **Collections** (`lib/collections/` - 9 files):
 
-| File                     | Entity            |
-| ------------------------ | ----------------- |
-| `expense.ts`             | Expenses          |
-| `income.ts`              | Incomes           |
-| `category.ts`            | Categories        |
-| `wallet.ts`              | Wallets           |
-| `event.ts`               | Events            |
-| `exchange-rate.ts`       | Exchange rates    |
-| `recurring-bill.ts`      | Recurring bills   |
-| `index.ts`               | Centralized cleanup |
+| File                           | Entity                    |
+| ------------------------------ | ------------------------- |
+| `expense.ts`                   | Expenses                  |
+| `income.ts`                    | Incomes                   |
+| `category.ts`                  | Categories                |
+| `wallet.ts`                    | Wallets                   |
+| `event.ts`                     | Events                    |
+| `exchange-rate.ts`             | Exchange rates            |
+| `recurring-bill.ts`            | Recurring bills           |
+| `index.ts`                     | Centralized cleanup       |
 | `create-collection-factory.ts` | Factory helper (63 lines) |
 
 All collections use `@tanstack/electric-db-collection` with `@tanstack/react-db` and Zod validation schemas that coerce numeric fields.
 
 **API Client** (`lib/api-client.ts`):
 Uses `hono/client` `hc()` to create a typed RPC client:
+
 - `baseURL: import.meta.env.PUBLIC_API_URL`
 - `credentials: "include"` for cookie-based auth
 - Uses `ApiRoutes` type from `@hoalu/api/types`

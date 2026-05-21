@@ -1,5 +1,6 @@
-import { THEMES } from "#app/helpers/constants.ts";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
+
+import { THEMES } from "#app/helpers/constants.ts";
 
 export type ThemeMode = (typeof THEMES)[number];
 export type ResolvedTheme = Exclude<ThemeMode, "system">;

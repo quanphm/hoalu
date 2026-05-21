@@ -1,8 +1,3 @@
-import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
-import { ButtonLink } from "#app/components/button-link.tsx";
-import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
@@ -18,6 +13,12 @@ import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+
+import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
+import { ButtonLink } from "#app/components/button-link.tsx";
+import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
+import { useTheme } from "#app/hooks/use-theme.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface LayoutProps {
 	children: React.ReactNode;

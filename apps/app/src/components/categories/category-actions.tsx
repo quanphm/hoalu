@@ -1,16 +1,3 @@
-import {
-	createCategoryDialogAtom,
-	deleteCategoryDialogAtom,
-	selectedCategoryAtom,
-} from "#app/atoms/index.ts";
-import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
-import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { CategoryFormSchema } from "#app/lib/schema.ts";
-import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
-import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
 import { Trash2Icon } from "@hoalu/icons/lucide";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -25,6 +12,20 @@ import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+
+import {
+	createCategoryDialogAtom,
+	deleteCategoryDialogAtom,
+	selectedCategoryAtom,
+} from "#app/atoms/index.ts";
+import { useAppForm } from "#app/components/forms/index.tsx";
+import { HotKey } from "#app/components/hotkey.tsx";
+import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { CategoryFormSchema } from "#app/lib/schema.ts";
+import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
+import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
 
 import { WarningMessage } from "../warning-message";
 

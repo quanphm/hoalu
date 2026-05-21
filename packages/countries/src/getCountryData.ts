@@ -1,5 +1,6 @@
 import { countries } from "./data/countries";
 import { countries2to3 } from "./data/countries.2to3";
+
 import type { ICountryData, TCountryCode } from "./types";
 
 export const getCountryData = (iso2: TCountryCode): ICountryData => {

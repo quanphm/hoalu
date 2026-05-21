@@ -1,4 +1,5 @@
 import { currencies } from "./data/currencies";
+
 import type { TCountryCode } from "./types";
 
 function isValidCountryCode(code: string): code is keyof typeof currencies {

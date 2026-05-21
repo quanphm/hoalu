@@ -1,6 +1,3 @@
-import { HotKey } from "#app/components/hotkey.tsx";
-import { AVAILABLE_WORKSPACE_SHORTCUT } from "#app/helpers/constants.ts";
-import { listWorkspacesOptions } from "#app/services/query-options.ts";
 import { FolderIcon } from "@hoalu/icons/tabler";
 import {
 	SidebarGroup,
@@ -13,6 +10,10 @@ import {
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId } from "react";
+
+import { HotKey } from "#app/components/hotkey.tsx";
+import { AVAILABLE_WORKSPACE_SHORTCUT } from "#app/helpers/constants.ts";
+import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 export function NavWorkspaceList() {
 	const reactId = useId();

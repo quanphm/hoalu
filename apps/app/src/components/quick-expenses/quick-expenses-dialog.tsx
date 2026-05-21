@@ -1,9 +1,10 @@
-import { quickExpenseDialogAtom } from "#app/atoms/dialogs.ts";
-import { QuickExpensesForm } from "#app/components/quick-expenses/quick-expenses-form.tsx";
 import { ZapIcon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 import { useSetAtom } from "jotai";
+
+import { quickExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+import { QuickExpensesForm } from "#app/components/quick-expenses/quick-expenses-form.tsx";
 
 export function QuickExpensesDialogTrigger(props: ButtonProps) {
 	const setQuickDialog = useSetAtom(quickExpenseDialogAtom);

@@ -1,4 +1,5 @@
 import { getCountryDataList } from "./getCountryData";
+
 import type { TCountryCode } from "./types";
 
 const countryDataList = getCountryDataList();

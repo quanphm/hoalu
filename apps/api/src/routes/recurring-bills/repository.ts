@@ -1,6 +1,7 @@
-import { db, schema } from "#api/db/index.ts";
 import { monetary } from "@hoalu/common/monetary";
 import { and, eq, getTableColumns, inArray, sql } from "drizzle-orm";
+
+import { db, schema } from "#api/db/index.ts";
 
 type NewRecurringBill = typeof schema.recurringBill.$inferInsert;
 
@@ -385,21 +386,22 @@ export class RecurringBillRepository {
 			);
 
 		// Get all paid occurrences for these bills
-		const billIds = bills.map(b => b.id);
-		const paidOccurrences = billIds.length > 0 
-			? await db
-				.select({
-					recurringBillId: schema.recurringBillOccurrence.recurringBillId,
-					dueDate: schema.recurringBillOccurrence.dueDate,
-				})
-				.from(schema.recurringBillOccurrence)
-				.where(
-					and(
-						inArray(schema.recurringBillOccurrence.recurringBillId, billIds),
-						sql`${schema.recurringBillOccurrence.expenseId} IS NOT NULL`,
-					),
-				)
-			: [];
+		const billIds = bills.map((b) => b.id);
+		const paidOccurrences =
+			billIds.length > 0
+				? await db
+						.select({
+							recurringBillId: schema.recurringBillOccurrence.recurringBillId,
+							dueDate: schema.recurringBillOccurrence.dueDate,
+						})
+						.from(schema.recurringBillOccurrence)
+						.where(
+							and(
+								inArray(schema.recurringBillOccurrence.recurringBillId, billIds),
+								sql`${schema.recurringBillOccurrence.expenseId} IS NOT NULL`,
+							),
+						)
+				: [];
 
 		const paidDatesByBill = new Map<string, Set<string>>();
 		for (const po of paidOccurrences) {
@@ -416,19 +418,19 @@ export class RecurringBillRepository {
 		for (const bill of bills) {
 			// Generate all expected occurrences from bill start until window end
 			const windowEndStr = bill.repeat === "yearly" ? oneYearOutStr : oneMonthOutStr;
-			
+
 			// For overdue detection, only look back 30 days (within the month)
 			// AND don't show occurrences before the bill was created
 			// This prevents showing overdue bills from before the bill existed
 			const billCreatedStr = bill.createdAt.slice(0, 10);
 			const startStr = thirtyDaysAgoStr > billCreatedStr ? thirtyDaysAgoStr : billCreatedStr;
-			
+
 			const allDates = generateOccurrencesRange(
-				{ 
-					repeat: bill.repeat, 
-					anchorDate: bill.anchorDate, 
-					dueDay: bill.dueDay, 
-					dueMonth: bill.dueMonth 
+				{
+					repeat: bill.repeat,
+					anchorDate: bill.anchorDate,
+					dueDay: bill.dueDay,
+					dueMonth: bill.dueMonth,
 				},
 				startStr,
 				windowEndStr,
@@ -522,7 +524,7 @@ function generateOccurrencesRange(
 		const dow = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDay();
 		// Find first occurrence >= start
 		const startDow = start.getDay();
-		let daysForward = ((dow - startDow) + 7) % 7;
+		let daysForward = (dow - startDow + 7) % 7;
 		let cur = addDays(start, daysForward);
 		while (true) {
 			const ds = formatDate(cur);
@@ -545,7 +547,10 @@ function generateOccurrencesRange(
 			if (ds > endStr) break;
 			if (ds >= startStr) results.push(ds);
 			m++;
-			if (m > 11) { m = 0; y++; }
+			if (m > 11) {
+				m = 0;
+				y++;
+			}
 		}
 		return results;
 	}

@@ -1,3 +1,23 @@
+import { CopyPlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CashPlusIcon } from "@hoalu/icons/tabler";
+import { Button, type ButtonProps } from "@hoalu/ui/button";
+import {
+	DialogClose,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogHeaderAction,
+	DialogPopup,
+	DialogTitle,
+} from "@hoalu/ui/dialog";
+import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useLocalStorage } from "@hoalu/ui/hooks";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { getRouteApi } from "@tanstack/react-router";
+import { useAtom, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { useEffect } from "react";
+
 import {
 	createIncomeDialogAtom,
 	deleteIncomeDialogAtom,
@@ -18,25 +38,6 @@ import {
 	useDuplicateIncome,
 	useEditIncome,
 } from "#app/services/mutations.ts";
-import { CopyPlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
-import { CashPlusIcon } from "@hoalu/icons/tabler";
-import { Button, type ButtonProps } from "@hoalu/ui/button";
-import {
-	DialogClose,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogHeaderAction,
-	DialogPopup,
-	DialogTitle,
-} from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
-import { useLocalStorage } from "@hoalu/ui/hooks";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { getRouteApi } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { useEffect } from "react";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 

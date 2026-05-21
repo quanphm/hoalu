@@ -1,3 +1,7 @@
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { useCallback, useEffectEvent, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+
 import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import {
@@ -5,9 +9,6 @@ import {
 	MobileIncomeDetailsPanel,
 } from "#app/components/transactions/income-details-panel.tsx";
 import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useCallback, useEffectEvent, useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 
 export const Route = createFileRoute(
 	"/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId",

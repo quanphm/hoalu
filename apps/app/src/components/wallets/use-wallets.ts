@@ -1,7 +1,8 @@
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { expenseCollectionFactory, walletCollectionFactory } from "#app/lib/collections/index.ts";
 import { count, eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
+
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { expenseCollectionFactory, walletCollectionFactory } from "#app/lib/collections/index.ts";
 
 export function useLiveQueryWallets() {
 	const workspace = useWorkspace();

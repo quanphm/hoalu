@@ -1,8 +1,9 @@
-import { trendChangeVariants, type PercentageChange } from "#app/helpers/percentage-change.ts";
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useState } from "react";
+
+import { trendChangeVariants, type PercentageChange } from "#app/helpers/percentage-change.ts";
 
 import { CurrencyValue } from "./currency-value";
 

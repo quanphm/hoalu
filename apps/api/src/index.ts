@@ -1,5 +1,6 @@
 import { app } from "#api/app.ts";
 import { verifyEnv } from "#api/lib/env.ts";
+
 import type { ApiRoutes } from "#api/modules/api.ts";
 
 verifyEnv();
