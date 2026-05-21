@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-05-10
+LAST_UPDATED: 2026-05-21
 TECH_STACK: Bun 1.3.9, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -363,3 +363,13 @@ export function ExpenseList() {
 | `@hoalu/tsconfig`  | `packages/tsconfig`  | Shared TypeScript configs                       |
 | `@hoalu/typekit`   | `packages/typekit`   | Type utilities                                  |
 | `@hoalu/ui`        | `packages/ui`        | Shared UI components (~42 components)           |
+
+---
+
+## DO NOT AUTO-COMMIT
+
+Never run `git commit`, `git add`, `git push`, `git rebase`, `git reset`, or any git mutation commands unless the user explicitly asks for it with phrases like "commit this", "git commit", or "push".
+
+- Show the diff and wait for confirmation before committing.
+- Do not stage or commit files as part of "finishing up" or "wrapping up" a task.
+- The user must explicitly approve every commit.
