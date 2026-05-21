@@ -17,7 +17,7 @@ export default defineConfig({
 			},
 		}),
 		tailwindcss(),
-		tanstackRouter({ target: "react", autoCodeSplitting: false }),
+		tanstackRouter(),
 		viteReact(),
 		VitePWA({
 			strategies: "generateSW",
@@ -61,6 +61,22 @@ export default defineConfig({
 	],
 	define: {
 		"import.meta.env.PUBLIC_APP_VERSION": JSON.stringify(process.env.npm_package_version),
+	},
+	build: {
+		target: "esnext",
+		cssMinify: "lightningcss",
+		modulePreload: { polyfill: false },
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (id.includes("node_modules")) {
+						const pkg = id.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/)?.[1];
+						if (pkg) return `vendor-${pkg.replace("@", "").replace("/", "-")}`;
+					}
+					return null;
+				},
+			},
+		},
 	},
 	optimizeDeps: {
 		exclude: ["@electric-sql/pglite"],

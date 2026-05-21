@@ -15,7 +15,28 @@
 		<link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
 		<link rel="shortcut icon" href="/images/favicon.ico" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+
+		<link
+			rel="preload"
+			href="/fonts/geist-sans/Geist[wght].woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="/fonts/geist-mono/GeistMono[wght].woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+
 		<link href="/src/styles/global.css" rel="stylesheet" />
+
+		<script>
+			performance.mark("appStart");
+		</script>
+
 		<title>Hoalu</title>
 	</head>
 	<body>
