@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"rootDir": "./src",
 		"jsxImportSource": "react",
-		"exactOptionalPropertyTypes": true
+		"jsx": "react-jsx"
 	},
 	"include": ["src"]
 }
