@@ -61,11 +61,9 @@ if (rootElement) {
 		</StrictMode>,
 	);
 
-	// Performance instrumentation
 	if (typeof window !== "undefined" && performance.getEntriesByName("appStart").length > 0) {
 		performance.mark("appMounted");
 		performance.measure("app-boot", "appStart", "appMounted");
-
 		if (import.meta.env.DEV) {
 			const bootTime = performance.getEntriesByName("app-boot")[0]?.duration;
 			console.log(`[perf] App boot: ${bootTime?.toFixed(0)}ms`);

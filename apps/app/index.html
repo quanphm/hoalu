@@ -16,7 +16,6 @@
 		<link rel="shortcut icon" href="/images/favicon.ico" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
 
-		<!-- Font preloads -->
 		<link
 			rel="preload"
 			href="/fonts/geist-sans/Geist[wght].woff2"
@@ -34,96 +33,14 @@
 
 		<link href="/src/styles/global.css" rel="stylesheet" />
 
-		<!-- Inlined app shell: renders BEFORE any JS bundle loads -->
-		<style>
-			:root {
-				--bg-color: #f9f7f3;
-				--bg-base-color: #ffffff;
-				--bg-border-color: #e5e0d5;
-				--text-muted: #8b8680;
-			}
-			.dark {
-				--bg-color: #1a1d2e;
-				--bg-base-color: #242a3a;
-				--bg-border-color: #2e3448;
-				--text-muted: #6b7280;
-			}
-			html {
-				background: var(--bg-color);
-				height: 100%;
-			}
-			body {
-				margin: 0;
-				font-family: "Geist", system-ui, sans-serif;
-			}
-
-			#app-shell {
-				display: flex;
-				height: 100vh;
-				width: 100vw;
-				align-items: center;
-				justify-content: center;
-				background: var(--bg-color);
-			}
-
-			#app-shell-inner {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 12px;
-				color: var(--text-muted);
-			}
-
-			#app-shell-logo {
-				width: 40px;
-				height: 40px;
-				border-radius: 10px;
-				background: linear-gradient(135deg, #6366f1, #8b5cf6);
-				animation: shell-pulse 1.2s ease-in-out infinite;
-			}
-
-			@keyframes shell-pulse {
-				0%,
-				100% {
-					opacity: 0.6;
-					transform: scale(0.95);
-				}
-				50% {
-					opacity: 1;
-					transform: scale(1.05);
-				}
-			}
-		</style>
-
 		<script>
 			performance.mark("appStart");
-			// Restore dark mode before paint
-			try {
-				const c = JSON.parse(localStorage.getItem("splashScreenConfig") || "{}");
-				if (c.darkMode) document.documentElement.classList.add("dark");
-				if (c.bgSidebarColor)
-					document.documentElement.style.setProperty("--bg-sidebar-color", c.bgSidebarColor);
-				if (c.sidebarWidth)
-					document.documentElement.style.setProperty("--sidebar-width", c.sidebarWidth + "px");
-			} catch (_) {}
-			// Detect logged-out state
-			if (localStorage.getItem("ApplicationStore") === null) {
-				document.documentElement.classList.add("logged-out");
-			}
 		</script>
 
 		<title>Hoalu</title>
 	</head>
 	<body>
-		<div id="root">
-			<!-- App shell: shown until React mounts -->
-			<div id="app-shell">
-				<div id="app-shell-inner">
-					<div id="app-shell-logo"></div>
-					<span>Hoalu</span>
-				</div>
-			</div>
-		</div>
+		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>
