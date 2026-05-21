@@ -17,7 +17,7 @@ export default defineConfig({
 			},
 		}),
 		tailwindcss(),
-		tanstackRouter({ target: "react", autoCodeSplitting: true }),
+		tanstackRouter(),
 		viteReact(),
 		VitePWA({
 			strategies: "generateSW",
