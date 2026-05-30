@@ -1,6 +1,6 @@
 import { APIError } from "@better-auth/core/error";
-import { generateId } from "@hoalu/common/generate-id";
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { generateId } from "@hoalu/ids/generate-id";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { createAuthEndpoint, requestOnlySessionMiddleware } from "better-auth/api";
 import { type ZodArray, type ZodObject, type ZodOptional, type ZodString, z } from "zod";
 

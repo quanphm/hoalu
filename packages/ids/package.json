@@ -1,0 +1,22 @@
+{
+	"name": "@hoalu/ids",
+	"version": "0.29.0",
+	"private": true,
+	"description": "ID generation and slug utilities for Hoalu",
+	"type": "module",
+	"sideEffects": false,
+	"imports": {
+		"#ids/*": "./src/*"
+	},
+	"exports": {
+		"./generate-id": "./src/generate-id.ts",
+		"./slugify": "./src/slugify.ts"
+	},
+	"dependencies": {
+		"nanoid": "^5.1.11",
+		"uuid": "^14.0.0"
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
+	}
+}

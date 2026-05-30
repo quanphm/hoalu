@@ -1,0 +1,21 @@
+{
+	"name": "@hoalu/finance",
+	"version": "0.29.0",
+	"private": true,
+	"description": "Monetary and exchange-rate utilities for Hoalu",
+	"type": "module",
+	"sideEffects": false,
+	"imports": {
+		"#money/*": "./src/*"
+	},
+	"exports": {
+		"./exchange-rate": "./src/exchange-rate.ts",
+		"./monetary": "./src/monetary.ts"
+	},
+	"dependencies": {
+		"@hoalu/countries": "workspace:*"
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
+	}
+}

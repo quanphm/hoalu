@@ -1,6 +1,6 @@
 import { cn } from "@hoalu/ui/utils";
 
-import type { ColorSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import type { ColorSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 
 const chartVariants: Record<ColorSchema, string> = {
 	red: "bg-red-500 dark:bg-red-400",

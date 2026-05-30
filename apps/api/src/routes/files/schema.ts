@@ -1,4 +1,4 @@
-import { IsoDateSchema } from "@hoalu/common/schema";
+import { IsoDateSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 export const UploadUrlSchema = z.object({

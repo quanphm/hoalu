@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/datetime/datetime";
 import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";

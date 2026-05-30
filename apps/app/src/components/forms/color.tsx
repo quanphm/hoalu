@@ -1,4 +1,4 @@
-import { PG_ENUM_COLOR } from "@hoalu/common/enums";
+import { PG_ENUM_COLOR } from "@hoalu/schema/enums";
 import { RadioGroup, RadioGroupItem } from "@hoalu/ui/radio-group";
 import { cn } from "@hoalu/ui/utils";
 import { useId } from "react";

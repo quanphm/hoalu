@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { authGuard } from "@hoalu/furnace";
 import { cors } from "hono/cors";
 

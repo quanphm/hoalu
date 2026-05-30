@@ -3,7 +3,7 @@ import {
 	type ExchangeRate,
 	type ExchangeRateProvider,
 	lookupExchangeRate,
-} from "@hoalu/common/exchange-rate";
+} from "@hoalu/finance/exchange-rate";
 import { and, between, eq, inArray, or, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";

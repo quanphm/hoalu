@@ -26,7 +26,7 @@ import { CurrencyValue } from "../currency-value";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { ColorSchema } from "@hoalu/common/schema";
+import type { ColorSchema } from "@hoalu/schema/schema";
 
 const TOP_N_CATEGORY = 5;
 
@@ -206,7 +206,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 				<CardAction>
 					{dataToView.length > TOP_N_CATEGORY && (
 						<div className="flex justify-end">
-							<Button variant="outline" size="xs" onClick={handleToggleView}>
+							<Button variant="outline" size="sm" onClick={handleToggleView}>
 								{view === "less" && "View all"}
 								{view === "more" && "View less"}
 							</Button>

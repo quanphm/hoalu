@@ -1,5 +1,5 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
-import { createIssueMsg } from "@hoalu/common/standard-validate";
+import { HTTPStatus } from "@hoalu/http/http-status";
+import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { zValidator } from "@hono/zod-validator";
 import * as z from "zod";
 

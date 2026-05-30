@@ -1,4 +1,4 @@
-import { standardValidate } from "@hoalu/common/standard-validate";
+import { standardValidate } from "@hoalu/http/standard-validate";
 import * as z from "zod";
 
 const EnvSchema = z.object({

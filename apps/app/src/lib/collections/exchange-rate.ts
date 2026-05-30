@@ -1,4 +1,4 @@
-import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
+import { CurrencySchema, IsoDateSchema } from "@hoalu/schema/schema";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";

@@ -1,4 +1,4 @@
-import { datetime, toFromToDateObject } from "@hoalu/common/datetime";
+import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
@@ -17,7 +17,7 @@ import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/
 import { htmlToText } from "#app/helpers/dom-parser.ts";
 import { useFuzzyFilter } from "#app/hooks/use-fuzzy-search.ts";
 
-import type { RepeatSchema } from "@hoalu/common/schema";
+import type { RepeatSchema } from "@hoalu/schema/schema";
 
 export type SyncedTransaction =
 	| (SyncedExpense & { kind: "expense" })

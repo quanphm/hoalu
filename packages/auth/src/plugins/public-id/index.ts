@@ -1,4 +1,4 @@
-import { generateId } from "@hoalu/common/generate-id";
+import { generateId } from "@hoalu/ids/generate-id";
 
 import type { BetterAuthPlugin } from "better-auth";
 

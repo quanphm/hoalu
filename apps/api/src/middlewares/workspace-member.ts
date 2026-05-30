@@ -1,5 +1,5 @@
 import { WORKSPACE_ERROR_CODES } from "@hoalu/auth/plugins";
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 

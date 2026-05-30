@@ -6,7 +6,7 @@ import {
 	PG_ENUM_REPEAT,
 	PG_ENUM_TASK_STATUS,
 	PG_ENUM_WALLET_TYPE,
-} from "@hoalu/common/enums";
+} from "@hoalu/schema/enums";
 import { sql } from "drizzle-orm";
 import {
 	boolean,

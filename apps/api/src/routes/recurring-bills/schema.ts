@@ -1,11 +1,11 @@
-import { monetary } from "@hoalu/common/monetary";
+import { monetary } from "@hoalu/finance/monetary";
 import {
 	ColorSchema,
 	CurrencySchema,
 	IsoDateSchema,
 	RepeatSchema,
 	WalletTypeSchema,
-} from "@hoalu/common/schema";
+} from "@hoalu/schema/schema";
 import * as z from "zod";
 
 export const RecurringBillSchema = z

@@ -44,7 +44,7 @@ import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
 import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
 import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
 
-import type { WalletTypeSchema } from "@hoalu/common/schema";
+import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
 export function CreateWalletDialogTrigger() {
 	const setDialog = useSetAtom(createWalletDialogAtom);

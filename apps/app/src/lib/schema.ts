@@ -1,4 +1,4 @@
-import { ColorSchema, CurrencySchema, RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import { ColorSchema, CurrencySchema, RepeatSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 import type { honoClient } from "#app/lib/api-client.ts";

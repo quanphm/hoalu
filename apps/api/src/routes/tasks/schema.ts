@@ -1,4 +1,4 @@
-import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "@hoalu/common/schema";
+import { IsoDateSchema, PrioritySchema, TaskStatusSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 export const TaskSchema = z.object({

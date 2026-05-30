@@ -1,11 +1,11 @@
-import { monetary } from "@hoalu/common/monetary";
+import { monetary } from "@hoalu/finance/monetary";
 import {
 	CurrencySchema,
 	RepeatSchema,
 	IsoDateSchema,
 	ColorSchema,
 	WalletTypeSchema,
-} from "@hoalu/common/schema";
+} from "@hoalu/schema/schema";
 import * as z from "zod";
 
 const BaseIncomeSchema = z.object({

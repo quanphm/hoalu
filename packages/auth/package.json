@@ -11,7 +11,8 @@
 	},
 	"dependencies": {
 		"@better-auth/core": "catalog:",
-		"@hoalu/common": "workspace:*",
+		"@hoalu/http": "workspace:*",
+		"@hoalu/ids": "workspace:*",
 		"better-auth": "catalog:",
 		"nanostores": "^1.3.0",
 		"zod": "catalog:"

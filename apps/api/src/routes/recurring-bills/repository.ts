@@ -1,4 +1,4 @@
-import { monetary } from "@hoalu/common/monetary";
+import { monetary } from "@hoalu/finance/monetary";
 import { and, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";

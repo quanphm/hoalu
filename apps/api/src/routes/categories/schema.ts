@@ -1,4 +1,4 @@
-import { ColorSchema, CategoryTypeSchema } from "@hoalu/common/schema";
+import { ColorSchema, CategoryTypeSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 export const CategorySchema = z.object({

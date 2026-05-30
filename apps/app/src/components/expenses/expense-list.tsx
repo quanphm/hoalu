@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/datetime/datetime";
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
