@@ -1,4 +1,4 @@
-import { monetary } from "@hoalu/common/monetary";
+import { monetary } from "@hoalu/finance/monetary";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 

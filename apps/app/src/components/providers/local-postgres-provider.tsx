@@ -1,7 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { PGliteProvider } from "@electric-sql/pglite-react";
 import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
-import { tryCatch } from "@hoalu/common/try-catch";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { LoaderCircleIcon } from "@hoalu/icons/lucide";
 // import { electricSync } from "@electric-sql/pglite-sync";
 import { useEffect, useState } from "react";

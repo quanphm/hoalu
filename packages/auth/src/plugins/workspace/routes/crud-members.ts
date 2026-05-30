@@ -1,5 +1,5 @@
 import { APIError } from "@better-auth/core/error";
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { createAuthEndpoint } from "better-auth/api";
 import * as z from "zod";
 

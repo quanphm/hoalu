@@ -1,4 +1,4 @@
-import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
+import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/stdlib/io";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useFilesUpload({

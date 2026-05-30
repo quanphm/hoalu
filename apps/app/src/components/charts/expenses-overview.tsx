@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/datetime/datetime";
 import { CheckIcon, Loader2Icon, ZapIcon } from "@hoalu/icons/lucide";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
@@ -40,7 +40,7 @@ import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
-import type { ColorSchema } from "@hoalu/common/schema";
+import type { ColorSchema } from "@hoalu/schema/schema";
 
 function ClippedBarShape(props: Record<string, unknown>) {
 	const x = (props.x as number) ?? 0;

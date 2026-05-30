@@ -1,6 +1,6 @@
 import { getCurrencyList } from "@hoalu/countries";
 
-import type { RepeatSchema, WalletTypeSchema } from "@hoalu/common/schema";
+import type { RepeatSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 
 export const SYSTEM_THEMES = ["system", "light", "dark"] as const;
 export const CUSTOM_THEMES = ["creamy"] as const;

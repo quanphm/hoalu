@@ -1,4 +1,4 @@
-import { datetime } from "@hoalu/common/datetime";
+import { datetime } from "@hoalu/datetime/datetime";
 import {
 	ChevronDownIcon,
 	ChevronUpIcon,

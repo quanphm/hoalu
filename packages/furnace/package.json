@@ -8,7 +8,7 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"@hoalu/common": "workspace:*",
+		"@hoalu/http": "workspace:*",
 		"hono-openapi": "^1.2.0",
 		"hono-pino": "^0.10.3",
 		"hono-rate-limiter": "^0.5.3",

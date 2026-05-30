@@ -29,7 +29,7 @@ import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
 
 import { WarningMessage } from "../warning-message";
 
-import type { ColorSchema } from "@hoalu/common/schema";
+import type { ColorSchema } from "@hoalu/schema/schema";
 
 export function CreateCategoryDialogTrigger() {
 	const setDialog = useSetAtom(createCategoryDialogAtom);

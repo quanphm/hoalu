@@ -1,0 +1,21 @@
+{
+	"name": "@hoalu/http",
+	"version": "0.29.0",
+	"private": true,
+	"description": "HTTP helpers and validation for Hoalu",
+	"type": "module",
+	"sideEffects": false,
+	"imports": {
+		"#http/*": "./src/*"
+	},
+	"exports": {
+		"./http-status": "./src/http-status/index.ts",
+		"./standard-validate": "./src/standard-validate.ts"
+	},
+	"dependencies": {
+		"@standard-schema/spec": "^1.1.0"
+	},
+	"devDependencies": {
+		"@hoalu/tsconfig": "workspace:*"
+	}
+}

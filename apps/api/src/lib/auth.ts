@@ -1,7 +1,7 @@
 import { apiKey } from "@better-auth/api-key";
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
-import { TIME_IN_SECONDS } from "@hoalu/common/datetime";
-import { generateId } from "@hoalu/common/generate-id";
+import { TIME_IN_SECONDS } from "@hoalu/datetime/datetime";
+import { generateId } from "@hoalu/ids/generate-id";
 import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";

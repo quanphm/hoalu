@@ -1,5 +1,5 @@
-import { slugify } from "@hoalu/common/slugify";
-import { tryCatch } from "@hoalu/common/try-catch";
+import { slugify } from "@hoalu/ids/slugify";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { PlusIcon } from "@hoalu/icons/lucide";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button, type ButtonProps } from "@hoalu/ui/button";

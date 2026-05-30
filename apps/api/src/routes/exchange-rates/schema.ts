@@ -1,4 +1,4 @@
-import { CurrencySchema, IsoDateSchema } from "@hoalu/common/schema";
+import { CurrencySchema, IsoDateSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 export const ExchangeRateSchema = z.object({

@@ -1,4 +1,4 @@
-import { TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
+import { TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({

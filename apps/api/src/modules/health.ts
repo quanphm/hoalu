@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { OpenAPI, RATE_LIMIT_MAX_CONNECTIONS, rateLimiter } from "@hoalu/furnace";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
 import * as z from "zod";

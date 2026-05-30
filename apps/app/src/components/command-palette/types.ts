@@ -1,4 +1,4 @@
-import type { ColorSchema } from "@hoalu/common/schema";
+import type { ColorSchema } from "@hoalu/schema/schema";
 
 export interface ExpenseSearchResult {
 	id: string;

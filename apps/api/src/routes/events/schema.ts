@@ -1,5 +1,5 @@
-import { monetary } from "@hoalu/common/monetary";
-import { CurrencySchema, EventStatusSchema, IsoDateSchema } from "@hoalu/common/schema";
+import { monetary } from "@hoalu/finance/monetary";
+import { CurrencySchema, EventStatusSchema, IsoDateSchema } from "@hoalu/schema/schema";
 import * as z from "zod";
 
 const BasedEventSchema = z.object({

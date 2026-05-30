@@ -1,4 +1,4 @@
-import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/common/datetime";
+import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
 import {
 	ClearDayIcon,
 	PartlyCloudyDayIcon,

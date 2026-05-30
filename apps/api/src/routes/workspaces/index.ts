@@ -1,4 +1,4 @@
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 import { OpenAPI } from "@hoalu/furnace";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";

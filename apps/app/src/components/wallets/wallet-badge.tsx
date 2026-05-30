@@ -3,7 +3,7 @@ import { cn } from "@hoalu/ui/utils";
 
 import { createWalletTheme } from "#app/helpers/colors.ts";
 
-import type { WalletTypeSchema } from "@hoalu/common/schema";
+import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
 interface WalletCommonProps {
 	name: string;

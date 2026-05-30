@@ -1,0 +1,7 @@
+{
+	"extends": "@hoalu/tsconfig/bun.json",
+	"compilerOptions": {
+		"noImplicitAny": false
+	},
+	"include": ["src"]
+}

@@ -1,4 +1,4 @@
-import { generateId } from "@hoalu/common/generate-id";
+import { generateId } from "@hoalu/ids/generate-id";
 import { atom, type Atom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 

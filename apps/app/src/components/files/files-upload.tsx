@@ -1,4 +1,4 @@
-import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/common/io";
+import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/stdlib/io";
 import { UploadIcon } from "@hoalu/icons/lucide";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
