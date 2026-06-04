@@ -293,7 +293,8 @@
     },
   },
   "overrides": {
-    "@better-auth/core": "^1.6.9",
+    "@openrouter/sdk": "^0.12.79",
+    "@tanstack/ai-openrouter>@openrouter/sdk": "^0.12.79",
     "chalk": "5.6.2",
     "ora": "8.2.0",
   },
@@ -740,7 +741,7 @@
 
     "@noble/hashes": ["@noble/hashes@2.2.0", "", {}, "sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg=="],
 
-    "@openrouter/sdk": ["@openrouter/sdk@0.12.14", "", { "dependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-G32CZ1IkmtsGfQF7/mzcvt7W0Lmd6HUHFGjDWv5knBvL6sJcMmX6i3VPSIpHQYSgEqRQSxFuDROP6iErTu7XcA=="],
+    "@openrouter/sdk": ["@openrouter/sdk@0.12.79", "", { "dependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-0ZpwtnuHh3/B1piW9kHCUIQy6PAsaK/vjFdZuHxmCdAenCyUNsLA2mFpmfHNWRNb+bOO3yBc4IALa264UyzmBA=="],
 
     "@opentelemetry/semantic-conventions": ["@opentelemetry/semantic-conventions@1.41.1", "", {}, "sha512-/UhIkaZgPutTFmQ7RnIJGgDXZmtEJ7Dvi86xNTFWcnRxVRNk/aotsqDJYeEvDP+FSMB2SdW+pQzNMcWP0rwuNA=="],
 
