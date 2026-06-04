@@ -5,10 +5,10 @@ import type { ApiRoutes } from "#api/modules/api.ts";
 
 verifyEnv();
 
-export default {
+Bun.serve({
 	port: 3000,
 	fetch: app.fetch,
 	idleTimeout: 60,
-};
+});
 
 export type { ApiRoutes };

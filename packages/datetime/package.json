@@ -12,7 +12,7 @@
 		"./datetime": "./src/datetime.ts"
 	},
 	"dependencies": {
-		"date-fns": "^4.2.1"
+		"date-fns": "^4.4.0"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
