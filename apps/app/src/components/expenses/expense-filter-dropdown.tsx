@@ -21,18 +21,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { Separator } from "@hoalu/ui/separator";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtom } from "jotai";
 import { useCallback, useId, useMemo, useState } from "react";
 
 import {
 	type AmountFilterState,
 	type TransactionKindFilter,
-	expenseAmountFilterAtom,
-	expenseCategoryFilterAtom,
-	expenseRepeatFilterAtom,
-	expenseWalletFilterAtom,
-	transactionKindFilterAtom,
+	expenseAmountFilter$,
+	expenseCategoryFilter$,
+	expenseRepeatFilter$,
+	expenseWalletFilter$,
+	transactionKindFilter$,
 } from "#app/atoms/index.ts";
 import {
 	useLiveQueryCategories,
@@ -55,11 +55,15 @@ export function ExpenseFilterDropdown() {
 	const [open, setOpen] = useState(false);
 	const [currentView, setCurrentView] = useState<FilterMenuView>("main");
 
-	const [amountFilter, setAmountFilter] = useAtom(expenseAmountFilterAtom);
-	const [selectedCategories, setSelectedCategories] = useAtom(expenseCategoryFilterAtom);
-	const [selectedWallets, setSelectedWallets] = useAtom(expenseWalletFilterAtom);
-	const [selectedRepeats, setSelectedRepeats] = useAtom(expenseRepeatFilterAtom);
-	const [kindFilter] = useAtom(transactionKindFilterAtom);
+	const amountFilter = useValue(expenseAmountFilter$);
+	const setAmountFilter = expenseAmountFilter$.set;
+	const selectedCategories = useValue(expenseCategoryFilter$);
+	const setSelectedCategories = expenseCategoryFilter$.set;
+	const selectedWallets = useValue(expenseWalletFilter$);
+	const setSelectedWallets = expenseWalletFilter$.set;
+	const selectedRepeats = useValue(expenseRepeatFilter$);
+	const setSelectedRepeats = expenseRepeatFilter$.set;
+	const kindFilter = useValue(transactionKindFilter$);
 	const { date: searchByDate } = expenseRouteApi.useSearch();
 	const navigate = expenseRouteApi.useNavigate();
 	const dateRange = toFromToDateObject(searchByDate);

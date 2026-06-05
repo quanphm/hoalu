@@ -1,16 +1,16 @@
 import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
 
 import {
 	type AmountFilterState,
-	expenseAmountFilterAtom,
-	expenseCategoryFilterAtom,
-	expenseRepeatFilterAtom,
-	expenseWalletFilterAtom,
-	searchKeywordsAtom,
-	transactionKindFilterAtom,
+	expenseAmountFilter$,
+	expenseCategoryFilter$,
+	expenseRepeatFilter$,
+	expenseWalletFilter$,
+	searchKeywords$,
+	transactionKindFilter$,
 } from "#app/atoms/index.ts";
 import { type SyncedExpense, useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { type SyncedIncome, useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
@@ -33,12 +33,12 @@ export function useFilteredTransactions(): SyncedTransaction[] {
 	const incomes = useLiveQueryIncomes();
 	const { date: searchByDate } = transactionRouteApi.useSearch();
 	const range = toFromToDateObject(searchByDate);
-	const searchKeywords = useAtomValue(searchKeywordsAtom);
-	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
-	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
-	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
-	const amountFilter = useAtomValue(expenseAmountFilterAtom);
-	const kindFilter = useAtomValue(transactionKindFilterAtom);
+	const searchKeywords = useValue(searchKeywords$);
+	const selectedCategoryIds = useValue(expenseCategoryFilter$);
+	const selectedWalletIds = useValue(expenseWalletFilter$);
+	const selectedRepeat = useValue(expenseRepeatFilter$);
+	const amountFilter = useValue(expenseAmountFilter$);
+	const kindFilter = useValue(transactionKindFilter$);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
 	const merged = useMemo(() => {

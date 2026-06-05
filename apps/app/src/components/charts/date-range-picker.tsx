@@ -4,10 +4,10 @@ import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { cn } from "@hoalu/ui/utils";
-import { useAtom } from "jotai";
+import { useValue } from "@legendapp/state/react";
 import { useState } from "react";
 
-import { type CustomDateRange, customDateRangeAtom } from "#app/atoms/filters.ts";
+import { type CustomDateRange, customDateRange$ } from "#app/atoms/filters.ts";
 
 interface DateRangePickerProps {
 	onRangeSelect(range: CustomDateRange): void;
@@ -20,7 +20,8 @@ export function DateRangePicker({
 	className,
 	size = "default",
 }: DateRangePickerProps) {
-	const [customRange, setCustomRange] = useAtom(customDateRangeAtom);
+	const customRange = useValue(customDateRange$);
+	const setCustomRange = customDateRange$.set;
 	const [tempRange, setTempRange] = useState<{ from?: Date; to?: Date }>({
 		from: customRange?.from,
 		to: customRange?.to,

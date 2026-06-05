@@ -23,6 +23,7 @@ import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -35,7 +36,7 @@ import {
 	logPaymentAtom,
 	scannedReceiptsAtom,
 	scannedReceiptJobIdAtom,
-	searchKeywordsAtom,
+	searchKeywords$,
 	quickExpenseJobIdAtom,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
@@ -652,7 +653,8 @@ export function ExpenseCalendar() {
 }
 
 export function ExpenseSearch() {
-	const [value, setValue] = useAtom(searchKeywordsAtom);
+	const value = useValue(searchKeywords$);
+	const setValue = searchKeywords$.set;
 
 	return (
 		<div className="relative w-80">

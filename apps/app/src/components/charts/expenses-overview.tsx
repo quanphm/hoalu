@@ -7,16 +7,15 @@ import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart"
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
 import {
-	chartCategoryFilterAtom,
-	chartGroupByAtom,
-	customDateRangeAtom,
-	selectDateRangeAtom,
-	syncedDateRangeAtom,
+	chartCategoryFilter$,
+	chartGroupBy$,
+	customDateRange$,
+	selectDateRange$,
+	setSyncedDateRange,
 } from "#app/atoms/filters.ts";
 import { redactedAmount$ } from "#app/atoms/redacted.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
@@ -145,11 +144,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 		return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
 	}, [props.incomes]);
 
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
-	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
-	const selectedCategoryIds = useAtomValue(chartCategoryFilterAtom);
-	const chartGroupBy = useAtomValue(chartGroupByAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
+	const selectedCategoryIds = useValue(chartCategoryFilter$);
+	const chartGroupBy = useValue(chartGroupBy$);
 	const isRedacted = useValue(redactedAmount$);
 
 	const {
