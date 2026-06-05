@@ -27,7 +27,7 @@ CMD ["pnpm", "db:migrate"]
 
 FROM base AS runner
 WORKDIR /api
-COPY --from=build /repo/apps/api/dist/index.mjs .
+COPY --from=build /repo/apps/api/dist/index.cjs .
 USER node
 EXPOSE 3000
-CMD ["node", "index.mjs"]
+CMD ["node", "index.cjs"]
