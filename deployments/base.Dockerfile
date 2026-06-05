@@ -4,6 +4,6 @@ RUN apk add --no-cache \
     python3 \
     make \
     gcc \
-    && npm install -g turbo pnpm
+    && npm install -g turbo@latest pnpm@11
 
 WORKDIR /repo
