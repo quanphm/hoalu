@@ -12,7 +12,7 @@
 		"./types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
-		"build:api": "vite build",
+		"build:api": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --external:pg-native --external:argon2",
 		"build:types": "tsc -p tsconfig.build.json",
 		"prebuild": "pnpm run clean",
 		"build": "pnpm run build:api && pnpm run build:types",
@@ -60,6 +60,7 @@
 		"@types/pg": "^8.20.0",
 		"@types/react": "catalog:",
 		"drizzle-kit": "^0.31.10",
+		"esbuild": "^0.28.0",
 		"rimraf": "^6.1.3"
 	},
 	"overrides": {
