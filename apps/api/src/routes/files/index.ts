@@ -1,15 +1,17 @@
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TIME_IN_SECONDS } from "@hoalu/datetime/datetime";
-import { generateId } from "@hoalu/ids/generate-id";
-import { HTTPStatus } from "@hoalu/http/http-status";
-import { FILE_SIZE_LIMIT } from "@hoalu/stdlib/io";
-import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { OpenAPI } from "@hoalu/furnace";
+import { HTTPStatus } from "@hoalu/http/http-status";
+import { createIssueMsg } from "@hoalu/http/standard-validate";
+import { generateId } from "@hoalu/ids/generate-id";
+import { FILE_SIZE_LIMIT } from "@hoalu/stdlib/io";
 import { describeRoute } from "hono-openapi";
 import * as z from "zod";
 
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { batchExtractReceiptData, extractReceiptData } from "#api/lib/ocr.ts";
-import { bunS3Client } from "#api/lib/s3.ts";
+import { s3Client, S3_BUCKET } from "#api/lib/s3.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { FileRepository } from "#api/routes/files/repository.ts";
@@ -85,10 +87,11 @@ const route = app
 			const path = `${workspace.publicId}/${fileName}`;
 			const s3Url = `s3://${path}`;
 
-			const uploadUrl = bunS3Client.presign(path, {
-				expiresIn: TIME_IN_SECONDS.MINUTE * 5, //  5 min
-				method: "PUT",
-			});
+			const uploadUrl = await getSignedUrl(
+				s3Client,
+				new PutObjectCommand({ Bucket: S3_BUCKET, Key: path }),
+				{ expiresIn: TIME_IN_SECONDS.MINUTE * 5 },
+			);
 			const fileSlot = await fileRepository.insert({
 				id: generateId({ use: "uuid" }),
 				name: fileName,
@@ -132,9 +135,11 @@ const route = app
 			const filesWithPresignedUrl = await Promise.all(
 				files.map(async (file) => {
 					const path = getS3Path(file.s3Url);
-					const presignedUrl = bunS3Client.presign(path, {
-						expiresIn: TIME_IN_SECONDS.DAY, // 1 day
-					});
+					const presignedUrl = await getSignedUrl(
+						s3Client,
+						new GetObjectCommand({ Bucket: S3_BUCKET, Key: path }),
+						{ expiresIn: TIME_IN_SECONDS.DAY },
+					);
 					return { ...file, presignedUrl };
 				}),
 			);
@@ -168,9 +173,11 @@ const route = app
 			const workspace = c.get("workspace");
 			if (workspace.logo) {
 				const path = getS3Path(workspace.logo);
-				const file = bunS3Client.presign(path, {
-					expiresIn: TIME_IN_SECONDS.DAY, // 1 day
-				});
+				const file = await getSignedUrl(
+					s3Client,
+					new GetObjectCommand({ Bucket: S3_BUCKET, Key: path }),
+					{ expiresIn: TIME_IN_SECONDS.DAY },
+				);
 				return c.json({ data: file }, HTTPStatus.codes.OK);
 			}
 			return c.json({ data: null }, HTTPStatus.codes.OK);
@@ -285,9 +292,11 @@ const route = app
 			const filesWithPresignedUrl = await Promise.all(
 				files.map(async (file) => {
 					const path = getS3Path(file.s3Url);
-					const presignedUrl = bunS3Client.presign(path, {
-						expiresIn: TIME_IN_SECONDS.DAY,
-					});
+					const presignedUrl = await getSignedUrl(
+						s3Client,
+						new GetObjectCommand({ Bucket: S3_BUCKET, Key: path }),
+						{ expiresIn: TIME_IN_SECONDS.DAY },
+					);
 					return { ...file, presignedUrl };
 				}),
 			);
@@ -368,7 +377,7 @@ const route = app
 			}
 
 			const path = getS3Path(result.s3Url);
-			await bunS3Client.delete(path);
+			await s3Client.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: path }));
 
 			return c.body(null, HTTPStatus.codes.NO_CONTENT);
 		},

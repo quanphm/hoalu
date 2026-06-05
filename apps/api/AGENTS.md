@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
 LAST_UPDATED: 2026-05-10
-TECH_STACK: Bun 1.3.9, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
+TECH_STACK: Node.js 24, pnpm 11, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
 # AGENTS.md
@@ -11,7 +11,7 @@ Hoalu backend api.
 ## Tech Stack
 
 - **Framework**: Hono v4.12+ (lightweight web framework)
-- **Runtime**: Bun (1.3.9)
+- **Runtime**: Node.js (24)
 - **Database**: PostgreSQL 17 with Drizzle ORM
 - **Authentication**: Better Auth v1.6+ with custom workspace & public-id plugins
 - **Validation**:
@@ -33,7 +33,7 @@ Hoalu backend api.
 
 ## Infrastructure
 
-- **Build System**: Turborepo with Bun workspaces
+- **Build System**: Turborepo with pnpm workspaces
 - **Database**:
   - PostgreSQL 17 with logical replication (WAL level)
   - Drizzle ORM with migration-first workflow
@@ -52,7 +52,7 @@ Hoalu backend api.
 ## Component Registry
 
 - **Path Alias**: `#api/*` maps to `./src/*`
-- **Build**: `bun build ./src/index.ts --outdir ./dist --target bun --production` + `bun tsc -p tsconfig.build.json` for types
+- **Build**: `vite build` (bundles to `dist/index.mjs`) + `tsc -p tsconfig.build.json` for types
 - **Main Entry**: `src/index.ts`
 - **Key Files**:
   - `src/lib/create-app.ts` - `createHonoInstance()` and `createApp()` factory functions
@@ -258,9 +258,9 @@ app.get(
 - Schema file: `apps/api/src/db/schema.ts` (480 lines)
 - Migrations directory: `apps/api/migrations/`
 - Commands:
-  - `bun run db:generate` — generates migration from schema changes
-  - `bun run db:migrate` — applies pending migrations
-  - Auto-migrate is part of `dev` script (`bun db:migrate && bun --watch src/index.ts`)
+  - `pnpm run db:generate` — generates migration from schema changes
+  - `pnpm run db:migrate` — applies pending migrations
+  - Auto-migrate is part of `dev` script (`pnpm db:migrate && tsx watch src/index.ts`)
 
 ### Enum Types (from `@hoalu/common/enums`)
 

@@ -70,12 +70,9 @@ export default defineConfig({
 			output: {
 				manualChunks(id) {
 					if (id.includes("node_modules")) {
-						// Bun symlinks packages under node_modules/.bun/<pkg>@ver+hash/node_modules/<pkg>/...
-						// We need the LAST match (the actual package, not .bun)
-						const matches = Array.from(id.matchAll(/node_modules\/((?:@[^/]+\/)?[^/]+)/g));
-						const pkg = matches.pop()?.[1];
-						if (pkg && pkg !== ".bun") {
-							return `vendor-${pkg.replace("@", "").replace("/", "-")}`;
+						const match = id.match(/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/)?.[1];
+						if (match) {
+							return `vendor-${match.replace("@", "").replace("/", "-")}`;
 						}
 					}
 					return null;

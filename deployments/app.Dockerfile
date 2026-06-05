@@ -8,7 +8,7 @@ FROM base AS build
 WORKDIR /repo
 ENV NODE_ENV='production'
 COPY --from=turbo /repo/out/json/ .
-RUN bun install --frozen-lockfile --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY --from=turbo /repo/out/full/ .
 
 # create .env
@@ -21,9 +21,9 @@ PUBLIC_APP_BASE_URL=%s\n" \
 
 # for import HonoRPC types in client
 WORKDIR /repo/apps/api
-RUN bun run build:types
+RUN pnpm run build:types
 WORKDIR /repo/apps/app
-RUN bun run build
+RUN pnpm run build
 
 FROM nginx:alpine
 COPY --from=build /repo/apps/app/dist /usr/share/nginx/html

@@ -13,26 +13,18 @@
 ## Getting Started
 
 ```bash
-# Install Bun if not already installed
-curl -fsSL https://bun.sh/install | bash
+# Install pnpm if not already installed
+corepack enable && corepack prepare pnpm@latest --activate
 
 # Install Caddy if not already installed (macOS)
 brew install caddy
 
 # Install dependencies
-bun install --ignore-scripts
+pnpm install
 
-# Start local infrastructure (PostgreSQL, Redis, Electric)
-bun run docker:up
-
-# Start Caddy reverse proxy (in project root)
-caddy run
-
-# Start development (API + App)
-bun dev
+pnpm run docker:up
+pnpm dev:apps
 ```
-
-- Run `bun install --ignore-scripts` & `bun dev`
 
 ## Deployment
 

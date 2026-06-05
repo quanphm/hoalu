@@ -1,23 +1,17 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-function prefixStream(stream: ReadableStream, prefix: string) {
-	const reader = stream.getReader();
-	const decoder = new TextDecoder();
+import { spawn } from "node:child_process";
+import { createInterface } from "node:readline";
 
-	(async () => {
-		while (true) {
-			const { done, value } = await reader.read();
-			if (done) break;
-			const lines = decoder.decode(value).split("\n");
-			for (const line of lines) {
-				if (line) console.log(`[${prefix}] ${line}`);
-			}
-		}
-	})();
+function prefixStream(stream: NodeJS.ReadableStream, prefix: string) {
+	const rl = createInterface({ input: stream });
+	rl.on("line", (line) => {
+		console.log(`[${prefix}] ${line}`);
+	});
 }
 
-const caddy = Bun.spawn(["caddy", "run"], { stdout: "pipe", stderr: "pipe" });
-const dev = Bun.spawn(["bun", "run", "dev"], { stdout: "pipe", stderr: "pipe" });
+const caddy = spawn("caddy", ["run"], { stdio: ["pipe", "pipe", "pipe"] });
+const dev = spawn("pnpm", ["run", "dev"], { stdio: ["pipe", "pipe", "pipe"] });
 
 prefixStream(caddy.stdout, "caddy");
 prefixStream(caddy.stderr, "caddy");
@@ -29,5 +23,3 @@ process.on("SIGINT", () => {
 	dev.kill();
 	process.exit(0);
 });
-
-Promise.all([caddy.exited, dev.exited]);
