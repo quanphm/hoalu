@@ -1,8 +1,9 @@
 import { apiKey } from "@better-auth/api-key";
 import { userPublicId, workspace } from "@hoalu/auth/plugins";
 import { TIME_IN_SECONDS } from "@hoalu/datetime/datetime";
-import { generateId } from "@hoalu/ids/generate-id";
 import { JoinWorkspace, ResetPassword, VerifyEmail } from "@hoalu/email";
+import { generateId } from "@hoalu/ids/generate-id";
+import { argon2id, hash, verify } from "argon2";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, openAPI } from "better-auth/plugins";
@@ -45,14 +46,14 @@ export const auth = betterAuth({
 		minPasswordLength: 5,
 		password: {
 			hash: async (password) => {
-				return await Bun.password.hash(password, {
-					algorithm: "argon2id",
+				return await hash(password, {
+					type: argon2id,
 					memoryCost: 19456,
 					timeCost: 2,
 				});
 			},
-			verify: async ({ password, hash }) => {
-				return await Bun.password.verify(password, hash);
+			verify: async ({ password, hash: hashValue }) => {
+				return await verify(hashValue, password);
 			},
 		},
 		sendResetPassword: async ({ user, token }, _request) => {

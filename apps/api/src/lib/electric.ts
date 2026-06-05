@@ -27,7 +27,7 @@ type Data = {
 		control?: "up-to-date" | "must-refetch" | "snapshot-end";
 	};
 };
-export async function proxyElectricRequest(originUrl: URL): Promise<[Data[], Headers]> {
+export async function proxyElectricRequest(originUrl: URL): Promise<Response> {
 	const response = await fetch(originUrl);
 	const headers = response.headers;
 
@@ -35,17 +35,9 @@ export async function proxyElectricRequest(originUrl: URL): Promise<[Data[], Hea
 	headers.delete(`content-length`);
 	headers.set(`vary`, `cookie`);
 
-	const data: Data[] = await response.json();
-	const endOfDataResponse = data[data.length - 1];
-
-	/**
-	 * Bun.fetch can not attach `electric-up-to-date` from Electric proxy.
-	 * Manually check the response data.
-	 */
-	const isUpToDate = endOfDataResponse.headers.control === "up-to-date";
-	if (isUpToDate) {
-		headers.set("electric-up-to-date", "");
-	}
-
-	return [data, headers];
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers,
+	});
 }
