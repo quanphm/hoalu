@@ -15,7 +15,7 @@ export const extensions = [
 ];
 
 export function Toolbar({ editor }: { editor: Editor | null }) {
-	if (!editor) {
+	if (!editor || editor.isDestroyed) {
 		return null;
 	}
 

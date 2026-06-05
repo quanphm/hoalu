@@ -92,7 +92,7 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 		case "scan-receipt":
 			return <ScanReceiptDialogContent />;
 		case "scan-queue-review":
-			return <ScanQueueReviewDialogContent />;
+			return <ScanQueueReviewDialogContent key={props.data?.jobId} />;
 		case "quick-expense":
 			return <QuickExpensesDialogContent />;
 
