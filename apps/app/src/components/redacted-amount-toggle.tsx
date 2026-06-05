@@ -12,7 +12,7 @@ export function RedactedAmountToggle() {
 		<Button
 			variant="outline"
 			size="icon-sm"
-			onClick={() => redactedAmount$.toggle()}
+			onClick={redactedAmount$.toggle}
 			title={isRedacted ? "Show amounts" : "Hide amounts"}
 			className={cn(isRedacted && "border-primary [&_svg]:text-primary")}
 		>

@@ -60,15 +60,9 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 		},
 	);
 
-	useHotkeys(
-		KEYBOARD_SHORTCUTS.toggle_redacted.hotkey,
-		() => {
-			redactedAmount$.toggle();
-		},
-		{
-			enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,
-		},
-	);
+	useHotkeys(KEYBOARD_SHORTCUTS.toggle_redacted.hotkey, redactedAmount$.toggle, {
+		enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,
+	});
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.goto_preferences.hotkey,

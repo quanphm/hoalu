@@ -213,10 +213,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	return (
 		<>
 			{children}
-			<CommandPalette
-				open={commandPaletteOpen}
-				onOpenChange={(open) => commandPaletteOpen$.set(open)}
-			/>
+			<CommandPalette open={commandPaletteOpen} onOpenChange={commandPaletteOpen$.set} />
 		</>
 	);
 }
