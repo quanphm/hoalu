@@ -79,7 +79,6 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const transactionsDiff = totalTransactions - prevTransactions;
 
 	const periodInfo = useMemo(() => {
-		console.log(dateRange);
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		let start: Date;

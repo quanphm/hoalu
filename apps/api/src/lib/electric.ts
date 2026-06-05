@@ -29,7 +29,7 @@ type Data = {
 };
 export async function proxyElectricRequest(originUrl: URL): Promise<Response> {
 	const response = await fetch(originUrl);
-	const headers = response.headers;
+	const headers = new Headers(response.headers);
 
 	headers.delete(`content-encoding`);
 	headers.delete(`content-length`);
