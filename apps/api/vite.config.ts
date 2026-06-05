@@ -11,7 +11,7 @@ export default defineConfig({
 		rollupOptions: {
 			external: [/^node:/],
 			output: {
-				inlineDynamicImports: true,
+				codeSplitting: false,
 			},
 		},
 		target: "node22",

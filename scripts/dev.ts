@@ -11,7 +11,7 @@ function prefixStream(stream: NodeJS.ReadableStream, prefix: string) {
 }
 
 const caddy = spawn("caddy", ["run"], { stdio: ["pipe", "pipe", "pipe"] });
-const dev = spawn("bun", ["run", "dev"], { stdio: ["pipe", "pipe", "pipe"] });
+const dev = spawn("pnpm", ["run", "dev"], { stdio: ["pipe", "pipe", "pipe"] });
 
 prefixStream(caddy.stdout, "caddy");
 prefixStream(caddy.stderr, "caddy");
