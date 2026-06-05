@@ -22,17 +22,9 @@ brew install caddy
 # Install dependencies
 pnpm install
 
-# Start local infrastructure (PostgreSQL, Redis, Electric)
 pnpm run docker:up
-
-# Start Caddy reverse proxy (in project root)
-caddy run
-
-# Start development (API + App)
-bun dev
+pnpm dev:apps
 ```
-
-- Run `bun install --ignore-scripts` & `bun dev`
 
 ## Deployment
 
