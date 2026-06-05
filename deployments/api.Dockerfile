@@ -27,6 +27,7 @@ CMD ["pnpm", "db:migrate"]
 
 FROM base AS runner
 WORKDIR /api
+RUN mkdir -p node_modules && ln -s /usr/local/lib/node_modules/argon2 node_modules/argon2
 COPY --from=build /repo/apps/api/dist/index.cjs .
 USER node
 EXPOSE 3000

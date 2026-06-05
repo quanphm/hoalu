@@ -12,7 +12,7 @@
 		"./types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
-		"build:api": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --external:pg-native --external:argon2",
+		"build:api": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --external:argon2",
 		"build:types": "tsc -p tsconfig.build.json",
 		"prebuild": "pnpm run clean",
 		"build": "pnpm run build:api && pnpm run build:types",
