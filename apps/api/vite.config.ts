@@ -9,7 +9,6 @@ export default defineConfig({
 			fileName: () => "index.mjs",
 		},
 		rollupOptions: {
-			external: [/^node:/],
 			output: {
 				codeSplitting: false,
 			},
