@@ -1,7 +1,7 @@
 import { cn } from "@hoalu/ui/utils";
-import { useAtomValue } from "jotai";
+import { useValue } from "@legendapp/state/react";
 
-import { redactedAmountAtom } from "#app/atoms/index.ts";
+import { redactedAmount$ } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 
 interface CurrencyValueProps {
@@ -21,7 +21,7 @@ export function CurrencyValue({
 	style = "currency",
 	...props
 }: CurrencyValueProps) {
-	const isRedacted = useAtomValue(redactedAmountAtom);
+	const isRedacted = useValue(redactedAmount$);
 
 	if (isRedacted) {
 		return (

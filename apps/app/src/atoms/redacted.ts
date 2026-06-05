@@ -1,3 +1,12 @@
-import { atomWithStorage } from "jotai/utils";
+import { observable } from "@legendapp/state";
+import { ObservablePersistLocalStorage } from "@legendapp/state/persist-plugins/local-storage";
+import { syncObservable } from "@legendapp/state/sync";
 
-export const redactedAmountAtom = atomWithStorage("redacted_amount", true);
+export const redactedAmount$ = observable(true);
+
+syncObservable(redactedAmount$, {
+	persist: {
+		name: "redacted_amount",
+		plugin: ObservablePersistLocalStorage,
+	},
+});

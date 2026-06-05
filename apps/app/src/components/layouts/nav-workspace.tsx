@@ -21,15 +21,13 @@ import {
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
 import { Link, useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 
-import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
+import { commandPaletteOpen$ } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
 export function NavWorkspace() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
-	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	return (
 		<>
@@ -38,7 +36,7 @@ export function NavWorkspace() {
 					<Button
 						variant="outline"
 						className="w-full gap-2 rounded-md"
-						onClick={() => setCommandPaletteOpen(true)}
+						onClick={() => commandPaletteOpen$.set(true)}
 					>
 						<SearchIcon className="text-muted-foreground size-4" />
 						<span className="text-muted-foreground flex-1 text-left">Search...</span>
