@@ -113,7 +113,7 @@ export function ScanQueueReviewDialogContent() {
 	});
 
 	const feedbackEditorState = useEditorState({
-		editor: feedbackEditor,
+		editor: feedbackEditor && !feedbackEditor.isDestroyed ? feedbackEditor : null,
 		selector: (ctx) => ({ isEmpty: ctx.editor?.isEmpty ?? true }),
 	});
 	const isFeedbackEmpty = feedbackEditorState?.isEmpty;
@@ -152,7 +152,9 @@ export function ScanQueueReviewDialogContent() {
 			setDate(jobData?.date ?? "");
 			setCategoryId(jobData?.suggestedCategoryId ?? "");
 			setError(null);
-			feedbackEditor?.commands.clearContent();
+			if (feedbackEditor && !feedbackEditor.isDestroyed) {
+				feedbackEditor.commands.clearContent();
+			}
 		}
 	}, [jobId, jobData, feedbackEditor, workspaceCurrency]);
 
@@ -173,7 +175,7 @@ export function ScanQueueReviewDialogContent() {
 	}, [hasPrev, completedJobs, currentIndex, setReviewDialog]);
 
 	const handleRefine = useCallback(() => {
-		if (!feedbackEditor || isFeedbackEmpty || !currentJob) return;
+		if (!feedbackEditor || feedbackEditor.isDestroyed || isFeedbackEmpty || !currentJob) return;
 		addJob({
 			...currentJob.input,
 			feedback: feedbackEditor.getText(),
