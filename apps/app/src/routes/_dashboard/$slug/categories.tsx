@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { useValue } from "@legendapp/state/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useAtom } from "jotai";
 
-import { categoryTypeFilterAtom } from "#app/atoms/categories.ts";
+import { categoryTypeFilter$ } from "#app/atoms/categories.ts";
 import { CreateCategoryDialogTrigger } from "#app/components/categories/category-actions.tsx";
 import { CategoryTable } from "#app/components/categories/category-table.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
@@ -21,7 +21,8 @@ export const Route = createFileRoute("/_dashboard/$slug/categories")({
 
 function RouteComponent() {
 	const categories = useLiveQueryCategories();
-	const [typeFilter, setTypeFilter] = useAtom(categoryTypeFilterAtom);
+	const typeFilter = useValue(categoryTypeFilter$);
+	const setTypeFilter = categoryTypeFilter$.set;
 	const filteredCategories = categories.filter((category) => category.type === typeFilter);
 
 	return (
