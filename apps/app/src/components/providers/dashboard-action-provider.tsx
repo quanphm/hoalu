@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { redactedAmountAtom } from "#app/atoms/index.ts";
+import { redactedAmount$ } from "#app/atoms/index.ts";
 import {
 	AVAILABLE_WORKSPACE_SHORTCUT,
 	KEYBOARD_SHORTCUTS,
@@ -18,7 +17,6 @@ import { listWorkspacesOptions } from "#app/services/query-options.ts";
 export function DashboardActionProvider({ children }: { children: React.ReactNode }) {
 	const navigate = useNavigate();
 	const { mode, setTheme } = useTheme();
-	const setRedacted = useSetAtom(redactedAmountAtom);
 	const { data: workspaces } = useQuery(listWorkspacesOptions());
 
 	useHotkeys(
@@ -65,7 +63,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_redacted.hotkey,
 		() => {
-			setRedacted((value) => !value);
+			redactedAmount$.toggle();
 		},
 		{
 			enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,

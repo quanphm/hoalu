@@ -1,3 +1,3 @@
-import { atom } from "jotai";
+import { observable } from "@legendapp/state";
 
-export const commandPaletteOpenAtom = atom(false);
+export const commandPaletteOpen$ = observable(false);

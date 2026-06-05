@@ -5,6 +5,7 @@ import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -17,7 +18,7 @@ import {
 	selectDateRangeAtom,
 	syncedDateRangeAtom,
 } from "#app/atoms/filters.ts";
-import { redactedAmountAtom } from "#app/atoms/redacted.ts";
+import { redactedAmount$ } from "#app/atoms/redacted.ts";
 import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
 import { useIncomeStats } from "#app/components/incomes/use-incomes.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
@@ -149,7 +150,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const selectedCategoryIds = useAtomValue(chartCategoryFilterAtom);
 	const chartGroupBy = useAtomValue(chartGroupByAtom);
-	const isRedacted = useAtomValue(redactedAmountAtom);
+	const isRedacted = useValue(redactedAmount$);
 
 	const {
 		metadata: { currency },

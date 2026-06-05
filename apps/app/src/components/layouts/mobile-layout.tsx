@@ -12,9 +12,8 @@ import {
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 
-import { commandPaletteOpenAtom } from "#app/atoms/index.ts";
+import { commandPaletteOpen$ } from "#app/atoms/index.ts";
 import { ButtonLink } from "#app/components/button-link.tsx";
 import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
 import { useTheme } from "#app/hooks/use-theme.ts";
@@ -42,7 +41,6 @@ export function MobileLayout({ children }: LayoutProps) {
 function MobileHeader() {
 	const params = useParams({ strict: false });
 	const { mode, setTheme } = useTheme();
-	const setCommandPaletteOpen = useSetAtom(commandPaletteOpenAtom);
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -76,7 +74,7 @@ function MobileHeader() {
 						variant="outline"
 						size="icon-lg"
 						aria-label="Search"
-						onClick={() => setCommandPaletteOpen(true)}
+						onClick={() => commandPaletteOpen$.set(true)}
 					>
 						<SearchIcon />
 					</Button>

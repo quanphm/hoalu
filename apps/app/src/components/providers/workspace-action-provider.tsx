@@ -1,11 +1,12 @@
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import {
-	commandPaletteOpenAtom,
+	commandPaletteOpen$,
 	createCategoryDialogAtom,
 	createExpenseDialogAtom,
 	createIncomeDialogAtom,
@@ -42,7 +43,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
 	const setRecurringBillOpen = useSetAtom(createRecurringBillDialogAtom);
 
-	const [commandPaletteOpen, setCommandPaletteOpen] = useAtom(commandPaletteOpenAtom);
+	const commandPaletteOpen = useValue(commandPaletteOpen$);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
@@ -145,7 +146,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.command_palette.hotkey,
 		(e) => {
 			e.preventDefault();
-			setCommandPaletteOpen((prev) => !prev);
+			commandPaletteOpen$.toggle();
 		},
 		{
 			enabled: KEYBOARD_SHORTCUTS.command_palette.enabled,
@@ -212,7 +213,10 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	return (
 		<>
 			{children}
-			<CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
+			<CommandPalette
+				open={commandPaletteOpen}
+				onOpenChange={(open) => commandPaletteOpen$.set(open)}
+			/>
 		</>
 	);
 }
