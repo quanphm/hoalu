@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
 LAST_UPDATED: 2026-05-21
-TECH_STACK: Bun 1.3.9, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
+TECH_STACK: Node.js 24, pnpm 11, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
 # AGENTS.md
@@ -19,12 +19,12 @@ When debug with browser, please refer to these addresses to access the applicati
 ### Common Tasks Cheat Sheet
 
 - **Add new API route**: Follow 3-file pattern in `apps/api/src/routes/[resource]/` (index.ts, repository.ts, schema.ts)
-- **Add database table**: Update `apps/api/src/db/schema.ts:1-480` → `bun run db:generate` → `bun run db:migrate`
+- **Add database table**: Update `apps/api/src/db/schema.ts:1-480` → `pnpm run db:generate` → `pnpm run db:migrate`
 - **Add frontend route**: Create file in `apps/app/src/routes/` (file-based routing with TanStack Router)
 - **Add UI component**: Place in `apps/app/src/components/` or `packages/ui/src/components/` if reusable
 - **Add collection**: Create in `apps/app/src/lib/collections/[resource].ts` with Electric SQL
 - **Fix type errors**: Restart dev servers to regenerate RPC types and route definitions
-- **Run lint**: `bun run lint` (oxlint) or `bun run format` (oxfmt)
+- **Run lint**: `pnpm run lint` (oxlint) or `pnpm run format` (oxfmt)
 
 ### File Location Quick Lookup
 
@@ -110,9 +110,9 @@ If adding occurrence tracking to existing data:
 
 ### Linting & Formatting
 
-- **Lint**: `bun run lint` (oxlint) — no ESLint/Prettier
-- **Format**: `bun run format` (oxfmt) — automatic code formatter
-- **Dead code**: `bun run knip` (knip-bun)
+- **Lint**: `pnpm run lint` (oxlint) — no ESLint/Prettier
+- **Format**: `pnpm run format` (oxfmt) — automatic code formatter
+- **Dead code**: `pnpm run knip` (knip)
 
 ### Authentication & Authorization
 
@@ -149,7 +149,8 @@ If adding occurrence tracking to existing data:
 
 | Package           | Version (catalog) |
 | ----------------- | ----------------- |
-| bun               | 1.3.9             |
+| node              | 24                |
+| pnpm              | 11                |
 | typescript        | ^6.0.3            |
 | vite              | ^8.0.10           |
 | hono              | ^4.12.15          |

@@ -14,7 +14,7 @@ export default defineConfig({
 				codeSplitting: false,
 			},
 		},
-		target: "node22",
+		target: "node24",
 		minify: false,
 		cssMinify: false,
 		modulePreload: false,

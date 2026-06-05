@@ -1,9 +1,9 @@
-FROM oven/bun:1.3.13-alpine
+FROM node:24-alpine
 
 RUN apk add --no-cache \
     python3 \
     make \
     gcc \
-    && bun install -g turbo
+    && npm install -g turbo pnpm
 
 WORKDIR /repo
