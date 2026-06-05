@@ -63,7 +63,7 @@ export function DashboardActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.toggle_redacted.hotkey,
 		() => {
-			redactedAmount$.set((prev) => !prev);
+			redactedAmount$.toggle();
 		},
 		{
 			enabled: KEYBOARD_SHORTCUTS.toggle_redacted.enabled,

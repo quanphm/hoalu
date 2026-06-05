@@ -146,7 +146,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		KEYBOARD_SHORTCUTS.command_palette.hotkey,
 		(e) => {
 			e.preventDefault();
-			commandPaletteOpen$.set((prev) => !prev);
+			commandPaletteOpen$.toggle();
 		},
 		{
 			enabled: KEYBOARD_SHORTCUTS.command_palette.enabled,
