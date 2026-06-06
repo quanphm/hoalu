@@ -4,11 +4,10 @@ import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-
 import { monetary } from "@hoalu/finance/monetary";
 import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useAtom } from "jotai";
 import { useMemo } from "react";
 
 import { customDateRange$, selectDateRange$ } from "#app/atoms/filters.ts";
-import { selectedIncomeAtom } from "#app/atoms/index.ts";
+import { selectedIncome$ } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -25,7 +24,8 @@ import {
 } from "#app/lib/collections/index.ts";
 
 export function useSelectedIncome() {
-	const [income, setSelectedIncome] = useAtom(selectedIncomeAtom);
+	const income = useValue(selectedIncome$);
+	const setSelectedIncome = selectedIncome$.set;
 	const onSelectIncome = (id: string | null) => {
 		setSelectedIncome({ id });
 	};

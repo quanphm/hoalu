@@ -12,7 +12,7 @@ import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
 import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
-import { draftExpenseAtom, quickExpenseJobIdAtom } from "#app/atoms/expenses.ts";
+import { draftExpense$, quickExpenseJobId$ } from "#app/atoms/expenses.ts";
 import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 
 import { BrailleSpinner } from "./braille-spinner";
@@ -143,8 +143,8 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 
 function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	const { retry, remove } = useQuickExpenseQueue();
-	const setDraft = useSetAtom(draftExpenseAtom);
-	const setQuickExpenseJobId = useSetAtom(quickExpenseJobIdAtom);
+	const setDraft = draftExpense$.set;
+	const setQuickExpenseJobId = quickExpenseJobId$.set;
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 
 	const handleReview = () => {

@@ -1,9 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
 
-import { draftExpenseAtom } from "#app/atoms/index.ts";
+import { resetDraftExpense } from "#app/atoms/index.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import { clearAllWorkspaceCollections } from "#app/lib/collections/index.ts";
 import { authKeys, workspaceKeys } from "#app/lib/query-key-factory.ts";
@@ -13,7 +11,6 @@ export function useAuth() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	const { data, ...rest } = useQuery(sessionOptions());
 
 	const signOut = async () => {
@@ -26,7 +23,7 @@ export function useAuth() {
 					clearAllWorkspaceCollections();
 
 					router.invalidate().finally(() => {
-						setExpenseDraft(RESET);
+						resetDraftExpense();
 						navigate({
 							to: "/login",
 							search: {

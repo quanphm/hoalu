@@ -1,6 +1,6 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { RepeatSchema } from "@hoalu/schema/schema";
 import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { RepeatSchema } from "@hoalu/schema/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -13,7 +13,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empt
 import { cn } from "@hoalu/ui/utils";
 import { useSetAtom } from "jotai";
 
-import { createExpenseDialogAtom, draftExpenseAtom, logPaymentAtom } from "#app/atoms/index.ts";
+import { createExpenseDialogAtom, draftExpense$, logPayment$ } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
@@ -168,8 +168,8 @@ interface UpcomingBillRowProps {
 function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 	const archive = useArchiveRecurringBill();
 	const setDialog = useSetAtom(createExpenseDialogAtom);
-	const setDraft = useSetAtom(draftExpenseAtom);
-	const setLogPayment = useSetAtom(logPaymentAtom);
+	const setDraft = draftExpense$.set;
+	const setLogPayment = logPayment$.set;
 
 	function handleDelete(e: React.MouseEvent) {
 		e.stopPropagation();

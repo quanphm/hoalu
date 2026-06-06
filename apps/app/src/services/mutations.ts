@@ -4,10 +4,10 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { WebHaptics } from "web-haptics";
 
-import { draftIncomeAtom } from "#app/atoms/incomes.ts";
+import { draftIncome$ } from "#app/atoms/incomes.ts";
 import {
 	createExpenseDialogAtom,
-	draftExpenseAtom,
+	draftExpense$,
 	createIncomeDialogAtom,
 } from "#app/atoms/index.ts";
 import { apiClient } from "#app/lib/api-client.ts";
@@ -468,7 +468,7 @@ export function useDeleteIncome() {
 
 export function useDuplicateIncome() {
 	const setDialog = useSetAtom(createIncomeDialogAtom);
-	const setDraft = useSetAtom(draftIncomeAtom);
+	const setDraft = draftIncome$.set;
 
 	const mutation = useMutation({
 		mutationFn: async ({ sourceIncome }: { sourceIncome: SyncedIncome }) => {
@@ -804,7 +804,7 @@ export function useDeleteEvent() {
 
 export function useDuplicateExpense() {
 	const setDialog = useSetAtom(createExpenseDialogAtom);
-	const setDraft = useSetAtom(draftExpenseAtom);
+	const setDraft = draftExpense$.set;
 
 	const mutation = useMutation({
 		mutationFn: async ({ sourceExpense }: { sourceExpense: SyncedExpense }) => {
