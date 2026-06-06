@@ -1,13 +1,12 @@
 import { ZapIcon } from "@hoalu/icons/lucide";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
-import { useSetAtom } from "jotai";
 
-import { quickExpenseDialogAtom } from "#app/atoms/dialogs.ts";
+import { quickExpenseDialog } from "#app/atoms/dialogs.ts";
 import { QuickExpensesForm } from "#app/components/quick-expenses/quick-expenses-form.tsx";
 
 export function QuickExpensesDialogTrigger(props: ButtonProps) {
-	const setQuickDialog = useSetAtom(quickExpenseDialogAtom);
+	const setQuickDialog = quickExpenseDialog.set;
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setQuickDialog({ state: true })}>
@@ -18,7 +17,7 @@ export function QuickExpensesDialogTrigger(props: ButtonProps) {
 }
 
 export function QuickExpensesDialogContent() {
-	const setQuickDialog = useSetAtom(quickExpenseDialogAtom);
+	const setQuickDialog = quickExpenseDialog.set;
 
 	const handleSubmitted = () => {
 		setQuickDialog({ state: false });

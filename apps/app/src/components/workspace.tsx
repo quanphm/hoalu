@@ -1,6 +1,6 @@
+import { PlusIcon } from "@hoalu/icons/lucide";
 import { slugify } from "@hoalu/ids/slugify";
 import { tryCatch } from "@hoalu/stdlib/try-catch";
-import { PlusIcon } from "@hoalu/icons/lucide";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
@@ -9,9 +9,8 @@ import { cn } from "@hoalu/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { cva, type VariantProps } from "class-variance-authority";
-import { useSetAtom } from "jotai";
 
-import { createWorkspaceDialogAtom, deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { createWorkspaceDialog, deleteWorkspaceDialog } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_CURRENCY_OPTIONS } from "#app/helpers/constants.ts";
@@ -33,7 +32,7 @@ export function CreateWorkspaceTrigger({
 	showKbd = true,
 	...props
 }: ButtonProps & { showKbd?: boolean }) {
-	const setDialog = useSetAtom(createWorkspaceDialogAtom);
+	const setDialog = createWorkspaceDialog.set;
 
 	return (
 		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
@@ -57,7 +56,7 @@ export function CreateWorkspaceDialogContent() {
 
 export function CreateWorkspaceForm() {
 	const mutation = useCreateWorkspace();
-	const setDialog = useSetAtom(createWorkspaceDialogAtom);
+	const setDialog = createWorkspaceDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -279,7 +278,7 @@ export function DeleteWorkspaceDialogContent() {
 function DeleteWorkspaceForm() {
 	const { slug } = routeApi.useParams();
 	const mutation = useDeleteWorkspace();
-	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
+	const setDialog = deleteWorkspaceDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {

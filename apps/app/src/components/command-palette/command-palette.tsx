@@ -11,14 +11,9 @@ import {
 import { Kbd, KbdGroup } from "@hoalu/ui/kbd";
 import { Separator } from "@hoalu/ui/separator";
 import { useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-	createCategoryDialogAtom,
-	createExpenseDialogAtom,
-	createWalletDialogAtom,
-} from "#app/atoms/index.ts";
+import { createCategoryDialog, createExpenseDialog, createWalletDialog } from "#app/atoms/index.ts";
 import { useUpcomingBills } from "#app/components/upcoming-bills/use-upcoming-bills.ts";
 
 import { useExpenseSearch } from "./use-expense-search.ts";
@@ -35,9 +30,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const [search, setSearch] = useState("");
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
-	const setCreateExpenseDialog = useSetAtom(createExpenseDialogAtom);
-	const setCreateWalletDialog = useSetAtom(createWalletDialogAtom);
-	const setCreateCategoryDialog = useSetAtom(createCategoryDialogAtom);
+	const setCreateExpenseDialog = createExpenseDialog.set;
+	const setCreateWalletDialog = createWalletDialog.set;
+	const setCreateCategoryDialog = createCategoryDialog.set;
 
 	const { filtered: filteredExpenses, recent: recentExpenses } = useExpenseSearch(
 		open ? slug : undefined,

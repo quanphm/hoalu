@@ -2,9 +2,8 @@ import { Button } from "@hoalu/ui/button";
 import { toastManager } from "@hoalu/ui/toast";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 
-import { deleteWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { deleteWorkspaceDialog } from "#app/atoms/index.ts";
 import { SettingCard } from "#app/components/cards.tsx";
 import { useFilesUpload } from "#app/components/files/use-files-upload.ts";
 import { InputWithCopy } from "#app/components/input-with-copy.tsx";
@@ -41,7 +40,7 @@ function RouteComponent() {
 		onUpload: handleUploadLogo,
 	});
 
-	const setDialog = useSetAtom(deleteWorkspaceDialogAtom);
+	const setDialog = deleteWorkspaceDialog.set;
 	const canDeleteWorkspace = authClient.workspace.checkRolePermission({
 		role: member.role as "member" | "admin" | "owner",
 		permission: {

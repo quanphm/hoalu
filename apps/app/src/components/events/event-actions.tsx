@@ -10,15 +10,11 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useValue } from "@legendapp/state/react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
 
-import {
-	createEventDialogAtom,
-	deleteEventDialogAtom,
-	editEventDialogAtom,
-} from "#app/atoms/dialogs.ts";
+import { createEventDialog, deleteEventDialog, editEventDialog } from "#app/atoms/dialogs.ts";
 import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
 import { DateRangeCalendarField } from "#app/components/forms/date-range-calendar.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
@@ -47,7 +43,7 @@ const EVENT_STATUS_OPTIONS = [
 ];
 
 export function CreateEventDialogTrigger({ ...props }: ButtonProps) {
-	const setDialog = useSetAtom(createEventDialogAtom);
+	const setDialog = createEventDialog.set;
 	return (
 		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
 			New event
@@ -71,7 +67,7 @@ export function CreateEventDialogContent() {
 function CreateEventForm() {
 	const workspace = useWorkspace();
 	const mutation = useCreateEvent();
-	const setDialog = useSetAtom(createEventDialogAtom);
+	const setDialog = createEventDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -148,7 +144,7 @@ function CreateEventForm() {
 }
 
 export function EditEventDialogContent() {
-	const [dialog] = useAtom(editEventDialogAtom);
+	const dialog = useValue(editEventDialog.$);
 	const events = useLiveQueryEvents();
 	const event = events.find((e) => e.id === dialog?.data?.id) ?? null;
 	if (!event) return null;
@@ -166,7 +162,7 @@ export function EditEventDialogContent() {
 function EditEventForm({ event }: { event: SyncedEvent }) {
 	const workspace = useWorkspace();
 	const mutation = useEditEvent();
-	const setDialog = useSetAtom(editEventDialogAtom);
+	const setDialog = editEventDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -257,7 +253,8 @@ export function DeleteEventDialogContent() {
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useDeleteEvent();
-	const [dialog, setDialog] = useAtom(deleteEventDialogAtom);
+	const dialog = useValue(deleteEventDialog.$);
+	const setDialog = deleteEventDialog.set;
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {

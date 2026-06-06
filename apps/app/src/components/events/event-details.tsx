@@ -13,9 +13,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { Progress, ProgressIndicator, ProgressTrack } from "@hoalu/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { useSetAtom } from "jotai";
 
-import { deleteEventDialogAtom, editEventDialogAtom } from "#app/atoms/dialogs.ts";
+import { deleteEventDialog, editEventDialog } from "#app/atoms/dialogs.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { EventDateRange } from "#app/components/events/event-date-range.tsx";
 import {
@@ -48,8 +47,8 @@ export function EventDetailPanel({
 }: EventDetailPanelProps) {
 	const expenses = useLiveQueryEventExpenses(event.id);
 	const bills = useLiveQueryEventRecurringBills(event.id);
-	const setEditDialog = useSetAtom(editEventDialogAtom);
-	const setDeleteDialog = useSetAtom(deleteEventDialogAtom);
+	const setEditDialog = editEventDialog.set;
+	const setDeleteDialog = deleteEventDialog.set;
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();

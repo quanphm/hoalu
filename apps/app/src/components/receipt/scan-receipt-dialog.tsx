@@ -7,14 +7,13 @@ import {
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
-import { useSetAtom } from "jotai";
 
-import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
+import { scanReceiptDialog } from "#app/atoms/dialogs.ts";
 import { ReceiptScanner } from "#app/components/receipt/receipt-scanner.tsx";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 
 export function ScanReceiptDialogTrigger(props: ButtonProps) {
-	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
+	const setScanDialog = scanReceiptDialog.set;
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setScanDialog({ state: true })}>

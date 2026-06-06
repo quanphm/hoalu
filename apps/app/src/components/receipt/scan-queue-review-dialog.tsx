@@ -12,16 +12,13 @@ import {
 import { Input } from "@hoalu/ui/input";
 import { Label } from "@hoalu/ui/label";
 import { SelectNative } from "@hoalu/ui/select-native";
+import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
-import {
-	currentDialogAtom,
-	createExpenseDialogAtom,
-	scanQueueReviewDialogAtom,
-} from "#app/atoms/dialogs.ts";
+import { currentDialog$, createExpenseDialog, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
 import { scannedReceipts$, draftExpense$, scannedReceiptJobId$ } from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
 import { extensions } from "#app/components/tiptap.tsx";
@@ -83,15 +80,15 @@ async function base64ToFile(base64: string, fileName: string, fileType: string):
 }
 
 export function ScanQueueReviewDialogContent() {
-	const currentDialog = useAtomValue(currentDialogAtom);
+	const currentDialog = useValue(currentDialog$);
 	const jobId = currentDialog?.data?.jobId as string | undefined;
 	const queue = useAtomValue(receiptScanQueue.queueAtom);
 	const workspace = useWorkspace();
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(workspace.slug));
 	const setDraftExpense = draftExpense$.set;
 	const setScannedReceipts = scannedReceipts$.set;
-	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
-	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
+	const setCreateDialog = createExpenseDialog.set;
+	const setReviewDialog = scanQueueReviewDialog.set;
 
 	const setScannedReceiptJobId = scannedReceiptJobId$.set;
 	const addJob = useSetAtom(receiptScanQueue.add);

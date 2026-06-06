@@ -11,13 +11,12 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empt
 import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
-import { useSetAtom } from "jotai";
 import { memo, useCallback, useMemo, type MutableRefObject, type ReactNode } from "react";
 
 import {
-	archiveRecurringBillDialogAtom,
-	deleteRecurringBillDialogAtom,
-	unarchiveRecurringBillDialogAtom,
+	archiveRecurringBillDialog,
+	deleteRecurringBillDialog,
+	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import {
@@ -93,9 +92,9 @@ function BillGroupHeader({
 }
 
 function RecurringBillContent(props: SyncedAllRecurringBill) {
-	const setArchiveDialog = useSetAtom(archiveRecurringBillDialogAtom);
-	const setUnarchiveDialog = useSetAtom(unarchiveRecurringBillDialogAtom);
-	const setDeleteDialog = useSetAtom(deleteRecurringBillDialogAtom);
+	const setArchiveDialog = archiveRecurringBillDialog.set;
+	const setUnarchiveDialog = unarchiveRecurringBillDialog.set;
+	const setDeleteDialog = deleteRecurringBillDialog.set;
 
 	const repeatLabel =
 		AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === props.repeat)?.label ?? props.repeat;

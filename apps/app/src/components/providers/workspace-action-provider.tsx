@@ -1,17 +1,16 @@
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import {
 	commandPaletteOpen$,
-	createCategoryDialogAtom,
-	createExpenseDialogAtom,
-	createIncomeDialogAtom,
-	createRecurringBillDialogAtom,
-	createWalletDialogAtom,
-	dialogStateAtom,
+	createCategoryDialog,
+	createExpenseDialog,
+	createIncomeDialog,
+	createRecurringBillDialog,
+	createWalletDialog,
+	dialog$,
 	resetDraftExpense,
 } from "#app/atoms/index.ts";
 import { CommandPalette } from "#app/components/command-palette/index.ts";
@@ -26,7 +25,7 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
 
-	const isAnyDialogOpen = useAtomValue(dialogStateAtom);
+	const isAnyDialogOpen = useValue(dialog$.open);
 	const allowShortcutNavigate = !isAnyDialogOpen;
 
 	useEffect(() => {
@@ -35,11 +34,11 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 		}
 	}, [slug]);
 
-	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
-	const setIncomeOpen = useSetAtom(createIncomeDialogAtom);
-	const setWalletOpen = useSetAtom(createWalletDialogAtom);
-	const setCategoryOpen = useSetAtom(createCategoryDialogAtom);
-	const setRecurringBillOpen = useSetAtom(createRecurringBillDialogAtom);
+	const setExpenseOpen = createExpenseDialog.set;
+	const setIncomeOpen = createIncomeDialog.set;
+	const setWalletOpen = createWalletDialog.set;
+	const setCategoryOpen = createCategoryDialog.set;
+	const setRecurringBillOpen = createRecurringBillDialog.set;
 
 	const commandPaletteOpen = useValue(commandPaletteOpen$);
 

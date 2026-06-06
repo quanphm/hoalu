@@ -13,9 +13,8 @@ import { SidebarMenuButton } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 
-import { createWorkspaceDialogAtom } from "#app/atoms/index.ts";
+import { createWorkspaceDialog } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -32,7 +31,7 @@ interface Props {
 export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const params = useParams({ from: "/_dashboard/$slug" });
-	const setDialog = useSetAtom(createWorkspaceDialogAtom);
+	const setDialog = createWorkspaceDialog.set;
 
 	return (
 		<DropdownMenu>

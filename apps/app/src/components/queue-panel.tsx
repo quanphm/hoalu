@@ -8,10 +8,9 @@ import {
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
-import { createExpenseDialogAtom, scanQueueReviewDialogAtom } from "#app/atoms/dialogs.ts";
+import { createExpenseDialog, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
 import { draftExpense$, quickExpenseJobId$ } from "#app/atoms/expenses.ts";
 import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 
@@ -59,7 +58,7 @@ function JobStatusBadge({ status, retryCount }: { status: JobStatus; retryCount:
 
 function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 	const { retry, remove } = useReceiptScanQueue();
-	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
+	const setReviewDialog = scanQueueReviewDialog.set;
 
 	const handleReview = () => {
 		setReviewDialog({ state: true, data: { jobId: job.id } });
@@ -145,7 +144,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	const { retry, remove } = useQuickExpenseQueue();
 	const setDraft = draftExpense$.set;
 	const setQuickExpenseJobId = quickExpenseJobId$.set;
-	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
+	const setCreateDialog = createExpenseDialog.set;
 
 	const handleReview = () => {
 		if (!job.result) return;

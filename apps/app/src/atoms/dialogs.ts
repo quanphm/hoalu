@@ -1,4 +1,4 @@
-import { atom, type PrimitiveAtom } from "jotai";
+import { observable } from "@legendapp/state";
 
 const DIALOG_ID = [
 	// workspace
@@ -38,105 +38,88 @@ const DIALOG_ID = [
 ] as const;
 export type DialogId = (typeof DIALOG_ID)[number];
 
-interface DialogData {
-	id: DialogId;
-	data: Record<string, any> | undefined;
-}
+type DialogData = { id: DialogId; data: Record<string, any> | undefined };
 
-interface DialogManagerAtom {
+interface DialogState {
 	currentId: DialogId | null;
-	dialogs: PrimitiveAtom<DialogData>[];
+	data: Record<string, any> | undefined;
+	open: boolean;
 }
 
-export const dialogStateAtom = atom(false);
-
-export const dialogManagerAtom = atom<DialogManagerAtom>({
+/**
+ * Single source of truth for the app's modal dialog. Only one dialog is open
+ * at a time, identified by `currentId`, with its optional `data` payload.
+ */
+export const dialog$ = observable<DialogState>({
 	currentId: null,
-	dialogs: [],
+	data: undefined,
+	open: false,
 });
 
-export const currentDialogAtom = atom(
-	(get) => {
-		const { currentId, dialogs } = get(dialogManagerAtom);
-		if (!currentId) {
-			return null;
-		}
-		const currentDialog = dialogs.find((dialog) => get(dialog).id === currentId);
-		return currentDialog ? get(currentDialog) : null;
-	},
-	(_get, set, id: DialogId | null) => {
-		set(dialogManagerAtom, (state) => ({
-			...state,
-			currentId: id,
-		}));
-	},
-);
-
-export const wipeOutDialogsAtom = atom(null, (_get, set) => {
-	set(dialogManagerAtom, {
-		currentId: null,
-		dialogs: [],
-	});
+/**
+ * The currently active dialog ({ id, data }) or null. Drives DialogProvider.
+ */
+export const currentDialog$ = observable<DialogData | null>(() => {
+	const currentId = dialog$.currentId.get();
+	return currentId ? { id: currentId, data: dialog$.data.get() } : null;
 });
 
-const dialogsAtom = atom((get) => get(dialogManagerAtom).dialogs);
+/**
+ * Close any open dialog and clear its state.
+ */
+export function wipeOutDialogs() {
+	dialog$.set({ currentId: null, data: undefined, open: false });
+}
 
 type Action = { state: true; data?: Record<string, any> | undefined } | { state: false };
 
-function createDialogAtom(id: DialogId) {
-	const basedAtom = atom(
-		(get) => {
-			const dialogs = get(dialogsAtom);
-			const dialogAtomById = dialogs.find((dialogAtom) => get(dialogAtom).id === id);
-			return dialogAtomById ? get(dialogAtomById) : null;
-		},
-		(get, set, action: Action) => {
-			set(dialogStateAtom, action.state);
-
-			if (!action.state) {
-				set(dialogManagerAtom, (state) => ({
-					currentId: state.currentId === id ? null : state.currentId,
-					dialogs: state.dialogs.filter((dialogAtom) => get(dialogAtom).id !== id),
-				}));
+/**
+ * Creates a controller for a single dialog id:
+ * - `$`  a computed observable resolving to { id, data } when this dialog is
+ *        active, otherwise null (read it in components with `useValue`).
+ * - `set` open/close this dialog, mirroring the previous atom write API
+ *        (`{ state: true, data }` / `{ state: false }`).
+ */
+function createDialog(id: DialogId) {
+	return {
+		$: observable<DialogData | null>(() =>
+			dialog$.currentId.get() === id ? { id, data: dialog$.data.get() } : null,
+		),
+		set: (action: Action) => {
+			if (action.state) {
+				dialog$.set({ currentId: id, data: action.data, open: true });
 			} else {
-				set(dialogManagerAtom, (state) => {
-					const filteredDialogs = state.dialogs.filter((atom) => get(atom).id !== id);
-					return {
-						currentId: id,
-						dialogs: [...filteredDialogs, atom({ id, data: action.data })],
-					};
-				});
+				dialog$.set({ currentId: null, data: undefined, open: false });
 			}
 		},
-	);
-	return basedAtom;
+	};
 }
 
-export const createWorkspaceDialogAtom = createDialogAtom("create-workspace");
-export const deleteWorkspaceDialogAtom = createDialogAtom("delete-workspace");
+export const createWorkspaceDialog = createDialog("create-workspace");
+export const deleteWorkspaceDialog = createDialog("delete-workspace");
 
-export const createExpenseDialogAtom = createDialogAtom("create-expense");
-export const deleteExpenseDialogAtom = createDialogAtom("delete-expense");
-export const scanReceiptDialogAtom = createDialogAtom("scan-receipt");
+export const createExpenseDialog = createDialog("create-expense");
+export const deleteExpenseDialog = createDialog("delete-expense");
+export const scanReceiptDialog = createDialog("scan-receipt");
 
-export const createWalletDialogAtom = createDialogAtom("create-wallet");
-export const editWalletDialogAtom = createDialogAtom("edit-wallet");
-export const deleteWalletDialogAtom = createDialogAtom("delete-wallet");
+export const createWalletDialog = createDialog("create-wallet");
+export const editWalletDialog = createDialog("edit-wallet");
+export const deleteWalletDialog = createDialog("delete-wallet");
 
-export const createCategoryDialogAtom = createDialogAtom("create-category");
-export const deleteCategoryDialogAtom = createDialogAtom("delete-category");
+export const createCategoryDialog = createDialog("create-category");
+export const deleteCategoryDialog = createDialog("delete-category");
 
-export const createRecurringBillDialogAtom = createDialogAtom("create-recurring-bill");
-export const archiveRecurringBillDialogAtom = createDialogAtom("archive-recurring-bill");
-export const unarchiveRecurringBillDialogAtom = createDialogAtom("unarchive-recurring-bill");
-export const deleteRecurringBillDialogAtom = createDialogAtom("delete-recurring-bill");
+export const createRecurringBillDialog = createDialog("create-recurring-bill");
+export const archiveRecurringBillDialog = createDialog("archive-recurring-bill");
+export const unarchiveRecurringBillDialog = createDialog("unarchive-recurring-bill");
+export const deleteRecurringBillDialog = createDialog("delete-recurring-bill");
 
-export const scanQueueReviewDialogAtom = createDialogAtom("scan-queue-review");
-export const quickExpenseDialogAtom = createDialogAtom("quick-expense");
+export const scanQueueReviewDialog = createDialog("scan-queue-review");
+export const quickExpenseDialog = createDialog("quick-expense");
 
-export const createIncomeDialogAtom = createDialogAtom("create-income");
-export const deleteIncomeDialogAtom = createDialogAtom("delete-income");
+export const createIncomeDialog = createDialog("create-income");
+export const deleteIncomeDialog = createDialog("delete-income");
 
-export const createEventDialogAtom = createDialogAtom("create-event");
-export const editEventDialogAtom = createDialogAtom("edit-event");
-export const deleteEventDialogAtom = createDialogAtom("delete-event");
+export const createEventDialog = createDialog("create-event");
+export const editEventDialog = createDialog("edit-event");
+export const deleteEventDialog = createDialog("delete-event");

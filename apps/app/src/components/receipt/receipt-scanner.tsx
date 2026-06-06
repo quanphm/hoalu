@@ -2,10 +2,9 @@ import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/l
 import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
-import { useSetAtom } from "jotai";
 import { useCallback, useRef, useState } from "react";
 
-import { scanReceiptDialogAtom } from "#app/atoms/dialogs.ts";
+import { scanReceiptDialog } from "#app/atoms/dialogs.ts";
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 import {
 	useReceiptScanQueue,
@@ -89,7 +88,7 @@ export function ReceiptScanner() {
 	const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
 	const [isDragging, setIsDragging] = useState(false);
 	const [isEncoding, setIsEncoding] = useState(false);
-	const setScanDialog = useSetAtom(scanReceiptDialogAtom);
+	const setScanDialog = scanReceiptDialog.set;
 	const workspace = useWorkspace();
 	const { add } = useReceiptScanQueue();
 	const { isFull: isQueueFull, sharedRemainingSlots } = useQueueStatus();

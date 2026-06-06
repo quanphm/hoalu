@@ -8,12 +8,11 @@ import {
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { useSetAtom } from "jotai";
 
 import {
-	archiveRecurringBillDialogAtom,
-	deleteRecurringBillDialogAtom,
-	unarchiveRecurringBillDialogAtom,
+	archiveRecurringBillDialog,
+	deleteRecurringBillDialog,
+	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
@@ -36,9 +35,9 @@ export function RecurringBillDetailPanel({
 	canGoUp,
 	canGoDown,
 }: RecurringBillDetailPanelProps) {
-	const setArchiveDialog = useSetAtom(archiveRecurringBillDialogAtom);
-	const setUnarchiveDialog = useSetAtom(unarchiveRecurringBillDialogAtom);
-	const setDeleteDialog = useSetAtom(deleteRecurringBillDialogAtom);
+	const setArchiveDialog = archiveRecurringBillDialog.set;
+	const setUnarchiveDialog = unarchiveRecurringBillDialog.set;
+	const setDeleteDialog = deleteRecurringBillDialog.set;
 
 	return (
 		<div className="bg-card text-card-foreground flex h-[calc(100vh-94px)] flex-col overflow-auto">

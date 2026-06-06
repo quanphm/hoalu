@@ -15,12 +15,11 @@ import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 import {
-	createIncomeDialogAtom,
-	deleteIncomeDialogAtom,
+	createIncomeDialog,
+	deleteIncomeDialog,
 	draftIncome$,
 	resetDraftIncome,
 } from "#app/atoms/index.ts";
@@ -46,7 +45,7 @@ export function CreateIncomeDialogTrigger({
 	showKbd = true,
 	...props
 }: ButtonProps & { showKbd?: boolean }) {
-	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const setDialog = createIncomeDialog.set;
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setDialog({ state: true })}>
@@ -75,7 +74,7 @@ function CreateIncomeForm() {
 	const { slug } = routeApi.useParams();
 	const wallets = useLiveQueryWallets();
 	const mutation = useCreateIncome();
-	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const setDialog = createIncomeDialog.set;
 	const draft = useValue(draftIncome$);
 	const setDraft = draftIncome$.set;
 
@@ -234,7 +233,7 @@ function CreateIncomeForm() {
 }
 
 export function DeleteIncome({ id }: { id: string }) {
-	const setDialog = useSetAtom(deleteIncomeDialogAtom);
+	const setDialog = deleteIncomeDialog.set;
 
 	return (
 		<Tooltip>
@@ -258,7 +257,8 @@ export function DeleteIncome({ id }: { id: string }) {
 export function DeleteIncomeDialogContent() {
 	const { onSelectIncome } = useSelectedIncome();
 	const mutation = useDeleteIncome();
-	const [dialog, setDialog] = useAtom(deleteIncomeDialogAtom);
+	const dialog = useValue(deleteIncomeDialog.$);
+	const setDialog = deleteIncomeDialog.set;
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {

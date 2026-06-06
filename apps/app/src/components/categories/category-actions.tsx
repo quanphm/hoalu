@@ -12,13 +12,8 @@ import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
 
-import {
-	createCategoryDialogAtom,
-	deleteCategoryDialogAtom,
-	selectedCategory$,
-} from "#app/atoms/index.ts";
+import { createCategoryDialog, deleteCategoryDialog, selectedCategory$ } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
@@ -33,7 +28,7 @@ import { WarningMessage } from "../warning-message";
 import type { ColorSchema } from "@hoalu/schema/schema";
 
 export function CreateCategoryDialogTrigger() {
-	const setDialog = useSetAtom(createCategoryDialogAtom);
+	const setDialog = createCategoryDialog.set;
 
 	return (
 		<Button size="sm" onClick={() => setDialog({ state: true })}>
@@ -70,7 +65,7 @@ export function CreateCategoryForm({
 	type?: "expense" | "income";
 	callback?(): void;
 }) {
-	const setDialog = useSetAtom(createCategoryDialogAtom);
+	const setDialog = createCategoryDialog.set;
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
@@ -178,7 +173,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 		},
 	});
 
-	const setDialog = useSetAtom(deleteCategoryDialogAtom);
+	const setDialog = deleteCategoryDialog.set;
 
 	return (
 		<form.AppForm>
@@ -225,7 +220,7 @@ export function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
 	const selectedCategory = useValue(selectedCategory$);
 	const setSelectedCategory = selectedCategory$.set;
-	const setDialog = useSetAtom(deleteCategoryDialogAtom);
+	const setDialog = deleteCategoryDialog.set;
 	const onDelete = async () => {
 		if (!selectedCategory.id) {
 			setDialog({ state: false });
