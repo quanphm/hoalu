@@ -10,13 +10,14 @@ import {
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 import {
 	createCategoryDialogAtom,
 	deleteCategoryDialogAtom,
-	selectedCategoryAtom,
+	selectedCategory$,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
@@ -144,7 +145,7 @@ export function CreateCategoryForm({
 
 export function EditCategoryForm(props: { onEditCallback?(): void }) {
 	const workspace = useWorkspace();
-	const selectedCategory = useAtomValue(selectedCategoryAtom);
+	const selectedCategory = useValue(selectedCategory$);
 	const { data: category } = useSuspenseQuery(
 		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id || ""),
 	);
@@ -222,7 +223,8 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 
 export function DeleteCategoryDialogContent() {
 	const mutation = useDeleteCategory();
-	const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
+	const selectedCategory = useValue(selectedCategory$);
+	const setSelectedCategory = selectedCategory$.set;
 	const setDialog = useSetAtom(deleteCategoryDialogAtom);
 	const onDelete = async () => {
 		if (!selectedCategory.id) {

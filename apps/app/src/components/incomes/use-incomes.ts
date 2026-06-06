@@ -1,13 +1,13 @@
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { datetime } from "@hoalu/datetime/datetime";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-rate";
 import { monetary } from "@hoalu/finance/monetary";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
+import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
-import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
-import { selectedIncomeAtom } from "#app/atoms/index.ts";
+import { customDateRange$, selectDateRange$ } from "#app/atoms/filters.ts";
+import { selectedIncome$ } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import {
 	calculateComparisonDateRange,
@@ -24,7 +24,8 @@ import {
 } from "#app/lib/collections/index.ts";
 
 export function useSelectedIncome() {
-	const [income, setSelectedIncome] = useAtom(selectedIncomeAtom);
+	const income = useValue(selectedIncome$);
+	const setSelectedIncome = selectedIncome$.set;
 	const onSelectIncome = (id: string | null) => {
 		setSelectedIncome({ id });
 	};
@@ -159,8 +160,8 @@ export function useIncomeStats(options: UseIncomeStatsOptions) {
 		metadata: { currency },
 	} = useWorkspace();
 
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
 
 	// Get current period data
 	const currentPeriodData = filterDataByRange(incomes, dateRange, customRange);

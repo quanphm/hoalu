@@ -16,17 +16,18 @@ import {
 	SelectValue,
 } from "@hoalu/ui/select";
 import { cn } from "@hoalu/ui/utils";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useValue } from "@legendapp/state/react";
 import { useEffect } from "react";
 
 import {
 	type ChartGroupBy,
 	type CustomDateRange,
-	chartCategoryFilterAtom,
-	chartGroupByAtom,
+	chartCategoryFilter$,
+	chartGroupBy$,
 	type PredefinedDateRange,
-	selectDateRangeAtom,
-	syncedDateRangeAtom,
+	selectDateRange$,
+	setSyncedDateRange,
+	syncedDateRange$,
 } from "#app/atoms/filters.ts";
 import { DateRangePicker } from "#app/components/charts/date-range-picker.tsx";
 import { createChartColor } from "#app/helpers/colors.ts";
@@ -46,8 +47,7 @@ const options = [
 ];
 
 export function DashboardDateFilter() {
-	const predefinedDateRange = useAtomValue(selectDateRangeAtom);
-	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
+	const predefinedDateRange = useValue(selectDateRange$);
 
 	const handleRangeChange = (value: PredefinedDateRange | null) => {
 		// Select component can pass null when clearing, though not used in this implementation
@@ -107,8 +107,9 @@ export function DashboardDateFilter() {
 }
 
 function ChartGroupByFilter() {
-	const dateRangeValue = useAtomValue(syncedDateRangeAtom);
-	const [groupBy, setGroupBy] = useAtom(chartGroupByAtom);
+	const dateRangeValue = useValue(syncedDateRange$);
+	const groupBy = useValue(chartGroupBy$);
+	const setGroupBy = chartGroupBy$.set;
 	const handleGroupByChange = (value: ChartGroupBy | null) => {
 		setGroupBy(value ?? "month");
 	};
@@ -140,7 +141,8 @@ function ChartGroupByFilter() {
 }
 
 function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
-	const [selectedIds, setSelectedIds] = useAtom(chartCategoryFilterAtom);
+	const selectedIds = useValue(chartCategoryFilter$);
+	const setSelectedIds = chartCategoryFilter$.set;
 
 	const toggleCategory = (id: string) => {
 		setSelectedIds((prev) =>

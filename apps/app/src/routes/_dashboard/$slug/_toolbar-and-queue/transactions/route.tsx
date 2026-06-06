@@ -1,10 +1,10 @@
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { useValue } from "@legendapp/state/react";
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { useAtom } from "jotai";
 import { useRef } from "react";
 import * as z from "zod";
 
-import { type TransactionKindFilter, transactionKindFilterAtom } from "#app/atoms/index.ts";
+import { type TransactionKindFilter, transactionKindFilter$ } from "#app/atoms/index.ts";
 import { ExpenseSearch } from "#app/components/expenses/expense-actions.tsx";
 import { ExpenseFilterDropdown } from "#app/components/expenses/expense-filter-dropdown.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
@@ -29,7 +29,8 @@ function LayoutComponent() {
 	const transactionId = transactionMatch ? transactionMatch.params.transactionId : undefined;
 
 	const filteredExpenses = useFilteredTransactions();
-	const [kindFilter, setKindFilter] = useAtom(transactionKindFilterAtom);
+	const kindFilter = useValue(transactionKindFilter$);
+	const setKindFilter = transactionKindFilter$.set;
 	const listScrollRef = useRef(0);
 
 	return (

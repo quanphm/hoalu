@@ -1,7 +1,6 @@
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
 import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -13,7 +12,7 @@ import {
 	createRecurringBillDialogAtom,
 	createWalletDialogAtom,
 	dialogStateAtom,
-	draftExpenseAtom,
+	resetDraftExpense,
 } from "#app/atoms/index.ts";
 import { CommandPalette } from "#app/components/command-palette/index.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -30,12 +29,11 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const isAnyDialogOpen = useAtomValue(dialogStateAtom);
 	const allowShortcutNavigate = !isAnyDialogOpen;
 
-	const setExpenseDraft = useSetAtom(draftExpenseAtom);
 	useEffect(() => {
 		if (slug) {
-			setExpenseDraft(RESET);
+			resetDraftExpense();
 		}
-	}, [slug, setExpenseDraft]);
+	}, [slug]);
 
 	const setExpenseOpen = useSetAtom(createExpenseDialogAtom);
 	const setIncomeOpen = useSetAtom(createIncomeDialogAtom);

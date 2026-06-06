@@ -1,10 +1,10 @@
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
 import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { cn } from "@hoalu/ui/utils";
-import { useAtomValue } from "jotai";
+import { useValue } from "@legendapp/state/react";
 import { useMemo } from "react";
 
-import { customDateRangeAtom, selectDateRangeAtom } from "#app/atoms/filters.ts";
+import { customDateRange$, selectDateRange$ } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { BoxAnimations } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
@@ -26,8 +26,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const {
 		metadata: { currency },
 	} = useWorkspace();
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
 
 	// Current period
 	const filteredIncomes = filterDataByRange(props.incomes, dateRange, customRange);

@@ -1,8 +1,8 @@
-import { atom } from "jotai";
+import { observable } from "@legendapp/state";
 
-export const selectedCategoryAtom = atom<{ id: string | null; name: string | null }>({
+export const selectedCategory$ = observable<{ id: string | null; name: string | null }>({
 	id: null,
 	name: null,
 });
 
-export const categoryTypeFilterAtom = atom<"expense" | "income">("expense");
+export const categoryTypeFilter$ = observable<"expense" | "income">("expense");

@@ -22,11 +22,7 @@ import {
 	createExpenseDialogAtom,
 	scanQueueReviewDialogAtom,
 } from "#app/atoms/dialogs.ts";
-import {
-	scannedReceiptsAtom,
-	draftExpenseAtom,
-	scannedReceiptJobIdAtom,
-} from "#app/atoms/expenses.ts";
+import { scannedReceipts$, draftExpense$, scannedReceiptJobId$ } from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
 import { extensions } from "#app/components/tiptap.tsx";
 import { formatCurrency } from "#app/helpers/currency.ts";
@@ -92,12 +88,12 @@ export function ScanQueueReviewDialogContent() {
 	const queue = useAtomValue(receiptScanQueue.queueAtom);
 	const workspace = useWorkspace();
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(workspace.slug));
-	const setDraftExpense = useSetAtom(draftExpenseAtom);
-	const setScannedReceipts = useSetAtom(scannedReceiptsAtom);
+	const setDraftExpense = draftExpense$.set;
+	const setScannedReceipts = scannedReceipts$.set;
 	const setCreateDialog = useSetAtom(createExpenseDialogAtom);
 	const setReviewDialog = useSetAtom(scanQueueReviewDialogAtom);
 
-	const setScannedReceiptJobId = useSetAtom(scannedReceiptJobIdAtom);
+	const setScannedReceiptJobId = scannedReceiptJobId$.set;
 	const addJob = useSetAtom(receiptScanQueue.add);
 	const dismissJob = useSetAtom(receiptScanQueue.dismiss);
 

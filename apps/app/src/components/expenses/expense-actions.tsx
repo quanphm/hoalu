@@ -23,20 +23,21 @@ import { Input } from "@hoalu/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
 import { useEffect, useRef } from "react";
 
 import {
 	createExpenseDialogAtom,
 	deleteExpenseDialogAtom,
-	draftExpenseAtom,
-	logPaymentAtom,
-	scannedReceiptsAtom,
-	scannedReceiptJobIdAtom,
-	searchKeywordsAtom,
-	quickExpenseJobIdAtom,
+	draftExpense$,
+	logPayment$,
+	resetDraftExpense,
+	scannedReceipts$,
+	scannedReceiptJobId$,
+	searchKeywords$,
+	quickExpenseJobId$,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
@@ -108,11 +109,16 @@ function CreateExpenseForm() {
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
 
 	const setDialog = useSetAtom(createExpenseDialogAtom);
-	const [draft, setDraft] = useAtom(draftExpenseAtom);
-	const [logPayment, setLogPayment] = useAtom(logPaymentAtom);
-	const [scannedReceipts, setScannedReceipts] = useAtom(scannedReceiptsAtom);
-	const [scannedReceiptJobId, setScannedReceiptJobId] = useAtom(scannedReceiptJobIdAtom);
-	const [quickExpenseJobId, setQuickExpenseJobId] = useAtom(quickExpenseJobIdAtom);
+	const draft = useValue(draftExpense$);
+	const setDraft = draftExpense$.set;
+	const logPayment = useValue(logPayment$);
+	const setLogPayment = logPayment$.set;
+	const scannedReceipts = useValue(scannedReceipts$);
+	const setScannedReceipts = scannedReceipts$.set;
+	const scannedReceiptJobId = useValue(scannedReceiptJobId$);
+	const setScannedReceiptJobId = scannedReceiptJobId$.set;
+	const quickExpenseJobId = useValue(quickExpenseJobId$);
+	const setQuickExpenseJobId = quickExpenseJobId$.set;
 	const removeReceiptJob = useSetAtom(receiptScanQueue.remove);
 	const removeQuickExpenseJob = useSetAtom(quickExpenseQueue.remove);
 
@@ -218,7 +224,7 @@ function CreateExpenseForm() {
 				},
 			});
 
-			setDraft(RESET);
+			resetDraftExpense();
 			setLogPayment({ recurringBillId: null });
 			setScannedReceipts([]);
 			if (scannedReceiptJobId) {
@@ -652,7 +658,8 @@ export function ExpenseCalendar() {
 }
 
 export function ExpenseSearch() {
-	const [value, setValue] = useAtom(searchKeywordsAtom);
+	const value = useValue(searchKeywords$);
+	const setValue = searchKeywords$.set;
 
 	return (
 		<div className="relative w-80">

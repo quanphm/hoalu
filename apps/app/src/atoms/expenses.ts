@@ -1,5 +1,6 @@
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { observable } from "@legendapp/state";
+import { ObservablePersistLocalStorage } from "@legendapp/state/persist-plugins/local-storage";
+import { syncObservable } from "@legendapp/state/sync";
 
 import type { ExpenseFormSchema } from "#app/lib/schema.ts";
 
@@ -9,13 +10,13 @@ import type { ExpenseFormSchema } from "#app/lib/schema.ts";
  * Stored in memory only (File objects are not serialisable to localStorage).
  * Supports multiple files when the user scans multiple attachments at once.
  */
-const scannedReceiptsAtom = atom<File[]>([]);
+const scannedReceipts$ = observable<File[]>([]);
 
 /**
- * @deprecated Use scannedReceiptsAtom instead.
- * Kept for backward compatibility — resolves to the first file in scannedReceiptsAtom.
+ * @deprecated Use scannedReceipts$ instead.
+ * Kept for backward compatibility — resolves to the first file in scannedReceipts$.
  */
-const scannedReceiptAtom = atom<File | null>(null);
+const scannedReceipt$ = observable<File | null>(null);
 
 type ExpenseAtomSchema = Omit<ExpenseFormSchema, "attachments">;
 const basedExpense: ExpenseAtomSchema = {
@@ -31,14 +32,24 @@ const basedExpense: ExpenseAtomSchema = {
 	repeat: "one-time",
 	recurringBillId: undefined,
 };
-const draftExpenseAtom = atomWithStorage("draft_expense", basedExpense);
+const draftExpense$ = observable<ExpenseAtomSchema>(basedExpense);
+syncObservable(draftExpense$, {
+	persist: {
+		name: "draft_expense",
+		plugin: ObservablePersistLocalStorage,
+	},
+});
+
+function resetDraftExpense() {
+	draftExpense$.set(basedExpense);
+}
 
 /**
  * Used by the "Log payment" flow from upcoming bills.
  * When set, CreateExpenseForm will include this recurringBillId in the POST payload
  * (which also advances the bill's anchor_date server-side).
  */
-const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillId: null });
+const logPayment$ = observable<{ recurringBillId: string | null }>({ recurringBillId: null });
 
 /**
  * Tracks the receipt scan queue job ID that produced the current draft expense.
@@ -47,7 +58,7 @@ const logPaymentAtom = atom<{ recurringBillId: string | null }>({ recurringBillI
  * so the originating scan job is removed from the queue automatically.
  * In-memory only — no persistence needed (transient handoff between two dialogs).
  */
-const scannedReceiptJobIdAtom = atom<string | null>(null);
+const scannedReceiptJobId$ = observable<string | null>(null);
 
 /**
  * Tracks the quick expense queue job ID that produced the current draft expense.
@@ -56,13 +67,14 @@ const scannedReceiptJobIdAtom = atom<string | null>(null);
  * so the originating quick expense job is removed from the queue automatically.
  * In-memory only — no persistence needed (transient handoff between components).
  */
-const quickExpenseJobIdAtom = atom<string | null>(null);
+const quickExpenseJobId$ = observable<string | null>(null);
 
 export {
-	draftExpenseAtom,
-	logPaymentAtom,
-	scannedReceiptAtom,
-	scannedReceiptsAtom,
-	scannedReceiptJobIdAtom,
-	quickExpenseJobIdAtom,
+	draftExpense$,
+	resetDraftExpense,
+	logPayment$,
+	scannedReceipt$,
+	scannedReceipts$,
+	scannedReceiptJobId$,
+	quickExpenseJobId$,
 };

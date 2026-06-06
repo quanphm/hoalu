@@ -13,15 +13,16 @@ import {
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
 import { useEffect } from "react";
 
 import {
 	createIncomeDialogAtom,
 	deleteIncomeDialogAtom,
-	draftIncomeAtom,
+	draftIncome$,
+	resetDraftIncome,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
@@ -75,7 +76,8 @@ function CreateIncomeForm() {
 	const wallets = useLiveQueryWallets();
 	const mutation = useCreateIncome();
 	const setDialog = useSetAtom(createIncomeDialogAtom);
-	const [draft, setDraft] = useAtom(draftIncomeAtom);
+	const draft = useValue(draftIncome$);
+	const setDraft = draftIncome$.set;
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_income_wallet_${slug}`,
@@ -162,7 +164,7 @@ function CreateIncomeForm() {
 					categoryId: value.categoryId,
 				},
 			});
-			setDraft(RESET);
+			resetDraftIncome();
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {

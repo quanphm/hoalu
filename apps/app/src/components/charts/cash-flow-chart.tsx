@@ -3,15 +3,15 @@ import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useValue } from "@legendapp/state/react";
 import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, ReferenceLine } from "recharts";
 
 import {
-	customDateRangeAtom,
+	customDateRange$,
 	PredefinedDateRange,
-	selectDateRangeAtom,
-	syncedDateRangeAtom,
+	selectDateRange$,
+	setSyncedDateRange,
 } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import {
@@ -53,8 +53,8 @@ interface CashFlowDataPoint {
 }
 
 export function CashFlowChart(props: CashFlowChartProps) {
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
 	const {
 		metadata: { currency },
 	} = useWorkspace();
@@ -219,7 +219,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 
 	const netChange = calculatePercentageChange(currentNetTotal, previousNetTotal, currency);
 
-	const setSyncedDateRange = useSetAtom(syncedDateRangeAtom);
 	const comparisonText = getComparisonPeriodText(dateRange, customRange);
 	const handleComparisonClick = () => {
 		if (comparisonRange) {

@@ -9,15 +9,11 @@ import {
 } from "@hoalu/ui/card";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
-import {
-	customDateRangeAtom,
-	expenseCategoryFilterAtom,
-	selectDateRangeAtom,
-} from "#app/atoms/filters.ts";
+import { customDateRange$, expenseCategoryFilter$, selectDateRange$ } from "#app/atoms/filters.ts";
 import { createChartColor } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -66,8 +62,8 @@ function CategoryListBreakdown(props: {
 }) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
-	const customDateRange = useAtomValue(customDateRangeAtom);
-	const setSelectedCategories = useSetAtom(expenseCategoryFilterAtom);
+	const customDateRange = useValue(customDateRange$);
+	const setSelectedCategories = expenseCategoryFilter$.set;
 
 	const handleClick = (id: string) => {
 		if (id === "others") {
@@ -150,8 +146,8 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 		metadata: { currency },
 	} = useWorkspace();
 
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
 
 	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
 

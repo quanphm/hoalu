@@ -1,11 +1,11 @@
 import { Badge } from "@hoalu/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { FramePanel } from "@hoalu/ui/frame";
+import { useValue } from "@legendapp/state/react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useAtom } from "jotai";
 import { Suspense } from "react";
 
-import { selectedCategoryAtom } from "#app/atoms/index.ts";
+import { selectedCategory$ } from "#app/atoms/index.ts";
 import { EditCategoryForm } from "#app/components/categories/category-actions.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
@@ -40,7 +40,8 @@ const columns = [
 ];
 
 export function CategoryTable({ data }: { data: CategoryTableItem[] }) {
-	const [selected, setSelected] = useAtom(selectedCategoryAtom);
+	const selected = useValue(selectedCategory$);
+	const setSelected = selectedCategory$.set;
 	const initRowSelection = selected.id ? { [selected.id]: true } : {};
 
 	function handleRowClick<T extends (typeof data)[number]>(rows: T[]) {

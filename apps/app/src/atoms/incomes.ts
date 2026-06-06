@@ -1,5 +1,6 @@
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { observable } from "@legendapp/state";
+import { ObservablePersistLocalStorage } from "@legendapp/state/persist-plugins/local-storage";
+import { syncObservable } from "@legendapp/state/sync";
 
 import type { IncomeFormSchema } from "#app/lib/schema.ts";
 
@@ -16,9 +17,19 @@ const basedIncome: IncomeAtomSchema = {
 	categoryId: "",
 };
 
-export const draftIncomeAtom = atomWithStorage("draft_income", basedIncome);
+export const draftIncome$ = observable<IncomeAtomSchema>(basedIncome);
+syncObservable(draftIncome$, {
+	persist: {
+		name: "draft_income",
+		plugin: ObservablePersistLocalStorage,
+	},
+});
 
-export const selectedIncomeAtom = atom<{
+export function resetDraftIncome() {
+	draftIncome$.set(basedIncome);
+}
+
+export const selectedIncome$ = observable<{
 	id: string | null;
 }>({
 	id: null,

@@ -1,21 +1,21 @@
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-rate";
 import { monetary } from "@hoalu/finance/monetary";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
+import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
 import { useDeferredValue, useMemo } from "react";
 
 import {
 	type AmountFilterState,
-	customDateRangeAtom,
-	expenseAmountFilterAtom,
-	expenseCategoryFilterAtom,
-	expenseRepeatFilterAtom,
-	expenseWalletFilterAtom,
-	searchKeywordsAtom,
-	selectDateRangeAtom,
+	customDateRange$,
+	expenseAmountFilter$,
+	expenseCategoryFilter$,
+	expenseRepeatFilter$,
+	expenseWalletFilter$,
+	searchKeywords$,
+	selectDateRange$,
 } from "#app/atoms/index.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
@@ -44,11 +44,11 @@ export function useFilteredExpenses() {
 	const expenses = useLiveQueryExpenses();
 	const { date: searchByDate } = expenseRouteApi.useSearch();
 	const range = toFromToDateObject(searchByDate);
-	const searchKeywords = useAtomValue(searchKeywordsAtom);
-	const selectedCategoryIds = useAtomValue(expenseCategoryFilterAtom);
-	const selectedWalletIds = useAtomValue(expenseWalletFilterAtom);
-	const selectedRepeat = useAtomValue(expenseRepeatFilterAtom);
-	const amountFilter = useAtomValue(expenseAmountFilterAtom);
+	const searchKeywords = useValue(searchKeywords$);
+	const selectedCategoryIds = useValue(expenseCategoryFilter$);
+	const selectedWalletIds = useValue(expenseWalletFilter$);
+	const selectedRepeat = useValue(expenseRepeatFilter$);
+	const amountFilter = useValue(expenseAmountFilter$);
 	const deferredSearchKeywords = useDeferredValue(searchKeywords);
 
 	const filtered = useMemo(
@@ -163,8 +163,8 @@ export function useExpenseStats(options: UseExpenseStatsOptions) {
 	} = useWorkspace();
 	const wallets = useLiveQueryWallets();
 
-	const dateRange = useAtomValue(selectDateRangeAtom);
-	const customRange = useAtomValue(customDateRangeAtom);
+	const dateRange = useValue(selectDateRange$);
+	const customRange = useValue(customDateRange$);
 
 	// Get current period data
 	const currentPeriodData = filterDataByRange(expenses, dateRange, customRange);
