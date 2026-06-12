@@ -12,7 +12,7 @@ import {
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
 import { QueuePanel } from "#app/components/queue-panel.tsx";
-import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
+// import { QuickExpensesDialogTrigger } from "#app/components/quick-expenses/quick-expenses-dialog.tsx";
 import { ScanReceiptDialogTrigger } from "#app/components/receipt/scan-receipt-dialog.tsx";
 import { RedactedAmountToggle } from "#app/components/redacted-amount-toggle.tsx";
 
@@ -48,7 +48,7 @@ function RouteComponent() {
 				<ToolbarActions>
 					<CreateExpenseDialogTrigger />
 					<ScanReceiptDialogTrigger />
-					<QuickExpensesDialogTrigger />
+					{/* <QuickExpensesDialogTrigger /> */}
 					<ToolbarSeparator />
 					<CreateIncomeDialogTrigger />
 					<ToolbarSeparator />

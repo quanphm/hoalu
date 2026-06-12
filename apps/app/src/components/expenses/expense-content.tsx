@@ -60,7 +60,7 @@ function TitleCell({ title, description }: { title: string; description?: string
 function AmountCell({ data }: { data: SyncedTransaction }) {
 	return (
 		<div className="flex items-center justify-end px-4 py-3">
-			<TransactionAmount type={data.kind} data={data} />
+			<TransactionAmount type="neutral" data={data} />
 		</div>
 	);
 }
@@ -68,7 +68,7 @@ function AmountCell({ data }: { data: SyncedTransaction }) {
 function AmountEmptyCell() {
 	return (
 		<div className="flex items-center justify-end px-4 py-3">
-			<span className="text-muted-foreground text-sm">-</span>
+			<span className="text-muted-foreground text-sm" />{" "}
 		</div>
 	);
 }
