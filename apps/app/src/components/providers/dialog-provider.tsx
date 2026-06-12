@@ -5,15 +5,10 @@ import {
 	DialogPortal,
 	DialogViewport,
 } from "@hoalu/ui/dialog";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useValue } from "@legendapp/state/react";
 import { Suspense, type PropsWithChildren } from "react";
 
-import {
-	currentDialogAtom,
-	type DialogId,
-	dialogStateAtom,
-	wipeOutDialogsAtom,
-} from "#app/atoms/index.ts";
+import { currentDialog$, dialog$, type DialogId, wipeOutDialogs } from "#app/atoms/index.ts";
 import {
 	CreateCategoryDialogContent,
 	DeleteCategoryDialogContent,
@@ -49,14 +44,14 @@ import {
 import { CreateWorkspaceDialogContent, DeleteWorkspaceDialogContent } from "../workspace";
 
 export function DialogProvider(props: PropsWithChildren) {
-	const [open, setOpen] = useAtom(dialogStateAtom);
-	const currentDialog = useAtomValue(currentDialogAtom);
-	const wipeOutAllDialogs = useSetAtom(wipeOutDialogsAtom);
+	const open = useValue(dialog$.open);
+	const currentDialog = useValue(currentDialog$);
 
 	const handleOpenChange = (open: boolean) => {
-		setOpen(open);
-		if (!open) {
-			wipeOutAllDialogs();
+		if (open) {
+			dialog$.open.set(true);
+		} else {
+			wipeOutDialogs();
 		}
 	};
 

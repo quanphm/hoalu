@@ -11,9 +11,8 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { useSetAtom } from "jotai";
 
-import { createExpenseDialogAtom, draftExpense$, logPayment$ } from "#app/atoms/index.ts";
+import { createExpenseDialog, draftExpense$, logPayment$ } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
@@ -167,7 +166,7 @@ interface UpcomingBillRowProps {
 
 function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 	const archive = useArchiveRecurringBill();
-	const setDialog = useSetAtom(createExpenseDialogAtom);
+	const setDialog = createExpenseDialog.set;
 	const setDraft = draftExpense$.set;
 	const setLogPayment = logPayment$.set;
 

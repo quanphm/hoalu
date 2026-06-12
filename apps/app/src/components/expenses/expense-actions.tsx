@@ -25,12 +25,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
 import {
-	createExpenseDialogAtom,
-	deleteExpenseDialogAtom,
+	createExpenseDialog,
+	deleteExpenseDialog,
 	draftExpense$,
 	logPayment$,
 	resetDraftExpense,
@@ -71,7 +71,7 @@ export function CreateExpenseDialogTrigger({
 	showKbd = true,
 	...props
 }: ButtonProps & { showKbd?: boolean }) {
-	const setDialog = useSetAtom(createExpenseDialogAtom);
+	const setDialog = createExpenseDialog.set;
 
 	return (
 		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
@@ -108,7 +108,7 @@ function CreateExpenseForm() {
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
 
-	const setDialog = useSetAtom(createExpenseDialogAtom);
+	const setDialog = createExpenseDialog.set;
 	const draft = useValue(draftExpense$);
 	const setDraft = draftExpense$.set;
 	const logPayment = useValue(logPayment$);
@@ -349,7 +349,7 @@ function CreateExpenseForm() {
 }
 
 export function DeleteExpense({ id }: { id: string }) {
-	const setDialog = useSetAtom(deleteExpenseDialogAtom);
+	const setDialog = deleteExpenseDialog.set;
 
 	return (
 		<Tooltip>
@@ -374,7 +374,8 @@ export function DeleteExpenseDialogContent() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
 	const mutation = useDeleteExpense();
-	const [dialog, setDialog] = useAtom(deleteExpenseDialogAtom);
+	const dialog = useValue(deleteExpenseDialog.$);
+	const setDialog = deleteExpenseDialog.set;
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {

@@ -22,14 +22,10 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
+import { useValue } from "@legendapp/state/react";
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
-import {
-	createWalletDialogAtom,
-	deleteWalletDialogAtom,
-	editWalletDialogAtom,
-} from "#app/atoms/index.ts";
+import { createWalletDialog, deleteWalletDialog, editWalletDialog } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
@@ -47,7 +43,7 @@ import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
 import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
 export function CreateWalletDialogTrigger() {
-	const setDialog = useSetAtom(createWalletDialogAtom);
+	const setDialog = createWalletDialog.set;
 
 	return (
 		<Button size="sm" onClick={() => setDialog({ state: true })}>
@@ -76,7 +72,7 @@ function CreateWalletForm() {
 	const {
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
-	const setDialog = useSetAtom(createWalletDialogAtom);
+	const setDialog = createWalletDialog.set;
 	const mutation = useCreateWallet();
 
 	const form = useAppForm({
@@ -152,7 +148,7 @@ function EditWalletForm(props: { id: string }) {
 	const workspace = useWorkspace();
 	const { data: wallet } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
 	const mutation = useEditWallet();
-	const setDialog = useSetAtom(editWalletDialogAtom);
+	const setDialog = editWalletDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -254,7 +250,7 @@ function EditWalletForm(props: { id: string }) {
 }
 
 export function EditWalletDialogContent() {
-	const dialog = useAtomValue(editWalletDialogAtom);
+	const dialog = useValue(editWalletDialog.$);
 
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
@@ -268,7 +264,8 @@ export function EditWalletDialogContent() {
 }
 
 export function DeleteWalletDialogContent() {
-	const [dialog, setDialog] = useAtom(deleteWalletDialogAtom);
+	const dialog = useValue(deleteWalletDialog.$);
+	const setDialog = deleteWalletDialog.set;
 	const mutation = useDeleteWallet();
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
@@ -300,8 +297,8 @@ export function DeleteWalletDialogContent() {
 }
 
 export function WalletDropdownMenuWithModal({ id }: { id: string }) {
-	const setEditDialog = useSetAtom(editWalletDialogAtom);
-	const setDeleteDialog = useSetAtom(deleteWalletDialogAtom);
+	const setEditDialog = editWalletDialog.set;
+	const setDeleteDialog = deleteWalletDialog.set;
 
 	return (
 		<DropdownMenu>

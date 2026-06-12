@@ -1,15 +1,10 @@
 import { toastManager } from "@hoalu/ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { WebHaptics } from "web-haptics";
 
 import { draftIncome$ } from "#app/atoms/incomes.ts";
-import {
-	createExpenseDialogAtom,
-	draftExpense$,
-	createIncomeDialogAtom,
-} from "#app/atoms/index.ts";
+import { createExpenseDialog, draftExpense$, createIncomeDialog } from "#app/atoms/index.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
@@ -467,7 +462,7 @@ export function useDeleteIncome() {
 }
 
 export function useDuplicateIncome() {
-	const setDialog = useSetAtom(createIncomeDialogAtom);
+	const setDialog = createIncomeDialog.set;
 	const setDraft = draftIncome$.set;
 
 	const mutation = useMutation({
@@ -803,7 +798,7 @@ export function useDeleteEvent() {
 }
 
 export function useDuplicateExpense() {
-	const setDialog = useSetAtom(createExpenseDialogAtom);
+	const setDialog = createExpenseDialog.set;
 	const setDraft = draftExpense$.set;
 
 	const mutation = useMutation({

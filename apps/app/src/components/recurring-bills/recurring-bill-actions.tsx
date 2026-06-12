@@ -9,15 +9,15 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Field, FieldGroup } from "@hoalu/ui/field";
+import { useValue } from "@legendapp/state/react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
 import * as z from "zod";
 
 import {
-	archiveRecurringBillDialogAtom,
-	createRecurringBillDialogAtom,
-	deleteRecurringBillDialogAtom,
-	unarchiveRecurringBillDialogAtom,
+	archiveRecurringBillDialog,
+	createRecurringBillDialog,
+	deleteRecurringBillDialog,
+	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
@@ -58,7 +58,7 @@ export function CreateRecurringBillDialogTrigger({
 	showKbd = true,
 	...props
 }: ButtonProps & { showKbd?: boolean }) {
-	const setDialog = useSetAtom(createRecurringBillDialogAtom);
+	const setDialog = createRecurringBillDialog.set;
 	return (
 		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
 			New recurring bill
@@ -109,7 +109,7 @@ const DOM_OPTIONS = Array.from({ length: 31 }, (_, i) => ({
 export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBillFormProps) {
 	const workspace = useWorkspace();
 	const mutation = useCreateRecurringBill();
-	const setDialog = useSetAtom(createRecurringBillDialogAtom);
+	const setDialog = createRecurringBillDialog.set;
 	const wallets = useLiveQueryWallets();
 
 	if (!wallets.length) return null;
@@ -381,7 +381,8 @@ export function ArchiveRecurringBillDialogContent() {
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useArchiveRecurringBill();
-	const [dialog, setDialog] = useAtom(archiveRecurringBillDialogAtom);
+	const dialog = useValue(archiveRecurringBillDialog.$);
+	const setDialog = archiveRecurringBillDialog.set;
 
 	const onDelete = async () => {
 		if (!dialog?.data?.id) {
@@ -415,7 +416,8 @@ export function ArchiveRecurringBillDialogContent() {
 
 export function UnarchiveRecurringBillDialogContent() {
 	const mutation = useUnarchiveRecurringBill();
-	const [dialog, setDialog] = useAtom(unarchiveRecurringBillDialogAtom);
+	const dialog = useValue(unarchiveRecurringBillDialog.$);
+	const setDialog = unarchiveRecurringBillDialog.set;
 
 	const onUnarchive = async () => {
 		if (!dialog?.data?.id) {
@@ -449,7 +451,8 @@ export function DeleteRecurringBillDialogContent() {
 	const navigate = useNavigate();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useDeleteRecurringBill();
-	const [dialog, setDialog] = useAtom(deleteRecurringBillDialogAtom);
+	const dialog = useValue(deleteRecurringBillDialog.$);
+	const setDialog = deleteRecurringBillDialog.set;
 
 	const billTitle = dialog?.data?.title ?? "this bill";
 
