@@ -78,7 +78,9 @@ type Action = { state: true; data?: Record<string, any> | undefined } | { state:
  * - `$`  a computed observable resolving to { id, data } when this dialog is
  *        active, otherwise null (read it in components with `useValue`).
  * - `set` open/close this dialog, mirroring the previous atom write API
- *        (`{ state: true, data }` / `{ state: false }`).
+ *        (`{ state: true, data }` / `{ state: false }`). Closing is a no-op
+ *        when a different dialog is active, so open/close ordering between
+ *        two dialogs doesn't matter.
  */
 function createDialog(id: DialogId) {
 	return {
@@ -89,7 +91,10 @@ function createDialog(id: DialogId) {
 			if (action.state) {
 				dialog$.set({ currentId: id, data: action.data, open: true });
 			} else {
-				dialog$.set({ currentId: null, data: undefined, open: false });
+				const currentId = dialog$.currentId.peek();
+				if (currentId === id || currentId === null) {
+					wipeOutDialogs();
+				}
 			}
 		},
 	};

@@ -48,8 +48,9 @@ export function DialogProvider(props: PropsWithChildren) {
 	const currentDialog = useValue(currentDialog$);
 
 	const handleOpenChange = (open: boolean) => {
-		dialog$.open.set(open);
-		if (!open) {
+		if (open) {
+			dialog$.open.set(true);
+		} else {
 			wipeOutDialogs();
 		}
 	};
