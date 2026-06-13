@@ -8,7 +8,6 @@ import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { RecentTransactions } from "#app/components/expenses/recent-transactions.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
-import { DashboardLayout } from "#app/components/layouts/dashboard-layout.tsx";
 import { SectionContent } from "#app/components/layouts/section.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 
@@ -22,21 +21,30 @@ function RouteComponent() {
 	const categories = useLiveQueryCategories();
 
 	return (
-		<DashboardLayout
-			main={
-				<SectionContent className="items-start gap-4">
-					<CashFlowSection incomes={incomes} expenses={expenses} />
-					<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
-					<RecentTransactions />
+		<SectionContent columns={24} className="items-start gap-4 p-4">
+			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+				<CashFlowChart incomes={incomes} expenses={expenses} />
+			</div>
+			<div className="col-span-24 flex flex-col gap-0 md:col-span-16">
+				<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
+				<CashFlowSection incomes={incomes} expenses={expenses} />
+			</div>
+
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
+				<SectionContent columns={2}>
+					<div className="col-span-1 flex h-full flex-col gap-4">
+						<UpcomingBillsWidget />
+					</div>
+					<div className="col-span-1 flex h-full flex-col gap-4">
+						<CategoryBreakdown expenses={expenses} categories={categories} />
+					</div>
 				</SectionContent>
-			}
-			sidebar={
-				<>
-					<CashFlowChart incomes={incomes} expenses={expenses} />
-					<CategoryBreakdown expenses={expenses} categories={categories} />
-					<UpcomingBillsWidget />
-				</>
-			}
-		/>
+			</div>
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-8"></div>
+
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-24">
+				<RecentTransactions />
+			</div>
+		</SectionContent>
 	);
 }

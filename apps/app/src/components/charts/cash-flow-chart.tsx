@@ -312,6 +312,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							dataKey="date"
 							axisLine={false}
 							tickLine={false}
+							tickMargin={8}
 							tickFormatter={(value) => formatChartDate(value, dateRange)}
 							interval="preserveStartEnd"
 							minTickGap={32}

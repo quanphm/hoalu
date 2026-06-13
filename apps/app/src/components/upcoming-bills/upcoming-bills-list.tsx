@@ -10,6 +10,7 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
+import { ScrollArea } from "@hoalu/ui/scroll-area";
 import { cn } from "@hoalu/ui/utils";
 
 import { createExpenseDialog, draftExpense$, logPayment$ } from "#app/atoms/index.ts";
@@ -130,10 +131,10 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 	}
 
 	return (
-		<div className="space-y-3">
+		<ScrollArea className="min-h-90 space-y-3 px-4">
 			{groups.map((group) => (
 				<div key={group.isOverdue ? `overdue:${group.date}` : group.date}>
-					<div className="mb-1 flex items-center gap-2">
+					<div className="mt-3 mb-1 flex items-center gap-2">
 						<span
 							className={cn(
 								"text-xs font-semibold",
@@ -156,7 +157,7 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 					</div>
 				</div>
 			))}
-		</div>
+		</ScrollArea>
 	);
 }
 
@@ -263,7 +264,3 @@ const colorMap: Record<string, string> = {
 	gray: "bg-slate-300",
 	stone: "bg-stone-300",
 };
-
-function getCategoryStripeColor(color: string): string {
-	return colorMap[color] ?? "bg-muted-foreground/30";
-}

@@ -23,9 +23,9 @@ const sizeClasses = {
 };
 
 const iconSizeClasses = {
-	sm: "size-3",
-	md: "size-4",
-	lg: "size-5",
+	sm: "size-2",
+	md: "size-3",
+	lg: "size-4",
 };
 
 interface PercentageChangeProps {

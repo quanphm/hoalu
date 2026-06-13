@@ -93,7 +93,7 @@ function CategoryListBreakdown(props: {
 			{props.data.map((data) => {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
-					<div key={data.id} className="flex items-center justify-between py-0.5">
+					<div key={data.id} className="flex items-center justify-between py-1">
 						<div className="flex items-center gap-2">
 							<div className={cn("h-4 w-1 rounded-xs", createChartColor(data.color))} />
 							<Button
@@ -195,7 +195,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
 
 	return (
-		<Card className="pb-2">
+		<Card className="h-full pb-2">
 			<CardHeader>
 				<CardTitle>Categories Breakdown</CardTitle>
 				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
@@ -214,7 +214,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 				{dataToView.length === 0 ? (
 					<EmptyData />
 				) : (
-					<div className="space-y-2">
+					<div className="space-y-6">
 						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
 						<CategoryListBreakdown
 							data={dataToView}

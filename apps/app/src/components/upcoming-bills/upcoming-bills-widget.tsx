@@ -1,4 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
+import { Badge } from "@hoalu/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
 import { useQuery } from "@tanstack/react-query";
 
 import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
@@ -13,19 +14,14 @@ export function UpcomingBillsWidget() {
 		(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
 
 	return (
-		<Card className="flex h-full max-h-125 min-h-75 flex-col">
+		<Card>
 			<CardHeader>
-				<CardDescription className="flex items-center justify-between text-xs uppercase">
-					Upcoming Bills
-				</CardDescription>
-				{totalCount > 0 && (
-					<CardDescription>
-						<span className="text-foreground text-xl font-semibold">{totalCount}</span>
-					</CardDescription>
-				)}
+				<CardTitle className="flex items-center gap-2">
+					Upcoming Bills <Badge variant="info">{totalCount}</Badge>
+				</CardTitle>
 				<CardDescription>Next 30 days, yearly and overdue bills</CardDescription>
 			</CardHeader>
-			<CardContent className="min-h-0 flex-1 overflow-y-auto">
+			<CardContent className="max-h-90 px-0">
 				<UpcomingBillsList
 					overdue={data?.overdue ?? []}
 					today={data?.today ?? []}
