@@ -1,8 +1,7 @@
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-rate";
 import { monetary } from "@hoalu/finance/monetary";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { atom, useAtom } from "jotai";
 import { useMemo } from "react";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -14,14 +13,6 @@ import {
 	categoryCollectionFactory,
 	exchangeRateCollection,
 } from "#app/lib/collections/index.ts";
-
-export const selectedEventAtom = atom<{ id: string | null }>({ id: null });
-
-export function useSelectedEvent() {
-	const [event, setSelectedEvent] = useAtom(selectedEventAtom);
-	const onSelectEvent = (id: string | null) => setSelectedEvent({ id });
-	return { event, onSelectEvent };
-}
 
 function useFxRateData() {
 	const { data: fxRateData } = useLiveQuery((q) =>
@@ -136,14 +127,12 @@ export type SyncedEvents = ReturnType<typeof useLiveQueryEvents>;
 
 /**
  * Expenses filtered by event_id — for the event detail page.
- * Same join/transform pattern as useLiveQueryExpenses.
  */
 export function useLiveQueryEventExpenses(eventId: string) {
 	const workspace = useWorkspace();
 	const expenseCollection = expenseCollectionFactory(workspace.slug);
 	const walletCollection = walletCollectionFactory(workspace.slug);
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
-	const fxRateData = useFxRateData();
 
 	const { data } = useLiveQuery(
 		(q) =>

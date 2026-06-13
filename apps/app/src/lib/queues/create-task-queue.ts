@@ -1,32 +1,33 @@
 import { generateId } from "@hoalu/ids/generate-id";
-import { atom, type Atom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
+import { observable, type Observable } from "@legendapp/state";
+import { useValue } from "@legendapp/state/react";
 import { useEffect, useMemo } from "react";
 
 import { MAX_QUEUE_SIZE } from "#app/helpers/constants.ts";
 
 import type { TaskJob, TaskQueueConfig } from "./types.ts";
 
-interface TaskQueueAtoms<TInput, TResult> {
-	queueAtom: Atom<TaskJob<TInput, TResult>[]>;
-	pendingAtom: Atom<TaskJob<TInput, TResult>[]>;
-	processingAtom: Atom<TaskJob<TInput, TResult>[]>;
-	completedAtom: Atom<TaskJob<TInput, TResult>[]>;
-	failedAtom: Atom<TaskJob<TInput, TResult>[]>;
+export interface TaskQueueAtoms<TInput, TResult> {
+	queue$: Observable<TaskJob<TInput, TResult>[]>;
+	pending$: Observable<TaskJob<TInput, TResult>[]>;
+	processing$: Observable<TaskJob<TInput, TResult>[]>;
+	completed$: Observable<TaskJob<TInput, TResult>[]>;
+	failed$: Observable<TaskJob<TInput, TResult>[]>;
 }
 
-interface TaskQueueActions<TInput> {
-	add: WritableAtom<null, [TInput], void>;
-	retry: WritableAtom<null, [string], void>;
-	dismiss: WritableAtom<null, [string], void>;
-	remove: WritableAtom<null, [string], void>;
-	startEngine: WritableAtom<null, [], void>;
+export interface TaskQueueActions<TInput> {
+	add: (input: TInput) => void;
+	retry: (jobId: string) => void;
+	dismiss: (jobId: string) => void;
+	remove: (jobId: string) => void;
+	startEngine: () => void;
 }
 
-interface TaskQueueUtils {
+export interface TaskQueueUtils {
 	cleanup: () => void;
 }
 
-interface UseTaskQueueResult<TInput, TResult> {
+export interface UseTaskQueueResult<TInput, TResult> {
 	queue: TaskJob<TInput, TResult>[];
 	activeJobs: TaskJob<TInput, TResult>[];
 	pending: TaskJob<TInput, TResult>[];
@@ -40,7 +41,7 @@ interface UseTaskQueueResult<TInput, TResult> {
 	remove: (jobId: string) => void;
 }
 
-interface TaskQueue<TInput, TResult>
+export interface TaskQueue<TInput, TResult>
 	extends TaskQueueAtoms<TInput, TResult>, TaskQueueActions<TInput>, TaskQueueUtils {
 	useQueue: () => UseTaskQueueResult<TInput, TResult>;
 }
@@ -55,39 +56,28 @@ export function createTaskQueue<TInput, TResult>(
 		maxConcurrent = MAX_QUEUE_SIZE;
 	}
 
-	const baseQueueAtom = atom<TaskJob<TInput, TResult>[]>([]);
-	const queueAtom = atom((get) => get(baseQueueAtom));
-	const pendingAtom = atom((get) => get(baseQueueAtom).filter((job) => job.status === "pending"));
-
-	const processingAtom = atom((get) =>
-		get(baseQueueAtom).filter((job) => job.status === "processing"),
+	const baseQueue$ = observable<TaskJob<TInput, TResult>[]>([]);
+	const queue$ = observable(() => baseQueue$.get());
+	const pending$ = observable(() => baseQueue$.get().filter((job) => job.status === "pending"));
+	const processing$ = observable(() =>
+		baseQueue$.get().filter((job) => job.status === "processing"),
 	);
-	const completedAtom = atom((get) =>
-		get(baseQueueAtom).filter((job) => job.status === "completed"),
-	);
-	const failedAtom = atom((get) => get(baseQueueAtom).filter((job) => job.status === "failed"));
+	const completed$ = observable(() => baseQueue$.get().filter((job) => job.status === "completed"));
+	const failed$ = observable(() => baseQueue$.get().filter((job) => job.status === "failed"));
 
-	async function processJob(
-		set: (atom: typeof baseQueueAtom, value: TaskJob<TInput, TResult>[]) => void,
-		get: <T>(atom: Atom<T>) => T,
-		jobId: string,
-	) {
-		const jobs = get(baseQueueAtom);
+	async function processJob(jobId: string) {
+		const jobs = baseQueue$.peek();
 		const job = jobs.find((j) => j.id === jobId);
 		if (!job || job.status !== "pending") return;
 
 		// Mark as processing
-		set(
-			baseQueueAtom,
-			jobs.map((j) => (j.id === jobId ? { ...j, status: "processing" as const } : j)),
-		);
+		baseQueue$.set(jobs.map((j) => (j.id === jobId ? { ...j, status: "processing" as const } : j)));
 
 		try {
 			const result = await config.processor.execute(job.input);
 
-			const currentJobs = get(baseQueueAtom);
-			set(
-				baseQueueAtom,
+			const currentJobs = baseQueue$.peek();
+			baseQueue$.set(
 				currentJobs.map((j) =>
 					j.id === jobId
 						? {
@@ -102,14 +92,13 @@ export function createTaskQueue<TInput, TResult>(
 		} catch (error) {
 			console.error("[TaskQueue] Job processing error:", error);
 			const errorMessage = error instanceof Error ? error.message : "Unknown error";
-			const currentJobs = get(baseQueueAtom);
+			const currentJobs = baseQueue$.peek();
 			const currentJob = currentJobs.find((j) => j.id === jobId);
 
 			const shouldRetry = (currentJob?.retryCount ?? 0) < maxRetries;
 
 			if (shouldRetry) {
-				set(
-					baseQueueAtom,
+				baseQueue$.set(
 					currentJobs.map((j) =>
 						j.id === jobId
 							? {
@@ -122,8 +111,7 @@ export function createTaskQueue<TInput, TResult>(
 					),
 				);
 			} else {
-				set(
-					baseQueueAtom,
+				baseQueue$.set(
 					currentJobs.map((j) =>
 						j.id === jobId
 							? {
@@ -138,7 +126,7 @@ export function createTaskQueue<TInput, TResult>(
 		}
 	}
 
-	const add = atom(null, (get, set, input: TInput) => {
+	function add(input: TInput) {
 		const newJob: TaskJob<TInput, TResult> = {
 			id: generateId({ use: "uuid" }),
 			status: "pending",
@@ -150,8 +138,8 @@ export function createTaskQueue<TInput, TResult>(
 			completedAt: null,
 		};
 
-		const currentJobs = get(baseQueueAtom);
-		set(baseQueueAtom, [...currentJobs, newJob]);
+		const currentJobs = baseQueue$.peek();
+		baseQueue$.set([...currentJobs, newJob]);
 
 		if (isEngineRunning) {
 			const processingCount = currentJobs.filter((j) => j.status === "processing").length;
@@ -160,7 +148,7 @@ export function createTaskQueue<TInput, TResult>(
 				setTimeout(() => {
 					const processNext = async () => {
 						try {
-							const jobs = get(baseQueueAtom);
+							const jobs = baseQueue$.peek();
 							const currentProcessingCount = jobs.filter((j) => j.status === "processing").length;
 							if (currentProcessingCount >= maxConcurrent) {
 								return;
@@ -169,10 +157,10 @@ export function createTaskQueue<TInput, TResult>(
 							const nextPending = jobs.find((j) => j.status === "pending");
 							if (!nextPending) return;
 
-							await processJob(set, get, nextPending.id);
+							await processJob(nextPending.id);
 
 							// Continue processing
-							const updatedJobs = get(baseQueueAtom);
+							const updatedJobs = baseQueue$.peek();
 
 							const hasMorePending = updatedJobs.some((j) => j.status === "pending");
 							if (hasMorePending) {
@@ -186,12 +174,11 @@ export function createTaskQueue<TInput, TResult>(
 				}, 0);
 			}
 		}
-	});
+	}
 
-	const retry = atom(null, (get, set, jobId: string) => {
-		const currentJobs = get(baseQueueAtom);
-		set(
-			baseQueueAtom,
+	function retry(jobId: string) {
+		const currentJobs = baseQueue$.peek();
+		baseQueue$.set(
 			currentJobs.map((j) =>
 				j.id === jobId
 					? {
@@ -206,14 +193,14 @@ export function createTaskQueue<TInput, TResult>(
 		// Trigger engine to process the retried job
 		if (isEngineRunning) {
 			const processNext = async () => {
-				const jobs = get(baseQueueAtom);
+				const jobs = baseQueue$.peek();
 				const processingCount = jobs.filter((j) => j.status === "processing").length;
 				if (processingCount >= maxConcurrent) return;
 				const nextPending = jobs.find((j) => j.status === "pending");
 				if (!nextPending) return;
-				await processJob(set, get, nextPending.id);
+				await processJob(nextPending.id);
 				// Continue processing
-				const updatedJobs = get(baseQueueAtom);
+				const updatedJobs = baseQueue$.peek();
 				const hasMorePending = updatedJobs.some((j) => j.status === "pending");
 				if (hasMorePending) {
 					processNext();
@@ -221,32 +208,28 @@ export function createTaskQueue<TInput, TResult>(
 			};
 			processNext();
 		}
-	});
+	}
 
-	const dismiss = atom(null, (get, set, jobId: string) => {
-		const currentJobs = get(baseQueueAtom);
-		set(
-			baseQueueAtom,
+	function dismiss(jobId: string) {
+		const currentJobs = baseQueue$.peek();
+		baseQueue$.set(
 			currentJobs.map((j) => (j.id === jobId ? { ...j, status: "dismissed" as const } : j)),
 		);
-	});
+	}
 
-	const remove = atom(null, (get, set, jobId: string) => {
-		const currentJobs = get(baseQueueAtom);
-		set(
-			baseQueueAtom,
-			currentJobs.filter((j) => j.id !== jobId),
-		);
-	});
+	function remove(jobId: string) {
+		const currentJobs = baseQueue$.peek();
+		baseQueue$.set(currentJobs.filter((j) => j.id !== jobId));
+	}
 
-	const startEngine = atom(null, (get, set) => {
+	function startEngine() {
 		if (isEngineRunning) {
 			return;
 		}
 		isEngineRunning = true;
 
 		const processNext = async () => {
-			const jobs = get(baseQueueAtom);
+			const jobs = baseQueue$.peek();
 			const processingCount = jobs.filter((j) => j.status === "processing").length;
 
 			if (processingCount >= maxConcurrent) {
@@ -258,40 +241,34 @@ export function createTaskQueue<TInput, TResult>(
 				return;
 			}
 
-			await processJob(set, get, nextPending.id);
+			await processJob(nextPending.id);
 
-			const updatedJobs = get(baseQueueAtom);
+			const updatedJobs = baseQueue$.peek();
 			const hasMorePending = updatedJobs.some((j) => j.status === "pending");
 			if (hasMorePending) {
 				processNext();
 			}
 		};
 		processNext();
-	});
+	}
 
 	function cleanup() {
 		isEngineRunning = false;
 	}
 
 	function useQueue(): UseTaskQueueResult<TInput, TResult> {
-		const queue = useAtomValue(queueAtom);
-		const pending = useAtomValue(pendingAtom);
-		const processing = useAtomValue(processingAtom);
-		const completed = useAtomValue(completedAtom);
-		const failed = useAtomValue(failedAtom);
-
-		const addFn = useSetAtom(add);
-		const retryFn = useSetAtom(retry);
-		const dismissFn = useSetAtom(dismiss);
-		const removeFn = useSetAtom(remove);
-		const startFn = useSetAtom(startEngine);
+		const queue = useValue(queue$);
+		const pending = useValue(pending$);
+		const processing = useValue(processing$);
+		const completed = useValue(completed$);
+		const failed = useValue(failed$);
 
 		useEffect(() => {
-			startFn();
+			startEngine();
 			return () => {
 				cleanup();
 			};
-		}, [startFn]);
+		}, []);
 
 		const activeJobs = useMemo(() => queue.filter((job) => job.status !== "dismissed"), [queue]);
 
@@ -308,19 +285,19 @@ export function createTaskQueue<TInput, TResult>(
 			completed,
 			failed,
 			remainingSlots,
-			add: addFn,
-			retry: retryFn,
-			dismiss: dismissFn,
-			remove: removeFn,
+			add,
+			retry,
+			dismiss,
+			remove,
 		};
 	}
 
 	return {
-		queueAtom,
-		pendingAtom,
-		processingAtom,
-		completedAtom,
-		failedAtom,
+		queue$,
+		pending$,
+		processing$,
+		completed$,
+		failed$,
 		add,
 		retry,
 		dismiss,
