@@ -145,14 +145,14 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	return (
 		<div
 			className={cn(
-				"grid w-full grid-cols-2 md:grid-cols-5",
+				"grid w-full grid-cols-2 md:grid-cols-1",
 				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 			)}
 		>
-			<Card className="@container/card relative overflow-hidden">
-				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
+			<Card className="@container/card relative overflow-hidden border-b-0">
+				{/* {showTrend && <BoxAnimations status={cashFlowChange.status} />} */}
 				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
+					<CardDescription className="flex-start flex items-center gap-4 text-xs uppercase">
 						<span className="font-mono tracking-wider">Cumulative Net</span>
 						{showTrend && (
 							<PercentageChangeDisplay
@@ -162,83 +162,89 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 						)}
 					</CardDescription>
 					<CardTitle className="text-xl">
-						<CurrencyValue value={netCashFlow} currency={currency} className="text-xl" />
+						<CurrencyValue value={netCashFlow} currency={currency} className="text-3xl" />
 					</CardTitle>
 				</CardHeader>
 			</Card>
+			<div
+				className={cn(
+					"grid w-full grid-cols-2 md:grid-cols-4",
+					"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
+				)}
+			>
+				<Card className="@container/card">
+					<CardHeader>
+						<CardDescription className="flex items-center justify-between text-xs uppercase">
+							<span className="font-mono tracking-wider">Incomes</span>
+							{showTrend && (
+								<PercentageChangeDisplay
+									change={incomeChange}
+									className="[&>*>span]:text-xs [&>button]:h-1"
+								/>
+							)}
+						</CardDescription>
+						<CardTitle className="text-xl">
+							<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
+						</CardTitle>
+					</CardHeader>
+				</Card>
 
-			<Card className="@container/card">
-				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Income</span>
-						{showTrend && (
-							<PercentageChangeDisplay
-								change={incomeChange}
-								className="[&>*>span]:text-xs [&>button]:h-1"
-							/>
-						)}
-					</CardDescription>
-					<CardTitle className="text-xl">
-						<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
-					</CardTitle>
-				</CardHeader>
-			</Card>
+				<Card className="@container/card">
+					<CardHeader>
+						<CardDescription className="flex items-center justify-between text-xs uppercase">
+							<span className="font-mono tracking-wider">Expenses</span>
+							{showTrend && (
+								<PercentageChangeDisplay
+									change={expensesChange}
+									invertColor
+									className="[&>*>span]:text-xs [&>button]:h-1"
+								/>
+							)}
+						</CardDescription>
+						<CardTitle className="text-xl">
+							<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
+						</CardTitle>
+					</CardHeader>
+				</Card>
 
-			<Card className="@container/card">
-				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Expenses</span>
-						{showTrend && (
-							<PercentageChangeDisplay
-								change={expensesChange}
-								invertColor
-								className="[&>*>span]:text-xs [&>button]:h-1"
-							/>
-						)}
-					</CardDescription>
-					<CardTitle className="text-xl">
-						<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
-					</CardTitle>
-				</CardHeader>
-			</Card>
+				<Card className="@container/card">
+					<CardHeader>
+						<CardDescription className="flex items-center justify-between text-xs uppercase">
+							<span className="font-mono tracking-wider">Transactions</span>
+							{showTrend && transactionsDiff !== 0 && (
+								<span
+									className={cn(
+										"text-xs font-medium tabular-nums",
+										transactionsDiff > 0
+											? trendChangeVariants({ trend: "increase" })
+											: trendChangeVariants({ trend: "decrease" }),
+									)}
+								>
+									{transactionsDiff > 0 ? "+" : ""}
+									{transactionsDiff}
+								</span>
+							)}
+						</CardDescription>
+						<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
+							{formatNumber(totalTransactions)}
+						</CardTitle>
+					</CardHeader>
+				</Card>
 
-			<Card className="@container/card">
-				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Transactions</span>
-						{showTrend && transactionsDiff !== 0 && (
-							<span
-								className={cn(
-									"text-xs font-medium tabular-nums",
-									transactionsDiff > 0
-										? trendChangeVariants({ trend: "increase" })
-										: trendChangeVariants({ trend: "decrease" }),
-								)}
-							>
-								{transactionsDiff > 0 ? "+" : ""}
-								{transactionsDiff}
-							</span>
-						)}
-					</CardDescription>
-					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
-						{formatNumber(totalTransactions)}
-					</CardTitle>
-				</CardHeader>
-			</Card>
-
-			<Card className="@container/card hidden md:block">
-				<CardHeader>
-					<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
-					<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
-						{periodInfo.label}
-						{/* {periodInfo.totalDays !== null && (
+				<Card className="@container/card hidden md:block">
+					<CardHeader>
+						<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
+						<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
+							{periodInfo.label}
+							{/* {periodInfo.totalDays !== null && (
 							<span className="text-muted-foreground ml-1.5 text-sm font-normal">
 								({periodInfo.totalDays})
 							</span>
 						)} */}
-					</CardTitle>
-				</CardHeader>
-			</Card>
+						</CardTitle>
+					</CardHeader>
+				</Card>
+			</div>
 		</div>
 	);
 }

@@ -23,7 +23,7 @@ function RouteComponent() {
 	return (
 		<>
 			<SectionContent columns={25} className="items-start gap-0 md:gap-0">
-				<div className="col-span-25 flex w-full flex-row gap-4">
+				<div className="col-span-25 flex w-full flex-row">
 					<CashFlowSection incomes={incomes} expenses={expenses} />
 				</div>
 				<div className="col-span-25 hidden h-full w-full flex-col gap-4 md:col-span-8 md:flex">
