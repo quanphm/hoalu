@@ -239,7 +239,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	const zeroRatio = balanceRange === 0 ? 0.5 : Math.max(0, Math.min(1, maxBalance / balanceRange));
 
 	return (
-		<Card className={cn("bg-background flex h-full flex-col gap-2 border-0 border-r md:py-3")}>
+		<Card className={cn("flex h-full flex-col gap-2 md:py-2")}>
 			<CardHeader>
 				<CardDescription className="font-mono text-xs tracking-wider uppercase">
 					Cumulative Net
@@ -303,8 +303,6 @@ export function CashFlowChart(props: CashFlowChartProps) {
 								/>
 							</linearGradient>
 						</defs>
-						<rect x="0" y="0" width="100%" height="120%" fill="url(#pattern-dots)" />
-						<DottedBackgroundPattern />
 						<ReferenceLine
 							y={0}
 							stroke="var(--muted-foreground)"
@@ -393,18 +391,4 @@ function TooltipContent({
 		);
 	}
 	return null;
-}
-
-function DottedBackgroundPattern() {
-	return (
-		<pattern id="pattern-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-			<circle
-				className="dark:text-muted/24 text-muted/80"
-				cx="2"
-				cy="2"
-				r="1"
-				fill="currentColor"
-			/>
-		</pattern>
-	);
 }

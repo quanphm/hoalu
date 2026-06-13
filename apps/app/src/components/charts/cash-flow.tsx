@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 import { customDateRange$, selectDateRange$ } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import { BoxAnimations } from "#app/components/orb-motion.tsx";
+// import { BoxAnimations } from "#app/components/orb-motion.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { calculateComparisonDateRange, filterDataByRange } from "#app/helpers/date-range.ts";
 import { formatNumber } from "#app/helpers/number.ts";
@@ -143,13 +143,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const showTrend = dateRange === "all" || comparisonRange !== null;
 
 	return (
-		<div
-			className={cn(
-				"grid w-full grid-cols-2 md:grid-cols-1",
-				"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
-			)}
-		>
-			<Card className="@container/card relative overflow-hidden border-b-0">
+		<div className={cn("relative w-full border")}>
+			<Card className="bg-background @container/card relative overflow-hidden border-0">
 				{/* {showTrend && <BoxAnimations status={cashFlowChange.status} />} */}
 				<CardHeader>
 					<CardDescription className="flex-start flex items-center gap-4 text-xs uppercase">
@@ -166,10 +161,11 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					</CardTitle>
 				</CardHeader>
 			</Card>
+
 			<div
 				className={cn(
 					"grid w-full grid-cols-2 md:grid-cols-4",
-					"*:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
+					"*:data-[slot=card]:bg-sidebar *:data-[slot=card]:border-b-0 *:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
 				)}
 			>
 				<Card className="@container/card">

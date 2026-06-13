@@ -8,6 +8,7 @@ import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { RecentTransactions } from "#app/components/expenses/recent-transactions.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
+import { DashboardLayout } from "#app/components/layouts/dashboard-layout.tsx";
 import { SectionContent } from "#app/components/layouts/section.tsx";
 import { UpcomingBillsWidget } from "#app/components/upcoming-bills/upcoming-bills-widget.tsx";
 
@@ -21,25 +22,21 @@ function RouteComponent() {
 	const categories = useLiveQueryCategories();
 
 	return (
-		<>
-			<SectionContent columns={25} className="items-start gap-0 md:gap-0">
-				<div className="col-span-25 flex w-full flex-row">
+		<DashboardLayout
+			main={
+				<SectionContent className="items-start gap-4">
 					<CashFlowSection incomes={incomes} expenses={expenses} />
-				</div>
-				<div className="col-span-25 hidden h-full w-full flex-col gap-4 md:col-span-8 md:flex">
-					<CashFlowChart incomes={incomes} expenses={expenses} />
-				</div>
-				<div className="col-span-25 flex w-full flex-col gap-4 md:col-span-17">
 					<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
-				</div>
-				<div className="col-span-25 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
 					<RecentTransactions />
-				</div>
-				<div className="col-span-25 hidden w-full flex-col md:col-span-8 md:flex">
+				</SectionContent>
+			}
+			sidebar={
+				<>
+					<CashFlowChart incomes={incomes} expenses={expenses} />
 					<CategoryBreakdown expenses={expenses} categories={categories} />
 					<UpcomingBillsWidget />
-				</div>
-			</SectionContent>
-		</>
+				</>
+			}
+		/>
 	);
 }

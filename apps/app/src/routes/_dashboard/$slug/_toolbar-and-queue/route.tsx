@@ -31,7 +31,7 @@ function RouteComponent() {
 		<PageContent>
 			<QueuePanel />
 
-			<Toolbar className="border-b-0">
+			<Toolbar>
 				<ToolbarGroup>
 					{dashboardMatch && (
 						<>

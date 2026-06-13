@@ -13,7 +13,7 @@ export function UpcomingBillsWidget() {
 		(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
 
 	return (
-		<Card className="flex h-full max-h-[500px] min-h-[300px] flex-col border-x-0 border-t-0 border-b-0">
+		<Card className="flex h-full max-h-125 min-h-75 flex-col">
 			<CardHeader>
 				<CardDescription className="flex items-center justify-between text-xs uppercase">
 					Upcoming Bills

@@ -110,7 +110,7 @@ export function MoodGlow({
 		<div
 			aria-hidden="true"
 			className={cn(
-				"pointer-events-none absolute -top-6 left-1/2 size-30 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
+				"pointer-events-none absolute -top-10 left-1/3 size-2/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl",
 				"motion-safe:animate-pulse",
 				className,
 				trend === "increase"
