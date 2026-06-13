@@ -15,7 +15,6 @@ import { SelectNative } from "@hoalu/ui/select-native";
 import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
-import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
 import { currentDialog$, createExpenseDialog, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
@@ -82,7 +81,7 @@ async function base64ToFile(base64: string, fileName: string, fileType: string):
 export function ScanQueueReviewDialogContent() {
 	const currentDialog = useValue(currentDialog$);
 	const jobId = currentDialog?.data?.jobId as string | undefined;
-	const queue = useAtomValue(receiptScanQueue.queueAtom);
+	const queue = useValue(receiptScanQueue.queue$);
 	const workspace = useWorkspace();
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(workspace.slug));
 	const setDraftExpense = draftExpense$.set;
@@ -91,8 +90,8 @@ export function ScanQueueReviewDialogContent() {
 	const setReviewDialog = scanQueueReviewDialog.set;
 
 	const setScannedReceiptJobId = scannedReceiptJobId$.set;
-	const addJob = useSetAtom(receiptScanQueue.add);
-	const dismissJob = useSetAtom(receiptScanQueue.dismiss);
+	const addJob = receiptScanQueue.add;
+	const dismissJob = receiptScanQueue.dismiss;
 
 	const feedbackEditor = useEditor({
 		extensions,

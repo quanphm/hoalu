@@ -1,9 +1,9 @@
+import { zeroDecimalCurrencies } from "@hoalu/countries";
 import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-rate";
 import { monetary } from "@hoalu/finance/monetary";
-import { zeroDecimalCurrencies } from "@hoalu/countries";
+import { observable } from "@legendapp/state";
+import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useAtom } from "jotai";
-import { atom } from "jotai";
 import { useMemo } from "react";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -16,11 +16,11 @@ import {
 
 export const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
 
-export const selectedRecurringBillAtom = atom<{ id: string | null }>({ id: null });
+export const selectedRecurringBillAtom$ = observable<{ id: string | null }>({ id: null });
 
 export function useSelectedRecurringBill() {
-	const [bill, setSelectedBill] = useAtom(selectedRecurringBillAtom);
-	const onSelectBill = (id: string | null) => setSelectedBill({ id });
+	const bill = useValue(selectedRecurringBillAtom$);
+	const onSelectBill = (id: string | null) => selectedRecurringBillAtom$.set({ id });
 	return { bill, onSelectBill };
 }
 

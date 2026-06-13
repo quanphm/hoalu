@@ -56,8 +56,8 @@ export function EventDetailPanel({
 	const budgetCurrency = event.budget_currency || workspaceCurrency;
 	const remaining = event.realBudget != null ? event.realBudget - event.totalSpent : null;
 	const progress =
-		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : null;
-	const clampedProgress = Math.min(progress ?? 0, 100);
+		event.realBudget && event.realBudget > 0 ? (event.totalSpent / event.realBudget) * 100 : 0;
+	const clampedProgress = Math.min(progress, 100);
 
 	return (
 		<div className="flex h-[calc(100vh-94px)] flex-col overflow-auto">
@@ -203,14 +203,14 @@ export function EventDetailPanel({
 					</Card>
 				</div>
 
-				{clampedProgress != null && (
+				{!!clampedProgress && (
 					<Progress value={clampedProgress} className="flex-row items-center gap-3">
 						<ProgressTrack className="h-2 flex-1">
 							<ProgressIndicator
 								className={cn(
-									progress! >= 100
+									progress >= 100
 										? "bg-destructive"
-										: progress! >= 80
+										: progress >= 80
 											? "bg-orange-400 dark:bg-orange-500"
 											: "bg-emerald-500 dark:bg-emerald-400",
 								)}
@@ -219,14 +219,14 @@ export function EventDetailPanel({
 						<span
 							className={cn(
 								"font-mono text-xs font-medium tabular-nums",
-								progress! >= 100
+								progress >= 100
 									? "text-destructive"
-									: progress! >= 80
+									: progress >= 80
 										? "text-orange-500 dark:text-orange-400"
 										: "text-muted-foreground",
 							)}
 						>
-							{Math.round(progress!)}%
+							{Math.round(progress)}%
 						</span>
 					</Progress>
 				)}

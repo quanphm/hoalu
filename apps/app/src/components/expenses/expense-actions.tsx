@@ -20,7 +20,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
 import {
@@ -114,8 +113,8 @@ function CreateExpenseForm() {
 	const setScannedReceiptJobId = scannedReceiptJobId$.set;
 	const quickExpenseJobId = useValue(quickExpenseJobId$);
 	const setQuickExpenseJobId = quickExpenseJobId$.set;
-	const removeReceiptJob = useSetAtom(receiptScanQueue.remove);
-	const removeQuickExpenseJob = useSetAtom(quickExpenseQueue.remove);
+	const removeReceiptJob = receiptScanQueue.remove;
+	const removeQuickExpenseJob = quickExpenseQueue.remove;
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_wallet_${slug}`,
