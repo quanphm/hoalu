@@ -500,7 +500,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				<ChartContainer
 					config={chartConfig}
 					className={cn(
-						"aspect-auto h-[250px] w-full select-none **:focus:outline-none",
+						"aspect-auto h-62.5 w-full select-none **:focus:outline-none",
 						isIncomeTab
 							? "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--success)/5"
 							: "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--destructive)/5",
@@ -525,16 +525,6 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							axisLine={false}
 							tickLine={false}
 							tickMargin={8}
-							// ticks={
-							// 	data.length === 0
-							// 		? []
-							// 		: data.length === 1
-							// 			? [(data[0] as { date: string }).date]
-							// 			: [
-							// 					(data[0] as { date: string }).date,
-							// 					(data[data.length - 1] as { date: string }).date,
-							// 				]
-							// }
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
 								return dateRange === "ytd" ||
@@ -562,6 +552,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								strokeWidth={1}
 								opacity={0.7}
 								ifOverflow="extendDomain"
+								// oxlint-disable-next-line react/no-unstable-nested-components
 								label={(props: { viewBox?: { x: number; y: number; width: number } }) => {
 									const { viewBox } = props;
 									if (!viewBox) return null;
@@ -605,6 +596,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							/>
 						)}
 						<ChartTooltip
+							// oxlint-disable-next-line react/no-unstable-nested-components
 							content={({ active, payload, label, coordinate }) => {
 								if (active && payload && payload.length && label && coordinate) {
 									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
