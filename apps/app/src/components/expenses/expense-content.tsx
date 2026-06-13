@@ -60,7 +60,7 @@ function TitleCell({ title, description }: { title: string; description?: string
 function AmountCell({ data }: { data: SyncedTransaction }) {
 	return (
 		<div className="flex items-center justify-end px-4 py-3">
-			<TransactionAmount type="neutral" data={data} />
+			<TransactionAmount type={data.kind} data={data} />
 		</div>
 	);
 }

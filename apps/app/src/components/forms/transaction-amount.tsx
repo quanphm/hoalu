@@ -132,7 +132,7 @@ export function TransactionAmountInput({
 						onKeyDown={handleKeyDown}
 						onBlur={handleCalculatorBlur}
 						placeholder="100+50*2"
-						className="h-9 rounded-s-none"
+						className="h-9 rounded-s-none *:h-9!"
 					/>
 					{calculatedValue !== null && (
 						<div className="text-muted-foreground absolute right-3 -bottom-6 left-3 text-xs">

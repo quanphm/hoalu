@@ -143,7 +143,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const showTrend = dateRange === "all" || comparisonRange !== null;
 
 	return (
-		<div className={cn("relative w-full border")}>
+		<div className={cn("grid w-full grid-cols-2 md:grid-cols-2", "relative w-full border")}>
 			<Card className="bg-background @container/card relative overflow-hidden border-0">
 				{/* {showTrend && <BoxAnimations status={cashFlowChange.status} />} */}
 				<CardHeader>
@@ -164,8 +164,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 
 			<div
 				className={cn(
-					"grid w-full grid-cols-2 md:grid-cols-4",
-					"*:data-[slot=card]:bg-sidebar *:data-[slot=card]:border-b-0 *:data-[slot=card]:border-l-0 *:data-[slot=card]:last:border-r-transparent *:data-[slot=card]:md:py-3",
+					"grid w-full grid-cols-2 md:grid-cols-2",
+					"*:data-[slot=card]:bg-sidebar *:data-[slot=card]:border-r-0 *:data-[slot=card]:border-b-0 *:data-[slot=card]:first:border-t-0 *:data-[slot=card]:nth-[2]:border-t-0 *:data-[slot=card]:md:py-3",
 				)}
 			>
 				<Card className="@container/card">
@@ -179,8 +179,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								/>
 							)}
 						</CardDescription>
-						<CardTitle className="text-xl">
-							<CurrencyValue value={totalIncome} currency={currency} className="text-xl" />
+						<CardTitle className="text-lg font-normal">
+							<CurrencyValue value={totalIncome} currency={currency} className="text-lg" />
 						</CardTitle>
 					</CardHeader>
 				</Card>
@@ -193,12 +193,12 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								<PercentageChangeDisplay
 									change={expensesChange}
 									invertColor
-									className="[&>*>span]:text-xs [&>button]:h-1"
+									className="font-normal [&>*>span]:text-xs [&>button]:h-1"
 								/>
 							)}
 						</CardDescription>
-						<CardTitle className="text-xl">
-							<CurrencyValue value={totalExpenses} currency={currency} className="text-xl" />
+						<CardTitle className="text-lg font-normal">
+							<CurrencyValue value={totalExpenses} currency={currency} className="text-lg" />
 						</CardTitle>
 					</CardHeader>
 				</Card>
@@ -221,7 +221,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 								</span>
 							)}
 						</CardDescription>
-						<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
+						<CardTitle className="font-mono text-lg font-normal tracking-tight">
 							{formatNumber(totalTransactions)}
 						</CardTitle>
 					</CardHeader>
@@ -230,7 +230,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				<Card className="@container/card hidden md:block">
 					<CardHeader>
 						<CardDescription className="text-xs tracking-wider uppercase">Period</CardDescription>
-						<CardTitle className="font-mono text-xl tracking-tight tabular-nums">
+						<CardTitle className="font-mono text-lg font-normal tracking-tight">
 							{periodInfo.label}
 							{/* {periodInfo.totalDays !== null && (
 							<span className="text-muted-foreground ml-1.5 text-sm font-normal">
