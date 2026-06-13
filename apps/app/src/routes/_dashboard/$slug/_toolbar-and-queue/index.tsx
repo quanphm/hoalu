@@ -21,25 +21,30 @@ function RouteComponent() {
 	const categories = useLiveQueryCategories();
 
 	return (
-		<>
-			<SectionContent columns={25} className="items-start gap-0 md:gap-0">
-				<div className="col-span-25 flex w-full flex-row gap-4">
-					<CashFlowSection incomes={incomes} expenses={expenses} />
-				</div>
-				<div className="col-span-25 hidden h-full w-full flex-col gap-4 md:col-span-8 md:flex">
-					<CashFlowChart incomes={incomes} expenses={expenses} />
-				</div>
-				<div className="col-span-25 flex w-full flex-col gap-4 md:col-span-17">
-					<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
-				</div>
-				<div className="col-span-25 hidden w-full flex-col gap-4 md:col-span-17 md:flex">
-					<RecentTransactions />
-				</div>
-				<div className="col-span-25 hidden w-full flex-col md:col-span-8 md:flex">
-					<CategoryBreakdown expenses={expenses} categories={categories} />
-					<UpcomingBillsWidget />
-				</div>
-			</SectionContent>
-		</>
+		<SectionContent columns={24} className="items-start gap-4 p-4">
+			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+				<CashFlowChart incomes={incomes} expenses={expenses} />
+			</div>
+			<div className="col-span-24 flex flex-col gap-0 md:col-span-16">
+				<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
+				<CashFlowSection incomes={incomes} expenses={expenses} />
+			</div>
+
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
+				<SectionContent columns={2}>
+					<div className="col-span-1 flex h-full flex-col gap-4">
+						<UpcomingBillsWidget />
+					</div>
+					<div className="col-span-1 flex h-full flex-col gap-4">
+						<CategoryBreakdown expenses={expenses} categories={categories} />
+					</div>
+				</SectionContent>
+			</div>
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-8"></div>
+
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-24">
+				<RecentTransactions />
+			</div>
+		</SectionContent>
 	);
 }

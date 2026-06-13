@@ -68,7 +68,7 @@ function AmountCell({ data }: { data: SyncedTransaction }) {
 function AmountEmptyCell() {
 	return (
 		<div className="flex items-center justify-end px-4 py-3">
-			<span className="text-muted-foreground text-sm">-</span>
+			<span className="text-muted-foreground text-sm" />{" "}
 		</div>
 	);
 }

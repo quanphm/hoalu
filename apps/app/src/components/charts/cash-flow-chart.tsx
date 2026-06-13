@@ -5,7 +5,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart"
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { useEffect, useMemo, useState } from "react";
-import { Area, AreaChart, ReferenceLine } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
 	customDateRange$,
@@ -25,6 +25,7 @@ import {
 	groupDataByMonth,
 	isMonthBasedRange,
 } from "#app/helpers/date-range.ts";
+import { formatCompactNumber } from "#app/helpers/number.ts";
 import { trendChangeVariants } from "#app/helpers/percentage-change.ts";
 import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
@@ -181,6 +182,9 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	);
 
 	const finalBalance = data.length > 0 ? data[data.length - 1].balance : 0;
+	const startBalance = data.length > 0 ? data[0].balance : 0;
+	const isPositiveTrend = finalBalance >= startBalance;
+	const trendColor = isPositiveTrend ? "var(--success)" : "var(--destructive)";
 	const [hoveredDataPoint, setHoveredDataPoint] = useState<CashFlowDataPoint | null>(null);
 	const displayBalance = hoveredDataPoint?.balance ?? finalBalance;
 	const displayNet = hoveredDataPoint?.net ?? null;
@@ -232,14 +236,8 @@ export function CashFlowChart(props: CashFlowChartProps) {
 		}
 	};
 
-	// Calculate zero-line ratio for split gradient
-	const minBalance = data.length > 0 ? Math.min(...data.map((d) => d.balance)) : 0;
-	const maxBalance = data.length > 0 ? Math.max(...data.map((d) => d.balance)) : 0;
-	const balanceRange = maxBalance - minBalance;
-	const zeroRatio = balanceRange === 0 ? 0.5 : Math.max(0, Math.min(1, maxBalance / balanceRange));
-
 	return (
-		<Card className={cn("bg-background flex h-full flex-col gap-2 border-0 border-r md:py-3")}>
+		<Card className={cn("flex h-full flex-col gap-2")}>
 			<CardHeader>
 				<CardDescription className="font-mono text-xs tracking-wider uppercase">
 					Cumulative Net
@@ -292,49 +290,54 @@ export function CashFlowChart(props: CashFlowChartProps) {
 					config={chartConfig}
 					className="[&_.recharts-curve.recharts-tooltip-cursor]:stroke-muted-foreground/50 aspect-auto h-full w-full **:focus:outline-none"
 				>
-					<AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 0, top: 0 }}>
+					<AreaChart
+						accessibilityLayer
+						data={data}
+						margin={{ left: 0, right: 0, top: 8, bottom: 0 }}
+					>
 						<defs>
-							<linearGradient id="gradient-rounded-chart-desktop" x1="0" y1="0" x2="0" y2="1">
-								<stop offset={`${zeroRatio * 100}%`} stopColor="var(--success)" stopOpacity={1} />
-								<stop
-									offset={`${zeroRatio * 100}%`}
-									stopColor="var(--destructive)"
-									stopOpacity={1}
-								/>
+							<linearGradient id="gradient-cash-flow" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stopColor={trendColor} stopOpacity={0.4} />
+								<stop offset="100%" stopColor={trendColor} stopOpacity={0} />
 							</linearGradient>
 						</defs>
-						<rect x="0" y="0" width="100%" height="120%" fill="url(#pattern-dots)" />
-						<DottedBackgroundPattern />
-						<ReferenceLine
-							y={0}
-							stroke="var(--muted-foreground)"
-							strokeWidth={1}
-							strokeDasharray="5 5"
-							opacity={0.5}
+						<CartesianGrid
+							vertical={false}
+							strokeDasharray="0 4"
+							strokeLinecap="round"
+							strokeWidth={2}
+							opacity={0.9}
+						/>
+						<XAxis
+							dataKey="date"
+							axisLine={false}
+							tickLine={false}
+							tickMargin={8}
+							tickFormatter={(value) => formatChartDate(value, dateRange)}
+							interval="preserveStartEnd"
+							minTickGap={32}
+						/>
+						<YAxis
+							axisLine={false}
+							tickLine={false}
+							tickFormatter={(value) => formatCompactNumber(value as number)}
+							width={48}
 						/>
 						<ChartTooltip
 							cursor={{
 								strokeWidth: 1,
 								strokeDasharray: "4 4",
 							}}
-							content={({ active, payload, coordinate }) => (
-								<TooltipContent
-									active={active}
-									payload={
-										payload as unknown as Array<{ payload: CashFlowDataPoint; value: number }>
-									}
-									coordinate={coordinate}
-									dateRange={dateRange}
-									setHoveredDataPoint={setHoveredDataPoint}
-								/>
-							)}
+							content={
+								<TooltipContent dateRange={dateRange} setHoveredDataPoint={setHoveredDataPoint} />
+							}
 						/>
 						<Area
 							type="monotone"
 							dataKey="balance"
-							fill="url(#gradient-rounded-chart-desktop)"
-							fillOpacity={0.4}
-							stroke="var(--muted-foreground)"
+							fill="url(#gradient-cash-flow)"
+							fillOpacity={1}
+							stroke={trendColor}
 							strokeWidth={2}
 							isAnimationActive={false}
 						/>
@@ -395,16 +398,8 @@ function TooltipContent({
 	return null;
 }
 
-function DottedBackgroundPattern() {
-	return (
-		<pattern id="pattern-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-			<circle
-				className="dark:text-muted/24 text-muted/80"
-				cx="2"
-				cy="2"
-				r="1"
-				fill="currentColor"
-			/>
-		</pattern>
-	);
+function formatChartDate(dateValue: string, dateRange: PredefinedDateRange): string {
+	const date = datetime.parse(dateValue, "yyyy-MM-dd", new Date());
+	const isMonthly = dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange);
+	return datetime.format(date, isMonthly ? "MMM yyyy" : "MMM dd");
 }

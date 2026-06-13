@@ -46,19 +46,12 @@ interface DialogState {
 	open: boolean;
 }
 
-/**
- * Single source of truth for the app's modal dialog. Only one dialog is open
- * at a time, identified by `currentId`, with its optional `data` payload.
- */
 export const dialog$ = observable<DialogState>({
 	currentId: null,
 	data: undefined,
 	open: false,
 });
 
-/**
- * The currently active dialog ({ id, data }) or null. Drives DialogProvider.
- */
 export const currentDialog$ = observable<DialogData | null>(() => {
 	const currentId = dialog$.currentId.get();
 	return currentId ? { id: currentId, data: dialog$.data.get() } : null;
@@ -73,15 +66,6 @@ export function wipeOutDialogs() {
 
 type Action = { state: true; data?: Record<string, any> | undefined } | { state: false };
 
-/**
- * Creates a controller for a single dialog id:
- * - `$`  a computed observable resolving to { id, data } when this dialog is
- *        active, otherwise null (read it in components with `useValue`).
- * - `set` open/close this dialog, mirroring the previous atom write API
- *        (`{ state: true, data }` / `{ state: false }`). Closing is a no-op
- *        when a different dialog is active, so open/close ordering between
- *        two dialogs doesn't matter.
- */
 function createDialog(id: DialogId) {
 	return {
 		$: observable<DialogData | null>(() =>
