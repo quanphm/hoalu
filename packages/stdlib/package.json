@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/stdlib",
-	"version": "0.30.3",
+	"version": "0.30.4",
 	"private": true,
 	"description": "Cross-cutting utilities for Hoalu",
 	"type": "module",
