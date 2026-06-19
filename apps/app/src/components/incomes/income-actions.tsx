@@ -21,7 +21,7 @@ import {
 	createIncomeDialog,
 	deleteIncomeDialog,
 	draftIncome$,
-	resetDraftIncome,
+	makeDraftIncome,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { HotKey } from "#app/components/hotkey.tsx";
@@ -76,7 +76,6 @@ function CreateIncomeForm() {
 	const mutation = useCreateIncome();
 	const setDialog = createIncomeDialog.set;
 	const draft = useValue(draftIncome$);
-	const setDraft = draftIncome$.set;
 	const submittedRef = useRef(false);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
@@ -152,6 +151,11 @@ function CreateIncomeForm() {
 		validators: {
 			onSubmit: IncomeFormSchema,
 		},
+		listeners: {
+			onChange: ({ formApi }) => {
+				draftIncome$.set(formApi.state.values);
+			},
+		},
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({
 				payload: {
@@ -165,22 +169,14 @@ function CreateIncomeForm() {
 				},
 			});
 			submittedRef.current = true;
-			resetDraftIncome();
-			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
 				setLastUsedCategoryId(value.categoryId);
 			}
+			draftIncome$.set(makeDraftIncome());
+			setDialog({ state: false });
 		},
 	});
-
-	useEffect(() => {
-		return () => {
-			if (!submittedRef.current) {
-				setDraft(form.state.values);
-			}
-		};
-	}, [setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>

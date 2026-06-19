@@ -1,7 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 
-import { resetDraftExpense } from "#app/atoms/index.ts";
+import {
+	draftExpense$,
+	draftIncome$,
+	makeDraftExpense,
+	makeDraftIncome,
+} from "#app/atoms/index.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import { clearAllWorkspaceCollections } from "#app/lib/collections/index.ts";
 import { authKeys, workspaceKeys } from "#app/lib/query-key-factory.ts";
@@ -23,7 +28,9 @@ export function useAuth() {
 					clearAllWorkspaceCollections();
 
 					router.invalidate().finally(() => {
-						resetDraftExpense();
+						draftExpense$.set(makeDraftExpense());
+						draftIncome$.set(makeDraftIncome());
+
 						navigate({
 							to: "/login",
 							search: {

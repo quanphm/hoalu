@@ -5,7 +5,8 @@ import { syncObservable } from "@legendapp/state/sync";
 import type { IncomeFormSchema } from "#app/lib/schema.ts";
 
 type IncomeAtomSchema = IncomeFormSchema;
-const basedIncome: IncomeAtomSchema = {
+
+export const makeDraftIncome = (): IncomeAtomSchema => ({
 	title: "",
 	description: "",
 	date: new Date().toISOString(),
@@ -15,19 +16,15 @@ const basedIncome: IncomeAtomSchema = {
 	},
 	walletId: "",
 	categoryId: "",
-};
+});
 
-export const draftIncome$ = observable<IncomeAtomSchema>(basedIncome);
+export const draftIncome$ = observable<IncomeAtomSchema>(makeDraftIncome());
 syncObservable(draftIncome$, {
 	persist: {
 		name: "draft_income",
 		plugin: ObservablePersistLocalStorage,
 	},
 });
-
-export function resetDraftIncome() {
-	draftIncome$.set(basedIncome);
-}
 
 export const selectedIncome$ = observable<{
 	id: string | null;
