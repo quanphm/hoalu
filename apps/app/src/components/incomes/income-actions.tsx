@@ -15,7 +15,7 @@ import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import {
 	createIncomeDialog,
@@ -77,6 +77,7 @@ function CreateIncomeForm() {
 	const setDialog = createIncomeDialog.set;
 	const draft = useValue(draftIncome$);
 	const setDraft = draftIncome$.set;
+	const submittedRef = useRef(false);
 
 	const [lastUsedWalletId, setLastUsedWalletId] = useLocalStorage<string | null>(
 		`last_used_income_wallet_${slug}`,
@@ -163,6 +164,7 @@ function CreateIncomeForm() {
 					categoryId: value.categoryId,
 				},
 			});
+			submittedRef.current = true;
 			resetDraftIncome();
 			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
@@ -174,11 +176,11 @@ function CreateIncomeForm() {
 
 	useEffect(() => {
 		return () => {
-			if (!form.state.isSubmitted) {
+			if (!submittedRef.current) {
 				setDraft(form.state.values);
 			}
 		};
-	}, [form.state.isSubmitted, setDraft, form.state.values]);
+	}, [setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>

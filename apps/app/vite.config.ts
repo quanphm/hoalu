@@ -70,7 +70,9 @@ export default defineConfig({
 			output: {
 				manualChunks(id) {
 					if (id.includes("node_modules")) {
-						const match = id.match(/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/)?.[1];
+						const match = id.match(
+							/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/,
+						)?.[1];
 						if (match) {
 							return `vendor-${match.replace("@", "").replace("/", "-")}`;
 						}
