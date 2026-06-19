@@ -27,11 +27,11 @@ import {
 	deleteExpenseDialog,
 	draftExpense$,
 	logPayment$,
-	resetDraftExpense,
 	scannedReceipts$,
 	scannedReceiptJobId$,
 	searchKeywords$,
 	quickExpenseJobId$,
+	makeDraftExpense,
 } from "#app/atoms/index.ts";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
 import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
@@ -101,11 +101,9 @@ function CreateExpenseForm() {
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
-	const submittedRef = useRef(false);
 
 	const setDialog = createExpenseDialog.set;
 	const draft = useValue(draftExpense$);
-	const setDraft = draftExpense$.set;
 	const logPayment = useValue(logPayment$);
 	const setLogPayment = logPayment$.set;
 	const scannedReceipts = useValue(scannedReceipts$);
@@ -202,6 +200,11 @@ function CreateExpenseForm() {
 		validators: {
 			onSubmit: ExpenseFormSchema,
 		},
+		listeners: {
+			onChange: ({ formApi }) => {
+				draftExpense$.set(formApi.state.values);
+			},
+		},
 		onSubmit: async ({ value }) => {
 			const expense = await mutation.mutateAsync({
 				payload: {
@@ -219,8 +222,6 @@ function CreateExpenseForm() {
 				},
 			});
 
-			submittedRef.current = true;
-			resetDraftExpense();
 			setLogPayment({ recurringBillId: null });
 			setScannedReceipts([]);
 			if (scannedReceiptJobId) {
@@ -231,12 +232,10 @@ function CreateExpenseForm() {
 				removeQuickExpenseJob(quickExpenseJobId);
 				setQuickExpenseJobId(null);
 			}
-			setDialog({ state: false });
 			setLastUsedWalletId(value.walletId);
 			if (value.categoryId) {
 				setLastUsedCategoryId(value.categoryId);
 			}
-
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
 					id: expense.id,
@@ -247,16 +246,11 @@ function CreateExpenseForm() {
 				filesUploadRef.current?.clearFiles();
 				form.setFieldValue("attachments", []);
 			}
+			draftExpense$.set(makeDraftExpense());
+
+			setDialog({ state: false });
 		},
 	});
-
-	useEffect(() => {
-		return () => {
-			if (!submittedRef.current) {
-				setDraft(form.state.values);
-			}
-		};
-	}, [setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>

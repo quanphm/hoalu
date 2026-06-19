@@ -11,7 +11,6 @@ import {
 	createRecurringBillDialog,
 	createWalletDialog,
 	dialog$,
-	resetDraftExpense,
 } from "#app/atoms/index.ts";
 import { CommandPalette } from "#app/components/command-palette/index.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
@@ -27,12 +26,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 
 	const isAnyDialogOpen = useValue(dialog$.open);
 	const allowShortcutNavigate = !isAnyDialogOpen;
-
-	useEffect(() => {
-		if (slug) {
-			resetDraftExpense();
-		}
-	}, [slug]);
 
 	const setExpenseOpen = createExpenseDialog.set;
 	const setIncomeOpen = createIncomeDialog.set;
