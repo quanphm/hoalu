@@ -23,7 +23,7 @@
 		"typescript": "^6.0.3",
 		"vite": "^8.0.16"
 	},
-	"packageManager": "pnpm@11.5.2",
+	"packageManager": "pnpm@11.8.0",
 	"patchedDependencies": {
 		"@better-auth/kysely-adapter@1.6.14": "patches/@better-auth__kysely-adapter@1.6.14.patch"
 	}
