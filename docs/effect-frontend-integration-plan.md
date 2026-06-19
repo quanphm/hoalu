@@ -56,22 +56,22 @@ Derive frontend types **directly from backend Effect routes** — like tRPC or H
 
 ```typescript
 // apps/api/src/modules/api.ts
-import { HttpRouter } from "effect/unstable/http"
+import { HttpRouter } from "effect/unstable/http";
 
 // Runtime routes
 export const apiRoutes = HttpRouter.addAll([
-  // Categories
-  HttpRouter.route("GET", "/bff/categories", getCategories),
-  HttpRouter.route("POST", "/bff/categories", createCategory),
-  HttpRouter.route("GET", "/bff/categories/:id", getCategoryById),
-  HttpRouter.route("PATCH", "/bff/categories/:id", updateCategory),
-  HttpRouter.route("DELETE", "/bff/categories/:id", deleteCategory),
-  
-  // ... other resources
-])
+	// Categories
+	HttpRouter.route("GET", "/bff/categories", getCategories),
+	HttpRouter.route("POST", "/bff/categories", createCategory),
+	HttpRouter.route("GET", "/bff/categories/:id", getCategoryById),
+	HttpRouter.route("PATCH", "/bff/categories/:id", updateCategory),
+	HttpRouter.route("DELETE", "/bff/categories/:id", deleteCategory),
+
+	// ... other resources
+]);
 
 // Type export — frontend imports this
-export type ApiRouter = typeof apiRoutes
+export type ApiRouter = typeof apiRoutes;
 ```
 
 ### Each route handler exports its schema
@@ -109,13 +109,13 @@ export type GetCategoriesResponse = Schema.Schema.Type<typeof CategoryResponse>
 
 ```typescript
 // apps/app/src/lib/effect-client.ts
-import type { ApiRouter } from "@hoalu/api/types"
+import type { ApiRouter } from "@hoalu/api/types";
 
 // Type-safe client derived from backend routes
 export const api = createEffectClient<ApiRouter>({
-  baseUrl: import.meta.env.PUBLIC_API_URL,
-  credentials: "include",
-})
+	baseUrl: import.meta.env.PUBLIC_API_URL,
+	credentials: "include",
+});
 
 // Usage:
 // api.categories.$get({ workspaceIdOrSlug: slug }) → typed!
@@ -126,37 +126,35 @@ export const api = createEffectClient<ApiRouter>({
 
 ```typescript
 // apps/app/src/lib/effect-client.ts
-import { Effect, HttpClient, HttpClientRequest } from "effect"
-import { FetchHttpClient } from "effect/unstable/http"
+import { Effect, HttpClient, HttpClientRequest } from "effect";
+import { FetchHttpClient } from "effect/unstable/http";
 
 function createEffectClient<Router>(config: { baseUrl: string }) {
-  const client = HttpClient.fetch().pipe(
-    HttpClient.mapRequest(req =>
-      req.pipe(HttpClientRequest.prependUrl(config.baseUrl))
-    )
-  )
+	const client = HttpClient.fetch().pipe(
+		HttpClient.mapRequest((req) => req.pipe(HttpClientRequest.prependUrl(config.baseUrl))),
+	);
 
-  return {
-    // Resource-based API (derived from router type)
-    categories: {
-      $get: (params: { workspaceIdOrSlug: string }) =>
-        Effect.gen(function* () {
-          const response = yield* client.get(
-            `/bff/categories?workspaceIdOrSlug=${params.workspaceIdOrSlug}`
-          )
-          return yield* response.json
-        }).pipe(Effect.provide(FetchHttpClient.layer)),
+	return {
+		// Resource-based API (derived from router type)
+		categories: {
+			$get: (params: { workspaceIdOrSlug: string }) =>
+				Effect.gen(function* () {
+					const response = yield* client.get(
+						`/bff/categories?workspaceIdOrSlug=${params.workspaceIdOrSlug}`,
+					);
+					return yield* response.json;
+				}).pipe(Effect.provide(FetchHttpClient.layer)),
 
-      $post: (params: { workspaceIdOrSlug: string; body: CreateCategory }) =>
-        Effect.gen(function* () {
-          const response = yield* client.post(
-            `/bff/categories?workspaceIdOrSlug=${params.workspaceIdOrSlug}`,
-            { body: HttpClientRequest.bodyJson(params.body) }
-          )
-          return yield* response.json
-        }).pipe(Effect.provide(FetchHttpClient.layer)),
-    },
-  }
+			$post: (params: { workspaceIdOrSlug: string; body: CreateCategory }) =>
+				Effect.gen(function* () {
+					const response = yield* client.post(
+						`/bff/categories?workspaceIdOrSlug=${params.workspaceIdOrSlug}`,
+						{ body: HttpClientRequest.bodyJson(params.body) },
+					);
+					return yield* response.json;
+				}).pipe(Effect.provide(FetchHttpClient.layer)),
+		},
+	};
 }
 ```
 
@@ -166,29 +164,29 @@ function createEffectClient<Router>(config: { baseUrl: string }) {
 
 ```typescript
 // apps/app/src/hooks/use-effect-query.ts
-import { Effect } from "effect"
-import { useQuery, useMutation } from "@tanstack/react-query"
+import { Effect } from "effect";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 export function useEffectQuery<A, E>(
-  key: Array<string | number | object>,
-  effect: Effect.Effect<A, E>,
-  options?: Omit<UseQueryOptions<A, E>, "queryKey" | "queryFn">
+	key: Array<string | number | object>,
+	effect: Effect.Effect<A, E>,
+	options?: Omit<UseQueryOptions<A, E>, "queryKey" | "queryFn">,
 ) {
-  return useQuery({
-    queryKey: key,
-    queryFn: () => Effect.runPromise(effect),
-    ...options,
-  })
+	return useQuery({
+		queryKey: key,
+		queryFn: () => Effect.runPromise(effect),
+		...options,
+	});
 }
 
 export function useEffectMutation<A, E, TVariables>(
-  effect: (variables: TVariables) => Effect.Effect<A, E>,
-  options?: Omit<UseMutationOptions<A, E, TVariables>, "mutationFn">
+	effect: (variables: TVariables) => Effect.Effect<A, E>,
+	options?: Omit<UseMutationOptions<A, E, TVariables>, "mutationFn">,
 ) {
-  return useMutation({
-    mutationFn: (variables) => Effect.runPromise(effect(variables)),
-    ...options,
-  })
+	return useMutation({
+		mutationFn: (variables) => Effect.runPromise(effect(variables)),
+		...options,
+	});
 }
 ```
 
@@ -196,26 +194,26 @@ export function useEffectMutation<A, E, TVariables>(
 
 ```typescript
 // Before (Hono client):
-import { apiClient } from "#app/lib/api-client.ts"
-import { useQuery } from "@tanstack/react-query"
+import { apiClient } from "#app/lib/api-client.ts";
+import { useQuery } from "@tanstack/react-query";
 
 function CategoryList({ slug }: { slug: string }) {
-  const { data } = useQuery({
-    queryKey: ["categories", slug],
-    queryFn: () => apiClient.categories.list(slug)
-  })
+	const { data } = useQuery({
+		queryKey: ["categories", slug],
+		queryFn: () => apiClient.categories.list(slug),
+	});
 }
 
 // After (Effect derived client):
-import { api } from "#app/lib/effect-client.ts"
-import { useEffectQuery } from "#app/hooks/use-effect-query.ts"
+import { api } from "#app/lib/effect-client.ts";
+import { useEffectQuery } from "#app/hooks/use-effect-query.ts";
 
 function CategoryList({ slug }: { slug: string }) {
-  const { data } = useEffectQuery(
-    ["categories", slug],
-    api.categories.$get({ workspaceIdOrSlug: slug })
-  )
-  // data is typed from backend schema
+	const { data } = useEffectQuery(
+		["categories", slug],
+		api.categories.$get({ workspaceIdOrSlug: slug }),
+	);
+	// data is typed from backend schema
 }
 ```
 
@@ -223,41 +221,39 @@ function CategoryList({ slug }: { slug: string }) {
 
 ```typescript
 // apps/app/src/services/query-options.ts
-import { queryOptions } from "@tanstack/react-query"
-import { Effect } from "effect"
-import { api } from "#app/lib/effect-client.ts"
-import { categoryKeys } from "#app/lib/query-key-factory.ts"
+import { queryOptions } from "@tanstack/react-query";
+import { Effect } from "effect";
+import { api } from "#app/lib/effect-client.ts";
+import { categoryKeys } from "#app/lib/query-key-factory.ts";
 
 export const listCategoriesOptions = (slug: string) => {
-  return queryOptions({
-    queryKey: categoryKeys.all(slug),
-    queryFn: () => Effect.runPromise(
-      api.categories.$get({ workspaceIdOrSlug: slug })
-    ),
-  })
-}
+	return queryOptions({
+		queryKey: categoryKeys.all(slug),
+		queryFn: () => Effect.runPromise(api.categories.$get({ workspaceIdOrSlug: slug })),
+	});
+};
 ```
 
 ## Phase 5: Mutations Migration (3 days)
 
 ```typescript
 // apps/app/src/services/mutations.ts
-import { useQueryClient } from "@tanstack/react-query"
-import { useEffectMutation } from "#app/hooks/use-effect-mutation.ts"
-import { api } from "#app/lib/effect-client.ts"
-import { categoryKeys } from "#app/lib/query-key-factory.ts"
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffectMutation } from "#app/hooks/use-effect-mutation.ts";
+import { api } from "#app/lib/effect-client.ts";
+import { categoryKeys } from "#app/lib/query-key-factory.ts";
 
 export function useCreateCategory(slug: string) {
-  const queryClient = useQueryClient()
-  return useEffectMutation(
-    ({ payload }: { payload: CreateCategory }) =>
-      api.categories.$post({ workspaceIdOrSlug: slug, body: payload }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) })
-      },
-    }
-  )
+	const queryClient = useQueryClient();
+	return useEffectMutation(
+		({ payload }: { payload: CreateCategory }) =>
+			api.categories.$post({ workspaceIdOrSlug: slug, body: payload }),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
+			},
+		},
+	);
 }
 ```
 
@@ -265,23 +261,24 @@ export function useCreateCategory(slug: string) {
 
 ```typescript
 // apps/app/src/api/error-handler.ts
-import { Effect } from "effect"
-import { ApiError } from "@hoalu/api/errors"
-import { toastManager } from "@hoalu/ui/toast"
+import { Effect } from "effect";
+import { ApiError } from "@hoalu/api/errors";
+import { toastManager } from "@hoalu/ui/toast";
 
 export const handleApiError = <A, E>(effect: Effect.Effect<A, E>) =>
-  effect.pipe(
-    Effect.catchTags({
-      ApiError: (error) => Effect.sync(() => {
-        toastManager.add({
-          title: "API Error",
-          description: error.message,
-          type: "error",
-        })
-      }),
-    }),
-    Effect.catchAll(() => Effect.void)
-  )
+	effect.pipe(
+		Effect.catchTags({
+			ApiError: (error) =>
+				Effect.sync(() => {
+					toastManager.add({
+						title: "API Error",
+						description: error.message,
+						type: "error",
+					});
+				}),
+		}),
+		Effect.catchAll(() => Effect.void),
+	);
 ```
 
 ## Type Safety Guarantees
@@ -293,17 +290,14 @@ Backend adds `newField` to `CategorySchema`:
 ```typescript
 // Backend: CategorySchema updated
 export const CategorySchema = Schema.Struct({
-  id: Schema.String,
-  name: Schema.String,
-  // ...
-  newField: Schema.String, // ← ADDED
-})
+	id: Schema.String,
+	name: Schema.String,
+	// ...
+	newField: Schema.String, // ← ADDED
+});
 
 // Frontend: automatic type update
-const { data } = useEffectQuery(
-  ["categories"],
-  api.categories.$get({ workspaceIdOrSlug: slug })
-)
+const { data } = useEffectQuery(["categories"], api.categories.$get({ workspaceIdOrSlug: slug }));
 // data: Category[] — now includes newField
 // Components not handling newField get type errors
 ```
@@ -314,10 +308,10 @@ Backend adds new route:
 
 ```typescript
 // Backend: new route
-HttpRouter.route("GET", "/bff/categories/:id/export", exportCategory)
+HttpRouter.route("GET", "/bff/categories/:id/export", exportCategory);
 
 // Frontend: automatic type update
-api.categories[":id"].export.$get({ workspaceIdOrSlug, id })
+api.categories[":id"].export.$get({ workspaceIdOrSlug, id });
 // TypeScript knows this route exists
 ```
 
@@ -326,16 +320,16 @@ api.categories[":id"].export.$get({ workspaceIdOrSlug, id })
 ```typescript
 // Wrong payload:
 api.categories.$post({
-  workspaceIdOrSlug: slug,
-  body: { name: "", type: "invalid" }
-})
+	workspaceIdOrSlug: slug,
+	body: { name: "", type: "invalid" },
+});
 // ❌ TypeScript error: type must be "expense" | "income"
 
 // Correct payload:
 api.categories.$post({
-  workspaceIdOrSlug: slug,
-  body: { name: "Food", type: "expense", color: "red" }
-})
+	workspaceIdOrSlug: slug,
+	body: { name: "Food", type: "expense", color: "red" },
+});
 // ✅ Type-safe
 ```
 
@@ -353,10 +347,10 @@ api.categories.$post({
 ```json
 // apps/app/package.json
 {
-  "dependencies": {
-    "effect": "^4.0.0-beta.x",
-    "@hoalu/api": "workspace:*"
-  }
+	"dependencies": {
+		"effect": "^4.0.0-beta.x",
+		"@hoalu/api": "workspace:*"
+	}
 }
 ```
 
@@ -364,20 +358,20 @@ api.categories.$post({
 
 ## Benefits
 
-| Feature | Before (Hono) | After (Effect) |
-|---------|---------------|----------------|
-| Type derivation | Manual shared package | Derived from backend routes |
-| New routes | Update shared package | Automatic via type inference |
-| Error handling | `throw new Error` | Typed error channels |
-| Request validation | None on frontend | Derived from backend Schema |
-| Path safety | String-based | Derived from backend routes |
+| Feature            | Before (Hono)         | After (Effect)               |
+| ------------------ | --------------------- | ---------------------------- |
+| Type derivation    | Manual shared package | Derived from backend routes  |
+| New routes         | Update shared package | Automatic via type inference |
+| Error handling     | `throw new Error`     | Typed error channels         |
+| Request validation | None on frontend      | Derived from backend Schema  |
+| Path safety        | String-based          | Derived from backend routes  |
 
 ## Risks
 
-| Risk | Mitigation |
-|------|------------|
-| Effect bundle size | Tree-shakes to ~6KB |
-| v4 beta stability | Pin to specific version |
+| Risk                 | Mitigation                                     |
+| -------------------- | ---------------------------------------------- |
+| Effect bundle size   | Tree-shakes to ~6KB                            |
+| v4 beta stability    | Pin to specific version                        |
 | Type import overhead | TypeScript only imports types, no runtime cost |
 
 ---

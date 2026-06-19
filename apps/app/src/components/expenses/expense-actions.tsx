@@ -101,6 +101,7 @@ function CreateExpenseForm() {
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const filesUploadRef = useRef<FilesCompactUploadRef>(null);
+	const submittedRef = useRef(false);
 
 	const setDialog = createExpenseDialog.set;
 	const draft = useValue(draftExpense$);
@@ -218,6 +219,7 @@ function CreateExpenseForm() {
 				},
 			});
 
+			submittedRef.current = true;
 			resetDraftExpense();
 			setLogPayment({ recurringBillId: null });
 			setScannedReceipts([]);
@@ -250,11 +252,11 @@ function CreateExpenseForm() {
 
 	useEffect(() => {
 		return () => {
-			if (!form.state.isSubmitted) {
+			if (!submittedRef.current) {
 				setDraft(form.state.values);
 			}
 		};
-	}, [form.state.isSubmitted, setDraft, form.state.values]);
+	}, [setDraft, form.state.values]);
 
 	return (
 		<form.AppForm>

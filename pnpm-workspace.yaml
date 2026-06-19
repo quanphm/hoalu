@@ -3,17 +3,17 @@ packages:
   - packages/*
 
 allowBuilds:
-  '@openrouter/sdk': true
+  "@openrouter/sdk": true
   argon2: true
   esbuild: true
   sharp: true
 
 catalogs:
   default:
-    '@better-auth/api-key': ^1.6.14
-    '@better-auth/core': ^1.6.14
-    '@types/react': ^19.2.16
-    '@types/react-dom': ^19.2.3
+    "@better-auth/api-key": ^1.6.14
+    "@better-auth/core": ^1.6.14
+    "@types/react": ^19.2.16
+    "@types/react-dom": ^19.2.3
     better-auth: ^1.6.14
     hono: ^4.12.23
     react: ^19.2.7
@@ -23,20 +23,20 @@ catalogs:
 
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-  - '@aws-sdk/client-s3@3.1062.0'
-  - '@aws-sdk/credential-provider-ini@3.972.49'
-  - '@aws-sdk/credential-provider-login@3.972.48'
-  - '@aws-sdk/credential-provider-node@3.972.51'
-  - '@aws-sdk/credential-provider-sso@3.972.48'
-  - '@aws-sdk/credential-provider-web-identity@3.972.48'
-  - '@aws-sdk/nested-clients@3.997.16'
-  - '@aws-sdk/s3-request-presigner@3.1062.0'
-  - '@aws-sdk/token-providers@3.1062.0'
+  - "@aws-sdk/client-s3@3.1062.0"
+  - "@aws-sdk/credential-provider-ini@3.972.49"
+  - "@aws-sdk/credential-provider-login@3.972.48"
+  - "@aws-sdk/credential-provider-node@3.972.51"
+  - "@aws-sdk/credential-provider-sso@3.972.48"
+  - "@aws-sdk/credential-provider-web-identity@3.972.48"
+  - "@aws-sdk/nested-clients@3.997.16"
+  - "@aws-sdk/s3-request-presigner@3.1062.0"
+  - "@aws-sdk/token-providers@3.1062.0"
 
 overrides:
-  '@openrouter/sdk': ^0.12.79
+  "@openrouter/sdk": ^0.12.79
   chalk: 5.6.2
   ora: 8.2.0
 
 patchedDependencies:
-  '@better-auth/kysely-adapter@1.6.14': patches/@better-auth__kysely-adapter@1.6.14.patch
+  "@better-auth/kysely-adapter@1.6.14": patches/@better-auth__kysely-adapter@1.6.14.patch

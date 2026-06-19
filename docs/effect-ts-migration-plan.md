@@ -12,10 +12,10 @@
 
 ```json
 {
-  "dependencies": {
-    "effect": "^4.0.0-beta.x",
-    "@effect/platform-node": "^4.0.0-beta.x"
-  }
+	"dependencies": {
+		"effect": "^4.0.0-beta.x",
+		"@effect/platform-node": "^4.0.0-beta.x"
+	}
 }
 ```
 
@@ -29,20 +29,20 @@ All Effect ecosystem packages share a single version number in v4.
 
 ### New Files
 
-| File                             | Purpose                                                                                        |
-| -------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `src/effect/errors.ts`           | Typed error hierarchy replacing `HTTPException` + `null` returns                               |
-| `src/effect/runtime.ts`          | Effect `Runtime` with base Layers (Logger, Env, NodeHttpServer)                                |
-| `src/effect/http-app.ts`         | `createHttpApp()` — returns `HttpRouter` application builder                                   |
-| `src/effect/services/context.ts` | `RequestContext` service (user, session, workspace, membership)                                |
-| `src/effect/schemas/common.ts`   | Effect Schema v4 equivalents of `@hoalu/common/schema` primitives                            |
+| File                             | Purpose                                                           |
+| -------------------------------- | ----------------------------------------------------------------- |
+| `src/effect/errors.ts`           | Typed error hierarchy replacing `HTTPException` + `null` returns  |
+| `src/effect/runtime.ts`          | Effect `Runtime` with base Layers (Logger, Env, NodeHttpServer)   |
+| `src/effect/http-app.ts`         | `createHttpApp()` — returns `HttpRouter` application builder      |
+| `src/effect/services/context.ts` | `RequestContext` service (user, session, workspace, membership)   |
+| `src/effect/schemas/common.ts`   | Effect Schema v4 equivalents of `@hoalu/common/schema` primitives |
 
 ### Modified Files
 
-| File           | Change                                            |
-| -------------- | ------------------------------------------------- |
+| File           | Change                                           |
+| -------------- | ------------------------------------------------ |
 | `package.json` | Add `effect` and `@effect/platform-node` v4      |
-| `src/index.ts` | Replace Hono `serve` with `NodeHttpServer.serve`  |
+| `src/index.ts` | Replace Hono `serve` with `NodeHttpServer.serve` |
 
 ### Key Patterns Introduced
 
@@ -50,22 +50,25 @@ All Effect ecosystem packages share a single version number in v4.
 
 ```typescript
 // src/effect/errors.ts
-import { Schema } from "effect"
+import { Schema } from "effect";
 
 class NotFoundError extends Schema.TaggedErrorClass<NotFoundError>()("NotFoundError", {
-  resource: Schema.String,
-  id: Schema.String,
+	resource: Schema.String,
+	id: Schema.String,
 }) {}
 
 class ValidationError extends Schema.TaggedErrorClass<ValidationError>()("ValidationError", {
-  message: Schema.String,
-  issues: Schema.Array(Schema.String),
+	message: Schema.String,
+	issues: Schema.Array(Schema.String),
 }) {}
 
-class UnauthorizedError extends Schema.TaggedErrorClass<UnauthorizedError>()("UnauthorizedError", {}) {}
+class UnauthorizedError extends Schema.TaggedErrorClass<UnauthorizedError>()(
+	"UnauthorizedError",
+	{},
+) {}
 
 class DatabaseError extends Schema.TaggedErrorClass<DatabaseError>()("DatabaseError", {
-  message: Schema.String,
+	message: Schema.String,
 }) {}
 ```
 
@@ -73,15 +76,15 @@ class DatabaseError extends Schema.TaggedErrorClass<DatabaseError>()("DatabaseEr
 
 ```typescript
 // src/effect/http-app.ts
-import { HttpRouter } from "effect/unstable/http"
-import { Layer } from "effect"
+import { HttpRouter } from "effect/unstable/http";
+import { Layer } from "effect";
 
 export function createHttpApp() {
-  return HttpRouter.make
+	return HttpRouter.make;
 }
 
 export function serveApp(appLayer: Layer.Layer<any, any, HttpRouter>) {
-  return HttpRouter.serve(appLayer)
+	return HttpRouter.serve(appLayer);
 }
 ```
 
@@ -115,50 +118,62 @@ export function serveApp(appLayer: Layer.Layer<any, any, HttpRouter>) {
 
 ```typescript
 // src/effect/services/category.ts
-import { Context, Effect, Layer } from "effect"
-import { CategoryRepository } from "#api/routes/categories/repository.ts"
+import { Context, Effect, Layer } from "effect";
+import { CategoryRepository } from "#api/routes/categories/repository.ts";
 
-class CategoryService extends Context.Service<CategoryService, {
-  findAllByWorkspaceId: (params: { workspaceId: string; type?: "expense" | "income" }) => Effect.Effect<Array<Category>, DatabaseError>
-  findOne: (params: { id: string; workspaceId: string }) => Effect.Effect<Category, NotFoundError | DatabaseError>
-  insert: (data: NewCategory) => Effect.Effect<Category, DatabaseError>
-  // ... update, delete
-}>()("CategoryService") {
-  static readonly layer = Layer.effect(this, Effect.gen(function* () {
-    const repo = new CategoryRepository()
+class CategoryService extends Context.Service<
+	CategoryService,
+	{
+		findAllByWorkspaceId: (params: {
+			workspaceId: string;
+			type?: "expense" | "income";
+		}) => Effect.Effect<Array<Category>, DatabaseError>;
+		findOne: (params: {
+			id: string;
+			workspaceId: string;
+		}) => Effect.Effect<Category, NotFoundError | DatabaseError>;
+		insert: (data: NewCategory) => Effect.Effect<Category, DatabaseError>;
+		// ... update, delete
+	}
+>()("CategoryService") {
+	static readonly layer = Layer.effect(
+		this,
+		Effect.gen(function* () {
+			const repo = new CategoryRepository();
 
-    return {
-      findAllByWorkspaceId: (params) =>
-        Effect.tryPromise({
-          try: () => repo.findAllByWorkspaceId(params),
-          catch: (error) => new DatabaseError({ message: String(error) }),
-        }),
+			return {
+				findAllByWorkspaceId: (params) =>
+					Effect.tryPromise({
+						try: () => repo.findAllByWorkspaceId(params),
+						catch: (error) => new DatabaseError({ message: String(error) }),
+					}),
 
-      findOne: (params) =>
-        Effect.gen(function* () {
-          const result = yield* Effect.tryPromise({
-            try: () => repo.findOne(params),
-            catch: (error) => new DatabaseError({ message: String(error) }),
-          })
-          if (!result) {
-            return yield* Effect.fail(new NotFoundError({ resource: "Category", id: params.id }))
-          }
-          return result
-        }),
+				findOne: (params) =>
+					Effect.gen(function* () {
+						const result = yield* Effect.tryPromise({
+							try: () => repo.findOne(params),
+							catch: (error) => new DatabaseError({ message: String(error) }),
+						});
+						if (!result) {
+							return yield* Effect.fail(new NotFoundError({ resource: "Category", id: params.id }));
+						}
+						return result;
+					}),
 
-      insert: (data) =>
-        Effect.gen(function* () {
-          const result = yield* Effect.tryPromise({
-            try: () => repo.insert(data),
-            catch: (error) => new DatabaseError({ message: String(error) }),
-          })
-          if (!result) return yield* Effect.fail(new DatabaseError({ message: "Insert failed" }))
-          return result
-        }),
+				insert: (data) =>
+					Effect.gen(function* () {
+						const result = yield* Effect.tryPromise({
+							try: () => repo.insert(data),
+							catch: (error) => new DatabaseError({ message: String(error) }),
+						});
+						if (!result) return yield* Effect.fail(new DatabaseError({ message: "Insert failed" }));
+						return result;
+					}),
 
-      // ... update, delete
-    }
-  }))
+				// ... update, delete
+			};
+		}),
+	);
 }
 ```
 
@@ -166,14 +181,14 @@ class CategoryService extends Context.Service<CategoryService, {
 
 ```typescript
 // Before:
-const categories = await categoryRepository.findAllByWorkspaceId({ workspaceId: workspace.id })
+const categories = await categoryRepository.findAllByWorkspaceId({ workspaceId: workspace.id });
 
 // After:
 const categories = await Effect.runPromise(
-  CategoryService.use((s) => s.findAllByWorkspaceId({ workspaceId: workspace.id })).pipe(
-    Effect.provide(CategoryService.layer),
-  ),
-)
+	CategoryService.use((s) => s.findAllByWorkspaceId({ workspaceId: workspace.id })).pipe(
+		Effect.provide(CategoryService.layer),
+	),
+);
 // error handling still manual until Phase 3's runEffect bridge
 ```
 
@@ -189,37 +204,37 @@ const categories = await Effect.runPromise(
 
 ```typescript
 // BEFORE (Zod):
-import * as z from "zod"
+import * as z from "zod";
 
 export const InsertCategorySchema = z.object({
-  name: z.string().min(1),
-  description: z.optional(z.string()),
-  color: ColorSchema.default("gray"),
-  type: CategoryTypeSchema,
-})
+	name: z.string().min(1),
+	description: z.optional(z.string()),
+	color: ColorSchema.default("gray"),
+	type: CategoryTypeSchema,
+});
 
 // AFTER (Effect Schema v4):
-import { Schema } from "effect"
+import { Schema } from "effect";
 
 export const InsertCategorySchema = Schema.Struct({
-  name: Schema.String.check(Schema.isMinLength(1)),
-  description: Schema.optional(Schema.String),
-  color: Schema.String.pipe(Schema.withDecodingDefaultType(Effect.succeed("gray"))),
-  type: Schema.Literals(["expense", "income"]),
-})
+	name: Schema.String.check(Schema.isMinLength(1)),
+	description: Schema.optional(Schema.String),
+	color: Schema.String.pipe(Schema.withDecodingDefaultType(Effect.succeed("gray"))),
+	type: Schema.Literals(["expense", "income"]),
+});
 
-export type InsertCategory = Schema.Schema.Type<typeof InsertCategorySchema>
+export type InsertCategory = Schema.Schema.Type<typeof InsertCategorySchema>;
 ```
 
 ### Shared Schemas to Migrate
 
-| Zod (common)     | Effect Schema v4 (api)                                                      |
-| ---------------- | --------------------------------------------------------------------------- |
-| `CurrencySchema` | `Currency = Schema.Literals(["VND", "USD", "EUR", ...])`                    |
-| `ColorSchema`    | `Color = Schema.Literals(["gray", "red", ...])`                             |
+| Zod (common)     | Effect Schema v4 (api)                                                       |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `CurrencySchema` | `Currency = Schema.Literals(["VND", "USD", "EUR", ...])`                     |
+| `ColorSchema`    | `Color = Schema.Literals(["gray", "red", ...])`                              |
 | `RepeatSchema`   | `Repeat = Schema.Literals(["none", "daily", "weekly", "monthly", "yearly"])` |
-| `IsoDateSchema`  | `IsoDate = Schema.Date` (or `Schema.String` with format validation)         |
-| `MonetarySchema` | Schema with `decodeTo` for amount formatting                                |
+| `IsoDateSchema`  | `IsoDate = Schema.Date` (or `Schema.String` with format validation)          |
+| `MonetarySchema` | Schema with `decodeTo` for amount formatting                                 |
 | `UUIDv7`         | `Schema.String.check(Schema.isUUID())`                                       |
 
 ### Validator Replacement Strategy
@@ -228,20 +243,20 @@ Current Hono validators (`@hono/zod-validator`) → Effect Schema v4 validators:
 
 ```typescript
 // src/validators/effect-json-body.ts
-import { Schema, Effect, SchemaIssue } from "effect"
-import { HttpServerResponse } from "effect/unstable/http"
+import { Schema, Effect, SchemaIssue } from "effect";
+import { HttpServerResponse } from "effect/unstable/http";
 
 export function effectJsonBodyValidator<A>(schema: Schema.Schema<A>) {
-  return Effect.gen(function* () {
-    const request = yield* HttpServerRequest.HttpServerRequest
-    const body = yield* request.json
-    const result = Schema.decodeUnknownExit(schema)(body)
-    if (result._tag === "Failure") {
-      const issues = SchemaIssue.makeFormatterStandardSchemaV1()(result.cause).issues
-      return HttpServerResponse.json({ message: "Validation failed", issues }, { status: 400 })
-    }
-    // ... provide validated body to context
-  })
+	return Effect.gen(function* () {
+		const request = yield* HttpServerRequest.HttpServerRequest;
+		const body = yield* request.json;
+		const result = Schema.decodeUnknownExit(schema)(body);
+		if (result._tag === "Failure") {
+			const issues = SchemaIssue.makeFormatterStandardSchemaV1()(result.cause).issues;
+			return HttpServerResponse.json({ message: "Validation failed", issues }, { status: 400 });
+		}
+		// ... provide validated body to context
+	});
 }
 ```
 
@@ -268,40 +283,38 @@ export function effectJsonBodyValidator<A>(schema: Schema.Schema<A>) {
 ```typescript
 // BEFORE (categories/index.ts - GET /:id):
 app.get("/:id", idParamValidator, workspaceQueryValidator, workspaceMember, async (c) => {
-  const workspace = c.get("workspace")
-  const param = c.req.valid("param")
+	const workspace = c.get("workspace");
+	const param = c.req.valid("param");
 
-  const category = await categoryRepository.findOne({ id: param.id, workspaceId: workspace.id })
-  if (!category) {
-    return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND)
-  }
+	const category = await categoryRepository.findOne({ id: param.id, workspaceId: workspace.id });
+	if (!category) {
+		return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+	}
 
-  const parsed = CategorySchema.safeParse(category)
-  if (!parsed.success) {
-    return c.json({ message: createIssueMsg(parsed.error.issues) }, 422)
-  }
-  return c.json({ data: parsed.data }, 200)
-})
+	const parsed = CategorySchema.safeParse(category);
+	if (!parsed.success) {
+		return c.json({ message: createIssueMsg(parsed.error.issues) }, 422);
+	}
+	return c.json({ data: parsed.data }, 200);
+});
 
 // AFTER (Effect v4):
-import { HttpRouter, HttpServerResponse } from "effect/unstable/http"
-import { Effect, Schema } from "effect"
+import { HttpRouter, HttpServerResponse } from "effect/unstable/http";
+import { Effect, Schema } from "effect";
 
 const getCategoryById = HttpRouter.route(
-  "GET",
-  "/:id",
-  Effect.gen(function* () {
-    const context = yield* RequestContext
-    const params = yield* HttpRouter.RouteContext
-    const category = yield* CategoryService.use((s) =>
-      s.findOne({ id: params.id, workspaceId: context.workspace.id })
-    )
-    const validated = yield* Schema.decodeUnknown(CategorySchema)(category)
-    return HttpServerResponse.json({ data: validated })
-  }).pipe(
-    Effect.provide(CategoryService.layer)
-  )
-)
+	"GET",
+	"/:id",
+	Effect.gen(function* () {
+		const context = yield* RequestContext;
+		const params = yield* HttpRouter.RouteContext;
+		const category = yield* CategoryService.use((s) =>
+			s.findOne({ id: params.id, workspaceId: context.workspace.id }),
+		);
+		const validated = yield* Schema.decodeUnknown(CategorySchema)(category);
+		return HttpServerResponse.json({ data: validated });
+	}).pipe(Effect.provide(CategoryService.layer)),
+);
 ```
 
 **Key win**: No more manual `if (!category)` checks, no `safeParse` + `if` chains. Errors propagate through Effect's typed error channel, caught and mapped to HTTP responses by the router.
@@ -351,10 +364,10 @@ const WorkspaceMiddleware = HttpRouter.middleware<{
     const request = yield* HttpServerRequest.HttpServerRequest
     const slug = request.searchParams.get("workspaceIdOrSlug")
     const user = yield* AuthContext
-    
+
     const workspace = yield* WorkspaceService.use((s) => s.findBySlug(slug))
     const membership = yield* WorkspaceService.use((s) => s.findMembership(workspace.id, user.id))
-    
+
     return (effect) => Effect.provideService(effect, WorkspaceContext, { workspace, membership })
   })
 ).layer
@@ -362,11 +375,11 @@ const WorkspaceMiddleware = HttpRouter.middleware<{
 
 ### Files Modified
 
-| File                                  | Change                                                         |
-| ------------------------------------- | -------------------------------------------------------------- |
-| `src/middlewares/user-session.ts`     | Replaced by `AuthContext` service + middleware layer             |
-| `src/middlewares/workspace-member.ts` | Replaced by `WorkspaceContext` service + middleware layer        |
-| `src/effect/runtime.ts`               | Add `WorkspaceService`, `AuthService` to base layer list       |
+| File                                  | Change                                                    |
+| ------------------------------------- | --------------------------------------------------------- |
+| `src/middlewares/user-session.ts`     | Replaced by `AuthContext` service + middleware layer      |
+| `src/middlewares/workspace-member.ts` | Replaced by `WorkspaceContext` service + middleware layer |
+| `src/effect/runtime.ts`               | Add `WorkspaceService`, `AuthService` to base layer list  |
 
 ---
 
@@ -456,27 +469,27 @@ apps/api/src/
 
 ## Risk Assessment
 
-| Risk                                      | Impact             | Mitigation                                         |
-| ----------------------------------------- | ------------------ | -------------------------------------------------- |
-| Effect Schema v4 validation differs from Zod | Production bugs | Test each endpoint after Phase 2 migration         |
-| `Effect.runPromise` race conditions       | Conn leak, memory  | Phase 5 resource safety via `Scope`                |
-| Better Auth integration breaks            | Auth outage        | `auth.handler` is framework-agnostic — low risk      |
-| Bundle size increase                      | Slower cold starts | Effect v4 tree-shakes to ~6-15KB min+gzip          |
-| Team learning curve                       | Slower development | Incremental roll-out, services co-exist with repos |
-| v4 API changes during beta                | Breaking changes   | Pin to specific beta version, monitor changelogs   |
+| Risk                                         | Impact             | Mitigation                                         |
+| -------------------------------------------- | ------------------ | -------------------------------------------------- |
+| Effect Schema v4 validation differs from Zod | Production bugs    | Test each endpoint after Phase 2 migration         |
+| `Effect.runPromise` race conditions          | Conn leak, memory  | Phase 5 resource safety via `Scope`                |
+| Better Auth integration breaks               | Auth outage        | `auth.handler` is framework-agnostic — low risk    |
+| Bundle size increase                         | Slower cold starts | Effect v4 tree-shakes to ~6-15KB min+gzip          |
+| Team learning curve                          | Slower development | Incremental roll-out, services co-exist with repos |
+| v4 API changes during beta                   | Breaking changes   | Pin to specific beta version, monitor changelogs   |
 
 ---
 
 ## Key v4 API Changes from v3
 
-| v3 API | v4 API | Notes |
-|--------|--------|-------|
-| `Effect.Service<T>()(id, { effect, dependencies })` | `Context.Service<T>()(id, { make })` | Use `Layer.effect` for layer construction |
-| `Context.Tag(id)<Self, Shape>()` | `Context.Service<Self, Shape>()(id)` | Class syntax updated |
-| `Schema.TaggedError` | `Schema.TaggedErrorClass` | Renamed |
-| `Schema.Literal("a", "b")` | `Schema.Literals(["a", "b"])` | Variadic → array |
-| `Schema.String.pipe(Schema.minLength(1))` | `Schema.String.check(Schema.isMinLength(1))` | `is*` prefix for filters |
-| `Schema.UUID` | `Schema.String.check(Schema.isUUID())` | Restructured |
-| `Schema.decodeUnknown` | `Schema.decodeUnknownEffect` | Renamed |
-| `Schema.decodeUnknownEither` | `Schema.decodeUnknownExit` | Renamed |
-| `Schema.optionalWith(schema, { default })` | `schema.pipe(Schema.withDecodingDefaultType(...))` | Restructured |
+| v3 API                                              | v4 API                                             | Notes                                     |
+| --------------------------------------------------- | -------------------------------------------------- | ----------------------------------------- |
+| `Effect.Service<T>()(id, { effect, dependencies })` | `Context.Service<T>()(id, { make })`               | Use `Layer.effect` for layer construction |
+| `Context.Tag(id)<Self, Shape>()`                    | `Context.Service<Self, Shape>()(id)`               | Class syntax updated                      |
+| `Schema.TaggedError`                                | `Schema.TaggedErrorClass`                          | Renamed                                   |
+| `Schema.Literal("a", "b")`                          | `Schema.Literals(["a", "b"])`                      | Variadic → array                          |
+| `Schema.String.pipe(Schema.minLength(1))`           | `Schema.String.check(Schema.isMinLength(1))`       | `is*` prefix for filters                  |
+| `Schema.UUID`                                       | `Schema.String.check(Schema.isUUID())`             | Restructured                              |
+| `Schema.decodeUnknown`                              | `Schema.decodeUnknownEffect`                       | Renamed                                   |
+| `Schema.decodeUnknownEither`                        | `Schema.decodeUnknownExit`                         | Renamed                                   |
+| `Schema.optionalWith(schema, { default })`          | `schema.pipe(Schema.withDecodingDefaultType(...))` | Restructured                              |

@@ -1,6 +1,7 @@
 # Effect Migration — On-Hold Status
 
 ## Date: 2026-06-13
+
 ## Status: Plans Complete, Implementation On-Hold
 
 ---
@@ -8,9 +9,11 @@
 ## Completed Plans
 
 ### 1. Backend Migration Plan
+
 **File:** `docs/effect-ts-migration-plan.md` (482 lines)
 
 **Strategy:** Replace Hono with `@effect/platform-node` v4 fully
+
 - **Phase 0:** Foundation (errors, runtime, http-app, context, schemas)
 - **Phase 1:** Service Layer (repository → Effect Services)
 - **Phase 2:** Schema Migration (Zod → Effect Schema v4)
@@ -19,27 +22,31 @@
 - **Phase 5:** Advanced (Config, concurrency, resource safety, testing)
 
 **Key Dependencies:**
+
 ```json
 {
-  "effect": "^4.0.0-beta.x",
-  "@effect/platform-node": "^4.0.0-beta.x"
+	"effect": "^4.0.0-beta.x",
+	"@effect/platform-node": "^4.0.0-beta.x"
 }
 ```
 
 ### 2. Frontend Integration Plan
+
 **File:** `docs/effect-frontend-integration-plan.md` (385 lines)
 
 **Strategy:** Type-derived client from backend routes (tRPC-style)
+
 - Backend exports `ApiRouter = typeof apiRoutes`
 - Frontend imports type only and generates typed client
 - TanStack Query bridge for React integration
 - No separate shared package — types derived directly from backend
 
 **Key Dependencies:**
+
 ```json
 {
-  "effect": "^4.0.0-beta.x",
-  "@hoalu/api": "workspace:*"
+	"effect": "^4.0.0-beta.x",
+	"@hoalu/api": "workspace:*"
 }
 ```
 
@@ -47,14 +54,14 @@
 
 ## Key Decisions Made
 
-| Decision | Value | Rationale |
-|----------|-------|-----------|
-| Effect version | v4 (beta) | User specified, single version number for ecosystem |
-| Service pattern | `Context.Service` with `make` | v4 pattern, no auto-generated `.Default` layer |
-| Error types | `Schema.TaggedErrorClass` | v4 renamed from `TaggedError` |
-| Frontend client | Type-derived from backend | Like tRPC/Hono RPC, no manual shared package |
-| Schema filters | `is*` prefix + `check()` | v4 pattern (e.g., `isMinLength`, `isUUID`) |
-| Middleware | `HttpRouter.middleware` | v4 pattern with `provides`/`handles` tracking |
+| Decision        | Value                         | Rationale                                           |
+| --------------- | ----------------------------- | --------------------------------------------------- |
+| Effect version  | v4 (beta)                     | User specified, single version number for ecosystem |
+| Service pattern | `Context.Service` with `make` | v4 pattern, no auto-generated `.Default` layer      |
+| Error types     | `Schema.TaggedErrorClass`     | v4 renamed from `TaggedError`                       |
+| Frontend client | Type-derived from backend     | Like tRPC/Hono RPC, no manual shared package        |
+| Schema filters  | `is*` prefix + `check()`      | v4 pattern (e.g., `isMinLength`, `isUUID`)          |
+| Middleware      | `HttpRouter.middleware`       | v4 pattern with `provides`/`handles` tracking       |
 
 ## Critical Files to Review
 
