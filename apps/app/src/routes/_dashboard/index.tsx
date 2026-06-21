@@ -1,4 +1,4 @@
-import { PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/phosphor";
 import { Card } from "@hoalu/ui/card";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";

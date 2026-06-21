@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
+import { CaretLeftIcon, CaretRightIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -87,14 +87,14 @@ export function ImageGallery({ data }: ImageGalleryProps) {
 								variant="outline"
 								onClick={() => goTo((selectedIndex ?? 0) - 1)}
 							>
-								<ChevronLeftIcon className="size-5" />
+								<CaretLeftIcon className="size-5" />
 							</Button>
 							<Button
 								size="icon-sm"
 								variant="outline"
 								onClick={() => goTo((selectedIndex ?? 0) + 1)}
 							>
-								<ChevronRightIcon className="size-5" />
+								<CaretRightIcon className="size-5" />
 							</Button>
 						</DialogHeaderAction>
 					</DialogHeader>

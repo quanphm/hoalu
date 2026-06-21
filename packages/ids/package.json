@@ -13,7 +13,7 @@
 		"./slugify": "./src/slugify.ts"
 	},
 	"dependencies": {
-		"nanoid": "^5.1.11",
+		"nanoid": "^5.1.14",
 		"uuid": "^14.0.0"
 	},
 	"devDependencies": {

@@ -9,7 +9,7 @@ import {
 	Preview,
 	Tailwind,
 	Text,
-} from "@react-email/components";
+} from "react-email";
 
 interface Props {
 	url: string;

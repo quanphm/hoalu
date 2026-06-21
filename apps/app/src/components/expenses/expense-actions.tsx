@@ -202,7 +202,8 @@ function CreateExpenseForm() {
 		},
 		listeners: {
 			onChange: ({ formApi }) => {
-				draftExpense$.set(formApi.state.values);
+				const { attachments, ...draft } = formApi.state.values;
+				draftExpense$.set(draft);
 			},
 		},
 		onSubmit: async ({ value }) => {

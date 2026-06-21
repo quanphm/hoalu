@@ -21,11 +21,6 @@ import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 import { NavWorkspaceList } from "./nav-workspace-list";
 
-/**
- * A layout where the sidebar is on the left and content is on the right.
- *
- * @see https://web.dev/patterns/layout/sidebar-says
- */
 export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;

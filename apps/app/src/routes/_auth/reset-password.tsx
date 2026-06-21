@@ -1,4 +1,4 @@
-import { ArrowLeft } from "@hoalu/icons/lucide";
+import { ArrowLeftIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { toastManager } from "@hoalu/ui/toast";
 import { createFileRoute, type ErrorComponentProps, Link } from "@tanstack/react-router";
@@ -86,7 +86,7 @@ function ResetPasswordRequest() {
 						to="/login"
 						className="text-muted-foreground m-auto inline-flex max-w-fit items-center text-sm"
 					>
-						<ArrowLeft className="mr-2 size-3" />
+						<ArrowLeftIcon className="mr-2 size-3" />
 						Back
 					</Link>
 				</div>

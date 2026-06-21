@@ -11,13 +11,11 @@
 		"dev": "email dev --port 3003 --dir src/emails"
 	},
 	"dependencies": {
-		"@react-email/components": "^1.0.12"
+		"react-email": "^6.6.3"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
-		"@react-email/preview-server": "5.2.10",
-		"@types/react": "catalog:",
-		"react-email": "^6.5.0"
+		"@types/react": "catalog:"
 	},
 	"peerDependencies": {
 		"react": "catalog:"
