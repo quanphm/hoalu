@@ -1,5 +1,5 @@
 import { useRender } from "@base-ui/react/use-render";
-import { PanelLeftIcon } from "@hoalu/icons/lucide";
+import { SidebarSimpleIcon } from "@hoalu/icons/phosphor";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -252,7 +252,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 			}}
 			{...props}
 		>
-			<PanelLeftIcon />
+			<SidebarSimpleIcon />
 			<span className="sr-only">Toggle Sidebar</span>
 		</Button>
 	);

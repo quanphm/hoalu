@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@hoalu/icons/lucide";
+import { CaretDownIcon, CaretUpIcon } from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -60,7 +60,7 @@ export function IncomeDetails({ incomes }: IncomeDetailsProps) {
 								/>
 							}
 						>
-							<ChevronDownIcon className="size-4" />
+							<CaretDownIcon className="size-4" />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Down <HotKey className="ml-2" label="J" />
@@ -72,7 +72,7 @@ export function IncomeDetails({ incomes }: IncomeDetailsProps) {
 								<Button size="icon" variant="outline" onClick={handleGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon className="size-4" />
+							<CaretUpIcon className="size-4" />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Up <HotKey className="ml-2" label="K" />
@@ -121,10 +121,10 @@ export function MobileIncomeDetails({ incomes }: IncomeDetailsProps) {
 					<DialogTitle>Income Details</DialogTitle>
 					<DialogHeaderAction>
 						<Button size="icon-sm" variant="outline" onClick={handleGoUp} disabled={!canGoUp}>
-							<ChevronUpIcon />
+							<CaretUpIcon />
 						</Button>
 						<Button size="icon-sm" variant="outline" onClick={handleGoDown} disabled={!canGoDown}>
-							<ChevronDownIcon />
+							<CaretDownIcon />
 						</Button>
 					</DialogHeaderAction>
 				</DialogHeader>

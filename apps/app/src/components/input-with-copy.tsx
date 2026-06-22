@@ -1,4 +1,4 @@
-import { CheckIcon, CopyIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, CopyIcon } from "@hoalu/icons/phosphor";
 import { Input } from "@hoalu/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";

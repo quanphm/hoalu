@@ -1,4 +1,4 @@
-import { UploadIcon } from "@hoalu/icons/lucide";
+import { UploadIcon } from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { FILE_LIMIT, FILE_SIZE_LIMIT } from "@hoalu/stdlib/io";
 import { Button } from "@hoalu/ui/button";

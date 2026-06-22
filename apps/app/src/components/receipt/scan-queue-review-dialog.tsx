@@ -1,4 +1,4 @@
-import { FileTextIcon, ChevronRightIcon, ChevronLeftIcon } from "@hoalu/icons/lucide";
+import { FileTextIcon, CaretRightIcon, CaretLeftIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	DialogDescription,
@@ -243,10 +243,10 @@ export function ScanQueueReviewDialogContent() {
 					{completedJobs.length > 1 && (
 						<>
 							<Button variant="outline" size="icon-sm" onClick={handlePrev} disabled={!hasPrev}>
-								<ChevronLeftIcon />
+								<CaretLeftIcon />
 							</Button>
 							<Button variant="outline" size="icon-sm" onClick={handleNext} disabled={!hasNext}>
-								<ChevronRightIcon />
+								<CaretRightIcon />
 							</Button>
 						</>
 					)}

@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "@hoalu/icons/lucide";
+import { ArrowDownIcon, ArrowUpIcon, ArrowBendDownLeftIcon } from "@hoalu/icons/phosphor";
 import {
 	Command,
 	CommandDialog,
@@ -250,7 +250,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 							</div>
 							<div className="flex items-center gap-1">
 								<Kbd className="bg-background text-foreground" aria-hidden="true">
-									<CornerDownLeftIcon />
+									<ArrowBendDownLeftIcon />
 								</Kbd>
 								<span>Open</span>
 							</div>

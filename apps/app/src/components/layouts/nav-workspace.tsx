@@ -1,4 +1,4 @@
-import { SearchIcon } from "@hoalu/icons/lucide";
+import { MagnifyingGlassIcon } from "@hoalu/icons/phosphor";
 import {
 	CalendarDollarIcon,
 	FileIcon,
@@ -38,7 +38,7 @@ export function NavWorkspace() {
 						className="w-full gap-2 rounded-md"
 						onClick={() => commandPaletteOpen$.set(true)}
 					>
-						<SearchIcon className="text-muted-foreground size-4" />
+						<MagnifyingGlassIcon className="text-muted-foreground size-4" />
 						<span className="text-muted-foreground flex-1 text-left">Search...</span>
 						<HotKey {...KEYBOARD_SHORTCUTS.command_palette} />
 					</Button>

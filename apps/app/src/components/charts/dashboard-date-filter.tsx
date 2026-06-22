@@ -1,4 +1,4 @@
-import { CheckIcon, LayersIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, StackIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Popover,
@@ -155,7 +155,7 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 	return (
 		<Popover>
 			<PopoverTrigger render={<Button size="sm" variant={hasSelection ? "default" : "outline"} />}>
-				<LayersIcon />
+				<StackIcon />
 				{hasSelection
 					? `${selectedIds.length} ${selectedIds.length === 1 ? "category" : "categories"}`
 					: "By category"}

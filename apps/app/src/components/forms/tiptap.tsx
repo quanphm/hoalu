@@ -23,15 +23,19 @@ export function TiptapField(props: Props) {
 					"prose dark:prose-invert prose-base focus:outline-none text-foreground text-sm px-3 py-2.5 min-h-20",
 			},
 		},
-		content: "",
+		content: field.state.value ?? "",
 		onUpdate: ({ editor }) => field.handleChange(editor.getHTML()),
 	});
 
 	useEffect(() => {
-		if (editor && !editor.isDestroyed) {
-			editor.commands.setContent(props.defaultValue || "");
+		if (!editor) {
+			return;
 		}
-	}, [editor, props.defaultValue]);
+		const newValue = field.state.value ?? "";
+		if (newValue !== editor.getHTML()) {
+			editor.commands.setContent(newValue, { emitUpdate: false });
+		}
+	}, [editor, field.state.value]);
 
 	return (
 		<Field>

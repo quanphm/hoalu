@@ -1,4 +1,4 @@
-import { EyeIcon, EyeOffIcon } from "@hoalu/icons/lucide";
+import { EyeIcon, EyeSlashIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
@@ -16,7 +16,7 @@ export function RedactedAmountToggle() {
 			title={isRedacted ? "Show amounts" : "Hide amounts"}
 			className={cn(isRedacted && "border-primary [&_svg]:text-primary")}
 		>
-			{isRedacted ? <EyeOffIcon /> : <EyeIcon />}
+			{isRedacted ? <EyeSlashIcon /> : <EyeIcon />}
 		</Button>
 	);
 }

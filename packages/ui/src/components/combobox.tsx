@@ -1,5 +1,5 @@
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
-import { CheckIcon, ChevronDownIcon, XIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, CaretDownIcon, XIcon } from "@hoalu/icons/phosphor";
 import * as React from "react";
 
 import { cn } from "../utils";
@@ -105,7 +105,7 @@ function ComboboxInput({
 						sizeValue === "sm" ? "end-0" : "end-0.5",
 					)}
 				>
-					<ChevronDownIcon />
+					<CaretDownIcon />
 				</ComboboxTrigger>
 			)}
 			{showClear && (

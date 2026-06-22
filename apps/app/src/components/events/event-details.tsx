@@ -1,11 +1,11 @@
 import { datetime } from "@hoalu/datetime/datetime";
 import {
-	ChevronDownIcon,
-	ChevronUpIcon,
+	CaretDownIcon,
+	CaretUpIcon,
 	PencilIcon,
 	RepeatIcon,
-	Trash2Icon,
-} from "@hoalu/icons/lucide";
+	TrashIcon,
+} from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -70,7 +70,7 @@ export function EventDetailPanel({
 								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon />
+							<CaretDownIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Down (J)</TooltipContent>
 					</Tooltip>
@@ -80,7 +80,7 @@ export function EventDetailPanel({
 								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon />
+							<CaretUpIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Up (K)</TooltipContent>
 					</Tooltip>
@@ -112,7 +112,7 @@ export function EventDetailPanel({
 								/>
 							}
 						>
-							<Trash2Icon />
+							<TrashIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Delete</TooltipContent>
 					</Tooltip>

@@ -1,5 +1,5 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { ChevronDownIcon } from "@hoalu/icons/lucide";
+import { CaretDownIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 
@@ -29,7 +29,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 				{...props}
 			>
 				{children}
-				<ChevronDownIcon className="pointer-events-none size-4 shrink-0 translate-y-0.5 opacity-80 transition-transform duration-200 ease-in-out" />
+				<CaretDownIcon className="pointer-events-none size-4 shrink-0 translate-y-0.5 opacity-80 transition-transform duration-200 ease-in-out" />
 			</AccordionPrimitive.Trigger>
 		</AccordionPrimitive.Header>
 	);

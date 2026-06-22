@@ -1,4 +1,4 @@
-import { BoldIcon, ItalicIcon, ListIcon, ListOrderedIcon } from "@hoalu/icons/lucide";
+import { TextBIcon, TextItalicIcon, ListIcon, ListNumbersIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import Placeholder from "@tiptap/extension-placeholder";
 import StarterKit from "@tiptap/starter-kit";
@@ -29,7 +29,7 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 				tabIndex={-1}
 				type="button"
 			>
-				<BoldIcon className="h-4 w-4" />
+				<TextBIcon className="h-4 w-4" />
 			</Button>
 			<Button
 				variant={editor.isActive("italic") ? "outline" : "ghost"}
@@ -39,7 +39,7 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 				tabIndex={-1}
 				type="button"
 			>
-				<ItalicIcon className="h-4 w-4" />
+				<TextItalicIcon className="h-4 w-4" />
 			</Button>
 			<Button
 				variant={editor.isActive("bulletList") ? "outline" : "ghost"}
@@ -58,7 +58,7 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 				tabIndex={-1}
 				type="button"
 			>
-				<ListOrderedIcon className="h-4 w-4" />
+				<ListNumbersIcon className="h-4 w-4" />
 			</Button>
 		</div>
 	);

@@ -1,4 +1,4 @@
-import { PaperclipIcon } from "@hoalu/icons/lucide";
+import { PaperclipIcon } from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";

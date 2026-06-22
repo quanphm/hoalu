@@ -10,15 +10,15 @@ allowBuilds:
 
 catalogs:
   default:
-    "@better-auth/api-key": ^1.6.14
-    "@better-auth/core": ^1.6.14
-    "@types/react": ^19.2.16
+    "@better-auth/api-key": ^1.6.20
+    "@better-auth/core": ^1.6.20
+    "@types/react": ^19.2.17
     "@types/react-dom": ^19.2.3
-    better-auth: ^1.6.14
-    hono: ^4.12.23
+    better-auth: ^1.6.20
+    hono: ^4.12.26
     react: ^19.2.7
     react-dom: ^19.2.7
-    tailwindcss: ^4.3.0
+    tailwindcss: ^4.3.1
     zod: ^4.4.3
 
 minimumReleaseAge: 1440
@@ -37,6 +37,3 @@ overrides:
   "@openrouter/sdk": ^0.12.79
   chalk: 5.6.2
   ora: 8.2.0
-
-patchedDependencies:
-  "@better-auth/kysely-adapter@1.6.14": patches/@better-auth__kysely-adapter@1.6.14.patch

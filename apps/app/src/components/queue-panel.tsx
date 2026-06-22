@@ -1,10 +1,10 @@
 import {
-	ChevronDownIcon,
-	Loader2Icon,
+	CaretDownIcon,
+	CircleNotchIcon,
 	ReceiptIcon,
-	RefreshCwIcon,
-	ZapIcon,
-} from "@hoalu/icons/lucide";
+	ArrowsClockwiseIcon,
+	LightningIcon,
+} from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -35,7 +35,7 @@ function JobStatusBadge({ status, retryCount }: { status: JobStatus; retryCount:
 	if (status === "processing") {
 		return (
 			<span className={cn(base, "bg-primary/15 text-primary")}>
-				<Loader2Icon className="size-2.5 animate-spin" />
+				<CircleNotchIcon className="size-2.5 animate-spin" />
 				Scanning
 			</span>
 		);
@@ -130,7 +130,7 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 							{job.errorMessage || "Unknown error"}
 						</span>
 						<Button variant="outline" size="xs" onClick={() => retry(job.id)}>
-							<RefreshCwIcon />
+							<ArrowsClockwiseIcon />
 							Retry
 						</Button>
 					</div>
@@ -168,7 +168,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	return (
 		<div className="bg-card flex min-w-0 gap-2.5 border-r p-3 last:border-r-transparent">
 			<div className="bg-muted relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-sm border">
-				<ZapIcon className="text-muted-foreground size-4" />
+				<LightningIcon className="text-muted-foreground size-4" />
 				{job.status === "processing" && (
 					<div className="bg-primary shadow-primary/60 animate-scanline absolute inset-x-0 h-[2px] shadow-[0_0_6px]" />
 				)}
@@ -208,7 +208,7 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 							{job.errorMessage || "Unknown error"}
 						</span>
 						<Button variant="outline" size="xs" onClick={() => retry(job.id)}>
-							<RefreshCwIcon />
+							<ArrowsClockwiseIcon />
 							Retry
 						</Button>
 					</div>
@@ -284,7 +284,7 @@ export function QueuePanel() {
 
 				<p className="text-muted-foreground flex items-center gap-1 text-xs uppercase">
 					{collapsed ? "Show" : "Hide"}
-					<ChevronDownIcon
+					<CaretDownIcon
 						className={cn(
 							"text-muted-foreground size-3 transition-transform",
 							collapsed && "-rotate-90",

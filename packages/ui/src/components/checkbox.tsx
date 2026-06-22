@@ -1,5 +1,5 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-import { CheckIcon } from "@hoalu/icons/lucide";
+import { CheckIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 

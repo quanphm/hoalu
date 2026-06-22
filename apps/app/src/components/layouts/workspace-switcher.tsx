@@ -1,5 +1,5 @@
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "@hoalu/icons/lucide";
-import { HouseIcon } from "@hoalu/icons/nucleo";
+import { CheckIcon, CaretDownIcon, PlusIcon } from "@hoalu/icons/phosphor";
+import { HouseIcon } from "@hoalu/icons/phosphor";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -42,7 +42,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<div className="grid flex-1 text-left text-sm leading-tight">
 					<span className="truncate font-semibold">{selectedWorkspace.name}</span>
 				</div>
-				<ChevronsUpDownIcon className="ml-auto" />
+				<CaretDownIcon className="ml-auto" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="right" sideOffset={4}>
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
@@ -50,17 +50,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 					Home
 					<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
-				{/* <DropdownMenuItem
-					className="gap-2 p-2"
-					render={
-						<a href="https://hoalu.app" target="_blank" rel="noreferrer">
-							<LinkIcon />
-							<span>
-								Website <span className="text-muted-foreground text-xs">hoalu.app</span>
-							</span>
-						</a>
-					}
-				/> */}
+
 				<DropdownMenuSeparator />
 
 				<DropdownMenuGroup>

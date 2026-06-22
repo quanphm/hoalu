@@ -1,5 +1,5 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { DotsThreeIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -115,7 +115,7 @@ function RowActions({ row }: { row: Row<Member> }) {
 			<DropdownMenu>
 				<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
 					<span className="sr-only">Open menu</span>
-					<MoreVerticalIcon className="size-4" />
+					<DotsThreeIcon className="size-4" />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
 					<DialogTrigger render={<DropdownMenuItem />}>

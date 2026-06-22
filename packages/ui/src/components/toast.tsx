@@ -1,11 +1,11 @@
 import { Toast } from "@base-ui/react/toast";
 import {
-	CircleAlertIcon,
-	CircleCheckIcon,
+	WarningCircleIcon,
+	CheckCircleIcon,
 	InfoIcon,
-	LoaderCircleIcon,
-	TriangleAlertIcon,
-} from "@hoalu/icons/lucide";
+	CircleNotchIcon,
+	WarningIcon,
+} from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 import { buttonVariants } from "./button";
@@ -13,11 +13,11 @@ import { buttonVariants } from "./button";
 import type React from "react";
 
 const TOAST_ICONS = {
-	error: CircleAlertIcon,
+	error: WarningCircleIcon,
 	info: InfoIcon,
-	loading: LoaderCircleIcon,
-	success: CircleCheckIcon,
-	warning: TriangleAlertIcon,
+	loading: CircleNotchIcon,
+	success: CheckCircleIcon,
+	warning: WarningIcon,
 } as const;
 
 type SwipeDirection = "up" | "down" | "left" | "right";

@@ -1,5 +1,5 @@
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import { ChevronsUpDownIcon, XIcon } from "@hoalu/icons/lucide";
+import { CaretDownIcon, XIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 import { Input } from "./input";
@@ -54,7 +54,7 @@ function AutocompleteInput({
 						sizeValue === "sm" ? "end-0" : "end-0.5",
 					)}
 				>
-					<ChevronsUpDownIcon />
+					<CaretDownIcon />
 				</AutocompleteTrigger>
 			)}
 			{showClear && (

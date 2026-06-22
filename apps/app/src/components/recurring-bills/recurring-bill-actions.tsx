@@ -229,7 +229,7 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 
 					<form.AppField
 						name="description"
-						children={(field) => <field.TiptapField label="Note" defaultValue="" />}
+						children={(field) => <field.TiptapField label="Note" />}
 					/>
 				</FieldGroup>
 
@@ -361,9 +361,7 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 
 					<form.AppField
 						name="description"
-						children={(field) => (
-							<field.TiptapField label="Note" defaultValue={bill.description ?? ""} />
-						)}
+						children={(field) => <field.TiptapField label="Note" />}
 					/>
 				</FieldGroup>
 				<Field

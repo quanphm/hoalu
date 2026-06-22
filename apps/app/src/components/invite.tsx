@@ -1,4 +1,4 @@
-import { MailPlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -63,7 +63,7 @@ export function InviteDialog() {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger render={<Button size="sm" variant="outline" />}>
-				<MailPlusIcon className="size-4" />
+				<PlusIcon className="size-4" />
 				Invite people
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]">

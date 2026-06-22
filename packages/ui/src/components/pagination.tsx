@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "@hoalu/icons/lucide";
+import { CaretLeftIcon, CaretRightIcon, DotsThreeIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 import { type Button, buttonVariants } from "./button";
@@ -69,7 +69,7 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
 			className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
 			{...props}
 		>
-			<ChevronLeftIcon />
+			<CaretLeftIcon />
 			<span className="hidden sm:block">Previous</span>
 		</PaginationLink>
 	);
@@ -84,7 +84,7 @@ function PaginationNext({ className, ...props }: React.ComponentProps<typeof Pag
 			{...props}
 		>
 			<span className="hidden sm:block">Next</span>
-			<ChevronRightIcon />
+			<CaretRightIcon />
 		</PaginationLink>
 	);
 }
@@ -97,7 +97,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
 			className={cn("flex size-9 items-center justify-center", className)}
 			{...props}
 		>
-			<MoreHorizontalIcon className="size-4" />
+			<DotsThreeIcon className="size-4" />
 			<span className="sr-only">More pages</span>
 		</span>
 	);

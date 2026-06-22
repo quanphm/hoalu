@@ -215,9 +215,7 @@ function EditEventForm({ event }: { event: SyncedEvent }) {
 						/>
 						<form.AppField
 							name="description"
-							children={(field) => (
-								<field.TiptapField label="Note" defaultValue={event.description ?? ""} />
-							)}
+							children={(field) => <field.TiptapField label="Note" />}
 						/>
 					</FieldGroup>
 					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">

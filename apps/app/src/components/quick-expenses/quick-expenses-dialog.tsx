@@ -1,4 +1,4 @@
-import { ZapIcon } from "@hoalu/icons/lucide";
+import { LightningIcon } from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoalu/ui/dialog";
 
@@ -10,7 +10,7 @@ export function QuickExpensesDialogTrigger(props: ButtonProps) {
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setQuickDialog({ state: true })}>
-			<ZapIcon />
+			<LightningIcon />
 			Quick add
 		</Button>
 	);

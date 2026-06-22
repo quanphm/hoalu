@@ -4,14 +4,14 @@
 	"private": true,
 	"main": "./src/index.tsx",
 	"exports": {
-		"./lucide": "./src/lucide/index.tsx",
 		"./meteocons": "./src/meteocons/index.tsx",
 		"./nucleo": "./src/nucleo/index.tsx",
+		"./phosphor": "./src/phosphor/index.tsx",
 		"./social": "./src/social/index.tsx",
 		"./tabler": "./src/tabler/index.tsx"
 	},
 	"dependencies": {
-		"lucide-react": "^1.17.0"
+		"@phosphor-icons/react": "^2.1.10"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",

@@ -1,4 +1,4 @@
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { DotsThreeIcon } from "@hoalu/icons/phosphor";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -113,7 +113,7 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 			<DropdownMenu>
 				<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
 					<span className="sr-only">Open menu</span>
-					<MoreVerticalIcon className="size-4" />
+					<DotsThreeIcon className="size-4" />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
 					{isLeaving && (

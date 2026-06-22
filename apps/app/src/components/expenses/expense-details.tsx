@@ -1,11 +1,11 @@
 import {
-	ChevronDownIcon,
-	ChevronUpIcon,
-	ChevronLeftIcon,
-	ChevronRightIcon,
+	CaretDownIcon,
+	CaretUpIcon,
+	CaretLeftIcon,
+	CaretRightIcon,
 	RepeatIcon,
-	Trash2Icon,
-} from "@hoalu/icons/lucide";
+	TrashIcon,
+} from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -177,7 +177,7 @@ function AttachmentStrip({
 										}
 									}}
 								>
-									<Trash2Icon />
+									<TrashIcon />
 								</Button>
 							)}
 							{total > 1 && (
@@ -187,14 +187,14 @@ function AttachmentStrip({
 										variant="outline"
 										onClick={() => goTo((previewIndex ?? 0) - 1)}
 									>
-										<ChevronLeftIcon className="size-5" />
+										<CaretLeftIcon className="size-5" />
 									</Button>
 									<Button
 										size="icon-sm"
 										variant="outline"
 										onClick={() => goTo((previewIndex ?? 0) + 1)}
 									>
-										<ChevronRightIcon className="size-5" />
+										<CaretRightIcon className="size-5" />
 									</Button>
 								</>
 							)}
@@ -258,7 +258,7 @@ export function ExpenseDetails({
 								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon />
+							<CaretDownIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Down (J)</TooltipContent>
 					</Tooltip>
@@ -268,7 +268,7 @@ export function ExpenseDetails({
 								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon />
+							<CaretUpIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">Up (K)</TooltipContent>
 					</Tooltip>
@@ -318,10 +318,10 @@ export function MobileExpenseDetails({
 					<DialogTitle>Expense Details</DialogTitle>
 					<DialogHeaderAction>
 						<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp}>
-							<ChevronUpIcon />
+							<CaretUpIcon />
 						</Button>
 						<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown}>
-							<ChevronDownIcon />
+							<CaretDownIcon />
 						</Button>
 						{currentExpense && (
 							<>

@@ -1,5 +1,5 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { ArrowRightIcon } from "@hoalu/icons/lucide";
+import { ArrowRightIcon } from "@hoalu/icons/phosphor";
 import {
 	Card,
 	CardAction,
