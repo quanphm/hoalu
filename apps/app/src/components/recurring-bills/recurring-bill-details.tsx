@@ -1,10 +1,10 @@
 import {
 	ArchiveIcon,
-	ArchiveRestoreIcon,
-	ChevronDownIcon,
-	ChevronUpIcon,
-	Trash2Icon,
-} from "@hoalu/icons/lucide";
+	BoxArrowUpIcon,
+	CaretDownIcon,
+	CaretUpIcon,
+	TrashIcon,
+} from "@hoalu/icons/phosphor";
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
@@ -52,7 +52,7 @@ export function RecurringBillDetailPanel({
 								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
 							}
 						>
-							<ChevronDownIcon />
+							<CaretDownIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Down <HotKey className="ml-2" label="J" />
@@ -64,7 +64,7 @@ export function RecurringBillDetailPanel({
 								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
 							}
 						>
-							<ChevronUpIcon />
+							<CaretUpIcon />
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							Up <HotKey className="ml-2" label="K" />
@@ -101,7 +101,7 @@ export function RecurringBillDetailPanel({
 										/>
 									}
 								>
-									<ArchiveRestoreIcon />
+									<BoxArrowUpIcon />
 								</TooltipTrigger>
 								<TooltipContent side="bottom">Restore</TooltipContent>
 							</Tooltip>
@@ -118,7 +118,7 @@ export function RecurringBillDetailPanel({
 										/>
 									}
 								>
-									<Trash2Icon />
+									<TrashIcon />
 								</TooltipTrigger>
 								<TooltipContent side="bottom">Delete</TooltipContent>
 							</Tooltip>

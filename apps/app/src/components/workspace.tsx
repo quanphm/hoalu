@@ -1,4 +1,4 @@
-import { PlusIcon } from "@hoalu/icons/lucide";
+import { PlusIcon } from "@hoalu/icons/phosphor";
 import { slugify } from "@hoalu/ids/slugify";
 import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { Avatar, AvatarFallback, AvatarImage } from "@hoalu/ui/avatar";

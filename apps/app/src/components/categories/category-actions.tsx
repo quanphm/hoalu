@@ -1,4 +1,4 @@
-import { Trash2Icon } from "@hoalu/icons/lucide";
+import { TrashIcon } from "@hoalu/icons/phosphor";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -207,7 +207,7 @@ export function EditCategoryForm(props: { onEditCallback?(): void }) {
 						variant="ghost"
 						onClick={() => setDialog({ state: true })}
 					>
-						<Trash2Icon className="size-4" />
+						<TrashIcon className="size-4" />
 					</Button>
 					<form.SubscribeButton>Update</form.SubscribeButton>
 				</Field>

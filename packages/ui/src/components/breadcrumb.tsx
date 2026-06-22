@@ -1,5 +1,5 @@
 import { useRender } from "@base-ui/react/use-render";
-import { ChevronRight, MoreHorizontal } from "@hoalu/icons/lucide";
+import { CaretRightIcon, DotsThreeIcon } from "@hoalu/icons/phosphor";
 
 import { cn, mergeProps } from "../utils";
 
@@ -72,7 +72,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
 			className={cn("[&>svg]:size-3.5", className)}
 			{...props}
 		>
-			{children ?? <ChevronRight />}
+			{children ?? <CaretRightIcon />}
 		</li>
 	);
 }
@@ -86,7 +86,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span"
 			className={cn("flex size-9 items-center justify-center", className)}
 			{...props}
 		>
-			<MoreHorizontal className="size-4" />
+			<DotsThreeIcon className="size-4" />
 			<span className="sr-only">More</span>
 		</span>
 	);

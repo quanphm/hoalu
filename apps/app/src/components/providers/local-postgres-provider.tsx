@@ -1,7 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { PGliteProvider } from "@electric-sql/pglite-react";
 import { live, type PGliteWithLive } from "@electric-sql/pglite/live";
-import { LoaderCircleIcon } from "@hoalu/icons/lucide";
+import { CircleNotchIcon } from "@hoalu/icons/phosphor";
 import { tryCatch } from "@hoalu/stdlib/try-catch";
 // import { electricSync } from "@electric-sql/pglite-sync";
 import { useEffect, useState } from "react";
@@ -56,7 +56,7 @@ export function LocalPostgresProvider(props: { children: React.ReactNode }) {
 	if (!pgForProvider) {
 		return (
 			<div className="bg-background flex h-screen w-screen flex-col items-center justify-center gap-4">
-				<LoaderCircleIcon className="text-foreground size-8 animate-spin" />
+				<CircleNotchIcon className="text-foreground size-8 animate-spin" />
 				<div className="flex items-center gap-2">
 					<p className="text-muted-foreground flex gap-2">Starting</p>
 					{"-"}

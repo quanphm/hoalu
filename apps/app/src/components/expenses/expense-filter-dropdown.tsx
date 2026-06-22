@@ -2,14 +2,14 @@ import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
 import {
 	CalendarIcon,
 	CheckIcon,
-	DollarSignIcon,
-	FilterIcon,
-	ListFilterIcon,
-	RefreshCwIcon,
+	CurrencyDollarIcon,
+	FunnelIcon,
+	FadersHorizontalIcon,
+	ArrowsClockwiseIcon,
 	TagIcon,
 	WalletIcon,
 	XIcon,
-} from "@hoalu/icons/lucide";
+} from "@hoalu/icons/phosphor";
 import { CaretRightFilledIcon, TriangleSquareCircleIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -200,7 +200,7 @@ export function ExpenseFilterDropdown() {
 				<PopoverTrigger
 					render={<Button size="sm" variant="outline" className="active:scale-none" />}
 				>
-					<ListFilterIcon />
+					<FadersHorizontalIcon />
 					<span>Filters ({activeFiltersCount})</span>
 				</PopoverTrigger>
 
@@ -216,7 +216,7 @@ export function ExpenseFilterDropdown() {
 								onClick={() => setCurrentView("date")}
 							/>
 							<FilterMenuItem
-								icon={<DollarSignIcon className="size-3" />}
+								icon={<CurrencyDollarIcon className="size-3" />}
 								label="Amount"
 								active={hasActiveFilter("amount")}
 								selected={currentView === "amount"}
@@ -237,7 +237,7 @@ export function ExpenseFilterDropdown() {
 								onClick={() => setCurrentView("wallet")}
 							/>
 							<FilterMenuItem
-								icon={<RefreshCwIcon className="size-3" />}
+								icon={<ArrowsClockwiseIcon className="size-3" />}
 								label="Repeat"
 								active={hasActiveFilter("repeat")}
 								selected={currentView === "repeat"}
@@ -374,7 +374,7 @@ function MainFilterView({
 		<div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
 			{activeFiltersCount === 0 ? (
 				<>
-					<FilterIcon className="text-muted-foreground mb-2 size-8" />
+					<FunnelIcon className="text-muted-foreground mb-2 size-8" />
 					<p className="text-muted-foreground text-sm">Select a filter from the menu</p>
 				</>
 			) : (

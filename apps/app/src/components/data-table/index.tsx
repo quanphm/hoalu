@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronRightIcon } from "@hoalu/icons/lucide";
+import { CaretDownIcon, CaretRightIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Table,
@@ -314,9 +314,9 @@ export function DataTable<T extends TableRowData>({
 													{flexRender(cell.column.columnDef.cell, cell.getContext())} (
 													{row.subRows.length})
 													{row.getIsExpanded() ? (
-														<ChevronDownIcon size={12} className="text-muted-foreground/80 ml-2" />
+														<CaretDownIcon size={12} className="text-muted-foreground/80 ml-2" />
 													) : (
-														<ChevronRightIcon size={12} className="text-muted-foreground/80 ml-2" />
+														<CaretRightIcon size={12} className="text-muted-foreground/80 ml-2" />
 													)}
 												</Button>
 											) : cell.getIsAggregated() ? (

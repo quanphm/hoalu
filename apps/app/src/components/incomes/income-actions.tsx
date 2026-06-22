@@ -1,4 +1,4 @@
-import { CopyPlusIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CopyIcon, TrashIcon } from "@hoalu/icons/phosphor";
 import { CashPlusIcon } from "@hoalu/icons/tabler";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
@@ -245,7 +245,7 @@ export function DeleteIncome({ id }: { id: string }) {
 					/>
 				}
 			>
-				<Trash2Icon className="size-4" />
+				<TrashIcon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Delete</TooltipContent>
 		</Tooltip>
@@ -305,7 +305,7 @@ export function DuplicateIncome(props: { data: SyncedIncome }) {
 					/>
 				}
 			>
-				<CopyPlusIcon className="size-4" />
+				<CopyIcon className="size-4" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>
 		</Tooltip>

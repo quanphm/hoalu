@@ -1,4 +1,4 @@
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -165,7 +165,7 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 						}
 					>
 						<span className="sr-only">Open menu</span>
-						<MoreVerticalIcon className="size-4" />
+						<DotsThreeVerticalIcon className="size-4" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						{props.is_active && (
@@ -224,7 +224,7 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 								setUnarchiveDialog({ state: true, data: { id: props.id } });
 							}}
 						>
-							<ArchiveRestoreIcon />
+							<BoxArrowUpIcon />
 						</Button>
 						<Button
 							size="icon-sm"
@@ -235,7 +235,7 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 								setDeleteDialog({ state: true, data: { id: props.id, title: props.title } });
 							}}
 						>
-							<Trash2Icon />
+							<TrashIcon />
 						</Button>
 					</div>
 				)} */}

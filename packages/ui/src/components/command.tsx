@@ -1,5 +1,5 @@
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog";
-import { SearchIcon } from "@hoalu/icons/lucide";
+import { MagnifyingGlassIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 import {
@@ -102,7 +102,7 @@ function CommandInput({
 				)}
 				placeholder={placeholder}
 				size="lg"
-				startAddon={<SearchIcon />}
+				startAddon={<MagnifyingGlassIcon />}
 				{...props}
 			/>
 		</div>

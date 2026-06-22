@@ -1,4 +1,4 @@
-import { AlertCircleIcon } from "@hoalu/icons/lucide";
+import { WarningCircleIcon } from "@hoalu/icons/phosphor";
 import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { DialogFooter } from "@hoalu/ui/dialog";
 import { cn } from "@hoalu/ui/utils";
@@ -43,7 +43,7 @@ export function QuickExpensesForm({ onSubmitted }: QuickExpensesFormProps) {
 			<form.Form>
 				{isFull && (
 					<Alert variant="error">
-						<AlertCircleIcon />
+						<WarningCircleIcon />
 						<AlertTitle>Queue is full</AlertTitle>
 						<AlertDescription>
 							Please wait for jobs to complete or remove some items.

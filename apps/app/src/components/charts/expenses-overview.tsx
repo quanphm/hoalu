@@ -1,5 +1,5 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { CheckIcon, Loader2Icon, ZapIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, CircleNotchIcon, LightningIcon } from "@hoalu/icons/phosphor";
 import { CameraIcon } from "@hoalu/icons/nucleo";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
@@ -452,7 +452,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									: "Full scale — click to restore smart scale"
 							}
 						>
-							<ZapIcon />
+							<LightningIcon />
 						</Button>
 					)}
 					{dateRange === "custom" && (
@@ -491,7 +491,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
 					>
 						{(status === "idle" || status === "error") && <CameraIcon />}
-						{status === "pending" && <Loader2Icon className="animate-spin" />}{" "}
+						{status === "pending" && <CircleNotchIcon className="animate-spin" />}{" "}
 						{status === "success" && <CheckIcon className="text-green-600" />}{" "}
 					</Button>
 				</CardAction>

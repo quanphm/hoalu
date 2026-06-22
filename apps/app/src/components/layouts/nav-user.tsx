@@ -1,10 +1,10 @@
 import {
 	CheckIcon,
-	KeyRoundIcon,
-	LogOutIcon,
-	MoreVerticalIcon,
+	KeyIcon,
+	SignOutIcon,
+	DotsThreeVerticalIcon,
 	PaletteIcon,
-} from "@hoalu/icons/lucide";
+} from "@hoalu/icons/phosphor";
 import { SettingsIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
@@ -58,7 +58,7 @@ export function NavUser() {
 							<span className="truncate font-semibold">{user.name}</span>
 							{/* <span className="truncate text-xs">{user.email}</span> */}
 						</div>
-						<MoreVerticalIcon className="ml-auto size-4" />
+						<DotsThreeVerticalIcon className="ml-auto size-4" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--anchor-width) min-w-52 rounded-lg"
@@ -126,7 +126,7 @@ export function NavUser() {
 									<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled} />
 								}
 							>
-								<KeyRoundIcon />
+								<KeyIcon />
 								Access tokens
 								<HotKey {...KEYBOARD_SHORTCUTS.goto_tokens} />
 							</DropdownMenuItem>
@@ -135,7 +135,7 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 
 						<DropdownMenuItem onClick={() => signOut()}>
-							<LogOutIcon />
+							<SignOutIcon />
 							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>

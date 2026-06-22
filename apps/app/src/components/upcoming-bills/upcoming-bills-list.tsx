@@ -1,5 +1,5 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { MoreVerticalIcon } from "@hoalu/icons/lucide";
+import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
 import { RepeatSchema } from "@hoalu/schema/schema";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
@@ -238,7 +238,7 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 					<DropdownMenuTrigger
 						render={<Button variant="ghost" size="icon-sm" className="hover:bg-transparent" />}
 					>
-						<MoreVerticalIcon />
+						<DotsThreeVerticalIcon />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem onClick={handleLogPayment}>Log payment</DropdownMenuItem>

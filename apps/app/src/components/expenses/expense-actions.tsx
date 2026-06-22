@@ -1,5 +1,5 @@
 import { datetime, toFromToDateObject, toLocalISOString } from "@hoalu/datetime/datetime";
-import { CopyPlusIcon, SearchIcon, Trash2Icon } from "@hoalu/icons/lucide";
+import { CopyIcon, MagnifyingGlassIcon, TrashIcon } from "@hoalu/icons/phosphor";
 import { CalendarIcon, CashBanknoteMoveIcon } from "@hoalu/icons/tabler";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -354,7 +354,7 @@ export function DeleteExpense({ id }: { id: string }) {
 					/>
 				}
 			>
-				<Trash2Icon />
+				<TrashIcon />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Delete</TooltipContent>
 		</Tooltip>
@@ -415,7 +415,7 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 					/>
 				}
 			>
-				<CopyPlusIcon />
+				<CopyIcon />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">Duplicate</TooltipContent>
 		</Tooltip>
@@ -666,7 +666,7 @@ export function ExpenseSearch() {
 				}}
 			/>
 			<div className="pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-				<SearchIcon className="text-muted-foreground size-3" aria-hidden="true" />
+				<MagnifyingGlassIcon className="text-muted-foreground size-3" aria-hidden="true" />
 			</div>
 		</div>
 	);

@@ -1,9 +1,9 @@
 import {
-	// ChevronFirstIcon,
-	// ChevronLastIcon,
-	ChevronLeft,
-	ChevronRight,
-} from "@hoalu/icons/lucide";
+	// CaretLineLeftIcon,
+	// CaretLineRightIcon,
+	CaretLeftIcon,
+	CaretRightIcon,
+} from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Label } from "@hoalu/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@hoalu/ui/pagination";
@@ -96,7 +96,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									disabled={!table.getCanPreviousPage()}
 									aria-label="Go to first page"
 								>
-									<ChevronFirstIcon size={16} strokeWidth={2} aria-hidden="true" />
+									<CaretLineLeftIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem> */}
 							<PaginationItem>
@@ -108,7 +108,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									disabled={!table.getCanPreviousPage()}
 									aria-label="Go to previous page"
 								>
-									<ChevronLeft size={16} strokeWidth={2} aria-hidden="true" />
+									<CaretLeftIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem>
 							<PaginationItem>
@@ -120,7 +120,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									disabled={!table.getCanNextPage()}
 									aria-label="Go to next page"
 								>
-									<ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
+									<CaretRightIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem>
 							{/* <PaginationItem>
@@ -132,7 +132,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									disabled={!table.getCanNextPage()}
 									aria-label="Go to last page"
 								>
-									<ChevronLastIcon size={16} strokeWidth={2} aria-hidden="true" />
+									<CaretLineRightIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem> */}
 						</PaginationContent>

@@ -1,4 +1,4 @@
-import { FileTextIcon, UploadIcon, XIcon, AlertCircleIcon } from "@hoalu/icons/lucide";
+import { FileTextIcon, UploadIcon, XIcon, WarningCircleIcon } from "@hoalu/icons/phosphor";
 import { Alert, AlertDescription, AlertTitle } from "@hoalu/ui/alert";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
@@ -195,7 +195,7 @@ export function ReceiptScanner() {
 		<div className="flex w-full flex-col gap-4">
 			{isQueueFull && (
 				<Alert variant="error">
-					<AlertCircleIcon />
+					<WarningCircleIcon />
 					<AlertTitle>Queue is full</AlertTitle>
 					<AlertDescription>
 						Please wait for jobs to complete or remove some items.

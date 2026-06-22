@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronsUpDownIcon, PaletteIcon, SearchIcon } from "@hoalu/icons/lucide";
+import { CheckIcon, CaretUpDownIcon, PaletteIcon, MagnifyingGlassIcon } from "@hoalu/icons/phosphor";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
@@ -66,7 +66,7 @@ function MobileHeader() {
 							</AvatarFallback>
 						</Avatar>
 						<span className="font-medium">{currentWorkspace.name}</span>
-						<ChevronsUpDownIcon className="text-muted-foreground h-3 w-3" aria-hidden="true" />
+						<CaretUpDownIcon className="text-muted-foreground h-3 w-3" aria-hidden="true" />
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ function MobileHeader() {
 						aria-label="Search"
 						onClick={() => commandPaletteOpen$.set(true)}
 					>
-						<SearchIcon />
+						<MagnifyingGlassIcon />
 					</Button>
 					<DropdownMenu>
 						<DropdownMenuTrigger

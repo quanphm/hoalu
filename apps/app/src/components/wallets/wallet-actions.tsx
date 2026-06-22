@@ -1,10 +1,10 @@
 import {
-	BitcoinIcon,
+	CurrencyBtcIcon,
 	WalletIcon as CashIcon,
 	CreditCardIcon,
-	LandmarkIcon,
-	MoreVerticalIcon,
-} from "@hoalu/icons/lucide";
+	BankIcon,
+	DotsThreeVerticalIcon,
+} from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -304,7 +304,7 @@ export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
 				<span className="sr-only">Open menu</span>
-				<MoreVerticalIcon className="size-4" />
+				<DotsThreeVerticalIcon className="size-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem onClick={() => setEditDialog({ state: true, data: { id } })}>
@@ -323,10 +323,10 @@ export function WalletDropdownMenuWithModal({ id }: { id: string }) {
 
 const icons: Record<WalletTypeSchema, any> = {
 	cash: CashIcon,
-	"bank-account": LandmarkIcon,
+	"bank-account": BankIcon,
 	"credit-card": CreditCardIcon,
 	"debit-card": CreditCardIcon,
-	"digital-account": BitcoinIcon,
+	"digital-account": CurrencyBtcIcon,
 };
 
 export interface WalletIconProps {
