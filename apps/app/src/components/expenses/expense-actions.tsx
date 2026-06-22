@@ -305,9 +305,7 @@ function CreateExpenseForm() {
 						</div>
 						<form.AppField
 							name="description"
-							children={(field) => (
-								<field.TiptapField label="Note" defaultValue={draft.description} />
-							)}
+							children={(field) => <field.TiptapField label="Note" />}
 						/>
 					</FieldGroup>
 					<FieldGroup className="col-span-12 flex flex-col gap-2.5 md:col-span-5">
@@ -576,9 +574,7 @@ export function EditExpenseForm(props: { data: SyncedExpense }) {
 					</div>
 					<form.AppField
 						name="description"
-						children={(field) => (
-							<field.TiptapField label="Note" defaultValue={props.data.description ?? ""} />
-						)}
+						children={(field) => <field.TiptapField label="Note" />}
 					/>
 				</FieldGroup>
 

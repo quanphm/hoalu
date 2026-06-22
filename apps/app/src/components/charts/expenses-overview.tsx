@@ -1,6 +1,6 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { CheckIcon, CircleNotchIcon, LightningIcon } from "@hoalu/icons/phosphor";
 import { CameraIcon } from "@hoalu/icons/nucleo";
+import { CheckIcon, CircleNotchIcon, LightningIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
@@ -689,7 +689,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 										fill={getCategoryColor(catId)}
 										className="cursor-pointer"
 										onClick={handleBarClick}
-										isAnimationActive={true}
+										isAnimationActive={false}
 										radius={
 											selectedCategoryIds.length >= 2
 												? catIdx === 0
@@ -710,7 +710,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 								fill={chartConfig.date.color}
 								className="cursor-pointer"
 								onClick={handleBarClick}
-								isAnimationActive={true}
+								isAnimationActive={false}
 								radius={[2, 2, 0, 0]}
 								shape={activeDomainCap ? (ClippedBarShape as any) : undefined}
 							/>

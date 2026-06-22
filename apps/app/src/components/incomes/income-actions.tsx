@@ -205,9 +205,7 @@ function CreateIncomeForm() {
 						</div>
 						<form.AppField
 							name="description"
-							children={(field) => (
-								<field.TiptapField label="Note" defaultValue={draft.description} />
-							)}
+							children={(field) => <field.TiptapField label="Note" />}
 						/>
 					</FieldGroup>
 					<FieldGroup className="col-span-12 flex flex-col gap-2.5 md:col-span-5">
@@ -408,9 +406,7 @@ export function EditIncomeForm({ data }: { data: SyncedIncome }) {
 
 					<form.AppField
 						name="description"
-						children={(field) => (
-							<field.TiptapField label="Note" defaultValue={data.description ?? ""} />
-						)}
+						children={(field) => <field.TiptapField label="Note" />}
 					/>
 				</FieldGroup>
 
