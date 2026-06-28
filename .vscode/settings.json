@@ -1,0 +1,39 @@
+{
+	"editor.tabSize": 2,
+	"editor.foldingStrategy": "indentation",
+	"editor.formatOnSave": true,
+	"editor.wordWrap": "on",
+	"editor.suggestSelection": "first",
+	"editor.defaultFormatter": "oxc.oxc-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.oxc": "explicit"
+	},
+	"editor.quickSuggestions": {
+		"strings": "on"
+	},
+	"[javascript][javascriptreact][typescript][typescriptreact][css][tailwindcss][json]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"js/ts.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
+	"js/ts.implementationsCodeLens.enabled": true,
+	"js/ts.referencesCodeLens.enabled": true,
+	"js/ts.suggest.autoImports": true,
+	"js/ts.tsdk.path": "node_modules/typescript/lib",
+	"js/ts.tsdk.promptToUseWorkspaceVersion": true,
+
+	"files.readonlyInclude": {
+		"**/routeTree.gen.ts": true
+	},
+
+	"files.watcherExclude": {
+		"**/routeTree.gen.ts": true
+	},
+
+	"search.exclude": {
+		"**/routeTree.gen.ts": true,
+		"**/.agents": true,
+		"**/node_modules": true,
+		"**/dist": true
+	}
+}
