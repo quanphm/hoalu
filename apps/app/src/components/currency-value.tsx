@@ -24,11 +24,7 @@ export function CurrencyValue({
 	const isRedacted = useValue(redactedAmount$);
 
 	if (isRedacted) {
-		return (
-			<Component className={cn(DEFAULT_CLASSNAME, "font-redacted-script", props.className)}>
-				{props.value}
-			</Component>
-		);
+		return <Component className={cn(DEFAULT_CLASSNAME, props.className)}>*****</Component>;
 	}
 
 	const formattedValue = formatCurrency(props.value, props.currency, { style });

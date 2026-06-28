@@ -586,9 +586,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 												fill="var(--foreground)"
 												fontSize={10}
 												fontWeight="bold"
-												className={cn("font-mono", isRedacted && "font-redacted-script")}
+												className="font-mono"
 											>
-												{text}
+												{isRedacted ? "*****" : text}
 											</text>
 										</g>
 									);
