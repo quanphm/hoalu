@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lesson 4 — Credit cards as debt</title>
+<link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<article class="lesson">
+
+<header class="lesson-header">
+	<p class="lesson-kicker">Lesson 4 · The balance-sheet half</p>
+	<h1>Credit cards are debt instruments, not wallets</h1>
+	<p class="lesson-meta">Continues <a href="0003-accounts-done-right.html">Lesson 3</a> · ~8 minutes · grounded in <a href="../reference/hoalu-financial-audit.html">Audit §2</a></p>
+</header>
+
+<p>A credit card is the one account Hoalu most badly misunderstands. Treated as a wallet, it looks
+like any other container of money. Treated correctly, it is a <strong>revolving loan</strong> with
+a cycle, a grace period, and a punishment for carrying a balance. Get this right and the whole
+"available credit vs balance owed" picture opens up.</p>
+
+<h2>The five numbers a credit card carries</h2>
+
+<div class="callout">
+	<p class="callout-title def">Definition</p>
+	<div class="def-row"><dt>Credit limit</dt><dd>The most the bank will let you owe at once. A stock — fixed by the bank.</dd></div>
+	<div class="def-row"><dt>Balance owed</dt><dd>What you currently owe. A stock that rises with each purchase and falls with each payment.</dd></div>
+	<div class="def-row"><dt>Available credit</dt><dd><strong>Limit − Balance owed.</strong> How much more you can spend right now.</dd></div>
+	<div class="def-row"><dt>Statement balance</dt><dd>What you owed on the statement closing date. Paying <em>this</em> in full avoids interest.</dd></div>
+	<div class="def-row"><dt>APR</dt><dd>Annual interest rate applied to any balance carried past the due date.</dd></div>
+</div>
+
+<h2>The cycle, and the one rule that makes credit free</h2>
+
+<p>Every card runs a monthly <strong>billing cycle</strong> with two dates that matter:</p>
+
+<table>
+	<thead><tr><th>Date</th><th>What happens</th></tr></thead>
+	<tbody>
+		<tr><td><strong>Statement closing date</strong></td><td>The bank totals your month's purchases → the <em>statement balance</em>.</td></tr>
+		<tr><td><strong>Payment due date</strong></td><td>~25 days later. Pay the <em>statement balance</em> in full by this date → <strong>no interest</strong>.</td></tr>
+	</tbody>
+</table>
+
+<p>The window between those two dates is the <strong>grace period</strong> — the bank's money you
+are using for free. The entire game of "using credit cards well" is: <em>spend on the card for
+rewards and fraud protection, then pay the statement balance in full by the due date, every
+month, forever.</em> Do that and the APR is irrelevant. Slip once and interest charges dating back
+to each purchase erase months of rewards.</p>
+
+<aside class="note">
+	<b>Transactor vs revolnver.</b> A <i>transactor</i> pays in full each month — pays no interest,
+	uses the bank's money free. A <i>revolver</i> carries a balance — pays interest at rates that
+	often exceed 20% APR. The app must show which mode the user is in, because a revolver's credit
+	card is a <strong>liability</strong> on the balance sheet; a transactor's, paid in full, is
+	essentially zero liability.
+</aside>
+
+<h2>Why "available credit" is the number you watch</h2>
+
+<p>For spending decisions, <strong>available credit</strong> (limit − owed) is the live constraint,
+not the limit. A card with a 50,000,000 ₫ limit and 42,000,000 ₫ owed has only 8,000,000 ₫ of
+headroom — and a 84% <em>utilisation</em> that will hurt the user's credit profile. Hoalu must
+show available credit and utilisation, not just "a wallet named Visa."</p>
+
+<div class="callout">
+	<p class="callout-title app">In Hoalu — the card is an empty label</p>
+	<p><code>wallet.type</code> can be <code>"credit-card"</code>, but the table has <strong>none of the
+	five numbers above</strong> — no limit, no balance owed, no statement date, no due date, no APR.
+	(<a href="../reference/hoalu-financial-audit.html">Audit §2</a>) So the app:</p>
+	<ul>
+		<li>Cannot tell you your available credit before a purchase.</li>
+		<li>Cannot warn you when utilisation is high.</li>
+		<li>Cannot show the card as a <strong>liability</strong> on the balance sheet (Lesson 2).</li>
+		<li>Cannot model the grace period or flag a balance being carried (the expensive case).</li>
+	</ul>
+	<p>A credit card in Hoalu today is a name with a currency and an emoji. Financially it carries no
+	information at all.</p>
+</div>
+
+<h2>The win</h2>
+
+<p>For each card you hold, write down today: limit, balance owed, available credit, statement
+date, due date, APR. Then mark whether you pay in full (transactor) or carry a balance (revolver).
+That single page is what Hoalu must eventually reproduce per card — and it is also the page that
+tells you, right now, whether your cards are free money or expensive debt.</p>
+
+<div class="quiz" data-quiz
+	data-msg-perfect="All correct — you can read a credit card as a debt instrument."
+	data-msg-retry="Re-read the five numbers and the grace period, then retry.">
+	<h3>Credit-card drill</h3>
+	<p class="quiz-score"></p>
+
+	<div class="quiz-item" data-answer="8000000" data-reason="Available credit = limit − balance owed = 50,000,000 − 42,000,000 = 8,000,000 ₫.">
+		<p class="quiz-prompt">Limit 50,000,000 ₫, balance owed 42,000,000 ₫. Available credit is:</p>
+		<div class="quiz-options">
+			<button data-choice="50000000">50,000,000 ₫</button>
+			<button data-choice="8000000">8,000,000 ₫</button>
+			<button data-choice="42000000">42,000,000 ₫</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="statement-balance" data-reason="Paying the statement balance in full by the due date is what triggers the grace period and avoids all interest.">
+		<p class="quiz-prompt">To pay no interest, you must pay ____ in full by the due date.</p>
+		<div class="quiz-options">
+			<button data-choice="minimum-payment">the minimum payment</button>
+			<button data-choice="statement-balance">the statement balance</button>
+			<button data-choice="credit-limit">the credit limit</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="liability" data-reason="A carried balance is money owed — a liability on the balance sheet, and an expensive one.">
+		<p class="quiz-prompt">A credit-card balance you carry past the due date is, on your balance sheet:</p>
+		<div class="quiz-options">
+			<button data-choice="asset">An asset</button>
+			<button data-choice="liability">A liability</button>
+			<button data-choice="neither">Neither — it's a flow</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="false" data-reason="Slip once (carry a balance) and interest is charged back to each purchase's date — erasing months of rewards. The grace period only holds if you pay in full every cycle.">
+		<p class="quiz-prompt">True or false: missing one full payment then resuming full payments costs nothing, because the grace period returns.</p>
+		<div class="quiz-options">
+			<button data-choice="true">True</button>
+			<button data-choice="false">False</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="transactor" data-reason="A transactor pays in full each month — the bank's money used free, no interest, the card is effectively zero liability.">
+		<p class="quiz-prompt">Someone who pays the statement balance in full every month is called a:</p>
+		<div class="quiz-options">
+			<button data-choice="revolver">revolver</button>
+			<button data-choice="transactor">transactor</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<p class="quiz-complete"></p>
+</div>
+
+<div class="callout">
+	<p class="callout-title source">Primary source to read next</p>
+	<p><strong><a href="https://www.khanacademy.org/college-careers-more/personal-finance">Khan Academy — Personal Finance, "Credit" unit.</a></strong>
+	The credit-card and APR lessons there walk through statement balances, grace periods, and the
+	math of revolving interest with worked examples. Use it to confirm the mechanics before you
+	spec the card model for Hoalu.</p>
+</div>
+
+<footer class="lesson-footer">
+	<div class="questions">
+		<b>Ask your teacher.</b> "Is a credit card ever worth keeping if I revolve a balance?"
+		"What utilisation is safe?" "Should Hoalu treat a paid-in-full card as zero liability or
+		show the statement balance anyway?" — ask.
+	</div>
+	<nav>
+		<span>← <a href="0003-accounts-done-right.html">Lesson 3: Accounts done right</a></span>
+		<span><a href="0005-cash-flow-and-savings-rate.html">Lesson 5: Cash flow &amp; the savings rate</a> →</span>
+	</nav>
+</footer>
+
+</article>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

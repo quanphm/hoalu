@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lesson 12 — Investing basics</title>
+<link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<article class="lesson">
+
+<header class="lesson-header">
+	<p class="lesson-kicker">Lesson 12 · The long game</p>
+	<h1>Investing basics: why cash loses, and how net worth grows</h1>
+	<p class="lesson-meta">Continues <a href="0011-debt-and-loans.html">Lesson 11</a> · ~9 minutes · grounded in <a href="../reference/hoalu-financial-audit.html">Audit, missing features</a></p>
+</header>
+
+<p>Saving preserves money. <em>Investing</em> grows it. The distinction is not optional: over
+decades, cash loses to inflation; invested capital compounds. This lesson is why the balance sheet
+(Lesson 2) needs an investment line — and why Hoalu, which has no investment entity, cannot show
+the engine that actually builds wealth.</p>
+
+<h2>The three forces</h2>
+
+<div class="callout">
+	<p class="callout-title def">Definition</p>
+	<div class="def-row"><dt>Inflation</dt><dd>The slow rise in prices that erodes the purchasing power of idle cash. A bank balance earning nothing loses real value every year.</dd></div>
+	<div class="def-row"><dt>Compounding</dt><dd>Returns earned on prior returns. The longer money is invested, the steeper the curve — most of the growth happens in the later years.</dd></div>
+	<div class="def-row"><dt>Risk premium</dt><dd>The extra return markets pay for taking on risk (stocks over bonds over cash). Higher expected return is the reward for accepting volatility.</dd></div>
+</div>
+
+<p>The household question is not <em>whether</em> to invest but <em>how much of the balance sheet</em>
+belongs in growth assets versus cash. Cash covers needs and near-term goals (Lessons 3, 10);
+investments cover the long game — money you will not touch for years.</p>
+
+<h2>The simplest portfolio most people need</h2>
+
+<aside class="note">
+	<b>Source.</b> J.L. Collins's <i>The Simple Path to Wealth</i> and the Bogleheads wiki both land
+	on the same answer for non-professionals: a small number of low-cost, broad-market <strong>index
+	funds</strong>, held for decades. No stock-picking, no market timing.
+</aside>
+
+<p>A <strong>broad-market index fund</strong> holds a tiny slice of every company in a market, so
+you own the whole market's average return at near-zero cost. The classic
+<strong>three-fund portfolio</strong> is: a domestic stock index, an international stock index, and
+a bond index. The split between stocks and bonds sets your risk: more stocks = more growth and more
+volatility; more bonds = calmer but slower. Age and time horizon decide the mix.</p>
+
+<table>
+	<thead><tr><th></th><th>Cash / savings</th><th>Bonds</th><th>Stocks (index)</th></tr></thead>
+	<tbody>
+		<tr><td><strong>Return</strong></td><td>Lowest</td><td>Low</td><td>Highest (long-run)</td></tr>
+		<tr><td><strong>Risk</strong></td><td>Lowest</td><td>Low</td><td>Highest (short-run)</td></tr>
+		<tr><td><strong>Time horizon</strong></td><td>0–1 yr</td><td>1–5 yr</td><td>5–10+ yr</td></tr>
+		<tr><td><strong>Job</strong></td><td>Reserve + sinking</td><td>Steady</td><td>Growth</td></tr>
+	</tbody>
+</table>
+
+<h2>The one graph that changes behaviour</h2>
+
+<p>Compounding is a curve, not a line. Invest 1,000,000 ₫/month at a 7% real return:</p>
+<ul>
+	<li>After 10 years: ~170,000,000 ₫ (you put in 120,000,000)</li>
+	<li>After 20 years: ~520,000,000 ₫ (you put in 240,000,000)</li>
+	<li>After 30 years: ~1,200,000,000 ₫ (you put in 360,000,000)</li>
+</ul>
+<p>The contributions tripled; the result grew sevenfold from year 10 to year 30. The <em>last</em>
+years did most of the work. The lesson: <strong>start now, not later</strong> — a decade of delay
+costs more than it seems, because the missed years are the ones that would have compounded
+hardest.</p>
+
+<div class="callout">
+	<p class="callout-title app">In Hoalu — the growth engine is absent</p>
+	<ul>
+		<li>There is <strong>no investment account entity, no holdings, no tickers, no portfolio valuation</strong>. "Investments" is only an income-category name. (<a href="../reference/hoalu-financial-audit.html">Audit, missing features</a>)</li>
+		<li>The balance sheet (Lesson 2) therefore cannot show the line that actually grows net worth over decades — only static cash and depreciating assets.</li>
+		<li>Without an investment line, the app cannot chart <strong>net-worth-over-time</strong> in a way that means anything, because the curve that should dominate the chart is missing.</li>
+	</ul>
+	<p>The smallest useful version: an investment account with manual holdings and a current value
+	(market value as a stock), feeding net worth. Automatic price feeds and rebalancing come later —
+	the user first needs the line to exist at all.</p>
+</div>
+
+<h2>The win</h2>
+
+<p>If you have no investments: open a brokerage, buy one broad-market index fund, set a small
+monthly auto-invest. The amount matters less than <em>starting</em> — the curve in this lesson
+rewards time above all. If you already invest: list your holdings and their rough allocation
+(stocks vs bonds vs cash). That allocation is your real risk dial; the app should eventually hold
+it.</p>
+
+<div class="quiz" data-quiz
+	data-msg-perfect="All correct — you know why cash loses and capital grows."
+	data-msg-retry="Re-read inflation, compounding, and the three-fund idea, then retry.">
+	<h3>Investing drill</h3>
+	<p class="quiz-score"></p>
+
+	<div class="quiz-item" data-answer="inflation" data-reason="Inflation erodes the purchasing power of idle cash — a bank balance earning nothing loses real value every year.">
+		<p class="quiz-prompt">What silently erodes the real value of idle cash?</p>
+		<div class="quiz-options">
+			<button data-choice="inflation">inflation</button>
+			<button data-choice="taxes">taxes</button>
+			<button data-choice="fees">fees</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="compounding" data-reason="Compounding — returns on prior returns — makes the curve steepen. Most growth happens in the later years.">
+		<p class="quiz-prompt">What makes an investment curve steepen over decades?</p>
+		<div class="quiz-options">
+			<button data-choice="luck">luck</button>
+			<button data-choice="compounding">compounding</button>
+			<button data-choice="leverage">leverage</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="index-fund" data-reason="A broad-market index fund holds a slice of every company in a market, capturing the market's average return at near-zero cost — no stock-picking.">
+		<p class="quiz-prompt">The simplest long-run holding for most non-professionals is a low-cost:</p>
+		<div class="quiz-options">
+			<button data-choice="index-fund">broad-market index fund</button>
+			<button data-choice="single-stock">single stock</button>
+			<button data-choice="savings-account">savings account</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="time" data-reason="The curve rewards time above all — the last years do most of the work, so a decade of delay costs more than it seems.">
+		<p class="quiz-prompt">What matters most for compounding — amount or time?</p>
+		<div class="quiz-options">
+			<button data-choice="amount">the amount</button>
+			<button data-choice="time">the time</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="absent" data-reason="Hoalu has no investment account, no holdings, no valuation — the growth line of the balance sheet is missing entirely. (Audit, missing features)">
+		<p class="quiz-prompt">In Hoalu today, the investment line of the balance sheet is:</p>
+		<div class="quiz-options">
+			<button data-choice="present">present and tracked</button>
+			<button data-choice="absent">absent entirely</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<p class="quiz-complete"></p>
+</div>
+
+<div class="callout">
+	<p class="callout-title source">Primary source to read next</p>
+	<p><strong><a href="https://www.jlcollinsnh.com/">The Simple Path to Wealth</a> — J.L. Collins.</strong>
+	The clearest case for broad-market index investing, the behaviour that makes it work (do
+	nothing, through crashes), and the maths of the 4% withdrawal that Lesson 13 builds on. The book
+	the whole "long game" half of this course leans on.</p>
+</div>
+
+<footer class="lesson-footer">
+	<div class="questions">
+		<b>Ask your teacher.</b> "How do I pick a stock/bond split for my age?" "What do I do when the
+		market crashes?" "Are Vietnam-specific index funds right for me?" — ask. (Jurisdiction
+		answers depend on your country — confirm it first.)
+	</div>
+	<nav>
+		<span>← <a href="0011-debt-and-loans.html">Lesson 11: Debt &amp; loans</a></span>
+		<span><a href="0013-financial-independence.html">Lesson 13: Financial independence</a> →</span>
+	</nav>
+</footer>
+
+</article>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

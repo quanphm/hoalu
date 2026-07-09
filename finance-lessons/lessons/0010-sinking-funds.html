@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lesson 10 — Sinking funds</title>
+<link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<article class="lesson">
+
+<header class="lesson-header">
+	<p class="lesson-kicker">Lesson 10 · Planning</p>
+	<h1>Savings goals &amp; sinking funds: give the future a place to live</h1>
+	<p class="lesson-meta">Continues <a href="0009-multi-currency.html">Lesson 9</a> · ~8 minutes · grounded in <a href="../reference/hoalu-financial-audit.html">Audit, missing features</a></p>
+</header>
+
+<p>Some expenses are large, known, and months away — annual insurance, a tax bill, a trip home, a
+new phone. The mistake is to treat them as <em>surprises</em> when they arrive. A <strong>sinking
+fund</strong> turns a future lump into many small present contributions. It is budgeting across
+time, not just across categories.</p>
+
+<div class="callout">
+	<p class="callout-title def">Definition</p>
+	<div class="def-row"><dt>Sinking fund</dt><dd>Money set aside gradually for a <strong>known future expense</strong> of a known amount and date. Each month you sink a little in, so the lump never hits cash flow all at once.</dd></div>
+	<div class="def-row"><dt>Monthly contribution</dt><dd><strong>Target amount ÷ months remaining</strong>. The amount to save each month so the fund hits its target by the due date.</dd></div>
+	<div class="def-row"><dt>Envelope</dt><dd>An allocation of money to a purpose <em>within</em> a single savings account — the fund exists as a labelled slice, not a separate bank account.</dd></div>
+</div>
+
+<h2>The arithmetic</h2>
+
+<p style="text-align:center;font-family:var(--sans);font-size:1rem"><strong>monthly contribution = target amount ÷ months remaining</strong></p>
+
+<p>Annual insurance of 12,000,000 ₫ due in 12 months → 1,000,000 ₫/month. A trip of 30,000,000 ₫
+in 10 months → 3,000,000 ₫/month. The lumpy future becomes a smooth, budgetable present line —
+exactly like a recurring bill, but where you pay <em>yourself</em> first.</p>
+
+<aside class="note">
+	<b>The reconciliation test.</b> A sinking fund changes <em>where</em> money is allocated, not
+	<em>whether</em> you have it. Moving cash into the fund is a <strong>transfer</strong>
+	(Lesson 6), not an expense — your net worth is unchanged. The expense is recorded later, when
+	the purchase happens, paid <i>from</i> the fund.
+</aside>
+
+<h2>Why this is different from "saving"</h2>
+
+<p>Generic savings protects against the unknown. A sinking fund is the opposite — it is for a
+<em>specific</em> future expense you can name and date. The household difference is huge: without
+sinking funds, known future lumps masquerade as emergencies when they arrive, and the emergency
+fund gets drained by things that were never emergencies. With sinking funds, the emergency fund
+stays reserved for the genuinely unexpected.</p>
+
+<table>
+	<thead><tr><th></th><th>Emergency fund</th><th>Sinking fund</th></tr></thead>
+	<tbody>
+		<tr><td><strong>Purpose</strong></td><td>Unknown bad event</td><td>Known future expense</td></tr>
+		<tr><td><strong>Amount</strong></td><td>3–6 months of expenses</td><td>Exact target</td></tr>
+		<tr><td><strong>Timing</strong></td><td>Indefinite</td><td>Known due date</td></tr>
+		<tr><td><strong>Withdrawal</strong></td><td>When disaster strikes</td><td>On the planned date</td></tr>
+	</tbody>
+</table>
+
+<div class="callout">
+	<p class="callout-title app">In Hoalu — the future has no address</p>
+	<ul>
+		<li>There is <strong>no goal or allocation entity</strong> — money in a savings account is an undifferentiated balance, with no label saying "this 6,000,000 is for insurance." (<a href="../reference/hoalu-financial-audit.html">Audit, missing features</a>)</li>
+		<li>Without allocations, the app cannot compute "monthly contribution to keep on track," cannot warn when a fund is behind, and cannot show a due-date countdown.</li>
+		<li>This compounds with the missing <strong>transfer</strong> (Lesson 6) and missing <strong>per-category budget</strong> (Lesson 7): sinking funds need both to exist as a first-class concept.</li>
+	</ul>
+	<p>The smallest useful version: a <code>goal</code> with target amount, target date, linked
+	wallet, and a rollup of allocated transfers — then a card per goal showing "on track / behind by
+	X months." That is the feature that turns a savings account from a pile into a plan.</p>
+</div>
+
+<h2>The win</h2>
+
+<p>List every known future expense in the next 12 months — insurance, tax, travel, a replacement
+phone, school fees. For each, write the amount and the month it's due. Divide amount by months
+remaining. The list of monthly contributions is a new set of "bills you owe yourself" — and it
+almost always reveals you are under-saving for something specific.</p>
+
+<div class="quiz" data-quiz
+	data-msg-perfect="All correct — you can plan a sinking fund."
+	data-msg-retry="Re-read the contribution formula and the emergency-vs-sinking split, then retry.">
+	<h3>Sinking-fund drill</h3>
+	<p class="quiz-score"></p>
+
+	<div class="quiz-item" data-answer="1000000" data-reason="12,000,000 ÷ 12 = 1,000,000 ₫/month. Target ÷ months remaining.">
+		<p class="quiz-prompt">Insurance of 12,000,000 ₫ due in 12 months. Monthly contribution:</p>
+		<div class="quiz-options">
+			<button data-choice="12000000">12,000,000 ₫</button>
+			<button data-choice="1000000">1,000,000 ₫</button>
+			<button data-choice="6000000">6,000,000 ₫</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="3000000" data-reason="30,000,000 ÷ 10 = 3,000,000 ₫/month.">
+		<p class="quiz-prompt">A trip of 30,000,000 ₫ in 10 months. Monthly contribution:</p>
+		<div class="quiz-options">
+			<button data-choice="3000000">3,000,000 ₫</button>
+			<button data-choice="30000000">30,000,000 ₫</button>
+			<button data-choice="1000000">1,000,000 ₫</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="transfer" data-reason="Moving cash into the fund changes where money is allocated, not whether you have it — net worth unchanged. It is a transfer (Lesson 6), not an expense.">
+		<p class="quiz-prompt">Putting money into a sinking fund is, on the cash-flow statement:</p>
+		<div class="quiz-options">
+			<button data-choice="expense">an expense</button>
+			<button data-choice="income">income</button>
+			<button data-choice="transfer">a transfer (no effect)</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="sinking" data-reason="A sinking fund is for a known future expense of known amount and date — the opposite of the emergency fund, which is for unknown events.">
+		<p class="quiz-prompt">Money set aside for annual insurance is a ____ fund.</p>
+		<div class="quiz-options">
+			<button data-choice="emergency">emergency</button>
+			<button data-choice="sinking">sinking</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="emergency" data-reason="The emergency fund should stay reserved for the genuinely unexpected; without sinking funds, known lumps drain it and real emergencies go uncovered.">
+		<p class="quiz-prompt">Without sinking funds, known future lumps drain the ____ fund by mistake.</p>
+		<div class="quiz-options">
+			<button data-choice="emergency">emergency</button>
+			<button data-choice="sinking">sinking</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<p class="quiz-complete"></p>
+</div>
+
+<div class="callout">
+	<p class="callout-title source">Primary source to read next</p>
+	<p><strong><a href="https://www.youneedabudget.com/method/">The YNAB Method — Rule 2: "Embrace your true expenses."</a></strong>
+	YNAB's second rule is sinking funds under another name: take large, less-frequent expenses and
+	treat them as monthly. The clearest practical framing of this lesson's idea.</p>
+</div>
+
+<footer class="lesson-footer">
+	<div class="questions">
+		<b>Ask your teacher.</b> "Should each sinking fund be a separate account or one account with
+		labels?" "What if the due date passes and the fund is short?" "Do I earn interest on sinking
+		funds?" — ask.
+	</div>
+	<nav>
+		<span>← <a href="0009-multi-currency.html">Lesson 9: Multi-currency</a></span>
+		<span><a href="0011-debt-and-loans.html">Lesson 11: Debt &amp; loans</a> →</span>
+	</nav>
+</footer>
+
+</article>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

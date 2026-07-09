@@ -1,0 +1,313 @@
+/* Hoalu Money-Management Lessons — shared stylesheet
+   Design goal: Tufte-like, print-friendly, readable, one consistent course. */
+
+:root {
+	--ink: #1a1a1a;
+	--ink-soft: #444;
+	--ink-faint: #777;
+	--rule: #d8d4cc;
+	--rule-soft: #ece8df;
+	--paper: #fbfaf7;
+	--paper-warm: #f4f1ea;
+	--accent: #7a4a2d;        /* warm sienna for headings & links */
+	--accent-soft: #b07a52;
+	--stock: #2d5a7a;         /* blue — "stock" / point-in-time */
+	--flow: #7a4a2d;          /* sienna — "flow" / period */
+	--good: #2f6b3e;
+	--bad: #9a3b2c;
+	--warn: #8a6d1f;
+	--serif: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+	--sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	--measure: 66ch;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 18px; -webkit-text-size-adjust: 100%; }
+
+body {
+	margin: 0;
+	font-family: var(--serif);
+	color: var(--ink);
+	background: var(--paper);
+	line-height: 1.6;
+	font-feature-settings: "kern", "liga", "onum";
+}
+
+/* Layout ----------------------------------------------------------------- */
+
+.lesson {
+	max-width: var(--measure);
+	margin: 0 auto;
+	padding: 4rem 1.25rem 6rem;
+}
+
+.lesson > * { max-width: var(--measure); }
+
+/* Wide elements (tables, figures): wider than the text measure but
+   centered and capped to the viewport. Qualified with .lesson so they
+   beat the `.lesson > *` measure cap, and centered with auto margins
+   (no negative-margin full-bleed → no scrollbar asymmetry, no drift). */
+.lesson .wide, .lesson figure, .lesson table {
+	margin-inline: auto;
+	max-width: min(100vw - 1rem, 52rem);
+	width: 100%;
+}
+@media (max-width: 880px) {
+	.lesson .wide, .lesson figure, .lesson table {
+		max-width: 100%;
+	}
+}
+
+/* Header ----------------------------------------------------------------- */
+
+.lesson-header {
+	border-bottom: 1px solid var(--rule);
+	padding-bottom: 1.5rem;
+	margin-bottom: 2.5rem;
+}
+.lesson-kicker {
+	font-family: var(--sans);
+	font-size: 0.72rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--accent);
+	font-weight: 600;
+	margin: 0 0 0.5rem;
+}
+.lesson-header h1 {
+	font-family: var(--serif);
+	font-size: 2.1rem;
+	line-height: 1.15;
+	font-weight: 600;
+	margin: 0 0 0.6rem;
+	letter-spacing: -0.01em;
+}
+.lesson-meta {
+	font-family: var(--sans);
+	font-size: 0.8rem;
+	color: var(--ink-faint);
+	margin: 0;
+}
+
+/* Prose ------------------------------------------------------------------ */
+
+p { margin: 0 0 1.1rem; hyphens: auto; }
+h2 {
+	font-family: var(--serif);
+	font-size: 1.35rem;
+	font-weight: 600;
+	margin: 2.2rem 0 0.8rem;
+	line-height: 1.25;
+	letter-spacing: -0.005em;
+}
+h3 {
+	font-family: var(--sans);
+	font-size: 0.82rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+	font-weight: 600;
+	margin: 1.8rem 0 0.5rem;
+}
+em { font-style: italic; }
+strong { font-weight: 600; }
+a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--ink); }
+
+ul, ol { margin: 0 0 1.1rem; padding-left: 1.4rem; }
+li { margin-bottom: 0.3rem; }
+li::marker { color: var(--accent-soft); }
+
+/* Marginal note (Tufte-style) ------------------------------------------- */
+
+aside.note {
+	float: right;
+	clear: right;
+	width: 42%;
+	margin: 0.2rem -2rem 1rem 1.5rem;
+	font-family: var(--sans);
+	font-size: 0.78rem;
+	line-height: 1.5;
+	color: var(--ink-soft);
+	border-left: 2px solid var(--accent-soft);
+	padding-left: 0.9rem;
+}
+aside.note b { color: var(--accent); }
+@media (max-width: 900px) {
+	aside.note { float: none; width: auto; margin: 1rem 0; }
+}
+
+/* Callout boxes ---------------------------------------------------------- */
+
+.callout {
+	border: 1px solid var(--rule);
+	background: var(--paper-warm);
+	border-radius: 4px;
+	padding: 1rem 1.25rem;
+	margin: 1.5rem 0;
+	font-size: 0.95rem;
+}
+.callout-title {
+	font-family: var(--sans);
+	font-size: 0.72rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 0 0 0.5rem;
+}
+.callout-title.app { color: var(--accent); }
+.callout-title.def { color: var(--stock); }
+.callout-title.warn { color: var(--warn); }
+.callout-title.source { color: var(--good); }
+
+/* Key-value definition rows */
+.def-row { display: grid; grid-template-columns: 9rem 1fr; gap: 0.5rem 1rem; margin: 0.5rem 0; }
+.def-row dt { font-family: var(--sans); font-size: 0.78rem; color: var(--ink-faint); font-weight: 600; }
+.def-row dd { margin: 0; }
+
+/* Quiz ------------------------------------------------------------------- */
+
+.quiz {
+	border: 1px solid var(--rule);
+	border-radius: 5px;
+	padding: 1.5rem 1.5rem 1.25rem;
+	margin: 2rem 0;
+	background: var(--paper);
+}
+.quiz > h3 { margin-top: 0; }
+.quiz-score {
+	font-family: var(--sans);
+	font-size: 0.8rem;
+	color: var(--ink-faint);
+	margin: 0 0 1rem;
+}
+.quiz-item {
+	padding: 0.9rem 0;
+	border-top: 1px solid var(--rule-soft);
+}
+.quiz-item:first-of-type { border-top: none; }
+.quiz-prompt { margin: 0 0 0.6rem; font-size: 1.02rem; }
+.quiz-options { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.quiz-options button {
+	font-family: var(--sans);
+	font-size: 0.82rem;
+	font-weight: 600;
+	padding: 0.45rem 1rem;
+	border: 1px solid var(--rule);
+	background: var(--paper);
+	color: var(--ink-soft);
+	border-radius: 4px;
+	cursor: pointer;
+	letter-spacing: 0.02em;
+	transition: all 0.12s;
+}
+.quiz-options button:hover:not(:disabled) { border-color: var(--accent-soft); color: var(--ink); }
+.quiz-options button:disabled { cursor: default; opacity: 0.55; }
+.quiz-options button.correct {
+	background: var(--good); color: #fff; border-color: var(--good); opacity: 1;
+}
+.quiz-options button.wrong {
+	background: var(--bad); color: #fff; border-color: var(--bad); opacity: 1;
+}
+.quiz-feedback {
+	font-family: var(--sans);
+	font-size: 0.8rem;
+	margin: 0.55rem 0 0;
+	min-height: 1.1em;
+	color: var(--ink-soft);
+}
+.quiz-feedback.correct { color: var(--good); }
+.quiz-feedback.wrong { color: var(--bad); }
+.quiz-complete {
+	font-family: var(--sans);
+	font-size: 0.85rem;
+	font-weight: 600;
+	margin: 0.75rem 0 0;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--rule);
+	color: var(--accent);
+}
+
+/* Table ------------------------------------------------------------------ */
+
+table {
+	border-collapse: collapse;
+	font-family: var(--sans);
+	font-size: 0.82rem;
+	width: 100%;
+}
+th, td {
+	text-align: left;
+	padding: 0.55rem 0.8rem;
+	border-bottom: 1px solid var(--rule);
+	vertical-align: top;
+}
+th { font-weight: 600; color: var(--ink-soft); border-bottom: 2px solid var(--rule); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* Figure ----------------------------------------------------------------- */
+
+figure { padding: 0; }
+figcaption {
+	font-family: var(--sans);
+	font-size: 0.78rem;
+	color: var(--ink-faint);
+	padding: 0.5rem 1.25rem 0;
+	text-align: center;
+	margin: 0;
+}
+
+/* Diagram (inline SVG / styled boxes) ----------------------------------- */
+
+.diagram {
+	font-family: var(--sans);
+	font-size: 0.82rem;
+}
+.diagram-box {
+	border: 1.5px solid var(--ink);
+	border-radius: 5px;
+	padding: 0.7rem 0.9rem;
+	display: inline-block;
+	text-align: center;
+	background: var(--paper);
+}
+.diagram-box.stock { border-color: var(--stock); color: var(--stock); }
+.diagram-box.flow { border-color: var(--flow); color: var(--flow); }
+.diagram-arrow { color: var(--ink-faint); font-size: 1.1rem; }
+
+/* Footer ----------------------------------------------------------------- */
+
+.lesson-footer {
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--rule);
+	font-family: var(--sans);
+	font-size: 0.82rem;
+	color: var(--ink-soft);
+}
+.lesson-footer .questions {
+	background: var(--paper-warm);
+	border-left: 3px solid var(--accent);
+	padding: 0.9rem 1.1rem;
+	margin: 0 0 1.5rem;
+	border-radius: 0 4px 4px 0;
+}
+.lesson-footer .questions b { color: var(--accent); }
+.lesson-footer nav { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.lesson-footer nav a { font-family: var(--sans); }
+
+hr.section { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+/* Print ------------------------------------------------------------------ */
+
+@media print {
+	body { background: #fff; font-size: 11pt; }
+	.lesson { max-width: none; padding: 0; }
+	.wide, figure, table { margin: 0; max-width: none; }
+	aside.note { float: none; width: auto; margin: 0.5rem 0; border-left-width: 2px; }
+	.quiz-options button { border: 1px solid #999; color: #333; }
+	a { color: #333; text-decoration: underline; }
+	.lesson-footer nav { display: none; }
+}

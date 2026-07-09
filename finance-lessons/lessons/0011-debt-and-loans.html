@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lesson 11 — Debt & loans</title>
+<link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<article class="lesson">
+
+<header class="lesson-header">
+	<p class="lesson-kicker">Lesson 11 · The balance-sheet half</p>
+	<h1>Debt &amp; loans: amortization, and avalanche vs. snowball</h1>
+	<p class="lesson-meta">Continues <a href="0010-sinking-funds.html">Lesson 10</a> · ~9 minutes · grounded in <a href="../reference/hoalu-financial-audit.html">Audit, missing features</a></p>
+</header>
+
+<p>Lesson 4 covered the worst debt — revolving credit cards. This lesson covers the rest: loans
+with a principal, an interest rate, and a term. Hoalu has no entity for any of them. Understanding
+amortization and the two payoff strategies is what turns a scary balance into a plan.</p>
+
+<h2>The anatomy of a loan</h2>
+
+<div class="callout">
+	<p class="callout-title def">Definition</p>
+	<div class="def-row"><dt>Principal</dt><dd>The amount you still owe — the part of the balance that is yours to pay down. A stock.</dd></div>
+	<div class="def-row"><dt>Interest</dt><dd>The cost of borrowing — a flow the lender charges each period on the outstanding principal.</dd></div>
+	<div class="def-row"><dt>Term</dt><dd>The number of payments scheduled to clear the loan.</dd></div>
+	<div class="def-row"><dt>Amortization</dt><dd>The schedule that splits each fixed payment into <strong>interest</strong> (on the remaining principal) and <strong>principal reduction</strong>. Early payments are mostly interest; late payments are mostly principal.</dd></div>
+</div>
+
+<aside class="note">
+	<b>The front-loaded trap.</b> Because interest is charged on the <i>outstanding</i> principal,
+	early payments are almost all interest — you barely dent the principal for years. This is why a
+	30-year mortgage feels stuck for the first decade. Extra payments against principal, early,
+	shorten the loan far more than the same money applied years later.
+</aside>
+
+<h2>The minimum payment is a trap</h2>
+
+<p>Every loan quotes a <strong>minimum payment</strong>. It is sized to stretch the loan across
+the full term — maximising the interest you pay. Paying only the minimum on a credit card is the
+single most expensive habit a household can have: a 20,000,000 ₫ balance at 25% APR, paying the
+~2% minimum, takes <em>decades</em> and costs more in interest than the original purchase. The
+rule: <strong>always pay more than the minimum, against the highest-APR debt first</strong>.</p>
+
+<h2>Two strategies for multiple debts</h2>
+
+<table>
+	<thead><tr><th></th><th>Avalanche</th><th>Snowball</th></tr></thead>
+	<tbody>
+		<tr><td><strong>Order</strong></td><td>Highest <em>APR</em> first</td><td>Smallest <em>balance</em> first</td></tr>
+		<tr><td><strong>Cost</strong></td><td>Mathematically least interest</td><td>Slightly more interest</td></tr>
+		<tr><td><strong>Motivation</strong></td><td>Slower visible wins</td><td>Fast wins as balances hit zero</td></tr>
+		<tr><td><strong>Best for</strong></td><td>Disciplined, pure-maths types</td><td>People who need momentum</td></tr>
+	</tbody>
+</table>
+
+<p>Both work the same way: pay minimums on every debt, then throw <em>all</em> spare cash at the
+target debt until it is gone, then roll that freed-up amount onto the next target. Avalanche is
+cheapest; snowball is most motivating. The best strategy is <em>the one you will actually stick
+to</em> — a plan you abandon saves nothing.</p>
+
+<div class="callout">
+	<p class="callout-title app">In Hoalu — debt is invisible</p>
+	<ul>
+		<li>There is <strong>no loan entity</strong> — no principal, no APR, no term, no amortization schedule, no monthly payment field. (<a href="../reference/hoalu-financial-audit.html">Audit, missing features</a>)</li>
+		<li>A mortgage, a car loan, a student loan — none can be represented. They appear, at best, as expenses (the monthly payment) with no link to the underlying debt.</li>
+		<li>No <strong>payoff planner</strong> — the app cannot show "avalanche vs. snowball, total interest difference, debt-free date." That single view is what makes a debt plan real.</li>
+		<li>The credit card (Lesson 4) is the most expensive debt most households carry, and it cannot be modelled as debt either.</li>
+	</ul>
+	<p>Debt is the heaviest item on most households' balance sheets. An app that cannot show it
+	cannot help manage it.</p>
+</div>
+
+<h2>The win</h2>
+
+<p>List every debt you owe: balance, APR, minimum payment, term. Sort by APR (avalanche). Note
+how much spare cash you can put above the minimums each month. That spare cash, aimed at the top
+of the list until it is gone, then rolled onto the next — is a complete debt-elimination plan you
+can hold in one paragraph.</p>
+
+<div class="quiz" data-quiz
+	data-msg-perfect="All correct — you can read a loan and choose a strategy."
+	data-msg-retry="Re-read amortization and the two strategies, then retry.">
+	<h3>Debt drill</h3>
+	<p class="quiz-score"></p>
+
+	<div class="quiz-item" data-answer="interest" data-reason="Early payments are mostly interest because interest is charged on the still-large outstanding principal. Principal reduction comes later.">
+		<p class="quiz-prompt">In an amortization schedule, early payments are mostly:</p>
+		<div class="quiz-options">
+			<button data-choice="principal">principal</button>
+			<button data-choice="interest">interest</button>
+			<button data-choice="fees">fees</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="avalanche" data-reason="Avalanche targets highest APR first — mathematically the least total interest.">
+		<p class="quiz-prompt">Which strategy costs the least total interest?</p>
+		<div class="quiz-options">
+			<button data-choice="snowball">Snowball</button>
+			<button data-choice="avalanche">Avalanche</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="snowball" data-reason="Snowball targets smallest balance first — balances hit zero fast, building momentum. Slightly more interest but more motivating.">
+		<p class="quiz-prompt">Which strategy gives the fastest visible wins (balances hitting zero)?</p>
+		<div class="quiz-options">
+			<button data-choice="snowball">Snowball</button>
+			<button data-choice="avalanche">Avalanche</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="highest-apr" data-reason="Both strategies pay minimums on all debts, then put all spare cash at the target. Avalanche's target is the highest-APR debt.">
+		<p class="quiz-prompt">Under avalanche, you put all spare cash against the ____ debt.</p>
+		<div class="quiz-options">
+			<button data-choice="highest-apr">highest-APR</button>
+			<button data-choice="smallest-balance">smallest-balance</button>
+			<button data-choice="oldest">oldest</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<div class="quiz-item" data-answer="decades" data-reason="Paying only the ~2% minimum on a credit-card balance takes decades and costs more in interest than the original purchase — the most expensive habit a household can have.">
+		<p class="quiz-prompt">Paying only the minimum on a credit card takes:</p>
+		<div class="quiz-options">
+			<button data-choice="months">a few months</button>
+			<button data-choice="decades">decades</button>
+			<button data-choice="one-year">about one year</button>
+		</div>
+		<p class="quiz-feedback"></p>
+	</div>
+
+	<p class="quiz-complete"></p>
+</div>
+
+<div class="callout">
+	<p class="callout-title source">Primary source to read next</p>
+	<p><strong><a href="https://www.khanacademy.org/college-careers-more/personal-finance">Khan Academy — Personal Finance, "Credit &amp; Debt" units.</a></strong>
+	Worked amortization examples and the math of compound interest on debt — the clearest free
+	resource for the mechanics behind this lesson. Use it to confirm the avalanche numbers before
+	spec'ing a payoff planner.</p>
+</div>
+
+<footer class="lesson-footer">
+	<div class="questions">
+		<b>Ask your teacher.</b> "Is a mortgage 'good debt' worth keeping for the tax deduction?"
+		"When does investing beat paying down a low-APR loan?" "Should I refinance before avalanching?"
+		— ask.
+	</div>
+	<nav>
+		<span>← <a href="0010-sinking-funds.html">Lesson 10: Sinking funds</a></span>
+		<span><a href="0012-investing-basics.html">Lesson 12: Investing basics</a> →</span>
+	</nav>
+</footer>
+
+</article>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>
