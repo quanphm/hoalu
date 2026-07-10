@@ -64,7 +64,7 @@
 		"@hoalu/tsconfig": "workspace:*",
 		"@tailwindcss/vite": "^4.3.1",
 		"@tanstack/router-plugin": "^1.168.18",
-		"@types/node": "^25.9.4",
+		"@types/node": "^25.9.5",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vitejs/plugin-react": "^6.0.2",
