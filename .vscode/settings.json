@@ -19,8 +19,9 @@
 	"js/ts.implementationsCodeLens.enabled": true,
 	"js/ts.referencesCodeLens.enabled": true,
 	"js/ts.suggest.autoImports": true,
-	"js/ts.tsdk.path": "node_modules/typescript/lib",
+	"js/ts.tsdk.path": "./node_modules/typescript",
 	"js/ts.tsdk.promptToUseWorkspaceVersion": true,
+	"js/ts.experimental.useTsgo": true,
 
 	"files.readonlyInclude": {
 		"**/routeTree.gen.ts": true
