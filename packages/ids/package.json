@@ -13,8 +13,8 @@
 		"./slugify": "./src/slugify.ts"
 	},
 	"dependencies": {
-		"nanoid": "^5.1.14",
-		"uuid": "^14.0.0"
+		"nanoid": "^5.1.16",
+		"uuid": "^14.0.1"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"
