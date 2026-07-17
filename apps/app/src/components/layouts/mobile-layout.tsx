@@ -1,4 +1,9 @@
-import { CheckIcon, CaretUpDownIcon, PaletteIcon, MagnifyingGlassIcon } from "@hoalu/icons/phosphor";
+import {
+	CheckIcon,
+	CaretUpDownIcon,
+	PaletteIcon,
+	MagnifyingGlassIcon,
+} from "@hoalu/icons/phosphor";
 import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
