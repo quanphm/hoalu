@@ -15,9 +15,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 
 import { createWorkspaceDialog } from "#app/atoms/index.ts";
-import { HotKey } from "#app/components/hotkey.tsx";
 import { S3WorkspaceLogo } from "#app/components/workspace.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface Props {
@@ -48,7 +46,6 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
 					<HouseIcon />
 					Home
-					<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.goto_home} />
 				</DropdownMenuItem>
 
 				<DropdownMenuSeparator />

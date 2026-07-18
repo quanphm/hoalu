@@ -15,9 +15,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { createCategoryDialog, deleteCategoryDialog, selectedCategory$ } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { CategoryFormSchema } from "#app/lib/schema.ts";
 import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
@@ -29,14 +27,9 @@ import type { ColorSchema } from "@hoalu/schema/schema";
 
 export function CreateCategoryDialogTrigger() {
 	const setDialog = createCategoryDialog.set;
-
 	return (
 		<Button size="sm" onClick={() => setDialog({ state: true })}>
 			Create category
-			<HotKey
-				{...KEYBOARD_SHORTCUTS.create_category}
-				className="text-background ml-0.5 bg-black/25 font-bold"
-			/>
 		</Button>
 	);
 }

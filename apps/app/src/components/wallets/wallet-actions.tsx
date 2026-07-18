@@ -27,13 +27,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { createWalletDialog, deleteWalletDialog, editWalletDialog } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { createWalletTheme } from "#app/helpers/colors.ts";
 import {
 	AVAILABLE_CURRENCY_OPTIONS,
 	AVAILABLE_WALLET_TYPE_OPTIONS,
-	KEYBOARD_SHORTCUTS,
 } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
@@ -44,14 +42,9 @@ import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
 export function CreateWalletDialogTrigger() {
 	const setDialog = createWalletDialog.set;
-
 	return (
 		<Button size="sm" onClick={() => setDialog({ state: true })}>
 			Create wallet
-			<HotKey
-				{...KEYBOARD_SHORTCUTS.create_wallet}
-				className="text-background ml-0.5 bg-black/25 font-bold"
-			/>
 		</Button>
 	);
 }

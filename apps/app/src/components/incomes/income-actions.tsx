@@ -15,7 +15,7 @@ import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import {
 	createIncomeDialog,
@@ -24,11 +24,9 @@ import {
 	makeDraftIncome,
 } from "#app/atoms/index.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
 import { type SyncedIncome, useSelectedIncome } from "#app/components/incomes/use-incomes.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { IncomeFormSchema } from "#app/lib/schema.ts";
@@ -41,17 +39,12 @@ import {
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-export function CreateIncomeDialogTrigger({
-	showKbd = true,
-	...props
-}: ButtonProps & { showKbd?: boolean }) {
+export function CreateIncomeDialogTrigger(props: ButtonProps) {
 	const setDialog = createIncomeDialog.set;
-
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setDialog({ state: true })}>
 			<CashPlusIcon className="text-success size-3.5" />
 			New income
-			{showKbd && <HotKey {...KEYBOARD_SHORTCUTS.create_income} className="ml-0.5" />}
 		</Button>
 	);
 }

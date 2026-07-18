@@ -67,7 +67,7 @@ function TransactionGroupHeaderBase({
 	return (
 		<div
 			data-slot="transaction-group-header"
-			className={cn("bg-muted flex w-full items-center border-b px-4 py-1 text-xs", GRID_TEMPLATE)}
+			className={cn("bg-accent flex w-full items-center border-b px-4 py-1 text-xs", GRID_TEMPLATE)}
 		>
 			<div className="flex items-center gap-2 font-mono font-medium">
 				{datetime.format(new Date(groupKey), "E dd/MM/yyyy")}

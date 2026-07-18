@@ -23,7 +23,7 @@ import { useAppForm } from "#app/components/forms/index.tsx";
 import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	useArchiveRecurringBill,
@@ -54,20 +54,11 @@ const BillFormSchema = z.object({
 
 type BillFormSchema = z.infer<typeof BillFormSchema>;
 
-export function CreateRecurringBillDialogTrigger({
-	showKbd = true,
-	...props
-}: ButtonProps & { showKbd?: boolean }) {
+export function CreateRecurringBillDialogTrigger(props: ButtonProps) {
 	const setDialog = createRecurringBillDialog.set;
 	return (
 		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
 			New recurring bill
-			{showKbd && (
-				<HotKey
-					{...KEYBOARD_SHORTCUTS.create_recurring_bill}
-					className="text-background ml-0.5 bg-black/25 font-bold"
-				/>
-			)}
 		</Button>
 	);
 }
