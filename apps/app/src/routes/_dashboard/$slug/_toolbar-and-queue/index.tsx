@@ -24,7 +24,7 @@ function RouteComponent() {
 			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
 				<CashFlowChart incomes={incomes} expenses={expenses} />
 			</div>
-			<div className="col-span-24 flex flex-col gap-0 md:col-span-16">
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
 				<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
 				<CashFlowSection incomes={incomes} expenses={expenses} />
 			</div>

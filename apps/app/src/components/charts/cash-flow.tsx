@@ -143,9 +143,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 	const showTrend = dateRange === "all" || comparisonRange !== null;
 
 	return (
-		<div
-			className={cn("grid w-full grid-cols-1 md:grid-cols-1", "relative w-full border border-t-0")}
-		>
+		<div className="grid w-full grid-cols-1 md:grid-cols-1">
 			{/* <Card className="bg-background @container/card relative overflow-hidden border-0">
 				{showTrend && <BoxAnimations status={cashFlowChange.status} />}
 				<CardHeader>
@@ -164,12 +162,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 				</CardHeader>
 			</Card> */}
 
-			<div
-				className={cn(
-					"grid w-full grid-cols-2 md:grid-cols-3",
-					"*:data-[slot=card]:bg-sidebar *:data-[slot=card]:border-0 *:data-[slot=card]:border-r *:data-[slot=card]:last:border-r-0 *:data-[slot=card]:md:py-3",
-				)}
-			>
+			<div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3">
 				<Card className="@container/card">
 					<CardHeader>
 						<CardDescription className="flex items-center justify-between text-xs uppercase">
@@ -205,7 +198,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 					</CardHeader>
 				</Card>
 
-				<Card className="@container/card">
+				<Card className="@container/card col-span-2 md:col-span-1">
 					<CardHeader>
 						<CardDescription className="flex items-center justify-between text-xs uppercase">
 							<span className="font-mono tracking-wider">Transactions</span>

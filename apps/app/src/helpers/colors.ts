@@ -18,6 +18,22 @@ export function createChartColor(color: ColorSchema) {
 	return chartVariants[color];
 }
 
+const chartColorThemes: Record<ColorSchema, { light: string; dark: string }> = {
+	red: { light: "var(--color-red-500)", dark: "var(--color-red-400)" },
+	green: { light: "var(--color-emerald-500)", dark: "var(--color-emerald-400)" },
+	teal: { light: "var(--color-teal-500)", dark: "var(--color-teal-400)" },
+	blue: { light: "var(--color-blue-500)", dark: "var(--color-blue-400)" },
+	yellow: { light: "var(--color-amber-400)", dark: "var(--color-amber-300)" },
+	orange: { light: "var(--color-orange-500)", dark: "var(--color-orange-400)" },
+	purple: { light: "var(--color-violet-500)", dark: "var(--color-violet-400)" },
+	pink: { light: "var(--color-pink-500)", dark: "var(--color-pink-400)" },
+	gray: { light: "var(--color-slate-400)", dark: "var(--color-slate-500)" },
+	stone: { light: "var(--color-stone-400)", dark: "var(--color-stone-500)" },
+};
+export function createChartColorTheme(color: ColorSchema) {
+	return chartColorThemes[color];
+}
+
 const categoryVariants: Record<ColorSchema, string> = {
 	red: cn(
 		"border-red-300 bg-red-100 text-red-800",

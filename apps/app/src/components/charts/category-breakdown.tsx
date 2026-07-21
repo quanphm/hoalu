@@ -7,14 +7,16 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@hoalu/ui/chart";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
+import { Pie, PieChart } from "recharts";
 
 import { customDateRange$, expenseCategoryFilter$, selectDateRange$ } from "#app/atoms/filters.ts";
-import { createChartColor } from "#app/helpers/colors.ts";
+import { createChartColor, createChartColorTheme } from "#app/helpers/colors.ts";
 import { filterDataByRange } from "#app/helpers/date-range.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
@@ -35,22 +37,54 @@ interface CategoryData {
 	color: ColorSchema;
 }
 
-function PercentageBreakdown(props: { data: CategoryData[]; totalAmount: number }) {
+function DonutBreakdown(props: { data: CategoryData[]; totalAmount: number; currency: string }) {
+	const chartData = props.data.map((item) => ({
+		...item,
+		fill: `var(--color-${item.id})`,
+	}));
+	const chartConfig = Object.fromEntries(
+		props.data.map((item) => [
+			item.id,
+			{ label: item.name, theme: createChartColorTheme(item.color) },
+		]),
+	) satisfies ChartConfig;
+
 	return (
-		<div className="flex h-2 w-full items-center justify-center gap-0.5 overflow-hidden rounded-xs">
-			{props.data.map((data) => {
-				const widthPercentage = (data.value / props.totalAmount) * 100;
-				return (
-					<div
-						key={data.id}
-						className={cn("h-full transition-all duration-300", createChartColor(data.color))}
-						style={{
-							width: `${widthPercentage}%`,
-						}}
-					/>
-				);
-			})}
-		</div>
+		<ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[165px] w-full">
+			<PieChart>
+				<ChartTooltip
+					content={
+						<ChartTooltipContent
+							hideLabel
+							nameKey="id"
+							formatter={(value, _name, item) => (
+								<div className="flex w-full items-center gap-2">
+									<div
+										className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+										style={{ backgroundColor: item.payload.fill }}
+									/>
+									<span className="text-muted-foreground flex-1">{item.payload.name}</span>
+									<CurrencyValue
+										value={Number(value)}
+										currency={props.currency}
+										className="text-xs"
+									/>
+								</div>
+							)}
+						/>
+					}
+				/>
+				<Pie
+					data={chartData}
+					dataKey="value"
+					nameKey="id"
+					innerRadius="62%"
+					outerRadius="90%"
+					paddingAngle={2}
+					cornerRadius={4}
+				/>
+			</PieChart>
+		</ChartContainer>
 	);
 }
 
@@ -215,7 +249,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 					<EmptyData />
 				) : (
 					<div className="space-y-6">
-						<PercentageBreakdown data={dataToView} totalAmount={totalAmount} />
+						<DonutBreakdown data={dataToView} totalAmount={totalAmount} currency={currency} />
 						<CategoryListBreakdown
 							data={dataToView}
 							totalAmount={totalAmount}
