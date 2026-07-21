@@ -76,7 +76,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 		: datetime.format(props.createdAt, "d MMM yyyy");
 
 	return (
-		<Card className="gap-0 rounded-md py-3">
+		<Card className="gap-0 rounded-md py-3 pb-0">
 			<CardHeader className="pb-2.5">
 				<CardTitle className="flex items-center gap-3 text-base font-semibold">
 					<WorkspaceLogo logo={null} name={props.name} />
@@ -85,9 +85,7 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 			</CardHeader>
 			<div className="border-border border-t" />
 			{summary && (
-				<CardContent
-					className={cn("grid grid-cols-2 py-0", "*:py-2.5 *:last:border-l *:last:pl-4")}
-				>
+				<CardContent className={cn("grid grid-cols-2 py-2.5 *:last:pl-4")}>
 					<div>
 						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
 							Expenses • MTD
@@ -112,17 +110,10 @@ export function WorkspaceCard(props: WorkspaceCardProps) {
 					</div>
 				</CardContent>
 			)}
-			<div className="border-border border-t" />
-			<CardFooter className="flex items-center justify-between pt-2.5">
+			<CardFooter className="bg-muted flex items-center justify-between py-2.5">
 				<p className="text-muted-foreground text-xs">
 					Last activity <span className="text-foreground ml-1">{lastActive}</span>
 				</p>
-				<div
-					data-slot="card-footer-action"
-					className="text-muted-foreground group-hover:text-primary flex items-center gap-1 text-xs transition-colors"
-				>
-					Open <ArrowRightIcon className="size-3" />
-				</div>
 			</CardFooter>
 		</Card>
 	);

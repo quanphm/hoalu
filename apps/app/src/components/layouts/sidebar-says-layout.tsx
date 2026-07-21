@@ -52,7 +52,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 					</div>
 					<div className="flex items-center gap-2.5 border-t px-4 py-2">
 						<p className="text-muted-foreground font-mono text-xs leading-none tracking-tight">
-							v{import.meta.env.PUBLIC_APP_VERSION}
+							{import.meta.env.PUBLIC_APP_VERSION}
 						</p>
 						<Button
 							variant="link"

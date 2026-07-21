@@ -16,7 +16,6 @@ import {
 	SidebarGroupContent,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuBadge,
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@hoalu/ui/sidebar";
@@ -55,9 +54,6 @@ export function NavWorkspace() {
 							>
 								<LayoutDashboardIcon />
 								<span>Dashboard</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_dashboard} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -81,9 +77,6 @@ export function NavWorkspace() {
 							>
 								<ArrowsExchangeIcon />
 								<span>Transactions</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_expenses} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
@@ -94,9 +87,6 @@ export function NavWorkspace() {
 							>
 								<CalendarDollarIcon />
 								<span>Recurring Bills</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_recurring_bills} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
@@ -107,9 +97,6 @@ export function NavWorkspace() {
 							>
 								<CalendarClockIcon />
 								<span>Events</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_events} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -124,9 +111,6 @@ export function NavWorkspace() {
 							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
 								<TriangleSquareCircleIcon />
 								<span>Categories</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_categories} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
@@ -134,9 +118,6 @@ export function NavWorkspace() {
 							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
 								<WalletIcon />
 								<span>Wallets</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_wallets} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
@@ -144,9 +125,6 @@ export function NavWorkspace() {
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileIcon />
 								<span>Files</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_files} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -161,18 +139,12 @@ export function NavWorkspace() {
 							<SidebarMenuButton render={<Link to="/$slug/settings/workspace" params={{ slug }} />}>
 								<TentIcon />
 								<span>Workspace</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_workspace} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/settings/members" params={{ slug }} />}>
 								<UsersGroupIcon />
 								<span>Members</span>
-								<SidebarMenuBadge>
-									<HotKey {...KEYBOARD_SHORTCUTS.goto_members} />
-								</SidebarMenuBadge>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>

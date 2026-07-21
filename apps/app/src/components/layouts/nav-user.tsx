@@ -69,7 +69,6 @@ export function NavUser() {
 							<DropdownMenuSubTrigger>
 								<PaletteIcon />
 								<span>Theme</span>
-								<HotKey className="ml-auto" {...KEYBOARD_SHORTCUTS.toggle_theme} />
 							</DropdownMenuSubTrigger>
 							<DropdownMenuPortal>
 								<DropdownMenuSubContent>
@@ -119,7 +118,6 @@ export function NavUser() {
 							>
 								<SettingsIcon />
 								Preferences
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_preferences} />
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								render={
@@ -128,7 +126,6 @@ export function NavUser() {
 							>
 								<KeyIcon />
 								Access tokens
-								<HotKey {...KEYBOARD_SHORTCUTS.goto_tokens} />
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 

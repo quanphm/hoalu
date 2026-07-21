@@ -40,11 +40,10 @@ import {
 	type FilesCompactUploadRef,
 } from "#app/components/files/files-compact-upload.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import { HotKey } from "#app/components/hotkey.tsx";
 import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
+import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { quickExpenseQueue } from "#app/lib/queues/quick-expense-queue.ts";
@@ -61,22 +60,12 @@ import {
 const routeApi = getRouteApi("/_dashboard/$slug");
 const expenseRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
-export function CreateExpenseDialogTrigger({
-	showKbd = true,
-	...props
-}: ButtonProps & { showKbd?: boolean }) {
+export function CreateExpenseDialogTrigger(props: ButtonProps) {
 	const setDialog = createExpenseDialog.set;
-
 	return (
 		<Button size="sm" variant="default" {...props} onClick={() => setDialog({ state: true })}>
 			<CashBanknoteMoveIcon className="size-3.5" />
 			New expense
-			{showKbd && (
-				<HotKey
-					{...KEYBOARD_SHORTCUTS.create_expense}
-					className="text-background ml-0.5 bg-black/25 font-bold"
-				/>
-			)}
 		</Button>
 	);
 }

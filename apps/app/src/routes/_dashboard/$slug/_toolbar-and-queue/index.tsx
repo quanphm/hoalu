@@ -5,7 +5,6 @@ import { CashFlowChart } from "#app/components/charts/cash-flow-chart.tsx";
 import { CashFlowSection } from "#app/components/charts/cash-flow.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
-import { RecentTransactions } from "#app/components/expenses/recent-transactions.tsx";
 import { useLiveQueryExpenses } from "#app/components/expenses/use-expenses.ts";
 import { useLiveQueryIncomes } from "#app/components/incomes/use-incomes.ts";
 import { SectionContent } from "#app/components/layouts/section.tsx";
@@ -25,7 +24,7 @@ function RouteComponent() {
 			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
 				<CashFlowChart incomes={incomes} expenses={expenses} />
 			</div>
-			<div className="col-span-24 flex flex-col gap-0 md:col-span-16">
+			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
 				<ExpenseOverview incomes={incomes} expenses={expenses} categories={categories} />
 				<CashFlowSection incomes={incomes} expenses={expenses} />
 			</div>
@@ -41,10 +40,6 @@ function RouteComponent() {
 				</SectionContent>
 			</div>
 			<div className="col-span-24 flex flex-col gap-4 md:col-span-8"></div>
-
-			<div className="col-span-24 flex flex-col gap-4 md:col-span-24">
-				<RecentTransactions />
-			</div>
 		</SectionContent>
 	);
 }

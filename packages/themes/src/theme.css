@@ -1,4 +1,8 @@
 @theme inline {
+	--font-sans: var(--font-sans);
+	--font-heading: var(--font-heading);
+	--font-mono: var(--font-mono);
+
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
@@ -61,4 +65,11 @@
 	--tracking-wide: calc(var(--tracking-normal) + 0.025em);
 	--tracking-wider: calc(var(--tracking-normal) + 0.05em);
 	--tracking-widest: calc(var(--tracking-normal) + 0.1em);
+
+	--animate-skeleton: skeleton 2s -1s infinite linear;
+	@keyframes skeleton {
+		to {
+			background-position: -200% 0;
+		}
+	}
 }

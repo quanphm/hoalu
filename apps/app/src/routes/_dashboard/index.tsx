@@ -78,14 +78,15 @@ function RouteComponent() {
 									</Link>
 								);
 							})}
-							<button type="button" onClick={() => setDialog({ state: true })}>
-								<Card className="hover:border-foreground/40 h-full min-h-40 justify-center rounded-md border-dashed bg-transparent">
-									<div className="flex flex-col items-center justify-center gap-3">
-										<PlusIcon className="text-muted-foreground size-4" />
-										<span className="text-muted-foreground text-sm">New workspace</span>
-									</div>
-								</Card>
-							</button>
+							<Card
+								className="hover:border-foreground/40 h-full min-h-40 cursor-pointer justify-center rounded-md border-dashed bg-transparent"
+								onClick={() => setDialog({ state: true })}
+							>
+								<div className="flex flex-col items-center justify-center gap-3">
+									<PlusIcon className="text-muted-foreground size-4" />
+									<span className="text-muted-foreground text-sm">New workspace</span>
+								</div>
+							</Card>
 						</SectionContent>
 					</Section>
 				)}
