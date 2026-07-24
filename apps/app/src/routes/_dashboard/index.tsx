@@ -70,14 +70,6 @@ function RouteComponent() {
 							<SectionDescription>Select a workspace</SectionDescription>
 						</SectionHeader>
 						<SectionContent columns={3} className="grid-cols-1">
-							{workspaces.map((ws) => {
-								const summary = summaryMap.get(ws.id);
-								return (
-									<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="group h-full">
-										<WorkspaceCard {...ws} summary={summary} />
-									</Link>
-								);
-							})}
 							<Card
 								className="hover:border-foreground/40 h-full min-h-40 cursor-pointer justify-center rounded-md border-dashed bg-transparent"
 								onClick={() => setDialog({ state: true })}
@@ -87,6 +79,14 @@ function RouteComponent() {
 									<span className="text-muted-foreground text-sm">New workspace</span>
 								</div>
 							</Card>
+							{workspaces.map((ws) => {
+								const summary = summaryMap.get(ws.id);
+								return (
+									<Link key={ws.id} to="/$slug" params={{ slug: ws.slug }} className="group h-full">
+										<WorkspaceCard {...ws} summary={summary} />
+									</Link>
+								);
+							})}
 						</SectionContent>
 					</Section>
 				)}
