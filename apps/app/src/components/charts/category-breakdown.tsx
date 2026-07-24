@@ -1,13 +1,11 @@
 import { Button } from "@hoalu/ui/button";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@hoalu/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@hoalu/ui/chart";
+	type ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@hoalu/ui/chart";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
@@ -82,6 +80,7 @@ function DonutBreakdown(props: { data: CategoryData[]; totalAmount: number; curr
 					outerRadius="90%"
 					paddingAngle={2}
 					cornerRadius={4}
+					isAnimationActive={false}
 				/>
 			</PieChart>
 		</ChartContainer>
@@ -232,7 +231,6 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 		<Card className="h-full pb-2">
 			<CardHeader>
 				<CardTitle>Categories Breakdown</CardTitle>
-				<CardDescription>Top {TOP_N_CATEGORY} categories</CardDescription>
 				<CardAction>
 					{dataToView.length > TOP_N_CATEGORY && (
 						<div className="flex justify-end">
