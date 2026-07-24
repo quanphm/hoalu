@@ -6,11 +6,12 @@ import {
 	FunnelIcon,
 	FadersHorizontalIcon,
 	ArrowsClockwiseIcon,
+	ShapesIcon,
 	TagIcon,
 	WalletIcon,
 	XIcon,
 } from "@hoalu/icons/phosphor";
-import { CaretRightFilledIcon, TriangleSquareCircleIcon } from "@hoalu/icons/tabler";
+import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -223,7 +224,7 @@ export function ExpenseFilterDropdown() {
 								onClick={() => setCurrentView("amount")}
 							/>
 							<FilterMenuItem
-								icon={<TriangleSquareCircleIcon />}
+								icon={<ShapesIcon />}
 								label="Category"
 								active={hasActiveFilter("category")}
 								selected={currentView === "category"}
