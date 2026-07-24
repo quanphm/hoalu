@@ -1,10 +1,12 @@
 import {
+	ArrowsLeftRightIcon,
 	CheckIcon,
 	CaretUpDownIcon,
 	PaletteIcon,
 	MagnifyingGlassIcon,
+	SquaresFourIcon,
 } from "@hoalu/icons/phosphor";
-import { ArrowsExchangeIcon, LayoutDashboardIcon, SettingsIcon } from "@hoalu/icons/tabler";
+import { SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -168,7 +170,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<LayoutDashboardIcon className="size-6" aria-hidden="true" />
+					<SquaresFourIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Dashboard</span>
 				</ButtonLink>
 				<ButtonLink
@@ -182,7 +184,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<ArrowsExchangeIcon className="size-6" aria-hidden="true" />
+					<ArrowsLeftRightIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Transactions</span>
 				</ButtonLink>
 				<ButtonLink

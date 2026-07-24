@@ -1,15 +1,15 @@
-import { MagnifyingGlassIcon } from "@hoalu/icons/phosphor";
 import {
-	CalendarDollarIcon,
+	ArrowsLeftRightIcon,
+	CalendarStarIcon,
 	FileIcon,
-	LayoutDashboardIcon,
+	MagnifyingGlassIcon,
+	RepeatIcon,
+	ShapesIcon,
+	SquaresFourIcon,
 	TentIcon,
-	TriangleSquareCircleIcon,
-	UsersGroupIcon,
+	UsersIcon,
 	WalletIcon,
-	CalendarClockIcon,
-	ArrowsExchangeIcon,
-} from "@hoalu/icons/tabler";
+} from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	SidebarGroup,
@@ -52,7 +52,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }} />}
 								tooltip="Dashboard"
 							>
-								<LayoutDashboardIcon />
+								<SquaresFourIcon />
 								<span>Dashboard</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -75,7 +75,7 @@ export function NavWorkspace() {
 								}
 								tooltip="Transactions"
 							>
-								<ArrowsExchangeIcon />
+								<ArrowsLeftRightIcon />
 								<span>Transactions</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -85,7 +85,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
 							>
-								<CalendarDollarIcon />
+								<RepeatIcon />
 								<span>Recurring Bills</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -95,7 +95,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug/events" params={{ slug }} />}
 								tooltip="Events"
 							>
-								<CalendarClockIcon />
+								<CalendarStarIcon />
 								<span>Events</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -109,7 +109,7 @@ export function NavWorkspace() {
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
-								<TriangleSquareCircleIcon />
+								<ShapesIcon />
 								<span>Categories</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -143,7 +143,7 @@ export function NavWorkspace() {
 						</SidebarMenuItem>
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/settings/members" params={{ slug }} />}>
-								<UsersGroupIcon />
+								<UsersIcon />
 								<span>Members</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
