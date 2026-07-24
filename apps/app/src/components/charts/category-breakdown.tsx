@@ -51,6 +51,7 @@ function DonutBreakdown(props: { data: CategoryData[]; totalAmount: number; curr
 		<ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[165px] w-full">
 			<PieChart>
 				<ChartTooltip
+					isAnimationActive={false}
 					content={
 						<ChartTooltipContent
 							hideLabel
