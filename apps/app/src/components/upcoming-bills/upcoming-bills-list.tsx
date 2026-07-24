@@ -251,16 +251,3 @@ function UpcomingBillRow({ bill }: UpcomingBillRowProps) {
 		</div>
 	);
 }
-
-const colorMap: Record<string, string> = {
-	red: "bg-red-400",
-	green: "bg-emerald-400",
-	teal: "bg-teal-400",
-	blue: "bg-blue-400",
-	yellow: "bg-amber-300",
-	orange: "bg-orange-400",
-	purple: "bg-violet-400",
-	pink: "bg-pink-400",
-	gray: "bg-slate-300",
-	stone: "bg-stone-300",
-};
