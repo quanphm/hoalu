@@ -47,6 +47,7 @@
 		"@tiptap/starter-kit": "^3.28.0",
 		"better-auth": "catalog:",
 		"class-variance-authority": "^0.7.1",
+		"cuelume": "^0.1.2",
 		"frimousse": "^0.3.0",
 		"hono": "catalog:",
 		"html2canvas-pro": "^2.2.4",

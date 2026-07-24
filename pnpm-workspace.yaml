@@ -37,3 +37,6 @@ overrides:
   "@openrouter/sdk": ^0.12.79
   chalk: 5.6.2
   ora: 8.2.0
+
+patchedDependencies:
+  cuelume@0.1.2: patches/cuelume@0.1.2.patch

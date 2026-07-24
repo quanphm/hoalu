@@ -2,6 +2,7 @@ import { CheckIcon, CopyIcon } from "@hoalu/icons/phosphor";
 import { Input } from "@hoalu/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
+import { play } from "cuelume";
 import { useId, useRef, useState } from "react";
 
 export function InputWithCopy({ value }: { value: string }) {
@@ -12,6 +13,7 @@ export function InputWithCopy({ value }: { value: string }) {
 	const handleCopy = () => {
 		if (inputRef.current) {
 			navigator.clipboard.writeText(inputRef.current.value);
+			play("success");
 			setCopied(true);
 			setTimeout(() => setCopied(false), 1500);
 		}

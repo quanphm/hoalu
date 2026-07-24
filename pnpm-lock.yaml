@@ -42,6 +42,9 @@ overrides:
   chalk: 5.6.2
   ora: 8.2.0
 
+patchedDependencies:
+  cuelume@0.1.2: 23da46e1cb33e819dd3e6bd7f19defd229280558f79e03abeb49e3a69af82865
+
 importers:
 
   .:
@@ -293,6 +296,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
+      cuelume:
+        specifier: ^0.1.2
+        version: 0.1.2(patch_hash=23da46e1cb33e819dd3e6bd7f19defd229280558f79e03abeb49e3a69af82865)
       frimousse:
         specifier: ^0.3.0
         version: 0.3.0(react@19.2.7)(typescript@7.0.2)
@@ -4436,6 +4442,9 @@ packages:
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
+
+  cuelume@0.1.2:
+    resolution: {integrity: sha512-VxL0k9l1fyKGot3VKM+wm5Xd2K75fVeBHdNTrR1EHiqKRtD6S5Dxy/vY7hwl9gXp3QT/TIywFXUos77n39YZVQ==}
 
   d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
@@ -9914,6 +9923,8 @@ snapshots:
   cssesc@3.0.0: {}
 
   csstype@3.2.3: {}
+
+  cuelume@0.1.2(patch_hash=23da46e1cb33e819dd3e6bd7f19defd229280558f79e03abeb49e3a69af82865): {}
 
   d3-array@3.2.4:
     dependencies:

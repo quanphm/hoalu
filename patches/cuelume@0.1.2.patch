@@ -1,0 +1,13 @@
+diff --git a/dist/audio/engine.js b/dist/audio/engine.js
+index 5b1abc6aa75ee66cbcd4b0f8f27b900cf5b0bdf6..d01f0404ee84d5a2aa8bdea0add96fc487b26087 100644
+--- a/dist/audio/engine.js
++++ b/dist/audio/engine.js
+@@ -80,7 +80,7 @@ function shimmerTail(shimmer) {
+ function renderRecipe(context, recipe) {
+     const now = context.currentTime;
+     const master = context.createGain();
+-    master.gain.value = recipe.masterGain;
++    master.gain.value = Math.min(1, recipe.masterGain * 1.5);
+     master.connect(context.destination);
+     const shimmerNodes = recipe.shimmer
+         ? attachShimmer(context, master, context.destination, recipe.shimmer)
