@@ -42,12 +42,10 @@ export function SelectCategoryField(props: Props) {
 	const categories = props.type
 		? (allCategories?.filter((c) => c.type === props.type) ?? [])
 		: (allCategories ?? []);
-	const categoryOptions: CategoryOption[] = [...categories]
-		.sort((a, b) => b.total - a.total)
-		.map((c) => ({
-			label: c.name,
-			value: c.id,
-		}));
+	const categoryOptions: CategoryOption[] = categories.map((c) => ({
+		label: c.name,
+		value: c.id,
+	}));
 
 	const selectedOption = categoryOptions.find((opt) => opt.value === value) ?? null;
 

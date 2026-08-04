@@ -3,8 +3,6 @@
  * @see - https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
  */
 
-import type { ExchangeRatesQuerySchema } from "#app/lib/schema.ts";
-
 export const authKeys = {
 	session: ["session"] as const,
 };
@@ -58,12 +56,6 @@ export const fileKeys = {
 	all: (slug: string) => fileKeys["~withWorkspace"](slug),
 	withId: (slug: string, id: string) => [...fileKeys.all(slug), "id", id] as const,
 	"~withWorkspace": (slug: string) => [...workspaceKeys.withSlug(slug), "files"] as const,
-};
-
-export const exchangeRateKeys = {
-	all: ["exchange-rates"] as const,
-	pair: ({ from = "USD", to }: ExchangeRatesQuerySchema) =>
-		[...exchangeRateKeys.all, { from, to }] as const,
 };
 
 export const recurringBillKeys = {

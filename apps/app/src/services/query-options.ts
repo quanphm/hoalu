@@ -1,28 +1,18 @@
-import { zeroDecimalCurrencies } from "@hoalu/countries";
-import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
+import { TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
 import { queryOptions } from "@tanstack/react-query";
 
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient, type Session, type SessionData, type User } from "#app/lib/auth-client.ts";
-import { queryClient } from "#app/lib/query-client.ts";
 import {
 	authKeys,
 	categoryKeys,
-	exchangeRateKeys,
-	expenseKeys,
 	fileKeys,
-	incomeKeys,
 	memberKeys,
 	recurringBillKeys,
 	taskKeys,
 	walletKeys,
 	workspaceKeys,
 } from "#app/lib/query-key-factory.ts";
-
-import type {
-	ExchangeRatesQuerySchema,
-	ExpenseWithClientConvertedSchema,
-} from "#app/lib/schema.ts";
 
 /**
  * auth
@@ -202,128 +192,6 @@ export const categoryWithIdQueryOptions = (slug: string, id: string) => {
 		queryKey: categoryKeys.withId(slug, id),
 		queryFn: () => apiClient.categories.get(slug, id),
 		enabled: !!id,
-	});
-};
-
-/**
- * expenses
- */
-
-export const expensesQueryOptions = (slug: string) => {
-	return queryOptions({
-		queryKey: expenseKeys.all(slug),
-		queryFn: async () => {
-			const workspace = queryClient.getQueryData<{
-				metadata: Record<string, any>;
-			}>(workspaceKeys.withSlug(slug));
-			const expenses = await apiClient.expenses.list(slug);
-			const promises = expenses.map(async (expense) => {
-				const { realAmount, currency: sourceCurrency } = expense;
-				try {
-					const result = await queryClient.fetchQuery(
-						exchangeRatesQueryOptions({
-							from: sourceCurrency,
-							to: workspace?.metadata.currency,
-						}),
-					);
-					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
-					const factor = isNoCent ? 1 : 100;
-					const convertedAmount = realAmount * (result.rate / factor);
-
-					return {
-						...expense,
-						convertedAmount: convertedAmount,
-					};
-				} catch (_error) {
-					return {
-						...expense,
-						convertedAmount: -1,
-					};
-				}
-			});
-			const result = await Promise.all(promises);
-			return result.map((expense) => {
-				return {
-					...expense,
-					date: datetime.format(expense.date, "yyyy-MM-dd"),
-				} as ExpenseWithClientConvertedSchema;
-			});
-		},
-	});
-};
-
-export const expenseWithIdQueryOptions = (slug: string, id: string) => {
-	return queryOptions({
-		queryKey: expenseKeys.withId(slug, id),
-		queryFn: () => apiClient.expenses.get(slug, id),
-	});
-};
-
-/**
- * incomes
- */
-
-export const incomesQueryOptions = (slug: string) => {
-	return queryOptions({
-		queryKey: incomeKeys.all(slug),
-		queryFn: async () => {
-			const workspace = queryClient.getQueryData<{
-				metadata: Record<string, any>;
-			}>(workspaceKeys.withSlug(slug));
-			const incomes = await apiClient.incomes.list(slug);
-			const promises = incomes.map(async (income) => {
-				const { realAmount, currency: sourceCurrency } = income;
-				try {
-					const result = await queryClient.fetchQuery(
-						exchangeRatesQueryOptions({
-							from: sourceCurrency,
-							to: workspace?.metadata.currency,
-						}),
-					);
-					const isNoCent = zeroDecimalCurrencies.find((c) => c === sourceCurrency);
-					const factor = isNoCent ? 1 : 100;
-					const convertedAmount = realAmount * (result.rate / factor);
-
-					return {
-						...income,
-						convertedAmount: convertedAmount,
-					};
-				} catch (_error) {
-					return {
-						...income,
-						convertedAmount: -1,
-					};
-				}
-			});
-			const result = await Promise.all(promises);
-			return result.map((income) => {
-				return {
-					...income,
-					date: datetime.format(income.date, "yyyy-MM-dd"),
-				};
-			});
-		},
-	});
-};
-
-export const incomeWithIdQueryOptions = (slug: string, id: string) => {
-	return queryOptions({
-		queryKey: incomeKeys.withId(slug, id),
-		queryFn: () => apiClient.incomes.get(slug, id),
-	});
-};
-
-/**
- * exchange-rates
- */
-
-export const exchangeRatesQueryOptions = ({ from = "USD", to }: ExchangeRatesQuerySchema) => {
-	return queryOptions<{ rate: number; inverse_rate: number }>({
-		queryKey: exchangeRateKeys.pair({ from, to }),
-		queryFn: () => apiClient.exchangeRates.find({ from, to }),
-		select: (data) => ({ rate: data.rate, inverse_rate: data.inverse_rate }),
-		placeholderData: { rate: 1, inverse_rate: 1 },
-		throwOnError: true,
 	});
 };
 

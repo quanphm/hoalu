@@ -34,8 +34,9 @@ When debug with browser, please refer to these addresses to access the applicati
 | API client types           | `apps/app/src/lib/api-client.ts`                                | 634                       |
 | Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 170                       |
 | Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)       |
-| Expense components         | `apps/app/src/components/expenses/`                             | 7 files                   |
-| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 430                       |
+| Expense components         | `apps/app/src/components/expenses/`                             | 6 files                   |
+| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 69                        |
+| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 630                       |
 | Category components        | `apps/app/src/components/categories/`                           | 3 files                   |
 | Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                   |
 | Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                   |
@@ -48,7 +49,7 @@ When debug with browser, please refer to these addresses to access the applicati
 | PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                         |
 | Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (index + 8 items) |
 | Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                        |
-| Query options              | `apps/app/src/services/query-options.ts`                        | 370                       |
+| Query options              | `apps/app/src/services/query-options.ts`                        | 239                       |
 | Mutations                  | `apps/app/src/services/mutations.ts`                            | 1082                      |
 | Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files                   |
 | Events API routes          | `apps/api/src/routes/events/`                                   | 3 files                   |

@@ -244,27 +244,6 @@ export function calculateComparisonDateRange(
 	};
 }
 
-export function filterDataByRange<T extends { date: string }>(
-	data: T[],
-	range: PredefinedDateRange,
-	customRange?: { from: Date; to: Date } | null,
-): T[] {
-	const dateRange = calculateDateRange(range, customRange);
-	if (!dateRange) {
-		return data;
-	}
-	const { startDate, endDate } = dateRange;
-
-	const filtered = data
-		.filter((item) => {
-			const itemDate = datetime.parse(item.date, "yyyy-MM-dd", new Date());
-			return itemDate >= startDate && itemDate <= endDate;
-		})
-		.sort((a, b) => a.date.localeCompare(b.date));
-
-	return filtered;
-}
-
 export function getComparisonPeriodText(
 	predefinedRange: PredefinedDateRange,
 	customRange?: { from: Date; to: Date } | null,

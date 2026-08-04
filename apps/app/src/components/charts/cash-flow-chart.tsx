@@ -3,37 +3,16 @@ import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
-import { useValue } from "@legendapp/state/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import {
-	customDateRange$,
-	PredefinedDateRange,
-	selectDateRange$,
-	setSyncedDateRange,
-} from "#app/atoms/filters.ts";
+import { setSyncedDateRange } from "#app/atoms/filters.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
-import {
-	calculateComparisonDateRange,
-	filterDataByRange,
-	generateDailyDataForRange,
-	generateDailyDataWithZeros,
-	generateMTDDataWithZeros,
-	getComparisonPeriodText,
-	getStartOfWeek,
-	groupDataByMonth,
-	isMonthBasedRange,
-} from "#app/helpers/date-range.ts";
+import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { formatCompactNumber } from "#app/helpers/number.ts";
 import { trendChangeVariants } from "#app/helpers/percentage-change.ts";
-import { calculatePercentageChange } from "#app/helpers/percentage-change.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
-import { PercentageChangeDisplay } from "../percentage-change.tsx";
-
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
+import type { CashFlowPoint, DashboardModel, SeriesBucket } from "#app/services/dashboard-model.ts";
 
 const chartConfig = {
 	balance: {
@@ -42,195 +21,33 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface CashFlowChartProps {
-	incomes: SyncedIncome[];
-	expenses: SyncedExpense[];
-}
-
-interface CashFlowDataPoint {
-	date: string;
-	net: number;
-	balance: number;
-	isMonthly?: boolean;
+	model: DashboardModel;
 }
 
 export function CashFlowChart(props: CashFlowChartProps) {
-	const dateRange = useValue(selectDateRange$);
-	const customRange = useValue(customDateRange$);
-	const {
-		metadata: { currency },
-	} = useWorkspace();
-
-	// Build daily income map
-	const incomeByDate = useMemo(() => {
-		const map = new Map<string, number>();
-		for (const income of props.incomes) {
-			const amount = income.convertedAmount > 0 ? income.convertedAmount : 0;
-			map.set(income.date, (map.get(income.date) ?? 0) + amount);
-		}
-		return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
-	}, [props.incomes]);
-
-	// Build daily expense map
-	const expenseByDate = useMemo(() => {
-		const map = new Map<string, number>();
-		for (const expense of props.expenses) {
-			const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
-			map.set(expense.date, (map.get(expense.date) ?? 0) + amount);
-		}
-		return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
-	}, [props.expenses]);
-
-	// Filter by date range
-	const filteredIncomes = useMemo(
-		() => filterDataByRange(incomeByDate, dateRange, customRange),
-		[incomeByDate, dateRange, customRange],
-	);
-	const filteredExpenses = useMemo(
-		() => filterDataByRange(expenseByDate, dateRange, customRange),
-		[expenseByDate, dateRange, customRange],
-	);
-
-	// Apply same date grouping as expense chart, then calculate cumulative balance
-	const applyDateGrouping = (
-		incomeData: { date: string; value: number }[],
-		expenseData: { date: string; value: number }[],
-	): CashFlowDataPoint[] => {
-		const today = new Date();
-
-		let incomeGrouped: { date: string; value: number; isMonthly?: boolean }[];
-		let expenseGrouped: { date: string; value: number; isMonthly?: boolean }[];
-
-		if (dateRange === "ytd") {
-			incomeGrouped = groupDataByMonth(incomeData, true);
-			expenseGrouped = groupDataByMonth(expenseData, true);
-		} else if (dateRange === "all") {
-			incomeGrouped = groupDataByMonth(incomeData, false);
-			expenseGrouped = groupDataByMonth(expenseData, false);
-		} else if (isMonthBasedRange(dateRange)) {
-			incomeGrouped = groupDataByMonth(incomeData, false);
-			expenseGrouped = groupDataByMonth(expenseData, false);
-		} else if (dateRange === "mtd") {
-			incomeGrouped = generateMTDDataWithZeros(incomeData);
-			expenseGrouped = generateMTDDataWithZeros(expenseData);
-		} else if (dateRange === "wtd") {
-			const startOfWeek = getStartOfWeek(today, 1);
-			const endOfWeek = datetime.endOfDay(today);
-			incomeGrouped = generateDailyDataForRange(incomeData, startOfWeek, endOfWeek);
-			expenseGrouped = generateDailyDataForRange(expenseData, startOfWeek, endOfWeek);
-		} else if (dateRange === "custom" && customRange) {
-			const startDate = datetime.startOfDay(customRange.from);
-			const endDate = datetime.endOfDay(customRange.to);
-			incomeGrouped = generateDailyDataForRange(incomeData, startDate, endDate);
-			expenseGrouped = generateDailyDataForRange(expenseData, startDate, endDate);
-		} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
-			const days = parseInt(dateRange, 10);
-			incomeGrouped = generateDailyDataWithZeros(incomeData, days);
-			expenseGrouped = generateDailyDataWithZeros(expenseData, days);
-		} else {
-			incomeGrouped = generateDailyDataWithZeros(incomeData, 50);
-			expenseGrouped = generateDailyDataWithZeros(expenseData, 50);
-		}
-
-		// Merge income and expense by date, calculate net
-		const merged = new Map<string, { net: number; isMonthly?: boolean }>();
-
-		for (const item of incomeGrouped) {
-			merged.set(item.date, {
-				net: item.value,
-				isMonthly: item.isMonthly,
-			});
-		}
-
-		for (const item of expenseGrouped) {
-			const existing = merged.get(item.date);
-			if (existing) {
-				existing.net -= item.value;
-				existing.isMonthly = item.isMonthly ?? existing.isMonthly;
-			} else {
-				merged.set(item.date, {
-					net: -item.value,
-					isMonthly: item.isMonthly,
-				});
-			}
-		}
-
-		// Calculate cumulative balance (running total)
-		const sorted = Array.from(merged.entries())
-			.map(([date, values]) => ({
-				date,
-				net: values.net,
-				isMonthly: values.isMonthly,
-			}))
-			.sort((a, b) => a.date.localeCompare(b.date));
-
-		let balance = 0;
-		return sorted.map((item) => {
-			balance += item.net;
-			return {
-				date: item.date,
-				net: item.net,
-				balance,
-				isMonthly: item.isMonthly,
-			};
-		});
-	};
-
-	const data = useMemo(
-		() => applyDateGrouping(filteredIncomes, filteredExpenses),
-		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-		[filteredIncomes, filteredExpenses],
-	);
+	const { model } = props;
+	const { currency, range } = model;
+	const data = model.cashFlow.series;
+	const isMonthlyBucket = range.bucket === "month";
 
 	const finalBalance = data.length > 0 ? data[data.length - 1].balance : 0;
 	const startBalance = data.length > 0 ? data[0].balance : 0;
 	const isPositiveTrend = finalBalance >= startBalance;
 	const trendColor = isPositiveTrend ? "var(--success)" : "var(--destructive)";
-	const [hoveredDataPoint, setHoveredDataPoint] = useState<CashFlowDataPoint | null>(null);
+	const [hoveredDataPoint, setHoveredDataPoint] = useState<CashFlowPoint | null>(null);
 	const displayBalance = hoveredDataPoint?.balance ?? finalBalance;
 	const displayNet = hoveredDataPoint?.net ?? null;
 	const isHovering = hoveredDataPoint !== null;
 
-	// Comparison period logic
-	const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
-
-	const currentNetTotal = useMemo(
-		() =>
-			filteredIncomes.reduce((sum, item) => sum + item.value, 0) -
-			filteredExpenses.reduce((sum, item) => sum + item.value, 0),
-		[filteredIncomes, filteredExpenses],
-	);
-
-	const previousNetTotal = useMemo(() => {
-		if (!comparisonRange) return 0;
-		const prevIncomes = props.incomes.filter((income) => {
-			const incomeDate = datetime.parse(income.date, "yyyy-MM-dd", new Date());
-			return incomeDate >= comparisonRange.startDate && incomeDate <= comparisonRange.endDate;
-		});
-		const prevExpenses = props.expenses.filter((expense) => {
-			const expenseDate = datetime.parse(expense.date, "yyyy-MM-dd", new Date());
-			return expenseDate >= comparisonRange.startDate && expenseDate <= comparisonRange.endDate;
-		});
-		const prevIncomeTotal = prevIncomes.reduce(
-			(sum, item) => sum + (item.convertedAmount > 0 ? item.convertedAmount : 0),
-			0,
-		);
-		const prevExpenseTotal = prevExpenses.reduce(
-			(sum, item) => sum + (item.convertedAmount > 0 ? item.convertedAmount : 0),
-			0,
-		);
-		return prevIncomeTotal - prevExpenseTotal;
-	}, [comparisonRange, props.incomes, props.expenses]);
-
-	const netChange = calculatePercentageChange(currentNetTotal, previousNetTotal, currency);
-
-	const comparisonText = getComparisonPeriodText(dateRange, customRange);
+	const netChange = model.cashFlow.stats.net.change;
+	const comparisonText = model.cashFlow.stats.comparisonText;
 	const handleComparisonClick = () => {
-		if (comparisonRange) {
+		if (range.comparison) {
 			setSyncedDateRange({
 				selected: "custom",
 				custom: {
-					from: comparisonRange.startDate,
-					to: comparisonRange.endDate,
+					from: range.comparison.startDate,
+					to: range.comparison.endDate,
 				},
 			});
 		}
@@ -313,7 +130,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 							axisLine={false}
 							tickLine={false}
 							tickMargin={8}
-							tickFormatter={(value) => formatChartDate(value, dateRange)}
+							tickFormatter={(value) => formatChartDate(value, range.bucket)}
 							interval="preserveStartEnd"
 							minTickGap={32}
 						/>
@@ -329,7 +146,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 								strokeDasharray: "4 4",
 							}}
 							content={
-								<TooltipContent dateRange={dateRange} setHoveredDataPoint={setHoveredDataPoint} />
+								<TooltipContent bucket={range.bucket} setHoveredDataPoint={setHoveredDataPoint} />
 							}
 						/>
 						<Area
@@ -352,30 +169,28 @@ function TooltipContent({
 	active,
 	payload,
 	coordinate,
-	dateRange,
+	bucket,
 	setHoveredDataPoint,
 }: {
 	active?: boolean;
-	payload?: Array<{ payload: CashFlowDataPoint; value: number }>;
+	payload?: Array<{ payload: CashFlowPoint; value: number }>;
 	coordinate?: { x: number; y: number };
-	dateRange: PredefinedDateRange;
-	setHoveredDataPoint: (value: CashFlowDataPoint | null) => void;
+	bucket: SeriesBucket;
+	setHoveredDataPoint: (value: CashFlowPoint | null) => void;
 }) {
 	useEffect(() => {
 		if (active && payload && payload.length) {
-			setHoveredDataPoint(payload[0].payload as CashFlowDataPoint);
+			setHoveredDataPoint(payload[0].payload as CashFlowPoint);
 		} else {
 			setHoveredDataPoint(null);
 		}
 	}, [active, payload, setHoveredDataPoint]);
 
 	if (active && payload && payload.length && coordinate) {
-		const dataPoint = payload[0].payload as CashFlowDataPoint;
+		const dataPoint = payload[0].payload as CashFlowPoint;
 		const date = datetime.parse(dataPoint.date, "yyyy-MM-dd", new Date());
 		const formattedDate =
-			dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
-				? datetime.format(date, "MMMM yyyy")
-				: datetime.format(date, "MMMM dd");
+			bucket === "month" ? datetime.format(date, "MMMM yyyy") : datetime.format(date, "MMMM dd");
 
 		const tooltipStyle: React.CSSProperties = {
 			position: "absolute",
@@ -398,8 +213,7 @@ function TooltipContent({
 	return null;
 }
 
-function formatChartDate(dateValue: string, dateRange: PredefinedDateRange): string {
+function formatChartDate(dateValue: string, bucket: SeriesBucket): string {
 	const date = datetime.parse(dateValue, "yyyy-MM-dd", new Date());
-	const isMonthly = dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange);
-	return datetime.format(date, isMonthly ? "MMM yyyy" : "MMM dd");
+	return datetime.format(date, bucket === "month" ? "MMM yyyy" : "MMM dd");
 }

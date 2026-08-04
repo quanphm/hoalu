@@ -18,16 +18,9 @@ export function normalizeSearch(input: string | null) {
 		.toLowerCase();
 }
 
-interface SearchableItem {
-	/** Text fields to search (title, description, etc.) */
-	textFields: (string | null | undefined)[];
-	/** Numeric fields to search (amount, etc.) */
-	numericFields?: (number | null | undefined)[];
-}
-
 export type ComparisonOp = ">" | ">=" | "<" | "<=" | "=";
 
-export interface NumericComparison {
+interface NumericComparison {
 	op: ComparisonOp;
 	value: number;
 }
@@ -104,73 +97,4 @@ export function parseQuery(query: string): ParsedQuery {
 		}));
 
 	return { terms, comparisons };
-}
-
-/**
- * Multi-term search function that supports:
- * - Diacritic-insensitive text matching (e.g., "com tam" matches "Cơm tấm")
- * - Numeric substring matching (e.g., "64" matches 640000)
- * - Numeric comparisons (e.g., "> 100000", ">=120,000", "<= 50000", "= 85000")
- * - Multiple terms with AND logic (e.g., "kem > 100000" matches items with "kem" in text AND amount > 100000)
- *
- * @param query - Search query string (space-separated terms, may include comparison operators)
- * @param item - Item with text and numeric fields to search
- * @returns true if all terms and comparisons match
- *
- * @example
- * ```ts
- * // Text + substring numeric search
- * matchesSearch("kem 64", {
- *   textFields: [expense.title, expense.description],
- *   numericFields: [expense.amount],
- * })
- *
- * // Comparison search
- * matchesSearch("> 100000", {
- *   textFields: [expense.title],
- *   numericFields: [expense.amount],
- * })
- *
- * // Combined text + comparison
- * matchesSearch("coffee >= 50,000", {
- *   textFields: [expense.title],
- *   numericFields: [expense.amount],
- * })
- * ```
- */
-export function matchesSearch(query: string, item: SearchableItem): boolean {
-	if (!query.trim()) return true;
-
-	const { terms, comparisons } = parseQuery(query);
-
-	// Pre-normalize text fields
-	const normalizedTextFields = item.textFields.map((field) => normalizeSearch(field ?? null));
-
-	// Pre-format numeric fields as strings (for substring matching)
-	const numericStrings = (item.numericFields ?? []).map((field) =>
-		field != null ? String(field).replace(/[.,]/g, "") : "",
-	);
-
-	// Raw numeric values (for comparison matching)
-	const numericValues = (item.numericFields ?? []).filter(
-		(field): field is number => field != null,
-	);
-
-	// All text/substring terms must match at least one field
-	const termsMatch =
-		terms.length === 0 ||
-		terms.every(
-			(term) =>
-				normalizedTextFields.some((field) => field.includes(term.text)) ||
-				numericStrings.some((field) => field.includes(term.numeric)),
-		);
-
-	// All comparison expressions must match at least one numeric field
-	const comparisonsMatch =
-		comparisons.length === 0 ||
-		comparisons.every((comp) =>
-			numericValues.some((value) => compareNumeric(value, comp.op, comp.value)),
-		);
-
-	return termsMatch && comparisonsMatch;
 }
