@@ -393,6 +393,81 @@ const route = app
 						.where(eq(schema.recurringBill.id, expense.recurringBillId));
 				}
 
+				// Manage occurrence records for recurring bills
+				// Clear old occurrence if the expense was previously linked
+				if (expense.recurringBillId) {
+					await tx
+						.update(schema.recurringBillOccurrence)
+						.set({ expenseId: null, paidAt: null, updatedAt: sql`now()` })
+						.where(eq(schema.recurringBillOccurrence.expenseId, expense.id));
+				}
+
+				// Create/update occurrence if the expense is now linked to a bill
+				if (resolvedRecurringBillId) {
+					const [newBill] = await tx
+						.select()
+						.from(schema.recurringBill)
+						.where(
+							and(
+								eq(schema.recurringBill.id, resolvedRecurringBillId),
+								eq(schema.recurringBill.workspaceId, workspace.id),
+							),
+						)
+						.limit(1);
+
+					if (newBill) {
+						const expenseDateLocal = extractDateFromISO(date ?? expense.date);
+						const [year, month, day] = expenseDateLocal.split("-").map(Number);
+						let dueDateStr: string;
+
+						if (newBill.repeat === "monthly" && newBill.dueDay) {
+							const occ = new Date(year, month - 1, newBill.dueDay);
+							if (occ.getMonth() !== month - 1) occ.setDate(0);
+							dueDateStr = datetime.format(occ, "yyyy-MM-dd");
+						} else if (newBill.repeat === "weekly" && newBill.dueDay !== null) {
+							const expenseDateObj = new Date(year, month - 1, day);
+							const expenseDayOfWeek = expenseDateObj.getDay();
+							const targetDayOfWeek = newBill.dueDay;
+							const daysSinceDue = (expenseDayOfWeek - targetDayOfWeek + 7) % 7;
+							const dueDate = new Date(year, month - 1, day - daysSinceDue);
+							dueDateStr = datetime.format(dueDate, "yyyy-MM-dd");
+						} else if (newBill.repeat === "yearly") {
+							const anchorDate = new Date(newBill.anchorDate);
+							const dueMonth = newBill.dueMonth ?? anchorDate.getMonth() + 1;
+							const dueDay = newBill.dueDay ?? anchorDate.getDate();
+							dueDateStr = `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
+						} else {
+							dueDateStr = expenseDateLocal;
+						}
+
+						const [existingOccurrence] = await tx
+							.select()
+							.from(schema.recurringBillOccurrence)
+							.where(
+								and(
+									eq(schema.recurringBillOccurrence.recurringBillId, resolvedRecurringBillId),
+									eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
+								),
+							)
+							.limit(1);
+
+						if (existingOccurrence) {
+							await tx
+								.update(schema.recurringBillOccurrence)
+								.set({ expenseId: param.id, paidAt: sql`now()`, updatedAt: sql`now()` })
+								.where(eq(schema.recurringBillOccurrence.id, existingOccurrence.id));
+						} else {
+							await tx.insert(schema.recurringBillOccurrence).values({
+								id: generateId({ use: "uuid" }),
+								recurringBillId: resolvedRecurringBillId,
+								dueDate: dueDateStr,
+								expenseId: param.id,
+								paidAt: sql`now()`,
+							});
+						}
+					}
+				}
+
 				// Build the expense update — only include fields that were explicitly provided.
 				// Never spread all of payload to avoid Zod-defaulted fields overwriting DB values.
 				const expenseSet: Record<string, unknown> = {
