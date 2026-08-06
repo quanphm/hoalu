@@ -8,34 +8,25 @@ import {
 } from "@hoalu/ui/chart";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
-import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 import { Pie, PieChart } from "recharts";
 
-import { customDateRange$, expenseCategoryFilter$, selectDateRange$ } from "#app/atoms/filters.ts";
+import { expenseCategoryFilter$ } from "#app/atoms/filters.ts";
+import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { createChartColor, createChartColorTheme } from "#app/helpers/colors.ts";
-import { filterDataByRange } from "#app/helpers/date-range.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
-import { CurrencyValue } from "../currency-value";
-
-import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
-import type { SyncedExpense } from "#app/components/expenses/use-expenses.ts";
-import type { ColorSchema } from "@hoalu/schema/schema";
+import type { CategoryBreakdownEntry, DashboardModel } from "#app/services/dashboard-model.ts";
 
 const TOP_N_CATEGORY = 5;
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-interface CategoryData {
-	id: string;
-	name: string;
-	value: number;
-	color: ColorSchema;
-}
-
-function DonutBreakdown(props: { data: CategoryData[]; totalAmount: number; currency: string }) {
+function DonutBreakdown(props: {
+	data: CategoryBreakdownEntry[];
+	totalAmount: number;
+	currency: string;
+}) {
 	const chartData = props.data.map((item) => ({
 		...item,
 		fill: `var(--color-${item.id})`,
@@ -89,14 +80,14 @@ function DonutBreakdown(props: { data: CategoryData[]; totalAmount: number; curr
 }
 
 function CategoryListBreakdown(props: {
-	data: CategoryData[];
+	data: CategoryBreakdownEntry[];
 	totalAmount: number;
 	currency: string;
+	customRange: DashboardModel["range"]["custom"];
 	onToggleView(): void;
 }) {
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
-	const customDateRange = useValue(customDateRange$);
 	const setSelectedCategories = expenseCategoryFilter$.set;
 
 	const handleClick = (id: string) => {
@@ -107,13 +98,13 @@ function CategoryListBreakdown(props: {
 
 		setSelectedCategories([id]);
 
-		if (!customDateRange) {
+		if (!props.customRange) {
 			navigate({
 				to: "/$slug/transactions",
 				params: { slug },
 			});
 		} else {
-			const searchQuery = `${customDateRange.from.getTime()}-${customDateRange.to.getTime()}`;
+			const searchQuery = `${props.customRange.from.getTime()}-${props.customRange.to.getTime()}`;
 			navigate({
 				to: "/$slug/transactions",
 				params: { slug },
@@ -170,48 +161,20 @@ function EmptyData() {
 }
 
 interface CategoryBreakdownProps {
-	expenses: SyncedExpense[];
-	categories: SyncedCategory[];
+	model: DashboardModel;
 }
 
 export function CategoryBreakdown(props: CategoryBreakdownProps) {
+	const { model } = props;
 	const [view, setView] = useState<"less" | "more">("less");
-	const {
-		metadata: { currency },
-	} = useWorkspace();
 
-	const dateRange = useValue(selectDateRange$);
-	const customRange = useValue(customDateRange$);
-
-	const filteredExpenses = filterDataByRange(props.expenses, dateRange, customRange);
-
-	const categoryTotals: Record<string, number> = {};
-	for (const expense of filteredExpenses) {
-		const categoryId = expense.category?.id;
-		if (categoryId) {
-			const amount = expense.convertedAmount > 0 ? expense.convertedAmount : 0;
-			categoryTotals[categoryId] = (categoryTotals[categoryId] || 0) + amount;
-		}
-	}
-
-	const allCategoryData: CategoryData[] = Object.entries(categoryTotals)
-		.map(([categoryId, total]) => {
-			const category = props.categories.find((c) => c.id === categoryId);
-			return {
-				id: categoryId,
-				name: category?.name || "Unknown",
-				color: category?.color || "gray",
-				value: total,
-			};
-		})
-		.filter((item) => item.value > 0)
-		.sort((a, b) => b.value - a.value);
+	const allCategoryData = model.categories.breakdown;
 
 	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
 	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
 	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
 
-	const categoryData = [...topCategories];
+	const categoryData: CategoryBreakdownEntry[] = [...topCategories];
 	if (othersTotal > 0) {
 		categoryData.push({
 			id: "others",
@@ -248,11 +211,12 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 					<EmptyData />
 				) : (
 					<div className="space-y-6">
-						<DonutBreakdown data={dataToView} totalAmount={totalAmount} currency={currency} />
+						<DonutBreakdown data={dataToView} totalAmount={totalAmount} currency={model.currency} />
 						<CategoryListBreakdown
 							data={dataToView}
 							totalAmount={totalAmount}
-							currency={currency}
+							currency={model.currency}
+							customRange={model.range.custom}
 							onToggleView={handleToggleView}
 						/>
 					</div>

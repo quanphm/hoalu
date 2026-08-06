@@ -1,12 +1,12 @@
 import { cn } from "@hoalu/ui/utils";
 
+import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-
-import { CurrencyValue } from "./currency-value";
 
 interface TransactionAmountProps {
 	amount: number;
-	convertedAmount: number;
+	/** major units, workspace currency — `null` when no FX rate exists */
+	convertedAmount: number | null;
 	currency: string;
 }
 
@@ -23,8 +23,18 @@ export function TransactionAmount({
 		metadata: { currency: workspaceCurrency },
 	} = useWorkspace();
 
-	if (convertedAmount === -1) {
-		return <p className="text-destructive">Error</p>;
+	// No FX rate — show the original amount instead of a misleading ≈0
+	if (convertedAmount === null) {
+		return (
+			<div className="flex flex-col items-end gap-0.5 leading-tight">
+				<CurrencyValue
+					value={amount}
+					currency={sourceCurrency}
+					className={cn("text-sm font-medium", className)}
+					as="p"
+				/>
+			</div>
+		);
 	}
 
 	const prefix = `${workspaceCurrency !== sourceCurrency ? "≈" : ""}${type === "expense" ? "-" : type === "income" ? "+" : ""}`;

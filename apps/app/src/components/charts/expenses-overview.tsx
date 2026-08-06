@@ -7,39 +7,20 @@ import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart"
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
-import {
-	chartCategoryFilter$,
-	chartGroupBy$,
-	customDateRange$,
-	selectDateRange$,
-	setSyncedDateRange,
-} from "#app/atoms/filters.ts";
+import { chartCategoryFilter$, setSyncedDateRange } from "#app/atoms/filters.ts";
 import { redactedAmount$ } from "#app/atoms/redacted.ts";
-import { type SyncedExpense, useExpenseStats } from "#app/components/expenses/use-expenses.ts";
-import { useIncomeStats } from "#app/components/incomes/use-incomes.ts";
+import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { formatCurrency } from "#app/helpers/currency.ts";
-import {
-	calculateComparisonDateRange,
-	filterDataByRange,
-	generateDailyDataForRange,
-	generateDailyDataWithZeros,
-	generateMTDDataWithZeros,
-	getStartOfWeek,
-	groupDataByMonth,
-	isMonthBasedRange,
-} from "#app/helpers/date-range.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { seriesForRange, type DashboardModel } from "#app/services/dashboard-model.ts";
 
-import { CurrencyValue } from "../currency-value.tsx";
-import { PercentageChangeDisplay } from "../percentage-change.tsx";
 import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter.tsx";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
-import type { SyncedIncome } from "#app/components/incomes/use-incomes.ts";
 import type { ColorSchema } from "@hoalu/schema/schema";
 
 function ClippedBarShape(props: Record<string, unknown>) {
@@ -104,8 +85,7 @@ const CATEGORY_COLOR_HEX: Record<ColorSchema, string> = {
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface ExpenseOverviewProps {
-	expenses: SyncedExpense[];
-	incomes: SyncedIncome[];
+	model: DashboardModel;
 	categories: SyncedCategory[];
 }
 
@@ -114,6 +94,7 @@ type OverviewTab = "expenses" | "income";
 type GroupedDateEntry = { date: string; value: number; isMonthly?: boolean };
 
 export function ExpenseOverview(props: ExpenseOverviewProps) {
+	const { model } = props;
 	const { slug } = routeApi.useParams();
 	const navigate = routeApi.useNavigate();
 
@@ -121,93 +102,33 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	const isIncomeTab = activeTab === "income";
 	const [clampOutliers, setClampOutliers] = useState(true);
 
-	const expenseStats = useExpenseStats({
-		expenses: props.expenses,
-		categories: props.categories,
-	});
-
-	const incomeStats = useIncomeStats({
-		incomes: props.incomes ?? [],
-	});
-
-	// Use the appropriate stats based on active tab
-	const stats = isIncomeTab ? incomeStats : expenseStats;
-
-	// For income tab: build byDate aggregation from income data
-	const incomeByDate = useMemo(() => {
-		if (!props.incomes) return [];
-		const map = new Map<string, number>();
-		for (const income of props.incomes) {
-			const amount = income.convertedAmount > 0 ? income.convertedAmount : 0;
-			map.set(income.date, (map.get(income.date) ?? 0) + amount);
-		}
-		return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
-	}, [props.incomes]);
-
-	const dateRange = useValue(selectDateRange$);
-	const customRange = useValue(customDateRange$);
 	const selectedCategoryIds = useValue(chartCategoryFilter$);
-	const chartGroupBy = useValue(chartGroupBy$);
 	const isRedacted = useValue(redactedAmount$);
 
-	const {
-		metadata: { currency },
-	} = useWorkspace();
+	const { currency, range } = model;
+	const stats = isIncomeTab ? model.incomes.stats : model.expenses.stats;
+
 	const chartRef = useRef<HTMLDivElement>(null);
 	const { takeScreenshot, status } = useScreenshot();
 
 	const isCategoryMode = selectedCategoryIds.length > 0 && !isIncomeTab;
+	const isMonthlyBucket = range.bucket === "month";
 
-	// Source data for the chart — expenses use aggregation.byDate, income builds it inline
-	const filteredData = isIncomeTab
-		? filterDataByRange(incomeByDate, dateRange, customRange)
-		: filterDataByRange(expenseStats.aggregation.byDate, dateRange, customRange);
-
-	const applyDateGrouping = useCallback(
-		(sourceData: { date: string; value: number }[]): GroupedDateEntry[] => {
-			const today = new Date();
-
-			if (dateRange === "ytd") {
-				return groupDataByMonth(sourceData, true);
-			} else if (dateRange === "all") {
-				return groupDataByMonth(sourceData, false);
-			} else if (isMonthBasedRange(dateRange)) {
-				return groupDataByMonth(sourceData, false);
-			} else if (dateRange === "mtd") {
-				return generateMTDDataWithZeros(sourceData);
-			} else if (dateRange === "wtd") {
-				const startOfWeek = getStartOfWeek(today, 1);
-				const endOfWeek = datetime.endOfDay(today);
-				return generateDailyDataForRange(sourceData, startOfWeek, endOfWeek);
-			} else if (dateRange === "custom" && customRange) {
-				const startDate = datetime.startOfDay(customRange.from);
-				const endDate = datetime.endOfDay(customRange.to);
-				if (chartGroupBy === "month") {
-					return groupDataByMonth(sourceData, false);
-				} else {
-					return generateDailyDataForRange(sourceData, startDate, endDate);
-				}
-			} else if (dateRange === "7" || dateRange === "30" || dateRange === "90") {
-				const days = parseInt(dateRange, 10);
-				return generateDailyDataWithZeros(sourceData, days);
-			} else {
-				return generateDailyDataWithZeros(sourceData, 50);
-			}
-		},
-		[dateRange, customRange, chartGroupBy],
-	);
-
-	const totalData = useMemo(
-		() => applyDateGrouping(filteredData),
-		[applyDateGrouping, filteredData],
-	);
+	// Source data for the chart — one series per tab from the model
+	const totalData: GroupedDateEntry[] = isIncomeTab ? model.incomes.series : model.expenses.series;
 
 	// Category mode data: build per-category series then merge into grouped records
 	const categoryData = useMemo(() => {
 		if (!isCategoryMode) return [];
 
+		const selection = {
+			dateRange: range.selected,
+			customRange: range.custom,
+			groupBy: range.groupBy,
+		};
+
 		// Filter byDateAndCategory to only selected categories
-		const rawByDateCat = expenseStats.aggregation.byDateAndCategory;
+		const rawByDateCat = model.expenses.byDateAndCategory;
 
 		// First, build per-category { date, value }[] arrays
 		const perCategoryDateValues: Record<string, { date: string; value: number }[]> = {};
@@ -226,10 +147,13 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 			}));
 		}
 
-		// Apply date grouping to each category separately
+		// Apply the shared bucketing to each category separately
 		const groupedPerCategory: Record<string, GroupedDateEntry[]> = {};
 		for (const catId of selectedCategoryIds) {
-			groupedPerCategory[catId] = applyDateGrouping(perCategoryDateValues[catId] || []);
+			groupedPerCategory[catId] = seriesForRange(
+				perCategoryDateValues[catId] || [],
+				selection,
+			).points;
 		}
 
 		// Merge into a single array of records: { date, [catId]: value, ... }
@@ -251,8 +175,10 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	}, [
 		isCategoryMode,
 		selectedCategoryIds,
-		expenseStats.aggregation.byDateAndCategory,
-		applyDateGrouping,
+		model.expenses.byDateAndCategory,
+		range.selected,
+		range.custom,
+		range.groupBy,
 	]);
 
 	const data = isCategoryMode ? categoryData : totalData;
@@ -289,8 +215,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	// Calculate total: filtered by selected categories in category mode, or all expenses in total mode
 	const totalExpenses = useMemo(() => {
 		if (!isCategoryMode) {
-			// Total mode: sum all filtered expenses
-			return filteredData.reduce((sum, item) => sum + item.value, 0);
+			return stats.total;
 		}
 
 		// Category mode: sum only selected categories from the chart data
@@ -302,7 +227,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 				}, 0)
 			);
 		}, 0);
-	}, [isCategoryMode, filteredData, data, selectedCategoryIds]);
+	}, [isCategoryMode, stats.total, data, selectedCategoryIds]);
 
 	const maxBarSize = useMemo(() => {
 		if (!isCategoryMode) return 32; // Larger bars for total mode
@@ -370,13 +295,12 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	const handleComparisonClick = () => {
-		const comparisonRange = calculateComparisonDateRange(dateRange, customRange);
-		if (comparisonRange) {
+		if (range.comparison) {
 			setSyncedDateRange({
 				selected: "custom",
 				custom: {
-					from: comparisonRange.startDate,
-					to: comparisonRange.endDate,
+					from: range.comparison.startDate,
+					to: range.comparison.endDate,
 				},
 			});
 		}
@@ -395,13 +319,13 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	};
 
 	const getCategoryColor = (catId: string) => {
-		const info = expenseStats.categoryInfoMap[catId];
+		const info = model.categories.infoMap[catId];
 		if (!info) return CATEGORY_COLOR_HEX.gray;
 		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
 	};
 
 	const getCategoryName = (catId: string) => {
-		return expenseStats.categoryInfoMap[catId]?.name ?? "Unknown";
+		return model.categories.infoMap[catId]?.name ?? "Unknown";
 	};
 
 	const chartConfig = {
@@ -432,8 +356,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							)}
 						</div>
 						<PercentageChangeDisplay
-							change={stats.amount.change}
-							comparisonText={stats.comparisonText || undefined}
+							change={stats.amountChange}
+							comparisonText={range.comparisonText || undefined}
 							onComparisonClick={handleComparisonClick}
 							invertColor={!isIncomeTab}
 						/>
@@ -455,7 +379,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							<LightningIcon />
 						</Button>
 					)}
-					{dateRange === "custom" && (
+					{range.selected === "custom" && (
 						<div data-slot="chart-group-by hidden md:block">
 							<ChartGroupByFilter />
 						</div>
@@ -527,10 +451,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							tickMargin={8}
 							tickFormatter={(value) => {
 								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-								return dateRange === "ytd" ||
-									dateRange === "all" ||
-									isMonthBasedRange(dateRange) ||
-									(dateRange === "custom" && chartGroupBy === "month")
+								return isMonthlyBucket
 									? datetime.format(date, "MMM yyyy")
 									: datetime.format(date, "MMM dd");
 							}}
@@ -600,10 +521,9 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							content={({ active, payload, label, coordinate }) => {
 								if (active && payload && payload.length && label && coordinate) {
 									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
-									const formattedDate =
-										dateRange === "ytd" || dateRange === "all" || isMonthBasedRange(dateRange)
-											? datetime.format(date, "MMMM yyyy")
-											: datetime.format(date, "dd/MM/yyyy");
+									const formattedDate = isMonthlyBucket
+										? datetime.format(date, "MMMM yyyy")
+										: datetime.format(date, "dd/MM/yyyy");
 
 									const tooltipStyle: React.CSSProperties = {
 										position: "absolute",

@@ -15,7 +15,7 @@ Hoalu frontend react app.
 - **Routing**: TanStack Router v1.139+ with file-based routing
 - **Data Fetching**: TanStack Query v5.90+ with TanStack React DB v0.1+
 - **Forms**: TanStack Form v1.29+ with Zod v4 validation
-- **State Management**: Jotai v2.15+ atoms for local state
+- **State Management**: Legendapp State v3 (`@legendapp/state` beta) observables for local state
 - **Real-time Sync**:
   - Electric SQL with `@electric-sql/pglite` v0.4.4
   - `@tanstack/electric-db-collection` v0.3.3 for reactive collections
@@ -51,20 +51,19 @@ Hoalu frontend react app.
   - `src/hooks/use-db.ts` - TanStack DB live queries
   - `src/hooks/use-workspace.ts` - Workspace context hook (slug-based)
   - `src/hooks/use-receipt-scan.ts` - Receipt scanning hook
-  - `src/services/query-options.ts` - Reusable query configs (370 lines)
+  - `src/services/query-options.ts` - Reusable query configs (239 lines)
   - `src/services/mutations.ts` - Mutation configurations (1082 lines)
 
 ### Frontend Components (`apps/app/src/components/`)
 
-**Expenses (7 files):**
+**Expenses (6 files):**
 
 - `expense-list.tsx` - Virtualized list with TanStack Virtual
 - `expense-content.tsx` - Individual list item component
 - `expense-details.tsx` - Detail panel with edit/delete actions
 - `expense-actions.tsx` - Create/Edit dialog triggers
 - `expense-filter-dropdown.tsx` - Filter controls (search, category, wallet, repeat, date)
-- `recent-transactions.tsx` - Recent transactions widget
-- `use-expenses.ts` (430 lines) - Live queries, stats calculations, filtering logic (exports SyncedExpense type)
+- `use-expenses.ts` - Expense live query with FX conversion via `dashboard-model.ts` (exports SyncedExpense type)
 
 **Categories (3 files):**
 
@@ -99,7 +98,7 @@ Hoalu frontend react app.
 - `income-content.tsx` - Individual item component
 - `income-details.tsx` - Detail panel
 - `income-actions.tsx` - CRUD dialog triggers
-- `use-incomes.ts` - Live queries (exports SyncedIncome type)
+- `use-incomes.ts` - Income live query with FX conversion via `dashboard-model.ts` (exports SyncedIncome type)
 - `use-income-navigation.ts` - Navigation helpers
 
 **Events (5 files):**
@@ -128,11 +127,16 @@ Hoalu frontend react app.
 
 **Charts:**
 
-- `expense-stats-row.tsx` - Summary cards with percentage changes
-- `expenses-overview.tsx` - Line/area chart with Recharts
+- `use-dashboard-model.ts` - The one hook reading collections + filter observables; charts receive the memoized `DashboardModel` as props
+- `expenses-overview.tsx` - Bar chart with Recharts (expenses/incomes tabs, category mode)
+- `cash-flow-chart.tsx` - Cumulative net area chart
+- `cash-flow.tsx` - Cash flow summary cards
 - `category-breakdown.tsx` - Pie/donut chart for categories
 - `date-range-picker.tsx` - Date range selector component
 - `dashboard-date-filter.tsx` - Quick date filters (today, week, month, year)
+
+The dashboard read pipeline (FX conversion, range bucketing, period stats) lives in the
+deep pure module `src/services/dashboard-model.ts` — charts never assemble their own pipelines.
 
 **Providers (6 files):**
 
@@ -155,18 +159,21 @@ Hoalu frontend react app.
 
 ## Architecture Patterns
 
-### State Management with Jotai
+### State Management with Legendapp State
 
 **Location**: `apps/app/src/atoms/` (8 files)
+
+Global UI state lives in `@legendapp/state` observables (suffixed `$`), read in components
+via `useValue(...$)` from `@legendapp/state/react`:
 
 ```
 atoms/
   categories.ts   - Category dialog state
   command-palette.ts - Command palette state
   dialogs.ts      - Global dialog state
-  expenses.ts     - Draft, selected expense atoms
-  filters.ts      - Date range filters
-  incomes.ts      - Draft income atoms
+  expenses.ts     - Draft, selected expense state
+  filters.ts      - Date range + chart filters (selectDateRange$, customDateRange$, chartGroupBy$, ...)
+  incomes.ts      - Draft income state
   redacted.ts     - Amount redaction toggle
   index.ts        - Re-exports
 ```
@@ -174,7 +181,7 @@ atoms/
 ### Data Layer
 
 **Query Key Factory** (`lib/query-key-factory.ts`):
-Uses structured query keys for all resources: workspaceKeys, expenseKeys, incomeKeys, categoryKeys, walletKeys, eventKeys, recurringBillKeys, taskKeys, fileKeys, exchangeRateKeys, memberKeys, authKeys
+Uses structured query keys for all resources: workspaceKeys, expenseKeys, incomeKeys, categoryKeys, walletKeys, eventKeys, recurringBillKeys, taskKeys, fileKeys, memberKeys, authKeys
 
 **Collections** (`lib/collections/` - 9 files):
 

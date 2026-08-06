@@ -51,9 +51,6 @@ export type ExpenseSchema = InferResponseType<
 	typeof honoClient.bff.expenses.$get,
 	200
 >["data"][number];
-export type ExpenseWithClientConvertedSchema = ExpenseSchema & {
-	convertedAmount: number;
-};
 export type ExpensePostSchema = InferRequestType<typeof honoClient.bff.expenses.$post>["json"];
 export type ExpensePatchSchema = InferRequestType<
 	(typeof honoClient.bff.expenses)[":id"]["$patch"]
