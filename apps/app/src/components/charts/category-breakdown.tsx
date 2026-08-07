@@ -114,31 +114,30 @@ function CategoryListBreakdown(props: {
 	};
 
 	return (
-		<div className="divide-border/60 divide-y">
+		<div className="divide-border/50 divide-y">
 			{props.data.map((data) => {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
-					<div key={data.id} className="flex items-center justify-between py-1">
-						<div className="flex items-center gap-2">
-							<div className={cn("h-4 w-1 rounded-xs", createChartColor(data.color))} />
-							<Button
-								variant="link"
-								onClick={() => handleClick(data.id)}
-								className={cn(
-									"text-foreground h-auto p-0 text-sm",
-									data.id !== "others" && "underline decoration-dotted underline-offset-4",
-								)}
-							>
-								{data.name}
-							</Button>
-						</div>
-						<div className="text-right">
+					<div key={data.id} className="flex items-center gap-3 py-2.5">
+						<div
+							className={cn("size-3 shrink-0 rounded-[4px]", createChartColor(data.color))}
+						/>
+						<Button
+							variant="link"
+							onClick={() => handleClick(data.id)}
+							className="text-foreground h-auto min-w-0 truncate p-0 text-sm font-semibold"
+						>
+							{data.name}
+						</Button>
+						<div className="ml-auto flex shrink-0 items-center gap-6">
+							<span className="text-muted-foreground w-12 text-right text-sm tabular-nums">
+								{percentage}%
+							</span>
 							<CurrencyValue
 								value={data.value}
 								currency={props.currency}
-								className="text-sm font-medium"
+								className="text-sm font-semibold tabular-nums"
 							/>
-							<div className="text-muted-foreground text-xs">{percentage}%</div>
 						</div>
 					</div>
 				);
