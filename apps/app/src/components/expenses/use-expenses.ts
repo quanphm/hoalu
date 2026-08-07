@@ -2,9 +2,9 @@ import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
 import {
 	categoryCollectionFactory,
-	exchangeRateCollection,
 	expenseCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
@@ -45,21 +45,12 @@ export function useLiveQueryExpenses() {
 		[workspace.slug],
 	);
 
-	const { data: fxRateData } = useLiveQuery((q) => {
-		return q.from({ fxRate: exchangeRateCollection }).fn.select(({ fxRate }) => ({
-			from: fxRate.from_currency,
-			to: fxRate.to_currency,
-			exchangeRate: `${fxRate.exchange_rate}`,
-			inverseRate: `${fxRate.inverse_rate}`,
-			validFrom: fxRate.valid_from,
-			validTo: fxRate.valid_to,
-		}));
-	});
+	const fxRateData = useFxRateData();
 
-	const fxRateIndex = useMemo(() => buildFxRateIndex(fxRateData), [fxRateData]);
+	const fxRateIndex = useMemo(() => buildFxRateIndex(fxRateData ?? []), [fxRateData]);
 
 	const transformedExpenses = useMemo(() => {
-		return convertTransactions(expensesData, fxRateIndex, workspace.metadata.currency);
+		return convertTransactions(expensesData ?? [], fxRateIndex, workspace.metadata.currency);
 	}, [expensesData, fxRateIndex, workspace.metadata.currency]);
 
 	return transformedExpenses;

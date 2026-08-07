@@ -40,8 +40,8 @@ import type { ColorSchema } from "@hoalu/schema/schema";
 export interface FxRateRow {
 	from: string;
 	to: string;
-	exchangeRate: string;
-	inverseRate: string;
+	exchangeRate: number;
+	inverseRate: number;
 	validFrom: string;
 	validTo: string;
 }
@@ -150,7 +150,7 @@ export function convertTransactions<T extends ConvertibleTransaction>(
 
 		const factor = zeroDecimalSet.has(row.currency) ? 1 : 100;
 		const convertedAmount = exchangeRate
-			? (row.amount * Number(exchangeRate.exchangeRate)) / factor
+			? (row.amount * exchangeRate.exchangeRate) / factor
 			: null;
 
 		return {

@@ -9,55 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
-import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
-import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
-import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
-import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
+import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
+import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as DashboardSlugRouteRouteImport } from './routes/_dashboard/$slug/route'
-import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
-import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
-import { Route as DashboardSlugWalletsRouteImport } from './routes/_dashboard/$slug/wallets'
-import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
-import { Route as DashboardSlugCategoriesRouteImport } from './routes/_dashboard/$slug/categories'
-import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
-import { Route as DashboardSlugRecurringBillsRouteRouteImport } from './routes/_dashboard/$slug/recurring-bills/route'
-import { Route as DashboardSlugEventsRouteRouteImport } from './routes/_dashboard/$slug/events/route'
 import { Route as DashboardSlugToolbarAndQueueRouteRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/route'
-import { Route as DashboardSlugSettingsIndexRouteImport } from './routes/_dashboard/$slug/settings/index'
-import { Route as DashboardSlugToolbarAndQueueIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/index'
-import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
-import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
-import { Route as DashboardSlugRecurringBillsBillIdRouteImport } from './routes/_dashboard/$slug/recurring-bills/$billId'
-import { Route as DashboardSlugEventsEventIdRouteImport } from './routes/_dashboard/$slug/events/$eventId'
+import { Route as DashboardSlugCategoriesRouteImport } from './routes/_dashboard/$slug/categories'
+import { Route as DashboardSlugEventsRouteRouteImport } from './routes/_dashboard/$slug/events/route'
+import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
+import { Route as DashboardSlugRecurringBillsRouteRouteImport } from './routes/_dashboard/$slug/recurring-bills/route'
+import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
+import { Route as DashboardSlugWalletsRouteImport } from './routes/_dashboard/$slug/wallets'
+import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
+import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
 import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
+import { Route as DashboardSlugToolbarAndQueueIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/index'
 import { Route as DashboardSlugToolbarAndQueueTransactionsRouteRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/route'
+import { Route as DashboardSlugEventsEventIdRouteImport } from './routes/_dashboard/$slug/events/$eventId'
+import { Route as DashboardSlugRecurringBillsBillIdRouteImport } from './routes/_dashboard/$slug/recurring-bills/$billId'
+import { Route as DashboardSlugSettingsIndexRouteImport } from './routes/_dashboard/$slug/settings/index'
+import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
+import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
 import { Route as DashboardSlugToolbarAndQueueTransactionsIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/index'
 import { Route as DashboardSlugToolbarAndQueueTransactionsTransactionIdRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId'
 
-const DashboardRouteRoute = DashboardRouteRouteImport.update({
-  id: '/_dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -65,20 +55,63 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardSlugRouteRoute = DashboardSlugRouteRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardAccountTokensRoute = DashboardAccountTokensRouteImport.update({
-  id: '/account/tokens',
-  path: '/account/tokens',
-  getParentRoute: () => DashboardRouteRoute,
+const DashboardSlugToolbarAndQueueRouteRoute =
+  DashboardSlugToolbarAndQueueRouteRouteImport.update({
+    id: '/_toolbar-and-queue',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
+const DashboardSlugCategoriesRoute = DashboardSlugCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
+const DashboardSlugEventsRouteRoute =
+  DashboardSlugEventsRouteRouteImport.update({
+    id: '/events',
+    path: '/events',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
+const DashboardSlugFilesRoute = DashboardSlugFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => DashboardSlugRouteRoute,
+} as any)
+const DashboardSlugRecurringBillsRouteRoute =
+  DashboardSlugRecurringBillsRouteRouteImport.update({
+    id: '/recurring-bills',
+    path: '/recurring-bills',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
+const DashboardSlugSettingsRouteRoute =
+  DashboardSlugSettingsRouteRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
+const DashboardSlugWalletsRoute = DashboardSlugWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => DashboardSlugRouteRoute,
 } as any)
 const DashboardAccountPreferencesRoute =
   DashboardAccountPreferencesRouteImport.update({
@@ -86,60 +119,44 @@ const DashboardAccountPreferencesRoute =
     path: '/account/preferences',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
-const DashboardSlugWalletsRoute = DashboardSlugWalletsRouteImport.update({
-  id: '/wallets',
-  path: '/wallets',
-  getParentRoute: () => DashboardSlugRouteRoute,
+const DashboardAccountTokensRoute = DashboardAccountTokensRouteImport.update({
+  id: '/account/tokens',
+  path: '/account/tokens',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardSlugFilesRoute = DashboardSlugFilesRouteImport.update({
-  id: '/files',
-  path: '/files',
-  getParentRoute: () => DashboardSlugRouteRoute,
+const AuthInviteIdAcceptRoute = AuthInviteIdAcceptRouteImport.update({
+  id: '/invite/$id/accept',
+  path: '/invite/$id/accept',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const DashboardSlugCategoriesRoute = DashboardSlugCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
-const DashboardSlugSettingsRouteRoute =
-  DashboardSlugSettingsRouteRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => DashboardSlugRouteRoute,
-  } as any)
-const DashboardSlugRecurringBillsRouteRoute =
-  DashboardSlugRecurringBillsRouteRouteImport.update({
-    id: '/recurring-bills',
-    path: '/recurring-bills',
-    getParentRoute: () => DashboardSlugRouteRoute,
-  } as any)
-const DashboardSlugEventsRouteRoute =
-  DashboardSlugEventsRouteRouteImport.update({
-    id: '/events',
-    path: '/events',
-    getParentRoute: () => DashboardSlugRouteRoute,
-  } as any)
-const DashboardSlugToolbarAndQueueRouteRoute =
-  DashboardSlugToolbarAndQueueRouteRouteImport.update({
-    id: '/_toolbar-and-queue',
-    getParentRoute: () => DashboardSlugRouteRoute,
-  } as any)
-const DashboardSlugSettingsIndexRoute =
-  DashboardSlugSettingsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => DashboardSlugSettingsRouteRoute,
-  } as any)
 const DashboardSlugToolbarAndQueueIndexRoute =
   DashboardSlugToolbarAndQueueIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => DashboardSlugToolbarAndQueueRouteRoute,
   } as any)
-const DashboardSlugSettingsWorkspaceRoute =
-  DashboardSlugSettingsWorkspaceRouteImport.update({
-    id: '/workspace',
-    path: '/workspace',
+const DashboardSlugToolbarAndQueueTransactionsRouteRoute =
+  DashboardSlugToolbarAndQueueTransactionsRouteRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => DashboardSlugToolbarAndQueueRouteRoute,
+  } as any)
+const DashboardSlugEventsEventIdRoute =
+  DashboardSlugEventsEventIdRouteImport.update({
+    id: '/$eventId',
+    path: '/$eventId',
+    getParentRoute: () => DashboardSlugEventsRouteRoute,
+  } as any)
+const DashboardSlugRecurringBillsBillIdRoute =
+  DashboardSlugRecurringBillsBillIdRouteImport.update({
+    id: '/$billId',
+    path: '/$billId',
+    getParentRoute: () => DashboardSlugRecurringBillsRouteRoute,
+  } as any)
+const DashboardSlugSettingsIndexRoute =
+  DashboardSlugSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
 const DashboardSlugSettingsMembersRoute =
@@ -148,28 +165,11 @@ const DashboardSlugSettingsMembersRoute =
     path: '/members',
     getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
-const DashboardSlugRecurringBillsBillIdRoute =
-  DashboardSlugRecurringBillsBillIdRouteImport.update({
-    id: '/$billId',
-    path: '/$billId',
-    getParentRoute: () => DashboardSlugRecurringBillsRouteRoute,
-  } as any)
-const DashboardSlugEventsEventIdRoute =
-  DashboardSlugEventsEventIdRouteImport.update({
-    id: '/$eventId',
-    path: '/$eventId',
-    getParentRoute: () => DashboardSlugEventsRouteRoute,
-  } as any)
-const AuthInviteIdAcceptRoute = AuthInviteIdAcceptRouteImport.update({
-  id: '/invite/$id/accept',
-  path: '/invite/$id/accept',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const DashboardSlugToolbarAndQueueTransactionsRouteRoute =
-  DashboardSlugToolbarAndQueueTransactionsRouteRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => DashboardSlugToolbarAndQueueRouteRoute,
+const DashboardSlugSettingsWorkspaceRoute =
+  DashboardSlugSettingsWorkspaceRouteImport.update({
+    id: '/workspace',
+    path: '/workspace',
+    getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
 const DashboardSlugToolbarAndQueueTransactionsIndexRoute =
   DashboardSlugToolbarAndQueueTransactionsIndexRouteImport.update({
@@ -351,13 +351,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_dashboard': {
-      id: '/_dashboard'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof DashboardRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -365,25 +358,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_dashboard/': {
-      id: '/_dashboard/'
-      path: '/'
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_auth/verify-email': {
-      id: '/_auth/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof AuthVerifyEmailRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/_auth/signup': {
-      id: '/_auth/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/_auth/reset-password': {
@@ -393,12 +379,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_auth/login': {
-      id: '/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
+    '/_auth/signup': {
+      id: '/_auth/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_dashboard/': {
+      id: '/_dashboard/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/$slug': {
       id: '/_dashboard/$slug'
@@ -407,32 +407,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugRouteRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_dashboard/account/tokens': {
-      id: '/_dashboard/account/tokens'
-      path: '/account/tokens'
-      fullPath: '/account/tokens'
-      preLoaderRoute: typeof DashboardAccountTokensRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/_dashboard/account/preferences': {
-      id: '/_dashboard/account/preferences'
-      path: '/account/preferences'
-      fullPath: '/account/preferences'
-      preLoaderRoute: typeof DashboardAccountPreferencesRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/_dashboard/$slug/wallets': {
-      id: '/_dashboard/$slug/wallets'
-      path: '/wallets'
-      fullPath: '/$slug/wallets'
-      preLoaderRoute: typeof DashboardSlugWalletsRouteImport
-      parentRoute: typeof DashboardSlugRouteRoute
-    }
-    '/_dashboard/$slug/files': {
-      id: '/_dashboard/$slug/files'
-      path: '/files'
-      fullPath: '/$slug/files'
-      preLoaderRoute: typeof DashboardSlugFilesRouteImport
+    '/_dashboard/$slug/_toolbar-and-queue': {
+      id: '/_dashboard/$slug/_toolbar-and-queue'
+      path: ''
+      fullPath: '/$slug'
+      preLoaderRoute: typeof DashboardSlugToolbarAndQueueRouteRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
     '/_dashboard/$slug/categories': {
@@ -442,11 +421,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugCategoriesRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
-    '/_dashboard/$slug/settings': {
-      id: '/_dashboard/$slug/settings'
-      path: '/settings'
-      fullPath: '/$slug/settings'
-      preLoaderRoute: typeof DashboardSlugSettingsRouteRouteImport
+    '/_dashboard/$slug/events': {
+      id: '/_dashboard/$slug/events'
+      path: '/events'
+      fullPath: '/$slug/events'
+      preLoaderRoute: typeof DashboardSlugEventsRouteRouteImport
+      parentRoute: typeof DashboardSlugRouteRoute
+    }
+    '/_dashboard/$slug/files': {
+      id: '/_dashboard/$slug/files'
+      path: '/files'
+      fullPath: '/$slug/files'
+      preLoaderRoute: typeof DashboardSlugFilesRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
     '/_dashboard/$slug/recurring-bills': {
@@ -456,26 +442,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugRecurringBillsRouteRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
-    '/_dashboard/$slug/events': {
-      id: '/_dashboard/$slug/events'
-      path: '/events'
-      fullPath: '/$slug/events'
-      preLoaderRoute: typeof DashboardSlugEventsRouteRouteImport
+    '/_dashboard/$slug/settings': {
+      id: '/_dashboard/$slug/settings'
+      path: '/settings'
+      fullPath: '/$slug/settings'
+      preLoaderRoute: typeof DashboardSlugSettingsRouteRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
-    '/_dashboard/$slug/_toolbar-and-queue': {
-      id: '/_dashboard/$slug/_toolbar-and-queue'
-      path: ''
-      fullPath: '/$slug'
-      preLoaderRoute: typeof DashboardSlugToolbarAndQueueRouteRouteImport
+    '/_dashboard/$slug/wallets': {
+      id: '/_dashboard/$slug/wallets'
+      path: '/wallets'
+      fullPath: '/$slug/wallets'
+      preLoaderRoute: typeof DashboardSlugWalletsRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
-    '/_dashboard/$slug/settings/': {
-      id: '/_dashboard/$slug/settings/'
-      path: '/'
-      fullPath: '/$slug/settings/'
-      preLoaderRoute: typeof DashboardSlugSettingsIndexRouteImport
-      parentRoute: typeof DashboardSlugSettingsRouteRoute
+    '/_dashboard/account/preferences': {
+      id: '/_dashboard/account/preferences'
+      path: '/account/preferences'
+      fullPath: '/account/preferences'
+      preLoaderRoute: typeof DashboardAccountPreferencesRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/account/tokens': {
+      id: '/_dashboard/account/tokens'
+      path: '/account/tokens'
+      fullPath: '/account/tokens'
+      preLoaderRoute: typeof DashboardAccountTokensRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_auth/invite/$id/accept': {
+      id: '/_auth/invite/$id/accept'
+      path: '/invite/$id/accept'
+      fullPath: '/invite/$id/accept'
+      preLoaderRoute: typeof AuthInviteIdAcceptRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/_dashboard/$slug/_toolbar-and-queue/': {
       id: '/_dashboard/$slug/_toolbar-and-queue/'
@@ -484,11 +484,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugToolbarAndQueueIndexRouteImport
       parentRoute: typeof DashboardSlugToolbarAndQueueRouteRoute
     }
-    '/_dashboard/$slug/settings/workspace': {
-      id: '/_dashboard/$slug/settings/workspace'
-      path: '/workspace'
-      fullPath: '/$slug/settings/workspace'
-      preLoaderRoute: typeof DashboardSlugSettingsWorkspaceRouteImport
+    '/_dashboard/$slug/_toolbar-and-queue/transactions': {
+      id: '/_dashboard/$slug/_toolbar-and-queue/transactions'
+      path: '/transactions'
+      fullPath: '/$slug/transactions'
+      preLoaderRoute: typeof DashboardSlugToolbarAndQueueTransactionsRouteRouteImport
+      parentRoute: typeof DashboardSlugToolbarAndQueueRouteRoute
+    }
+    '/_dashboard/$slug/events/$eventId': {
+      id: '/_dashboard/$slug/events/$eventId'
+      path: '/$eventId'
+      fullPath: '/$slug/events/$eventId'
+      preLoaderRoute: typeof DashboardSlugEventsEventIdRouteImport
+      parentRoute: typeof DashboardSlugEventsRouteRoute
+    }
+    '/_dashboard/$slug/recurring-bills/$billId': {
+      id: '/_dashboard/$slug/recurring-bills/$billId'
+      path: '/$billId'
+      fullPath: '/$slug/recurring-bills/$billId'
+      preLoaderRoute: typeof DashboardSlugRecurringBillsBillIdRouteImport
+      parentRoute: typeof DashboardSlugRecurringBillsRouteRoute
+    }
+    '/_dashboard/$slug/settings/': {
+      id: '/_dashboard/$slug/settings/'
+      path: '/'
+      fullPath: '/$slug/settings/'
+      preLoaderRoute: typeof DashboardSlugSettingsIndexRouteImport
       parentRoute: typeof DashboardSlugSettingsRouteRoute
     }
     '/_dashboard/$slug/settings/members': {
@@ -498,33 +519,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugSettingsMembersRouteImport
       parentRoute: typeof DashboardSlugSettingsRouteRoute
     }
-    '/_dashboard/$slug/recurring-bills/$billId': {
-      id: '/_dashboard/$slug/recurring-bills/$billId'
-      path: '/$billId'
-      fullPath: '/$slug/recurring-bills/$billId'
-      preLoaderRoute: typeof DashboardSlugRecurringBillsBillIdRouteImport
-      parentRoute: typeof DashboardSlugRecurringBillsRouteRoute
-    }
-    '/_dashboard/$slug/events/$eventId': {
-      id: '/_dashboard/$slug/events/$eventId'
-      path: '/$eventId'
-      fullPath: '/$slug/events/$eventId'
-      preLoaderRoute: typeof DashboardSlugEventsEventIdRouteImport
-      parentRoute: typeof DashboardSlugEventsRouteRoute
-    }
-    '/_auth/invite/$id/accept': {
-      id: '/_auth/invite/$id/accept'
-      path: '/invite/$id/accept'
-      fullPath: '/invite/$id/accept'
-      preLoaderRoute: typeof AuthInviteIdAcceptRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/_dashboard/$slug/_toolbar-and-queue/transactions': {
-      id: '/_dashboard/$slug/_toolbar-and-queue/transactions'
-      path: '/transactions'
-      fullPath: '/$slug/transactions'
-      preLoaderRoute: typeof DashboardSlugToolbarAndQueueTransactionsRouteRouteImport
-      parentRoute: typeof DashboardSlugToolbarAndQueueRouteRoute
+    '/_dashboard/$slug/settings/workspace': {
+      id: '/_dashboard/$slug/settings/workspace'
+      path: '/workspace'
+      fullPath: '/$slug/settings/workspace'
+      preLoaderRoute: typeof DashboardSlugSettingsWorkspaceRouteImport
+      parentRoute: typeof DashboardSlugSettingsRouteRoute
     }
     '/_dashboard/$slug/_toolbar-and-queue/transactions/': {
       id: '/_dashboard/$slug/_toolbar-and-queue/transactions/'

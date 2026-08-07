@@ -25,7 +25,15 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 			)
 			.limit(1);
 
-		return queryData[0];
+		const row = queryData[0];
+		if (!row) return null;
+
+		return {
+			fromCurrency: row.fromCurrency,
+			toCurrency: row.toCurrency,
+			exchangeRate: Number(row.exchangeRate),
+			inverseRate: Number(row.inverseRate),
+		};
 	}
 
 	async findCrossRate([from, to]: [string, string], date: string): Promise<ExchangeRate | null> {
@@ -44,10 +52,17 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 				),
 			);
 
+		const usdToFrom = usdRates.find((rate) => rate.toCurrency === from);
+		const usdToTo = usdRates.find((rate) => rate.toCurrency === to);
+
 		const rates = calculateCrossRate({
 			pair: [from, to],
-			usdToFrom: usdRates.find((rate) => rate.toCurrency === from),
-			usdToTo: usdRates.find((rate) => rate.toCurrency === to),
+			usdToFrom: usdToFrom
+				? { exchangeRate: Number(usdToFrom.exchangeRate), inverseRate: Number(usdToFrom.inverseRate) }
+				: undefined,
+			usdToTo: usdToTo
+				? { exchangeRate: Number(usdToTo.exchangeRate), inverseRate: Number(usdToTo.inverseRate) }
+				: undefined,
 		});
 
 		return rates;
