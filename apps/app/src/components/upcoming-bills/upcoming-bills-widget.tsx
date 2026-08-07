@@ -9,14 +9,16 @@ export function UpcomingBillsWidget() {
 	const workspace = useWorkspace();
 	const { data } = useQuery(unifiedBillsQueryOptions(workspace.slug));
 
-	// const totalCount =
-	// 	(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
+	const totalCount =
+		(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
 
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">Upcoming Bills</CardTitle>
-				<CardDescription>Next 30 days, yearly and overdue bills</CardDescription>
+				<CardDescription>
+					{totalCount} bill{totalCount !== 1 ? "s" : ""} in the next 30 days
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="max-h-90 px-0">
 				<UpcomingBillsList
