@@ -11,7 +11,7 @@
 		"dev": "email dev --port 3003 --dir src/emails"
 	},
 	"dependencies": {
-		"react-email": "^6.9.0"
+		"react-email": "^6.9.1"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*",
