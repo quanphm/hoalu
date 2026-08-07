@@ -1,122 +1,33 @@
 import { monetary } from "@hoalu/finance/monetary";
+import { occurrenceDate, schedule, windowEnd } from "@hoalu/finance/occurrence-schedule";
+import type { ScheduleDefinition } from "@hoalu/finance/occurrence-schedule";
+import { generateId } from "@hoalu/ids/generate-id";
 import { and, eq, getTableColumns, inArray, sql } from "drizzle-orm";
+import type { ExtractTablesWithRelations } from "drizzle-orm";
+import type { PgTransaction } from "drizzle-orm/pg-core";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 
 import { db, schema } from "#api/db/index.ts";
+
+type TransactionLike = PgTransaction<
+	NodePgQueryResultHKT,
+	typeof schema,
+	ExtractTablesWithRelations<typeof schema>
+>;
 
 type NewRecurringBill = typeof schema.recurringBill.$inferInsert;
 
 const billColumns = getTableColumns(schema.recurringBill);
 
-function addDays(date: Date, n: number): Date {
-	const d = new Date(date);
-	d.setDate(d.getDate() + n);
-	return d;
-}
-
-function addYears(date: Date, n: number): Date {
-	const d = new Date(date);
-	d.setFullYear(d.getFullYear() + n);
-	return d;
-}
-
-/**
- * Generate all occurrence dates for a bill within [todayStr, windowEndStr].
- *
- * - daily:   every day from today
- * - weekly:  every week on due_day (0=Sun..6=Sat)
- * - monthly: every month on due_day (1-31); due_day is fixed — paying late never drifts the schedule
- * - yearly:  every year on due_month/due_day using anchor_date as the base
- */
-function generateOccurrences(
-	bill: {
-		repeat: string;
-		anchorDate: string;
-		dueDay: number | null;
-		dueMonth: number | null;
-	},
-	todayStr: string,
-	windowEndStr: string,
-): string[] {
-	const today = parseLocalDate(todayStr);
-	const upcoming: string[] = [];
-
-	if (bill.repeat === "daily") {
-		let cur = today;
-		while (true) {
-			const ds = formatDate(cur);
-			if (ds > windowEndStr) break;
-			upcoming.push(ds);
-			cur = addDays(cur, 1);
-			if (upcoming.length > 400) break;
-		}
-		return upcoming;
-	}
-
-	if (bill.repeat === "weekly") {
-		const dow = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDay();
-		const todayDow = today.getDay();
-		const daysBack = (todayDow - dow + 7) % 7;
-		const daysForward = daysBack === 0 ? 0 : 7 - daysBack;
-		let cur = addDays(today, daysForward);
-		while (true) {
-			const ds = formatDate(cur);
-			if (ds > windowEndStr) break;
-			upcoming.push(ds);
-			cur = addDays(cur, 7);
-			if (upcoming.length > 400) break;
-		}
-		return upcoming;
-	}
-
-	if (bill.repeat === "monthly") {
-		const dueDay = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDate();
-		const startYear = today.getFullYear();
-		const startMonth = today.getMonth();
-		let m = startMonth;
-		let y = startYear;
-		for (let i = 0; i < 400; i++) {
-			const occ = new Date(y, m, dueDay);
-			if (occ.getMonth() !== m) occ.setDate(0);
-			const ds = formatDate(occ);
-			if (ds > windowEndStr) break;
-			if (ds >= todayStr) upcoming.push(ds);
-			m++;
-			if (m > 11) {
-				m = 0;
-				y++;
-			}
-		}
-		return upcoming;
-	}
-
-	if (bill.repeat === "yearly") {
-		const anchor = parseLocalDate(bill.anchorDate);
-		const dueMonth = (bill.dueMonth ?? anchor.getMonth() + 1) - 1;
-		const dueDay = bill.dueDay ?? anchor.getDate();
-		for (let offset = 0; offset <= 2; offset++) {
-			const occ = new Date(today.getFullYear() + offset, dueMonth, dueDay);
-			if (occ.getMonth() !== dueMonth) occ.setDate(0);
-			const ds = formatDate(occ);
-			if (ds > windowEndStr) break;
-			if (ds >= todayStr) upcoming.push(ds);
-		}
-		return upcoming;
-	}
-
-	return upcoming;
-}
-
-function formatDate(d: Date): string {
-	// Use local date parts to avoid UTC offset shifting the date
-	const y = d.getFullYear();
-	const m = String(d.getMonth() + 1).padStart(2, "0");
-	const day = String(d.getDate()).padStart(2, "0");
-	return `${y}-${m}-${day}`;
-}
-
-/** Parse a "yyyy-MM-dd" string as local midnight to avoid UTC-shift bugs. */
-function parseLocalDate(s: string): Date {
-	return new Date(`${s}T00:00:00`);
+function billToDefinition(
+	bill: Pick<typeof schema.recurringBill.$inferSelect, "repeat" | "anchorDate" | "dueDay" | "dueMonth">,
+): ScheduleDefinition {
+	return {
+		repeat: bill.repeat,
+		anchorDate: bill.anchorDate,
+		dueDay: bill.dueDay,
+		dueMonth: bill.dueMonth,
+	};
 }
 
 export interface UpcomingBillEntry {
@@ -306,17 +217,12 @@ export class RecurringBillRepository {
 				),
 			);
 
-		// Use local-date strings for all comparisons to avoid UTC offset bugs.
-		// new Date() gives local time; formatDate() uses local date parts.
-		const todayStr = formatDate(new Date());
-		const todayLocal = parseLocalDate(todayStr);
-		const oneMonthOutStr = formatDate(addDays(todayLocal, 30));
-		const oneYearOutStr = formatDate(addYears(todayLocal, 1));
+		const todayStr = new Date().toISOString().slice(0, 10);
 
 		const results: UpcomingBillEntry[] = [];
 
 		for (const bill of rows) {
-			const windowEndStr = bill.repeat === "yearly" ? oneYearOutStr : oneMonthOutStr;
+			const end = windowEnd(todayStr, bill.repeat);
 
 			const entry = (dateStr: string): UpcomingBillEntry => ({
 				recurringBillId: bill.id,
@@ -332,7 +238,7 @@ export class RecurringBillRepository {
 				categoryColor: bill.categoryColor ?? null,
 			});
 
-			const dates = generateOccurrences(bill, todayStr, windowEndStr);
+			const dates = schedule(billToDefinition(bill), todayStr, end);
 			for (const ds of dates) {
 				results.push(entry(ds));
 			}
@@ -351,11 +257,10 @@ export class RecurringBillRepository {
 		today: UnifiedBillEntry[];
 		upcoming: UnifiedBillEntry[];
 	}> {
-		const todayStr = formatDate(new Date());
-		const todayLocal = parseLocalDate(todayStr);
-		const thirtyDaysAgoStr = formatDate(addDays(todayLocal, -30));
-		const oneMonthOutStr = formatDate(addDays(todayLocal, 30));
-		const oneYearOutStr = formatDate(addYears(todayLocal, 1));
+		const todayStr = new Date().toISOString().slice(0, 10);
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+		const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().slice(0, 10);
 
 		// Get all active recurring bills with their details
 		const bills = await db
@@ -416,16 +321,11 @@ export class RecurringBillRepository {
 		const upcoming: UnifiedBillEntry[] = [];
 
 		for (const bill of bills) {
-			// Generate all expected occurrences from bill start until window end
-			const windowEndStr = bill.repeat === "yearly" ? oneYearOutStr : oneMonthOutStr;
-
-			// For overdue detection, only look back 30 days (within the month)
-			// AND don't show occurrences before the bill was created
-			// This prevents showing overdue bills from before the bill existed
+			const end = windowEnd(todayStr, bill.repeat);
 			const billCreatedStr = bill.createdAt.slice(0, 10);
 			const startStr = thirtyDaysAgoStr > billCreatedStr ? thirtyDaysAgoStr : billCreatedStr;
 
-			const allDates = generateOccurrencesRange(
+			const allDates = schedule(
 				{
 					repeat: bill.repeat,
 					anchorDate: bill.anchorDate,
@@ -433,7 +333,7 @@ export class RecurringBillRepository {
 					dueMonth: bill.dueMonth,
 				},
 				startStr,
-				windowEndStr,
+				end,
 			);
 
 			const paidDates = paidDatesByBill.get(bill.id) ?? new Set();
@@ -473,6 +373,103 @@ export class RecurringBillRepository {
 
 		return { overdue, today, upcoming };
 	}
+
+	/* ------------------------------------------------------------------ */
+	/*  Transaction-aware methods — used by the expense route to keep     */
+	/*  recurring-bill internals behind this repository's interface.      */
+	/* ------------------------------------------------------------------ */
+
+	async findBillInTransaction(
+		tx: TransactionLike,
+		params: { billId: string; workspaceId: string },
+	) {
+		const [row] = await tx
+			.select()
+			.from(schema.recurringBill)
+			.where(
+				and(
+					eq(schema.recurringBill.id, params.billId),
+					eq(schema.recurringBill.workspaceId, params.workspaceId),
+				),
+			)
+			.limit(1);
+		return row ?? null;
+	}
+
+	async advanceYearlyAnchor(tx: TransactionLike, params: { billId: string; anchorDate: string }) {
+		await tx
+			.update(schema.recurringBill)
+			.set({ anchorDate: params.anchorDate, updatedAt: sql`now()` })
+			.where(eq(schema.recurringBill.id, params.billId));
+	}
+
+	async markOccurrencePaid(
+		tx: TransactionLike,
+		params: {
+			recurringBillId: string;
+			expenseId: string;
+			expenseDate: string;
+		},
+		bill: Pick<
+			typeof schema.recurringBill.$inferSelect,
+			"repeat" | "anchorDate" | "dueDay" | "dueMonth"
+		>,
+	) {
+		const dueDateStr = occurrenceDate(billToDefinition(bill), params.expenseDate);
+
+		const [existing] = await tx
+			.select()
+			.from(schema.recurringBillOccurrence)
+			.where(
+				and(
+					eq(schema.recurringBillOccurrence.recurringBillId, params.recurringBillId),
+					eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
+				),
+			)
+			.limit(1);
+
+		if (existing) {
+			await tx
+				.update(schema.recurringBillOccurrence)
+				.set({ expenseId: params.expenseId, paidAt: sql`now()`, updatedAt: sql`now()` })
+				.where(eq(schema.recurringBillOccurrence.id, existing.id));
+		} else {
+			await tx.insert(schema.recurringBillOccurrence).values({
+				id: generateId({ use: "uuid" }),
+				recurringBillId: params.recurringBillId,
+				dueDate: dueDateStr,
+				expenseId: params.expenseId,
+				paidAt: sql`now()`,
+			});
+		}
+	}
+
+	async clearOccurrenceForExpense(tx: TransactionLike, expenseId: string) {
+		await tx
+			.update(schema.recurringBillOccurrence)
+			.set({ expenseId: null, paidAt: null, updatedAt: sql`now()` })
+			.where(eq(schema.recurringBillOccurrence.expenseId, expenseId));
+	}
+
+	async syncBillFromExpense(
+		tx: TransactionLike,
+		params: {
+			billId: string;
+			changes: Record<string, unknown>;
+		},
+	) {
+		await tx
+			.update(schema.recurringBill)
+			.set({ ...params.changes, updatedAt: sql`now()` })
+			.where(eq(schema.recurringBill.id, params.billId));
+	}
+
+	async archiveOnTx(tx: TransactionLike, billId: string) {
+		await tx
+			.update(schema.recurringBill)
+			.set({ isActive: false, updatedAt: sql`now()` })
+			.where(eq(schema.recurringBill.id, billId));
+	}
 }
 
 export interface UnifiedBillEntry {
@@ -488,87 +485,4 @@ export interface UnifiedBillEntry {
 	categoryName: string | null;
 	categoryColor: string | null;
 	isPaid: boolean;
-}
-
-/**
- * Generate occurrences within a date range [startStr, endStr].
- * Similar to generateOccurrences but doesn't filter by >= today.
- */
-function generateOccurrencesRange(
-	bill: {
-		repeat: string;
-		anchorDate: string;
-		dueDay: number | null;
-		dueMonth: number | null;
-	},
-	startStr: string,
-	endStr: string,
-): string[] {
-	const start = parseLocalDate(startStr);
-	const end = parseLocalDate(endStr);
-	const results: string[] = [];
-
-	if (bill.repeat === "daily") {
-		let cur = new Date(start);
-		while (true) {
-			const ds = formatDate(cur);
-			if (ds > endStr) break;
-			if (ds >= startStr) results.push(ds);
-			cur = addDays(cur, 1);
-			if (results.length > 400) break;
-		}
-		return results;
-	}
-
-	if (bill.repeat === "weekly") {
-		const dow = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDay();
-		// Find first occurrence >= start
-		const startDow = start.getDay();
-		let daysForward = (dow - startDow + 7) % 7;
-		let cur = addDays(start, daysForward);
-		while (true) {
-			const ds = formatDate(cur);
-			if (ds > endStr) break;
-			results.push(ds);
-			cur = addDays(cur, 7);
-			if (results.length > 400) break;
-		}
-		return results;
-	}
-
-	if (bill.repeat === "monthly") {
-		const dueDay = bill.dueDay ?? parseLocalDate(bill.anchorDate).getDate();
-		let y = start.getFullYear();
-		let m = start.getMonth();
-		for (let i = 0; i < 400; i++) {
-			const occ = new Date(y, m, dueDay);
-			if (occ.getMonth() !== m) occ.setDate(0);
-			const ds = formatDate(occ);
-			if (ds > endStr) break;
-			if (ds >= startStr) results.push(ds);
-			m++;
-			if (m > 11) {
-				m = 0;
-				y++;
-			}
-		}
-		return results;
-	}
-
-	if (bill.repeat === "yearly") {
-		const anchor = parseLocalDate(bill.anchorDate);
-		const dueMonth = (bill.dueMonth ?? anchor.getMonth() + 1) - 1;
-		const dueDay = bill.dueDay ?? anchor.getDate();
-		const startYear = start.getFullYear();
-		const endYear = end.getFullYear();
-		for (let year = startYear; year <= endYear; year++) {
-			const occ = new Date(year, dueMonth, dueDay);
-			if (occ.getMonth() !== dueMonth) occ.setDate(0);
-			const ds = formatDate(occ);
-			if (ds >= startStr && ds <= endStr) results.push(ds);
-		}
-		return results;
-	}
-
-	return results;
 }
