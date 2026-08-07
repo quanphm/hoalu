@@ -10,7 +10,8 @@
 	},
 	"exports": {
 		"./exchange-rate": "./src/exchange-rate.ts",
-		"./monetary": "./src/monetary.ts"
+		"./monetary": "./src/monetary.ts",
+		"./occurrence-schedule": "./src/occurrence-schedule.ts"
 	},
 	"dependencies": {
 		"@hoalu/countries": "workspace:*"
