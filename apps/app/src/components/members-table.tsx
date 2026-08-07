@@ -29,6 +29,8 @@ import { authClient } from "#app/lib/auth-client.ts";
 import { useRemoveMember } from "#app/services/mutations.ts";
 import { getActiveMemberOptions } from "#app/services/query-options.ts";
 
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+
 type MemberSchema = {
 	id: string;
 	name: string;
@@ -37,7 +39,7 @@ type MemberSchema = {
 	role: string;
 };
 
-const columnHelper = createColumnHelper<MemberSchema>();
+const columnHelper = createColumnHelper<DataTableFeatures, MemberSchema>();
 
 const columns = [
 	columnHelper.display({
@@ -85,7 +87,7 @@ export function MembersTable({ data }: { data: MemberSchema[] }) {
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-function RowActions({ row }: { row: Row<MemberSchema> }) {
+function RowActions({ row }: { row: Row<DataTableFeatures, MemberSchema> }) {
 	const [open, setOpen] = useState(false);
 	const navigate = routeApi.useNavigate();
 	const { slug } = routeApi.useParams();
@@ -159,7 +161,7 @@ function RowActions({ row }: { row: Row<MemberSchema> }) {
 	);
 }
 
-function NameCell({ row }: { row: Row<MemberSchema> }) {
+function NameCell({ row }: { row: Row<DataTableFeatures, MemberSchema> }) {
 	const { user } = useAuth();
 
 	return (

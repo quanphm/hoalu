@@ -51,7 +51,6 @@ export function NavWorkspace() {
 						<SidebarMenuButton
 							render={<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }} />}
 							tooltip="Dashboard"
-							data-cuelume-hover="tick"
 						>
 								<SquaresFourIcon />
 								<span>Dashboard</span>
@@ -75,7 +74,7 @@ export function NavWorkspace() {
 									/>
 								}
 								tooltip="Transactions"
-								data-cuelume-hover="tick"
+		
 							>
 								<ArrowsLeftRightIcon />
 								<span>Transactions</span>
@@ -86,7 +85,7 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
-								data-cuelume-hover="tick"
+		
 							>
 								<RepeatIcon />
 								<span>Recurring Bills</span>
@@ -97,7 +96,7 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={<Link to="/$slug/events" params={{ slug }} />}
 								tooltip="Events"
-								data-cuelume-hover="tick"
+		
 							>
 								<CalendarStarIcon />
 								<span>Events</span>
@@ -114,7 +113,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={<Link to="/$slug/categories" params={{ slug }} />}
-								data-cuelume-hover="tick"
+		
 							>
 								<ShapesIcon />
 								<span>Categories</span>
@@ -124,7 +123,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={<Link to="/$slug/wallets" params={{ slug }} />}
-								data-cuelume-hover="tick"
+		
 							>
 								<WalletIcon />
 								<span>Wallets</span>
@@ -134,7 +133,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={<Link to="/$slug/files" params={{ slug }} />}
-								data-cuelume-hover="tick"
+		
 							>
 								<FileIcon />
 								<span>Files</span>
@@ -151,7 +150,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={<Link to="/$slug/settings/workspace" params={{ slug }} />}
-								data-cuelume-hover="tick"
+		
 							>
 								<TentIcon />
 								<span>Workspace</span>
@@ -160,7 +159,7 @@ export function NavWorkspace() {
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								render={<Link to="/$slug/settings/members" params={{ slug }} />}
-								data-cuelume-hover="tick"
+		
 							>
 								<UsersIcon />
 								<span>Members</span>

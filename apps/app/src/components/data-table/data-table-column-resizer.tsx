@@ -1,7 +1,9 @@
 import { cn } from "@hoalu/ui/utils";
 import type { Header } from "@tanstack/react-table";
 
-export function ColumnResizer({ header }: { header: Header<any, unknown> }) {
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+
+export function ColumnResizer({ header }: { header: Header<DataTableFeatures, any, unknown> }) {
 	if (header.column.getCanResize() === false)
 		return <div className="bg-border absolute top-0 right-0 h-full w-px" />;
 

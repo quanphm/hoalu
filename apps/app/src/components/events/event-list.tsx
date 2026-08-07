@@ -11,6 +11,7 @@ import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const percentFormatter = new Intl.NumberFormat("en-US", {
 	style: "percent",
@@ -19,7 +20,7 @@ const percentFormatter = new Intl.NumberFormat("en-US", {
 const GRID_TEMPLATE =
 	"grid grid-cols-[1fr_var(--date-size)_var(--date-size)_var(--status-size)_var(--amount-size)_var(--amount-size)_var(--progress-size)]";
 
-const columns: ColumnDef<SyncedEvent>[] = [
+const columns: ColumnDef<HeaderOnlyTableFeatures, SyncedEvent>[] = [
 	{ id: "name", header: "Name" },
 	{ id: "from_date", header: "From" },
 	{ id: "to_date", header: "To" },

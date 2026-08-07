@@ -1,9 +1,12 @@
 import { cn } from "@hoalu/ui/utils";
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { type ColumnDef, flexRender, useTable } from "@tanstack/react-table";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import type { Range } from "@tanstack/react-virtual";
 import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
+import { headerOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 import { useScrollRestoration } from "#app/hooks/use-scroll-restoration.ts";
 
@@ -77,7 +80,7 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	estimateGroupHeaderSize?: number;
 
 	// Columns + layout
-	columns: ColumnDef<TRow>[];
+	columns: ColumnDef<HeaderOnlyTableFeatures, TRow>[];
 	gridTemplate: string;
 	renderRow: (item: TRow, isSelected: boolean) => React.ReactNode;
 	estimateRowSize?: number;
@@ -136,10 +139,10 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 		[flatItems],
 	);
 
-	const table = useReactTable<TRow>({
+	const table = useTable({
+		features: headerOnlyTableFeatures,
 		data: [] as TRow[],
 		columns,
-		getCoreRowModel: getCoreRowModel(),
 	});
 
 	const virtualizer = useVirtualizer({

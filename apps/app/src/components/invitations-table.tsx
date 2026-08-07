@@ -29,6 +29,8 @@ import { getActiveMemberOptions } from "#app/services/query-options.ts";
 
 import { InputWithCopy } from "./input-with-copy";
 
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+
 type Member = {
 	id: string;
 	email: string;
@@ -36,7 +38,7 @@ type Member = {
 	expiresAt: Date;
 };
 
-const columnHelper = createColumnHelper<Member>();
+const columnHelper = createColumnHelper<DataTableFeatures, Member>();
 
 const columns = [
 	columnHelper.accessor("email", {
@@ -88,7 +90,7 @@ export function InvitationsTable({ data }: { data: Member[] }) {
 
 const routeApi = getRouteApi("/_dashboard/$slug/settings/members");
 
-function RowActions({ row }: { row: Row<Member> }) {
+function RowActions({ row }: { row: Row<DataTableFeatures, Member> }) {
 	const [open, setOpen] = useState(false);
 	const { slug } = routeApi.useParams();
 	const { data: member } = useSuspenseQuery(getActiveMemberOptions(slug));
