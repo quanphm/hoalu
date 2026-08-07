@@ -1,4 +1,4 @@
-import { datetime, extractDateFromISO } from "@hoalu/datetime/datetime";
+import { extractDateFromISO } from "@hoalu/datetime/datetime";
 import { monetary } from "@hoalu/finance/monetary";
 import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
@@ -16,6 +16,7 @@ import { parseExpense } from "#api/lib/parse-with-ai.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
+import { RecurringBillRepository } from "#api/routes/recurring-bills/repository.ts";
 import {
 	DeleteExpenseSchema,
 	ExpenseSchema,
@@ -35,6 +36,7 @@ const app = createHonoInstance();
 const expenseRepository = new ExpenseRepository();
 const categoryRepository = new CategoryRepository();
 const walletRepository = new WalletRepository();
+const recurringBillRepository = new RecurringBillRepository();
 const TAGS = ["Expenses"];
 
 const route = app
@@ -143,25 +145,17 @@ const route = app
 			const { expense, txid } = await db.transaction(async (tx) => {
 				let bill: typeof schema.recurringBill.$inferSelect | null = null;
 
-				// If a recurringBillId is provided (Log payment flow), fetch bill details
-				// and advance anchor_date only for yearly bills — monthly/weekly due dates are fixed
 				if (recurringBillId) {
-					[bill] = await tx
-						.select()
-						.from(schema.recurringBill)
-						.where(
-							and(
-								eq(schema.recurringBill.id, recurringBillId),
-								eq(schema.recurringBill.workspaceId, workspace.id),
-							),
-						)
-						.limit(1);
+					bill = await recurringBillRepository.findBillInTransaction(tx, {
+						billId: recurringBillId,
+						workspaceId: workspace.id,
+					});
 
 					if (bill && bill.repeat === "yearly") {
-						await tx
-							.update(schema.recurringBill)
-							.set({ anchorDate: newAnchorDate, updatedAt: sql`now()` })
-							.where(eq(schema.recurringBill.id, recurringBillId));
+						await recurringBillRepository.advanceYearlyAnchor(tx, {
+							billId: recurringBillId,
+							anchorDate: newAnchorDate,
+						});
 					}
 				}
 
@@ -188,72 +182,16 @@ const route = app
 
 				const [expense] = result.data;
 
-				// Track occurrence payment for recurring bills
 				if (recurringBillId && bill) {
-					// Calculate the correct due date based on bill's schedule
-					// Parse expense date as local date to avoid UTC offset issues
-					const expenseDateLocal = extractDateFromISO(expenseDate);
-					const [year, month, day] = expenseDateLocal.split("-").map(Number);
-					let dueDateStr: string;
-
-					if (bill.repeat === "monthly" && bill.dueDay) {
-						// For monthly bills, use the due_day from the expense's month
-						// Handle month-end overflow (e.g. dueDay=31 in April → clamp to 30)
-						const occ = new Date(year, month - 1, bill.dueDay);
-						if (occ.getMonth() !== month - 1) occ.setDate(0);
-						dueDateStr = datetime.format(occ, "yyyy-MM-dd");
-					} else if (bill.repeat === "weekly" && bill.dueDay !== null) {
-						// For weekly bills, find the most recent occurrence of the due day
-						// relative to the expense date (backward, not forward)
-						const expenseDateObj = new Date(year, month - 1, day);
-						const expenseDayOfWeek = expenseDateObj.getDay();
-						const targetDayOfWeek = bill.dueDay;
-						const daysSinceDue = (expenseDayOfWeek - targetDayOfWeek + 7) % 7;
-						const dueDate = new Date(year, month - 1, day - daysSinceDue);
-						dueDateStr = datetime.format(dueDate, "yyyy-MM-dd");
-					} else if (bill.repeat === "yearly") {
-						// For yearly bills, use the anchor_date month/day
-						const anchorDate = new Date(bill.anchorDate);
-						const dueMonth = bill.dueMonth ?? anchorDate.getMonth() + 1;
-						const dueDay = bill.dueDay ?? anchorDate.getDate();
-						dueDateStr = `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
-					} else {
-						// For daily or other cases, use the expense date
-						dueDateStr = expenseDateLocal;
-					}
-
-					// Try to find existing occurrence for this bill + due date
-					const [existingOccurrence] = await tx
-						.select()
-						.from(schema.recurringBillOccurrence)
-						.where(
-							and(
-								eq(schema.recurringBillOccurrence.recurringBillId, recurringBillId),
-								eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
-							),
-						)
-						.limit(1);
-
-					if (existingOccurrence) {
-						// Update existing occurrence as paid
-						await tx
-							.update(schema.recurringBillOccurrence)
-							.set({
-								expenseId: expense.id,
-								paidAt: sql`now()`,
-								updatedAt: sql`now()`,
-							})
-							.where(eq(schema.recurringBillOccurrence.id, existingOccurrence.id));
-					} else {
-						// Create new occurrence record marked as paid
-						await tx.insert(schema.recurringBillOccurrence).values({
-							id: generateId({ use: "uuid" }),
+					await recurringBillRepository.markOccurrencePaid(
+						tx,
+						{
 							recurringBillId,
-							dueDate: dueDateStr,
 							expenseId: expense.id,
-							paidAt: sql`now()`,
-						});
-					}
+							expenseDate: extractDateFromISO(expenseDate),
+						},
+						bill,
+					);
 				}
 
 				const txidResult = await tx.execute<{ txid: number }>(
@@ -340,131 +278,64 @@ const route = app
 				let resolvedRecurringBillId: string | null | undefined = expense.recurringBillId ?? null;
 
 				if (explicitBillOverride) {
-					// Caller is explicitly setting the link — trust it, no side effects
 					resolvedRecurringBillId = explicitRecurringBillId ?? null;
 				} else if (repeat !== undefined) {
-					// repeat is explicitly being changed — manage the linked bill accordingly
 					const newRepeat = repeat;
 					const becomesOneOff = newRepeat === "one-time" || newRepeat === "custom";
 
 					if (expense.recurringBillId) {
 						if (becomesOneOff) {
-							// Unlink and archive the existing bill
-							await tx
-								.update(schema.recurringBill)
-								.set({ isActive: false, updatedAt: sql`now()` })
-								.where(eq(schema.recurringBill.id, expense.recurringBillId));
+							await recurringBillRepository.archiveOnTx(tx, expense.recurringBillId);
 							resolvedRecurringBillId = null;
 						} else {
-							// Sync the existing bill's metadata — anchorDate is NOT touched here;
-							// it only advances when a new payment is logged (POST with recurringBillId).
-							await tx
-								.update(schema.recurringBill)
-								.set({
+							await recurringBillRepository.syncBillFromExpense(tx, {
+								billId: expense.recurringBillId,
+								changes: {
+									amount: `${realAmount}`,
+									currency: resolvedCurrency,
+									repeat: newRepeat,
 									...(title !== undefined && { title }),
 									...(description !== undefined && { description }),
 									...(walletId !== undefined && { walletId }),
 									...(categoryId !== undefined && { categoryId }),
-									amount: `${realAmount}`,
-									currency: resolvedCurrency,
-									repeat: newRepeat,
-									updatedAt: sql`now()`,
-								})
-								.where(eq(schema.recurringBill.id, expense.recurringBillId));
+								},
+							});
 						}
-					} else if (!becomesOneOff) {
-						// No existing bill and repeat is now recurring — do NOT auto-create here.
-						// The UI shows the "Set up recurring bill" prompt; let the user do it explicitly.
 					}
 				} else if (expense.recurringBillId) {
-					// No repeat change, no explicit override — sync mutable fields on existing bill.
-					// anchorDate is NOT touched here; it only advances when a new payment is logged.
-					await tx
-						.update(schema.recurringBill)
-						.set({
+					await recurringBillRepository.syncBillFromExpense(tx, {
+						billId: expense.recurringBillId,
+						changes: {
 							...(title !== undefined && { title }),
 							...(description !== undefined && { description }),
 							...(walletId !== undefined && { walletId }),
 							...(categoryId !== undefined && { categoryId }),
 							...(amount !== undefined && { amount: `${realAmount}` }),
 							...(currency !== undefined && { currency: resolvedCurrency }),
-							updatedAt: sql`now()`,
-						})
-						.where(eq(schema.recurringBill.id, expense.recurringBillId));
+						},
+					});
 				}
 
-				// Manage occurrence records for recurring bills
-				// Clear old occurrence if the expense was previously linked
 				if (expense.recurringBillId) {
-					await tx
-						.update(schema.recurringBillOccurrence)
-						.set({ expenseId: null, paidAt: null, updatedAt: sql`now()` })
-						.where(eq(schema.recurringBillOccurrence.expenseId, expense.id));
+					await recurringBillRepository.clearOccurrenceForExpense(tx, expense.id);
 				}
 
-				// Create/update occurrence if the expense is now linked to a bill
 				if (resolvedRecurringBillId) {
-					const [newBill] = await tx
-						.select()
-						.from(schema.recurringBill)
-						.where(
-							and(
-								eq(schema.recurringBill.id, resolvedRecurringBillId),
-								eq(schema.recurringBill.workspaceId, workspace.id),
-							),
-						)
-						.limit(1);
+					const newBill = await recurringBillRepository.findBillInTransaction(tx, {
+						billId: resolvedRecurringBillId,
+						workspaceId: workspace.id,
+					});
 
 					if (newBill) {
-						const expenseDateLocal = extractDateFromISO(date ?? expense.date);
-						const [year, month, day] = expenseDateLocal.split("-").map(Number);
-						let dueDateStr: string;
-
-						if (newBill.repeat === "monthly" && newBill.dueDay) {
-							const occ = new Date(year, month - 1, newBill.dueDay);
-							if (occ.getMonth() !== month - 1) occ.setDate(0);
-							dueDateStr = datetime.format(occ, "yyyy-MM-dd");
-						} else if (newBill.repeat === "weekly" && newBill.dueDay !== null) {
-							const expenseDateObj = new Date(year, month - 1, day);
-							const expenseDayOfWeek = expenseDateObj.getDay();
-							const targetDayOfWeek = newBill.dueDay;
-							const daysSinceDue = (expenseDayOfWeek - targetDayOfWeek + 7) % 7;
-							const dueDate = new Date(year, month - 1, day - daysSinceDue);
-							dueDateStr = datetime.format(dueDate, "yyyy-MM-dd");
-						} else if (newBill.repeat === "yearly") {
-							const anchorDate = new Date(newBill.anchorDate);
-							const dueMonth = newBill.dueMonth ?? anchorDate.getMonth() + 1;
-							const dueDay = newBill.dueDay ?? anchorDate.getDate();
-							dueDateStr = `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
-						} else {
-							dueDateStr = expenseDateLocal;
-						}
-
-						const [existingOccurrence] = await tx
-							.select()
-							.from(schema.recurringBillOccurrence)
-							.where(
-								and(
-									eq(schema.recurringBillOccurrence.recurringBillId, resolvedRecurringBillId),
-									eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
-								),
-							)
-							.limit(1);
-
-						if (existingOccurrence) {
-							await tx
-								.update(schema.recurringBillOccurrence)
-								.set({ expenseId: param.id, paidAt: sql`now()`, updatedAt: sql`now()` })
-								.where(eq(schema.recurringBillOccurrence.id, existingOccurrence.id));
-						} else {
-							await tx.insert(schema.recurringBillOccurrence).values({
-								id: generateId({ use: "uuid" }),
+						await recurringBillRepository.markOccurrencePaid(
+							tx,
+							{
 								recurringBillId: resolvedRecurringBillId,
-								dueDate: dueDateStr,
 								expenseId: param.id,
-								paidAt: sql`now()`,
-							});
-						}
+								expenseDate: extractDateFromISO(date ?? expense.date),
+							},
+							newBill,
+						);
 					}
 				}
 
