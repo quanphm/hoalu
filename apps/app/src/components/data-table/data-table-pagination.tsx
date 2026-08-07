@@ -1,6 +1,4 @@
 import {
-	// CaretLineLeftIcon,
-	// CaretLineRightIcon,
 	CaretLeftIcon,
 	CaretRightIcon,
 } from "@hoalu/icons/phosphor";
@@ -11,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Table } from "@tanstack/react-table";
 import { useId } from "react";
 
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+
 interface DataTablePaginationProps<TData> {
-	table: Table<TData>;
+	table: Table<DataTableFeatures, TData>;
 	config: {
 		showPerPage?: boolean;
 		showPageNumberInfo?: boolean;
@@ -41,7 +41,7 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 						</Label>
 						<Select
 							items={items}
-							value={table.getState().pagination.pageSize}
+							value={table.state.pagination.pageSize}
 							onValueChange={(value) => {
 								if (!value) return;
 								table.setPageSize(value);
@@ -67,11 +67,11 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 				{config.showPageNumberInfo && (
 					<p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
 						<span className="text-foreground">
-							{table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
+							{table.state.pagination.pageIndex * table.state.pagination.pageSize + 1}-
 							{Math.min(
 								Math.max(
-									table.getState().pagination.pageIndex * table.getState().pagination.pageSize +
-										table.getState().pagination.pageSize,
+									table.state.pagination.pageIndex * table.state.pagination.pageSize +
+										table.state.pagination.pageSize,
 									0,
 								),
 								table.getRowCount(),
@@ -87,18 +87,6 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 				{config.showNavigationButtons && (
 					<Pagination>
 						<PaginationContent>
-							{/* <PaginationItem>
-								<Button
-									size="icon-sm"
-									variant="outline"
-									className="disabled:pointer-events-none disabled:opacity-50"
-									onClick={() => table.firstPage()}
-									disabled={!table.getCanPreviousPage()}
-									aria-label="Go to first page"
-								>
-									<CaretLineLeftIcon size={16} strokeWidth={2} aria-hidden="true" />
-								</Button>
-							</PaginationItem> */}
 							<PaginationItem>
 								<Button
 									size="icon-sm"
@@ -123,18 +111,6 @@ export function DataTablePagination<TData>({ table, config }: DataTablePaginatio
 									<CaretRightIcon size={16} strokeWidth={2} aria-hidden="true" />
 								</Button>
 							</PaginationItem>
-							{/* <PaginationItem>
-								<Button
-									size="icon-sm"
-									variant="outline"
-									className="disabled:pointer-events-none disabled:opacity-50"
-									onClick={() => table.lastPage()}
-									disabled={!table.getCanNextPage()}
-									aria-label="Go to last page"
-								>
-									<CaretLineRightIcon size={16} strokeWidth={2} aria-hidden="true" />
-								</Button>
-							</PaginationItem> */}
 						</PaginationContent>
 					</Pagination>
 				)}

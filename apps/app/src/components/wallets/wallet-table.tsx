@@ -7,9 +7,11 @@ import { DataTable } from "../data-table";
 import { UserAvatar } from "../user-avatar";
 import { WalletDropdownMenuWithModal, WalletIcon } from "./wallet-actions";
 
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+
 import type { WalletSchema } from "#app/lib/schema.ts";
 
-const columnHelper = createColumnHelper<WalletSchema>();
+const columnHelper = createColumnHelper<DataTableFeatures, WalletSchema>();
 
 const columns = [
 	columnHelper.accessor("name", {

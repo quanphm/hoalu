@@ -14,20 +14,18 @@ import {
 	type ColumnDef,
 	flexRender,
 	type GroupingState,
-	getCoreRowModel,
-	getExpandedRowModel,
-	getFilteredRowModel,
-	getGroupedRowModel,
-	getPaginationRowModel,
 	type InitialTableState,
 	type RowData,
 	type RowSelectionState,
 	type Updater,
-	useReactTable,
+	useTable,
 } from "@tanstack/react-table";
 import { useLayoutEffect } from "react";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
+import { dataTableFeatures } from "#app/lib/table-features.ts";
 
 import { DataTablePagination } from "./data-table-pagination";
 
@@ -35,7 +33,7 @@ type TableRowData = { id: string } & RowData;
 
 interface DataTableProps<T extends TableRowData> {
 	data: T[];
-	columns: ColumnDef<T, any>[];
+	columns: ColumnDef<DataTableFeatures, T, any>[];
 	/**
 	 * @default false
 	 */
@@ -125,7 +123,8 @@ export function DataTable<T extends TableRowData>({
 		[data, onRowClick, rowSelection],
 	);
 
-	const table = useReactTable({
+	const table = useTable({
+		features: dataTableFeatures,
 		data,
 		columns,
 		initialState,
@@ -134,30 +133,13 @@ export function DataTable<T extends TableRowData>({
 			rowSelection,
 			grouping,
 		},
-		/**
-		 * @see https://tanstack.com/table/v8/docs/guide/row-models#the-order-of-row-model-execution
-		 */
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
-		getExpandedRowModel: enableGrouping ? getExpandedRowModel() : undefined,
-		getPaginationRowModel: paginationConfig.enabled ? getPaginationRowModel() : undefined,
 		getRowId: (row) => row.id,
 		enableMultiRowSelection,
 		onGroupingChange: enableGrouping ? setGrouping : () => undefined,
-		// onExpandedChange: enableGrouping ? handleExpendedChange : () => undefined,
 		onPaginationChange: paginationConfig.enabled ? setPagination : () => undefined,
 		onRowSelectionChange: handleOnRowSelectionChange,
 		groupedColumnMode: false,
 		debugTable: false,
-		aggregationFns: {
-			expenseConvertedAmountSum: (_columnId, _leafRows, childRows) => {
-				return childRows.reduce((sum, current) => {
-					const value = current.original.convertedAmount;
-					return sum + (typeof value === "number" ? value : 0);
-				}, 0);
-			},
-		},
 	});
 
 	useHotkeys(

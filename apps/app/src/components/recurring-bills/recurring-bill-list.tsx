@@ -30,11 +30,12 @@ import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const GRID_TEMPLATE =
 	"grid grid-cols-[var(--category-size)_1fr_var(--date-size)_var(--status-size)_var(--amount-size)_var(--wallet-size)_var(--action-size)]";
 
-const columns: ColumnDef<SyncedAllRecurringBill>[] = [
+const columns: ColumnDef<HeaderOnlyTableFeatures, SyncedAllRecurringBill>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "name", header: "Name" },
 	{ id: "repeat", header: "Repeat" },
@@ -201,44 +202,6 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
-				{/* {props.is_active ? (
-					<Button
-						size="icon-sm"
-						variant="ghost"
-						aria-label={`Archive ${props.title}`}
-						onClick={(e) => {
-							e.stopPropagation();
-							setArchiveDialog({ state: true, data: { id: props.id } });
-						}}
-					>
-						<ArchiveIcon />
-					</Button>
-				) : (
-					<div className="flex items-center gap-0.5">
-						<Button
-							size="icon-sm"
-							variant="ghost"
-							aria-label={`Restore ${props.title}`}
-							onClick={(e) => {
-								e.stopPropagation();
-								setUnarchiveDialog({ state: true, data: { id: props.id } });
-							}}
-						>
-							<BoxArrowUpIcon />
-						</Button>
-						<Button
-							size="icon-sm"
-							variant="destructive"
-							aria-label={`Delete ${props.title}`}
-							onClick={(e) => {
-								e.stopPropagation();
-								setDeleteDialog({ state: true, data: { id: props.id, title: props.title } });
-							}}
-						>
-							<TrashIcon />
-						</Button>
-					</div>
-				)} */}
 			</div>
 		</>
 	);

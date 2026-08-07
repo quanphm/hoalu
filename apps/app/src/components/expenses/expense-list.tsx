@@ -12,11 +12,12 @@ import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const GRID_TEMPLATE =
 	"grid md:grid-cols-[var(--category-size)_1fr_var(--amount-size)_var(--amount-size)_var(--wallet-size)] grid-cols-[auto_1fr_auto]";
 
-const columnsDesktop: ColumnDef<SyncedTransaction>[] = [
+const columnsDesktop: ColumnDef<HeaderOnlyTableFeatures, SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{
@@ -32,7 +33,7 @@ const columnsDesktop: ColumnDef<SyncedTransaction>[] = [
 	{ id: "wallet", header: "Wallet" },
 ];
 
-const columnsMobile: ColumnDef<SyncedTransaction>[] = [
+const columnsMobile: ColumnDef<HeaderOnlyTableFeatures, SyncedTransaction>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "title", header: "Title" },
 	{

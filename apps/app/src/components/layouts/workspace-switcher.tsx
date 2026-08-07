@@ -38,7 +38,6 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 					<SidebarMenuButton
 						size="lg"
 						className="border-border bg-input/32"
-						data-cuelume-hover="tick"
 					/>
 				}
 			>

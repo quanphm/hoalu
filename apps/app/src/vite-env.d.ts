@@ -21,26 +21,14 @@ declare global {
 	}
 }
 
-// https://github.com/openstatusHQ/data-table-filters/blob/main/src/react-table.d.ts
 declare module "@tanstack/react-table" {
-	// https://github.com/TanStack/table/issues/44#issuecomment-1377024296
-	interface TableMeta<TData> {
-		getRowClassName?: (row: Row<TData>) => string;
+	interface TableMeta<TFeatures = any, TData = any> {
+		getRowClassName?: (row: Row<TFeatures, TData>) => string;
 	}
 
-	interface ColumnMeta {
+	interface ColumnMeta<TFeatures = any, TData = any, TValue = any> {
 		headerClassName?: string;
 		cellClassName?: string;
 		label?: string;
-	}
-
-	interface FilterFns {
-		inDateRange?: FilterFn<any>;
-		arrSome?: FilterFn<any>;
-	}
-
-	// https://github.com/TanStack/table/discussions/4554
-	interface ColumnFiltersOptions<TData extends RowData> {
-		filterFns?: Record<string, FilterFn<TData>>;
 	}
 }
