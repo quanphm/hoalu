@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/schema",
-	"version": "0.31.1",
+	"version": "0.31.2",
 	"private": true,
 	"description": "Shared Zod schemas and enums for Hoalu",
 	"type": "module",
