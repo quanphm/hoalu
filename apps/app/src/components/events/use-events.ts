@@ -5,28 +5,14 @@ import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
 import {
 	eventCollectionFactory,
 	expenseCollectionFactory,
 	recurringBillCollectionFactory,
 	walletCollectionFactory,
 	categoryCollectionFactory,
-	exchangeRateCollection,
 } from "#app/lib/collections/index.ts";
-
-function useFxRateData() {
-	const { data: fxRateData } = useLiveQuery((q) =>
-		q.from({ fxRate: exchangeRateCollection }).fn.select(({ fxRate }) => ({
-			from: fxRate.from_currency,
-			to: fxRate.to_currency,
-			exchangeRate: `${fxRate.exchange_rate}`,
-			inverseRate: `${fxRate.inverse_rate}`,
-			validFrom: fxRate.valid_from,
-			validTo: fxRate.valid_to,
-		})),
-	);
-	return fxRateData;
-}
 
 export function useLiveQueryEvents() {
 	const workspace = useWorkspace();
@@ -79,12 +65,12 @@ export function useLiveQueryEvents() {
 								return inRange && correctPair;
 							});
 							if (!match) return null;
-							return {
-								fromCurrency: match.from,
-								toCurrency: match.to,
-								exchangeRate: `${match.exchangeRate}`,
-								inverseRate: `${match.inverseRate}`,
-							};
+						return {
+							fromCurrency: match.from,
+							toCurrency: match.to,
+							exchangeRate: match.exchangeRate,
+							inverseRate: match.inverseRate,
+						};
 						},
 						findCrossRate: ([from, to], d) => {
 							const usdRates = fxRateData.filter((rate) => {
@@ -105,7 +91,7 @@ export function useLiveQueryEvents() {
 				const isNoCent = zeroDecimalCurrencies.find((c) => c === exp.currency);
 				const factor = isNoCent ? 1 : 100;
 				convertedAmount =
-					Number(exp.amount) * ((exchangeRate ? Number(exchangeRate.exchangeRate) : 0) / factor);
+					Number(exp.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
 			}
 
 			totalSpentMap.set(exp.event_id, existing + convertedAmount);

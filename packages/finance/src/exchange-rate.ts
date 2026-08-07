@@ -1,23 +1,21 @@
 function calculateCrossRate(params: {
 	pair: [string, string];
-	usdToFrom: { exchangeRate: string; inverseRate: string } | undefined;
-	usdToTo: { exchangeRate: string; inverseRate: string } | undefined;
+	usdToFrom: { exchangeRate: number; inverseRate: number } | undefined;
+	usdToTo: { exchangeRate: number; inverseRate: number } | undefined;
 }) {
 	const { usdToFrom, usdToTo } = params;
 
 	if (!usdToFrom || !usdToTo) return null;
 
 	// Cross-rate formula: FROM → TO = (USD → FROM)^-1 × (USD → TO)
-	const exchangeRate =
-		Number.parseFloat(usdToFrom.inverseRate) * Number.parseFloat(usdToTo.exchangeRate);
-	const inverseRate =
-		Number.parseFloat(usdToTo.inverseRate) * Number.parseFloat(usdToFrom.exchangeRate);
+	const exchangeRate = usdToFrom.inverseRate * usdToTo.exchangeRate;
+	const inverseRate = usdToTo.inverseRate * usdToFrom.exchangeRate;
 
 	return {
 		fromCurrency: params.pair[0],
 		toCurrency: params.pair[1],
-		exchangeRate: exchangeRate.toString(),
-		inverseRate: inverseRate.toString(),
+		exchangeRate,
+		inverseRate,
 	};
 }
 
@@ -34,8 +32,8 @@ function getExchangeRateStrategy(from: string, to: string) {
 interface ExchangeRate {
 	fromCurrency: string;
 	toCurrency: string;
-	exchangeRate: string;
-	inverseRate: string;
+	exchangeRate: number;
+	inverseRate: number;
 }
 
 interface ExchangeRateProvider {
@@ -79,8 +77,8 @@ function lookupExchangeRate(
 		return {
 			fromCurrency: from,
 			toCurrency: to,
-			exchangeRate: "1",
-			inverseRate: "1",
+			exchangeRate: 1,
+			inverseRate: 1,
 		};
 	}
 

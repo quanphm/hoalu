@@ -52,7 +52,7 @@ export class WorkspaceRepository {
 			if (currency !== targetCurrency) {
 				const rate = await this.exchangeRateRepo.lookup([currency, targetCurrency], conversionDate);
 				if (rate) {
-					rates.set(currency, Number.parseFloat(rate.exchangeRate));
+					rates.set(currency, rate.exchangeRate);
 				}
 			}
 		}
