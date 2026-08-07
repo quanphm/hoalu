@@ -14,7 +14,8 @@ import { useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { createCategoryDialog, createExpenseDialog, createWalletDialog } from "#app/atoms/index.ts";
-import { useUpcomingBills } from "#app/components/upcoming-bills/use-upcoming-bills.ts";
+import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
+import { useQuery } from "@tanstack/react-query";
 
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
@@ -42,8 +43,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const hasSearchResults = isSearching && filteredExpenses.length > 0;
 	const hasRecentExpenses = !isSearching && recentExpenses.length > 0;
 
-	const allUpcomingBills = useUpcomingBills();
-	const upcomingBills: UpcomingBillItem[] = allUpcomingBills.slice(0, 3).map((b) => ({
+	const { data: unified } = useQuery(unifiedBillsQueryOptions(slug ?? ""));
+	const upcomingBills: UpcomingBillItem[] = (unified?.upcoming ?? []).slice(0, 3).map((b) => ({
 		recurringBillId: b.recurringBillId,
 		date: b.date,
 		title: b.title,
