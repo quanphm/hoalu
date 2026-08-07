@@ -21,21 +21,15 @@ function RouteComponent() {
 				<CashFlowChart model={model} />
 			</div>
 			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
-				<ExpenseOverview model={model} categories={model.categories.list} />
 				<CashFlowSection model={model} />
+				<ExpenseOverview model={model} categories={model.categories.list} />
 			</div>
-
-			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
-				<SectionContent columns={2}>
-					<div className="col-span-1 flex h-full flex-col gap-4">
-						<UpcomingBillsWidget />
-					</div>
-					<div className="col-span-1 flex h-full flex-col gap-4">
-						<CategoryBreakdown model={model} />
-					</div>
-				</SectionContent>
+			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+				<UpcomingBillsWidget />
 			</div>
-			<div className="col-span-24 flex flex-col gap-4 md:col-span-8"></div>
+			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+				<CategoryBreakdown model={model} />
+			</div>
 		</SectionContent>
 	);
 }
