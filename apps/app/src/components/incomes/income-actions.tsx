@@ -146,8 +146,6 @@ function CreateIncomeForm() {
 		},
 		listeners: {
 			onChange: ({ formApi }) => {
-				// Only persist the date if the user explicitly picked one. Otherwise keep it
-				// empty so the next open falls back to "now" instead of a stale timestamp.
 				const isDateDirty = formApi.getFieldMeta("date")?.isDirty ?? false;
 				draftIncome$.set({
 					...formApi.state.values,

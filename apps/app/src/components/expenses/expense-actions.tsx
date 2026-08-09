@@ -192,8 +192,6 @@ function CreateExpenseForm() {
 		listeners: {
 			onChange: ({ formApi }) => {
 				const { attachments, ...draft } = formApi.state.values;
-				// Only persist the date if the user explicitly picked one. Otherwise keep it
-				// empty so the next open falls back to "now" instead of a stale timestamp.
 				const isDateDirty = formApi.getFieldMeta("date")?.isDirty ?? false;
 				draftExpense$.set({ ...draft, date: isDateDirty ? draft.date : "" });
 			},
