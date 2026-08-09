@@ -192,7 +192,8 @@ function CreateExpenseForm() {
 		listeners: {
 			onChange: ({ formApi }) => {
 				const { attachments, ...draft } = formApi.state.values;
-				draftExpense$.set(draft);
+				const isDateDirty = formApi.getFieldMeta("date")?.isDirty ?? false;
+				draftExpense$.set({ ...draft, date: isDateDirty ? draft.date : "" });
 			},
 		},
 		onSubmit: async ({ value }) => {

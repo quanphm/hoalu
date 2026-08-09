@@ -9,7 +9,7 @@ type IncomeAtomSchema = IncomeFormSchema;
 export const makeDraftIncome = (): IncomeAtomSchema => ({
 	title: "",
 	description: "",
-	date: new Date().toISOString(),
+	date: "",
 	transaction: {
 		value: 0,
 		currency: "",

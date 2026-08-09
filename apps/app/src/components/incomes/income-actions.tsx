@@ -146,7 +146,11 @@ function CreateIncomeForm() {
 		},
 		listeners: {
 			onChange: ({ formApi }) => {
-				draftIncome$.set(formApi.state.values);
+				const isDateDirty = formApi.getFieldMeta("date")?.isDirty ?? false;
+				draftIncome$.set({
+					...formApi.state.values,
+					date: isDateDirty ? formApi.state.values.date : "",
+				});
 			},
 		},
 		onSubmit: async ({ value }) => {

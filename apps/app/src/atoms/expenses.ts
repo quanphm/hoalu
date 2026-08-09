@@ -11,7 +11,7 @@ type ExpenseAtomSchema = Omit<ExpenseFormSchema, "attachments">;
 export const makeDraftExpense = (): ExpenseAtomSchema => ({
 	title: "",
 	description: "",
-	date: new Date().toISOString(),
+	date: "",
 	transaction: { value: 0, currency: "" },
 	walletId: "",
 	categoryId: "",
