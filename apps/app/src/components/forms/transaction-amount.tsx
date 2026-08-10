@@ -318,11 +318,11 @@ function TransactionAmountSplitInput({
 						<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:z-10 data-focus-within:ring-[3px]">
 							<span
 								className={cn(
-									"ps-3 text-base font-semibold",
+									"px-3 text-base font-semibold",
 									sign === "expense" ? "text-destructive" : "text-success",
 								)}
 							>
-								{sign === "expense" ? "−" : "+"}
+								{sign === "expense" ? "-" : "+"}
 							</span>
 							<NumberFieldInput className="bg-background text-foreground flex-1 px-2 py-2 tabular-nums outline-none" />
 						</NumberFieldGroup>
@@ -333,6 +333,7 @@ function TransactionAmountSplitInput({
 						title="Calculator ON"
 						variant="ghost"
 						size="icon"
+						tabIndex={-1}
 					>
 						<CalculatorIcon className="text-muted-foreground size-4" />
 					</Button>

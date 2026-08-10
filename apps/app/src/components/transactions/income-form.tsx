@@ -186,13 +186,13 @@ export function CreateIncomeForm() {
 							<div className="flex items-center justify-between">
 								<div />
 								<div className="flex items-center gap-2">
-									<Button
+									{/* <Button
 										type="button"
 										variant="outline"
 										render={<Link to="/$slug/transactions" params={{ slug }} />}
 									>
 										Cancel
-									</Button>
+									</Button> */}
 									<form.SubscribeButton>Create income</form.SubscribeButton>
 								</div>
 							</div>
@@ -361,9 +361,9 @@ export function EditIncomeForm(props: { data: SyncedIncome; navigation: Transact
 									</form.Subscribe>
 								</div>
 								<div className="flex items-center gap-2">
-									<Button type="button" variant="outline" onClick={() => form.reset()}>
+									{/* <Button type="button" variant="outline" onClick={() => form.reset()}>
 										Cancel
-									</Button>
+									</Button> */}
 									<form.SubscribeButton>Update</form.SubscribeButton>
 								</div>
 							</div>

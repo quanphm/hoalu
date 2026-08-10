@@ -21,14 +21,6 @@ export function TransactionPageHeader(props: { title: ReactNode; actions?: React
 	return (
 		<div className="flex items-center justify-between gap-4 border-b px-4 py-2">
 			<div className="flex min-w-0 items-center gap-2 text-sm">
-				<Link
-					to="/$slug/transactions"
-					params={{ slug }}
-					className="text-foreground shrink-0 font-semibold hover:underline"
-				>
-					Transactions
-				</Link>
-				<span className="text-muted-foreground">/</span>
 				<span className="text-muted-foreground truncate">{props.title}</span>
 			</div>
 			{props.actions && (
@@ -61,9 +53,7 @@ export function TransactionCloseAction() {
 export function TransactionPageGrid(props: { main: ReactNode; aside?: ReactNode }) {
 	return (
 		<div className="grid grid-cols-12 gap-6 p-4 md:p-6">
-			<div className={cn("col-span-12", props.aside ? "lg:col-span-8" : "lg:col-span-12")}>
-				{props.main}
-			</div>
+			<div className="col-span-12 lg:col-span-8">{props.main}</div>
 			{props.aside && <div className="col-span-12 lg:col-span-4">{props.aside}</div>}
 		</div>
 	);
