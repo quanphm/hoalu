@@ -76,7 +76,7 @@ function RouteComponent() {
 							>
 								<div className="flex flex-col items-center justify-center gap-3">
 									<PlusIcon className="text-muted-foreground size-4" />
-									<span className="text-muted-foreground text-sm">New workspace</span>
+									<span className="text-muted-foreground text-base">New workspace</span>
 								</div>
 							</Card>
 							{workspaces.map((ws) => {

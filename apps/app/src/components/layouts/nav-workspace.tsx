@@ -48,10 +48,10 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-						<SidebarMenuButton
-							render={<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }} />}
-							tooltip="Dashboard"
-						>
+							<SidebarMenuButton
+								render={<Link to="/$slug" params={{ slug }} activeOptions={{ exact: true }} />}
+								tooltip="Dashboard"
+							>
 								<SquaresFourIcon />
 								<span>Dashboard</span>
 							</SidebarMenuButton>
@@ -74,7 +74,6 @@ export function NavWorkspace() {
 									/>
 								}
 								tooltip="Transactions"
-		
 							>
 								<ArrowsLeftRightIcon />
 								<span>Transactions</span>
@@ -85,7 +84,6 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
-		
 							>
 								<RepeatIcon />
 								<span>Recurring Bills</span>
@@ -96,7 +94,6 @@ export function NavWorkspace() {
 							<SidebarMenuButton
 								render={<Link to="/$slug/events" params={{ slug }} />}
 								tooltip="Events"
-		
 							>
 								<CalendarStarIcon />
 								<span>Events</span>
@@ -111,30 +108,21 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/categories" params={{ slug }} />}
-		
-							>
+							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
 								<ShapesIcon />
 								<span>Categories</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/wallets" params={{ slug }} />}
-		
-							>
+							<SidebarMenuButton render={<Link to="/$slug/wallets" params={{ slug }} />}>
 								<WalletIcon />
 								<span>Wallets</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/files" params={{ slug }} />}
-		
-							>
+							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
 								<FileIcon />
 								<span>Files</span>
 							</SidebarMenuButton>
@@ -148,19 +136,13 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/settings/workspace" params={{ slug }} />}
-		
-							>
+							<SidebarMenuButton render={<Link to="/$slug/settings/workspace" params={{ slug }} />}>
 								<TentIcon />
 								<span>Workspace</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								render={<Link to="/$slug/settings/members" params={{ slug }} />}
-		
-							>
+							<SidebarMenuButton render={<Link to="/$slug/settings/members" params={{ slug }} />}>
 								<UsersIcon />
 								<span>Members</span>
 							</SidebarMenuButton>

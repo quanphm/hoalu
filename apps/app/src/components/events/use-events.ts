@@ -4,8 +4,8 @@ import { monetary } from "@hoalu/finance/monetary";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	eventCollectionFactory,
 	expenseCollectionFactory,
@@ -65,12 +65,12 @@ export function useLiveQueryEvents() {
 								return inRange && correctPair;
 							});
 							if (!match) return null;
-						return {
-							fromCurrency: match.from,
-							toCurrency: match.to,
-							exchangeRate: match.exchangeRate,
-							inverseRate: match.inverseRate,
-						};
+							return {
+								fromCurrency: match.from,
+								toCurrency: match.to,
+								exchangeRate: match.exchangeRate,
+								inverseRate: match.inverseRate,
+							};
 						},
 						findCrossRate: ([from, to], d) => {
 							const usdRates = fxRateData.filter((rate) => {

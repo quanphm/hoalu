@@ -149,9 +149,7 @@ export function convertTransactions<T extends ConvertibleTransaction>(
 		);
 
 		const factor = zeroDecimalSet.has(row.currency) ? 1 : 100;
-		const convertedAmount = exchangeRate
-			? (row.amount * exchangeRate.exchangeRate) / factor
-			: null;
+		const convertedAmount = exchangeRate ? (row.amount * exchangeRate.exchangeRate) / factor : null;
 
 		return {
 			...row,

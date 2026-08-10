@@ -119,9 +119,7 @@ function CategoryListBreakdown(props: {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
 					<div key={data.id} className="flex items-center gap-3 py-2.5">
-						<div
-							className={cn("size-3 shrink-0 rounded-[4px]", createChartColor(data.color))}
-						/>
+						<div className={cn("size-3 shrink-0 rounded-[4px]", createChartColor(data.color))} />
 						<Button
 							variant="link"
 							onClick={() => handleClick(data.id)}
@@ -193,7 +191,7 @@ export function CategoryBreakdown(props: CategoryBreakdownProps) {
 	return (
 		<Card className="h-full pb-2">
 			<CardHeader>
-				<CardTitle>Categories Breakdown</CardTitle>
+				<CardTitle className="text-base">Categories Breakdown</CardTitle>
 				<CardAction>
 					{dataToView.length > TOP_N_CATEGORY && (
 						<div className="flex justify-end">

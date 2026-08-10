@@ -5,18 +5,26 @@ export function useFilesUpload({
 	acceptedFileTypes = "image/*",
 	maxFiles = FILE_LIMIT,
 	maxSizeMB = FILE_SIZE_LIMIT / (1024 * 1024),
+	initialFiles,
 	onUpload,
 }: {
 	acceptedFileTypes?: string;
 	maxFiles?: number;
 	maxSizeMB?: number;
+	initialFiles?: File[];
 	onUpload?(files: File[]): void;
 }) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const previewRef = useRef<string[] | null>(null);
 
-	const [files, setFiles] = useState<File[]>([]);
-	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+	const [files, setFiles] = useState<File[]>(() => initialFiles ?? []);
+	const [previewUrls, setPreviewUrls] = useState<string[]>(() => {
+		const urls = (initialFiles ?? []).map((file) => URL.createObjectURL(file));
+		if (urls.length > 0) {
+			previewRef.current = urls;
+		}
+		return urls;
+	});
 	const [errors, setErrors] = useState<string[]>([]);
 
 	const validateFiles = useCallback(

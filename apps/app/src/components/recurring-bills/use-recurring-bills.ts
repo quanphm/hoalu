@@ -6,8 +6,8 @@ import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
 	recurringBillCollectionFactory,
@@ -76,44 +76,44 @@ export function useLiveQueryRecurringBills() {
 									return inRange && correctPair;
 								});
 								if (!match) return null;
-							return {
-								fromCurrency: match.from,
-								toCurrency: match.to,
-								exchangeRate: match.exchangeRate,
-								inverseRate: match.inverseRate,
-							};
+								return {
+									fromCurrency: match.from,
+									toCurrency: match.to,
+									exchangeRate: match.exchangeRate,
+									inverseRate: match.inverseRate,
+								};
+							},
+							findCrossRate: ([from, to], d) => {
+								const usdRates = fxRateData.filter((rate) => {
+									const inRange =
+										new Date(rate.validFrom) <= new Date(d) &&
+										new Date(d) <= new Date(rate.validTo);
+									return inRange && (rate.to === from || rate.to === to);
+								});
+								return calculateCrossRate({
+									pair: [from, to],
+									usdToFrom: usdRates.find((r) => r.to === from),
+									usdToTo: usdRates.find((r) => r.to === to),
+								});
+							},
 						},
-						findCrossRate: ([from, to], d) => {
-							const usdRates = fxRateData.filter((rate) => {
-								const inRange =
-									new Date(rate.validFrom) <= new Date(d) &&
-									new Date(d) <= new Date(rate.validTo);
-								return inRange && (rate.to === from || rate.to === to);
-							});
-							return calculateCrossRate({
-								pair: [from, to],
-								usdToFrom: usdRates.find((r) => r.to === from),
-								usdToTo: usdRates.find((r) => r.to === to),
-							});
-						},
-					},
-					[b.currency, workspaceCurrency],
-					date,
-				);
+						[b.currency, workspaceCurrency],
+						date,
+					);
 
-				const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
-				const factor = isNoCent ? 1 : 100;
-				convertedAmount =
-					Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
-			}
+					const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
+					const factor = isNoCent ? 1 : 100;
+					convertedAmount =
+						Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
+				}
 
-			return {
-				...b,
-				amount,
-				realAmount: Number(b.amount),
-				convertedAmount,
-			};
-		});
+				return {
+					...b,
+					amount,
+					realAmount: Number(b.amount),
+					convertedAmount,
+				};
+			});
 	}, [data, fxRateData, workspace.metadata.currency]);
 }
 
@@ -168,43 +168,43 @@ export function useAllRecurringBills() {
 								return inRange && correctPair;
 							});
 							if (!match) return null;
-						return {
-							fromCurrency: match.from,
-							toCurrency: match.to,
-							exchangeRate: match.exchangeRate,
-							inverseRate: match.inverseRate,
-						};
+							return {
+								fromCurrency: match.from,
+								toCurrency: match.to,
+								exchangeRate: match.exchangeRate,
+								inverseRate: match.inverseRate,
+							};
+						},
+						findCrossRate: ([from, to], d) => {
+							const usdRates = fxRateData.filter((rate) => {
+								const inRange =
+									new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
+								return inRange && (rate.to === from || rate.to === to);
+							});
+							return calculateCrossRate({
+								pair: [from, to],
+								usdToFrom: usdRates.find((r) => r.to === from),
+								usdToTo: usdRates.find((r) => r.to === to),
+							});
+						},
 					},
-					findCrossRate: ([from, to], d) => {
-						const usdRates = fxRateData.filter((rate) => {
-							const inRange =
-								new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
-							return inRange && (rate.to === from || rate.to === to);
-						});
-						return calculateCrossRate({
-							pair: [from, to],
-							usdToFrom: usdRates.find((r) => r.to === from),
-							usdToTo: usdRates.find((r) => r.to === to),
-						});
-					},
-				},
-				[b.currency, workspaceCurrency],
-				date,
-			);
+					[b.currency, workspaceCurrency],
+					date,
+				);
 
-			const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
-			const factor = isNoCent ? 1 : 100;
-			convertedAmount =
-				Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
-		}
+				const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
+				const factor = isNoCent ? 1 : 100;
+				convertedAmount =
+					Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
+			}
 
-		return {
-			...b,
-			amount,
-			realAmount: Number(b.amount),
-			convertedAmount,
-		};
-	});
+			return {
+				...b,
+				amount,
+				realAmount: Number(b.amount),
+				convertedAmount,
+			};
+		});
 	}, [data, fxRateData, workspace.metadata.currency]);
 }
 

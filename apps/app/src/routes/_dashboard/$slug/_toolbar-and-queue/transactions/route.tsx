@@ -26,7 +26,10 @@ function LayoutComponent() {
 	const transactionMatch = matches.find(
 		(m) => m.routeId === "/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId",
 	);
-	const transactionId = transactionMatch ? transactionMatch.params.transactionId : undefined;
+	const newTransactionMatch = matches.find(
+		(m) => m.routeId === "/_dashboard/$slug/_toolbar-and-queue/transactions/new",
+	);
+	const showOutlet = !!transactionMatch || !!newTransactionMatch;
 
 	const filteredExpenses = useFilteredTransactions();
 	const kindFilter = useValue(transactionKindFilter$);
@@ -35,7 +38,7 @@ function LayoutComponent() {
 
 	return (
 		<Section>
-			{transactionId ? (
+			{showOutlet ? (
 				<Outlet />
 			) : (
 				<>

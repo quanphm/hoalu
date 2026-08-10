@@ -337,7 +337,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	return (
 		<Card ref={chartRef} className={cn("flex flex-col gap-2 md:py-3")}>
 			<CardHeader className="flex flex-col md:grid">
-				<CardDescription className="font-mono text-xs tracking-wider uppercase">
+				<CardDescription className="text-base">
 					{isIncomeTab ? "Incomes" : "Expenses"}
 				</CardDescription>
 				<CardDescription>

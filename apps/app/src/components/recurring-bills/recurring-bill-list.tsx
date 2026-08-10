@@ -30,6 +30,7 @@ import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+
 import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const GRID_TEMPLATE =

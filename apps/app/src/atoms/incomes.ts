@@ -25,9 +25,3 @@ syncObservable(draftIncome$, {
 		plugin: ObservablePersistLocalStorage,
 	},
 });
-
-export const selectedIncome$ = observable<{
-	id: string | null;
-}>({
-	id: null,
-});

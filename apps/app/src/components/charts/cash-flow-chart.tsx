@@ -56,9 +56,7 @@ export function CashFlowChart(props: CashFlowChartProps) {
 	return (
 		<Card className={cn("flex h-full flex-col gap-2")}>
 			<CardHeader>
-				<CardDescription className="font-mono text-xs tracking-wider uppercase">
-					Cumulative Net
-				</CardDescription>
+				<CardDescription className="text-base">Cumulative Net</CardDescription>
 				<CardDescription>
 					<div className="flex flex-col">
 						<div className="flex items-baseline gap-2">

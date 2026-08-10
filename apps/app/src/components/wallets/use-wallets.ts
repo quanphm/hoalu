@@ -60,3 +60,35 @@ export function useLiveQueryWallets() {
 
 type SyncedWallets = ReturnType<typeof useLiveQueryWallets>;
 export type SyncedWallet = SyncedWallets[number];
+
+export interface WalletGroupOption {
+	label: string;
+	value: string;
+	currency: string;
+}
+export type WalletGroups = Record<string, { name: string; options: WalletGroupOption[] }>;
+
+export function buildWalletGroups(
+	wallets: SyncedWallet[],
+	options?: { activeOnly?: boolean },
+): WalletGroups {
+	return wallets.reduce<WalletGroups>((result, current) => {
+		if (options?.activeOnly && !current.isActive) {
+			return result;
+		}
+		const owner = current.owner;
+		if (!result[owner.id]) {
+			result[owner.id] = {
+				name: owner.name,
+				options: [{ label: current.name, value: current.id, currency: current.currency }],
+			};
+		} else {
+			result[owner.id].options.push({
+				label: current.name,
+				value: current.id,
+				currency: current.currency,
+			});
+		}
+		return result;
+	}, {});
+}

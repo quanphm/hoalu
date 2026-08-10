@@ -12,6 +12,7 @@ import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 import { type SyncedTransaction } from "#app/components/transactions/use-transactions.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+
 import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const GRID_TEMPLATE =

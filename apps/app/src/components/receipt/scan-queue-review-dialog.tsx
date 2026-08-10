@@ -14,10 +14,11 @@ import { Label } from "@hoalu/ui/label";
 import { SelectNative } from "@hoalu/ui/select-native";
 import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useMemo, useState, useCallback, useEffect } from "react";
 
-import { currentDialog$, createExpenseDialog, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
+import { currentDialog$, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
 import { scannedReceipts$, draftExpense$, scannedReceiptJobId$ } from "#app/atoms/expenses.ts";
 import { TransactionAmountInput } from "#app/components/forms/transaction-amount.tsx";
 import { extensions } from "#app/components/tiptap.tsx";
@@ -86,7 +87,7 @@ export function ScanQueueReviewDialogContent() {
 	const { data: categories } = useSuspenseQuery(categoriesQueryOptions(workspace.slug));
 	const setDraftExpense = draftExpense$.set;
 	const setScannedReceipts = scannedReceipts$.set;
-	const setCreateDialog = createExpenseDialog.set;
+	const navigate = useNavigate();
 	const setReviewDialog = scanQueueReviewDialog.set;
 
 	const setScannedReceiptJobId = scannedReceiptJobId$.set;
@@ -204,7 +205,11 @@ export function ScanQueueReviewDialogContent() {
 			setScannedReceiptJobId(currentJob.id);
 
 			setReviewDialog({ state: false });
-			setCreateDialog({ state: true });
+			navigate({
+				to: "/$slug/transactions/new",
+				params: { slug: workspace.slug },
+				search: { type: "expense" },
+			});
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to process receipt");
 		} finally {

@@ -10,12 +10,12 @@ import {
 } from "@hoalu/ui/command";
 import { Kbd, KbdGroup } from "@hoalu/ui/kbd";
 import { Separator } from "@hoalu/ui/separator";
-import { useParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { createCategoryDialog, createExpenseDialog, createWalletDialog } from "#app/atoms/index.ts";
+import { createCategoryDialog, createWalletDialog } from "#app/atoms/index.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
-import { useQuery } from "@tanstack/react-query";
 
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
@@ -31,7 +31,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const [search, setSearch] = useState("");
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
-	const setCreateExpenseDialog = createExpenseDialog.set;
+	const navigate = useNavigate();
 	const setCreateWalletDialog = createWalletDialog.set;
 	const setCreateCategoryDialog = createCategoryDialog.set;
 
@@ -72,7 +72,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			{
 				id: "create-expense",
 				label: "Create Expense",
-				onAction: () => runAction(() => setCreateExpenseDialog({ state: true })),
+				onAction: () =>
+					runAction(() =>
+						navigate({
+							to: "/$slug/transactions/new",
+							params: { slug },
+							search: { type: "expense" },
+						}),
+					),
 				meta: <CommandShortcut>⇧E</CommandShortcut>,
 			},
 			{
@@ -88,7 +95,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 				meta: <CommandShortcut>⇧C</CommandShortcut>,
 			},
 		],
-		[runAction, setCreateExpenseDialog, setCreateWalletDialog, setCreateCategoryDialog],
+		[runAction, navigate, slug, setCreateWalletDialog, setCreateCategoryDialog],
 	);
 
 	const virtualizedItems: VirtualizedItem[] = useMemo(() => {

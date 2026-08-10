@@ -18,10 +18,7 @@ import {
 	DeleteEventDialogContent,
 	EditEventDialogContent,
 } from "#app/components/events/event-actions.tsx";
-import {
-	CreateIncomeDialogContent,
-	DeleteIncomeDialogContent,
-} from "#app/components/incomes/income-actions.tsx";
+import { DeleteIncomeDialogContent } from "#app/components/incomes/income-actions.tsx";
 import {
 	ArchiveRecurringBillDialogContent,
 	CreateRecurringBillDialogContent,
@@ -29,10 +26,7 @@ import {
 	UnarchiveRecurringBillDialogContent,
 } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 
-import {
-	CreateExpenseDialogContent,
-	DeleteExpenseDialogContent,
-} from "../expenses/expense-actions";
+import { DeleteExpenseDialogContent } from "../expenses/expense-actions";
 import { QuickExpensesDialogContent } from "../quick-expenses/quick-expenses-dialog.tsx";
 import { ScanQueueReviewDialogContent } from "../receipt/scan-queue-review-dialog.tsx";
 import { ScanReceiptDialogContent } from "../receipt/scan-receipt-dialog";
@@ -80,8 +74,6 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 		case "delete-workspace":
 			return <DeleteWorkspaceDialogContent />;
 
-		case "create-expense":
-			return <CreateExpenseDialogContent />;
 		case "delete-expense":
 			return <DeleteExpenseDialogContent />;
 		case "scan-receipt":
@@ -112,8 +104,6 @@ function Content(props: { id?: DialogId; data?: Record<string, any> }) {
 		case "delete-recurring-bill":
 			return <DeleteRecurringBillDialogContent />;
 
-		case "create-income":
-			return <CreateIncomeDialogContent />;
 		case "delete-income":
 			return <DeleteIncomeDialogContent />;
 
