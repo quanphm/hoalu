@@ -34,16 +34,16 @@ When debug with browser, please refer to these addresses to access the applicati
 | API client types           | `apps/app/src/lib/api-client.ts`                                | 634                       |
 | Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 170                       |
 | Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)       |
-| Expense components         | `apps/app/src/components/expenses/`                             | 6 files                   |
+| Expense components         | `apps/app/src/components/expenses/`                             | 5 files                   |
 | Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 69                        |
 | Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 630                       |
 | Category components        | `apps/app/src/components/categories/`                           | 3 files                   |
 | Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                   |
 | Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                   |
 | Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 3 files                   |
-| Income components          | `apps/app/src/components/incomes/`                              | 6 files                   |
+| Income components          | `apps/app/src/components/incomes/`                              | 2 files                   |
 | Event components           | `apps/app/src/components/events/`                               | 5 files                   |
-| Transactions components    | `apps/app/src/components/transactions/`                         | 2 files                   |
+| Transactions components    | `apps/app/src/components/transactions/`                         | 5 files                   |
 | Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 175                       |
 | Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                         |
 | PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                         |

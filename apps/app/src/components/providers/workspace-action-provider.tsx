@@ -6,8 +6,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 import {
 	commandPaletteOpen$,
 	createCategoryDialog,
-	createExpenseDialog,
-	createIncomeDialog,
 	createRecurringBillDialog,
 	createWalletDialog,
 	dialog$,
@@ -27,8 +25,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	const isAnyDialogOpen = useValue(dialog$.open);
 	const allowShortcutNavigate = !isAnyDialogOpen;
 
-	const setExpenseOpen = createExpenseDialog.set;
-	const setIncomeOpen = createIncomeDialog.set;
 	const setWalletOpen = createWalletDialog.set;
 	const setCategoryOpen = createCategoryDialog.set;
 	const setRecurringBillOpen = createRecurringBillDialog.set;
@@ -38,23 +34,31 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_expense.hotkey,
 		() => {
-			setExpenseOpen({ state: true });
+			navigate({
+				to: "/$slug/transactions/new",
+				params: { slug },
+				search: { type: "expense" },
+			});
 		},
 		{
 			preventDefault: true,
 		},
-		[],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_income.hotkey,
 		() => {
-			setIncomeOpen({ state: true });
+			navigate({
+				to: "/$slug/transactions/new",
+				params: { slug },
+				search: { type: "income" },
+			});
 		},
 		{
 			preventDefault: true,
 		},
-		[],
+		[slug],
 	);
 
 	useHotkeys(

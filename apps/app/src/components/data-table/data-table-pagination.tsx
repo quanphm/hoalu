@@ -1,7 +1,4 @@
-import {
-	CaretLeftIcon,
-	CaretRightIcon,
-} from "@hoalu/icons/phosphor";
+import { CaretLeftIcon, CaretRightIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Label } from "@hoalu/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@hoalu/ui/pagination";

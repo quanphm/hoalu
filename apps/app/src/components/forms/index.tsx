@@ -18,7 +18,7 @@ import { SelectWithSearchField } from "./select-with-search";
 import { SubscribeButton } from "./subscribe-button";
 import { SwitchField } from "./switch";
 import { TiptapField } from "./tiptap";
-import { TransactionAmountField } from "./transaction-amount";
+import { TransactionAmountField, TransactionAmountSplitField } from "./transaction-amount";
 
 const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
@@ -34,6 +34,7 @@ const { useAppForm, withForm } = createFormHook({
 		DatepickerField,
 		DatepickerInputField,
 		TransactionAmountField,
+		TransactionAmountSplitField,
 		SwitchField,
 		ColorsField,
 		TiptapField,

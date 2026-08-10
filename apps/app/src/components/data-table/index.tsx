@@ -24,10 +24,11 @@ import { useLayoutEffect } from "react";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import type { DataTableFeatures } from "#app/lib/table-features.ts";
 import { dataTableFeatures } from "#app/lib/table-features.ts";
 
 import { DataTablePagination } from "./data-table-pagination";
+
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
 
 type TableRowData = { id: string } & RowData;
 

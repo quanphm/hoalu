@@ -2,12 +2,8 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useCallback, useEffectEvent, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { ExpenseDetails, MobileExpenseDetails } from "#app/components/expenses/expense-details.tsx";
-import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
-import {
-	IncomeDetailsPanel,
-	MobileIncomeDetailsPanel,
-} from "#app/components/transactions/income-details-panel.tsx";
+import { EditExpenseForm } from "#app/components/transactions/expense-form.tsx";
+import { EditIncomeForm } from "#app/components/transactions/income-form.tsx";
 import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
 
 export const Route = createFileRoute(
@@ -20,7 +16,6 @@ function RouteComponent() {
 	const { transactionId } = Route.useParams();
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const navigate = useNavigate();
-	const { shouldUseMobileLayout } = useLayoutMode();
 	const filtered = useFilteredTransactions();
 
 	const filteredRef = useRef(filtered);
@@ -74,7 +69,7 @@ function RouteComponent() {
 
 	if (!current) return null;
 
-	const sharedProps = {
+	const navigation = {
 		onClose: handleClose,
 		onGoUp: handleGoUp,
 		onGoDown: handleGoDown,
@@ -83,16 +78,8 @@ function RouteComponent() {
 	};
 
 	if (current.kind === "income") {
-		return shouldUseMobileLayout ? (
-			<MobileIncomeDetailsPanel currentIncome={current} {...sharedProps} />
-		) : (
-			<IncomeDetailsPanel currentIncome={current} {...sharedProps} />
-		);
+		return <EditIncomeForm key={current.id} data={current} navigation={navigation} />;
 	}
 
-	return shouldUseMobileLayout ? (
-		<MobileExpenseDetails currentExpense={current} {...sharedProps} />
-	) : (
-		<ExpenseDetails currentExpense={current} {...sharedProps} />
-	);
+	return <EditExpenseForm key={current.id} data={current} navigation={navigation} />;
 }

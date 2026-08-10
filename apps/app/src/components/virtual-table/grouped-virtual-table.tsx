@@ -5,10 +5,10 @@ import type { Range } from "@tanstack/react-virtual";
 import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
+import { useScrollRestoration } from "#app/hooks/use-scroll-restoration.ts";
 import { headerOnlyTableFeatures } from "#app/lib/table-features.ts";
 
-import { useScrollRestoration } from "#app/hooks/use-scroll-restoration.ts";
+import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const THEAD_HEIGHT = 32;
 

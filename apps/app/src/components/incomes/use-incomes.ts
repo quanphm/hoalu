@@ -1,25 +1,14 @@
-import { useValue } from "@legendapp/state/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
-import { selectedIncome$ } from "#app/atoms/index.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
 	incomeCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
 import { buildFxRateIndex, convertTransactions } from "#app/services/dashboard-model.ts";
-
-export function useSelectedIncome() {
-	const income = useValue(selectedIncome$);
-	const setSelectedIncome = selectedIncome$.set;
-	const onSelectIncome = (id: string | null) => {
-		setSelectedIncome({ id });
-	};
-	return { income, onSelectIncome };
-}
 
 export function useLiveQueryIncomes() {
 	const workspace = useWorkspace();

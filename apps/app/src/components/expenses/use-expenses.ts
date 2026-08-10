@@ -1,8 +1,8 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	categoryCollectionFactory,
 	expenseCollectionFactory,

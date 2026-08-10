@@ -8,9 +8,10 @@ import {
 import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
-import { createExpenseDialog, scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
+import { scanQueueReviewDialog } from "#app/atoms/dialogs.ts";
 import { draftExpense$, quickExpenseJobId$ } from "#app/atoms/expenses.ts";
 import { useQuickExpenseQueue, useReceiptScanQueue } from "#app/hooks/use-queue.ts";
 
@@ -142,9 +143,10 @@ function ReceiptJobItem({ job }: { job: ReceiptScanJob }) {
 
 function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 	const { retry, remove } = useQuickExpenseQueue();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const navigate = useNavigate();
 	const setDraft = draftExpense$.set;
 	const setQuickExpenseJobId = quickExpenseJobId$.set;
-	const setCreateDialog = createExpenseDialog.set;
 
 	const handleReview = () => {
 		if (!job.result) return;
@@ -159,7 +161,11 @@ function QuickExpenseJobItem({ job }: { job: QuickExpenseJob }) {
 			repeat: job.result!.repeat,
 		}));
 		setQuickExpenseJobId(job.id);
-		setCreateDialog({ state: true });
+		navigate({
+			to: "/$slug/transactions/new",
+			params: { slug },
+			search: { type: "expense" },
+		});
 	};
 
 	const result = job.result;

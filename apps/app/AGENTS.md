@@ -56,12 +56,11 @@ Hoalu frontend react app.
 
 ### Frontend Components (`apps/app/src/components/`)
 
-**Expenses (6 files):**
+**Expenses (5 files):**
 
 - `expense-list.tsx` - Virtualized list with TanStack Virtual
 - `expense-content.tsx` - Individual list item component
-- `expense-details.tsx` - Detail panel with edit/delete actions
-- `expense-actions.tsx` - Create/Edit dialog triggers
+- `expense-actions.tsx` - Create trigger (navigates to `/transactions/new?type=expense`), delete/duplicate actions
 - `expense-filter-dropdown.tsx` - Filter controls (search, category, wallet, repeat, date)
 - `use-expenses.ts` - Expense live query with FX conversion via `dashboard-model.ts` (exports SyncedExpense type)
 
@@ -92,14 +91,10 @@ Hoalu frontend react app.
 - `upcoming-bills-widget.tsx` - Dashboard widget
 - `use-upcoming-bills.ts` - Query helpers
 
-**Incomes (6 files):**
+**Incomes (2 files):**
 
-- `income-list.tsx` - Virtualized list
-- `income-content.tsx` - Individual item component
-- `income-details.tsx` - Detail panel
-- `income-actions.tsx` - CRUD dialog triggers
+- `income-actions.tsx` - Create trigger (navigates to `/transactions/new?type=income`), delete/duplicate actions
 - `use-incomes.ts` - Income live query with FX conversion via `dashboard-model.ts` (exports SyncedIncome type)
-- `use-income-navigation.ts` - Navigation helpers
 
 **Events (5 files):**
 
@@ -109,9 +104,12 @@ Hoalu frontend react app.
 - `event-date-range.tsx` - Date range selector
 - `use-events.ts` - Live queries
 
-**Transactions (2 files):**
+**Transactions (5 files):**
 
-- `income-details-panel.tsx` - Income detail in transaction view
+- `transaction-layout.tsx` - Shared page layout (breadcrumb header, 2-col grid, section labels, borderless title input)
+- `expense-form.tsx` - Create/Edit expense page forms (used by `/transactions/new` + `/transactions/$transactionId`)
+- `income-form.tsx` - Create/Edit income page forms
+- `transaction-attachments.tsx` - Right-column attachments (existing files grid + pending uploads + dropzone, expense only)
 - `use-transactions.ts` - Combined expense/income transactions
 
 **Forms (19 files):**

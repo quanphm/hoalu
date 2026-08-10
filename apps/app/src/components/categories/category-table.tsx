@@ -9,9 +9,9 @@ import { selectedCategory$ } from "#app/atoms/index.ts";
 import { EditCategoryForm } from "#app/components/categories/category-actions.tsx";
 import { DataTable } from "#app/components/data-table/index.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
-import type { DataTableFeatures } from "#app/lib/table-features.ts";
 
 import type { CategorySchema } from "#app/lib/schema.ts";
+import type { DataTableFeatures } from "#app/lib/table-features.ts";
 
 type CategoryTableItem = Omit<CategorySchema, "total">;
 

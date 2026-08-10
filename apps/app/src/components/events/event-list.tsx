@@ -11,6 +11,7 @@ import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+
 import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const percentFormatter = new Intl.NumberFormat("en-US", {

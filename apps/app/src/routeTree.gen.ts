@@ -36,6 +36,7 @@ import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dash
 import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
 import { Route as DashboardSlugToolbarAndQueueTransactionsIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/index'
 import { Route as DashboardSlugToolbarAndQueueTransactionsTransactionIdRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId'
+import { Route as DashboardSlugToolbarAndQueueTransactionsNewRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/new'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -183,6 +184,12 @@ const DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute =
     path: '/$transactionId',
     getParentRoute: () => DashboardSlugToolbarAndQueueTransactionsRouteRoute,
   } as any)
+const DashboardSlugToolbarAndQueueTransactionsNewRoute =
+  DashboardSlugToolbarAndQueueTransactionsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => DashboardSlugToolbarAndQueueTransactionsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/$slug/': typeof DashboardSlugToolbarAndQueueIndexRoute
   '/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
   '/$slug/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
+  '/$slug/transactions/new': typeof DashboardSlugToolbarAndQueueTransactionsNewRoute
   '/$slug/transactions/': typeof DashboardSlugToolbarAndQueueTransactionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -231,6 +239,7 @@ export interface FileRoutesByTo {
   '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
   '/$slug/settings': typeof DashboardSlugSettingsIndexRoute
   '/$slug/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
+  '/$slug/transactions/new': typeof DashboardSlugToolbarAndQueueTransactionsNewRoute
   '/$slug/transactions': typeof DashboardSlugToolbarAndQueueTransactionsIndexRoute
 }
 export interface FileRoutesById {
@@ -261,6 +270,7 @@ export interface FileRoutesById {
   '/_dashboard/$slug/_toolbar-and-queue/': typeof DashboardSlugToolbarAndQueueIndexRoute
   '/_dashboard/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
   '/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
+  '/_dashboard/$slug/_toolbar-and-queue/transactions/new': typeof DashboardSlugToolbarAndQueueTransactionsNewRoute
   '/_dashboard/$slug/_toolbar-and-queue/transactions/': typeof DashboardSlugToolbarAndQueueTransactionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/$slug/'
     | '/$slug/settings/'
     | '/$slug/transactions/$transactionId'
+    | '/$slug/transactions/new'
     | '/$slug/transactions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/$slug/settings/workspace'
     | '/$slug/settings'
     | '/$slug/transactions/$transactionId'
+    | '/$slug/transactions/new'
     | '/$slug/transactions'
   id:
     | '__root__'
@@ -341,6 +353,7 @@ export interface FileRouteTypes {
     | '/_dashboard/$slug/_toolbar-and-queue/'
     | '/_dashboard/$slug/settings/'
     | '/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId'
+    | '/_dashboard/$slug/_toolbar-and-queue/transactions/new'
     | '/_dashboard/$slug/_toolbar-and-queue/transactions/'
   fileRoutesById: FileRoutesById
 }
@@ -540,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRouteImport
       parentRoute: typeof DashboardSlugToolbarAndQueueTransactionsRouteRoute
     }
+    '/_dashboard/$slug/_toolbar-and-queue/transactions/new': {
+      id: '/_dashboard/$slug/_toolbar-and-queue/transactions/new'
+      path: '/new'
+      fullPath: '/$slug/transactions/new'
+      preLoaderRoute: typeof DashboardSlugToolbarAndQueueTransactionsNewRouteImport
+      parentRoute: typeof DashboardSlugToolbarAndQueueTransactionsRouteRoute
+    }
   }
 }
 
@@ -565,6 +585,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface DashboardSlugToolbarAndQueueTransactionsRouteRouteChildren {
   DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute: typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
+  DashboardSlugToolbarAndQueueTransactionsNewRoute: typeof DashboardSlugToolbarAndQueueTransactionsNewRoute
   DashboardSlugToolbarAndQueueTransactionsIndexRoute: typeof DashboardSlugToolbarAndQueueTransactionsIndexRoute
 }
 
@@ -572,6 +593,8 @@ const DashboardSlugToolbarAndQueueTransactionsRouteRouteChildren: DashboardSlugT
   {
     DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute:
       DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute,
+    DashboardSlugToolbarAndQueueTransactionsNewRoute:
+      DashboardSlugToolbarAndQueueTransactionsNewRoute,
     DashboardSlugToolbarAndQueueTransactionsIndexRoute:
       DashboardSlugToolbarAndQueueTransactionsIndexRoute,
   }

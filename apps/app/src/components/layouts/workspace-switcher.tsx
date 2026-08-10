@@ -34,12 +34,7 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				render={
-					<SidebarMenuButton
-						size="lg"
-						className="border-border bg-input/32"
-					/>
-				}
+				render={<SidebarMenuButton size="lg" className="border-border bg-input/32" />}
 			>
 				<S3WorkspaceLogo {...selectedWorkspace} />
 				<div className="grid flex-1 text-left text-sm leading-tight">

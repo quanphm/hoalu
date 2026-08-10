@@ -1,8 +1,8 @@
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
 
 import { DashboardDateFilter } from "#app/components/charts/dashboard-date-filter.tsx";
-import { CreateExpenseDialogTrigger } from "#app/components/expenses/expense-actions.tsx";
-import { CreateIncomeDialogTrigger } from "#app/components/incomes/income-actions.tsx";
+import { CreateExpenseTrigger } from "#app/components/expenses/expense-actions.tsx";
+import { CreateIncomeTrigger } from "#app/components/incomes/income-actions.tsx";
 import { PageContent } from "#app/components/layouts/page-content.tsx";
 import {
 	Toolbar,
@@ -46,11 +46,11 @@ function RouteComponent() {
 					)}
 				</ToolbarGroup>
 				<ToolbarActions>
-					<CreateExpenseDialogTrigger />
+					<CreateExpenseTrigger />
 					<ScanReceiptDialogTrigger />
 					{/* <QuickExpensesDialogTrigger /> */}
 					<ToolbarSeparator />
-					<CreateIncomeDialogTrigger />
+					<CreateIncomeTrigger />
 					<ToolbarSeparator />
 					<RedactedAmountToggle />
 				</ToolbarActions>

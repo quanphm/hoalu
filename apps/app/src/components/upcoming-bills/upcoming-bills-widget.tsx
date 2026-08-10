@@ -15,7 +15,7 @@ export function UpcomingBillsWidget() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle className="flex items-center gap-2">Upcoming Bills</CardTitle>
+				<CardTitle className="flex items-center gap-2 text-base">Upcoming Bills</CardTitle>
 				<CardDescription>
 					{totalCount} bill{totalCount !== 1 ? "s" : ""} in the next 30 days
 				</CardDescription>

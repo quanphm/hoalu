@@ -24,8 +24,8 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 		<div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3">
 			<Card className="@container/card">
 				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Incomes</span>
+					<CardDescription className="flex items-center justify-between text-sm">
+						<span>Incomes</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={stats.income.change}
@@ -33,16 +33,16 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							/>
 						)}
 					</CardDescription>
-					<CardTitle className="text-lg font-normal">
-						<CurrencyValue value={stats.income.total} currency={currency} className="text-lg" />
+					<CardTitle className="text-lg">
+						<CurrencyValue value={stats.income.total} currency={currency} className="text-2xl" />
 					</CardTitle>
 				</CardHeader>
 			</Card>
 
 			<Card className="@container/card">
 				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Expenses</span>
+					<CardDescription className="flex items-center justify-between text-sm">
+						<span>Expenses</span>
 						{showTrend && (
 							<PercentageChangeDisplay
 								change={stats.expenses.change}
@@ -51,16 +51,16 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							/>
 						)}
 					</CardDescription>
-					<CardTitle className="text-lg font-normal">
-						<CurrencyValue value={stats.expenses.total} currency={currency} className="text-lg" />
+					<CardTitle className="text-lg">
+						<CurrencyValue value={stats.expenses.total} currency={currency} className="text-2xl" />
 					</CardTitle>
 				</CardHeader>
 			</Card>
 
 			<Card className="@container/card col-span-2 md:col-span-1">
 				<CardHeader>
-					<CardDescription className="flex items-center justify-between text-xs uppercase">
-						<span className="font-mono tracking-wider">Transactions</span>
+					<CardDescription className="flex items-center justify-between text-sm">
+						<span>Transactions</span>
 						{showTrend && transactionsDiff !== 0 && (
 							<span
 								className={cn(
@@ -75,9 +75,7 @@ export function CashFlowSection(props: CashFlowSectionProps) {
 							</span>
 						)}
 					</CardDescription>
-					<CardTitle className="font-mono text-lg font-normal tracking-tight">
-						{formatNumber(stats.transactions.count)}
-					</CardTitle>
+					<CardTitle className="text-2xl">{formatNumber(stats.transactions.count)}</CardTitle>
 				</CardHeader>
 			</Card>
 		</div>

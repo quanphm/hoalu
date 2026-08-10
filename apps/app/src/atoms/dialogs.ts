@@ -6,7 +6,6 @@ const DIALOG_ID = [
 	"delete-workspace",
 
 	// expense
-	"create-expense",
 	"delete-expense",
 	"scan-receipt",
 	"scan-queue-review",
@@ -28,7 +27,6 @@ const DIALOG_ID = [
 	"delete-recurring-bill",
 
 	// income
-	"create-income",
 	"delete-income",
 
 	// event
@@ -87,7 +85,6 @@ function createDialog(id: DialogId) {
 export const createWorkspaceDialog = createDialog("create-workspace");
 export const deleteWorkspaceDialog = createDialog("delete-workspace");
 
-export const createExpenseDialog = createDialog("create-expense");
 export const deleteExpenseDialog = createDialog("delete-expense");
 export const scanReceiptDialog = createDialog("scan-receipt");
 
@@ -106,7 +103,6 @@ export const deleteRecurringBillDialog = createDialog("delete-recurring-bill");
 export const scanQueueReviewDialog = createDialog("scan-queue-review");
 export const quickExpenseDialog = createDialog("quick-expense");
 
-export const createIncomeDialog = createDialog("create-income");
 export const deleteIncomeDialog = createDialog("delete-income");
 
 export const createEventDialog = createDialog("create-event");

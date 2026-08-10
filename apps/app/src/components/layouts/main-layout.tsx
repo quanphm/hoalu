@@ -21,7 +21,7 @@ import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 import { NavWorkspaceList } from "./nav-workspace-list";
 
-export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
+export function MainLayout({ children }: { children: React.ReactNode }) {
 	const params = useParams({ strict: false });
 	const hasSlug = !!params.slug;
 
@@ -36,9 +36,7 @@ export function SidebarSaysLayout({ children }: { children: React.ReactNode }) {
 						<SidebarMenuItem>
 							{hasSlug && currentWorkspace ? (
 								<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
-							) : (
-								<AppLogo />
-							)}
+							) : null}
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarHeader>

@@ -10,10 +10,13 @@ import {
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { useNavigate, getRouteApi } from "@tanstack/react-router";
 
-import { createExpenseDialog, draftExpense$, logPayment$ } from "#app/atoms/index.ts";
+import { draftExpense$, logPayment$ } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
+
+const routeApi = getRouteApi("/_dashboard/$slug");
 
 export interface UpcomingBill {
 	recurringBillId: string;
@@ -96,20 +99,20 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 		<ScrollArea className="min-h-90 px-4">
 			{/* Overdue section */}
 			{overdueBills.length > 0 && (
-				<div className="rounded-lg border border-destructive/20 bg-destructive/8 dark:bg-destructive/12">
+				<div className="border-destructive/20 bg-destructive/8 dark:bg-destructive/12 rounded-lg border">
 					{/* Header */}
-					<div className="flex items-center justify-between border-b border-destructive/10 px-4 py-2.5">
-						<span className="text-xs font-semibold uppercase tracking-wider text-destructive">
+					<div className="border-destructive/10 flex items-center justify-between border-b px-4 py-2.5">
+						<span className="text-destructive text-xs font-semibold tracking-wider uppercase">
 							Overdue · {overdueBills.length}
 						</span>
 						<CurrencyValue
 							value={overdueTotal}
 							currency={overdueCurrency}
-							className="text-xs font-semibold text-destructive"
+							className="text-destructive text-xs font-semibold"
 						/>
 					</div>
 					{/* Items */}
-					<div className="divide-y divide-destructive/10 px-4">
+					<div className="divide-destructive/10 divide-y px-4">
 						{overdueBills.map((bill) => (
 							<OverdueBillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} />
 						))}
@@ -119,7 +122,7 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 
 			{/* Upcoming section */}
 			{remainingBills.length > 0 && (
-				<div className="mt-4 divide-y divide-border/50 px-4">
+				<div className="divide-border/50 mt-4 divide-y px-4">
 					{remainingBills.map((bill) => (
 						<UpcomingBillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} />
 					))}
@@ -131,7 +134,8 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 
 function OverdueBillRow({ bill }: { bill: FlatBill }) {
 	const archive = useArchiveRecurringBill();
-	const setDialog = createExpenseDialog.set;
+	const { slug } = routeApi.useParams();
+	const navigate = useNavigate();
 	const setDraft = draftExpense$.set;
 	const setLogPayment = logPayment$.set;
 
@@ -150,7 +154,11 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 			repeat: bill.repeat as RepeatSchema,
 		});
 		setLogPayment({ recurringBillId: bill.recurringBillId });
-		setDialog({ state: true });
+		navigate({
+			to: "/$slug/transactions/new",
+			params: { slug },
+			search: { type: "expense" },
+		});
 	}
 
 	function handleDelete(e: React.MouseEvent) {
@@ -167,10 +175,8 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 				onClick={handleLogPayment}
 				className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
 			>
-				<span className="truncate text-sm font-semibold text-foreground">
-					{bill.title}
-				</span>
-				<span className="truncate text-xs text-muted-foreground">
+				<span className="text-foreground truncate text-sm font-semibold">{bill.title}</span>
+				<span className="text-muted-foreground truncate text-xs">
 					{bill.categoryName ?? "Uncategorized"} · due {formatDueDate(bill.date)} ·{" "}
 					<span className="text-destructive">
 						{daysLate} day{daysLate !== 1 ? "s" : ""} late
@@ -181,7 +187,7 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 				<CurrencyValue
 					value={bill.amount}
 					currency={bill.currency}
-					className="text-sm font-semibold text-destructive"
+					className="text-destructive text-sm font-semibold"
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger
@@ -203,7 +209,8 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 
 function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 	const archive = useArchiveRecurringBill();
-	const setDialog = createExpenseDialog.set;
+	const { slug } = routeApi.useParams();
+	const navigate = useNavigate();
 	const setDraft = draftExpense$.set;
 	const setLogPayment = logPayment$.set;
 
@@ -222,7 +229,11 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 			repeat: bill.repeat as RepeatSchema,
 		});
 		setLogPayment({ recurringBillId: bill.recurringBillId });
-		setDialog({ state: true });
+		navigate({
+			to: "/$slug/transactions/new",
+			params: { slug },
+			search: { type: "expense" },
+		});
 	}
 
 	function handleDelete(e: React.MouseEvent) {
@@ -231,9 +242,7 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 	}
 
 	const daysLabel =
-		bill.status === "today"
-			? "today"
-			: `in ${bill.daysDiff} day${bill.daysDiff !== 1 ? "s" : ""}`;
+		bill.status === "today" ? "today" : `in ${bill.daysDiff} day${bill.daysDiff !== 1 ? "s" : ""}`;
 
 	return (
 		<div className="flex w-full items-center gap-3 py-3">
@@ -242,8 +251,8 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 				onClick={handleLogPayment}
 				className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
 			>
-				<span className="truncate text-sm font-semibold text-foreground">{bill.title}</span>
-				<span className="truncate text-xs text-muted-foreground">
+				<span className="text-foreground truncate text-sm font-semibold">{bill.title}</span>
+				<span className="text-muted-foreground truncate text-xs">
 					{bill.categoryName ?? "Uncategorized"} · {formatDueDate(bill.date)} · {daysLabel}
 				</span>
 			</button>

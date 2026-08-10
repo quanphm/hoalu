@@ -4,7 +4,7 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { WebHaptics } from "web-haptics";
 
 import { draftIncome$ } from "#app/atoms/incomes.ts";
-import { createExpenseDialog, draftExpense$, createIncomeDialog } from "#app/atoms/index.ts";
+import { draftExpense$ } from "#app/atoms/index.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import {
@@ -462,7 +462,8 @@ export function useDeleteIncome() {
 }
 
 export function useDuplicateIncome() {
-	const setDialog = createIncomeDialog.set;
+	const { slug } = routeApi.useParams();
+	const navigate = useNavigate();
 	const setDraft = draftIncome$.set;
 
 	const mutation = useMutation({
@@ -480,7 +481,11 @@ export function useDuplicateIncome() {
 				walletId: sourceIncome.wallet.id,
 				categoryId: sourceIncome.category?.id ?? "",
 			});
-			setDialog({ state: true });
+			navigate({
+				to: "/$slug/transactions/new",
+				params: { slug },
+				search: { type: "income" },
+			});
 
 			return sourceIncome;
 		},
@@ -798,7 +803,8 @@ export function useDeleteEvent() {
 }
 
 export function useDuplicateExpense() {
-	const setDialog = createExpenseDialog.set;
+	const { slug } = routeApi.useParams();
+	const navigate = useNavigate();
 	const setDraft = draftExpense$.set;
 
 	const mutation = useMutation({
@@ -817,7 +823,11 @@ export function useDuplicateExpense() {
 				categoryId: sourceExpense.category?.id ?? "",
 				repeat: sourceExpense.repeat,
 			});
-			setDialog({ state: true });
+			navigate({
+				to: "/$slug/transactions/new",
+				params: { slug },
+				search: { type: "expense" },
+			});
 
 			return sourceExpense;
 		},
