@@ -39,7 +39,7 @@ function DonutBreakdown(props: {
 	) satisfies ChartConfig;
 
 	return (
-		<ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[165px] w-full">
+		<ChartContainer config={chartConfig} className="mx-auto aspect-auto h-[165px] w-full">
 			<PieChart>
 				<ChartTooltip
 					isAnimationActive={false}
