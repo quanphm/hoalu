@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-05-10
+LAST_UPDATED: 2026-08-28
 TECH_STACK: Node.js 24, pnpm 11, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -21,7 +21,7 @@ Hoalu backend api.
 - **API Documentation**: Scalar via `@scalar/hono-api-reference`
 - **Email**:
   - React Email for templates (`@hoalu/email`)
-  - Nodemailer v7 for sending
+  - Nodemailer v8 for sending
   - `@react-email/render` for HTML generation
 - **Storage**:
   - Redis (ioredis) for caching, rate limiting, and sessions
@@ -37,7 +37,7 @@ Hoalu backend api.
 - **Database**:
   - PostgreSQL 17 with logical replication (WAL level)
   - Drizzle ORM with migration-first workflow
-  - Migrations at `apps/api/migrations/` (13 migrations as of May 2026)
+  - Migrations at `apps/api/migrations/` (14 migrations as of Aug 2026)
 - **Real-time Sync**: Electric SQL sync engine on port 4000 (`modules/sync.ts`)
 - **Caching**: Redis for rate limiting, sessions, and temporary data
 - **Reverse Proxy**: Caddy v2+ for development proxy server
@@ -150,7 +150,7 @@ export class ExpenseRepository {
 
 ```typescript
 import * as z from "zod";
-import { CurrencySchema, RepeatSchema } from "@hoalu/common/schema";
+import { CurrencySchema, RepeatSchema } from "@hoalu/schema/schema";
 
 export const InsertExpenseSchema = z.object({
 	title: z.string().min(1),
@@ -203,7 +203,7 @@ All custom validators live in `#api/validators/`:
 
 ```typescript
 import { HTTPException } from "hono/http-exception";
-import { HTTPStatus } from "@hoalu/common/http-status";
+import { HTTPStatus } from "@hoalu/http/http-status";
 
 app.get("/expenses/:id", async (c) => {
 	const expense = await repository.findById(c.req.param("id"));
@@ -262,7 +262,7 @@ app.get(
   - `pnpm run db:migrate` — applies pending migrations
   - Auto-migrate is part of `dev` script (`pnpm db:migrate && tsx watch src/index.ts`)
 
-### Enum Types (from `@hoalu/common/enums`)
+### Enum Types (from `@hoalu/schema/enums`)
 
 | Enum          | Values                                                            |
 | ------------- | ----------------------------------------------------------------- |

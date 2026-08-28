@@ -1,7 +1,7 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-05-10
-TECH_STACK: Bun 1.3.9, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
+LAST_UPDATED: 2026-08-28
+TECH_STACK: Bun 1.4.0, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
 # AGENTS.md
@@ -11,17 +11,17 @@ Hoalu frontend react app.
 ## Tech Stack
 
 - **Framework**: React 19 with React DOM 19
-- **Runtime**: Bun (1.3.9)
-- **Routing**: TanStack Router v1.139+ with file-based routing
-- **Data Fetching**: TanStack Query v5.90+ with TanStack React DB v0.1+
-- **Forms**: TanStack Form v1.29+ with Zod v4 validation
+- **Runtime**: Bun (1.4.0)
+- **Routing**: TanStack Router v1.170+ with file-based routing
+- **Data Fetching**: TanStack Query v5.100+ with TanStack React DB v0.1+
+- **Forms**: TanStack Form v1.33+ with Zod v4 validation
 - **State Management**: Legendapp State v3 (`@legendapp/state` beta) observables for local state
 - **Real-time Sync**:
-  - Electric SQL with `@electric-sql/pglite` v0.4.4
-  - `@tanstack/electric-db-collection` v0.3.3 for reactive collections
-  - PGlite Sync v0.5.4 for offline-first PostgreSQL in browser
+  - Electric SQL with `@electric-sql/pglite` v0.5.4
+  - `@tanstack/electric-db-collection` v0.3.15 for reactive collections
+  - PGlite Sync v0.6.5 for offline-first PostgreSQL in browser
 - **Styling**:
-  - TailwindCSS v4.2+ with `@tailwindcss/vite`
+  - TailwindCSS v4.3+ with `@tailwindcss/vite`
   - shadcn/ui components via `@hoalu/ui` (~42 components)
 - **UI Components**:
   - TipTap v3.11+ for rich text editing
@@ -30,7 +30,7 @@ Hoalu frontend react app.
 - **PWA**: Vite PWA plugin with workbox strategies
 - **Dev Tools**: TanStack Query DevTools, Router DevTools, Form DevTools, React Query DevTools
 - **Build Tool**: Vite v8+ with SWC for fast compilation
-- **Hotkeys**: react-hotkeys-hook v5.2+
+- **Hotkeys**: react-hotkeys-hook v5.3+
 - **Sound Effects**: Web Audio API sound effects (`lib/sound-effects.ts`)
 - **Haptics**: `web-haptics` library + custom `haptics-provider.tsx`
 - **Fuzzy Search**: `@leeoniya/ufuzzy` for client-side search
@@ -43,16 +43,18 @@ Hoalu frontend react app.
 - **Main Entry**: `src/main.tsx`
 - **Key Files**:
   - `src/lib/api-client.ts` - Hono RPC client (634 lines)
-  - `src/lib/schema.ts` - Frontend type definitions & Zod schemas (170 lines)
+  - `src/lib/schema.ts` - Frontend type definitions & Zod schemas (167 lines)
   - `src/lib/auth-client.ts` - Better Auth client setup (workspaceClient plugin)
   - `src/lib/query-client.ts` - TanStack Query client setup
   - `src/lib/query-key-factory.ts` - Query key factory for all resources
+  - `src/lib/queues/` - Background job queues (task, quick-expense, receipt-scan)
+  - `src/lib/pglite-worker.ts` - PGlite sync worker for offline-first Postgres
   - `src/lib/sound-effects.ts` - Sound effect utilities
-  - `src/hooks/use-db.ts` - TanStack DB live queries
+  - `src/hooks/use-queue.ts` - Queue subscription hooks
   - `src/hooks/use-workspace.ts` - Workspace context hook (slug-based)
   - `src/hooks/use-receipt-scan.ts` - Receipt scanning hook
   - `src/services/query-options.ts` - Reusable query configs (239 lines)
-  - `src/services/mutations.ts` - Mutation configurations (1082 lines)
+  - `src/services/mutations.ts` - Mutation configurations (1088 lines)
 
 ### Frontend Components (`apps/app/src/components/`)
 
@@ -85,11 +87,10 @@ Hoalu frontend react app.
 - `use-recurring-bills.ts` - Live queries
 - `use-recurring-bill-navigation.ts` - Navigation helpers
 
-**Upcoming Bills (3 files):**
+**Upcoming Bills (2 files):**
 
 - `upcoming-bills-list.tsx` - Upcoming bills list
 - `upcoming-bills-widget.tsx` - Dashboard widget
-- `use-upcoming-bills.ts` - Query helpers
 
 **Incomes (2 files):**
 
@@ -112,7 +113,7 @@ Hoalu frontend react app.
 - `transaction-attachments.tsx` - Right-column attachments (existing files grid + pending uploads + dropzone, expense only)
 - `use-transactions.ts` - Combined expense/income transactions
 
-**Forms (19 files):**
+**Forms (22 files):**
 
 - `form.tsx` - TanStack Form wrapper with Zod validation
 - `input.tsx`, `select.tsx`, `switch.tsx` - Basic form inputs
