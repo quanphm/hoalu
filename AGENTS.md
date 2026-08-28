@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-05-21
+LAST_UPDATED: 2026-08-28
 TECH_STACK: Node.js 24, pnpm 11, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -32,29 +32,35 @@ When debug with browser, please refer to these addresses to access the applicati
 | -------------------------- | --------------------------------------------------------------- | ------------------------- |
 | Database schema            | `apps/api/src/db/schema.ts`                                     | 480                       |
 | API client types           | `apps/app/src/lib/api-client.ts`                                | 634                       |
-| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 170                       |
-| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (766 total)       |
+| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 167                       |
+| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)       |
 | Expense components         | `apps/app/src/components/expenses/`                             | 5 files                   |
-| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 69                        |
-| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 630                       |
+| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 60                        |
+| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 628                       |
 | Category components        | `apps/app/src/components/categories/`                           | 3 files                   |
 | Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                   |
 | Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                   |
-| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 3 files                   |
+| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 2 files                   |
 | Income components          | `apps/app/src/components/incomes/`                              | 2 files                   |
 | Event components           | `apps/app/src/components/events/`                               | 5 files                   |
 | Transactions components    | `apps/app/src/components/transactions/`                         | 5 files                   |
-| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 175                       |
+| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 177                       |
 | Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                         |
 | PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                         |
-| Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (index + 8 items) |
+| Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (7 + index + factory) |
 | Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                        |
 | Query options              | `apps/app/src/services/query-options.ts`                        | 239                       |
-| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1082                      |
-| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files                   |
-| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files                   |
-| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files                   |
-| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files                   |
+| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1088                      |
+| Categories API routes      | `apps/api/src/routes/categories/`                               | 3 files (350 total)       |
+| Exchange rates API routes  | `apps/api/src/routes/exchange-rates/`                           | 3 files (154 total)       |
+| Expenses API routes        | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)       |
+| Files API routes           | `apps/api/src/routes/files/`                                    | 3 files (532 total)       |
+| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files (462 total)       |
+| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files (988 total)       |
+| Tasks API routes           | `apps/api/src/routes/tasks/`                                    | 3 files (324 total)       |
+| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files (407 total)       |
+| Wallets API routes         | `apps/api/src/routes/wallets/`                                  | 3 files (444 total)       |
+| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files (362 total)       |
 
 ### Critical Constraints
 
@@ -82,7 +88,7 @@ When debug with browser, please refer to these addresses to access the applicati
 - ✅ Use `z.coerce.number()` for Electric SQL numeric fields
 - ✅ Restart dev servers after API changes to regenerate types
 - ✅ Use `z.iso.datetime({ offset: true })` for date fields
-- ✅ Use `generateId({ use: "uuid" })` from `@hoalu/common/generate-id` for IDs
+- ✅ Use `generateId({ use: "uuid" })` from `@hoalu/ids/generate-id` for IDs
 
 ### Recurring Bills Data Model
 
@@ -152,15 +158,15 @@ If adding occurrence tracking to existing data:
 | ----------------- | ----------------- |
 | node              | 24                |
 | pnpm              | 11                |
-| typescript        | ^6.0.3            |
-| vite              | ^8.0.10           |
-| hono              | ^4.12.15          |
-| better-auth       | ^1.6.9            |
-| zod               | ^4.3.6            |
-| react / react-dom | ^19.2.5           |
-| tailwindcss       | ^4.2.4            |
-| drizzle-orm       | ~0.44+            |
-| turbo             | ^2.9.6            |
+| typescript        | ^7.0.2            |
+| vite              | ^8.2.0            |
+| hono              | ^4.13.0           |
+| better-auth       | ^1.6.20           |
+| zod               | ^4.4.3            |
+| react / react-dom | ^19.2.8           |
+| tailwindcss       | ^4.3.3            |
+| drizzle-orm       | ^0.45.2           |
+| turbo             | ^2.10.8           |
 
 ### Workspace Lifecycle
 
@@ -195,16 +201,18 @@ Roles: `owner`, `admin`, `member` (configured via `creatorRole` setting)
 }
 ```
 
-**Packages use `#<package-name>/*`:**
+**Packages use `#<package-name>/*`:** shared packages are split by domain, each defining its own subpath alias:
 
 ```json
-// packages/common/package.json
+// packages/schema/package.json
 {
 	"imports": {
-		"#common/*": "./src/*"
+		"#schema/*": "./src/*"
 	}
 }
 ```
+
+Import from the domain subpath, not a barrel: `@hoalu/ids/generate-id`, `@hoalu/schema/schema`, `@hoalu/finance/monetary`, `@hoalu/http/http-status`, `@hoalu/datetime/datetime`.
 
 **Why it's used:**
 
@@ -351,20 +359,25 @@ export function ExpenseList() {
 
 ## Packages
 
-| Package            | Path                 | Purpose                                         |
-| ------------------ | -------------------- | ----------------------------------------------- |
-| `@hoalu/api`       | `apps/api`           | Backend Hono API                                |
-| `@hoalu/app`       | `apps/app`           | Frontend React app                              |
-| `@hoalu/auth`      | `packages/auth`      | Better Auth plugins (workspace, userPublicId)   |
-| `@hoalu/common`    | `packages/common`    | Shared utilities (enums, schema, datetime, etc) |
-| `@hoalu/countries` | `packages/countries` | Country/currency data                           |
-| `@hoalu/email`     | `packages/email`     | React Email templates                           |
-| `@hoalu/furnace`   | `packages/furnace`   | Hono helpers (logger, error handlers, OpenAPI)  |
-| `@hoalu/icons`     | `packages/icons`     | Icon sets (Lucide, Tabler, Nucleo)              |
-| `@hoalu/themes`    | `packages/themes`    | CSS theme layers                                |
-| `@hoalu/tsconfig`  | `packages/tsconfig`  | Shared TypeScript configs                       |
-| `@hoalu/typekit`   | `packages/typekit`   | Type utilities                                  |
-| `@hoalu/ui`        | `packages/ui`        | Shared UI components (~42 components)           |
+| Package             | Path                | Purpose                                        |
+| ------------------- | ------------------- | ---------------------------------------------- |
+| `@hoalu/api`        | `apps/api`          | Backend Hono API                               |
+| `@hoalu/app`        | `apps/app`          | Frontend React app                             |
+| `@hoalu/auth`       | `packages/auth`     | Better Auth plugins (workspace, userPublicId)  |
+| `@hoalu/countries`  | `packages/countries`| Country/currency data                          |
+| `@hoalu/datetime`   | `packages/datetime` | Date/time utilities (`#datetime/*`)            |
+| `@hoalu/email`      | `packages/email`    | React Email templates                          |
+| `@hoalu/finance`    | `packages/finance`  | Monetary, exchange-rate, occurrence-schedule (`#money/*`) |
+| `@hoalu/furnace`    | `packages/furnace`  | Hono helpers (logger, error handlers, OpenAPI) |
+| `@hoalu/http`       | `packages/http`     | HTTP status codes & standard-validate helpers (`#http/*`) |
+| `@hoalu/icons`      | `packages/icons`    | Icon sets (Phosphor, Tabler, Nucleo, Meteocons, Social) |
+| `@hoalu/ids`        | `packages/ids`      | ID generation & slug utilities (`#ids/*`)      |
+| `@hoalu/schema`     | `packages/schema`   | Shared Zod schemas & enums (`#schema/*`)       |
+| `@hoalu/stdlib`     | `packages/stdlib`   | Cross-cutting utilities: try-catch, io (`#stdlib/*`) |
+| `@hoalu/themes`     | `packages/themes`    | CSS theme layers                               |
+| `@hoalu/tsconfig`   | `packages/tsconfig` | Shared TypeScript configs                      |
+| `@hoalu/typekit`    | `packages/typekit`  | Type utilities                                 |
+| `@hoalu/ui`         | `packages/ui`       | Shared UI components (42 components)           |
 
 ---
 
