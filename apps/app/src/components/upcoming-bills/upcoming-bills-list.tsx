@@ -1,4 +1,4 @@
-import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
+import { toLocalISOString } from "@hoalu/datetime/datetime";
 import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
 import { RepeatSchema } from "@hoalu/schema/schema";
 import { Button } from "@hoalu/ui/button";
@@ -14,6 +14,7 @@ import { useNavigate, getRouteApi } from "@tanstack/react-router";
 
 import { draftExpense$, logPayment$ } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
+import { formatDueDate, formatDueIn } from "#app/helpers/due-date.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 
 import type { ProjectedBill } from "#app/components/upcoming-bills/use-billing-projection.ts";
@@ -24,10 +25,6 @@ interface UnifiedBillsListProps {
 	overdue: ProjectedBill[];
 	today: ProjectedBill[];
 	upcoming: ProjectedBill[];
-}
-
-function formatDueDate(dateStr: string): string {
-	return datetime.format(new Date(`${dateStr}T00:00:00`), "MMM d");
 }
 
 interface FlatBill extends ProjectedBill {
@@ -145,7 +142,7 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 		archive.mutate({ id: bill.recurringBillId });
 	}
 
-	const daysLate = Math.abs(bill.daysUntil);
+	const daysLate = formatDueIn(bill.daysUntil);
 
 	return (
 		<div className="flex w-full items-center gap-3 py-3">
@@ -157,9 +154,7 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 				<span className="text-foreground truncate text-sm font-semibold">{bill.title}</span>
 				<span className="text-muted-foreground truncate text-xs">
 					{bill.categoryName ?? "Uncategorized"} · due {formatDueDate(bill.date)} ·{" "}
-					<span className="text-destructive">
-						{daysLate} day{daysLate !== 1 ? "s" : ""} late
-					</span>
+					<span className="text-destructive">{daysLate}</span>
 				</span>
 			</button>
 			<div className="flex shrink-0 items-center gap-1">
@@ -220,10 +215,7 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 		archive.mutate({ id: bill.recurringBillId });
 	}
 
-	const daysLabel =
-		bill.status === "today"
-			? "today"
-			: `in ${bill.daysUntil} day${bill.daysUntil !== 1 ? "s" : ""}`;
+	const daysLabel = formatDueIn(bill.daysUntil);
 
 	return (
 		<div className="flex w-full items-center gap-3 py-3">

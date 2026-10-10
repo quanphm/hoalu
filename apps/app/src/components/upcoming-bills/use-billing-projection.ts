@@ -42,6 +42,11 @@ export interface BillingProjection {
 	overdue: ProjectedBill[];
 	today: ProjectedBill[];
 	upcoming: ProjectedBill[];
+	/**
+	 * The earliest unpaid occurrence per bill id — the answer to "what is next on
+	 * this bill?". Bills with nothing outstanding in the window are absent.
+	 */
+	nextDueByBill: Record<string, ProjectedBill>;
 	/** Payments that matched no occurrence, or double-paid one period. */
 	anomalies: BillingAnomaly[];
 	/** Bill ids the projection cannot schedule. */
@@ -145,10 +150,25 @@ export function useBillingProjection(): BillingProjection {
 		const translate = (occurrences: typeof projection.overdue) =>
 			occurrences.map(decorate).filter((entry): entry is ProjectedBill => entry !== null);
 
+		const overdue = translate(projection.overdue);
+		const todayBills = translate(projection.today);
+		const upcoming = translate(projection.upcoming);
+
+		// Each bucket is sorted by due date and the buckets are chronological
+		// relative to each other, so the first entry seen for a bill is that bill's
+		// earliest unpaid occurrence — what the list page shows as "next due".
+		const nextDueByBill: Record<string, ProjectedBill> = {};
+		for (const bill of [...overdue, ...todayBills, ...upcoming]) {
+			if (!nextDueByBill[bill.recurringBillId]) {
+				nextDueByBill[bill.recurringBillId] = bill;
+			}
+		}
+
 		return {
-			overdue: translate(projection.overdue),
-			today: translate(projection.today),
-			upcoming: translate(projection.upcoming),
+			overdue,
+			today: todayBills,
+			upcoming,
+			nextDueByBill,
 			anomalies: projection.anomalies,
 			unsupported: projection.unsupported,
 		};
