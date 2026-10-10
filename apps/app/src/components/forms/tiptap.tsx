@@ -28,7 +28,11 @@ export function TiptapField(props: Props) {
 	});
 
 	useEffect(() => {
-		if (!editor) {
+		// `useEditor` keeps handing back the instance after Tiptap tears it down — React
+		// StrictMode double-invokes effects, so a destroyed editor is reachable here.
+		// Calling `getHTML()` on one throws: `destroy()` nulls the schema while the last
+		// EditorState survives, so the serializer receives `null`.
+		if (!editor || editor.isDestroyed) {
 			return;
 		}
 		const newValue = field.state.value ?? "";

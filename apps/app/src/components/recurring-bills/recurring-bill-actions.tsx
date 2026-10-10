@@ -278,11 +278,10 @@ export function EditRecurringBillForm({ bill, headerActions }: EditRecurringBill
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
 					walletId: value.walletId,
-					// `UpdateRecurringBillSchema` currently types these as `z.uuidv7().optional()`,
-					// so `null` is rejected. Omit the key when cleared instead — switch these to
-					// `|| null` once the API accepts `.nullable()` (as the expenses schema does).
-					categoryId: value.categoryId || undefined,
-					eventId: value.eventId || undefined,
+					// `null` clears the relation; `undefined` would omit the key and leave the
+					// previous value in place.
+					categoryId: value.categoryId || null,
+					eventId: value.eventId || null,
 					repeat: value.repeat,
 					...(value.repeat === "yearly"
 						? {

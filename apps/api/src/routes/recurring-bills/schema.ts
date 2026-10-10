@@ -60,8 +60,11 @@ export const InsertRecurringBillSchema = z.object({
 	// For monthly/weekly/daily it is derived from dueDay/dueMonth and not user-supplied.
 	anchorDate: z.string().optional(),
 	walletId: z.uuidv7(),
-	categoryId: z.uuidv7().optional(),
-	eventId: z.uuidv7().optional(),
+	// `null` means "unset" for these optional relations, and the client sends exactly
+	// that (to create a bill with no category, or to clear one on edit). `undefined`
+	// cannot express it: an omitted key on PATCH leaves the previous value in place.
+	categoryId: z.uuidv7().nullable().optional(),
+	eventId: z.uuidv7().nullable().optional(),
 	workspaceId: z.uuidv7(),
 });
 
