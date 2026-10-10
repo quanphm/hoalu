@@ -31,5 +31,5 @@
 		"attributes": ["class", "className"],
 		"functions": ["cn", "clsx", "cva"]
 	},
-	"ignorePatterns": ["**/src/routeTree.gen.ts"]
+	"ignorePatterns": ["**/src/routeTree.gen.ts", "**/migrations"]
 }
