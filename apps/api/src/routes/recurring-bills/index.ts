@@ -12,11 +12,11 @@ import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { RecurringBillRepository } from "#api/routes/recurring-bills/repository.ts";
 import {
 	InsertRecurringBillSchema,
+	ProjectedBillsSchema,
 	RecurringBillSchema,
 	RecurringBillsSchema,
 	UnifiedBillsSchema,
 	UpdateRecurringBillSchema,
-	UpcomingBillsSchema,
 } from "#api/routes/recurring-bills/schema.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
@@ -25,6 +25,15 @@ import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 const app = createHonoInstance();
 const repository = new RecurringBillRepository();
 const TAGS = ["Recurring Bills"];
+
+/**
+ * "Today" on the server, in UTC — a request carries no timezone. The dashboard
+ * computes its own local date, which is the surface the user actually reads;
+ * this endpoint exists for non-browser consumers.
+ */
+function todayUtc(): string {
+	return new Date().toISOString().slice(0, 10);
+}
 
 const route = app
 	.get(
@@ -65,16 +74,19 @@ const route = app
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
-				...OpenAPI.response(z.object({ data: UpcomingBillsSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: ProjectedBillsSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const upcoming = await repository.findUpcoming({ workspaceId: workspace.id });
+			const { upcoming } = await repository.projection({
+				workspaceId: workspace.id,
+				today: todayUtc(),
+			});
 
-			const parsed = UpcomingBillsSchema.safeParse(upcoming);
+			const parsed = ProjectedBillsSchema.safeParse(upcoming);
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -100,7 +112,10 @@ const route = app
 		workspaceMember,
 		async (c) => {
 			const workspace = c.get("workspace");
-			const unified = await repository.findUnified({ workspaceId: workspace.id });
+			const unified = await repository.projection({
+				workspaceId: workspace.id,
+				today: todayUtc(),
+			});
 
 			const parsed = UnifiedBillsSchema.safeParse(unified);
 			if (!parsed.success) {

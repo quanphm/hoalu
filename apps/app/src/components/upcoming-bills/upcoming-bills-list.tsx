@@ -1,4 +1,4 @@
-import { datetime, toLocalISOString, TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
+import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
 import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
 import { RepeatSchema } from "@hoalu/schema/schema";
 import { Button } from "@hoalu/ui/button";
@@ -16,60 +16,39 @@ import { draftExpense$, logPayment$ } from "#app/atoms/index.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
 
+import type { ProjectedBill } from "#app/components/upcoming-bills/use-billing-projection.ts";
+
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-export interface UpcomingBill {
-	recurringBillId: string;
-	date: string;
-	title: string;
-	amount: number;
-	currency: string;
-	repeat: string;
-	walletId: string;
-	walletName: string;
-	categoryId: string | null;
-	categoryName: string | null;
-	categoryColor: string | null;
-	isPaid: boolean;
-}
-
 interface UnifiedBillsListProps {
-	overdue: UpcomingBill[];
-	today: UpcomingBill[];
-	upcoming: UpcomingBill[];
-}
-
-function getDaysDiff(dateStr: string): number {
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const due = new Date(`${dateStr}T00:00:00`);
-	return Math.round((due.getTime() - today.getTime()) / TIME_IN_MILLISECONDS.DAY);
+	overdue: ProjectedBill[];
+	today: ProjectedBill[];
+	upcoming: ProjectedBill[];
 }
 
 function formatDueDate(dateStr: string): string {
 	return datetime.format(new Date(`${dateStr}T00:00:00`), "MMM d");
 }
 
-interface FlatBill extends UpcomingBill {
+interface FlatBill extends ProjectedBill {
 	status: "overdue" | "today" | "upcoming";
-	daysDiff: number;
 }
 
 function flattenBills(
-	overdue: UpcomingBill[],
-	today: UpcomingBill[],
-	upcoming: UpcomingBill[],
+	overdue: ProjectedBill[],
+	today: ProjectedBill[],
+	upcoming: ProjectedBill[],
 ): FlatBill[] {
 	const bills: FlatBill[] = [];
 
 	for (const bill of overdue) {
-		bills.push({ ...bill, status: "overdue", daysDiff: getDaysDiff(bill.date) });
+		bills.push({ ...bill, status: "overdue" });
 	}
 	for (const bill of today) {
-		bills.push({ ...bill, status: "today", daysDiff: 0 });
+		bills.push({ ...bill, status: "today" });
 	}
 	for (const bill of upcoming) {
-		bills.push({ ...bill, status: "upcoming", daysDiff: getDaysDiff(bill.date) });
+		bills.push({ ...bill, status: "upcoming" });
 	}
 
 	return bills;
@@ -92,7 +71,7 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 	const overdueBills = bills.filter((b) => b.status === "overdue");
 	const remainingBills = bills.filter((b) => b.status !== "overdue");
 
-	const overdueTotal = overdueBills.reduce((sum, b) => sum + b.amount, 0);
+	const overdueTotal = overdueBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
 	const overdueCurrency = overdueBills[0]?.currency ?? "VND";
 
 	return (
@@ -166,7 +145,7 @@ function OverdueBillRow({ bill }: { bill: FlatBill }) {
 		archive.mutate({ id: bill.recurringBillId });
 	}
 
-	const daysLate = Math.abs(bill.daysDiff);
+	const daysLate = Math.abs(bill.daysUntil);
 
 	return (
 		<div className="flex w-full items-center gap-3 py-3">
@@ -242,7 +221,9 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 	}
 
 	const daysLabel =
-		bill.status === "today" ? "today" : `in ${bill.daysDiff} day${bill.daysDiff !== 1 ? "s" : ""}`;
+		bill.status === "today"
+			? "today"
+			: `in ${bill.daysUntil} day${bill.daysUntil !== 1 ? "s" : ""}`;
 
 	return (
 		<div className="flex w-full items-center gap-3 py-3">

@@ -1,16 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";
-import { useQuery } from "@tanstack/react-query";
 
 import { UpcomingBillsList } from "#app/components/upcoming-bills/upcoming-bills-list.tsx";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
+import { useBillingProjection } from "#app/components/upcoming-bills/use-billing-projection.ts";
 
 export function UpcomingBillsWidget() {
-	const workspace = useWorkspace();
-	const { data } = useQuery(unifiedBillsQueryOptions(workspace.slug));
+	const { overdue, today, upcoming, anomalies } = useBillingProjection();
 
-	const totalCount =
-		(data?.overdue.length ?? 0) + (data?.today.length ?? 0) + (data?.upcoming.length ?? 0);
+	const totalCount = overdue.length + today.length + upcoming.length;
+	const anomalyCount = anomalies.length;
 
 	return (
 		<Card>
@@ -21,11 +18,13 @@ export function UpcomingBillsWidget() {
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="max-h-90 px-0">
-				<UpcomingBillsList
-					overdue={data?.overdue ?? []}
-					today={data?.today ?? []}
-					upcoming={data?.upcoming ?? []}
-				/>
+				{anomalyCount > 0 && (
+					<p className="text-muted-foreground px-4 pb-2 text-xs">
+						{anomalyCount} payment{anomalyCount !== 1 ? "s" : ""}
+						{anomalyCount !== 1 ? " don't" : " doesn't"} match any bill schedule.
+					</p>
+				)}
+				<UpcomingBillsList overdue={overdue} today={today} upcoming={upcoming} />
 			</CardContent>
 		</Card>
 	);

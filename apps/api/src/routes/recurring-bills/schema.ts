@@ -70,9 +70,19 @@ export const UpdateRecurringBillSchema = InsertRecurringBillSchema.omit({
 	workspaceId: true,
 }).partial();
 
-export const UpcomingBillSchema = z.object({
+/**
+ * A projected occurrence, joined to the bill's display data.
+ *
+ * `period` is the occurrence's stable identity (e.g. `"2026-09"`); `date` is the
+ * due date rendered under the bill's current definition and may move when the
+ * bill is edited. An occurrence with a payment against it is not projected at
+ * all, so there is no `isPaid` field.
+ */
+const ProjectedBillSchema = z.object({
 	recurringBillId: z.uuidv7(),
 	date: z.string(), // "yyyy-MM-dd"
+	period: z.string(),
+	daysUntil: z.number(),
 	title: z.string(),
 	amount: z.coerce.number(),
 	currency: CurrencySchema,
@@ -84,25 +94,21 @@ export const UpcomingBillSchema = z.object({
 	categoryColor: ColorSchema.nullable(),
 });
 
-export const UpcomingBillsSchema = z.array(UpcomingBillSchema);
-
-export const UnifiedBillSchema = z.object({
-	recurringBillId: z.uuidv7(),
-	date: z.string(), // "yyyy-MM-dd"
-	title: z.string(),
-	amount: z.number(),
-	currency: CurrencySchema,
-	repeat: RepeatSchema,
-	walletId: z.uuidv7(),
-	walletName: z.string(),
-	categoryId: z.uuidv7().nullable(),
-	categoryName: z.string().nullable(),
-	categoryColor: ColorSchema.nullable(),
-	isPaid: z.boolean(),
-});
+export const ProjectedBillsSchema = z.array(ProjectedBillSchema);
 
 export const UnifiedBillsSchema = z.object({
-	overdue: z.array(UnifiedBillSchema),
-	today: z.array(UnifiedBillSchema),
-	upcoming: z.array(UnifiedBillSchema),
+	overdue: ProjectedBillsSchema,
+	today: ProjectedBillsSchema,
+	upcoming: ProjectedBillsSchema,
+	/** Payments that landed on no scheduled occurrence, or double-paid one period. */
+	anomalies: z.array(
+		z.object({
+			kind: z.string(),
+			recurringBillId: z.uuidv7(),
+			period: z.string(),
+			expenseIds: z.array(z.uuidv7()),
+		}),
+	),
+	/** Bill ids the projection cannot schedule (`repeat: "custom"` or malformed dates). */
+	unsupported: z.array(z.string()),
 });

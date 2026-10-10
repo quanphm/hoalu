@@ -8,7 +8,7 @@ import {
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
+import { Field as UIField, FieldGroup } from "@hoalu/ui/field";
 import { useValue } from "@legendapp/state/react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import * as z from "zod";
@@ -19,8 +19,15 @@ import {
 	deleteRecurringBillDialog,
 	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
+import { Field, FieldControl, FieldMessage } from "#app/components/forms/components.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import {
+	BorderlessTitleInput,
+	TransactionPageGrid,
+	TransactionPageHeader,
+	TransactionSectionLabel,
+} from "#app/components/transactions/transaction-layout.tsx";
 import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
@@ -34,6 +41,8 @@ import {
 } from "#app/services/mutations.ts";
 
 import { HotKey } from "../hotkey";
+
+import type { ReactNode } from "react";
 
 const BillFormSchema = z.object({
 	title: z.string().min(1),
@@ -225,9 +234,9 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 				</FieldGroup>
 
 				<DialogFooter>
-					<Field orientation="horizontal" className="justify-end">
+					<UIField orientation="horizontal" className="justify-end">
 						<form.SubscribeButton>Create bill</form.SubscribeButton>
-					</Field>
+					</UIField>
 				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
@@ -236,9 +245,10 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 
 interface EditRecurringBillFormProps {
 	bill: SyncedRecurringBill;
+	headerActions?: ReactNode;
 }
 
-export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
+export function EditRecurringBillForm({ bill, headerActions }: EditRecurringBillFormProps) {
 	const mutation = useEditRecurringBill();
 	const wallets = useLiveQueryWallets();
 	const walletGroups = buildWalletGroups(wallets);
@@ -255,6 +265,7 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 			},
 			walletId: bill.wallet_id,
 			categoryId: bill.category_id ?? "",
+			eventId: bill.event_id ?? "",
 			repeat: bill.repeat,
 		} as BillFormSchema,
 		validators: { onSubmit: BillFormSchema },
@@ -267,7 +278,11 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 					amount: value.transaction.value,
 					currency: value.transaction.currency,
 					walletId: value.walletId,
-					categoryId: value.categoryId || null,
+					// `UpdateRecurringBillSchema` currently types these as `z.uuidv7().optional()`,
+					// so `null` is rejected. Omit the key when cleared instead — switch these to
+					// `|| null` once the API accepts `.nullable()` (as the expenses schema does).
+					categoryId: value.categoryId || undefined,
+					eventId: value.eventId || undefined,
 					repeat: value.repeat,
 					...(value.repeat === "yearly"
 						? {
@@ -282,85 +297,121 @@ export function EditRecurringBillForm({ bill }: EditRecurringBillFormProps) {
 
 	return (
 		<form.AppForm>
+			<TransactionPageHeader
+				className="bg-card sticky top-0 z-10"
+				title={
+					<form.Subscribe selector={(s) => s.values.title}>
+						{(title) => title || "Untitled bill"}
+					</form.Subscribe>
+				}
+				actions={headerActions}
+			/>
 			<form.Form>
-				<FieldGroup className="grid grid-cols-1 gap-4 px-4">
-					<form.Subscribe
-						selector={(s) => s.values.repeat}
-						children={(repeat) => (
-							<div
-								className={repeat === "daily" || repeat === "none" ? "" : "grid grid-cols-2 gap-4"}
-							>
+				<TransactionPageGrid
+					keepAsideColumn
+					main={
+						<div className="flex flex-col gap-6">
+							<div className="bg-card flex flex-col gap-4 rounded-lg border p-4">
 								<form.AppField
-									name="repeat"
+									name="title"
 									children={(field) => (
-										<field.SelectField
-											label="Repeat"
-											options={AVAILABLE_REPEAT_OPTIONS.filter(
-												(o) => o.value !== "one-time" && o.value !== "custom",
-											)}
-										/>
+										<Field>
+											<FieldControl>
+												<BorderlessTitleInput
+													name={field.name}
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(e) => field.handleChange(e.target.value)}
+													placeholder="Untitled bill"
+													autoFocus
+												/>
+											</FieldControl>
+											<FieldMessage />
+										</Field>
 									)}
 								/>
-								{repeat === "yearly" ? (
-									<form.AppField
-										name="anchorDate"
-										children={(field) => <field.DatepickerInputField label="Due date" />}
-									/>
-								) : repeat === "weekly" ? (
-									<form.AppField
-										name="dueDay"
-										children={(field) => (
-											<field.SelectField label="Day of week" options={DOW_OPTIONS} />
-										)}
-									/>
-								) : repeat === "monthly" ? (
-									<form.AppField
-										name="dueDay"
-										children={(field) => (
-											<field.SelectField label="Day of month" options={DOM_OPTIONS} />
-										)}
-									/>
-								) : null}
+								<div className="flex flex-col gap-3 md:flex-row">
+									<div className="flex-1">
+										<form.AppField
+											name="transaction"
+											children={(field) => <field.TransactionAmountSplitField sign="expense" />}
+										/>
+									</div>
+									<div className="md:w-[190px]">
+										<form.Subscribe
+											selector={(s) => s.values.repeat}
+											children={(repeat) =>
+												repeat === "yearly" ? (
+													<form.AppField
+														name="anchorDate"
+														children={(field) => <field.DatepickerInputField />}
+													/>
+												) : repeat === "weekly" ? (
+													<form.AppField
+														name="dueDay"
+														children={(field) => <field.SelectField options={DOW_OPTIONS} />}
+													/>
+												) : repeat === "monthly" ? (
+													<form.AppField
+														name="dueDay"
+														children={(field) => <field.SelectField options={DOM_OPTIONS} />}
+													/>
+												) : null
+											}
+										/>
+									</div>
+								</div>
 							</div>
-						)}
-					/>
-					<form.AppField
-						name="title"
-						children={(field) => <field.InputField label="Title" required />}
-					/>
-					<form.AppField
-						name="transaction"
-						children={(field) => <field.TransactionAmountField label="Amount" />}
-					/>
-					<div className="grid grid-cols-2 gap-4">
-						<form.AppField
-							name="walletId"
-							children={(field) => (
-								<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
-							)}
-						/>
-						<form.AppField
-							name="categoryId"
-							children={(field) => <field.SelectCategoryField type="expense" label="Category" />}
-						/>
-					</div>
 
-					<form.AppField
-						name="eventId"
-						children={(field) => <field.SelectEventField label="Event" />}
-					/>
+							<div className="flex flex-col gap-3">
+								<TransactionSectionLabel>Details</TransactionSectionLabel>
+								<div className="bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2">
+									<form.AppField
+										name="walletId"
+										children={(field) => (
+											<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+										)}
+									/>
+									<form.AppField
+										name="categoryId"
+										children={(field) => (
+											<field.SelectCategoryField type="expense" label="Category" />
+										)}
+									/>
+									<form.AppField
+										name="repeat"
+										children={(field) => (
+											<field.SelectField
+												label="Repeat"
+												options={AVAILABLE_REPEAT_OPTIONS.filter(
+													(o) => o.value !== "one-time" && o.value !== "custom",
+												)}
+											/>
+										)}
+									/>
+									<form.AppField
+										name="eventId"
+										children={(field) => <field.SelectEventField label="Event" showClosed />}
+									/>
+								</div>
+							</div>
 
-					<form.AppField
-						name="description"
-						children={(field) => <field.TiptapField label="Note" />}
-					/>
-				</FieldGroup>
-				<Field
-					orientation="horizontal"
-					className="bg-card sticky bottom-0 w-full justify-end border-t px-4 py-2"
-				>
-					<form.SubscribeButton>Update</form.SubscribeButton>
-				</Field>
+							<div className="flex flex-col gap-3">
+								<TransactionSectionLabel>Note</TransactionSectionLabel>
+								<form.AppField name="description" children={(field) => <field.TiptapField />} />
+							</div>
+
+							<div className="flex items-center justify-between">
+								<div className="text-muted-foreground text-sm">
+									<form.Subscribe selector={(s) => s.isDirty}>
+										{(isDirty) => (isDirty ? "Unsaved changes" : "")}
+									</form.Subscribe>
+								</div>
+								<form.SubscribeButton>Update</form.SubscribeButton>
+							</div>
+						</div>
+					}
+				/>
 			</form.Form>
 		</form.AppForm>
 	);

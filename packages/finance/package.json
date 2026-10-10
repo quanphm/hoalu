@@ -9,9 +9,13 @@
 		"#money/*": "./src/*"
 	},
 	"exports": {
+		"./billing": "./src/billing.ts",
 		"./exchange-rate": "./src/exchange-rate.ts",
 		"./monetary": "./src/monetary.ts",
 		"./occurrence-schedule": "./src/occurrence-schedule.ts"
+	},
+	"scripts": {
+		"test": "bun test src"
 	},
 	"dependencies": {
 		"@hoalu/countries": "workspace:*"
