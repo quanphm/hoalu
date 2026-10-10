@@ -28,39 +28,39 @@ When debug with browser, please refer to these addresses to access the applicati
 
 ### File Location Quick Lookup
 
-| What                       | Where                                                           | Lines                     |
-| -------------------------- | --------------------------------------------------------------- | ------------------------- |
-| Database schema            | `apps/api/src/db/schema.ts`                                     | 480                       |
-| API client types           | `apps/app/src/lib/api-client.ts`                                | 634                       |
-| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 167                       |
-| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)       |
-| Expense components         | `apps/app/src/components/expenses/`                             | 5 files                   |
-| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 60                        |
-| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 628                       |
-| Category components        | `apps/app/src/components/categories/`                           | 3 files                   |
-| Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                   |
-| Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                   |
-| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 2 files                   |
-| Income components          | `apps/app/src/components/incomes/`                              | 2 files                   |
-| Event components           | `apps/app/src/components/events/`                               | 5 files                   |
-| Transactions components    | `apps/app/src/components/transactions/`                         | 5 files                   |
-| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 177                       |
-| Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                         |
-| PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                         |
+| What                       | Where                                                           | Lines                         |
+| -------------------------- | --------------------------------------------------------------- | ----------------------------- |
+| Database schema            | `apps/api/src/db/schema.ts`                                     | 480                           |
+| API client types           | `apps/app/src/lib/api-client.ts`                                | 634                           |
+| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 167                           |
+| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)           |
+| Expense components         | `apps/app/src/components/expenses/`                             | 5 files                       |
+| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 60                            |
+| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 628                           |
+| Category components        | `apps/app/src/components/categories/`                           | 3 files                       |
+| Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                       |
+| Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                       |
+| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 2 files                       |
+| Income components          | `apps/app/src/components/incomes/`                              | 2 files                       |
+| Event components           | `apps/app/src/components/events/`                               | 5 files                       |
+| Transactions components    | `apps/app/src/components/transactions/`                         | 5 files                       |
+| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 177                           |
+| Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                             |
+| PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                             |
 | Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (7 + index + factory) |
-| Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                        |
-| Query options              | `apps/app/src/services/query-options.ts`                        | 239                       |
-| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1088                      |
-| Categories API routes      | `apps/api/src/routes/categories/`                               | 3 files (350 total)       |
-| Exchange rates API routes  | `apps/api/src/routes/exchange-rates/`                           | 3 files (154 total)       |
-| Expenses API routes        | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)       |
-| Files API routes           | `apps/api/src/routes/files/`                                    | 3 files (532 total)       |
-| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files (462 total)       |
-| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files (988 total)       |
-| Tasks API routes           | `apps/api/src/routes/tasks/`                                    | 3 files (324 total)       |
-| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files (407 total)       |
-| Wallets API routes         | `apps/api/src/routes/wallets/`                                  | 3 files (444 total)       |
-| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files (362 total)       |
+| Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                            |
+| Query options              | `apps/app/src/services/query-options.ts`                        | 239                           |
+| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1088                          |
+| Categories API routes      | `apps/api/src/routes/categories/`                               | 3 files (350 total)           |
+| Exchange rates API routes  | `apps/api/src/routes/exchange-rates/`                           | 3 files (154 total)           |
+| Expenses API routes        | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)           |
+| Files API routes           | `apps/api/src/routes/files/`                                    | 3 files (532 total)           |
+| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files (462 total)           |
+| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files (862 total)           |
+| Tasks API routes           | `apps/api/src/routes/tasks/`                                    | 3 files (324 total)           |
+| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files (407 total)           |
+| Wallets API routes         | `apps/api/src/routes/wallets/`                                  | 3 files (444 total)           |
+| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files (362 total)           |
 
 ### Critical Constraints
 
@@ -95,23 +95,29 @@ When debug with browser, please refer to these addresses to access the applicati
 **Tables:**
 
 - `recurring_bill` - The bill definition (amount, frequency, due day/month)
-- `recurring_bill_occurrence` - Individual expected payments (due_date, paid status)
+- `expense.recurring_bill_id` - The payment link: an expense that pays a bill
+
+There is **no occurrence table**. Occurrences are a projection, never stored.
 
 **Key Concept:**
-When a recurring bill is created, the system calculates expected occurrences. When a user "logs a payment", an expense is created AND an occurrence record is marked as paid (linked via `expense_id`).
+An occurrence is identified by a **period** — a stable calendar key (`monthly` → `"2026-09"`, `yearly` → `"2026"`, `weekly` → `"2026-W36"`, `daily` → the date). The due date is only a _rendering_ of the bill's current definition, so it moves when the bill is edited (due day 5 → 10); the period does not. Payments are matched to occurrences by period, which is why editing a bill never orphans a payment already recorded against it.
 
-**Migration Strategy:**
-If adding occurrence tracking to existing data:
+Paid status is therefore derived, not stored: an occurrence is settled iff an expense linked to the bill (`expense.recurring_bill_id`) has a date inside that period.
 
-1. Create the new table via migration
-2. Backfill from existing expenses
-3. Future expenses automatically create occurrence records on payment
+**Where the rules live:**
+
+- `packages/finance/src/billing.ts` → `projectBills({ bills, payments, today })`, returning `overdue` / `today` / `upcoming` (unpaid only) plus `anomalies` (a payment matching no occurrence, or double-paying one period) and `unsupported` (`repeat: "custom"`, malformed rows — never a silent empty result). Pure: no I/O, no clock, `today` is injected.
+- Server adapter: `RecurringBillRepository.projection()`. Client adapter: `useBillingProjection()` in `apps/app/src/components/upcoming-bills/`. Both call the same function, so the dashboard and the bills page cannot disagree.
+- Tests: `packages/finance/src/billing.test.ts` (`pnpm --filter @hoalu/finance test`).
+
+**Never reintroduce a stored occurrence keyed on the due date** — a derived value used as a join key silently breaks on every edit to the bill.
 
 **API Endpoints:**
 
 - `GET /api/recurring-bills` - List all bills
-- `GET /api/recurring-bills/unified` - Get overdue + today + upcoming with payment status
-- `POST /api/expenses` - Log payment (creates expense + marks occurrence paid)
+- `GET /api/recurring-bills/unified` - Overdue + today + upcoming (unpaid), with `anomalies` and `unsupported`
+- `GET /api/recurring-bills/upcoming` - The upcoming bucket alone
+- `POST /api/expenses` with `recurringBillId` - Log a payment; the link on the expense is the only write
 
 ## Development Workflow
 
@@ -359,25 +365,25 @@ export function ExpenseList() {
 
 ## Packages
 
-| Package             | Path                | Purpose                                        |
-| ------------------- | ------------------- | ---------------------------------------------- |
-| `@hoalu/api`        | `apps/api`          | Backend Hono API                               |
-| `@hoalu/app`        | `apps/app`          | Frontend React app                             |
-| `@hoalu/auth`       | `packages/auth`     | Better Auth plugins (workspace, userPublicId)  |
-| `@hoalu/countries`  | `packages/countries`| Country/currency data                          |
-| `@hoalu/datetime`   | `packages/datetime` | Date/time utilities (`#datetime/*`)            |
-| `@hoalu/email`      | `packages/email`    | React Email templates                          |
-| `@hoalu/finance`    | `packages/finance`  | Monetary, exchange-rate, occurrence-schedule (`#money/*`) |
-| `@hoalu/furnace`    | `packages/furnace`  | Hono helpers (logger, error handlers, OpenAPI) |
-| `@hoalu/http`       | `packages/http`     | HTTP status codes & standard-validate helpers (`#http/*`) |
-| `@hoalu/icons`      | `packages/icons`    | Icon sets (Phosphor, Tabler, Nucleo, Meteocons, Social) |
-| `@hoalu/ids`        | `packages/ids`      | ID generation & slug utilities (`#ids/*`)      |
-| `@hoalu/schema`     | `packages/schema`   | Shared Zod schemas & enums (`#schema/*`)       |
-| `@hoalu/stdlib`     | `packages/stdlib`   | Cross-cutting utilities: try-catch, io (`#stdlib/*`) |
-| `@hoalu/themes`     | `packages/themes`    | CSS theme layers                               |
-| `@hoalu/tsconfig`   | `packages/tsconfig` | Shared TypeScript configs                      |
-| `@hoalu/typekit`    | `packages/typekit`  | Type utilities                                 |
-| `@hoalu/ui`         | `packages/ui`       | Shared UI components (42 components)           |
+| Package            | Path                 | Purpose                                                                          |
+| ------------------ | -------------------- | -------------------------------------------------------------------------------- |
+| `@hoalu/api`       | `apps/api`           | Backend Hono API                                                                 |
+| `@hoalu/app`       | `apps/app`           | Frontend React app                                                               |
+| `@hoalu/auth`      | `packages/auth`      | Better Auth plugins (workspace, userPublicId)                                    |
+| `@hoalu/countries` | `packages/countries` | Country/currency data                                                            |
+| `@hoalu/datetime`  | `packages/datetime`  | Date/time utilities (`#datetime/*`)                                              |
+| `@hoalu/email`     | `packages/email`     | React Email templates                                                            |
+| `@hoalu/finance`   | `packages/finance`   | Monetary, exchange-rate, bill projection (`billing`), schedule math (`#money/*`) |
+| `@hoalu/furnace`   | `packages/furnace`   | Hono helpers (logger, error handlers, OpenAPI)                                   |
+| `@hoalu/http`      | `packages/http`      | HTTP status codes & standard-validate helpers (`#http/*`)                        |
+| `@hoalu/icons`     | `packages/icons`     | Icon sets (Phosphor, Tabler, Nucleo, Meteocons, Social)                          |
+| `@hoalu/ids`       | `packages/ids`       | ID generation & slug utilities (`#ids/*`)                                        |
+| `@hoalu/schema`    | `packages/schema`    | Shared Zod schemas & enums (`#schema/*`)                                         |
+| `@hoalu/stdlib`    | `packages/stdlib`    | Cross-cutting utilities: try-catch, io (`#stdlib/*`)                             |
+| `@hoalu/themes`    | `packages/themes`    | CSS theme layers                                                                 |
+| `@hoalu/tsconfig`  | `packages/tsconfig`  | Shared TypeScript configs                                                        |
+| `@hoalu/typekit`   | `packages/typekit`   | Type utilities                                                                   |
+| `@hoalu/ui`        | `packages/ui`        | Shared UI components (42 components)                                             |
 
 ---
 
