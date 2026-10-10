@@ -58,7 +58,10 @@ export class ExchangeRateRepository implements ExchangeRateProvider {
 		const rates = calculateCrossRate({
 			pair: [from, to],
 			usdToFrom: usdToFrom
-				? { exchangeRate: Number(usdToFrom.exchangeRate), inverseRate: Number(usdToFrom.inverseRate) }
+				? {
+						exchangeRate: Number(usdToFrom.exchangeRate),
+						inverseRate: Number(usdToFrom.inverseRate),
+					}
 				: undefined,
 			usdToTo: usdToTo
 				? { exchangeRate: Number(usdToTo.exchangeRate), inverseRate: Number(usdToTo.inverseRate) }

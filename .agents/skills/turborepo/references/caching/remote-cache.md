@@ -50,10 +50,10 @@ Get your token from Vercel dashboard → Settings → Tokens.
 
 ```json
 {
-  "remoteCache": {
-    "enabled": true,
-    "signature": false
-  }
+	"remoteCache": {
+		"enabled": true,
+		"signature": false
+	}
 }
 ```
 
@@ -75,9 +75,9 @@ Enable in config:
 
 ```json
 {
-  "remoteCache": {
-    "signature": true
-  }
+	"remoteCache": {
+		"signature": true
+	}
 }
 ```
 

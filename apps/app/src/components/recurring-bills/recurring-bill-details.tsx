@@ -43,7 +43,9 @@ export function RecurringBillDetailPanel({
 		<>
 			<Tooltip>
 				<TooltipTrigger
-					render={<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />}
+					render={
+						<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
+					}
 				>
 					<CaretDownIcon />
 				</TooltipTrigger>
