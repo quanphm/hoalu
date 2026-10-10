@@ -25,12 +25,15 @@ import {
 	useAllRecurringBills,
 } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import { TransactionAmount } from "#app/components/transaction-amount.tsx";
+import { useBillingProjection } from "#app/components/upcoming-bills/use-billing-projection.ts";
 import { GroupedVirtualTable } from "#app/components/virtual-table/grouped-virtual-table.tsx";
 import { WalletBadge } from "#app/components/wallets/wallet-badge.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
 import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
+import { formatDueDate, formatDueIn } from "#app/helpers/due-date.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
+import type { ProjectedBill } from "#app/components/upcoming-bills/use-billing-projection.ts";
 import type { HeaderOnlyTableFeatures } from "#app/lib/table-features.ts";
 
 const GRID_TEMPLATE =
@@ -39,7 +42,8 @@ const GRID_TEMPLATE =
 const columns: ColumnDef<HeaderOnlyTableFeatures, SyncedAllRecurringBill>[] = [
 	{ id: "category", header: "Category" },
 	{ id: "name", header: "Name" },
-	{ id: "repeat", header: "Repeat" },
+	// The rows are grouped by repeat, so the group header already states the cadence.
+	{ id: "due", header: "Next due" },
 	{ id: "status", header: "Status" },
 	{ id: "amount", header: "Amount", meta: { headerClassName: "justify-end" } },
 	{ id: "wallet", header: "Wallet" },
@@ -79,6 +83,7 @@ function BillGroupHeader({
 				GRID_TEMPLATE,
 			)}
 		>
+			{/* Spans every track up to Status, so the group total stays aligned with the Amount column. */}
 			<div className="col-span-4 font-medium">{label}</div>
 			<div className="ml-auto flex items-center">
 				{total > 0 && (
@@ -93,13 +98,13 @@ function BillGroupHeader({
 	);
 }
 
-function RecurringBillContent(props: SyncedAllRecurringBill) {
+function RecurringBillContent(props: SyncedAllRecurringBill & { nextDue?: ProjectedBill }) {
 	const setArchiveDialog = archiveRecurringBillDialog.set;
 	const setUnarchiveDialog = unarchiveRecurringBillDialog.set;
 	const setDeleteDialog = deleteRecurringBillDialog.set;
 
-	const repeatLabel =
-		AVAILABLE_REPEAT_OPTIONS.find((o) => o.value === props.repeat)?.label ?? props.repeat;
+	const nextDue = props.nextDue;
+	const isOverdue = nextDue !== undefined && nextDue.daysUntil < 0;
 
 	return (
 		<>
@@ -130,8 +135,20 @@ function RecurringBillContent(props: SyncedAllRecurringBill) {
 					{props.title}
 				</p>
 			</div>
-			<div className="flex items-center px-4 py-3">
-				<span className="text-muted-foreground text-sm">{repeatLabel}</span>
+			<div className="flex items-center truncate px-4 py-3">
+				{nextDue ? (
+					<span
+						className={cn(
+							"truncate text-xs",
+							isOverdue ? "text-destructive font-medium" : "text-muted-foreground",
+						)}
+						title={`${formatDueDate(nextDue.date)} · ${formatDueIn(nextDue.daysUntil)}`}
+					>
+						{formatDueDate(nextDue.date)} · {formatDueIn(nextDue.daysUntil)}
+					</span>
+				) : (
+					<span className="text-muted-foreground text-sm">—</span>
+				)}
 			</div>
 			<div className="flex items-center px-4 py-3">
 				{props.is_active ? (
@@ -249,6 +266,7 @@ function RecurringBillList({
 	scrollRef?: MutableRefObject<number>;
 }) {
 	const allBills = useAllRecurringBills();
+	const { nextDueByBill } = useBillingProjection();
 	const bills = useMemo(() => {
 		if (statusFilter === "all") return allBills;
 		return allBills.filter((b) => (statusFilter === "active" ? b.is_active : !b.is_active));
@@ -279,8 +297,10 @@ function RecurringBillList({
 	);
 
 	const renderRow = useCallback(
-		(item: SyncedAllRecurringBill, _isSelected: boolean) => <RecurringBillContent {...item} />,
-		[],
+		(item: SyncedAllRecurringBill, _isSelected: boolean) => (
+			<RecurringBillContent {...item} nextDue={nextDueByBill[item.id]} />
+		),
+		[nextDueByBill],
 	);
 
 	const groupOrder = useCallback((a: string, b: string) => {

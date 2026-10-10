@@ -25,3 +25,4 @@ npm-debug.log*
 .DS_Store
 *.pem
 .playwright-mcp
+.playwright-cli
