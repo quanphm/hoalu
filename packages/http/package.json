@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/http",
-	"version": "0.32.2",
+	"version": "0.33.0",
 	"private": true,
 	"description": "HTTP helpers and validation for Hoalu",
 	"type": "module",
