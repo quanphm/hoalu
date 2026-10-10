@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/ids",
-	"version": "0.32.2",
+	"version": "0.33.0",
 	"private": true,
 	"description": "ID generation and slug utilities for Hoalu",
 	"type": "module",
