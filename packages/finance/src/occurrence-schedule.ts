@@ -106,46 +106,6 @@ export function schedule(definition: ScheduleDefinition, start: string, end: str
 }
 
 /**
- * Resolve which occurrence a payment on `referenceDate` satisfies.
- *
- * - monthly: the due_day in the reference month (clamped to month-end)
- * - weekly:  the most recent weekday occurrence (backward from reference)
- * - yearly:  the anchor month/day in the reference year
- * - daily:   the reference date itself
- *
- * Returns a "yyyy-MM-dd" string.
- */
-export function occurrenceDate(
-	definition: ScheduleDefinition,
-	referenceDate: string,
-): string {
-	const [year, month, day] = referenceDate.split("-").map(Number);
-
-	if (definition.repeat === "monthly" && definition.dueDay) {
-		const occ = new Date(year, month - 1, definition.dueDay);
-		if (occ.getMonth() !== month - 1) occ.setDate(0);
-		return formatDate(occ);
-	}
-
-	if (definition.repeat === "weekly" && definition.dueDay !== null) {
-		const ref = new Date(year, month - 1, day);
-		const refDow = ref.getDay();
-		const targetDow = definition.dueDay;
-		const daysSinceDue = (refDow - targetDow + 7) % 7;
-		return formatDate(new Date(year, month - 1, day - daysSinceDue));
-	}
-
-	if (definition.repeat === "yearly") {
-		const anchor = parseLocalDate(definition.anchorDate);
-		const dueMonth = definition.dueMonth ?? anchor.getMonth() + 1;
-		const dueDay = definition.dueDay ?? anchor.getDate();
-		return `${year}-${String(dueMonth).padStart(2, "0")}-${String(dueDay).padStart(2, "0")}`;
-	}
-
-	return referenceDate;
-}
-
-/**
  * Compute how far ahead to project for a given repeat frequency.
  *
  * - yearly: 1 year from today

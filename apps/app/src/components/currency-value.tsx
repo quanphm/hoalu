@@ -5,7 +5,11 @@ import { redactedAmount$ } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 
 interface CurrencyValueProps {
-	value: number;
+	/**
+	 * A number, or a numeric string — Postgres `numeric` columns reach the client
+	 * as strings over Electric.
+	 */
+	value: number | string;
 	currency: string;
 	prefix?: string;
 	style?: Intl.NumberFormatOptions["style"];

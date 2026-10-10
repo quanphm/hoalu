@@ -23,5 +23,5 @@
 		"typescript": "^7.0.2",
 		"vite": "^8.2.0"
 	},
-	"packageManager": "pnpm@11.24.0"
+	"packageManager": "pnpm@12.10.1"
 }

@@ -1,13 +1,13 @@
+import { projectBills } from "@hoalu/finance/billing";
 import { monetary } from "@hoalu/finance/monetary";
-import { occurrenceDate, schedule, windowEnd } from "@hoalu/finance/occurrence-schedule";
-import type { ScheduleDefinition } from "@hoalu/finance/occurrence-schedule";
-import { generateId } from "@hoalu/ids/generate-id";
-import { and, eq, getTableColumns, inArray, sql } from "drizzle-orm";
-import type { ExtractTablesWithRelations } from "drizzle-orm";
-import type { PgTransaction } from "drizzle-orm/pg-core";
-import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { and, eq, getTableColumns, isNotNull, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
+
+import type { BillDefinition, Payment } from "@hoalu/finance/billing";
+import type { ExtractTablesWithRelations } from "drizzle-orm";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type { PgTransaction } from "drizzle-orm/pg-core";
 
 type TransactionLike = PgTransaction<
 	NodePgQueryResultHKT,
@@ -19,22 +19,22 @@ type NewRecurringBill = typeof schema.recurringBill.$inferInsert;
 
 const billColumns = getTableColumns(schema.recurringBill);
 
-function billToDefinition(
-	bill: Pick<typeof schema.recurringBill.$inferSelect, "repeat" | "anchorDate" | "dueDay" | "dueMonth">,
-): ScheduleDefinition {
-	return {
-		repeat: bill.repeat,
-		anchorDate: bill.anchorDate,
-		dueDay: bill.dueDay,
-		dueMonth: bill.dueMonth,
-	};
-}
-
-export interface UpcomingBillEntry {
+/**
+ * A projected occurrence, joined back to the bill's display data.
+ *
+ * There is no `isPaid` field: an occurrence that has been paid for is not
+ * projected at all. Paid status is resolved by period inside
+ * `@hoalu/finance/billing`, never by matching a stored due date.
+ */
+interface ProjectedBillEntry {
 	recurringBillId: string;
+	/** `yyyy-MM-dd` rendering of the occurrence under the bill's current definition. */
 	date: string;
+	/** Stable occurrence identity, e.g. `"2026-09"`. */
+	period: string;
+	daysUntil: number;
 	title: string;
-	amount: string;
+	amount: number;
 	currency: string;
 	repeat: string;
 	walletId: string;
@@ -42,6 +42,14 @@ export interface UpcomingBillEntry {
 	categoryId: string | null;
 	categoryName: string | null;
 	categoryColor: string | null;
+}
+
+interface UnifiedBillsProjection {
+	overdue: ProjectedBillEntry[];
+	today: ProjectedBillEntry[];
+	upcoming: ProjectedBillEntry[];
+	anomalies: { kind: string; recurringBillId: string; period: string; expenseIds: string[] }[];
+	unsupported: string[];
 }
 
 export class RecurringBillRepository {
@@ -115,13 +123,6 @@ export class RecurringBillRepository {
 		return result ?? null;
 	}
 
-	async updateAnchorDate(param: { id: string; anchorDate: string }) {
-		await db
-			.update(schema.recurringBill)
-			.set({ anchorDate: param.anchorDate, updatedAt: sql`now()` })
-			.where(eq(schema.recurringBill.id, param.id));
-	}
-
 	async archive(param: { id: string; workspaceId: string }) {
 		await db
 			.update(schema.recurringBill)
@@ -190,79 +191,13 @@ export class RecurringBillRepository {
 	}
 
 	/**
-	 * Project upcoming occurrences for all active recurring bills in a workspace
-	 * within [windowStart, windowEnd].
+	 * Load the (bills, payments) pair the projection needs, and project it.
 	 *
-	 * For yearly bills: window spans 1 year from today.
-	 * For all others: window spans 1 month from today.
-	 * The windowEnd passed in should already encode both, and we filter per bill.
+	 * Bills come from `recurring_bill`; payments are the expenses linked to
+	 * them through `expense.recurring_bill_id`. Nothing else is needed — in
+	 * particular there is no stored occurrence table to keep in sync.
 	 */
-	async findUpcoming(param: { workspaceId: string }): Promise<UpcomingBillEntry[]> {
-		const rows = await db
-			.select({
-				...billColumns,
-				walletId: schema.wallet.id,
-				walletName: schema.wallet.name,
-				categoryId: schema.category.id,
-				categoryName: schema.category.name,
-				categoryColor: schema.category.color,
-			})
-			.from(schema.recurringBill)
-			.innerJoin(schema.wallet, eq(schema.recurringBill.walletId, schema.wallet.id))
-			.leftJoin(schema.category, eq(schema.recurringBill.categoryId, schema.category.id))
-			.where(
-				and(
-					eq(schema.recurringBill.workspaceId, param.workspaceId),
-					eq(schema.recurringBill.isActive, true),
-				),
-			);
-
-		const todayStr = new Date().toISOString().slice(0, 10);
-
-		const results: UpcomingBillEntry[] = [];
-
-		for (const bill of rows) {
-			const end = windowEnd(todayStr, bill.repeat);
-
-			const entry = (dateStr: string): UpcomingBillEntry => ({
-				recurringBillId: bill.id,
-				date: dateStr,
-				title: bill.title,
-				amount: `${monetary.fromRealAmount(Number(bill.amount), bill.currency)}`,
-				currency: bill.currency,
-				repeat: bill.repeat,
-				walletId: bill.walletId,
-				walletName: bill.walletName,
-				categoryId: bill.categoryId ?? null,
-				categoryName: bill.categoryName ?? null,
-				categoryColor: bill.categoryColor ?? null,
-			});
-
-			const dates = schedule(billToDefinition(bill), todayStr, end);
-			for (const ds of dates) {
-				results.push(entry(ds));
-			}
-		}
-
-		results.sort((a, b) => a.date.localeCompare(b.date));
-		return results;
-	}
-
-	/**
-	 * Find unified bills: overdue (unpaid past occurrences), today, and upcoming.
-	 * Uses explicit occurrence tracking for paid status.
-	 */
-	async findUnified(param: { workspaceId: string }): Promise<{
-		overdue: UnifiedBillEntry[];
-		today: UnifiedBillEntry[];
-		upcoming: UnifiedBillEntry[];
-	}> {
-		const todayStr = new Date().toISOString().slice(0, 10);
-		const thirtyDaysAgo = new Date();
-		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-		const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().slice(0, 10);
-
-		// Get all active recurring bills with their details
+	async projection(param: { workspaceId: string; today: string }) {
 		const bills = await db
 			.select({
 				id: schema.recurringBill.id,
@@ -290,166 +225,99 @@ export class RecurringBillRepository {
 				),
 			);
 
-		// Get all paid occurrences for these bills
-		const billIds = bills.map((b) => b.id);
-		const paidOccurrences =
+		const billIds = bills.map((bill) => bill.id);
+		const payments =
 			billIds.length > 0
 				? await db
 						.select({
-							recurringBillId: schema.recurringBillOccurrence.recurringBillId,
-							dueDate: schema.recurringBillOccurrence.dueDate,
+							expenseId: schema.expense.id,
+							billId: schema.expense.recurringBillId,
+							date: schema.expense.date,
 						})
-						.from(schema.recurringBillOccurrence)
+						.from(schema.expense)
 						.where(
 							and(
-								inArray(schema.recurringBillOccurrence.recurringBillId, billIds),
-								sql`${schema.recurringBillOccurrence.expenseId} IS NOT NULL`,
+								eq(schema.expense.workspaceId, param.workspaceId),
+								isNotNull(schema.expense.recurringBillId),
 							),
 						)
 				: [];
 
-		const paidDatesByBill = new Map<string, Set<string>>();
-		for (const po of paidOccurrences) {
-			if (!paidDatesByBill.has(po.recurringBillId)) {
-				paidDatesByBill.set(po.recurringBillId, new Set());
-			}
-			paidDatesByBill.get(po.recurringBillId)!.add(po.dueDate);
-		}
+		const definitions: BillDefinition[] = bills.map((bill) => ({
+			id: bill.id,
+			repeat: bill.repeat,
+			anchorDate: bill.anchorDate,
+			dueDay: bill.dueDay,
+			dueMonth: bill.dueMonth,
+			startsOn: bill.createdAt.slice(0, 10),
+		}));
 
-		const overdue: UnifiedBillEntry[] = [];
-		const today: UnifiedBillEntry[] = [];
-		const upcoming: UnifiedBillEntry[] = [];
+		const paymentRows: Payment[] = payments
+			.filter((payment): payment is typeof payment & { billId: string } => payment.billId !== null)
+			.map((payment) => ({
+				billId: payment.billId,
+				expenseId: payment.expenseId,
+				// The expense date is a timestamptz; slice the stored date portion.
+				// A positive-offset user's payment can land a day earlier here than it
+				// does in the browser. Occurrence periods are month/week granular, so
+				// this is only observable for a payment made within hours of a period
+				// boundary.
+				date: payment.date.slice(0, 10),
+			}));
 
-		for (const bill of bills) {
-			const end = windowEnd(todayStr, bill.repeat);
-			const billCreatedStr = bill.createdAt.slice(0, 10);
-			const startStr = thirtyDaysAgoStr > billCreatedStr ? thirtyDaysAgoStr : billCreatedStr;
+		const projection = projectBills({
+			bills: definitions,
+			payments: paymentRows,
+			today: param.today,
+		});
 
-			const allDates = schedule(
-				{
-					repeat: bill.repeat,
-					anchorDate: bill.anchorDate,
-					dueDay: bill.dueDay,
-					dueMonth: bill.dueMonth,
-				},
-				startStr,
-				end,
-			);
+		const billsById = new Map(bills.map((bill) => [bill.id, bill]));
+		const decorate = (occurrence: {
+			billId: string;
+			period: string;
+			dueDate: string;
+			daysUntil: number;
+		}): ProjectedBillEntry | null => {
+			const bill = billsById.get(occurrence.billId);
+			if (!bill) return null;
+			return {
+				recurringBillId: bill.id,
+				date: occurrence.dueDate,
+				period: occurrence.period,
+				daysUntil: occurrence.daysUntil,
+				title: bill.title,
+				amount: monetary.fromRealAmount(Number(bill.amount), bill.currency),
+				currency: bill.currency,
+				repeat: bill.repeat,
+				walletId: bill.walletId,
+				walletName: bill.walletName,
+				categoryId: bill.categoryId ?? null,
+				categoryName: bill.categoryName ?? null,
+				categoryColor: bill.categoryColor ?? null,
+			};
+		};
 
-			const paidDates = paidDatesByBill.get(bill.id) ?? new Set();
+		const translate = (occurrences: typeof projection.overdue) =>
+			occurrences.map(decorate).filter((entry): entry is ProjectedBillEntry => entry !== null);
 
-			for (const dateStr of allDates) {
-				if (paidDates.has(dateStr)) continue; // Skip paid occurrences
-
-				const entry: UnifiedBillEntry = {
-					recurringBillId: bill.id,
-					date: dateStr,
-					title: bill.title,
-					amount: monetary.fromRealAmount(Number(bill.amount), bill.currency),
-					currency: bill.currency,
-					repeat: bill.repeat,
-					walletId: bill.walletId,
-					walletName: bill.walletName,
-					categoryId: bill.categoryId ?? null,
-					categoryName: bill.categoryName ?? null,
-					categoryColor: bill.categoryColor ?? null,
-					isPaid: false,
-				};
-
-				if (dateStr < todayStr) {
-					overdue.push(entry);
-				} else if (dateStr === todayStr) {
-					today.push(entry);
-				} else {
-					upcoming.push(entry);
-				}
-			}
-		}
-
-		// Sort each category by date
-		overdue.sort((a, b) => a.date.localeCompare(b.date));
-		today.sort((a, b) => a.date.localeCompare(b.date));
-		upcoming.sort((a, b) => a.date.localeCompare(b.date));
-
-		return { overdue, today, upcoming };
+		return {
+			overdue: translate(projection.overdue),
+			today: translate(projection.today),
+			upcoming: translate(projection.upcoming),
+			anomalies: projection.anomalies.map((anomaly) => ({
+				kind: anomaly.kind,
+				recurringBillId: anomaly.billId,
+				period: anomaly.period,
+				expenseIds: anomaly.expenseIds,
+			})),
+			unsupported: projection.unsupported,
+		} satisfies UnifiedBillsProjection;
 	}
 
 	/* ------------------------------------------------------------------ */
 	/*  Transaction-aware methods — used by the expense route to keep     */
 	/*  recurring-bill internals behind this repository's interface.      */
 	/* ------------------------------------------------------------------ */
-
-	async findBillInTransaction(
-		tx: TransactionLike,
-		params: { billId: string; workspaceId: string },
-	) {
-		const [row] = await tx
-			.select()
-			.from(schema.recurringBill)
-			.where(
-				and(
-					eq(schema.recurringBill.id, params.billId),
-					eq(schema.recurringBill.workspaceId, params.workspaceId),
-				),
-			)
-			.limit(1);
-		return row ?? null;
-	}
-
-	async advanceYearlyAnchor(tx: TransactionLike, params: { billId: string; anchorDate: string }) {
-		await tx
-			.update(schema.recurringBill)
-			.set({ anchorDate: params.anchorDate, updatedAt: sql`now()` })
-			.where(eq(schema.recurringBill.id, params.billId));
-	}
-
-	async markOccurrencePaid(
-		tx: TransactionLike,
-		params: {
-			recurringBillId: string;
-			expenseId: string;
-			expenseDate: string;
-		},
-		bill: Pick<
-			typeof schema.recurringBill.$inferSelect,
-			"repeat" | "anchorDate" | "dueDay" | "dueMonth"
-		>,
-	) {
-		const dueDateStr = occurrenceDate(billToDefinition(bill), params.expenseDate);
-
-		const [existing] = await tx
-			.select()
-			.from(schema.recurringBillOccurrence)
-			.where(
-				and(
-					eq(schema.recurringBillOccurrence.recurringBillId, params.recurringBillId),
-					eq(schema.recurringBillOccurrence.dueDate, dueDateStr),
-				),
-			)
-			.limit(1);
-
-		if (existing) {
-			await tx
-				.update(schema.recurringBillOccurrence)
-				.set({ expenseId: params.expenseId, paidAt: sql`now()`, updatedAt: sql`now()` })
-				.where(eq(schema.recurringBillOccurrence.id, existing.id));
-		} else {
-			await tx.insert(schema.recurringBillOccurrence).values({
-				id: generateId({ use: "uuid" }),
-				recurringBillId: params.recurringBillId,
-				dueDate: dueDateStr,
-				expenseId: params.expenseId,
-				paidAt: sql`now()`,
-			});
-		}
-	}
-
-	async clearOccurrenceForExpense(tx: TransactionLike, expenseId: string) {
-		await tx
-			.update(schema.recurringBillOccurrence)
-			.set({ expenseId: null, paidAt: null, updatedAt: sql`now()` })
-			.where(eq(schema.recurringBillOccurrence.expenseId, expenseId));
-	}
 
 	async syncBillFromExpense(
 		tx: TransactionLike,
@@ -470,19 +338,4 @@ export class RecurringBillRepository {
 			.set({ isActive: false, updatedAt: sql`now()` })
 			.where(eq(schema.recurringBill.id, billId));
 	}
-}
-
-export interface UnifiedBillEntry {
-	recurringBillId: string;
-	date: string;
-	title: string;
-	amount: number;
-	currency: string;
-	repeat: string;
-	walletId: string;
-	walletName: string;
-	categoryId: string | null;
-	categoryName: string | null;
-	categoryColor: string | null;
-	isPaid: boolean;
 }

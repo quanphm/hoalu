@@ -1,0 +1,1 @@
+DROP TABLE "recurring_bill_occurrence" CASCADE;

@@ -215,7 +215,7 @@ export const unifiedBillsQueryOptions = (slug: string) => {
 		queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
 		queryFn: () => apiClient.recurringBills.getUnified(slug),
 		staleTime: TIME_IN_MILLISECONDS.MINUTE,
-		placeholderData: { overdue: [], today: [], upcoming: [] },
+		placeholderData: { overdue: [], today: [], upcoming: [], anomalies: [], unsupported: [] },
 	});
 };
 

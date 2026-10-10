@@ -16,10 +16,16 @@ export interface TransactionNavigation {
 	canGoDown: boolean;
 }
 
-export function TransactionPageHeader(props: { title: ReactNode; actions?: ReactNode }) {
+export function TransactionPageHeader(props: {
+	title: ReactNode;
+	actions?: ReactNode;
+	className?: string;
+}) {
 	const { slug } = routeApi.useParams();
 	return (
-		<div className="flex items-center justify-between gap-4 border-b px-4 py-2">
+		<div
+			className={cn("flex items-center justify-between gap-4 border-b px-4 py-2", props.className)}
+		>
 			<div className="flex min-w-0 items-center gap-2 text-sm">
 				<span className="text-muted-foreground truncate">{props.title}</span>
 			</div>
@@ -50,11 +56,21 @@ export function TransactionCloseAction() {
 	);
 }
 
-export function TransactionPageGrid(props: { main: ReactNode; aside?: ReactNode }) {
+export function TransactionPageGrid(props: {
+	main: ReactNode;
+	aside?: ReactNode;
+	/**
+	 * Hold the main column at its two-column width even when there is no aside,
+	 * so a page without a side panel lines up with one that has it.
+	 */
+	keepAsideColumn?: boolean;
+}) {
+	const showAsideColumn = Boolean(props.aside) || Boolean(props.keepAsideColumn);
+
 	return (
 		<div className="grid grid-cols-12 gap-6 p-4 md:p-6">
-			<div className="col-span-12 lg:col-span-8">{props.main}</div>
-			{props.aside && <div className="col-span-12 lg:col-span-4">{props.aside}</div>}
+			<div className={cn("col-span-12", showAsideColumn && "lg:col-span-8")}>{props.main}</div>
+			{showAsideColumn && <div className="col-span-12 lg:col-span-4">{props.aside}</div>}
 		</div>
 	);
 }

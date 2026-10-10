@@ -1,4 +1,3 @@
-import { extractDateFromISO } from "@hoalu/datetime/datetime";
 import { monetary } from "@hoalu/finance/monetary";
 import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
@@ -16,7 +15,6 @@ import { parseExpense } from "#api/lib/parse-with-ai.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
-import { RecurringBillRepository } from "#api/routes/recurring-bills/repository.ts";
 import {
 	DeleteExpenseSchema,
 	ExpenseSchema,
@@ -27,6 +25,7 @@ import {
 	QuickEntryResultSchema,
 	UpdateExpenseSchema,
 } from "#api/routes/expenses/schema.ts";
+import { RecurringBillRepository } from "#api/routes/recurring-bills/repository.ts";
 import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
@@ -140,25 +139,8 @@ const route = app
 			const { amount, currency, date, recurringBillId, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 			const expenseDate = date || new Date().toISOString();
-			const newAnchorDate = extractDateFromISO(expenseDate);
 
 			const { expense, txid } = await db.transaction(async (tx) => {
-				let bill: typeof schema.recurringBill.$inferSelect | null = null;
-
-				if (recurringBillId) {
-					bill = await recurringBillRepository.findBillInTransaction(tx, {
-						billId: recurringBillId,
-						workspaceId: workspace.id,
-					});
-
-					if (bill && bill.repeat === "yearly") {
-						await recurringBillRepository.advanceYearlyAnchor(tx, {
-							billId: recurringBillId,
-							anchorDate: newAnchorDate,
-						});
-					}
-				}
-
 				const result = await tryCatch.async(
 					tx
 						.insert(schema.expense)
@@ -181,18 +163,6 @@ const route = app
 				}
 
 				const [expense] = result.data;
-
-				if (recurringBillId && bill) {
-					await recurringBillRepository.markOccurrencePaid(
-						tx,
-						{
-							recurringBillId,
-							expenseId: expense.id,
-							expenseDate: extractDateFromISO(expenseDate),
-						},
-						bill,
-					);
-				}
 
 				const txidResult = await tx.execute<{ txid: number }>(
 					sql`SELECT txid_current()::bigint AS txid`,
@@ -314,29 +284,6 @@ const route = app
 							...(currency !== undefined && { currency: resolvedCurrency }),
 						},
 					});
-				}
-
-				if (expense.recurringBillId) {
-					await recurringBillRepository.clearOccurrenceForExpense(tx, expense.id);
-				}
-
-				if (resolvedRecurringBillId) {
-					const newBill = await recurringBillRepository.findBillInTransaction(tx, {
-						billId: resolvedRecurringBillId,
-						workspaceId: workspace.id,
-					});
-
-					if (newBill) {
-						await recurringBillRepository.markOccurrencePaid(
-							tx,
-							{
-								recurringBillId: resolvedRecurringBillId,
-								expenseId: param.id,
-								expenseDate: extractDateFromISO(date ?? expense.date),
-							},
-							newBill,
-						);
-					}
 				}
 
 				// Build the expense update — only include fields that were explicitly provided.

@@ -12,27 +12,16 @@ pg-data
 .next
 .tanstack
 .react-email
-references
 
-# claude code
-.claude/worktrees
-.claude/settings.local.json
-
-# debug
 npm-debug.log*
 .pnpm-debug.log*
 
-# local env files
 .env
 .env.*
 .sql
 !.env.template
 !.env.example
 
-# misc
 .DS_Store
 *.pem
-
-# playwriter
-tmp
-
+.playwright-mcp

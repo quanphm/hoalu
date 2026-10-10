@@ -39,102 +39,95 @@ export function RecurringBillDetailPanel({
 	const setUnarchiveDialog = unarchiveRecurringBillDialog.set;
 	const setDeleteDialog = deleteRecurringBillDialog.set;
 
+	const headerActions = (
+		<>
+			<Tooltip>
+				<TooltipTrigger
+					render={<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />}
+				>
+					<CaretDownIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">
+					Down <HotKey className="ml-2" label="J" />
+				</TooltipContent>
+			</Tooltip>
+			<Tooltip>
+				<TooltipTrigger
+					render={<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />}
+				>
+					<CaretUpIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">
+					Up <HotKey className="ml-2" label="K" />
+				</TooltipContent>
+			</Tooltip>
+			{bill.is_active ? (
+				<Tooltip>
+					<TooltipTrigger
+						render={
+							<Button
+								size="icon-sm"
+								variant="outline"
+								aria-label="Archive bill"
+								onClick={() => setArchiveDialog({ state: true, data: { id: bill.id } })}
+							/>
+						}
+					>
+						<ArchiveIcon />
+					</TooltipTrigger>
+					<TooltipContent side="bottom">Archive</TooltipContent>
+				</Tooltip>
+			) : (
+				<>
+					<Tooltip>
+						<TooltipTrigger
+							render={
+								<Button
+									size="icon-sm"
+									variant="outline"
+									aria-label="Restore bill"
+									onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
+								/>
+							}
+						>
+							<BoxArrowUpIcon />
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Restore</TooltipContent>
+					</Tooltip>
+					<Tooltip>
+						<TooltipTrigger
+							render={
+								<Button
+									size="icon-sm"
+									variant="outline"
+									aria-label="Delete bill"
+									onClick={() =>
+										setDeleteDialog({ state: true, data: { id: bill.id, title: bill.title } })
+									}
+								/>
+							}
+						>
+							<TrashIcon />
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Delete</TooltipContent>
+					</Tooltip>
+				</>
+			)}
+			<Tooltip>
+				<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
+					<XIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">Close</TooltipContent>
+			</Tooltip>
+		</>
+	);
+
 	return (
-		<div className="bg-card text-card-foreground flex h-[calc(100vh-94px)] flex-col overflow-auto">
-			<div
-				data-slot="recurring-bill-details-actions"
-				className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2"
-			>
-				<div className="flex items-center justify-center gap-2">
-					<Tooltip>
-						<TooltipTrigger
-							render={
-								<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
-							}
-						>
-							<CaretDownIcon />
-						</TooltipTrigger>
-						<TooltipContent side="bottom">
-							Down <HotKey className="ml-2" label="J" />
-						</TooltipContent>
-					</Tooltip>
-					<Tooltip>
-						<TooltipTrigger
-							render={
-								<Button size="icon-sm" variant="outline" onClick={onGoUp} disabled={!canGoUp} />
-							}
-						>
-							<CaretUpIcon />
-						</TooltipTrigger>
-						<TooltipContent side="bottom">
-							Up <HotKey className="ml-2" label="K" />
-						</TooltipContent>
-					</Tooltip>
-				</div>
-				<div className="flex items-center gap-2">
-					{bill.is_active ? (
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
-										size="icon-sm"
-										variant="outline"
-										aria-label="Archive bill"
-										onClick={() => setArchiveDialog({ state: true, data: { id: bill.id } })}
-									/>
-								}
-							>
-								<ArchiveIcon />
-							</TooltipTrigger>
-							<TooltipContent side="bottom">Archive</TooltipContent>
-						</Tooltip>
-					) : (
-						<>
-							<Tooltip>
-								<TooltipTrigger
-									render={
-										<Button
-											size="icon-sm"
-											variant="outline"
-											aria-label="Restore bill"
-											onClick={() => setUnarchiveDialog({ state: true, data: { id: bill.id } })}
-										/>
-									}
-								>
-									<BoxArrowUpIcon />
-								</TooltipTrigger>
-								<TooltipContent side="bottom">Restore</TooltipContent>
-							</Tooltip>
-							<Tooltip>
-								<TooltipTrigger
-									render={
-										<Button
-											size="icon-sm"
-											variant="outline"
-											aria-label="Delete bill"
-											onClick={() =>
-												setDeleteDialog({ state: true, data: { id: bill.id, title: bill.title } })
-											}
-										/>
-									}
-								>
-									<TrashIcon />
-								</TooltipTrigger>
-								<TooltipContent side="bottom">Delete</TooltipContent>
-							</Tooltip>
-						</>
-					)}
-					<Tooltip>
-						<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
-							<XIcon />
-						</TooltipTrigger>
-						<TooltipContent side="bottom">Close</TooltipContent>
-					</Tooltip>
-				</div>
-			</div>
-			<div data-slot="recurring-bill-details-form">
-				<EditRecurringBillForm key={bill.id} bill={bill} />
-			</div>
+		<div
+			data-slot="recurring-bill-details"
+			className="bg-card text-card-foreground h-[calc(100vh-94px)] overflow-auto"
+		>
+			<EditRecurringBillForm key={bill.id} bill={bill} headerActions={headerActions} />
 		</div>
 	);
 }
