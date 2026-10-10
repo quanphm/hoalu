@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/icons",
-	"version": "0.33.0",
+	"version": "0.32.2",
 	"private": true,
 	"main": "./src/index.tsx",
 	"exports": {
