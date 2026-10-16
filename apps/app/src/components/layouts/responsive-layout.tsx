@@ -1,6 +1,6 @@
 import { useLayoutMode } from "#app/components/layouts/use-layout-mode.ts";
 
-import { MainLayout } from "./main-layout";
+import { DesktopLayout } from "./desktop-layout";
 import { MobileLayout } from "./mobile-layout";
 
 export function ResponsiveLayout({ children }: { children: React.ReactNode }) {
@@ -8,5 +8,5 @@ export function ResponsiveLayout({ children }: { children: React.ReactNode }) {
 	if (mode === "mobile" || mode === "tablet") {
 		return <MobileLayout>{children}</MobileLayout>;
 	}
-	return <MainLayout>{children}</MainLayout>;
+	return <DesktopLayout>{children}</DesktopLayout>;
 }

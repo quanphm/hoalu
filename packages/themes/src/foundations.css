@@ -1,0 +1,20 @@
+/**
+ * The world's shape and type, colourless.
+ *
+ * Everything scale-like lives here: radii, spacing, tracking, font stacks.
+ * Depth (elevation, overlays) lives in `colors/oc2.css` instead, because in this
+ * world depth is alpha colour — see that file for why.
+ */
+:root {
+	--radius: 0.625rem;
+	--spacing: 0.25rem;
+	--tracking-normal: 0em;
+
+	--font-sans:
+		ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+		"Noto Color Emoji";
+	--font-heading: var(--font-sans);
+	--font-mono:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+		monospace;
+}

@@ -61,7 +61,7 @@ function Calendar({
 					defaultClassNames.dropdowns,
 				),
 				dropdown_root: cn(
-					"has-focus:border-ring border-input has-focus:ring-ring/50 relative rounded-md border shadow-xs has-focus:ring-[3px]",
+					"has-focus:border-ring border-input has-focus:ring-ring/50 relative rounded-md border has-focus:ring-[3px]",
 					defaultClassNames.dropdown_root,
 				),
 				dropdown: cn("bg-popover absolute inset-0 opacity-0", defaultClassNames.dropdown),

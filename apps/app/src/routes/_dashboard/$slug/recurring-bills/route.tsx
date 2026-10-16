@@ -67,7 +67,7 @@ function LayoutComponent() {
 							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100vh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
+								className="h-[calc(100vh-var(--app-chrome)-95px)] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 									<RecurringBillList statusFilter={statusFilter} scrollRef={listScrollRef} />

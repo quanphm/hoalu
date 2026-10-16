@@ -1,10 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@import "./layer-base.css";
+@import "./foundations.css";
+@import "./colors/oc2.css";
 
-@import "./colors/default.css";
-@import "./colors/creamy.css";
+@import "./layer-base.css";
 @import "./theme.css";
 
 @plugin "@tailwindcss/typography";

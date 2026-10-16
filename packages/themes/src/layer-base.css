@@ -20,15 +20,15 @@
 		width: 5px;
 	}
 	pre::-webkit-scrollbar-track {
-		background: transparent;
+		background: var(--scrollbar-track);
 	}
 	pre::-webkit-scrollbar-thumb {
-		background: var(--border);
+		background: var(--scrollbar-thumb);
 		border-radius: 5px;
 	}
 	pre {
 		scrollbar-width: thin;
-		scrollbar-color: var(--border) transparent;
+		scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 	}
 
 	.glass {

@@ -44,7 +44,7 @@ export function InputWithCopy({ value }: { value: string }) {
 					<div
 						className={cn("transition-all", copied ? "scale-100 opacity-100" : "scale-0 opacity-0")}
 					>
-						<CheckIcon className="size-4 text-emerald-500" aria-hidden="true" />
+						<CheckIcon className="text-success size-4" aria-hidden="true" />
 					</div>
 					<div
 						className={cn(

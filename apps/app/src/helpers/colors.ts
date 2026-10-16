@@ -2,108 +2,112 @@ import { cn } from "@hoalu/ui/utils";
 
 import type { ColorSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 
-const chartVariants: Record<ColorSchema, string> = {
-	red: "bg-red-500 dark:bg-red-400",
-	green: "bg-emerald-500 dark:bg-emerald-400",
-	teal: "bg-teal-500 dark:bg-teal-400",
-	blue: "bg-blue-500 dark:bg-blue-400",
-	yellow: "bg-amber-400 dark:bg-amber-300",
-	orange: "bg-orange-500 dark:bg-orange-400",
-	purple: "bg-violet-500 dark:bg-violet-400",
-	pink: "bg-pink-500 dark:bg-pink-400",
-	gray: "bg-slate-400 dark:bg-slate-500",
-	stone: "bg-stone-400 dark:bg-stone-500",
-};
-export function createChartColor(color: ColorSchema) {
-	return chartVariants[color];
-}
+/**
+ * Category, wallet and chart colours, drawn from the OC-2 ramps only.
+ *
+ * There are ten `ColorSchema` values and nine usable OC-2 hues, so two names
+ * share a family: `teal` reads as `cyan`, and `stone` (a warm grey, which OC-2
+ * does not have) reads as the deep end of `yellow` — a khaki or sand rather than
+ * the vivid gold of the `yellow` chip, and clearly distinct from `orange`. It is
+ * the one visible compromise in this mapping.
+ *
+ * Class strings are written out in full rather than assembled from a hue name:
+ * Tailwind scans for literal utilities, so anything built at runtime would never
+ * be generated. Values that are not classes — the chart fills below — are plain
+ * `var()` strings and can be built dynamically.
+ */
 
-const chartColorThemes: Record<ColorSchema, { light: string; dark: string }> = {
-	red: { light: "var(--color-red-500)", dark: "var(--color-red-400)" },
-	green: { light: "var(--color-emerald-500)", dark: "var(--color-emerald-400)" },
-	teal: { light: "var(--color-teal-500)", dark: "var(--color-teal-400)" },
-	blue: { light: "var(--color-blue-500)", dark: "var(--color-blue-400)" },
-	yellow: { light: "var(--color-amber-400)", dark: "var(--color-amber-300)" },
-	orange: { light: "var(--color-orange-500)", dark: "var(--color-orange-400)" },
-	purple: { light: "var(--color-violet-500)", dark: "var(--color-violet-400)" },
-	pink: { light: "var(--color-pink-500)", dark: "var(--color-pink-400)" },
-	gray: { light: "var(--color-slate-400)", dark: "var(--color-slate-500)" },
-	stone: { light: "var(--color-stone-400)", dark: "var(--color-stone-500)" },
-};
-export function createChartColorTheme(color: ColorSchema) {
-	return chartColorThemes[color];
-}
-
-const categoryVariants: Record<ColorSchema, string> = {
+/** Rest and checked states of a category chip, as a three-step state triad. */
+const CHIP: Record<ColorSchema, string> = {
 	red: cn(
-		"border-red-300 bg-red-100 text-red-800",
-		"dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300",
-		"data-[state=checked]:border-red-500 data-[state=checked]:bg-red-200 data-[state=checked]:text-red-900",
+		"border-(--oc2-red-900) bg-(--oc2-red-1200) text-(--oc2-red-500)",
+		"data-[state=checked]:border-(--oc2-red-500) data-[state=checked]:bg-(--oc2-red-900) data-[state=checked]:text-(--oc2-red-300)",
 	),
 	green: cn(
-		"border-green-300 bg-green-100 text-green-800",
-		"dark:border-green-500/30 dark:bg-green-500/15 dark:text-green-300",
-		"data-[state=checked]:border-green-500 data-[state=checked]:bg-green-200 data-[state=checked]:text-green-900",
+		"border-(--oc2-green-900) bg-(--oc2-green-1200) text-(--oc2-green-500)",
+		"data-[state=checked]:border-(--oc2-green-500) data-[state=checked]:bg-(--oc2-green-900) data-[state=checked]:text-(--oc2-green-300)",
 	),
 	teal: cn(
-		"border-teal-300 bg-teal-100 text-teal-800",
-		"dark:border-teal-500/30 dark:bg-teal-500/15 dark:text-teal-300",
-		"data-[state=checked]:border-teal-500 data-[state=checked]:bg-teal-200 data-[state=checked]:text-teal-900",
+		"border-(--oc2-cyan-900) bg-(--oc2-cyan-1200) text-(--oc2-cyan-400)",
+		"data-[state=checked]:border-(--oc2-cyan-400) data-[state=checked]:bg-(--oc2-cyan-900) data-[state=checked]:text-(--oc2-cyan-300)",
 	),
 	blue: cn(
-		"border-indigo-300 bg-indigo-100 text-indigo-800",
-		"dark:border-indigo-500/30 dark:bg-indigo-500/15 dark:text-indigo-300",
-		"data-[state=checked]:border-indigo-500 data-[state=checked]:bg-indigo-200 data-[state=checked]:text-indigo-900",
+		"border-(--oc2-blue-900) bg-(--oc2-blue-1200) text-(--oc2-blue-400)",
+		"data-[state=checked]:border-(--oc2-blue-500) data-[state=checked]:bg-(--oc2-blue-900) data-[state=checked]:text-(--oc2-blue-300)",
 	),
 	yellow: cn(
-		"border-yellow-300 bg-yellow-100 text-yellow-800",
-		"dark:border-yellow-500/30 dark:bg-yellow-500/15 dark:text-yellow-300",
-		"data-[state=checked]:border-yellow-500 data-[state=checked]:bg-yellow-200 data-[state=checked]:text-yellow-900",
+		"border-(--oc2-yellow-900) bg-(--oc2-yellow-1200) text-(--oc2-yellow-500)",
+		"data-[state=checked]:border-(--oc2-yellow-500) data-[state=checked]:bg-(--oc2-yellow-900) data-[state=checked]:text-(--oc2-yellow-300)",
 	),
 	orange: cn(
-		"border-orange-300 bg-orange-100 text-orange-800",
-		"dark:border-orange-500/30 dark:bg-orange-500/15 dark:text-orange-300",
-		"data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-200 data-[state=checked]:text-orange-900",
+		"border-(--oc2-orange-900) bg-(--oc2-orange-1200) text-(--oc2-orange-500)",
+		"data-[state=checked]:border-(--oc2-orange-500) data-[state=checked]:bg-(--oc2-orange-900) data-[state=checked]:text-(--oc2-orange-300)",
 	),
 	purple: cn(
-		"border-purple-300 bg-purple-100 text-purple-800",
-		"dark:border-purple-500/30 dark:bg-purple-500/15 dark:text-purple-300",
-		"data-[state=checked]:border-purple-500 data-[state=checked]:bg-purple-200 data-[state=checked]:text-purple-900",
+		"border-(--oc2-purple-900) bg-(--oc2-purple-1200) text-(--oc2-purple-400)",
+		"data-[state=checked]:border-(--oc2-purple-500) data-[state=checked]:bg-(--oc2-purple-900) data-[state=checked]:text-(--oc2-purple-300)",
 	),
 	pink: cn(
-		"border-pink-300 bg-pink-100 text-pink-800",
-		"dark:border-pink-500/30 dark:bg-pink-500/15 dark:text-pink-300",
-		"data-[state=checked]:border-pink-500 data-[state=checked]:bg-pink-200 data-[state=checked]:text-pink-900",
+		"border-(--oc2-pink-900) bg-(--oc2-pink-1200) text-(--oc2-pink-400)",
+		"data-[state=checked]:border-(--oc2-pink-500) data-[state=checked]:bg-(--oc2-pink-900) data-[state=checked]:text-(--oc2-pink-300)",
 	),
 	gray: cn(
-		"border-gray-300 bg-gray-100 text-gray-700",
-		"dark:border-gray-500/30 dark:bg-gray-500/15 dark:text-gray-300",
-		"data-[state=checked]:border-gray-400 data-[state=checked]:bg-gray-200 data-[state=checked]:text-gray-900",
+		"border-(--oc2-grey-800) bg-(--oc2-grey-1000) text-(--oc2-grey-400)",
+		"data-[state=checked]:border-(--oc2-grey-500) data-[state=checked]:bg-(--oc2-grey-800) data-[state=checked]:text-(--oc2-grey-200)",
 	),
 	stone: cn(
-		"border-stone-300 bg-stone-100 text-stone-700",
-		"dark:border-stone-500/30 dark:bg-stone-500/15 dark:text-stone-300",
-		"data-[state=checked]:border-stone-400 data-[state=checked]:bg-stone-200 data-[state=checked]:text-stone-900",
+		"border-(--oc2-yellow-900) bg-(--oc2-yellow-1100) text-(--oc2-yellow-200)",
+		"data-[state=checked]:border-(--oc2-yellow-700) data-[state=checked]:bg-(--oc2-yellow-900) data-[state=checked]:text-(--oc2-yellow-100)",
 	),
 };
+
+/** The fill step per hue. One source of truth: the swatches and the chart
+ *  segments read from this, so a legend dot cannot drift from its slice. */
+const FILL_VAR: Record<ColorSchema, string> = {
+	red: "--oc2-red-500",
+	green: "--oc2-green-500",
+	teal: "--oc2-cyan-400",
+	blue: "--oc2-blue-400",
+	yellow: "--oc2-yellow-500",
+	orange: "--oc2-orange-500",
+	purple: "--oc2-purple-400",
+	pink: "--oc2-pink-400",
+	gray: "--oc2-grey-500",
+	stone: "--oc2-yellow-200",
+};
+
+/** A raw colour for swatches and chart `fill`/`stroke` props — not a class. */
+export function createChartColor(color: ColorSchema) {
+	return `var(${FILL_VAR[color]})`;
+}
+
+/** The `-500`/`-400` text and fill pair used by wallet badges. */
+/** The `-500`/`-400` text and fill pair used by wallet badges. */
+const WALLET: Record<WalletTypeSchema, string> = {
+	"bank-account": "text-(--oc2-blue-400) bg-(--oc2-blue-400)",
+	cash: "text-(--oc2-yellow-500) bg-(--oc2-yellow-500)",
+	"credit-card": "text-(--oc2-green-500) bg-(--oc2-green-500)",
+	"debit-card": "text-(--oc2-purple-400) bg-(--oc2-purple-400)",
+	"digital-account": "text-(--oc2-orange-500) bg-(--oc2-orange-500)",
+};
+
+export function createChartColorTheme(color: ColorSchema) {
+	const fill = createChartColor(color);
+	// Both keys carry the same value: there is no light mode, and the chart
+	// component's config type requires the pair.
+	return { light: fill, dark: fill };
+}
+
 export function createCategoryTheme(color: ColorSchema | undefined) {
 	if (!color) {
 		return cn(
-			"text-2xs! border-b-2 border-gray-300 bg-gray-100 text-gray-700",
-			"dark:border-gray-500/30 dark:bg-gray-500/15 dark:text-gray-300",
-			"data-[state=checked]:border-gray-400 data-[state=checked]:bg-gray-200 data-[state=checked]:text-gray-900",
+			"text-2xs! border-(--oc2-grey-800) bg-(--oc2-grey-1000) text-(--oc2-grey-400)",
+			"data-[state=checked]:border-(--oc2-grey-500) data-[state=checked]:bg-(--oc2-grey-800) data-[state=checked]:text-(--oc2-grey-200)",
 		);
 	}
-	return cn(categoryVariants[color], "text-2xs!");
+	return cn(CHIP[color], "text-2xs!");
 }
 
-const cardVariants: Record<WalletTypeSchema, string> = {
-	"bank-account": "text-blue-500 bg-blue-500",
-	cash: "text-yellow-500 bg-yellow-500",
-	"credit-card": "text-lime-500 bg-lime-500",
-	"debit-card": "text-violet-500 bg-violet-500",
-	"digital-account": "text-orange-500 bg-orange-500",
-};
 export function createWalletTheme(type: WalletTypeSchema) {
-	return cardVariants[type];
+	return WALLET[type];
 }

@@ -1,143 +1,121 @@
-import {
-	CheckIcon,
-	KeyIcon,
-	SignOutIcon,
-	DotsThreeVerticalIcon,
-	PaletteIcon,
-} from "@hoalu/icons/phosphor";
+import { CaretDownIcon, KeyIcon, SignOutIcon } from "@hoalu/icons/phosphor";
+import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
 import { SettingsIcon } from "@hoalu/icons/tabler";
+import { Button } from "@hoalu/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { useId } from "react";
 
 import { UserAvatar } from "#app/components/user-avatar.tsx";
-import {
-	CUSTOM_THEMES,
-	KEYBOARD_SHORTCUTS,
-	SYSTEM_THEMES,
-	THEME_LABELS,
-} from "#app/helpers/constants.ts";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
 
-import { HotKey } from "../hotkey";
-
+/**
+ * The account menu in the top bar. Also the last home for the version string and
+ * the repository links, which used to sit in the sidebar's footer.
+ */
 export function NavUser() {
 	const { user, signOut } = useAuth();
-	const { mode, setTheme } = useTheme();
-	const reactId = useId();
 
 	if (!user) return null;
 
 	return (
-		<SidebarMenu id={`${reactId}-nav-user`}>
-			<SidebarMenuItem>
-				<DropdownMenu>
-					<DropdownMenuTrigger
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				render={
+					<Button variant="ghost" className="gap-2 pl-1.5" aria-label="Account menu">
+						<UserAvatar name={user.name} image={user.image} className="size-6" />
+						<span className="hidden max-w-40 truncate font-medium lg:inline">{user.name}</span>
+						<CaretDownIcon className="text-faint" />
+					</Button>
+				}
+			/>
+			<DropdownMenuContent className="min-w-56 rounded-lg" align="end" sideOffset={6}>
+				<div className="flex items-center gap-2 px-2 py-1.5">
+					<UserAvatar name={user.name} image={user.image} className="size-6" />
+					<div className="grid flex-1 text-left text-sm leading-tight">
+						<span className="truncate font-semibold">{user.name}</span>
+						<span className="text-faint truncate text-xs">{user.email}</span>
+					</div>
+				</div>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuGroup>
+					<DropdownMenuItem
 						render={
-							<SidebarMenuButton
-								size="lg"
-								className="text-sidebar-foreground rounded-none px-4 hover:bg-transparent"
+							<Link
+								to="/account/preferences"
+								disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
 							/>
 						}
 					>
-						<UserAvatar name={user.name} image={user.image} className="size-6" />
-						<div className="grid flex-1 text-left text-sm leading-tight">
-							<span className="truncate font-semibold">{user.name}</span>
-							{/* <span className="truncate text-xs">{user.email}</span> */}
-						</div>
-						<DotsThreeVerticalIcon className="ml-auto size-4" />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent
-						className="w-(--anchor-width) min-w-52 rounded-lg"
-						align="end"
-						side="right"
+						<SettingsIcon />
+						Preferences
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						render={
+							<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled} />
+						}
 					>
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger>
-								<PaletteIcon />
-								<span>Theme</span>
-							</DropdownMenuSubTrigger>
-							<DropdownMenuPortal>
-								<DropdownMenuSubContent>
-									{SYSTEM_THEMES.map((themeName) => (
-										<DropdownMenuItem
-											key={themeName}
-											onClick={() => setTheme(themeName)}
-											className="capitalize"
-										>
-											{mode === themeName && (
-												<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-													<CheckIcon className="size-4" />
-												</span>
-											)}
-											<span className="ms-6">{THEME_LABELS[themeName]}</span>
-										</DropdownMenuItem>
-									))}
-									<DropdownMenuSeparator />
-									{CUSTOM_THEMES.map((themeName) => (
-										<DropdownMenuItem
-											key={themeName}
-											onClick={() => setTheme(themeName)}
-											className="capitalize"
-										>
-											{mode === themeName && (
-												<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-													<CheckIcon className="size-4" />
-												</span>
-											)}
-											<span className="ms-6">{THEME_LABELS[themeName]}</span>
-										</DropdownMenuItem>
-									))}
-								</DropdownMenuSubContent>
-							</DropdownMenuPortal>
-						</DropdownMenuSub>
+						<KeyIcon />
+						Access tokens
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
 
-						<DropdownMenuSeparator />
+				<DropdownMenuSeparator />
 
-						<DropdownMenuGroup>
-							<DropdownMenuItem
-								render={
-									<Link
-										to="/account/preferences"
-										disabled={!KEYBOARD_SHORTCUTS.goto_preferences.enabled}
-									/>
-								}
-							>
-								<SettingsIcon />
-								Preferences
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								render={
-									<Link to="/account/tokens" disabled={!KEYBOARD_SHORTCUTS.goto_tokens.enabled} />
-								}
-							>
-								<KeyIcon />
-								Access tokens
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
+				<DropdownMenuGroup>
+					<DropdownMenuItem
+						render={
+							<a
+								href="https://github.com/quanphm/hoalu"
+								target="_blank"
+								rel="noreferrer"
+								aria-label="Hoalu on GitHub"
+							/>
+						}
+					>
+						<GithubIcon />
+						GitHub
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						render={
+							<a
+								href="https://x.com/quanphmm"
+								target="_blank"
+								rel="noreferrer"
+								aria-label="Quan Pham on X"
+							/>
+						}
+					>
+						<TwitterXIcon />
+						Follow along
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
 
-						<DropdownMenuSeparator />
+				<DropdownMenuSeparator />
 
-						<DropdownMenuItem onClick={() => signOut()}>
-							<SignOutIcon />
-							Log out
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</SidebarMenuItem>
-		</SidebarMenu>
+				<div className="flex items-center justify-between px-2 py-1.5">
+					<span className="text-faint font-mono text-xs leading-none tracking-tight">
+						{import.meta.env.PUBLIC_APP_VERSION}
+					</span>
+					<span className="text-faint text-xs leading-none">HoaLu</span>
+				</div>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuItem onClick={() => signOut()}>
+					<SignOutIcon />
+					Log out
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

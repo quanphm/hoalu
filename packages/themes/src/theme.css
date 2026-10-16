@@ -15,6 +15,7 @@
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
+	--color-faint: var(--faint);
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
 	--color-border: var(--border);
@@ -22,13 +23,13 @@
 	--color-input: var(--input);
 
 	--color-info: var(--info);
-	--color-info-foreground: var(--info-foreground);
 	--color-destructive: var(--destructive);
-	--color-destructive-foreground: var(--destructive-foreground);
 	--color-success: var(--success);
-	--color-success-foreground: var(--success-foreground);
 	--color-warning: var(--warning);
-	--color-warning-foreground: var(--warning-foreground);
+
+	--color-overlay-hover: var(--overlay-hover);
+	--color-overlay-pressed: var(--overlay-pressed);
+	--color-overlay-scrim: var(--overlay-scrim);
 
 	--color-chart-5: var(--chart-5);
 	--color-chart-4: var(--chart-4);
@@ -36,28 +37,31 @@
 	--color-chart-2: var(--chart-2);
 	--color-chart-1: var(--chart-1);
 
-	--color-sidebar-ring: var(--sidebar-ring);
-	--color-sidebar-border: var(--sidebar-border);
-	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-	--color-sidebar-accent: var(--sidebar-accent);
-	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-	--color-sidebar-primary: var(--sidebar-primary);
-	--color-sidebar-foreground: var(--sidebar-foreground);
-	--color-sidebar: var(--sidebar);
-
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
 
-	--shadow-2xs: var(--shadow-2xs);
-	--shadow-xs: var(--shadow-xs);
-	--shadow-sm: var(--shadow-sm);
-	--shadow: var(--shadow);
-	--shadow-md: var(--shadow-md);
-	--shadow-lg: var(--shadow-lg);
-	--shadow-xl: var(--shadow-xl);
-	--shadow-2xl: var(--shadow-2xl);
+	/* Depth. These are this project's vocabulary: prefer `shadow-raised` and
+	   friends in new code, and reach for `shadow-ring` / `shadow-top` when a
+	   hairline has to sit on a pseudo-element. */
+	--shadow-ring: var(--elevation-ring);
+	--shadow-top: var(--elevation-top);
+	--shadow-elements: var(--elevation-elements);
+	--shadow-raised: var(--elevation-raised);
+	--shadow-floating: var(--elevation-floating);
+	--shadow-overlay: var(--elevation-overlay);
+
+	/* Legacy aliases kept so the existing call sites keep working while they
+	   migrate onto the named levels above. Retire these once nothing uses them. */
+	--shadow-2xs: var(--elevation-elements);
+	--shadow-xs: var(--elevation-elements);
+	--shadow-sm: var(--elevation-raised);
+	--shadow: var(--elevation-raised);
+	--shadow-md: var(--elevation-raised);
+	--shadow-lg: var(--elevation-floating);
+	--shadow-xl: var(--elevation-floating);
+	--shadow-2xl: var(--elevation-overlay);
 
 	--tracking-tighter: calc(var(--tracking-normal) - 0.05em);
 	--tracking-tight: calc(var(--tracking-normal) - 0.025em);

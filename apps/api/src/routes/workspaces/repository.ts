@@ -1,8 +1,32 @@
+import { projectBills } from "@hoalu/finance/billing";
 import { monetary } from "@hoalu/finance/monetary";
-import { and, count, eq, gte, sql } from "drizzle-orm";
+import { and, count, eq, gte, isNotNull, lte, sql, sum } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
 import { ExchangeRateRepository } from "#api/routes/exchange-rates/repository.ts";
+
+import type { BillDefinition, Payment } from "@hoalu/finance/billing";
+
+/**
+ * "Today" on the server, in UTC — a request carries no timezone. The dashboard
+ * computes its own local date, which is the surface the user actually reads;
+ * this endpoint exists for non-browser consumers.
+ */
+function todayUtc(): string {
+	return new Date().toISOString().slice(0, 10);
+}
+
+/** `yyyy-MM-dd` from a Date's local calendar components — never shifted through UTC. */
+function dateLabel(date: Date): string {
+	const pad = (value: number) => String(value).padStart(2, "0");
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** A Postgres `numeric` sum arrives as a string; the API speaks minor units. */
+function toMinorUnits(raw: string | null): number {
+	const parsed = Number.parseFloat(raw ?? "0");
+	return Number.isFinite(parsed) ? Math.round(parsed) : 0;
+}
 
 export class WorkspaceRepository {
 	private exchangeRateRepo = new ExchangeRateRepository();
@@ -75,9 +99,201 @@ export class WorkspaceRepository {
 	}
 
 	/**
-	 * Get workspace summary with financial metrics
-	 * Includes: total expenses this/last month, transaction count, active wallets, trend
-	 * All monetary values are converted to the workspace's primary currency
+	 * All-time flow per wallet, grouped by the currency each transaction was
+	 * recorded in.
+	 *
+	 * Grouping by currency rather than converting into the wallet's own keeps the
+	 * figures true to what was entered and skips a per-transaction exchange-rate
+	 * lookup. Active-wallet count rides along so the caller doesn't need a second
+	 * query for it.
+	 */
+	private async getWalletFlow(workspaceId: string) {
+		const [wallets, outflows, inflows] = await Promise.all([
+			db
+				.select({
+					id: schema.wallet.id,
+					name: schema.wallet.name,
+					currency: schema.wallet.currency,
+					isActive: schema.wallet.isActive,
+				})
+				.from(schema.wallet)
+				.where(eq(schema.wallet.workspaceId, workspaceId)),
+			db
+				.select({
+					walletId: schema.expense.walletId,
+					currency: schema.expense.currency,
+					total: sum(schema.expense.amount),
+				})
+				.from(schema.expense)
+				.where(eq(schema.expense.workspaceId, workspaceId))
+				.groupBy(schema.expense.walletId, schema.expense.currency),
+			db
+				.select({
+					walletId: schema.income.walletId,
+					currency: schema.income.currency,
+					total: sum(schema.income.amount),
+				})
+				.from(schema.income)
+				.where(eq(schema.income.workspaceId, workspaceId))
+				.groupBy(schema.income.walletId, schema.income.currency),
+		]);
+
+		const walletsById = new Map(wallets.map((wallet) => [wallet.id, wallet]));
+		const entries = new Map<
+			string,
+			{
+				walletId: string;
+				walletName: string;
+				currency: string;
+				isActive: boolean;
+				inAmount: number;
+				outAmount: number;
+			}
+		>();
+
+		const entryFor = (walletId: string, currency: string) => {
+			const key = `${walletId}|${currency}`;
+			const existing = entries.get(key);
+			if (existing) return existing;
+
+			const wallet = walletsById.get(walletId);
+			const created = {
+				walletId,
+				walletName: wallet?.name ?? "Wallet",
+				currency,
+				isActive: wallet?.isActive ?? true,
+				inAmount: 0,
+				outAmount: 0,
+			};
+			entries.set(key, created);
+			// Every wallet gets a row in its own currency, even with no activity, so a
+			// fund that has never been touched still reads as ₫0 rather than vanishing.
+			if (wallet && wallet.currency !== currency) {
+				entries.set(`${walletId}|${wallet.currency}`, {
+					walletId,
+					walletName: wallet.name,
+					currency: wallet.currency,
+					isActive: wallet.isActive,
+					inAmount: 0,
+					outAmount: 0,
+				});
+			}
+			return created;
+		};
+
+		for (const wallet of wallets) {
+			entryFor(wallet.id, wallet.currency);
+		}
+		for (const row of outflows) {
+			entryFor(row.walletId, row.currency).outAmount += toMinorUnits(row.total);
+		}
+		for (const row of inflows) {
+			entryFor(row.walletId, row.currency).inAmount += toMinorUnits(row.total);
+		}
+
+		const walletNets = [...entries.values()]
+			.map((entry) => ({
+				...entry,
+				netAmount: entry.inAmount - entry.outAmount,
+			}))
+			.sort((a, b) => {
+				const activity = (entry: typeof a) => Math.abs(entry.inAmount) + Math.abs(entry.outAmount);
+				return activity(b) - activity(a) || a.walletName.localeCompare(b.walletName);
+			});
+
+		return {
+			walletNets,
+			activeWalletsCount: wallets.filter((wallet) => wallet.isActive).length,
+		};
+	}
+
+	/**
+	 * Unpaid bill occurrences, projected through the shared `projectBills` module
+	 * so this page and the bills page can never disagree about what is owed.
+	 */
+	private async getBillsDue(workspaceId: string, today: string) {
+		const bills = await db
+			.select({
+				id: schema.recurringBill.id,
+				title: schema.recurringBill.title,
+				amount: schema.recurringBill.amount,
+				currency: schema.recurringBill.currency,
+				repeat: schema.recurringBill.repeat,
+				anchorDate: schema.recurringBill.anchorDate,
+				dueDay: schema.recurringBill.dueDay,
+				dueMonth: schema.recurringBill.dueMonth,
+				createdAt: schema.recurringBill.createdAt,
+			})
+			.from(schema.recurringBill)
+			.where(
+				and(
+					eq(schema.recurringBill.workspaceId, workspaceId),
+					eq(schema.recurringBill.isActive, true),
+				),
+			);
+
+		const payments = await db
+			.select({
+				expenseId: schema.expense.id,
+				billId: schema.expense.recurringBillId,
+				date: schema.expense.date,
+			})
+			.from(schema.expense)
+			.where(
+				and(eq(schema.expense.workspaceId, workspaceId), isNotNull(schema.expense.recurringBillId)),
+			);
+
+		const definitions: BillDefinition[] = bills.map((bill) => ({
+			id: bill.id,
+			repeat: bill.repeat,
+			anchorDate: bill.anchorDate,
+			dueDay: bill.dueDay,
+			dueMonth: bill.dueMonth,
+			startsOn: bill.createdAt.slice(0, 10),
+		}));
+
+		const paymentRows: Payment[] = payments
+			.filter((payment): payment is typeof payment & { billId: string } => payment.billId !== null)
+			.map((payment) => ({
+				billId: payment.billId,
+				expenseId: payment.expenseId,
+				date: payment.date.slice(0, 10),
+			}));
+
+		const projection = projectBills({ bills: definitions, payments: paymentRows, today });
+		const billsById = new Map(bills.map((bill) => [bill.id, bill]));
+
+		// An overdue bill outranks anything in the future: the soonest due date among
+		// everything unpaid is what the home page should surface first.
+		const nextOccurrence = [...projection.overdue, ...projection.today, ...projection.upcoming]
+			.slice()
+			.sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+		const nextBill = nextOccurrence ? billsById.get(nextOccurrence.billId) : undefined;
+
+		return {
+			overdue: projection.overdue.length,
+			dueToday: projection.today.length,
+			upcoming: projection.upcoming.length,
+			next:
+				nextOccurrence && nextBill
+					? {
+							title: nextBill.title,
+							dueDate: nextOccurrence.dueDate,
+							amount: monetary.fromRealAmount(Number(nextBill.amount), nextBill.currency),
+							currency: nextBill.currency,
+						}
+					: null,
+			unsupported: projection.unsupported,
+		};
+	}
+
+	/**
+	 * Get workspace summary for the home page.
+	 *
+	 * Leads with what the workspace *is*: the wallets' all-time flow, what bills
+	 * are unpaid, and how this month's spend compares like-for-like with the same
+	 * stretch of last month. Month-to-date expense and income totals were removed —
+	 * unanchored, they answered nothing.
 	 */
 	async getWorkspaceSummary(param: { workspaceId: string; userId: string }) {
 		// Verify user has access to workspace
@@ -93,19 +309,31 @@ export class WorkspaceRepository {
 		if (!workspaceData) return null;
 
 		const workspace = workspaceData.workspace;
+		const today = todayUtc();
 
 		// STEP 1: Determine primary currency FIRST (most important!)
 		const primaryCurrency = await this.getPrimaryCurrency(param.workspaceId);
 
-		// Calculate date ranges
+		// STEP 2: Compare the same stretch of each month. `now` is mid-month for most
+		// reads, so a complete previous month would make every comparison flatter
+		// than reality.
 		const now = new Date();
-		const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-		const thisMonthEnd = now;
-		const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-		const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+		const currentWindowStart = new Date(now.getFullYear(), now.getMonth(), 1);
+		const previousWindowStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+		const previousMonthLastDay = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+		const sameStretchEnd = new Date(
+			now.getFullYear(),
+			now.getMonth() - 1,
+			now.getDate(),
+			23,
+			59,
+			59,
+			999,
+		);
+		const previousWindowEnd =
+			sameStretchEnd > previousMonthLastDay ? previousMonthLastDay : sameStretchEnd;
 
-		// STEP 2: Fetch expenses and income for this month
-		const [thisMonthExpenses, thisMonthIncome] = await Promise.all([
+		const [currentMonthExpenses, previousStretchExpenses] = await Promise.all([
 			db
 				.select({
 					amount: schema.expense.amount,
@@ -116,26 +344,9 @@ export class WorkspaceRepository {
 				.where(
 					and(
 						eq(schema.expense.workspaceId, param.workspaceId),
-						gte(schema.expense.date, thisMonthStart.toISOString()),
+						gte(schema.expense.date, currentWindowStart.toISOString()),
 					),
 				),
-			db
-				.select({
-					amount: schema.income.amount,
-					currency: schema.income.currency,
-					date: schema.income.date,
-				})
-				.from(schema.income)
-				.where(
-					and(
-						eq(schema.income.workspaceId, param.workspaceId),
-						gte(schema.income.date, thisMonthStart.toISOString()),
-					),
-				),
-		]);
-
-		// STEP 3: Fetch expenses and income for last month
-		const [lastMonthExpenses, lastMonthIncome] = await Promise.all([
 			db
 				.select({
 					amount: schema.expense.amount,
@@ -146,46 +357,23 @@ export class WorkspaceRepository {
 				.where(
 					and(
 						eq(schema.expense.workspaceId, param.workspaceId),
-						gte(schema.expense.date, lastMonthStart.toISOString()),
-						sql`${schema.expense.date} < ${lastMonthEnd.toISOString()}`,
-					),
-				),
-			db
-				.select({
-					amount: schema.income.amount,
-					currency: schema.income.currency,
-					date: schema.income.date,
-				})
-				.from(schema.income)
-				.where(
-					and(
-						eq(schema.income.workspaceId, param.workspaceId),
-						gte(schema.income.date, lastMonthStart.toISOString()),
-						sql`${schema.income.date} < ${lastMonthEnd.toISOString()}`,
+						gte(schema.expense.date, previousWindowStart.toISOString()),
+						lte(schema.expense.date, previousWindowEnd.toISOString()),
 					),
 				),
 		]);
 
-		// STEP 4: Convert and sum all four buckets
-		const [
-			totalExpensesThisMonth,
-			totalExpensesLastMonth,
-			totalIncomeThisMonth,
-			totalIncomeLastMonth,
-		] = await Promise.all([
-			this.convertAndSum(thisMonthExpenses, primaryCurrency, thisMonthEnd.toISOString()),
-			this.convertAndSum(lastMonthExpenses, primaryCurrency, lastMonthEnd.toISOString()),
-			this.convertAndSum(thisMonthIncome, primaryCurrency, thisMonthEnd.toISOString()),
-			this.convertAndSum(lastMonthIncome, primaryCurrency, lastMonthEnd.toISOString()),
-		]);
-
-		// Get active wallets count
-		const [walletsData] = await db
-			.select({ count: count() })
-			.from(schema.wallet)
-			.where(
-				and(eq(schema.wallet.workspaceId, param.workspaceId), eq(schema.wallet.isActive, true)),
-			);
+		const [currentAmount, previousAmount, { walletNets, activeWalletsCount }, bills] =
+			await Promise.all([
+				this.convertAndSum(currentMonthExpenses, primaryCurrency, now.toISOString()),
+				this.convertAndSum(
+					previousStretchExpenses,
+					primaryCurrency,
+					previousWindowEnd.toISOString(),
+				),
+				this.getWalletFlow(param.workspaceId),
+				this.getBillsDue(param.workspaceId, today),
+			]);
 
 		// Last activity across both expenses and income
 		const [lastExpense, lastIncome] = await Promise.all([
@@ -212,28 +400,35 @@ export class WorkspaceRepository {
 					: incomeDate
 				: (expenseDate ?? incomeDate);
 
-		// Calculate trend percentage based on expenses
-		let trendPercentage = 0;
-		if (totalExpensesLastMonth > 0) {
-			trendPercentage =
-				((totalExpensesThisMonth - totalExpensesLastMonth) / totalExpensesLastMonth) * 100;
-		} else if (totalExpensesThisMonth > 0) {
-			trendPercentage = 100;
-		}
+		// No spend last month is not a 100% rise; it is nothing to compare against.
+		const changePercentage =
+			previousAmount > 0
+				? Math.round(((currentAmount - previousAmount) / previousAmount) * 10_000) / 100
+				: null;
 
 		return {
 			id: workspace.id,
 			slug: workspace.slug,
 			name: workspace.name,
 			logo: workspace.logo,
-			totalExpensesThisMonth,
-			totalExpensesLastMonth,
-			totalIncomeThisMonth,
-			totalIncomeLastMonth,
-			activeWalletsCount: walletsData.count,
-			trendPercentage: Math.round(trendPercentage * 100) / 100,
-			lastActivityAt,
 			primaryCurrency,
+			activeWalletsCount,
+			lastActivityAt,
+			spend: {
+				currentWindow: {
+					from: dateLabel(currentWindowStart),
+					to: dateLabel(now),
+				},
+				previousWindow: {
+					from: dateLabel(previousWindowStart),
+					to: dateLabel(previousWindowEnd),
+				},
+				currentAmount,
+				previousAmount,
+				changePercentage,
+			},
+			walletNets,
+			bills,
 		};
 	}
 

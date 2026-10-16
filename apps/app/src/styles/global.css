@@ -20,11 +20,11 @@
 
 @layer base {
 	::-webkit-scrollbar-track {
-		background: transparent;
+		background: var(--scrollbar-track);
 	}
 	* {
 		scrollbar-width: thin;
-		scrollbar-color: var(--border) transparent;
+		scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 	}
 
 	body {

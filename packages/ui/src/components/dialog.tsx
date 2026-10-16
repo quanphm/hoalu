@@ -42,7 +42,7 @@ function DialogBackdrop({ className, ...props }: DialogPrimitive.Backdrop.Props)
 	return (
 		<DialogPrimitive.Backdrop
 			className={cn(
-				"fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 ease-out data-ending-style:opacity-0 data-starting-style:opacity-0",
+				"bg-overlay-scrim fixed inset-0 z-50 backdrop-blur-xs transition-opacity duration-200 ease-out data-ending-style:opacity-0 data-starting-style:opacity-0",
 				className,
 			)}
 			data-slot="dialog-backdrop"
@@ -63,8 +63,8 @@ function DialogPopup({
 		<DialogPrimitive.Popup
 			data-slot="dialog-popup"
 			className={cn(
-				"bg-background relative z-50 row-start-2 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border p-6 shadow-lg transition-[scale,opacity] duration-200 ease-out data-closed:duration-150 data-ending-style:scale-[0.95] data-ending-style:opacity-0 data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] data-starting-style:scale-[0.95] data-starting-style:opacity-0 sm:max-w-lg dark:outline-gray-300",
-				"data-nested-dialog-open:after:bg-black/20 data-nested-dialog-open:after:backdrop-blur-xs sm:scale-[calc(1-0.1*var(--nested-dialogs))]",
+				"bg-popover text-popover-foreground shadow-overlay relative z-50 row-start-2 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg p-6 transition-[scale,opacity] duration-200 ease-out data-closed:duration-150 data-ending-style:scale-[0.95] data-ending-style:opacity-0 data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] data-starting-style:scale-[0.95] data-starting-style:opacity-0 sm:max-w-lg",
+				"data-nested-dialog-open:after:bg-overlay-scrim/33 data-nested-dialog-open:after:backdrop-blur-xs sm:scale-[calc(1-0.1*var(--nested-dialogs))]",
 				className,
 			)}
 			{...props}

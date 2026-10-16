@@ -2,9 +2,9 @@ import { WarningIcon } from "@hoalu/icons/phosphor";
 
 export function WarningMessage({ children }: { children: React.ReactNode }) {
 	return (
-		<span className="rounded-lg border border-amber-700 p-4 text-sm text-amber-600">
+		<span className="border-warning/30 bg-warning/8 text-warning rounded-lg border p-4 text-sm">
 			<WarningIcon
-				className="-mt-0.5 mr-2 inline-flex size-4 text-amber-600"
+				className="text-warning -mt-0.5 mr-2 inline-flex size-4"
 				strokeWidth={2}
 				aria-hidden="true"
 			/>

@@ -19,6 +19,15 @@ export const WorkspaceMetadataFormSchema = z.object({
 });
 export type WorkspaceMetadataFormSchema = z.infer<typeof WorkspaceMetadataFormSchema>;
 
+/**
+ * One workspace's home-page summary, inferred from the BFF route so the ledger
+ * cannot drift from what `GET /workspaces/summaries` actually returns.
+ */
+export type WorkspaceSummarySchema = InferResponseType<
+	typeof honoClient.bff.workspaces.summaries.$get,
+	200
+>["data"][number];
+
 export const InviteFormSchema = z.object({
 	email: z.email(),
 });

@@ -1,16 +1,15 @@
 import { RobotIcon } from "@hoalu/icons/phosphor";
-import { SidebarMenuButton } from "@hoalu/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 
 export function AppLogo() {
 	return (
-		<SidebarMenuButton size="lg" variant="outline" render={<Link to="/" />}>
-			<div className="flex aspect-square size-8 items-center justify-center">
-				<RobotIcon className="size-8" />
-			</div>
-			<div className="grid flex-1 text-left text-sm leading-tight">
-				<span className="truncate font-semibold">HoaLu.app</span>
-			</div>
-		</SidebarMenuButton>
+		<Link
+			to="/"
+			aria-label="Hoalu home"
+			className="hover:bg-overlay-hover flex items-center gap-2 rounded-lg px-2 py-1 transition-colors"
+		>
+			<RobotIcon className="size-5" aria-hidden="true" />
+			<span className="hidden text-sm font-semibold sm:inline">HoaLu.app</span>
+		</Link>
 	);
 }

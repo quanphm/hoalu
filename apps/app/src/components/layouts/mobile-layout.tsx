@@ -1,29 +1,13 @@
-import {
-	ArrowsLeftRightIcon,
-	CheckIcon,
-	CaretUpDownIcon,
-	PaletteIcon,
-	MagnifyingGlassIcon,
-	SquaresFourIcon,
-} from "@hoalu/icons/phosphor";
+import { ArrowsLeftRightIcon, MagnifyingGlassIcon, SquaresFourIcon } from "@hoalu/icons/phosphor";
 import { SettingsIcon } from "@hoalu/icons/tabler";
-import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 import { commandPaletteOpen$ } from "#app/atoms/index.ts";
 import { ButtonLink } from "#app/components/button-link.tsx";
-import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
+import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface LayoutProps {
@@ -46,12 +30,9 @@ export function MobileLayout({ children }: LayoutProps) {
 }
 
 function MobileHeader() {
-	const params = useParams({ strict: false });
-	const { mode, setTheme } = useTheme();
-
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
+	const params = useParams({ strict: false });
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
-	const handleWorkspaceSwitcher = () => {};
 
 	if (!currentWorkspace) {
 		return null;
@@ -60,80 +41,15 @@ function MobileHeader() {
 	return (
 		<header className="bg-background border-b pt-[env(safe-area-inset-top)]">
 			<div className="flex min-h-14 items-center justify-between px-2 md:px-4">
-				<div className="flex items-center gap-2">
-					<Button
-						variant="outline"
-						onClick={handleWorkspaceSwitcher}
-						aria-label="Switch workspace"
-						className="flex items-center gap-2 px-2 py-1.5"
-					>
-						<Avatar className="size-6">
-							<AvatarFallback className="text-xs">
-								{currentWorkspace.name.charAt(0).toUpperCase()}
-							</AvatarFallback>
-						</Avatar>
-						<span className="font-medium">{currentWorkspace.name}</span>
-						<CaretUpDownIcon className="text-muted-foreground h-3 w-3" aria-hidden="true" />
-					</Button>
-				</div>
-				<div className="flex items-center gap-2">
-					<Button
-						variant="outline"
-						size="icon-lg"
-						aria-label="Search"
-						onClick={() => commandPaletteOpen$.set(true)}
-					>
-						<MagnifyingGlassIcon />
-					</Button>
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={<Button variant="outline" size="icon-lg" aria-label="Select theme" />}
-						>
-							<PaletteIcon />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" role="menu">
-							{SYSTEM_THEMES.map((themeName) => {
-								const isSelected = mode === themeName;
-								return (
-									<DropdownMenuItem
-										key={themeName}
-										onClick={() => setTheme(themeName)}
-										className="capitalize"
-										role="menuitemradio"
-										aria-checked={isSelected}
-									>
-										{isSelected && (
-											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-												<CheckIcon className="size-4" aria-hidden="true" />
-											</span>
-										)}
-										<span className="ms-6">{THEME_LABELS[themeName]}</span>
-									</DropdownMenuItem>
-								);
-							})}
-							<DropdownMenuSeparator />
-							{CUSTOM_THEMES.map((themeName) => {
-								const isSelected = mode === themeName;
-								return (
-									<DropdownMenuItem
-										key={themeName}
-										onClick={() => setTheme(themeName)}
-										className="capitalize"
-										role="menuitemradio"
-										aria-checked={isSelected}
-									>
-										{isSelected && (
-											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-												<CheckIcon className="size-4" aria-hidden="true" />
-											</span>
-										)}
-										<span className="ms-6">{THEME_LABELS[themeName]}</span>
-									</DropdownMenuItem>
-								);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
+				<WorkspaceSwitcher selectedWorkspace={currentWorkspace} />
+				<Button
+					variant="outline"
+					size="icon-lg"
+					aria-label="Search"
+					onClick={() => commandPaletteOpen$.set(true)}
+				>
+					<MagnifyingGlassIcon />
+				</Button>
 			</div>
 		</header>
 	);
@@ -149,7 +65,7 @@ function MobileBottomNav() {
 	);
 
 	const activeNavItemClass = cn(
-		"bg-muted text-foreground",
+		"bg-overlay-hover text-foreground",
 		"before:bg-primary before:absolute before:top-0 before:left-1/2 before:h-0.5 before:w-12 before:-translate-x-1/2 before:rounded-full",
 	);
 

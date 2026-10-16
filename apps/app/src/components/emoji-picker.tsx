@@ -19,18 +19,18 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 			</PopoverTrigger>
 			<PopoverContent className="w-fit overflow-auto p-0" align="start">
 				<Frimousse.Root
-					className="isolate flex h-[326px] w-fit flex-col bg-white dark:bg-neutral-900"
+					className="bg-popover isolate flex h-[326px] w-fit flex-col"
 					onEmojiSelect={({ emoji }) => {
 						props.onEmojiSelect?.(emoji);
 						setIsOpen(false);
 					}}
 				>
-					<Frimousse.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-neutral-100 px-2.5 py-2 text-sm dark:bg-neutral-800" />
+					<Frimousse.Search className="bg-muted z-10 mx-2 mt-2 appearance-none rounded-md px-2.5 py-2 text-sm" />
 					<Frimousse.Viewport className="relative flex-1 outline-hidden">
-						<Frimousse.Loading className="absolute inset-0 flex items-center justify-center text-sm text-neutral-400 dark:text-neutral-500">
+						<Frimousse.Loading className="text-faint absolute inset-0 flex items-center justify-center text-sm">
 							Loading…
 						</Frimousse.Loading>
-						<Frimousse.Empty className="absolute inset-0 flex items-center justify-center text-sm text-neutral-400 dark:text-neutral-500">
+						<Frimousse.Empty className="text-faint absolute inset-0 flex items-center justify-center text-sm">
 							No emoji found.
 						</Frimousse.Empty>
 						<Frimousse.List
@@ -51,7 +51,7 @@ export function EmojiPicker(props: { onEmojiSelect?(emoji: string): void }) {
 function CategoryHeader({ category, ...props }: EmojiPickerListCategoryHeaderProps) {
 	return (
 		<div
-			className="bg-white px-3 pt-3 pb-1.5 text-xs font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400"
+			className="bg-popover text-muted-foreground px-3 pt-3 pb-1.5 text-xs font-medium"
 			{...props}
 		>
 			{category.label}

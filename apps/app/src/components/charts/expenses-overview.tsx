@@ -14,6 +14,7 @@ import { chartCategoryFilter$, setSyncedDateRange } from "#app/atoms/filters.ts"
 import { redactedAmount$ } from "#app/atoms/redacted.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
+import { createChartColor } from "#app/helpers/colors.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { seriesForRange, type DashboardModel } from "#app/services/dashboard-model.ts";
@@ -65,23 +66,10 @@ function ClippedBarShape(props: Record<string, unknown>) {
 }
 
 /**
- * Map category ColorSchema values to hex colors for Recharts fill.
- * Uses vibrant colors matching createChartColor() for visual consistency.
- * Dark mode uses lighter shades (400) for better visibility on dark backgrounds.
+ * Category fills for Recharts come from the same ramp step as the legend
+ * swatches (`createChartColor`), so a category cannot be one colour in the
+ * donut and another in the bar chart.
  */
-const CATEGORY_COLOR_HEX: Record<ColorSchema, string> = {
-	red: "#f87171", // red-400
-	green: "#34d399", // emerald-400
-	teal: "#2dd4bf", // teal-400
-	blue: "#60a5fa", // blue-400
-	yellow: "#fcd34d", // amber-300
-	orange: "#fb923c", // orange-400
-	purple: "#a78bfa", // violet-400
-	pink: "#f472b6", // pink-400
-	gray: "#64748b", // slate-500
-	stone: "#78716c", // stone-500
-};
-
 const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface ExpenseOverviewProps {
@@ -320,8 +308,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const getCategoryColor = (catId: string) => {
 		const info = model.categories.infoMap[catId];
-		if (!info) return CATEGORY_COLOR_HEX.gray;
-		return CATEGORY_COLOR_HEX[info.color as ColorSchema] ?? CATEGORY_COLOR_HEX.gray;
+		if (!info) return createChartColor("gray");
+		return createChartColor(info.color as ColorSchema);
 	};
 
 	const getCategoryName = (catId: string) => {
@@ -416,7 +404,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 					>
 						{(status === "idle" || status === "error") && <CameraIcon />}
 						{status === "pending" && <CircleNotchIcon className="animate-spin" />}{" "}
-						{status === "success" && <CheckIcon className="text-green-600" />}{" "}
+						{status === "success" && <CheckIcon className="text-success" />}{" "}
 					</Button>
 				</CardAction>
 			</CardHeader>

@@ -19,7 +19,7 @@ export function HighlightedText({ text, ranges }: { text: string; ranges: number
 
 		// Matched text
 		parts.push(
-			<mark key={i} className="rounded-xs bg-yellow-400/30 text-inherit">
+			<mark key={i} className="bg-warning/24 rounded-xs text-inherit">
 				{text.slice(start, end)}
 			</mark>,
 		);

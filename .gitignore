@@ -6,12 +6,10 @@ dev-dist
 out
 pg-data
 .output
-.wrangler
-.dev.vars
 .turbo
-.next
 .tanstack
 .react-email
+.DS_Store
 
 npm-debug.log*
 .pnpm-debug.log*
@@ -22,9 +20,8 @@ npm-debug.log*
 !.env.template
 !.env.example
 
-.DS_Store
-*.pem
 .playwright-mcp
 .playwright-cli
-.impeccable/config.local.json
-.impeccable/**/*.png
+
+.impeccable
+!.impeccable/config.json

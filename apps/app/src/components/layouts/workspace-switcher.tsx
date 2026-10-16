@@ -1,5 +1,5 @@
-import { CheckIcon, CaretDownIcon, PlusIcon } from "@hoalu/icons/phosphor";
-import { HouseIcon } from "@hoalu/icons/phosphor";
+import { CaretUpDownIcon, CheckIcon, HouseIcon, PlusIcon } from "@hoalu/icons/phosphor";
+import { Button } from "@hoalu/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -9,7 +9,6 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { ScrollArea } from "@hoalu/ui/scroll-area";
-import { SidebarMenuButton } from "@hoalu/ui/sidebar";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
@@ -34,15 +33,15 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				render={<SidebarMenuButton size="lg" className="border-border bg-input/32" />}
-			>
-				<S3WorkspaceLogo {...selectedWorkspace} />
-				<div className="grid flex-1 text-left text-sm leading-tight">
-					<span className="truncate font-semibold">{selectedWorkspace.name}</span>
-				</div>
-				<CaretDownIcon className="ml-auto" />
-			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="right" sideOffset={4}>
+				render={
+					<Button variant="ghost" className="gap-2 border-transparent font-semibold">
+						<S3WorkspaceLogo {...selectedWorkspace} size="sm" />
+						<span className="max-w-40 truncate">{selectedWorkspace.name}</span>
+						<CaretUpDownIcon className="text-faint" />
+					</Button>
+				}
+			/>
+			<DropdownMenuContent className="w-(--anchor-width) rounded-lg" side="bottom" sideOffset={6}>
 				<DropdownMenuItem className="gap-2 p-2" render={<Link to="/" />}>
 					<HouseIcon />
 					Home
@@ -51,9 +50,6 @@ export function WorkspaceSwitcher({ selectedWorkspace }: Props) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuGroup>
-					{/* <DropdownMenuGroupLabel className="text-muted-foreground/60 text-xs">
-						Workspaces
-					</DropdownMenuGroupLabel> */}
 					<ScrollArea className="max-h-72">
 						{workspaces.map((ws) => (
 							<DropdownMenuItem

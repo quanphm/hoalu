@@ -60,7 +60,7 @@ export function EventDetailPanel({
 	const clampedProgress = Math.min(progress, 100);
 
 	return (
-		<div className="flex h-[calc(100vh-94px)] flex-col overflow-auto">
+		<div className="flex h-[calc(100vh-var(--app-chrome)-93px)] flex-col overflow-auto">
 			{/* Navigation header */}
 			<div className="bg-card sticky top-0 z-10 flex justify-between border-b px-4 py-2">
 				<div className="flex items-center gap-2">
@@ -208,11 +208,7 @@ export function EventDetailPanel({
 						<ProgressTrack className="h-2 flex-1">
 							<ProgressIndicator
 								className={cn(
-									progress >= 100
-										? "bg-destructive"
-										: progress >= 80
-											? "bg-orange-400 dark:bg-orange-500"
-											: "bg-emerald-500 dark:bg-emerald-400",
+									progress >= 100 ? "bg-destructive" : progress >= 80 ? "bg-warning" : "bg-success",
 								)}
 							/>
 						</ProgressTrack>
@@ -222,7 +218,7 @@ export function EventDetailPanel({
 								progress >= 100
 									? "text-destructive"
 									: progress >= 80
-										? "text-orange-500 dark:text-orange-400"
+										? "text-warning"
 										: "text-muted-foreground",
 							)}
 						>

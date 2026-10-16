@@ -19,7 +19,7 @@ export function ColumnResizer({ header }: { header: Header<DataTableFeatures, an
 			}}
 			className={cn(
 				"bg-border group-hover:bg-border absolute top-0 right-0 h-full w-px cursor-col-resize group-hover:w-2",
-				header.column.getIsResizing() && "w-2 bg-blue-700 group-hover:bg-blue-700",
+				header.column.getIsResizing() && "bg-primary group-hover:bg-primary",
 			)}
 		/>
 	);

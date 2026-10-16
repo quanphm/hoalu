@@ -195,10 +195,8 @@ function ChartCategoryFilter({ categories }: { categories: SyncedCategory[] }) {
 										{isSelected && <CheckIcon className="size-3" />}
 									</div>
 									<div
-										className={cn(
-											"size-2.5 shrink-0 rounded-full",
-											createChartColor(category.color),
-										)}
+										className="size-2.5 shrink-0 rounded-full"
+										style={{ backgroundColor: createChartColor(category.color) }}
 									/>
 									<span className="truncate">{category.name}</span>
 								</button>

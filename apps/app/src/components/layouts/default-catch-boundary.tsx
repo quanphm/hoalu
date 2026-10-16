@@ -27,21 +27,21 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 					onClick={() => {
 						router.invalidate();
 					}}
-					className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+					className="bg-muted text-foreground rounded-sm px-2 py-1 font-extrabold uppercase"
 				>
 					Try Again
 				</button>
 				{isRoot ? (
 					<Link
 						to="/"
-						className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+						className="bg-muted text-foreground rounded-sm px-2 py-1 font-extrabold uppercase"
 					>
 						Home
 					</Link>
 				) : (
 					<Link
 						to="/"
-						className="rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700"
+						className="bg-muted text-foreground rounded-sm px-2 py-1 font-extrabold uppercase"
 						onClick={onGoBackClick}
 					>
 						Go Back

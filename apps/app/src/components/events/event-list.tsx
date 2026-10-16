@@ -47,8 +47,8 @@ function EventContent(event: SyncedEvent) {
 			: progress >= 100
 				? "bg-destructive"
 				: progress >= 80
-					? "bg-orange-400 dark:bg-orange-500"
-					: "bg-emerald-500 dark:bg-emerald-400";
+					? "bg-warning"
+					: "bg-success";
 
 	const progressTextColor =
 		progress == null
@@ -56,7 +56,7 @@ function EventContent(event: SyncedEvent) {
 			: progress >= 100
 				? "text-destructive"
 				: progress >= 80
-					? "text-orange-500 dark:text-orange-400"
+					? "text-warning"
 					: "text-muted-foreground";
 
 	return (

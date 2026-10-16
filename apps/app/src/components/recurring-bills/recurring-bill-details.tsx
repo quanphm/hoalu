@@ -127,7 +127,7 @@ export function RecurringBillDetailPanel({
 	return (
 		<div
 			data-slot="recurring-bill-details"
-			className="bg-card text-card-foreground h-[calc(100vh-94px)] overflow-auto"
+			className="bg-card text-card-foreground h-[calc(100vh-var(--app-chrome)-93px)] overflow-auto"
 		>
 			<EditRecurringBillForm key={bill.id} bill={bill} headerActions={headerActions} />
 		</div>

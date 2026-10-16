@@ -1,5 +1,3 @@
-import { datetime } from "@hoalu/datetime/datetime";
-import { ArrowRightIcon } from "@hoalu/icons/phosphor";
 import {
 	Card,
 	CardAction,
@@ -9,10 +7,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@hoalu/ui/card";
-import { cn } from "@hoalu/ui/utils";
-
-import { CurrencyValue } from "./currency-value";
-import { WorkspaceLogo } from "./workspace";
 
 interface BasicCardProps extends Omit<React.ComponentProps<"div">, "title" | "content"> {
 	title?: React.ReactNode;
@@ -42,79 +36,6 @@ export function ContentCard({
 			)}
 			{content && <CardContent>{content}</CardContent>}
 			{footer && <CardFooter>{footer}</CardFooter>}
-		</Card>
-	);
-}
-
-function formatLastActive(dateStr: string) {
-	const date = new Date(dateStr);
-	const isToday = date.toDateString() === new Date().toDateString();
-	return isToday ? `Today, ${datetime.format(date, "HH:mm")}` : datetime.format(date, "d MMM yyyy");
-}
-
-interface WorkspaceCardProps {
-	id: string;
-	name: string;
-	slug: string;
-	createdAt: Date;
-	publicId: string;
-	logo?: string | null | undefined;
-	summary?: {
-		totalExpensesThisMonth: number;
-		totalIncomeThisMonth: number;
-		activeWalletsCount: number;
-		primaryCurrency: string;
-		lastActivityAt: string | null;
-	};
-}
-
-export function WorkspaceCard(props: WorkspaceCardProps) {
-	const { summary } = props;
-
-	const lastActive = summary?.lastActivityAt
-		? formatLastActive(summary.lastActivityAt)
-		: datetime.format(props.createdAt, "d MMM yyyy");
-
-	return (
-		<Card className="gap-0 rounded-md py-3 pb-0">
-			<CardHeader className="pb-2.5">
-				<CardTitle className="flex items-center gap-3 text-base font-semibold">
-					<WorkspaceLogo logo={null} name={props.name} />
-					{props.name}
-				</CardTitle>
-			</CardHeader>
-			<div className="border-border border-t" />
-			{summary && (
-				<CardContent className={cn("grid grid-cols-2 py-2.5 *:last:pl-4")}>
-					<div>
-						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
-							Expenses • MTD
-						</p>
-						<CurrencyValue
-							style="currency"
-							value={summary.totalExpensesThisMonth}
-							currency={summary.primaryCurrency}
-							className="text-lg font-medium"
-						/>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
-							Income • MTD
-						</p>
-						<CurrencyValue
-							style="currency"
-							value={summary.totalIncomeThisMonth}
-							currency={summary.primaryCurrency}
-							className="text-lg font-medium"
-						/>
-					</div>
-				</CardContent>
-			)}
-			<CardFooter className="bg-muted flex items-center justify-between py-2.5">
-				<p className="text-muted-foreground text-xs">
-					Last activity <span className="text-foreground ml-1">{lastActive}</span>
-				</p>
-			</CardFooter>
 		</Card>
 	);
 }

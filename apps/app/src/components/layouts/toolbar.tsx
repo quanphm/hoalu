@@ -5,7 +5,7 @@ function Toolbar({ className, ...props }: React.ComponentPropsWithRef<"div">) {
 		<div
 			data-slot="toolbar"
 			className={cn(
-				"bg-card relative flex min-h-7 w-full flex-col items-start justify-between gap-3 overflow-scroll border-b px-4 py-2.5 md:flex-row md:items-center",
+				"relative flex min-h-7 w-full flex-col items-start justify-between gap-3 overflow-scroll px-4 py-2.5 md:flex-row md:items-center md:px-6",
 				className,
 			)}
 			{...props}

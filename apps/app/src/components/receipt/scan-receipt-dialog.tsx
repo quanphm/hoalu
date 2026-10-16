@@ -17,7 +17,7 @@ export function ScanReceiptDialogTrigger(props: ButtonProps) {
 
 	return (
 		<Button size="sm" variant="outline" {...props} onClick={() => setScanDialog({ state: true })}>
-			<ScanIcon className="size-3.5 text-yellow-500" />
+			<ScanIcon className="text-warning size-3.5" />
 			Scan receipt
 		</Button>
 	);

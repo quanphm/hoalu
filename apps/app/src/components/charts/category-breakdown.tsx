@@ -7,7 +7,6 @@ import {
 	ChartTooltipContent,
 } from "@hoalu/ui/chart";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
-import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 import { Pie, PieChart } from "recharts";
@@ -119,7 +118,10 @@ function CategoryListBreakdown(props: {
 				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
 				return (
 					<div key={data.id} className="flex items-center gap-3 py-2.5">
-						<div className={cn("size-3 shrink-0 rounded-[4px]", createChartColor(data.color))} />
+						<div
+							className="size-3 shrink-0 rounded-[4px]"
+							style={{ backgroundColor: createChartColor(data.color) }}
+						/>
 						<Button
 							variant="link"
 							onClick={() => handleClick(data.id)}

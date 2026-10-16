@@ -74,7 +74,15 @@ When the hierarchy holds, hand off to `$impeccable polish`.
 Every variant declares a coarse `scale` parameter and authors its type ramp against `var(--p-scale, 1)`.
 
 ```json
-{"id":"scale","kind":"range","min":0.85,"max":1.3,"step":0.05,"default":1,"label":"Scale"}
+{
+	"id": "scale",
+	"kind": "range",
+	"min": 0.85,
+	"max": 1.3,
+	"step": 0.05,
+	"default": 1,
+	"label": "Scale"
+}
 ```
 
 Add at most one pairing or weight parameter when it represents a real system choice. Follow [live.md](live.md)'s parameter contract.

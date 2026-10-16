@@ -1,0 +1,277 @@
+/**
+ * OC-2 — the one theme.
+ *
+ * Ported from OpenCode's OC-2 token system (`packages/ui/src/theme/v2/mapping.ts`
+ * and `v2/styles/colors.css`). Block A below is copied byte-for-byte from
+ * upstream so an upstream update is a re-copy rather than a translation; block B
+ * maps those primitives onto Hoalu's own semantic token names, which stay the
+ * component-facing API (`bg-card`, `border`, `text-muted-foreground`).
+ *
+ * Dark only. There is no light variant and nothing resolves at runtime, so every
+ * token lives on `:root` and `.dark` on `<html>` only exists to keep the handful
+ * of `dark:` utilities in `packages/ui` meaningful.
+ *
+ * Three rules carry the look, and they are the reason this reads as one world
+ * rather than a set of colours:
+ *
+ *   1. One hue-free neutral ramp, one accent. `--primary` (blue-600) appears on
+ *      toggles, active states and focus rings; `--success` on progress bars.
+ *      Nothing else is saturated.
+ *   2. Depth is not blur. A hairline drawn as a shadow (`--elevation-ring`), a
+ *      top-edge catchlight (`--elevation-top`), and dark ambient shadow. See
+ *      `:root` block B.
+ *   3. Hover and press are percentage overlays of white, not colour-mixed
+ *      backgrounds — so one token reads correctly on every surface.
+ *
+ * Surfaces ascend in lightness as they come forward in dark: `--background`
+ * (grey-1100, the recessed shell) → `--card` (grey-1000, the content surface) →
+ * `--muted` / `--secondary` / `--accent` (grey-900 / grey-800, wells and raised
+ * or interactive fills).
+ */
+:root {
+	/* ── Block A: OC-2 primitives, unmodified ──────────────────────────── */
+
+	/* Grey — the only neutral ramp, deliberately hue-free */
+	--oc2-grey-50: #ffffff;
+	--oc2-grey-100: #fafafa;
+	--oc2-grey-200: #f2f2f2;
+	--oc2-grey-300: #eeeeee;
+	--oc2-grey-400: #dbdbdb;
+	--oc2-grey-500: #aeaeae;
+	--oc2-grey-600: #808080;
+	--oc2-grey-700: #5c5c5c;
+	--oc2-grey-800: #3a3a3a;
+	--oc2-grey-900: #2e2e2e;
+	--oc2-grey-1000: #242424;
+	--oc2-grey-1100: #161616;
+	--oc2-grey-1200: #080808;
+
+	/* Alpha ramps — the substrate for borders, overlays and every shadow */
+	--oc2-alpha-dark-0: #00000000;
+	--oc2-alpha-dark-2: #00000005;
+	--oc2-alpha-dark-4: #0000000a;
+	--oc2-alpha-dark-6: #0000000f;
+	--oc2-alpha-dark-8: #00000014;
+	--oc2-alpha-dark-10: #0000001a;
+	--oc2-alpha-dark-12: #0000001f;
+	--oc2-alpha-dark-14: #00000024;
+	--oc2-alpha-dark-16: #00000029;
+	--oc2-alpha-dark-20: #00000033;
+	--oc2-alpha-dark-24: #0000003d;
+	--oc2-alpha-dark-30: #0000004d;
+	--oc2-alpha-dark-40: #00000066;
+	--oc2-alpha-dark-50: #00000080;
+	--oc2-alpha-dark-60: #00000099;
+	--oc2-alpha-dark-70: #000000b2;
+	--oc2-alpha-dark-80: #000000cc;
+	--oc2-alpha-dark-90: #000000e5;
+	--oc2-alpha-dark-100: #000000;
+
+	--oc2-alpha-light-0: #ffffff00;
+	--oc2-alpha-light-2: #ffffff05;
+	--oc2-alpha-light-4: #ffffff0a;
+	--oc2-alpha-light-6: #ffffff0f;
+	--oc2-alpha-light-8: #ffffff14;
+	--oc2-alpha-light-10: #ffffff1a;
+	--oc2-alpha-light-12: #ffffff1f;
+	--oc2-alpha-light-14: #ffffff24;
+	--oc2-alpha-light-16: #ffffff29;
+	--oc2-alpha-light-20: #ffffff33;
+	--oc2-alpha-light-24: #ffffff3d;
+	--oc2-alpha-light-30: #ffffff4d;
+	--oc2-alpha-light-40: #ffffff66;
+	--oc2-alpha-light-50: #ffffff80;
+	--oc2-alpha-light-60: #ffffff99;
+	--oc2-alpha-light-70: #ffffffb2;
+	--oc2-alpha-light-80: #ffffffcc;
+	--oc2-alpha-light-90: #ffffffe5;
+	--oc2-alpha-light-100: #ffffff;
+
+	/* Hue ramps — red, orange, yellow, green, cyan, blue, purple, pink */
+	--oc2-red-100: #fceceb;
+	--oc2-red-200: #f6d5d3;
+	--oc2-red-300: #f2bbb7;
+	--oc2-red-400: #f29b96;
+	--oc2-red-500: #f17471;
+	--oc2-red-600: #f1484f;
+	--oc2-red-700: #d92e3c;
+	--oc2-red-800: #b82d35;
+	--oc2-red-900: #97252b;
+	--oc2-red-1000: #7a1f23;
+	--oc2-red-1100: #5f1a1c;
+	--oc2-red-1200: #461516;
+
+	--oc2-orange-100: #fdf2ed;
+	--oc2-orange-200: #ffe7dc;
+	--oc2-orange-300: #ffd8c6;
+	--oc2-orange-400: #ffc1a4;
+	--oc2-orange-500: #ffa478;
+	--oc2-orange-600: #ff8648;
+	--oc2-orange-700: #ee7330;
+	--oc2-orange-800: #d16427;
+	--oc2-orange-900: #b35624;
+	--oc2-orange-1000: #954c27;
+	--oc2-orange-1100: #723d22;
+	--oc2-orange-1200: #5a2c14;
+
+	--oc2-yellow-100: #fefaec;
+	--oc2-yellow-200: #fcefd0;
+	--oc2-yellow-300: #f7e5b5;
+	--oc2-yellow-400: #f3da9b;
+	--oc2-yellow-500: #f2cf76;
+	--oc2-yellow-600: #f6c251;
+	--oc2-yellow-700: #e7af36;
+	--oc2-yellow-800: #cb9f34;
+	--oc2-yellow-900: #ac8833;
+	--oc2-yellow-1000: #8e7231;
+	--oc2-yellow-1100: #68552b;
+	--oc2-yellow-1200: #4b4025;
+
+	--oc2-green-100: #e7f9ea;
+	--oc2-green-200: #d0f0d5;
+	--oc2-green-300: #b8e9c1;
+	--oc2-green-400: #96e3a6;
+	--oc2-green-500: #6bd586;
+	--oc2-green-600: #49c970;
+	--oc2-green-700: #2eaf5a;
+	--oc2-green-800: #198b43;
+	--oc2-green-900: #1d783c;
+	--oc2-green-1000: #196130;
+	--oc2-green-1100: #164c26;
+	--oc2-green-1200: #14361d;
+
+	--oc2-cyan-100: #e2f7fb;
+	--oc2-cyan-200: #c4edf4;
+	--oc2-cyan-300: #a3e4ef;
+	--oc2-cyan-400: #65d9eb;
+	--oc2-cyan-500: #00c5df;
+	--oc2-cyan-600: #00abcf;
+	--oc2-cyan-700: #0096b8;
+	--oc2-cyan-800: #007d9b;
+	--oc2-cyan-900: #006c85;
+	--oc2-cyan-1000: #005a6e;
+	--oc2-cyan-1100: #004756;
+	--oc2-cyan-1200: #00353f;
+
+	--oc2-blue-100: #ecf1fe;
+	--oc2-blue-200: #d7e2fc;
+	--oc2-blue-300: #c3d4fd;
+	--oc2-blue-400: #a2bcff;
+	--oc2-blue-500: #7698fd;
+	--oc2-blue-600: #3b5cf6;
+	--oc2-blue-700: #3250df;
+	--oc2-blue-800: #2c47c8;
+	--oc2-blue-900: #263fa9;
+	--oc2-blue-1000: #22388f;
+	--oc2-blue-1100: #1c2e70;
+	--oc2-blue-1200: #1b2852;
+
+	--oc2-purple-100: #ebecfe;
+	--oc2-purple-200: #d5d5fc;
+	--oc2-purple-300: #b9b8f5;
+	--oc2-purple-400: #9e99f7;
+	--oc2-purple-500: #8271f8;
+	--oc2-purple-600: #7152f4;
+	--oc2-purple-700: #623be2;
+	--oc2-purple-800: #5230c2;
+	--oc2-purple-900: #442aa1;
+	--oc2-purple-1000: #361f83;
+	--oc2-purple-1100: #2b1b6a;
+	--oc2-purple-1200: #221358;
+
+	--oc2-pink-100: #fdecf3;
+	--oc2-pink-200: #f7d5e4;
+	--oc2-pink-300: #fabcd8;
+	--oc2-pink-400: #f799c6;
+	--oc2-pink-500: #f26cb2;
+	--oc2-pink-600: #f64aab;
+	--oc2-pink-700: #e4429e;
+	--oc2-pink-800: #c83d8b;
+	--oc2-pink-900: #aa3576;
+	--oc2-pink-1000: #8c2d61;
+	--oc2-pink-1100: #6f284f;
+	--oc2-pink-1200: #5c1d3f;
+
+	/* ── Block B: Hoalu semantic tokens ───────────────────────────────── */
+
+	/* Surfaces, ascending in lightness as they come forward */
+	--background: var(--oc2-grey-1100);
+	--foreground: var(--oc2-grey-100);
+
+	--card: var(--oc2-grey-1000);
+	--card-foreground: var(--oc2-grey-100);
+
+	/* OC-2 raises popovers with elevation, not with a lighter fill */
+	--popover: var(--oc2-grey-1000);
+	--popover-foreground: var(--oc2-grey-100);
+
+	/* The one accent */
+	--primary: var(--oc2-blue-600);
+	--primary-foreground: var(--oc2-grey-50);
+	--ring: var(--oc2-blue-500);
+
+	/* Raised / interactive fills. Kept solid, not overlays, so the `/50` and
+	   `/64` modifiers already in use stay predictable — `--overlay-hover` below
+	   is the adaptive alternative for surfaces that need to blend. */
+	--secondary: var(--oc2-grey-800);
+	--secondary-foreground: var(--oc2-grey-100);
+	--accent: var(--oc2-grey-800);
+	--accent-foreground: var(--oc2-grey-100);
+
+	/* Recessed wells inside a card */
+	--muted: var(--oc2-grey-900);
+	--muted-foreground: var(--oc2-grey-500);
+
+	/* Table headers, captions, timestamps — a step below muted */
+	--faint: var(--oc2-grey-600);
+
+	/* Borders go translucent, so one token reads correctly on every surface.
+	   This is the single most visible change of the port. */
+	--border: var(--oc2-alpha-light-10);
+	--input: var(--oc2-alpha-light-14);
+
+	/* State colours are readable-on-dark text/line colours, matching OC-2's
+	   `state-fg-*`. The background and border steps of that triad are reached
+	   with alpha modifiers (`bg-destructive/8`, `border-destructive/30`), which
+	   is what the component layer already does — so the extra tokens would have
+	   no consumer here. */
+	--destructive: var(--oc2-red-500);
+	--info: var(--oc2-blue-500);
+	--success: var(--oc2-green-500);
+	--warning: var(--oc2-yellow-500);
+
+	/* OC-2 ships no chart palette; these five separate on a dark ground */
+	--chart-1: var(--oc2-blue-400);
+	--chart-2: var(--oc2-green-500);
+	--chart-3: var(--oc2-yellow-500);
+	--chart-4: var(--oc2-purple-400);
+	--chart-5: var(--oc2-pink-400);
+
+	/* Percentage overlays — mechanism 3. One hover token works everywhere. */
+	--overlay-hover: var(--oc2-alpha-light-6);
+	--overlay-pressed: var(--oc2-alpha-light-10);
+	--overlay-scrim: var(--oc2-alpha-dark-60);
+
+	/* Depth — mechanism 2. The ring and the catchlight are split out because the
+	   component layer draws hairlines on pseudo-elements with `bg-clip-padding`
+	   (frame, table, toast), which needs the pieces rather than a composed
+	   shadow. The three levels compose the same pieces at rising ambient blur. */
+	--elevation-ring: 0 0 0 0.5px var(--oc2-alpha-light-16);
+	--elevation-top: 0 -0.5px 0 0 var(--oc2-alpha-light-6);
+	--elevation-elements: 0 0.5px 0.5px 0 var(--oc2-alpha-dark-40);
+
+	--elevation-raised:
+		0 2px 4px 0 var(--oc2-alpha-dark-30), 0 1px 2px 0 var(--oc2-alpha-dark-30),
+		var(--elevation-ring), var(--elevation-top);
+	--elevation-floating:
+		0 8px 16px 0 var(--oc2-alpha-dark-30), 0 4px 8px 0 var(--oc2-alpha-dark-30),
+		var(--elevation-ring), var(--elevation-top);
+	--elevation-overlay:
+		0 16px 32px 0 var(--oc2-alpha-dark-30), 0 8px 16px 0 var(--oc2-alpha-dark-30),
+		var(--elevation-ring), var(--elevation-top);
+
+	/* Scrollbars. OC-2's own scrollbar group was not part of the pasted token
+	   block, so this is the derived equivalent: a light thumb on nothing. */
+	--scrollbar-thumb: var(--oc2-alpha-light-20);
+	--scrollbar-track: transparent;
+}
