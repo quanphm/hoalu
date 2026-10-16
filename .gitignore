@@ -26,3 +26,5 @@ npm-debug.log*
 *.pem
 .playwright-mcp
 .playwright-cli
+.impeccable/config.local.json
+.impeccable/**/*.png
