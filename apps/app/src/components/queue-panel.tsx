@@ -4,8 +4,8 @@ import {
 	ReceiptIcon,
 	ArrowsClockwiseIcon,
 	LightningIcon,
+	XIcon,
 } from "@hoalu/icons/phosphor";
-import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useNavigate, useParams } from "@tanstack/react-router";

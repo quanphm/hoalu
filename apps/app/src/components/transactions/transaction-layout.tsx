@@ -1,4 +1,4 @@
-import { XIcon } from "@hoalu/icons/tabler";
+import { XIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";

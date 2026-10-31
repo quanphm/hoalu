@@ -6,9 +6,7 @@
 	"exports": {
 		"./meteocons": "./src/meteocons/index.tsx",
 		"./nucleo": "./src/nucleo/index.tsx",
-		"./phosphor": "./src/phosphor/index.tsx",
-		"./social": "./src/social/index.tsx",
-		"./tabler": "./src/tabler/index.tsx"
+		"./phosphor": "./src/phosphor/index.tsx"
 	},
 	"dependencies": {
 		"@phosphor-icons/react": "^2.1.10"

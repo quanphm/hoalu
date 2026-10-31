@@ -5,8 +5,8 @@ import {
 	PencilIcon,
 	RepeatIcon,
 	TrashIcon,
+	XIcon,
 } from "@hoalu/icons/phosphor";
-import { XIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@hoalu/ui/card";

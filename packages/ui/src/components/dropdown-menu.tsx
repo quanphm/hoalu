@@ -1,5 +1,5 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { CaretRightFilledIcon, CheckIcon, CircleIcon } from "@hoalu/icons/tabler";
+import { CaretRightIcon, CheckIcon, CircleIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 
@@ -198,7 +198,7 @@ function DropdownMenuSubTrigger({
 			{...props}
 		>
 			{children}
-			<CaretRightFilledIcon className="size-4" />
+			<CaretRightIcon className="size-4" />
 		</MenuPrimitive.SubmenuTrigger>
 	);
 }

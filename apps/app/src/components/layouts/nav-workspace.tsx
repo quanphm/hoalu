@@ -1,12 +1,12 @@
 import {
-	ArrowsLeftRightIcon,
+	ArrowsClockwiseIcon,
+	BuildingsIcon,
 	CalendarStarIcon,
-	FileIcon,
+	ImagesIcon,
 	MagnifyingGlassIcon,
 	ReceiptIcon,
-	ShapesIcon,
 	SquaresFourIcon,
-	TentIcon,
+	TagIcon,
 	UsersIcon,
 	WalletIcon,
 } from "@hoalu/icons/phosphor";
@@ -75,7 +75,7 @@ export function NavWorkspace() {
 								}
 								tooltip="Transactions"
 							>
-								<ArrowsLeftRightIcon />
+								<ReceiptIcon />
 								<span>Transactions</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -85,7 +85,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
 							>
-								<ReceiptIcon />
+								<ArrowsClockwiseIcon />
 								<span>Recurring Bills</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -109,7 +109,7 @@ export function NavWorkspace() {
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/categories" params={{ slug }} />}>
-								<ShapesIcon />
+								<TagIcon />
 								<span>Categories</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -123,7 +123,7 @@ export function NavWorkspace() {
 
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/files" params={{ slug }} />}>
-								<FileIcon />
+								<ImagesIcon />
 								<span>Files</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -137,7 +137,7 @@ export function NavWorkspace() {
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton render={<Link to="/$slug/settings/workspace" params={{ slug }} />}>
-								<TentIcon />
+								<BuildingsIcon />
 								<span>Workspace</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

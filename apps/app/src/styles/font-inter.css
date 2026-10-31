@@ -1,0 +1,26 @@
+/* Inter — self-hosted variable font (local files, no remote font service) */
+@font-face {
+	font-family: "Inter";
+	src: url("/fonts/inter/InterVariable.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url("/fonts/inter/InterVariable-Italic.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: italic;
+	font-display: swap;
+}
+
+:root {
+	--inter: "Inter", Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, sans-serif;
+}
+
+@theme {
+	--font-sans: var(--inter);
+	/* The ledger sets figures in Inter with tabular numerals; there is no second face. */
+	--font-mono: var(--inter);
+}

@@ -4,8 +4,8 @@ import {
 	CaretDownIcon,
 	CaretUpIcon,
 	TrashIcon,
+	XIcon,
 } from "@hoalu/icons/phosphor";
-import { XIcon } from "@hoalu/icons/tabler";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 
@@ -43,7 +43,9 @@ export function RecurringBillDetailPanel({
 		<>
 			<Tooltip>
 				<TooltipTrigger
-					render={<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />}
+					render={
+						<Button size="icon-sm" variant="outline" onClick={onGoDown} disabled={!canGoDown} />
+					}
 				>
 					<CaretDownIcon />
 				</TooltipTrigger>

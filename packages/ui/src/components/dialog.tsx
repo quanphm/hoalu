@@ -1,5 +1,5 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "@hoalu/icons/tabler";
+import { XIcon } from "@hoalu/icons/phosphor";
 
 import { cn, mergeProps, useRender } from "../utils";
 import { Button } from "./button";

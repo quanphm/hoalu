@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"nanoid": "^5.1.16",
-		"uuid": "^14.0.1"
+		"uuid": "^14.0.3"
 	},
 	"devDependencies": {
 		"@hoalu/tsconfig": "workspace:*"

@@ -1,4 +1,4 @@
-import { CalculatorIcon } from "@hoalu/icons/tabler";
+import { CalculatorIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Input } from "@hoalu/ui/input";
 import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";

@@ -10,16 +10,16 @@ allowBuilds:
 
 catalogs:
   default:
-    "@better-auth/api-key": ^1.6.20
-    "@better-auth/core": ^1.6.20
-    "@types/react": ^19.2.18
-    "@types/react-dom": ^19.2.4
-    better-auth: ^1.6.20
-    hono: ^4.13.0
-    react: ^19.2.8
-    react-dom: ^19.2.8
+    "@better-auth/api-key": 1.6.20
+    "@better-auth/core": 1.6.20
+    "@types/react": ^19.3.0
+    "@types/react-dom": ^19.3.0
+    better-auth: 1.6.20
+    hono: ^4.13.14
+    react: ^19.3.1
+    react-dom: ^19.3.1
     tailwindcss: ^4.3.3
-    zod: ^4.4.3
+    zod: ^4.6.7
 
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:

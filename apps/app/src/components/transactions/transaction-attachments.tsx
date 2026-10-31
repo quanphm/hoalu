@@ -1,5 +1,4 @@
-import { PaperclipIcon } from "@hoalu/icons/phosphor";
-import { XIcon } from "@hoalu/icons/tabler";
+import { PaperclipIcon, XIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { type ReactNode, forwardRef, useImperativeHandle } from "react";
 

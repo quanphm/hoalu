@@ -1,5 +1,5 @@
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "@hoalu/icons/tabler";
+import { XIcon } from "@hoalu/icons/phosphor";
 
 import { cn } from "../utils";
 

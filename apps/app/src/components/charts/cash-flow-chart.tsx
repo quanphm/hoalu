@@ -1,5 +1,5 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
+import { TrendDownIcon, TrendUpIcon } from "@hoalu/icons/phosphor";
 import { Card, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
 import { cn } from "@hoalu/ui/utils";
@@ -69,11 +69,11 @@ export function CashFlowChart(props: CashFlowChartProps) {
 						{isHovering && displayNet !== null ? (
 							<div className="flex min-h-9 items-center gap-1">
 								{displayNet > 0 ? (
-									<TrendingUpIcon
+									<TrendUpIcon
 										className={cn("size-4", trendChangeVariants({ trend: "increase" }))}
 									/>
 								) : displayNet < 0 ? (
-									<TrendingDownIcon
+									<TrendDownIcon
 										className={cn("size-4", trendChangeVariants({ trend: "decrease" }))}
 									/>
 								) : null}

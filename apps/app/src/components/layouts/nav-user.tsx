@@ -1,21 +1,15 @@
 import {
-	CheckIcon,
+	DotsThreeVerticalIcon,
 	KeyIcon,
 	SignOutIcon,
-	DotsThreeVerticalIcon,
-	PaletteIcon,
+	SlidersHorizontalIcon,
 } from "@hoalu/icons/phosphor";
-import { SettingsIcon } from "@hoalu/icons/tabler";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@hoalu/ui/sidebar";
@@ -23,20 +17,11 @@ import { Link } from "@tanstack/react-router";
 import { useId } from "react";
 
 import { UserAvatar } from "#app/components/user-avatar.tsx";
-import {
-	CUSTOM_THEMES,
-	KEYBOARD_SHORTCUTS,
-	SYSTEM_THEMES,
-	THEME_LABELS,
-} from "#app/helpers/constants.ts";
+import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
-
-import { HotKey } from "../hotkey";
 
 export function NavUser() {
 	const { user, signOut } = useAuth();
-	const { mode, setTheme } = useTheme();
 	const reactId = useId();
 
 	if (!user) return null;
@@ -65,48 +50,6 @@ export function NavUser() {
 						align="end"
 						side="right"
 					>
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger>
-								<PaletteIcon />
-								<span>Theme</span>
-							</DropdownMenuSubTrigger>
-							<DropdownMenuPortal>
-								<DropdownMenuSubContent>
-									{SYSTEM_THEMES.map((themeName) => (
-										<DropdownMenuItem
-											key={themeName}
-											onClick={() => setTheme(themeName)}
-											className="capitalize"
-										>
-											{mode === themeName && (
-												<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-													<CheckIcon className="size-4" />
-												</span>
-											)}
-											<span className="ms-6">{THEME_LABELS[themeName]}</span>
-										</DropdownMenuItem>
-									))}
-									<DropdownMenuSeparator />
-									{CUSTOM_THEMES.map((themeName) => (
-										<DropdownMenuItem
-											key={themeName}
-											onClick={() => setTheme(themeName)}
-											className="capitalize"
-										>
-											{mode === themeName && (
-												<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-													<CheckIcon className="size-4" />
-												</span>
-											)}
-											<span className="ms-6">{THEME_LABELS[themeName]}</span>
-										</DropdownMenuItem>
-									))}
-								</DropdownMenuSubContent>
-							</DropdownMenuPortal>
-						</DropdownMenuSub>
-
-						<DropdownMenuSeparator />
-
 						<DropdownMenuGroup>
 							<DropdownMenuItem
 								render={
@@ -116,7 +59,7 @@ export function NavUser() {
 									/>
 								}
 							>
-								<SettingsIcon />
+								<SlidersHorizontalIcon />
 								Preferences
 							</DropdownMenuItem>
 							<DropdownMenuItem

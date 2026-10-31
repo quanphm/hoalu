@@ -4,7 +4,6 @@
 @import "./layer-base.css";
 
 @import "./colors/default.css";
-@import "./colors/creamy.css";
 @import "./theme.css";
 
 @plugin "@tailwindcss/typography";
