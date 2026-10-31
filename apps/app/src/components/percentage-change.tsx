@@ -1,4 +1,4 @@
-import { TrendingDownIcon, TrendingUpIcon } from "@hoalu/icons/tabler";
+import { TrendDownIcon, TrendUpIcon, type Icon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useState } from "react";
@@ -7,13 +7,10 @@ import { trendChangeVariants, type PercentageChange } from "#app/helpers/percent
 
 import { CurrencyValue } from "./currency-value";
 
-const IconComponent: Record<
-	PercentageChange["status"],
-	React.ComponentType<React.SVGProps<SVGSVGElement>> | null
-> = {
+const IconComponent: Record<PercentageChange["status"], Icon | null> = {
 	"no-change": null,
-	increase: TrendingUpIcon,
-	decrease: TrendingDownIcon,
+	increase: TrendUpIcon,
+	decrease: TrendDownIcon,
 };
 
 const sizeClasses = {

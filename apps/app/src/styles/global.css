@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "@hoalu/themes";
 
-@import "./font-geist.css";
+@import "./font-inter.css";
 
 @import "./animation.css";
 @import "./table.css";
@@ -10,8 +10,8 @@
 @source "../../../../packages/ui/**/*.{ts,tsx}";
 
 :root {
-	--font-sans: var(--geist-sans);
-	--font-mono: var(--geist-mono);
+	--font-sans: var(--inter);
+	--font-mono: var(--inter);
 }
 
 #root {

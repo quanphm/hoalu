@@ -1,5 +1,4 @@
-import { CopyIcon, TrashIcon } from "@hoalu/icons/phosphor";
-import { CashPlusIcon } from "@hoalu/icons/tabler";
+import { CopyIcon, TrashIcon, CoinsIcon } from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogClose,
@@ -29,7 +28,7 @@ export function CreateIncomeTrigger(props: ButtonProps) {
 			{...props}
 			render={<Link to="/$slug/transactions/new" params={{ slug }} search={{ type: "income" }} />}
 		>
-			<CashPlusIcon className="text-success size-3.5" />
+			<CoinsIcon className="text-success size-3.5" />
 			New income
 		</Button>
 	);

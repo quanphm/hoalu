@@ -1,4 +1,4 @@
-import { GithubIcon, TwitterXIcon } from "@hoalu/icons/social";
+import { GithubLogoIcon, XLogoIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
 	Sidebar,
@@ -58,7 +58,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 							className="size-4 [&_svg:not([class*='size-'])]:size-3"
 							render={
 								<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
-									<GithubIcon />
+									<GithubLogoIcon />
 								</a>
 							}
 						/>
@@ -68,7 +68,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 							className="size-4 [&_svg:not([class*='size-'])]:size-3"
 							render={
 								<a href="https://x.com/quanphmm" target="_blank" rel="noreferrer">
-									<TwitterXIcon />
+									<XLogoIcon />
 								</a>
 							}
 						/>

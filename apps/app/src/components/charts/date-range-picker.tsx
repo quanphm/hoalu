@@ -1,5 +1,5 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { CalendarIcon } from "@hoalu/icons/tabler";
+import { CalendarBlankIcon } from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
@@ -56,7 +56,7 @@ export function DateRangePicker({
 					/>
 				}
 			>
-				<CalendarIcon className="shrink-0" />
+				<CalendarBlankIcon className="shrink-0" />
 				<span className="truncate">{formatDateRange()}</span>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">

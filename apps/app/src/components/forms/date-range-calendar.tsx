@@ -1,5 +1,5 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { CalendarIcon } from "@hoalu/icons/tabler";
+import { CalendarBlankIcon } from "@hoalu/icons/phosphor";
 import { Calendar } from "@hoalu/ui/calendar";
 import { Field, FieldLabel } from "@hoalu/ui/field";
 import { Input } from "@hoalu/ui/input";
@@ -80,7 +80,7 @@ export function DateRangeCalendarField({
 							min="1970-01-01"
 						/>
 						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3">
-							<CalendarIcon className="size-4" aria-hidden="true" />
+							<CalendarBlankIcon className="size-4" aria-hidden="true" />
 						</div>
 					</div>
 				</Field>
@@ -95,7 +95,7 @@ export function DateRangeCalendarField({
 							min="1970-01-01"
 						/>
 						<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3">
-							<CalendarIcon className="size-4" aria-hidden="true" />
+							<CalendarBlankIcon className="size-4" aria-hidden="true" />
 						</div>
 					</div>
 				</Field>

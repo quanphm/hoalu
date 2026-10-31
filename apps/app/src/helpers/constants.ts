@@ -2,16 +2,6 @@ import { getCurrencyList } from "@hoalu/countries";
 
 import type { RepeatSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 
-export const SYSTEM_THEMES = ["system", "light", "dark"] as const;
-export const CUSTOM_THEMES = ["creamy"] as const;
-export const THEMES = [...SYSTEM_THEMES, ...CUSTOM_THEMES] as const;
-export const THEME_LABELS: Record<(typeof THEMES)[number], string> = {
-	system: "System",
-	light: "Light",
-	dark: "Dark",
-	creamy: "Creamy",
-};
-
 export const kbdSymbols = {
 	SHIFT: "⇧",
 	META: "⌘",
@@ -134,11 +124,6 @@ export const KEYBOARD_SHORTCUTS = {
 		label: `GA`,
 		hotkey: "g>a",
 		enabled: false,
-	},
-	toggle_theme: {
-		label: `${kbdSymbols.SHIFT} D`,
-		hotkey: "shift+d",
-		enabled: true,
 	},
 	command_palette: {
 		label: `${kbdSymbols.META} K`,

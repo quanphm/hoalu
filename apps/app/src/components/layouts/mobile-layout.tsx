@@ -1,29 +1,18 @@
 import {
-	ArrowsLeftRightIcon,
-	CheckIcon,
 	CaretUpDownIcon,
-	PaletteIcon,
+	GearSixIcon,
 	MagnifyingGlassIcon,
+	ReceiptIcon,
 	SquaresFourIcon,
 } from "@hoalu/icons/phosphor";
-import { SettingsIcon } from "@hoalu/icons/tabler";
 import { Avatar, AvatarFallback } from "@hoalu/ui/avatar";
 import { Button } from "@hoalu/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@hoalu/ui/dropdown-menu";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 import { commandPaletteOpen$ } from "#app/atoms/index.ts";
 import { ButtonLink } from "#app/components/button-link.tsx";
-import { CUSTOM_THEMES, SYSTEM_THEMES, THEME_LABELS } from "#app/helpers/constants.ts";
-import { useTheme } from "#app/hooks/use-theme.ts";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
 interface LayoutProps {
@@ -47,7 +36,6 @@ export function MobileLayout({ children }: LayoutProps) {
 
 function MobileHeader() {
 	const params = useParams({ strict: false });
-	const { mode, setTheme } = useTheme();
 
 	const { data: workspaces } = useSuspenseQuery(listWorkspacesOptions());
 	const currentWorkspace = workspaces.find((ws) => ws.slug === params.slug);
@@ -85,54 +73,6 @@ function MobileHeader() {
 					>
 						<MagnifyingGlassIcon />
 					</Button>
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={<Button variant="outline" size="icon-lg" aria-label="Select theme" />}
-						>
-							<PaletteIcon />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" role="menu">
-							{SYSTEM_THEMES.map((themeName) => {
-								const isSelected = mode === themeName;
-								return (
-									<DropdownMenuItem
-										key={themeName}
-										onClick={() => setTheme(themeName)}
-										className="capitalize"
-										role="menuitemradio"
-										aria-checked={isSelected}
-									>
-										{isSelected && (
-											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-												<CheckIcon className="size-4" aria-hidden="true" />
-											</span>
-										)}
-										<span className="ms-6">{THEME_LABELS[themeName]}</span>
-									</DropdownMenuItem>
-								);
-							})}
-							<DropdownMenuSeparator />
-							{CUSTOM_THEMES.map((themeName) => {
-								const isSelected = mode === themeName;
-								return (
-									<DropdownMenuItem
-										key={themeName}
-										onClick={() => setTheme(themeName)}
-										className="capitalize"
-										role="menuitemradio"
-										aria-checked={isSelected}
-									>
-										{isSelected && (
-											<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-												<CheckIcon className="size-4" aria-hidden="true" />
-											</span>
-										)}
-										<span className="ms-6">{THEME_LABELS[themeName]}</span>
-									</DropdownMenuItem>
-								);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
 				</div>
 			</div>
 		</header>
@@ -184,7 +124,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<ArrowsLeftRightIcon className="size-6" aria-hidden="true" />
+					<ReceiptIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Transactions</span>
 				</ButtonLink>
 				<ButtonLink
@@ -198,7 +138,7 @@ function MobileBottomNav() {
 						className: activeNavItemClass,
 					}}
 				>
-					<SettingsIcon className="size-6" aria-hidden="true" />
+					<GearSixIcon className="size-6" aria-hidden="true" />
 					<span className="truncate text-xs leading-none">Settings</span>
 				</ButtonLink>
 			</div>

@@ -1,5 +1,5 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { CalendarIcon } from "@hoalu/icons/tabler";
+import { CalendarBlankIcon } from "@hoalu/icons/phosphor";
 import { Input } from "@hoalu/ui/input";
 
 import { Field, FieldControl, FieldDescription, FieldLabel, FieldMessage } from "./components";
@@ -37,7 +37,7 @@ export function DatepickerInputField(props: Props) {
 						/>
 					</FieldControl>
 					<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-						<CalendarIcon className="size-4" aria-hidden="true" />
+						<CalendarBlankIcon className="size-4" aria-hidden="true" />
 					</div>
 				</div>
 			</div>

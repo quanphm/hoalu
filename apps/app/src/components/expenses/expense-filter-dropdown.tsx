@@ -10,8 +10,8 @@ import {
 	TagIcon,
 	WalletIcon,
 	XIcon,
+	CaretRightIcon,
 } from "@hoalu/icons/phosphor";
-import { CaretRightFilledIcon } from "@hoalu/icons/tabler";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
@@ -359,7 +359,7 @@ function FilterMenuItem({
 				{active ? <CheckIcon /> : icon}
 			</span>
 			<span className="min-w-0 flex-1 truncate text-left text-sm">{label}</span>
-			<CaretRightFilledIcon className="text-muted-foreground hidden size-4 shrink-0 md:block" />
+			<CaretRightIcon className="text-muted-foreground hidden size-4 shrink-0 md:block" />
 		</Button>
 	);
 }

@@ -1,5 +1,4 @@
-import { CaretDownIcon, CaretUpIcon } from "@hoalu/icons/phosphor";
-import { XIcon } from "@hoalu/icons/tabler";
+import { CaretDownIcon, CaretUpIcon, XIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";

@@ -1,4 +1,4 @@
-import { ScanIcon } from "@hoalu/icons/tabler";
+import { ScanIcon } from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import {
 	DialogDescription,

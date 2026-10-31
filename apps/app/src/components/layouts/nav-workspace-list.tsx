@@ -1,4 +1,4 @@
-import { FolderIcon } from "@hoalu/icons/tabler";
+import { BuildingsIcon } from "@hoalu/icons/phosphor";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -30,7 +30,7 @@ export function NavWorkspaceList() {
 							render={<Link to="/$slug" params={{ slug: ws.slug }} />}
 							tooltip={ws.name}
 						>
-							<FolderIcon />
+							<BuildingsIcon />
 							<span>{ws.name}</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>

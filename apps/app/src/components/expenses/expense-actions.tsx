@@ -1,6 +1,11 @@
 import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
-import { CopyIcon, MagnifyingGlassIcon, TrashIcon } from "@hoalu/icons/phosphor";
-import { CalendarIcon, CashBanknoteMoveIcon } from "@hoalu/icons/tabler";
+import {
+	CopyIcon,
+	MagnifyingGlassIcon,
+	TrashIcon,
+	CalendarBlankIcon,
+	MoneyIcon,
+} from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
 import { Calendar } from "@hoalu/ui/calendar";
 import {
@@ -35,7 +40,7 @@ export function CreateExpenseTrigger(props: ButtonProps) {
 			{...props}
 			render={<Link to="/$slug/transactions/new" params={{ slug }} search={{ type: "expense" }} />}
 		>
-			<CashBanknoteMoveIcon className="size-3.5" />
+			<MoneyIcon className="size-3.5" />
 			New expense
 		</Button>
 	);
@@ -146,7 +151,7 @@ export function ExpenseCalendar() {
 					/>
 				}
 			>
-				<CalendarIcon className="size-4" />
+				<CalendarBlankIcon className="size-4" />
 				{formatDateRange()}
 			</PopoverTrigger>
 			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
