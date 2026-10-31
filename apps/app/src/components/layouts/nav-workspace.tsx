@@ -3,7 +3,7 @@ import {
 	CalendarStarIcon,
 	FileIcon,
 	MagnifyingGlassIcon,
-	RepeatIcon,
+	ReceiptIcon,
 	ShapesIcon,
 	SquaresFourIcon,
 	TentIcon,
@@ -85,7 +85,7 @@ export function NavWorkspace() {
 								render={<Link to="/$slug/recurring-bills" params={{ slug }} />}
 								tooltip="Recurring Bills"
 							>
-								<RepeatIcon />
+								<ReceiptIcon />
 								<span>Recurring Bills</span>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

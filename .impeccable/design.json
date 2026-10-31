@@ -1,0 +1,381 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-31T12:45:00.000Z",
+  "title": "Design System: Hoalu",
+  "extensions": {
+    "colorMeta": {
+      "signal-indigo": {
+        "role": "primary",
+        "displayName": "Signal Indigo",
+        "canonical": "#5e6ad2",
+        "tonalRamp": [
+          "oklch(0.25 0.09 274)",
+          "oklch(0.35 0.13 274)",
+          "oklch(0.45 0.15 274)",
+          "oklch(0.55 0.16 274)",
+          "oklch(0.65 0.14 274)",
+          "oklch(0.75 0.11 274)",
+          "oklch(0.85 0.07 274)",
+          "oklch(0.94 0.03 274)"
+        ]
+      },
+      "graphite-ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f2023",
+        "tonalRamp": [
+          "oklch(0.16 0.004 265)",
+          "oklch(0.24 0.005 265)",
+          "oklch(0.34 0.006 265)",
+          "oklch(0.44 0.007 265)",
+          "oklch(0.54 0.008 265)",
+          "oklch(0.66 0.008 265)",
+          "oklch(0.80 0.006 265)",
+          "oklch(0.93 0.004 265)"
+        ]
+      },
+      "muted-ash": {
+        "role": "neutral",
+        "displayName": "Muted Ash",
+        "canonical": "#62676f",
+        "tonalRamp": [
+          "oklch(0.20 0.006 260)",
+          "oklch(0.30 0.008 260)",
+          "oklch(0.40 0.010 260)",
+          "oklch(0.50 0.011 260)",
+          "oklch(0.60 0.011 260)",
+          "oklch(0.72 0.009 260)",
+          "oklch(0.84 0.006 260)",
+          "oklch(0.95 0.003 260)"
+        ]
+      },
+      "slate-whisper": {
+        "role": "neutral",
+        "displayName": "Slate Whisper",
+        "canonical": "#e5e7ec",
+        "tonalRamp": [
+          "oklch(0.24 0.008 265)",
+          "oklch(0.36 0.010 265)",
+          "oklch(0.48 0.011 265)",
+          "oklch(0.62 0.010 265)",
+          "oklch(0.76 0.008 265)",
+          "oklch(0.86 0.007 265)",
+          "oklch(0.92 0.006 265)",
+          "oklch(0.97 0.003 265)"
+        ]
+      },
+      "alert-crimson": {
+        "role": "semantic",
+        "displayName": "Alert Crimson",
+        "canonical": "oklch(63.7% 0.237 25.331)",
+        "tonalRamp": [
+          "oklch(0.22 0.07 25)",
+          "oklch(0.34 0.12 25)",
+          "oklch(0.46 0.18 25)",
+          "oklch(0.56 0.22 25)",
+          "oklch(0.637 0.237 25.331)",
+          "oklch(0.73 0.19 25)",
+          "oklch(0.85 0.12 25)",
+          "oklch(0.95 0.05 25)"
+        ]
+      },
+      "income-emerald": {
+        "role": "semantic",
+        "displayName": "Income Emerald",
+        "canonical": "oklch(69.6% 0.17 162.48)",
+        "tonalRamp": [
+          "oklch(0.24 0.05 162)",
+          "oklch(0.36 0.09 162)",
+          "oklch(0.48 0.13 162)",
+          "oklch(0.59 0.16 162)",
+          "oklch(0.696 0.17 162.48)",
+          "oklch(0.79 0.13 162)",
+          "oklch(0.88 0.08 162)",
+          "oklch(0.96 0.03 162)"
+        ]
+      },
+      "midnight-page": {
+        "role": "neutral",
+        "displayName": "Midnight Page",
+        "canonical": "#0f1012",
+        "tonalRamp": [
+          "oklch(0.13 0.004 260)",
+          "oklch(0.18 0.005 260)",
+          "oklch(0.24 0.006 260)",
+          "oklch(0.32 0.007 260)",
+          "oklch(0.44 0.008 260)",
+          "oklch(0.60 0.008 260)",
+          "oklch(0.78 0.006 260)",
+          "oklch(0.94 0.003 260)"
+        ]
+      },
+      "creamy-paper": {
+        "role": "neutral",
+        "displayName": "Creamy Paper",
+        "canonical": "#fffcf0",
+        "tonalRamp": [
+          "oklch(0.22 0.010 60)",
+          "oklch(0.36 0.012 65)",
+          "oklch(0.50 0.012 68)",
+          "oklch(0.64 0.012 70)",
+          "oklch(0.78 0.012 70)",
+          "oklch(0.88 0.012 70)",
+          "oklch(0.95 0.014 70)",
+          "oklch(0.99 0.012 70)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "money-display": {
+        "displayName": "Money Display",
+        "purpose": "The single figure a card exists to show. Geist Mono only, tabular numerals, −0.025em. Never more than one per card."
+      },
+      "money-inline": {
+        "displayName": "Money Inline",
+        "purpose": "Table amounts, deltas, and bill figures. Same mono register, small size, so columns of money line up."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Page-level entry titles, including the borderless transaction title input."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Card eyebrows and default interface copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, field labels, table headers, muted descriptions."
+      },
+      "micro": {
+        "displayName": "Micro Marker",
+        "purpose": "Uppercase 10.8px region markers (DETAILS, NOTE, OVERDUE · 1) and sidebar group names."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-card",
+        "value": "0 1px 3px 0 hsl(0 0% 0% / 0.05)",
+        "purpose": "Resting state of cards and frame panels. Paper on paper; never more than 5% black."
+      },
+      {
+        "name": "inset-hairline",
+        "value": "inset 0 1px 0 rgba(0, 0, 0, 0.04)",
+        "purpose": "The milled edge inside inputs, buttons, and toasts, drawn by a ::before ring inset by 1px. Inverted to white at 6–8% in dark mode."
+      },
+      {
+        "name": "floating",
+        "value": "0 1px 3px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1)",
+        "purpose": "Dialogs, dropdowns, sheets — layers that genuinely overlap content."
+      },
+      {
+        "name": "whisper-float",
+        "value": "0 1px 3px hsl(0 0% 0% / 0.05)",
+        "purpose": "Toasts and stacked popovers, where the scrim and border do most of the separation."
+      }
+    ],
+    "motion": [
+      {
+        "name": "press",
+        "value": "transform scale(0.97) over 150ms ease-out",
+        "purpose": "Every button. The tactile response, applied on :active only."
+      },
+      {
+        "name": "state-transition",
+        "value": "background-color 150ms ease-out",
+        "purpose": "Hover and pressed fills. Hover is gated to fine pointers so touch devices never show a stuck state."
+      },
+      {
+        "name": "overlay-enter",
+        "value": "scale(0.95) + opacity 0 → 1 over 200ms ease-out",
+        "purpose": "Dialogs and sheets entering."
+      },
+      {
+        "name": "overlay-exit",
+        "value": "scale(0.95) + opacity 0 over 150ms",
+        "purpose": "Dialogs leaving — exits resolve faster than entrances."
+      },
+      {
+        "name": "toast-settle",
+        "value": "transform 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms, height 150ms",
+        "purpose": "Bottom-center toast stack reflowing when an item is added or dismissed."
+      },
+      {
+        "name": "skeleton",
+        "value": "background-position 2s linear infinite",
+        "purpose": "Loading placeholders. The only continuous animation in the system."
+      },
+      {
+        "name": "chart-shine",
+        "value": "shine var(--duration) infinite linear",
+        "purpose": "Receipt-scanning and queue progress shimmer. Used only while a job is running."
+      }
+    ],
+    "breakpoints": [
+      { "name": "xs", "value": "0px" },
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ],
+    "layoutMeta": {
+      "sidebarWidth": "224px",
+      "sidebarMobileWidth": "288px",
+      "sidebarIconWidth": "48px",
+      "contentGrid": "24 columns, 16px page padding and gutters",
+      "mobileBottomNav": "64px reserved bottom padding on main content"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one indigo action per view. 36px tall, 10px corners, 1px border of the same colour.",
+      "html": "<button class=\"ds-btn-primary\"><svg class=\"ds-icon\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M8 2.5v11M2.5 8h11\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/></svg>New expense</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 5px 11px; border: 1px solid var(--primary, #5e6ad2); border-radius: var(--radius-lg, 10px); background: var(--primary, #5e6ad2); color: var(--primary-foreground, #ffffff); font-family: Geist, Arial, sans-serif; font-size: 12.6px; font-weight: 500; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease-out, transform 150ms ease-out; }.ds-btn-primary:hover { background: color-mix(in srgb, var(--primary, #5e6ad2) 90%, transparent); }.ds-btn-primary:active { transform: scale(0.97); }.ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #5e6ad2); outline-offset: 1px; }.ds-icon { width: 16px; height: 16px; flex-shrink: 0; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Every secondary action. Paper fill, 1px input-line border, hover fills with accent cloud.",
+      "html": "<button class=\"ds-btn-outline\"><svg class=\"ds-icon\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 4.5h10M3 8h10M3 11.5h6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg>Scan receipt</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 5px 11px; border: 1px solid var(--input, #dcdfe6); border-radius: var(--radius-lg, 10px); background: var(--card, #ffffff); color: var(--foreground, #1f2023); font-family: Geist, Arial, sans-serif; font-size: 12.6px; font-weight: 500; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease-out, transform 150ms ease-out; }.ds-btn-outline:hover { background: color-mix(in srgb, var(--accent, #eceef3) 50%, transparent); }.ds-btn-outline:active { transform: scale(0.97); }.ds-btn-outline:focus-visible { outline: 2px solid var(--ring, #5e6ad2); outline-offset: 1px; }.ds-icon { width: 16px; height: 16px; flex-shrink: 0; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Defined by its hairline, not its fill: the card is the same white as the page, lifted only by 5% ambient shadow.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-eyebrow\">Cumulative Net</div><div class=\"ds-card-figure\">₫23,686,055</div><div class=\"ds-card-delta\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M4 12L12 4M12 4H6M12 4v6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg>+59.05%<span class=\"ds-card-delta-note\">vs Sep 1, 2026 – Sep 30, 2026</span></div></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 4px; padding: 16px; border: 1px solid var(--border, #e5e7ec); border-radius: var(--radius-lg, 10px); background: var(--card, #ffffff); box-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.05); font-family: Geist, Arial, sans-serif; }.ds-card-eyebrow { color: var(--muted-foreground, #62676f); font-size: 14.4px; font-weight: 400; line-height: 1.6; }.ds-card-figure { color: var(--foreground, #1f2023); font-family: 'Geist Mono', monospace; font-size: 27px; font-weight: 500; line-height: 36px; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }.ds-card-delta { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: #0f9d76; font-family: 'Geist Mono', monospace; font-size: 12.6px; font-weight: 500; }.ds-card-delta svg { width: 14px; height: 14px; }.ds-card-delta-note { color: var(--muted-foreground, #62676f); font-family: Geist, Arial, sans-serif; font-weight: 400; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "34px tall on touch, 28px at sm. Focus is a border shift plus a 3px halo; error reuses the same shape in crimson.",
+      "html": "<span class=\"ds-input\"><input class=\"ds-input-field\" placeholder=\"Search title, description…\" /></span>",
+      "css": ".ds-input { display: flex; align-items: center; width: 100%; height: 34px; border: 1px solid var(--input, #dcdfe6); border-radius: var(--radius-md, 8px); background: var(--card, #ffffff); box-shadow: 0 1px 2px 0 hsl(0 0% 0% / 0.05); transition: box-shadow 150ms ease-out, border-color 150ms ease-out; }.ds-input:focus-within { border-color: var(--ring, #5e6ad2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring, #5e6ad2) 24%, transparent); }.ds-input-field { flex: 1; min-width: 0; height: 100%; padding: 0 11px; border: 0; background: transparent; color: var(--foreground, #1f2023); font-family: Geist, Arial, sans-serif; font-size: 14.4px; outline: none; }.ds-input-field::placeholder { color: color-mix(in srgb, var(--muted-foreground, #62676f) 72%, transparent); }"
+    },
+    {
+      "name": "Category Badge",
+      "kind": "chip",
+      "refersTo": "badge-category",
+      "description": "Category identity at 9.2px on a tinted fill from the fixed ten-colour map. Carries category, never state.",
+      "html": "<span class=\"ds-badge-cat ds-badge-cat--green\">🍜 Food &amp; Drink</span>",
+      "css": ".ds-badge-cat { display: inline-flex; align-items: center; gap: 3px; height: 18px; padding: 0 3px; border: 1px solid #86efac; border-radius: var(--radius-sm, 6px); background: #dcfce7; color: #166534; font-family: Geist, Arial, sans-serif; font-size: 9.2px; font-weight: 500; line-height: 1; white-space: nowrap; }.ds-badge-cat--green { border-color: #86efac; background: #dcfce7; color: #166534; }.ds-badge-cat--stone { border-color: #d6d3d1; background: #f5f5f4; color: #44403c; }.ds-badge-cat--red { border-color: #fca5a5; background: #fee2e2; color: #991b1b; }"
+    },
+    {
+      "name": "Money Readout",
+      "kind": "custom",
+      "refersTo": "stat-readout",
+      "description": "The unit the product is composed from: muted eyebrow, mono figure, then a delta line that carries direction while the figure stays ink.",
+      "html": "<div class=\"ds-readout\"><div class=\"ds-readout-label\">Incomes</div><div class=\"ds-readout-row\"><div class=\"ds-readout-figure\">₫72,676,400</div><div class=\"ds-readout-delta\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M4 12L12 4M12 4H6M12 4v6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg>+1.34%</div></div></div>",
+      "css": ".ds-readout { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border: 1px solid var(--border, #e5e7ec); border-radius: var(--radius-lg, 10px); background: var(--card, #ffffff); font-family: Geist, Arial, sans-serif; }.ds-readout-label { color: var(--muted-foreground, #62676f); font-size: 12.6px; font-weight: 400; }.ds-readout-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }.ds-readout-figure { color: var(--foreground, #1f2023); font-family: 'Geist Mono', monospace; font-size: 21.6px; font-weight: 500; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }.ds-readout-delta { display: inline-flex; align-items: center; gap: 3px; color: #0f9d76; font-family: 'Geist Mono', monospace; font-size: 10.8px; font-weight: 500; }.ds-readout-delta svg { width: 12px; height: 12px; }"
+    },
+    {
+      "name": "Upcoming Bill Row",
+      "kind": "custom",
+      "description": "Title over a metadata line of category, status, due date and lateness; mono amount and kebab on the right.",
+      "html": "<div class=\"ds-bill-row\"><div class=\"ds-bill-main\"><div class=\"ds-bill-title\">A3 electric</div><div class=\"ds-bill-meta\"><span>🏠</span>Housing<span class=\"ds-bill-dot\">·</span>due Nov 3<span class=\"ds-bill-dot\">·</span>in 3 days</div></div><div class=\"ds-bill-amount\">₫1,022,976</div><button class=\"ds-bill-kebab\" aria-label=\"Bill actions\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"3\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"8\" cy=\"8\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"8\" cy=\"13\" r=\"1.3\" fill=\"currentColor\"/></svg></button></div>",
+      "css": ".ds-bill-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border, #e5e7ec); font-family: Geist, Arial, sans-serif; }.ds-bill-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }.ds-bill-title { color: var(--foreground, #1f2023); font-size: 12.6px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.ds-bill-meta { display: inline-flex; align-items: center; gap: 4px; color: var(--muted-foreground, #62676f); font-size: 10.8px; }.ds-bill-dot { opacity: 0.6; }.ds-bill-amount { color: var(--foreground, #1f2023); font-family: 'Geist Mono', monospace; font-size: 12.6px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }.ds-bill-kebab { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 0; border-radius: 6px; background: transparent; color: var(--muted-foreground, #62676f); cursor: pointer; }.ds-bill-kebab:hover { background: var(--accent, #eceef3); }.ds-bill-kebab svg { width: 14px; height: 14px; }"
+    },
+    {
+      "name": "Overdue Block",
+      "kind": "custom",
+      "description": "Urgency as an enclosure: crimson-tinted panel with an uppercase band, not a louder row.",
+      "html": "<div class=\"ds-overdue\"><div class=\"ds-overdue-band\"><span>Overdue · 1</span><span>₫175,456</span></div><div class=\"ds-overdue-body\"><div class=\"ds-overdue-title\">Youtube Premium</div><div class=\"ds-overdue-meta\"><span>💳</span>Subscription<span class=\"ds-bill-dot\">·</span>due Oct 25<span class=\"ds-overdue-late\">· 6 days late</span></div></div></div>",
+      "css": ".ds-overdue { overflow: hidden; border: 1px solid color-mix(in srgb, oklch(63.7% 0.237 25.331) 20%, transparent); border-radius: var(--radius-lg, 10px); background: color-mix(in srgb, oklch(63.7% 0.237 25.331) 8%, transparent); font-family: Geist, Arial, sans-serif; }.ds-overdue-band { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; border-bottom: 1px solid color-mix(in srgb, oklch(63.7% 0.237 25.331) 10%, transparent); color: oklch(63.7% 0.237 25.331); font-size: 10.8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }.ds-overdue-body { padding: 10px 16px; }.ds-overdue-title { color: var(--foreground, #1f2023); font-size: 12.6px; font-weight: 500; }.ds-overdue-meta { display: inline-flex; align-items: center; gap: 4px; color: var(--muted-foreground, #62676f); font-size: 10.8px; }.ds-overdue-late { color: oklch(63.7% 0.237 25.331); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Control Room",
+    "overview": "Hoalu looks like a room built for monitoring, not for selling. Paper-white surfaces sit on a paper-white page, separated by single-pixel hairlines instead of shadows or color blocks. The room is quiet in both directions: at midday it is cool paper and graphite, at night it is a near-black slate with the same hairlines, and a third warm-paper theme shifts the whole thing toward ink and cream. Nothing in the chrome is saturated except one indigo action. The numbers are the only thing allowed to be large.\n\nThe density is the point. Type is deliberately smaller than a typical web app — body copy is 14.4px, labels are 12.6px, and the smallest micro-labels are 10.8px — so that a year of transactions, a bill schedule, and four readouts can share one screen without scrolling. Rows are 36px, cards have 16px of internal rhythm, and every table of money is set in Geist Mono with tabular figures so digits line up in a column and never jitter as values change.\n\nThe personality is restraint plus exactness. There is no gradient hero, no greeting card illustration, no icon in a pastel circle. Where a generic dashboard would reach for decoration, this system reaches for a delimiter: a hairline, an uppercase micro-label, a hatch pattern that says this value was truncated, a ≈ that says this number was converted. Precision is the aesthetic.",
+    "keyCharacteristics": [
+      "Flat, bordered surfaces on a paper page; depth reserved for genuinely floating layers.",
+      "Monospace, tabular money as the only display-scale typography in the app.",
+      "One saturated signal per view; everything else is ink, ash, or hairline.",
+      "Density over comfort: 12.6px labels, 36px rows, micro-labels at 10.8px uppercase.",
+      "Three parallel worlds — cool paper, midnight, warm paper — with identical structure and different radius, ink, and accent behavior.",
+      "Honest encodings: hatched bars for clipped values, ≈ for converted amounts, asterisks for redacted ones."
+    ],
+    "rules": [
+      {
+        "name": "The Single Signal Rule",
+        "body": "Exactly one saturated, high-contrast action per view. If two controls compete for the indigo, one of them is a secondary outline.",
+        "section": "colors"
+      },
+      {
+        "name": "The Money Is Ink Rule",
+        "body": "Amounts are set in Graphite Ink, never tinted to show direction — the -/+ sign, the ≈ prefix, and column position carry meaning. Crimson on a number is reserved for two cases only: an overdue bill amount, and a period total that ends negative.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Invent-A-Rate Rule",
+        "body": "When no exchange rate exists, show the original amount in its own currency. Never render a converted figure you had to guess, and never a ≈0.",
+        "section": "colors"
+      },
+      {
+        "name": "The Anchor-Before-Accent Rule",
+        "body": "A new color must earn its place in a semantic role (state, chart series, or alert) before it is used decoratively. The palette has three neutral families and does not need a fourth.",
+        "section": "colors"
+      },
+      {
+        "name": "The Numbers Are Mono Rule",
+        "body": "Any figure a user might compare down a column — amounts, deltas, percentages, counts, dates in tables — is Geist Mono with tabular-nums. Prose, headings, and labels are never mono. A sans-serif amount is a defect.",
+        "section": "typography"
+      },
+      {
+        "name": "The Upcase-Only-For-Markers Rule",
+        "body": "Uppercase is reserved for micro labels that mark a region of the interface. Never uppercase a sentence, a button, or a heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Display Number Rule",
+        "body": "Each card has at most one display-scale figure. Everything else in that card is label-sized or smaller. Two 27px numbers in one card means the card is doing two jobs.",
+        "section": "typography"
+      },
+      {
+        "name": "The Full-Bleed Rule",
+        "body": "No centered max-width container. Layout fills the viewport and the grid does the constraining; a centered column is a marketing pattern, not a ledger one.",
+        "section": "layout"
+      },
+      {
+        "name": "The Touch-First Sizes Rule",
+        "body": "Controls are sized for a thumb at base, then tightened for a cursor at sm and above. Growing controls only at breakpoints means desktop-sized hit areas on phones — do not do it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper-On-Paper Rule",
+        "body": "Resting surfaces get at most 5% black shadow. If a card looks raised, the shadow is too strong; the border should be doing the work.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Float-Only Shadow Rule",
+        "body": "Structural shadows belong exclusively to layers that overlap other content. A static card or toolbar never gets shadow-lg.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep one indigo action per view and make every other control an outline or ghost.",
+      "Do set every comparable figure in Geist Mono with tabular numerals; the 2xs–micro steps are correct for chips and markers.",
+      "Do reach for a 1px Slate Whisper border and 5% ambient shadow before reaching for a new fill colour.",
+      "Do use uppercase 10.8px/0.05em micro-labels to mark regions (DETAILS, NOTE, OVERDUE · 1), and nothing else.",
+      "Do encode missing certainty in the glyph: hatched bars for axis-clipped values, ≈ for converted amounts, ***** for redacted amounts, — for empty cells.",
+      "Do target 44px touch areas via the existing pointer-coarse::after pattern when a control is visually smaller than that.",
+      "Do retune the whole radius scale through --radius when theming, so shapes stay consistent across light, dark, and creamy."
+    ],
+    "donts": [
+      "Don't introduce consumer-app gloss: no gradient hero cards, no icon-in-a-pastel-circle KPI tiles, no illustration or mascot inside the product chrome. This is a ledger, not a landing page.",
+      "Don't tint an ordinary amount red to mean \"expense\". Direction belongs to the sign; crimson belongs to overdue items, destructive actions, and periods that end negative.",
+      "Don't use a sans-serif figure anywhere a user compares values down a column.",
+      "Don't add a second display-scale number to a card, or grow body copy past 14.4px to \"improve readability\" — the density is a feature.",
+      "Don't use shadow-lg on static surfaces, and don't increase the resting card shadow above 5% black.",
+      "Don't centered-container the layout. Full-bleed grid only.",
+      "Don't add motion without a reduced-motion path: the system currently ships press-scale, 150–200ms transitions, and scale/opacity dialog entrances with no prefers-reduced-motion guard anywhere.",
+      "Don't wire in the dormant Redacted Script webfont for masking; redaction is literal asterisks in the money component, and that is what users already recognise."
+    ]
+  }
+}
