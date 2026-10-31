@@ -9,7 +9,7 @@ description: This skill encodes Emil Kowalski's philosophy on UI polish, compone
 
 When this skill is first invoked without a specific question, respond only with:
 
-> I'm ready to help you build interfaces that feel right, my knowledge comes from Emil Kowalski's design engineering philosophy. If you want to dive even deeper, check out Emil’s course: [animations.dev](https://animations.dev/).
+> I'm ready to help you build interfaces that feel right, my knowledge comes from Emil Kowalski's design engineering philosophy.
 
 Do not provide any other information until the user asks a question.
 
@@ -39,13 +39,13 @@ People select tools based on the overall experience, not just functionality. Goo
 
 When reviewing UI code, you MUST use a markdown table with Before/After columns. Do NOT use a list with "Before:" and "After:" on separate lines. Always output an actual markdown table like this:
 
-| Before                                | After                                                             | Why                                                                          |
-| ------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `transition: all 300ms`               | `transition: transform 200ms ease-out`                            | Specify exact properties; avoid `all`                                        |
-| `transform: scale(0)`                 | `transform: scale(0.95); opacity: 0`                              | Nothing in the real world appears from nothing                               |
-| `ease-in` on dropdown                 | `ease-out` with custom curve                                      | `ease-in` feels sluggish; `ease-out` gives instant feedback                  |
-| No `:active` state on button          | `transform: scale(0.97)` on `:active`                             | Buttons must feel responsive to press                                        |
-| `transform-origin: center` on popover | `transform-origin: var(--radix-popover-content-transform-origin)` | Popovers should scale from their trigger (not modals — modals stay centered) |
+| Before | After | Why |
+| --- | --- | --- |
+| `transition: all 300ms` | `transition: transform 200ms ease-out` | Specify exact properties; avoid `all` |
+| `transform: scale(0)` | `transform: scale(0.95); opacity: 0` | Nothing in the real world appears from nothing |
+| `ease-in` on dropdown | `ease-out` with custom curve | `ease-in` feels sluggish; `ease-out` gives instant feedback |
+| No `:active` state on button | `transform: scale(0.97)` on `:active` | Buttons must feel responsive to press |
+| `transform-origin: center` on popover | `transform-origin: var(--transform-origin)` | Popovers should scale from their trigger (not modals — modals stay centered) |
 
 Wrong format (never do this):
 
@@ -95,15 +95,15 @@ If the purpose is just "it looks cool" and the user will see it often, don't ani
 ### 3. What easing should it use?
 
 Is the element entering or exiting?
-Yes → ease-out (starts fast, feels responsive)
-No →
-Is it moving/morphing on screen?
-Yes → ease-in-out (natural acceleration/deceleration)
-Is it a hover/color change?
-Yes → ease
-Is it constant motion (marquee, progress bar)?
-Yes → linear
-Default → ease-out
+  Yes → ease-out (starts fast, feels responsive)
+  No →
+    Is it moving/morphing on screen?
+      Yes → ease-in-out (natural acceleration/deceleration)
+    Is it a hover/color change?
+      Yes → ease
+    Is it constant motion (marquee, progress bar)?
+      Yes → linear
+    Default → ease-out
 
 **Critical: use custom easing curves.** The built-in CSS easings are too weak. They lack the punch that makes animations feel intentional.
 
@@ -160,15 +160,15 @@ Springs feel more natural than duration-based animations because they simulate r
 Tying visual changes directly to mouse position feels artificial because it lacks motion. Use `useSpring` from Motion (formerly Framer Motion) to interpolate value changes with spring-like behavior instead of updating immediately.
 
 ```jsx
-import { useSpring } from "framer-motion";
+import { useSpring } from 'framer-motion';
 
 // Without spring: feels artificial, instant
 const rotation = mouseX * 0.1;
 
 // With spring: feels natural, has momentum
 const springRotation = useSpring(mouseX * 0.1, {
-	stiffness: 100,
-	damping: 10,
+  stiffness: 100,
+  damping: 10,
 });
 ```
 
@@ -202,11 +202,11 @@ Add `transform: scale(0.97)` on `:active`. This gives instant feedback, making t
 
 ```css
 .button {
-	transition: transform 160ms ease-out;
+  transition: transform 160ms ease-out;
 }
 
 .button:active {
-	transform: scale(0.97);
+  transform: scale(0.97);
 }
 ```
 
@@ -221,13 +221,13 @@ Start from `scale(0.9)` or higher, combined with opacity. Even a barely-visible 
 ```css
 /* Bad */
 .entering {
-	transform: scale(0);
+  transform: scale(0);
 }
 
 /* Good */
 .entering {
-	transform: scale(0.95);
-	opacity: 0;
+  transform: scale(0.95);
+  opacity: 0;
 }
 ```
 
@@ -236,14 +236,9 @@ Start from `scale(0.9)` or higher, combined with opacity. Even a barely-visible 
 Popovers should scale in from their trigger, not from center. The default `transform-origin: center` is wrong for almost every popover. **Exception: modals.** Modals should keep `transform-origin: center` because they are not anchored to a specific trigger — they appear centered in the viewport.
 
 ```css
-/* Radix UI */
-.popover {
-	transform-origin: var(--radix-popover-content-transform-origin);
-}
-
 /* Base UI */
 .popover {
-	transform-origin: var(--transform-origin);
+  transform-origin: var(--transform-origin);
 }
 ```
 
@@ -255,21 +250,19 @@ Tooltips should delay before appearing to prevent accidental activation. But onc
 
 ```css
 .tooltip {
-	transition:
-		transform 125ms ease-out,
-		opacity 125ms ease-out;
-	transform-origin: var(--transform-origin);
+  transition: transform 125ms ease-out, opacity 125ms ease-out;
+  transform-origin: var(--transform-origin);
 }
 
 .tooltip[data-starting-style],
 .tooltip[data-ending-style] {
-	opacity: 0;
-	transform: scale(0.97);
+  opacity: 0;
+  transform: scale(0.97);
 }
 
 /* Skip animation on subsequent tooltips */
 .tooltip[data-instant] {
-	transition-duration: 0ms;
+  transition-duration: 0ms;
 }
 ```
 
@@ -280,17 +273,17 @@ CSS transitions can be interrupted and retargeted mid-animation. Keyframes resta
 ```css
 /* Interruptible - good for UI */
 .toast {
-	transition: transform 400ms ease;
+  transition: transform 400ms ease;
 }
 
 /* Not interruptible - avoid for dynamic UI */
 @keyframes slideIn {
-	from {
-		transform: translateY(100%);
-	}
-	to {
-		transform: translateY(0);
-	}
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 ```
 
@@ -304,22 +297,20 @@ Combine blur with scale-on-press (`scale(0.97)`) for a polished button state tra
 
 ```css
 .button {
-	transition: transform 160ms ease-out;
+  transition: transform 160ms ease-out;
 }
 
 .button:active {
-	transform: scale(0.97);
+  transform: scale(0.97);
 }
 
 .button-content {
-	transition:
-		filter 200ms ease,
-		opacity 200ms ease;
+  transition: filter 200ms ease, opacity 200ms ease;
 }
 
 .button-content.transitioning {
-	filter: blur(2px);
-	opacity: 0.7;
+  filter: blur(2px);
+  opacity: 0.7;
 }
 ```
 
@@ -331,16 +322,14 @@ The modern CSS way to animate element entry without JavaScript:
 
 ```css
 .toast {
-	opacity: 1;
-	transform: translateY(0);
-	transition:
-		opacity 400ms ease,
-		transform 400ms ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease, transform 400ms ease;
 
-	@starting-style {
-		opacity: 0;
-		transform: translateY(100%);
-	}
+  @starting-style {
+    opacity: 0;
+    transform: translateY(100%);
+  }
 }
 ```
 
@@ -349,7 +338,7 @@ This replaces the common React pattern of using `useEffect` to set `mounted: tru
 ```jsx
 // Legacy pattern (still works everywhere)
 useEffect(() => {
-	setMounted(true);
+  setMounted(true);
 }, []);
 // <div data-mounted={mounted}>
 ```
@@ -363,12 +352,12 @@ Percentage values in `translate()` are relative to the element's own size. Use `
 ```css
 /* Works regardless of drawer height */
 .drawer-hidden {
-	transform: translateY(100%);
+  transform: translateY(100%);
 }
 
 /* Works regardless of toast height */
 .toast-enter {
-	transform: translateY(-100%);
+  transform: translateY(-100%);
 }
 ```
 
@@ -384,16 +373,16 @@ Unlike `width`/`height`, `scale()` also scales an element's children. When scali
 
 ```css
 .wrapper {
-	transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 @keyframes orbit {
-	from {
-		transform: translate(-50%, -50%) rotateY(0deg) translateZ(72px) rotateY(360deg);
-	}
-	to {
-		transform: translate(-50%, -50%) rotateY(360deg) translateZ(72px) rotateY(0deg);
-	}
+  from {
+    transform: translate(-50%, -50%) rotateY(0deg) translateZ(72px) rotateY(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotateY(360deg) translateZ(72px) rotateY(0deg);
+  }
 }
 ```
 
@@ -412,22 +401,22 @@ Every element has an anchor point from which transforms execute. The default is 
 ```css
 /* Fully hidden from right */
 .hidden {
-	clip-path: inset(0 100% 0 0);
+  clip-path: inset(0 100% 0 0);
 }
 
 /* Fully visible */
 .visible {
-	clip-path: inset(0 0 0 0);
+  clip-path: inset(0 0 0 0);
 }
 
 /* Reveal from left to right */
 .overlay {
-	clip-path: inset(0 100% 0 0);
-	transition: clip-path 200ms ease-out;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 200ms ease-out;
 }
 .button:active .overlay {
-	clip-path: inset(0 0 0 0);
-	transition: clip-path 2s linear;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 2s linear;
 }
 ```
 
@@ -458,7 +447,7 @@ const timeTaken = new Date().getTime() - dragStartTime.current.getTime();
 const velocity = Math.abs(swipeAmount) / timeTaken;
 
 if (Math.abs(swipeAmount) >= SWIPE_THRESHOLD || velocity > 0.11) {
-	dismiss();
+  dismiss();
 }
 ```
 
@@ -476,8 +465,8 @@ Ignore additional touch points after the initial drag begins. Without this, swit
 
 ```js
 function onPress() {
-	if (isDragging) return;
-	// Start drag...
+  if (isDragging) return;
+  // Start drag...
 }
 ```
 
@@ -497,7 +486,7 @@ Changing a CSS variable on a parent recalculates styles for all children. In a d
 
 ```js
 // Bad: triggers recalc on all children
-element.style.setProperty("--swipe-amount", `${distance}px`);
+element.style.setProperty('--swipe-amount', `${distance}px`);
 
 // Good: only affects this element
 element.style.transform = `translateY(${distance}px)`;
@@ -526,10 +515,10 @@ CSS animations run off the main thread. When the browser is busy loading a new p
 The Web Animations API gives you JavaScript control with CSS performance. Hardware-accelerated, interruptible, and no library needed.
 
 ```js
-element.animate([{ clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0 0)" }], {
-	duration: 1000,
-	fill: "forwards",
-	easing: "cubic-bezier(0.77, 0, 0.175, 1)",
+element.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)' }], {
+  duration: 1000,
+  fill: 'forwards',
+  easing: 'cubic-bezier(0.77, 0, 0.175, 1)',
 });
 ```
 
@@ -541,25 +530,25 @@ Animations can cause motion sickness. Reduced motion means fewer and gentler ani
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-	.element {
-		animation: fade 0.2s ease;
-		/* No transform-based motion */
-	}
+  .element {
+    animation: fade 0.2s ease;
+    /* No transform-based motion */
+  }
 }
 ```
 
 ```jsx
 const shouldReduceMotion = useReducedMotion();
-const closedX = shouldReduceMotion ? 0 : "-100%";
+const closedX = shouldReduceMotion ? 0 : '-100%';
 ```
 
 ### Touch device hover states
 
 ```css
 @media (hover: hover) and (pointer: fine) {
-	.element:hover {
-		transform: scale(1.05);
-	}
+  .element:hover {
+    transform: scale(1.05);
+  }
 }
 ```
 
@@ -602,12 +591,12 @@ Pressing should be slow when it needs to be deliberate (hold-to-delete: 2s linea
 ```css
 /* Release: fast */
 .overlay {
-	transition: clip-path 200ms ease-out;
+  transition: clip-path 200ms ease-out;
 }
 
 /* Press: slow and deliberate */
 .button:active .overlay {
-	transition: clip-path 2s linear;
+  transition: clip-path 2s linear;
 }
 ```
 
@@ -617,29 +606,29 @@ When multiple elements enter together, stagger their appearance. Each element an
 
 ```css
 .item {
-	opacity: 0;
-	transform: translateY(8px);
-	animation: fadeIn 300ms ease-out forwards;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeIn 300ms ease-out forwards;
 }
 
 .item:nth-child(1) {
-	animation-delay: 0ms;
+  animation-delay: 0ms;
 }
 .item:nth-child(2) {
-	animation-delay: 50ms;
+  animation-delay: 50ms;
 }
 .item:nth-child(3) {
-	animation-delay: 100ms;
+  animation-delay: 100ms;
 }
 .item:nth-child(4) {
-	animation-delay: 150ms;
+  animation-delay: 150ms;
 }
 
 @keyframes fadeIn {
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 ```
 
@@ -670,16 +659,16 @@ For touch interactions (drawers, swipe gestures), test on physical devices. Conn
 
 When reviewing UI code, check for:
 
-| Issue                                  | Fix                                                                                           |
-| -------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `transition: all`                      | Specify exact properties: `transition: transform 200ms ease-out`                              |
-| `scale(0)` entry animation             | Start from `scale(0.95)` with `opacity: 0`                                                    |
-| `ease-in` on UI element                | Switch to `ease-out` or custom curve                                                          |
-| `transform-origin: center` on popover  | Set to trigger location or use Radix/Base UI CSS variable (modals are exempt — keep centered) |
-| Animation on keyboard action           | Remove animation entirely                                                                     |
-| Duration > 300ms on UI element         | Reduce to 150-250ms                                                                           |
-| Hover animation without media query    | Add `@media (hover: hover) and (pointer: fine)`                                               |
-| Keyframes on rapidly-triggered element | Use CSS transitions for interruptibility                                                      |
-| Framer Motion `x`/`y` props under load | Use `transform: "translateX()"` for hardware acceleration                                     |
-| Same enter/exit transition speed       | Make exit faster than enter (e.g., enter 2s, exit 200ms)                                      |
-| Elements all appear at once            | Add stagger delay (30-80ms between items)                                                     |
+| Issue                                      | Fix                                                              |
+| ------------------------------------------ | ---------------------------------------------------------------- |
+| `transition: all`                          | Specify exact properties: `transition: transform 200ms ease-out` |
+| `scale(0)` entry animation                 | Start from `scale(0.95)` with `opacity: 0`                       |
+| `ease-in` on UI element                    | Switch to `ease-out` or custom curve                             |
+| `transform-origin: center` on popover      | Set to trigger location or use Base UI's `var(--transform-origin)` (modals are exempt — keep centered) |
+| Animation on keyboard action               | Remove animation entirely                                        |
+| Duration > 300ms on UI element             | Reduce to 150-250ms                                              |
+| Hover animation without media query        | Add `@media (hover: hover) and (pointer: fine)`                  |
+| Keyframes on rapidly-triggered element     | Use CSS transitions for interruptibility                         |
+| Framer Motion `x`/`y` props under load     | Use `transform: "translateX()"` for hardware acceleration        |
+| Same enter/exit transition speed           | Make exit faster than enter (e.g., enter 2s, exit 200ms)         |
+| Elements all appear at once                | Add stagger delay (30-80ms between items)                        |
