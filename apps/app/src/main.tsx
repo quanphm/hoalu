@@ -21,7 +21,12 @@ const router = createTanStackRouter({
 	scrollRestoration: true,
 	scrollRestorationBehavior: "instant",
 	defaultPreload: "render",
-	defaultPreloadStaleTime: 0,
+	/**
+	 * Preloading the next screen is only worth anything if the data it fetched survives until the tap.
+	 * At `0` every preload is stale by the time you press a nav item, so the loader re-runs and the
+	 * screen waits on the network it already paid for.
+	 */
+	defaultPreloadStaleTime: 30_000,
 	defaultNotFoundComponent: NotFound,
 	defaultErrorComponent: DefaultCatchBoundary,
 });

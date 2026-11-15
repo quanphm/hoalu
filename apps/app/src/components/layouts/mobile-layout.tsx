@@ -109,6 +109,7 @@ function MobileBottomNav() {
 					size="sm"
 					variant="ghost"
 					activeOptions={{ exact: true }}
+					preload="render"
 					className={navItemClass}
 					activeProps={{ className: activeNavItemClass }}
 				>
@@ -121,6 +122,7 @@ function MobileBottomNav() {
 					size="sm"
 					variant="ghost"
 					activeOptions={{ exact: true }}
+					preload="render"
 					className={navItemClass}
 					activeProps={{ className: activeNavItemClass }}
 				>
@@ -133,6 +135,7 @@ function MobileBottomNav() {
 					size="sm"
 					variant="ghost"
 					activeOptions={{ exact: true }}
+					preload="render"
 					className={navItemClass}
 					activeProps={{ className: activeNavItemClass }}
 				>

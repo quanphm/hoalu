@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_dashboard")({
 		}
 	},
 	loader: ({ context: { queryClient } }) => {
-		queryClient.ensureQueryData(listWorkspacesOptions());
+		return queryClient.ensureQueryData(listWorkspacesOptions());
 	},
 	component: RouteComponent,
 });
