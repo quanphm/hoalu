@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/finance",
-	"version": "0.34.3",
+	"version": "0.34.4",
 	"private": true,
 	"description": "Monetary and exchange-rate utilities for Hoalu",
 	"type": "module",
