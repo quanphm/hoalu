@@ -1,4 +1,10 @@
 {
 	"$schema": "https://opencode.ai/config.json",
-	"instructions": ["apps/*/AGENTS.md", "packages/*/AGENTS.md"]
+	"instructions": ["apps/*/AGENTS.md", "packages/*/AGENTS.md"],
+	"references": {
+		"finary": {
+			"path": "../finary",
+			"description": "Use for references an production graded app - built with Effect, Alchemy, StyleX, base-ui"
+		}
+	}
 }

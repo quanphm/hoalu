@@ -1,6 +1,5 @@
 import { toLocalISOString } from "@hoalu/datetime/datetime";
 import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
-import { RepeatSchema } from "@hoalu/schema/schema";
 import { Button } from "@hoalu/ui/button";
 import {
 	DropdownMenu,
@@ -9,10 +8,11 @@ import {
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
-import { ScrollArea } from "@hoalu/ui/scroll-area";
+import { cn } from "@hoalu/ui/utils";
 import { useNavigate, getRouteApi } from "@tanstack/react-router";
 
 import { draftExpense$, logPayment$ } from "#app/atoms/index.ts";
+import { ButtonLink } from "#app/components/button-link.tsx";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { formatDueDate, formatDueIn } from "#app/helpers/due-date.ts";
 import { useArchiveRecurringBill } from "#app/services/mutations.ts";
@@ -21,40 +21,23 @@ import type { ProjectedBill } from "#app/components/upcoming-bills/use-billing-p
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
+/** Bills shown after the overdue block, before "View N more" takes over. */
+const MAX_VISIBLE_BILLS = 5;
+
 interface UnifiedBillsListProps {
 	overdue: ProjectedBill[];
 	today: ProjectedBill[];
 	upcoming: ProjectedBill[];
 }
 
-interface FlatBill extends ProjectedBill {
-	status: "overdue" | "today" | "upcoming";
-}
-
-function flattenBills(
-	overdue: ProjectedBill[],
-	today: ProjectedBill[],
-	upcoming: ProjectedBill[],
-): FlatBill[] {
-	const bills: FlatBill[] = [];
-
-	for (const bill of overdue) {
-		bills.push({ ...bill, status: "overdue" });
-	}
-	for (const bill of today) {
-		bills.push({ ...bill, status: "today" });
-	}
-	for (const bill of upcoming) {
-		bills.push({ ...bill, status: "upcoming" });
-	}
-
-	return bills;
-}
-
 export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsListProps) {
-	const bills = flattenBills(overdue, today, upcoming);
+	const overdueBills = overdue;
+	const remainingBills = [...today, ...upcoming];
+	const visibleBills = remainingBills.slice(0, MAX_VISIBLE_BILLS);
+	const hiddenCount = remainingBills.length - visibleBills.length;
+	const { slug } = routeApi.useParams();
 
-	if (bills.length === 0) {
+	if (overdueBills.length === 0 && remainingBills.length === 0) {
 		return (
 			<Empty>
 				<EmptyHeader>
@@ -65,132 +48,71 @@ export function UpcomingBillsList({ overdue, today, upcoming }: UnifiedBillsList
 		);
 	}
 
-	const overdueBills = bills.filter((b) => b.status === "overdue");
-	const remainingBills = bills.filter((b) => b.status !== "overdue");
-
-	const overdueTotal = overdueBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
-	const overdueCurrency = overdueBills[0]?.currency ?? "VND";
+	const overdueTotal = overdueBills.reduce((sum, bill) => sum + bill.amount, 0);
+	const overdueCurrencies = new Set(overdueBills.map((bill) => bill.currency));
+	const [overdueCurrency] = overdueCurrencies;
+	// A total earns its place only when it aggregates: a lone bill would repeat
+	// its own row, and amounts in different currencies have no honest sum.
+	const showsOverdueTotal = overdueBills.length > 1 && overdueCurrencies.size === 1;
 
 	return (
-		<ScrollArea className="min-h-90 px-4">
-			{/* Overdue section */}
+		<div className="flex h-full flex-col">
 			{overdueBills.length > 0 && (
-				<div className="border-destructive/20 bg-destructive/8 dark:bg-destructive/12 rounded-lg border">
-					{/* Header */}
-					<div className="border-destructive/10 flex items-center justify-between border-b px-4 py-2.5">
-						<span className="text-destructive text-xs font-semibold tracking-wider uppercase">
+				<div className="border-destructive/20 bg-destructive/8 border-y">
+					<div className="flex items-baseline justify-between gap-3 px-4 py-1.5">
+						<span className="text-destructive text-xs font-medium tracking-wider uppercase">
 							Overdue · {overdueBills.length}
 						</span>
-						<CurrencyValue
-							value={overdueTotal}
-							currency={overdueCurrency}
-							className="text-destructive text-xs font-semibold"
-						/>
+						{/* `pr-9` clears the rows' kebab slot (32px + 4px) so the total lands in their money column. */}
+						{showsOverdueTotal && (
+							<CurrencyValue
+								value={overdueTotal}
+								currency={overdueCurrency}
+								className="text-destructive pr-9 text-sm font-semibold"
+							/>
+						)}
 					</div>
-					{/* Items */}
-					<div className="divide-destructive/10 divide-y px-4">
+					<div className="divide-destructive/10 mx-4 divide-y">
 						{overdueBills.map((bill) => (
-							<OverdueBillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} />
+							<BillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} isOverdue />
 						))}
 					</div>
 				</div>
 			)}
 
-			{/* Upcoming section */}
-			{remainingBills.length > 0 && (
-				<div className="divide-border/50 mt-4 divide-y px-4">
-					{remainingBills.map((bill) => (
-						<UpcomingBillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} />
+			{visibleBills.length > 0 && (
+				<div className="divide-border/50 mx-4 divide-y">
+					{visibleBills.map((bill) => (
+						<BillRow key={`${bill.recurringBillId}-${bill.date}`} bill={bill} />
 					))}
 				</div>
 			)}
-		</ScrollArea>
-	);
-}
 
-function OverdueBillRow({ bill }: { bill: FlatBill }) {
-	const archive = useArchiveRecurringBill();
-	const { slug } = routeApi.useParams();
-	const navigate = useNavigate();
-	const setDraft = draftExpense$.set;
-	const setLogPayment = logPayment$.set;
-
-	function handleLogPayment(e: React.MouseEvent) {
-		e.stopPropagation();
-		setDraft({
-			title: bill.title,
-			description: "",
-			date: toLocalISOString(bill.date),
-			transaction: {
-				value: bill.amount,
-				currency: bill.currency,
-			},
-			walletId: bill.walletId,
-			categoryId: bill.categoryId ?? "",
-			repeat: bill.repeat as RepeatSchema,
-		});
-		setLogPayment({ recurringBillId: bill.recurringBillId });
-		navigate({
-			to: "/$slug/transactions/new",
-			params: { slug },
-			search: { type: "expense" },
-		});
-	}
-
-	function handleDelete(e: React.MouseEvent) {
-		e.stopPropagation();
-		archive.mutate({ id: bill.recurringBillId });
-	}
-
-	const daysLate = formatDueIn(bill.daysUntil);
-
-	return (
-		<div className="flex w-full items-center gap-3 py-3">
-			<button
-				type="button"
-				onClick={handleLogPayment}
-				className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
-			>
-				<span className="text-foreground truncate text-sm font-semibold">{bill.title}</span>
-				<span className="text-muted-foreground truncate text-xs">
-					{bill.categoryName ?? "Uncategorized"} · due {formatDueDate(bill.date)} ·{" "}
-					<span className="text-destructive">{daysLate}</span>
-				</span>
-			</button>
-			<div className="flex shrink-0 items-center gap-1">
-				<CurrencyValue
-					value={bill.amount}
-					currency={bill.currency}
-					className="text-destructive text-sm font-semibold"
-				/>
-				<DropdownMenu>
-					<DropdownMenuTrigger
-						render={<Button variant="ghost" size="icon-sm" className="hover:bg-transparent" />}
+			{hiddenCount > 0 && (
+				<div className="mt-auto px-4">
+					<ButtonLink
+						to="/$slug/recurring-bills"
+						params={{ slug }}
+						variant="ghost"
+						size="sm"
+						className="text-muted-foreground w-full justify-center font-normal"
 					>
-						<DotsThreeVerticalIcon />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={handleLogPayment}>Log payment</DropdownMenuItem>
-						<DropdownMenuItem onClick={handleDelete} disabled={archive.isPending}>
-							Archive
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
+						View {hiddenCount} more
+					</ButtonLink>
+				</div>
+			)}
 		</div>
 	);
 }
 
-function UpcomingBillRow({ bill }: { bill: FlatBill }) {
+function BillRow({ bill, isOverdue = false }: { bill: ProjectedBill; isOverdue?: boolean }) {
 	const archive = useArchiveRecurringBill();
 	const { slug } = routeApi.useParams();
 	const navigate = useNavigate();
-	const setDraft = draftExpense$.set;
-	const setLogPayment = logPayment$.set;
 
-	function handleLogPayment(e: React.MouseEvent) {
-		e.stopPropagation();
-		setDraft({
+	function handleLogPayment(event: React.MouseEvent) {
+		event.stopPropagation();
+		draftExpense$.set({
 			title: bill.title,
 			description: "",
 			date: toLocalISOString(bill.date),
@@ -200,33 +122,39 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 			},
 			walletId: bill.walletId,
 			categoryId: bill.categoryId ?? "",
-			repeat: bill.repeat as RepeatSchema,
+			repeat: bill.repeat,
 		});
-		setLogPayment({ recurringBillId: bill.recurringBillId });
-		navigate({
+		logPayment$.set({ recurringBillId: bill.recurringBillId });
+		void navigate({
 			to: "/$slug/transactions/new",
 			params: { slug },
 			search: { type: "expense" },
 		});
 	}
 
-	function handleDelete(e: React.MouseEvent) {
-		e.stopPropagation();
+	function handleArchive(event: React.MouseEvent) {
+		event.stopPropagation();
 		archive.mutate({ id: bill.recurringBillId });
 	}
 
-	const daysLabel = formatDueIn(bill.daysUntil);
+	const category = bill.categoryName ?? "Uncategorized";
+	const dueDate = formatDueDate(bill.date);
+	const relative = formatDueIn(bill.daysUntil);
 
 	return (
-		<div className="flex w-full items-center gap-3 py-3">
+		<div className="group/row flex w-full items-center gap-3 py-2.5">
 			<button
 				type="button"
 				onClick={handleLogPayment}
-				className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
+				aria-label={`Log payment for ${bill.title}`}
+				className="focus-visible:ring-ring flex min-w-0 flex-1 flex-col gap-0.5 rounded-sm text-left outline-none focus-visible:ring-2"
 			>
 				<span className="text-foreground truncate text-sm font-semibold">{bill.title}</span>
-				<span className="text-muted-foreground truncate text-xs">
-					{bill.categoryName ?? "Uncategorized"} · {formatDueDate(bill.date)} · {daysLabel}
+				<span className="text-muted-foreground flex min-w-0 items-baseline gap-1 text-sm">
+					<span className="truncate">
+						{category} · {dueDate}
+					</span>
+					{isOverdue && <span className="text-destructive whitespace-nowrap">· {relative}</span>}
 				</span>
 			</button>
 			<div className="flex shrink-0 items-center gap-1">
@@ -237,13 +165,24 @@ function UpcomingBillRow({ bill }: { bill: FlatBill }) {
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger
-						render={<Button variant="ghost" size="icon-sm" className="hover:bg-transparent" />}
+						render={
+							<Button
+								variant="ghost"
+								size="icon"
+								aria-label={`${bill.title} actions`}
+								className={cn(
+									"opacity-0 transition-[opacity,background-color] group-hover/row:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100",
+									isOverdue &&
+										"[@media(hover:hover)_and_(pointer:fine)]:hover:bg-destructive/15 data-pressed:bg-destructive/15",
+								)}
+							/>
+						}
 					>
 						<DotsThreeVerticalIcon />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem onClick={handleLogPayment}>Log payment</DropdownMenuItem>
-						<DropdownMenuItem onClick={handleDelete} disabled={archive.isPending}>
+						<DropdownMenuItem onClick={handleArchive} disabled={archive.isPending}>
 							Archive
 						</DropdownMenuItem>
 					</DropdownMenuContent>

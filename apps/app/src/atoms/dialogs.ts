@@ -88,14 +88,10 @@ export const deleteWorkspaceDialog = createDialog("delete-workspace");
 export const deleteExpenseDialog = createDialog("delete-expense");
 export const scanReceiptDialog = createDialog("scan-receipt");
 
-export const createWalletDialog = createDialog("create-wallet");
-export const editWalletDialog = createDialog("edit-wallet");
 export const deleteWalletDialog = createDialog("delete-wallet");
 
-export const createCategoryDialog = createDialog("create-category");
 export const deleteCategoryDialog = createDialog("delete-category");
 
-export const createRecurringBillDialog = createDialog("create-recurring-bill");
 export const archiveRecurringBillDialog = createDialog("archive-recurring-bill");
 export const unarchiveRecurringBillDialog = createDialog("unarchive-recurring-bill");
 export const deleteRecurringBillDialog = createDialog("delete-recurring-bill");
@@ -105,6 +101,4 @@ export const quickExpenseDialog = createDialog("quick-expense");
 
 export const deleteIncomeDialog = createDialog("delete-income");
 
-export const createEventDialog = createDialog("create-event");
-export const editEventDialog = createDialog("edit-event");
 export const deleteEventDialog = createDialog("delete-event");

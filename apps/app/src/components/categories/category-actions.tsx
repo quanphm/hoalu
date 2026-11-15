@@ -1,64 +1,40 @@
-import { TrashIcon } from "@hoalu/icons/phosphor";
+import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon, TrashIcon } from "@hoalu/icons/phosphor";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
+	DialogClose,
 	DialogFooter,
 	DialogHeader,
 	DialogHeaderAction,
 	DialogPopup,
 	DialogTitle,
 } from "@hoalu/ui/dialog";
-import { Field, FieldGroup } from "@hoalu/ui/field";
+import { Field as UIField, FieldGroup } from "@hoalu/ui/field";
+import { Input } from "@hoalu/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { createCategoryDialog, deleteCategoryDialog, selectedCategory$ } from "#app/atoms/index.ts";
+import { categorySearchKeywords$, deleteCategoryDialog } from "#app/atoms/index.ts";
+import { type SyncedCategory } from "#app/components/categories/use-categories.ts";
 import { useAppForm } from "#app/components/forms/index.tsx";
+import { WarningMessage } from "#app/components/warning-message.tsx";
 import { createCategoryTheme } from "#app/helpers/colors.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { AVAILABLE_CATEGORY_TYPE_OPTIONS } from "#app/helpers/constants.ts";
 import { CategoryFormSchema } from "#app/lib/schema.ts";
-import { useCreateCategory, useDeleteCategory, useEditCategory } from "#app/services/mutations.ts";
-import { categoryWithIdQueryOptions } from "#app/services/query-options.ts";
-
-import { WarningMessage } from "../warning-message";
+import { useCreateCategory, useDeleteCategory } from "#app/services/mutations.ts";
 
 import type { ColorSchema } from "@hoalu/schema/schema";
 
-export function CreateCategoryDialogTrigger() {
-	const setDialog = createCategoryDialog.set;
-	return (
-		<Button size="sm" onClick={() => setDialog({ state: true })}>
-			Create category
-		</Button>
-	);
-}
-
-export function CreateCategoryDialogContent() {
-	return (
-		<DialogPopup className="sm:max-w-[420px]">
-			<DialogHeader>
-				<DialogTitle>Create new category</DialogTitle>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<CreateCategoryForm />
-		</DialogPopup>
-	);
-}
-
-const CATEGORY_TYPE_OPTIONS = [
-	{ label: "Expense", value: "expense" },
-	{ label: "Income", value: "income" },
-];
-
+/** The dialog-shaped quick-add used from inside another form's category picker. */
 export function CreateCategoryForm({
 	type,
 	callback,
 }: {
 	type?: "expense" | "income";
-	callback?(): void;
+	callback(): void;
 }) {
-	const setDialog = createCategoryDialog.set;
 	const mutation = useCreateCategory();
 	const form = useAppForm({
 		defaultValues: {
@@ -80,11 +56,7 @@ export function CreateCategoryForm({
 				},
 			});
 
-			if (callback) {
-				callback();
-			} else {
-				setDialog({ state: false });
-			}
+			callback();
 		},
 	});
 
@@ -104,7 +76,7 @@ export function CreateCategoryForm({
 						<form.AppField
 							name="type"
 							children={(field) => (
-								<field.SelectField label="Type" options={CATEGORY_TYPE_OPTIONS} />
+								<field.SelectField label="Type" options={AVAILABLE_CATEGORY_TYPE_OPTIONS} />
 							)}
 						/>
 					)}
@@ -122,120 +94,142 @@ export function CreateCategoryForm({
 				</div>
 
 				<DialogFooter>
-					<Field orientation="horizontal" className="justify-end">
+					<UIField orientation="horizontal" className="justify-end">
 						<form.SubscribeButton>Create category</form.SubscribeButton>
-					</Field>
+					</UIField>
 				</DialogFooter>
 			</form.Form>
 		</form.AppForm>
 	);
 }
 
-export function EditCategoryForm(props: { onEditCallback?(): void }) {
-	const workspace = useWorkspace();
-	const selectedCategory = useValue(selectedCategory$);
-	const { data: category } = useSuspenseQuery(
-		categoryWithIdQueryOptions(workspace.slug, selectedCategory.id || ""),
+export function CategorySearch() {
+	const value = useValue(categorySearchKeywords$);
+	const setValue = categorySearchKeywords$.set;
+
+	return (
+		<div className="relative w-full md:w-80">
+			<Input
+				type="search"
+				size="sm"
+				aria-label="Search categories"
+				placeholder="Search name, description..."
+				className="peer ps-6 focus-visible:ring-0"
+				value={value}
+				onChange={(e) => {
+					setValue(e.target.value);
+				}}
+			/>
+			<div className="pointer-events-none absolute inset-y-0 inset-s-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+				<MagnifyingGlassIcon className="text-muted-foreground size-3" aria-hidden="true" />
+			</div>
+		</div>
 	);
+}
 
-	const editMutation = useEditCategory();
-	const form = useAppForm({
-		defaultValues: {
-			name: category?.name ?? "",
-			description: category?.description ?? "",
-			color: category?.color ?? "gray",
-			type: category?.type ?? "expense",
-		} as CategoryFormSchema,
-		validators: {
-			onSubmit: CategoryFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			if (!selectedCategory.id) {
-				return;
-			}
-
-			await editMutation.mutateAsync({
-				id: selectedCategory.id,
-				payload: {
-					name: value.name,
-					description: value.description,
-					color: value.color,
-				},
-			});
-			if (props.onEditCallback) props.onEditCallback();
-		},
-	});
-
+export function CategoryNavigation(props: {
+	onGoUp: () => void;
+	onGoDown: () => void;
+	canGoUp: boolean;
+	canGoDown: boolean;
+	category: SyncedCategory;
+}) {
 	const setDialog = deleteCategoryDialog.set;
 
 	return (
-		<form.AppForm>
-			<form.Form>
-				<FieldGroup>
-					<form.AppField
-						name="name"
-						children={(field) => <field.InputWithEmojiPickerField label="Category" required />}
-					/>
-					<form.AppField
-						name="description"
-						children={(field) => <field.InputField label="Description" autoComplete="off" />}
-					/>
-					<form.AppField name="color" children={(field) => <field.ColorsField label="Color" />} />
-				</FieldGroup>
-
-				<div className="flex items-center justify-center p-1">
-					<form.Subscribe selector={(state) => [state.values.color, state.values.name]}>
-						{([color, name]) => (
-							<Badge className={cn(createCategoryTheme(color as ColorSchema), "scale-105")}>
-								{name || <>&nbsp;</>}
-							</Badge>
-						)}
-					</form.Subscribe>
-				</div>
-
-				<Field orientation="horizontal" className="justify-between">
-					<Button
-						type="button"
-						size="icon"
-						variant="ghost"
-						onClick={() => setDialog({ state: true })}
-					>
-						<TrashIcon className="size-4" />
-					</Button>
-					<form.SubscribeButton>Update</form.SubscribeButton>
-				</Field>
-			</form.Form>
-		</form.AppForm>
+		<>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Button
+							size="icon-sm"
+							variant="outline"
+							onClick={props.onGoDown}
+							disabled={!props.canGoDown}
+						/>
+					}
+				>
+					<CaretDownIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">Down (J)</TooltipContent>
+			</Tooltip>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Button
+							size="icon-sm"
+							variant="outline"
+							onClick={props.onGoUp}
+							disabled={!props.canGoUp}
+						/>
+					}
+				>
+					<CaretUpIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">Up (K)</TooltipContent>
+			</Tooltip>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Button
+							size="icon-sm"
+							variant="outline"
+							aria-label="Delete category"
+							onClick={() =>
+								setDialog({
+									state: true,
+									data: { id: props.category.id, name: props.category.name },
+								})
+							}
+						/>
+					}
+				>
+					<TrashIcon />
+				</TooltipTrigger>
+				<TooltipContent side="bottom">Delete</TooltipContent>
+			</Tooltip>
+		</>
 	);
 }
 
 export function DeleteCategoryDialogContent() {
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const mutation = useDeleteCategory();
-	const selectedCategory = useValue(selectedCategory$);
-	const setSelectedCategory = selectedCategory$.set;
+	const dialog = useValue(deleteCategoryDialog.$);
 	const setDialog = deleteCategoryDialog.set;
+
+	const categoryName = dialog?.data?.name ?? "this category";
+
 	const onDelete = async () => {
-		if (!selectedCategory.id) {
+		if (!dialog?.data?.id) {
 			setDialog({ state: false });
 			return;
 		}
-		await mutation.mutateAsync({ id: selectedCategory.id });
-		setDialog({ state: false });
-		setSelectedCategory({ id: null, name: null });
+		try {
+			await mutation.mutateAsync({ id: dialog.data.id });
+			navigate({ to: "/$slug/categories", params: { slug } });
+		} finally {
+			setDialog({ state: false });
+		}
 	};
 
 	return (
 		<DialogPopup className="sm:max-w-[480px]">
 			<DialogHeader>
-				<DialogTitle>Delete the "{selectedCategory.name}"?</DialogTitle>
+				<DialogTitle>Delete "{categoryName}"?</DialogTitle>
 				<DialogHeaderAction />
 			</DialogHeader>
-			<WarningMessage>This action cannot be undone.</WarningMessage>
+			<WarningMessage>
+				Transactions labeled with this category will be unlabeled. This action cannot be undone.
+			</WarningMessage>
 			<DialogFooter>
-				<Button type="button" variant="secondary" onClick={() => setDialog({ state: false })}>
+				<DialogClose
+					render={<Button type="button" variant="outline" disabled={mutation.isPending} />}
+				>
 					Cancel
-				</Button>
-				<Button variant="destructive" onClick={onDelete}>
+				</DialogClose>
+				<Button variant="destructive" onClick={onDelete} disabled={mutation.isPending}>
 					Delete
 				</Button>
 			</DialogFooter>

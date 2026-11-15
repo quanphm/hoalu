@@ -1,8 +1,14 @@
-import { datetime } from "@hoalu/datetime/datetime";
+import { formatDateNear } from "#app/helpers/format-date.ts";
 
-/** "Oct 15" — the calendar date an occurrence falls on. */
+/**
+ * The calendar date an occurrence falls on.
+ *
+ * `Nov 3` when the bill is due this year, `Feb 26, 2027` when it is not — a bare
+ * `Feb 26` next to a bill due in 118 days is the ambiguity the dashboard used to
+ * ship.
+ */
 export function formatDueDate(date: string): string {
-	return datetime.format(new Date(`${date}T00:00:00`), "MMM d");
+	return formatDateNear(date);
 }
 
 /**

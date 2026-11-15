@@ -1,13 +1,13 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { CaretDownIcon, CaretUpIcon, RepeatIcon, XIcon } from "@hoalu/icons/phosphor";
+import { CaretDownIcon, CaretUpIcon, RepeatIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
-import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
-import { Suspense, useEffect, useRef } from "react";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { Suspense, useEffect, useId, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import {
 	draftExpense$,
@@ -22,6 +22,7 @@ import { DeleteExpense, DuplicateExpense } from "#app/components/expenses/expens
 import { type SyncedExpense } from "#app/components/expenses/use-expenses.ts";
 import { Field, FieldControl, FieldMessage } from "#app/components/forms/components.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
+import { PillPicker } from "#app/components/forms/pill-picker.tsx";
 import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import {
 	TransactionAttachments,
@@ -32,12 +33,16 @@ import {
 	TransactionCloseAction,
 	TransactionPageGrid,
 	TransactionPageHeader,
-	TransactionSectionLabel,
+	TransactionSubmitRow,
 	type TransactionNavigation,
 } from "#app/components/transactions/transaction-layout.tsx";
+import {
+	TransactionMetaRow,
+	TransactionPanel,
+} from "#app/components/transactions/transaction-meta.tsx";
 import { buildWalletGroups, useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
+import { AVAILABLE_REPEAT_OPTIONS, KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 import { useAuth } from "#app/hooks/use-auth.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { quickExpenseQueue } from "#app/lib/queues/quick-expense-queue.ts";
@@ -53,15 +58,20 @@ import {
 import { expenseFilesQueryOptions } from "#app/services/query-options.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
+const createRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions/new");
 
 export function CreateExpenseForm() {
+	const workspace = useWorkspace();
 	const { user } = useAuth();
 	const { slug } = routeApi.useParams();
+	const returned = createRouteApi.useSearch();
 	const navigate = useNavigate();
 	const wallets = useLiveQueryWallets();
 	const mutation = useCreateExpense();
 	const expenseFilesMutation = useUploadExpenseFiles();
 	const attachmentsRef = useRef<TransactionAttachmentsRef>(null);
+	const formId = useId();
+	const amountId = useId();
 
 	const draft = useValue(draftExpense$);
 	const logPayment = useValue(logPayment$);
@@ -86,12 +96,12 @@ export function CreateExpenseForm() {
 
 	const categories = useLiveQueryCategories();
 
-	if (!wallets.length) return null;
-
+	// A new workspace can render this page before its default wallet syncs in, so the defaults
+	// have to survive an empty list: the guard below the hooks then renders nothing.
 	const fallbackWallet = {
-		label: wallets[0].name,
-		value: wallets[0].id,
-		currency: wallets[0].currency,
+		label: wallets[0]?.name ?? "",
+		value: wallets[0]?.id ?? "",
+		currency: wallets[0]?.currency ?? workspace.metadata.currency,
 	};
 	const walletGroups = buildWalletGroups(wallets, { activeOnly: true });
 	const userId = user?.id || "";
@@ -107,9 +117,21 @@ export function CreateExpenseForm() {
 			? lastUsedCategoryId
 			: null;
 
+	const recurringBills = useLiveQueryRecurringBills();
+	const returnedBill = returned.recurringBillId
+		? recurringBills.find((bill) => bill.id === returned.recurringBillId)
+		: undefined;
+
 	const initialWallet = draft.walletId || validLastWallet || defaultWallet.value;
-	const initialCategory = draft.categoryId || validLastCategory;
-	const initialRecurringBillId = logPayment.recurringBillId || undefined;
+	// A create page hands its result back through the URL, which outranks the draft: the choice
+	// made two seconds ago is newer than the one saved earlier.
+	const initialCategory = returned.categoryId || draft.categoryId || validLastCategory;
+	const initialEventId = returned.eventId || draft.eventId || undefined;
+	const initialRecurringBillId =
+		returned.recurringBillId || logPayment.recurringBillId || draft.recurringBillId || undefined;
+	// The bill picker only lists bills of the current cadence, so a bill created on its own page
+	// has to bring its cadence back with it or the pill would show nothing.
+	const initialRepeat = returnedBill?.repeat ?? draft.repeat;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -122,7 +144,8 @@ export function CreateExpenseForm() {
 			},
 			walletId: initialWallet,
 			categoryId: initialCategory,
-			repeat: draft.repeat,
+			repeat: initialRepeat,
+			eventId: initialEventId,
 			recurringBillId: initialRecurringBillId,
 			attachments: scannedReceipts.length > 0 ? scannedReceipts : [],
 		} as ExpenseFormSchema,
@@ -183,6 +206,18 @@ export function CreateExpenseForm() {
 		},
 	});
 
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.save_transaction.hotkey,
+		(e) => {
+			e.preventDefault();
+			void form.handleSubmit();
+		},
+		{ enableOnFormTags: true },
+		[form],
+	);
+
+	if (!wallets.length) return null;
+
 	return (
 		<form.AppForm>
 			<TransactionPageHeader
@@ -193,13 +228,18 @@ export function CreateExpenseForm() {
 				}
 				actions={<TransactionCloseAction />}
 			/>
-			<form.Form>
+			<form.Form id={formId}>
 				<TransactionPageGrid
+					keepAsideColumn
 					main={
-						<div className="flex flex-col gap-6">
-							<div className="bg-card flex flex-col gap-4 rounded-lg border p-4">
+						<div className="bg-card flex flex-col gap-4 rounded-lg border p-4">
+							<div className="flex flex-col gap-1">
 								<form.AppField
 									name="title"
+									validators={{
+										onSubmit: ({ value }) =>
+											value.trim() ? undefined : { message: "Give this transaction a title" },
+									}}
 									children={(field) => (
 										<Field>
 											<FieldControl>
@@ -208,6 +248,11 @@ export function CreateExpenseForm() {
 													value={field.state.value}
 													onBlur={field.handleBlur}
 													onChange={(e) => field.handleChange(e.target.value)}
+													onKeyDown={(e) => {
+														if (e.key !== "Enter") return;
+														e.preventDefault();
+														document.getElementById(amountId)?.focus();
+													}}
 													placeholder="Untitled expense"
 													autoFocus
 												/>
@@ -216,86 +261,90 @@ export function CreateExpenseForm() {
 										</Field>
 									)}
 								/>
-								<div className="flex flex-col gap-3 md:flex-row">
-									<div className="flex-1">
-										<form.AppField
-											name="transaction"
-											children={(field) => <field.TransactionAmountSplitField sign="expense" />}
+								<form.AppField
+									name="transaction"
+									children={(field) => (
+										<field.TransactionAmountHeroField
+											inputId={amountId}
+											sign="expense"
+											onEnter={() => void form.handleSubmit()}
 										/>
-									</div>
-									<div className="md:w-[190px]">
-										<form.AppField
-											name="date"
-											children={(field) => <field.DatepickerInputField />}
-										/>
-									</div>
-								</div>
-							</div>
-
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Details</TransactionSectionLabel>
-								<div className="bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2">
-									<form.AppField
-										name="walletId"
-										children={(field) => (
-											<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
-										)}
-									/>
-									<form.AppField
-										name="categoryId"
-										children={(field) => (
-											<field.SelectCategoryField label="Category" type="expense" />
-										)}
-									/>
-									<form.AppField
-										name="repeat"
-										children={(field) => (
-											<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-										)}
-									/>
-									<form.AppField
-										name="eventId"
-										children={(field) => <field.SelectEventField label="Event" showClosed />}
-									/>
-								</div>
-								<form.Subscribe
-									selector={(s) => s.values.repeat}
-									children={(repeat) => (
-										<div
-											className={cn(
-												"bg-card rounded-lg border p-4",
-												repeat === "one-time" && "hidden",
-											)}
-										>
-											<form.AppField
-												name="recurringBillId"
-												children={(field) => (
-													<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
-												)}
-											/>
-										</div>
 									)}
 								/>
 							</div>
 
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Note</TransactionSectionLabel>
-								<form.AppField name="description" children={(field) => <field.TiptapField />} />
-							</div>
+							<TransactionMetaRow>
+								<form.AppField
+									name="walletId"
+									children={(walletField) => (
+										<walletField.SelectWithGroupsField placeholder="Wallet" groups={walletGroups} />
+									)}
+								/>
+								<form.AppField
+									name="categoryId"
+									validators={{
+										onSubmit: ({ value }) => (value ? undefined : { message: "Pick a category" }),
+									}}
+									children={(categoryField) => (
+										<categoryField.SelectCategoryField
+											placeholder="Category"
+											type="expense"
+											createAction="navigate"
+										/>
+									)}
+								/>
+								<form.AppField name="date" children={(dateField) => <dateField.DateChipField />} />
+								<form.AppField name="repeat">
+									{(repeatField) => (
+										<PillPicker
+											options={AVAILABLE_REPEAT_OPTIONS}
+											value={repeatField.state.value}
+											onValueChange={repeatField.handleChange}
+											placeholder="Repeat"
+											triggerIcon={<RepeatIcon className="size-3.5" aria-hidden="true" />}
+											searchable={false}
+										/>
+									)}
+								</form.AppField>
+								<form.Subscribe selector={(s) => s.values.repeat}>
+									{(repeat) =>
+										repeat !== "one-time" ? (
+											<form.AppField
+												name="recurringBillId"
+												children={(billField) => (
+													<billField.SelectRecurringBillField
+														placeholder="Recurring bill"
+														repeat={repeat}
+														createAction="navigate"
+													/>
+												)}
+											/>
+										) : null
+									}
+								</form.Subscribe>
+								<form.AppField
+									name="eventId"
+									children={(eventField) => (
+										<eventField.SelectEventField
+											placeholder="No event"
+											showClosed
+											createAction="navigate"
+											transactionType="expense"
+										/>
+									)}
+								/>
+							</TransactionMetaRow>
 
-							<div className="flex items-center justify-between">
-								<div />
-								<div className="flex items-center gap-2">
-									{/* <Button
-										type="button"
-										variant="outline"
-										render={<Link to="/$slug/transactions" params={{ slug }} />}
-									>
-										Cancel
-									</Button> */}
-									<form.SubscribeButton>Create expense</form.SubscribeButton>
-								</div>
-							</div>
+							<TransactionPanel>
+								<form.AppField
+									name="description"
+									children={(field) => <field.TiptapField label="Note" />}
+								/>
+							</TransactionPanel>
+
+							<TransactionSubmitRow>
+								<form.SubscribeButton>Create expense</form.SubscribeButton>
+							</TransactionSubmitRow>
 						</div>
 					}
 					aside={
@@ -381,6 +430,8 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 	const attachmentsRef = useRef<TransactionAttachmentsRef>(null);
 	const wallets = useLiveQueryWallets();
 	const recurringBills = useLiveQueryRecurringBills();
+	const formId = useId();
+	const amountId = useId();
 
 	const walletGroups = buildWalletGroups(wallets);
 
@@ -440,6 +491,16 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 		form.reset();
 	}, [props.data.recurring_bill_id, form]);
 
+	useHotkeys(
+		KEYBOARD_SHORTCUTS.save_transaction.hotkey,
+		(e) => {
+			e.preventDefault();
+			void form.handleSubmit();
+		},
+		{ enableOnFormTags: true },
+		[form],
+	);
+
 	const { onClose, onGoUp, onGoDown, canGoUp, canGoDown } = props.navigation;
 
 	return (
@@ -479,18 +540,11 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 						</Tooltip>
 						<DuplicateExpense data={props.data} />
 						<DeleteExpense id={props.data.id} />
-						<Tooltip>
-							<TooltipTrigger
-								render={<Button size="icon-sm" variant="outline" onClick={onClose} />}
-							>
-								<XIcon />
-							</TooltipTrigger>
-							<TooltipContent side="bottom">Close</TooltipContent>
-						</Tooltip>
+						<TransactionCloseAction onClose={onClose} />
 					</>
 				}
 			/>
-			<form.Form>
+			<form.Form id={formId}>
 				<TransactionPageGrid
 					main={
 						<div className="flex flex-col gap-6">
@@ -498,107 +552,125 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 								<SetUpRecurringBillPrompt expense={props.data} />
 							)}
 							<div className="bg-card flex flex-col gap-4 rounded-lg border p-4">
-								<form.AppField
-									name="title"
-									children={(field) => (
-										<Field>
-											<FieldControl>
-												<BorderlessTitleInput
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(e) => field.handleChange(e.target.value)}
-													placeholder="Untitled expense"
-												/>
-											</FieldControl>
-											<FieldMessage />
-										</Field>
-									)}
-								/>
-								<div className="flex flex-col gap-3 md:flex-row">
-									<div className="flex-1">
-										<form.AppField
-											name="transaction"
-											children={(field) => <field.TransactionAmountSplitField sign="expense" />}
-										/>
-									</div>
-									<div className="md:w-[190px]">
-										<form.AppField
-											name="date"
-											children={(field) => <field.DatepickerInputField />}
-										/>
-									</div>
+								<div className="flex flex-col gap-1">
+									<form.AppField
+										name="title"
+										validators={{
+											onSubmit: ({ value }) =>
+												value.trim() ? undefined : { message: "Give this transaction a title" },
+										}}
+										children={(field) => (
+											<Field>
+												<FieldControl>
+													<BorderlessTitleInput
+														name={field.name}
+														value={field.state.value}
+														onBlur={field.handleBlur}
+														onChange={(e) => field.handleChange(e.target.value)}
+														onKeyDown={(e) => {
+															if (e.key !== "Enter") return;
+															e.preventDefault();
+															document.getElementById(amountId)?.focus();
+														}}
+														placeholder="Untitled expense"
+													/>
+												</FieldControl>
+												<FieldMessage />
+											</Field>
+										)}
+									/>
+									<form.AppField
+										name="transaction"
+										children={(field) => (
+											<field.TransactionAmountHeroField
+												inputId={amountId}
+												sign="expense"
+												onEnter={() => void form.handleSubmit()}
+											/>
+										)}
+									/>
 								</div>
-							</div>
 
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Details</TransactionSectionLabel>
-								<div className="bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2">
+								<TransactionMetaRow>
 									<form.AppField
 										name="walletId"
-										children={(field) => (
-											<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+										children={(walletField) => (
+											<walletField.SelectWithGroupsField
+												placeholder="Wallet"
+												groups={walletGroups}
+											/>
 										)}
 									/>
 									<form.AppField
 										name="categoryId"
-										children={(field) => (
-											<field.SelectCategoryField label="Category" type="expense" />
+										validators={{
+											onSubmit: ({ value }) => (value ? undefined : { message: "Pick a category" }),
+										}}
+										children={(categoryField) => (
+											<categoryField.SelectCategoryField placeholder="Category" type="expense" />
 										)}
 									/>
 									<form.AppField
-										name="repeat"
-										children={(field) => (
-											<field.SelectField label="Repeat" options={AVAILABLE_REPEAT_OPTIONS} />
-										)}
+										name="date"
+										children={(dateField) => <dateField.DateChipField />}
 									/>
+									<form.AppField name="repeat">
+										{(repeatField) => (
+											<PillPicker
+												options={AVAILABLE_REPEAT_OPTIONS}
+												value={repeatField.state.value}
+												onValueChange={repeatField.handleChange}
+												placeholder="Repeat"
+												triggerIcon={<RepeatIcon className="size-3.5" aria-hidden="true" />}
+												searchable={false}
+											/>
+										)}
+									</form.AppField>
+									<form.Subscribe selector={(s) => s.values.repeat}>
+										{(repeat) =>
+											repeat !== "one-time" ? (
+												<form.AppField
+													name="recurringBillId"
+													children={(billField) => (
+														<billField.SelectRecurringBillField
+															placeholder="Recurring bill"
+															repeat={repeat}
+														/>
+													)}
+												/>
+											) : null
+										}
+									</form.Subscribe>
 									<form.AppField
 										name="eventId"
-										children={(field) => <field.SelectEventField label="Event" showClosed />}
+										children={(eventField) => (
+											<eventField.SelectEventField placeholder="No event" showClosed />
+										)}
 									/>
-								</div>
-								<form.Subscribe
-									selector={(s) => s.values.repeat}
-									children={(repeat) => (
-										<div
-											className={cn(
-												"bg-card flex flex-col gap-3 rounded-lg border p-4",
-												repeat === "one-time" && "hidden",
-											)}
-										>
-											<form.AppField
-												name="recurringBillId"
-												children={(field) => (
-													<field.SelectRecurringBillField label="Recurring bill" repeat={repeat} />
-												)}
-											/>
-											{linkedBillIsArchived && (
-												<WarningMessage>
-													The linked recurring bill has been archived.
-												</WarningMessage>
-											)}
-										</div>
-									)}
-								/>
-							</div>
+								</TransactionMetaRow>
 
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Note</TransactionSectionLabel>
-								<form.AppField name="description" children={(field) => <field.TiptapField />} />
-							</div>
+								{linkedBillIsArchived && (
+									<div className="mt-1">
+										<WarningMessage>The linked recurring bill has been archived.</WarningMessage>
+									</div>
+								)}
 
-							<div className="flex items-center justify-between">
-								<div className="text-muted-foreground text-sm">
-									<form.Subscribe selector={(s) => s.isDirty}>
-										{(isDirty) => (isDirty ? "Unsaved changes" : "")}
-									</form.Subscribe>
-								</div>
-								<div className="flex items-center gap-2">
-									{/* <Button type="button" variant="outline" onClick={() => form.reset()}>
-										Cancel
-									</Button> */}
+								<TransactionPanel>
+									<form.AppField
+										name="description"
+										children={(field) => <field.TiptapField label="Note" />}
+									/>
+								</TransactionPanel>
+
+								<TransactionSubmitRow
+									status={
+										<form.Subscribe selector={(s) => s.isDirty}>
+											{(isDirty) => (isDirty ? "Unsaved changes" : null)}
+										</form.Subscribe>
+									}
+								>
 									<form.SubscribeButton>Update</form.SubscribeButton>
-								</div>
+								</TransactionSubmitRow>
 							</div>
 						</div>
 					}

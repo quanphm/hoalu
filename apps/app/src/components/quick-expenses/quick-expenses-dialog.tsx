@@ -5,17 +5,6 @@ import { DialogHeader, DialogHeaderAction, DialogPopup, DialogTitle } from "@hoa
 import { quickExpenseDialog } from "#app/atoms/dialogs.ts";
 import { QuickExpensesForm } from "#app/components/quick-expenses/quick-expenses-form.tsx";
 
-export function QuickExpensesDialogTrigger(props: ButtonProps) {
-	const setQuickDialog = quickExpenseDialog.set;
-
-	return (
-		<Button size="sm" variant="outline" {...props} onClick={() => setQuickDialog({ state: true })}>
-			<LightningIcon />
-			Quick add
-		</Button>
-	);
-}
-
 export function QuickExpensesDialogContent() {
 	const setQuickDialog = quickExpenseDialog.set;
 

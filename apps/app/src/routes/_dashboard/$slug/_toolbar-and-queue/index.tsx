@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CashFlowChart } from "#app/components/charts/cash-flow-chart.tsx";
-import { CashFlowSection } from "#app/components/charts/cash-flow.tsx";
+import { CashFlowTiles } from "#app/components/charts/cash-flow-tiles.tsx";
 import { CategoryBreakdown } from "#app/components/charts/category-breakdown.tsx";
 import { ExpenseOverview } from "#app/components/charts/expenses-overview.tsx";
 import { useDashboardModel } from "#app/components/charts/use-dashboard-model.ts";
@@ -16,18 +15,17 @@ function RouteComponent() {
 	const model = useDashboardModel();
 
 	return (
-		<SectionContent columns={24} className="items-start gap-4 p-4">
-			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
-				<CashFlowChart model={model} />
+		<SectionContent columns={24} className="items-stretch gap-4 p-4">
+			<div className="col-span-2 min-w-0 sm:col-span-3 md:col-span-4 lg:col-span-24">
+				<CashFlowTiles model={model} />
 			</div>
-			<div className="col-span-24 flex flex-col gap-4 md:col-span-16">
-				<CashFlowSection model={model} />
+			<div className="col-span-2 min-w-0 sm:col-span-3 md:col-span-4 lg:col-span-16">
 				<ExpenseOverview model={model} categories={model.categories.list} />
 			</div>
-			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+			<div className="col-span-2 min-w-0 sm:col-span-3 md:col-span-4 lg:col-span-8">
 				<UpcomingBillsWidget />
 			</div>
-			<div className="col-span-24 flex h-full flex-col gap-4 md:col-span-8">
+			<div className="col-span-2 min-w-0 sm:col-span-3 md:col-span-4 lg:col-span-24">
 				<CategoryBreakdown model={model} />
 			</div>
 		</SectionContent>

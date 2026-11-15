@@ -299,7 +299,9 @@ The unit the whole product is composed from: a muted eyebrow, then a 27px/500/�
 
 ### Upcoming Bill Row (signature)
 
-A full-width row: title in 12.6px/500, then a metadata line composed of the category emoji, category name, separator dot, status, due date, and lateness ("· due Oct 25 · 6 days late" with the lateness clause in crimson). The right side holds the tabular amount and a kebab menu. Overdue items are lifted out of the list into an alert block: `destructive/8` fill with a `destructive/20` border, rounded-lg, an uppercase `OVERDUE · 1` band across the top, and the count and total aligned right. Urgency is expressed as an _enclosure_, not as a louder row.
+A full-width row: title in 12.6px/500, then a metadata line composed of the category emoji, category name, separator dot, due date, and lateness ("· Oct 25 · 6 days late" with the lateness clause in crimson; the date never carries a "due" prefix the neighbouring rows lack). The right side holds the tabular amount — Midnight Ink like every other figure, so the money column reads identically down the card — and a 32px kebab menu that appears on hover.
+
+Overdue items are lifted out of the list into a full-bleed band: `destructive/8` fill between two `destructive/20` hairlines spanning the card's full inner width, with the card's own border as its enclosure, an uppercase `OVERDUE · 1` marker on the 16px gutter, and the total at the far right — shown only when it aggregates more than one bill in one currency, and always landing in the rows' money column. Row separators stay inset to that same gutter. Urgency is expressed as a _region of the card_, never as a card inside a card: no nested radius, no half-gutter indentation, nothing for the eye to re-align against.
 
 ### Command Palette (signature)
 

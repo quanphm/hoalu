@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-export const role = z.string();
 export const invitationStatus = z
 	.enum(["pending", "accepted", "rejected", "canceled"])
 	.default("pending");

@@ -88,6 +88,8 @@ export interface GroupedVirtualTableProps<TRow, TGroupKey extends string = strin
 	// Selection
 	selectedId?: string | null;
 	onSelectItem?: (id: string | null) => void;
+	// Accessible name for the scrollable list region.
+	label?: string;
 	// When true, j/k/esc hotkeys drive selection inside the list.
 	// Set false when a detail panel owns those keys (e.g. Transactions URL routing).
 	enableKeyboardNav?: boolean;
@@ -112,6 +114,7 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	estimateRowSize = 45,
 	selectedId,
 	onSelectItem,
+	label,
 	enableKeyboardNav = false,
 	scrollPositionRef,
 	emptyState = null,
@@ -200,9 +203,14 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 	}
 
 	return (
-		<div ref={parentRef} className="h-full w-full overflow-y-scroll">
-			{/* Sticky column header */}
+		<div
+			ref={parentRef}
+			role={label ? "group" : undefined}
+			aria-label={label}
+			className="h-full w-full overflow-y-scroll"
+		>
 			<div
+				aria-hidden="true"
 				className={cn("bg-card sticky top-0 z-20 border-b", gridTemplate)}
 				style={{ height: THEAD_HEIGHT }}
 			>
@@ -264,9 +272,12 @@ function GroupedVirtualTableInner<TRow, TGroupKey extends string = string>({
 							data-index={virtualRow.index}
 							ref={virtualizer.measureElement}
 							id={id}
-							role="row"
-							// oxlint-disable-next-line jsx_a11y/no-noninteractive-tabindex
+							// Rows host their own controls on some surfaces (e.g. the bills kebab),
+							// so a real <button> element cannot be used here.
+							// oxlint-disable-next-line jsx_a11y/prefer-tag-over-role
+							role="button"
 							tabIndex={0}
+							aria-current={isSelected ? "true" : undefined}
 							className={cn(
 								"hover:bg-muted/60 focus-visible:ring-ring cursor-pointer border-b outline-none focus-visible:ring-2 focus-visible:ring-inset",
 								gridTemplate,

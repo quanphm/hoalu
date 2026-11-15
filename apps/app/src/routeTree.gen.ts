@@ -18,22 +18,28 @@ import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as DashboardSlugRouteRouteImport } from './routes/_dashboard/$slug/route'
 import { Route as DashboardSlugToolbarAndQueueRouteRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/route'
-import { Route as DashboardSlugCategoriesRouteImport } from './routes/_dashboard/$slug/categories'
+import { Route as DashboardSlugCategoriesRouteRouteImport } from './routes/_dashboard/$slug/categories/route'
 import { Route as DashboardSlugEventsRouteRouteImport } from './routes/_dashboard/$slug/events/route'
 import { Route as DashboardSlugFilesRouteImport } from './routes/_dashboard/$slug/files'
 import { Route as DashboardSlugRecurringBillsRouteRouteImport } from './routes/_dashboard/$slug/recurring-bills/route'
 import { Route as DashboardSlugSettingsRouteRouteImport } from './routes/_dashboard/$slug/settings/route'
-import { Route as DashboardSlugWalletsRouteImport } from './routes/_dashboard/$slug/wallets'
+import { Route as DashboardSlugWalletsRouteRouteImport } from './routes/_dashboard/$slug/wallets/route'
 import { Route as DashboardAccountPreferencesRouteImport } from './routes/_dashboard/account/preferences'
 import { Route as DashboardAccountTokensRouteImport } from './routes/_dashboard/account/tokens'
 import { Route as AuthInviteIdAcceptRouteImport } from './routes/_auth/invite.$id.accept'
 import { Route as DashboardSlugToolbarAndQueueIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/index'
 import { Route as DashboardSlugToolbarAndQueueTransactionsRouteRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/route'
+import { Route as DashboardSlugCategoriesCategoryIdRouteImport } from './routes/_dashboard/$slug/categories/$categoryId'
+import { Route as DashboardSlugCategoriesNewRouteImport } from './routes/_dashboard/$slug/categories/new'
 import { Route as DashboardSlugEventsEventIdRouteImport } from './routes/_dashboard/$slug/events/$eventId'
+import { Route as DashboardSlugEventsNewRouteImport } from './routes/_dashboard/$slug/events/new'
 import { Route as DashboardSlugRecurringBillsBillIdRouteImport } from './routes/_dashboard/$slug/recurring-bills/$billId'
+import { Route as DashboardSlugRecurringBillsNewRouteImport } from './routes/_dashboard/$slug/recurring-bills/new'
 import { Route as DashboardSlugSettingsIndexRouteImport } from './routes/_dashboard/$slug/settings/index'
 import { Route as DashboardSlugSettingsMembersRouteImport } from './routes/_dashboard/$slug/settings/members'
 import { Route as DashboardSlugSettingsWorkspaceRouteImport } from './routes/_dashboard/$slug/settings/workspace'
+import { Route as DashboardSlugWalletsWalletIdRouteImport } from './routes/_dashboard/$slug/wallets/$walletId'
+import { Route as DashboardSlugWalletsNewRouteImport } from './routes/_dashboard/$slug/wallets/new'
 import { Route as DashboardSlugToolbarAndQueueTransactionsIndexRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/index'
 import { Route as DashboardSlugToolbarAndQueueTransactionsTransactionIdRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId'
 import { Route as DashboardSlugToolbarAndQueueTransactionsNewRouteImport } from './routes/_dashboard/$slug/_toolbar-and-queue/transactions/new'
@@ -81,11 +87,12 @@ const DashboardSlugToolbarAndQueueRouteRoute =
     id: '/_toolbar-and-queue',
     getParentRoute: () => DashboardSlugRouteRoute,
   } as any)
-const DashboardSlugCategoriesRoute = DashboardSlugCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
+const DashboardSlugCategoriesRouteRoute =
+  DashboardSlugCategoriesRouteRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
 const DashboardSlugEventsRouteRoute =
   DashboardSlugEventsRouteRouteImport.update({
     id: '/events',
@@ -109,11 +116,12 @@ const DashboardSlugSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => DashboardSlugRouteRoute,
   } as any)
-const DashboardSlugWalletsRoute = DashboardSlugWalletsRouteImport.update({
-  id: '/wallets',
-  path: '/wallets',
-  getParentRoute: () => DashboardSlugRouteRoute,
-} as any)
+const DashboardSlugWalletsRouteRoute =
+  DashboardSlugWalletsRouteRouteImport.update({
+    id: '/wallets',
+    path: '/wallets',
+    getParentRoute: () => DashboardSlugRouteRoute,
+  } as any)
 const DashboardAccountPreferencesRoute =
   DashboardAccountPreferencesRouteImport.update({
     id: '/account/preferences',
@@ -142,16 +150,39 @@ const DashboardSlugToolbarAndQueueTransactionsRouteRoute =
     path: '/transactions',
     getParentRoute: () => DashboardSlugToolbarAndQueueRouteRoute,
   } as any)
+const DashboardSlugCategoriesCategoryIdRoute =
+  DashboardSlugCategoriesCategoryIdRouteImport.update({
+    id: '/$categoryId',
+    path: '/$categoryId',
+    getParentRoute: () => DashboardSlugCategoriesRouteRoute,
+  } as any)
+const DashboardSlugCategoriesNewRoute =
+  DashboardSlugCategoriesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => DashboardSlugCategoriesRouteRoute,
+  } as any)
 const DashboardSlugEventsEventIdRoute =
   DashboardSlugEventsEventIdRouteImport.update({
     id: '/$eventId',
     path: '/$eventId',
     getParentRoute: () => DashboardSlugEventsRouteRoute,
   } as any)
+const DashboardSlugEventsNewRoute = DashboardSlugEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => DashboardSlugEventsRouteRoute,
+} as any)
 const DashboardSlugRecurringBillsBillIdRoute =
   DashboardSlugRecurringBillsBillIdRouteImport.update({
     id: '/$billId',
     path: '/$billId',
+    getParentRoute: () => DashboardSlugRecurringBillsRouteRoute,
+  } as any)
+const DashboardSlugRecurringBillsNewRoute =
+  DashboardSlugRecurringBillsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
     getParentRoute: () => DashboardSlugRecurringBillsRouteRoute,
   } as any)
 const DashboardSlugSettingsIndexRoute =
@@ -172,6 +203,17 @@ const DashboardSlugSettingsWorkspaceRoute =
     path: '/workspace',
     getParentRoute: () => DashboardSlugSettingsRouteRoute,
   } as any)
+const DashboardSlugWalletsWalletIdRoute =
+  DashboardSlugWalletsWalletIdRouteImport.update({
+    id: '/$walletId',
+    path: '/$walletId',
+    getParentRoute: () => DashboardSlugWalletsRouteRoute,
+  } as any)
+const DashboardSlugWalletsNewRoute = DashboardSlugWalletsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => DashboardSlugWalletsRouteRoute,
+} as any)
 const DashboardSlugToolbarAndQueueTransactionsIndexRoute =
   DashboardSlugToolbarAndQueueTransactionsIndexRouteImport.update({
     id: '/',
@@ -198,20 +240,26 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/$slug/categories': typeof DashboardSlugCategoriesRouteRouteWithChildren
   '/$slug/events': typeof DashboardSlugEventsRouteRouteWithChildren
   '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRouteRouteWithChildren
   '/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
-  '/$slug/categories': typeof DashboardSlugCategoriesRoute
+  '/$slug/wallets': typeof DashboardSlugWalletsRouteRouteWithChildren
   '/$slug/files': typeof DashboardSlugFilesRoute
-  '/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
   '/$slug/transactions': typeof DashboardSlugToolbarAndQueueTransactionsRouteRouteWithChildren
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
+  '/$slug/categories/$categoryId': typeof DashboardSlugCategoriesCategoryIdRoute
+  '/$slug/categories/new': typeof DashboardSlugCategoriesNewRoute
   '/$slug/events/$eventId': typeof DashboardSlugEventsEventIdRoute
+  '/$slug/events/new': typeof DashboardSlugEventsNewRoute
   '/$slug/recurring-bills/$billId': typeof DashboardSlugRecurringBillsBillIdRoute
+  '/$slug/recurring-bills/new': typeof DashboardSlugRecurringBillsNewRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
+  '/$slug/wallets/$walletId': typeof DashboardSlugWalletsWalletIdRoute
+  '/$slug/wallets/new': typeof DashboardSlugWalletsNewRoute
   '/$slug/': typeof DashboardSlugToolbarAndQueueIndexRoute
   '/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
   '/$slug/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
@@ -225,18 +273,24 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/$slug/categories': typeof DashboardSlugCategoriesRouteRouteWithChildren
   '/$slug/events': typeof DashboardSlugEventsRouteRouteWithChildren
   '/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRouteRouteWithChildren
-  '/$slug/categories': typeof DashboardSlugCategoriesRoute
+  '/$slug/wallets': typeof DashboardSlugWalletsRouteRouteWithChildren
   '/$slug/files': typeof DashboardSlugFilesRoute
-  '/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/account/preferences': typeof DashboardAccountPreferencesRoute
   '/account/tokens': typeof DashboardAccountTokensRoute
   '/invite/$id/accept': typeof AuthInviteIdAcceptRoute
+  '/$slug/categories/$categoryId': typeof DashboardSlugCategoriesCategoryIdRoute
+  '/$slug/categories/new': typeof DashboardSlugCategoriesNewRoute
   '/$slug/events/$eventId': typeof DashboardSlugEventsEventIdRoute
+  '/$slug/events/new': typeof DashboardSlugEventsNewRoute
   '/$slug/recurring-bills/$billId': typeof DashboardSlugRecurringBillsBillIdRoute
+  '/$slug/recurring-bills/new': typeof DashboardSlugRecurringBillsNewRoute
   '/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
+  '/$slug/wallets/$walletId': typeof DashboardSlugWalletsWalletIdRoute
+  '/$slug/wallets/new': typeof DashboardSlugWalletsNewRoute
   '/$slug/settings': typeof DashboardSlugSettingsIndexRoute
   '/$slug/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
   '/$slug/transactions/new': typeof DashboardSlugToolbarAndQueueTransactionsNewRoute
@@ -253,20 +307,26 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/$slug/_toolbar-and-queue': typeof DashboardSlugToolbarAndQueueRouteRouteWithChildren
+  '/_dashboard/$slug/categories': typeof DashboardSlugCategoriesRouteRouteWithChildren
   '/_dashboard/$slug/events': typeof DashboardSlugEventsRouteRouteWithChildren
   '/_dashboard/$slug/recurring-bills': typeof DashboardSlugRecurringBillsRouteRouteWithChildren
   '/_dashboard/$slug/settings': typeof DashboardSlugSettingsRouteRouteWithChildren
-  '/_dashboard/$slug/categories': typeof DashboardSlugCategoriesRoute
+  '/_dashboard/$slug/wallets': typeof DashboardSlugWalletsRouteRouteWithChildren
   '/_dashboard/$slug/files': typeof DashboardSlugFilesRoute
-  '/_dashboard/$slug/wallets': typeof DashboardSlugWalletsRoute
   '/_dashboard/account/preferences': typeof DashboardAccountPreferencesRoute
   '/_dashboard/account/tokens': typeof DashboardAccountTokensRoute
   '/_dashboard/$slug/_toolbar-and-queue/transactions': typeof DashboardSlugToolbarAndQueueTransactionsRouteRouteWithChildren
   '/_auth/invite/$id/accept': typeof AuthInviteIdAcceptRoute
+  '/_dashboard/$slug/categories/$categoryId': typeof DashboardSlugCategoriesCategoryIdRoute
+  '/_dashboard/$slug/categories/new': typeof DashboardSlugCategoriesNewRoute
   '/_dashboard/$slug/events/$eventId': typeof DashboardSlugEventsEventIdRoute
+  '/_dashboard/$slug/events/new': typeof DashboardSlugEventsNewRoute
   '/_dashboard/$slug/recurring-bills/$billId': typeof DashboardSlugRecurringBillsBillIdRoute
+  '/_dashboard/$slug/recurring-bills/new': typeof DashboardSlugRecurringBillsNewRoute
   '/_dashboard/$slug/settings/members': typeof DashboardSlugSettingsMembersRoute
   '/_dashboard/$slug/settings/workspace': typeof DashboardSlugSettingsWorkspaceRoute
+  '/_dashboard/$slug/wallets/$walletId': typeof DashboardSlugWalletsWalletIdRoute
+  '/_dashboard/$slug/wallets/new': typeof DashboardSlugWalletsNewRoute
   '/_dashboard/$slug/_toolbar-and-queue/': typeof DashboardSlugToolbarAndQueueIndexRoute
   '/_dashboard/$slug/settings/': typeof DashboardSlugSettingsIndexRoute
   '/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId': typeof DashboardSlugToolbarAndQueueTransactionsTransactionIdRoute
@@ -282,20 +342,26 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
+    | '/$slug/categories'
     | '/$slug/events'
     | '/$slug/recurring-bills'
     | '/$slug/settings'
-    | '/$slug/categories'
-    | '/$slug/files'
     | '/$slug/wallets'
+    | '/$slug/files'
     | '/account/preferences'
     | '/account/tokens'
     | '/$slug/transactions'
     | '/invite/$id/accept'
+    | '/$slug/categories/$categoryId'
+    | '/$slug/categories/new'
     | '/$slug/events/$eventId'
+    | '/$slug/events/new'
     | '/$slug/recurring-bills/$billId'
+    | '/$slug/recurring-bills/new'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
+    | '/$slug/wallets/$walletId'
+    | '/$slug/wallets/new'
     | '/$slug/'
     | '/$slug/settings/'
     | '/$slug/transactions/$transactionId'
@@ -309,18 +375,24 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
+    | '/$slug/categories'
     | '/$slug/events'
     | '/$slug/recurring-bills'
-    | '/$slug/categories'
-    | '/$slug/files'
     | '/$slug/wallets'
+    | '/$slug/files'
     | '/account/preferences'
     | '/account/tokens'
     | '/invite/$id/accept'
+    | '/$slug/categories/$categoryId'
+    | '/$slug/categories/new'
     | '/$slug/events/$eventId'
+    | '/$slug/events/new'
     | '/$slug/recurring-bills/$billId'
+    | '/$slug/recurring-bills/new'
     | '/$slug/settings/members'
     | '/$slug/settings/workspace'
+    | '/$slug/wallets/$walletId'
+    | '/$slug/wallets/new'
     | '/$slug/settings'
     | '/$slug/transactions/$transactionId'
     | '/$slug/transactions/new'
@@ -336,20 +408,26 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_dashboard/'
     | '/_dashboard/$slug/_toolbar-and-queue'
+    | '/_dashboard/$slug/categories'
     | '/_dashboard/$slug/events'
     | '/_dashboard/$slug/recurring-bills'
     | '/_dashboard/$slug/settings'
-    | '/_dashboard/$slug/categories'
-    | '/_dashboard/$slug/files'
     | '/_dashboard/$slug/wallets'
+    | '/_dashboard/$slug/files'
     | '/_dashboard/account/preferences'
     | '/_dashboard/account/tokens'
     | '/_dashboard/$slug/_toolbar-and-queue/transactions'
     | '/_auth/invite/$id/accept'
+    | '/_dashboard/$slug/categories/$categoryId'
+    | '/_dashboard/$slug/categories/new'
     | '/_dashboard/$slug/events/$eventId'
+    | '/_dashboard/$slug/events/new'
     | '/_dashboard/$slug/recurring-bills/$billId'
+    | '/_dashboard/$slug/recurring-bills/new'
     | '/_dashboard/$slug/settings/members'
     | '/_dashboard/$slug/settings/workspace'
+    | '/_dashboard/$slug/wallets/$walletId'
+    | '/_dashboard/$slug/wallets/new'
     | '/_dashboard/$slug/_toolbar-and-queue/'
     | '/_dashboard/$slug/settings/'
     | '/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId'
@@ -431,7 +509,7 @@ declare module '@tanstack/react-router' {
       id: '/_dashboard/$slug/categories'
       path: '/categories'
       fullPath: '/$slug/categories'
-      preLoaderRoute: typeof DashboardSlugCategoriesRouteImport
+      preLoaderRoute: typeof DashboardSlugCategoriesRouteRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
     '/_dashboard/$slug/events': {
@@ -466,7 +544,7 @@ declare module '@tanstack/react-router' {
       id: '/_dashboard/$slug/wallets'
       path: '/wallets'
       fullPath: '/$slug/wallets'
-      preLoaderRoute: typeof DashboardSlugWalletsRouteImport
+      preLoaderRoute: typeof DashboardSlugWalletsRouteRouteImport
       parentRoute: typeof DashboardSlugRouteRoute
     }
     '/_dashboard/account/preferences': {
@@ -504,6 +582,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugToolbarAndQueueTransactionsRouteRouteImport
       parentRoute: typeof DashboardSlugToolbarAndQueueRouteRoute
     }
+    '/_dashboard/$slug/categories/$categoryId': {
+      id: '/_dashboard/$slug/categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/$slug/categories/$categoryId'
+      preLoaderRoute: typeof DashboardSlugCategoriesCategoryIdRouteImport
+      parentRoute: typeof DashboardSlugCategoriesRouteRoute
+    }
+    '/_dashboard/$slug/categories/new': {
+      id: '/_dashboard/$slug/categories/new'
+      path: '/new'
+      fullPath: '/$slug/categories/new'
+      preLoaderRoute: typeof DashboardSlugCategoriesNewRouteImport
+      parentRoute: typeof DashboardSlugCategoriesRouteRoute
+    }
     '/_dashboard/$slug/events/$eventId': {
       id: '/_dashboard/$slug/events/$eventId'
       path: '/$eventId'
@@ -511,11 +603,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSlugEventsEventIdRouteImport
       parentRoute: typeof DashboardSlugEventsRouteRoute
     }
+    '/_dashboard/$slug/events/new': {
+      id: '/_dashboard/$slug/events/new'
+      path: '/new'
+      fullPath: '/$slug/events/new'
+      preLoaderRoute: typeof DashboardSlugEventsNewRouteImport
+      parentRoute: typeof DashboardSlugEventsRouteRoute
+    }
     '/_dashboard/$slug/recurring-bills/$billId': {
       id: '/_dashboard/$slug/recurring-bills/$billId'
       path: '/$billId'
       fullPath: '/$slug/recurring-bills/$billId'
       preLoaderRoute: typeof DashboardSlugRecurringBillsBillIdRouteImport
+      parentRoute: typeof DashboardSlugRecurringBillsRouteRoute
+    }
+    '/_dashboard/$slug/recurring-bills/new': {
+      id: '/_dashboard/$slug/recurring-bills/new'
+      path: '/new'
+      fullPath: '/$slug/recurring-bills/new'
+      preLoaderRoute: typeof DashboardSlugRecurringBillsNewRouteImport
       parentRoute: typeof DashboardSlugRecurringBillsRouteRoute
     }
     '/_dashboard/$slug/settings/': {
@@ -538,6 +644,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/$slug/settings/workspace'
       preLoaderRoute: typeof DashboardSlugSettingsWorkspaceRouteImport
       parentRoute: typeof DashboardSlugSettingsRouteRoute
+    }
+    '/_dashboard/$slug/wallets/$walletId': {
+      id: '/_dashboard/$slug/wallets/$walletId'
+      path: '/$walletId'
+      fullPath: '/$slug/wallets/$walletId'
+      preLoaderRoute: typeof DashboardSlugWalletsWalletIdRouteImport
+      parentRoute: typeof DashboardSlugWalletsRouteRoute
+    }
+    '/_dashboard/$slug/wallets/new': {
+      id: '/_dashboard/$slug/wallets/new'
+      path: '/new'
+      fullPath: '/$slug/wallets/new'
+      preLoaderRoute: typeof DashboardSlugWalletsNewRouteImport
+      parentRoute: typeof DashboardSlugWalletsRouteRoute
     }
     '/_dashboard/$slug/_toolbar-and-queue/transactions/': {
       id: '/_dashboard/$slug/_toolbar-and-queue/transactions/'
@@ -622,13 +742,32 @@ const DashboardSlugToolbarAndQueueRouteRouteWithChildren =
     DashboardSlugToolbarAndQueueRouteRouteChildren,
   )
 
+interface DashboardSlugCategoriesRouteRouteChildren {
+  DashboardSlugCategoriesCategoryIdRoute: typeof DashboardSlugCategoriesCategoryIdRoute
+  DashboardSlugCategoriesNewRoute: typeof DashboardSlugCategoriesNewRoute
+}
+
+const DashboardSlugCategoriesRouteRouteChildren: DashboardSlugCategoriesRouteRouteChildren =
+  {
+    DashboardSlugCategoriesCategoryIdRoute:
+      DashboardSlugCategoriesCategoryIdRoute,
+    DashboardSlugCategoriesNewRoute: DashboardSlugCategoriesNewRoute,
+  }
+
+const DashboardSlugCategoriesRouteRouteWithChildren =
+  DashboardSlugCategoriesRouteRoute._addFileChildren(
+    DashboardSlugCategoriesRouteRouteChildren,
+  )
+
 interface DashboardSlugEventsRouteRouteChildren {
   DashboardSlugEventsEventIdRoute: typeof DashboardSlugEventsEventIdRoute
+  DashboardSlugEventsNewRoute: typeof DashboardSlugEventsNewRoute
 }
 
 const DashboardSlugEventsRouteRouteChildren: DashboardSlugEventsRouteRouteChildren =
   {
     DashboardSlugEventsEventIdRoute: DashboardSlugEventsEventIdRoute,
+    DashboardSlugEventsNewRoute: DashboardSlugEventsNewRoute,
   }
 
 const DashboardSlugEventsRouteRouteWithChildren =
@@ -638,12 +777,14 @@ const DashboardSlugEventsRouteRouteWithChildren =
 
 interface DashboardSlugRecurringBillsRouteRouteChildren {
   DashboardSlugRecurringBillsBillIdRoute: typeof DashboardSlugRecurringBillsBillIdRoute
+  DashboardSlugRecurringBillsNewRoute: typeof DashboardSlugRecurringBillsNewRoute
 }
 
 const DashboardSlugRecurringBillsRouteRouteChildren: DashboardSlugRecurringBillsRouteRouteChildren =
   {
     DashboardSlugRecurringBillsBillIdRoute:
       DashboardSlugRecurringBillsBillIdRoute,
+    DashboardSlugRecurringBillsNewRoute: DashboardSlugRecurringBillsNewRoute,
   }
 
 const DashboardSlugRecurringBillsRouteRouteWithChildren =
@@ -669,26 +810,43 @@ const DashboardSlugSettingsRouteRouteWithChildren =
     DashboardSlugSettingsRouteRouteChildren,
   )
 
+interface DashboardSlugWalletsRouteRouteChildren {
+  DashboardSlugWalletsWalletIdRoute: typeof DashboardSlugWalletsWalletIdRoute
+  DashboardSlugWalletsNewRoute: typeof DashboardSlugWalletsNewRoute
+}
+
+const DashboardSlugWalletsRouteRouteChildren: DashboardSlugWalletsRouteRouteChildren =
+  {
+    DashboardSlugWalletsWalletIdRoute: DashboardSlugWalletsWalletIdRoute,
+    DashboardSlugWalletsNewRoute: DashboardSlugWalletsNewRoute,
+  }
+
+const DashboardSlugWalletsRouteRouteWithChildren =
+  DashboardSlugWalletsRouteRoute._addFileChildren(
+    DashboardSlugWalletsRouteRouteChildren,
+  )
+
 interface DashboardSlugRouteRouteChildren {
   DashboardSlugToolbarAndQueueRouteRoute: typeof DashboardSlugToolbarAndQueueRouteRouteWithChildren
+  DashboardSlugCategoriesRouteRoute: typeof DashboardSlugCategoriesRouteRouteWithChildren
   DashboardSlugEventsRouteRoute: typeof DashboardSlugEventsRouteRouteWithChildren
   DashboardSlugRecurringBillsRouteRoute: typeof DashboardSlugRecurringBillsRouteRouteWithChildren
   DashboardSlugSettingsRouteRoute: typeof DashboardSlugSettingsRouteRouteWithChildren
-  DashboardSlugCategoriesRoute: typeof DashboardSlugCategoriesRoute
+  DashboardSlugWalletsRouteRoute: typeof DashboardSlugWalletsRouteRouteWithChildren
   DashboardSlugFilesRoute: typeof DashboardSlugFilesRoute
-  DashboardSlugWalletsRoute: typeof DashboardSlugWalletsRoute
 }
 
 const DashboardSlugRouteRouteChildren: DashboardSlugRouteRouteChildren = {
   DashboardSlugToolbarAndQueueRouteRoute:
     DashboardSlugToolbarAndQueueRouteRouteWithChildren,
+  DashboardSlugCategoriesRouteRoute:
+    DashboardSlugCategoriesRouteRouteWithChildren,
   DashboardSlugEventsRouteRoute: DashboardSlugEventsRouteRouteWithChildren,
   DashboardSlugRecurringBillsRouteRoute:
     DashboardSlugRecurringBillsRouteRouteWithChildren,
   DashboardSlugSettingsRouteRoute: DashboardSlugSettingsRouteRouteWithChildren,
-  DashboardSlugCategoriesRoute: DashboardSlugCategoriesRoute,
+  DashboardSlugWalletsRouteRoute: DashboardSlugWalletsRouteRouteWithChildren,
   DashboardSlugFilesRoute: DashboardSlugFilesRoute,
-  DashboardSlugWalletsRoute: DashboardSlugWalletsRoute,
 }
 
 const DashboardSlugRouteRouteWithChildren =

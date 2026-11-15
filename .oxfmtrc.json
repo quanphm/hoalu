@@ -31,5 +31,14 @@
 		"attributes": ["class", "className"],
 		"functions": ["cn", "clsx", "cva"]
 	},
-	"ignorePatterns": ["**/src/routeTree.gen.ts"]
+	"ignorePatterns": [
+		"**/node_modules/**",
+		"**/routeTree.gen.ts",
+		"**/dist/**",
+		"**/build/**",
+		"**/repos/**",
+		"**/.output/**",
+		"**/.agents/**/*.js",
+		"**/.opencode/**/*.js"
+	]
 }

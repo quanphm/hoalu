@@ -2,7 +2,7 @@ import { XIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { cn } from "@hoalu/ui/utils";
-import { Link, getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 
 import type { ReactNode } from "react";
 
@@ -21,7 +21,6 @@ export function TransactionPageHeader(props: {
 	actions?: ReactNode;
 	className?: string;
 }) {
-	const { slug } = routeApi.useParams();
 	return (
 		<div
 			className={cn("flex items-center justify-between gap-4 border-b px-4 py-2", props.className)}
@@ -36,8 +35,10 @@ export function TransactionPageHeader(props: {
 	);
 }
 
-export function TransactionCloseAction() {
+export function TransactionCloseAction(props: { onClose?: () => void }) {
 	const { slug } = routeApi.useParams();
+	const navigate = useNavigate();
+
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -45,7 +46,9 @@ export function TransactionCloseAction() {
 					<Button
 						size="icon-sm"
 						variant="outline"
-						render={<Link to="/$slug/transactions" params={{ slug }} />}
+						onClick={
+							props.onClose ?? (() => navigate({ to: "/$slug/transactions", params: { slug } }))
+						}
 					/>
 				}
 			>
@@ -56,6 +59,13 @@ export function TransactionCloseAction() {
 	);
 }
 
+const MAIN_SPAN = {
+	4: "lg:col-span-4",
+	6: "lg:col-span-6",
+	8: "lg:col-span-8",
+	12: "lg:col-span-12",
+} as const;
+
 export function TransactionPageGrid(props: {
 	main: ReactNode;
 	aside?: ReactNode;
@@ -64,12 +74,15 @@ export function TransactionPageGrid(props: {
 	 * so a page without a side panel lines up with one that has it.
 	 */
 	keepAsideColumn?: boolean;
+	/** Columns the main panel takes on `lg` and up. Defaults to 8 beside an aside, 12 without. */
+	mainSpan?: keyof typeof MAIN_SPAN;
 }) {
 	const showAsideColumn = Boolean(props.aside) || Boolean(props.keepAsideColumn);
+	const mainSpan = props.mainSpan ?? (showAsideColumn ? 8 : 12);
 
 	return (
 		<div className="grid grid-cols-12 gap-6 p-4 md:p-6">
-			<div className={cn("col-span-12", showAsideColumn && "lg:col-span-8")}>{props.main}</div>
+			<div className={cn("col-span-12", MAIN_SPAN[mainSpan])}>{props.main}</div>
 			{showAsideColumn && <div className="col-span-12 lg:col-span-4">{props.aside}</div>}
 		</div>
 	);
@@ -96,5 +109,19 @@ export function BorderlessTitleInput({ className, ...props }: BorderlessTitleInp
 				className,
 			)}
 		/>
+	);
+}
+
+/**
+ * The commit sits under the fields it commits, not in the page header: the button belongs to the
+ * form, and a form-wide action inside a toolbar reads as a page-level one. `status` is the slot
+ * for an unsaved-changes note on the opposite side.
+ */
+export function TransactionSubmitRow(props: { status?: ReactNode; children: ReactNode }) {
+	return (
+		<div className="flex items-center justify-between gap-3">
+			<div className="text-muted-foreground min-w-0 text-xs">{props.status}</div>
+			<div className="flex shrink-0 items-center gap-2">{props.children}</div>
+		</div>
 	);
 }

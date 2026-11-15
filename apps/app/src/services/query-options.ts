@@ -1,5 +1,5 @@
 import { TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient, type Session, type SessionData, type User } from "#app/lib/auth-client.ts";
@@ -187,14 +187,6 @@ export const categoriesQueryOptions = (slug: string) => {
 	});
 };
 
-export const categoryWithIdQueryOptions = (slug: string, id: string) => {
-	return queryOptions({
-		queryKey: categoryKeys.withId(slug, id),
-		queryFn: () => apiClient.categories.get(slug, id),
-		enabled: !!id,
-	});
-};
-
 /**
  * recurring bills - all active
  */
@@ -223,10 +215,15 @@ export const unifiedBillsQueryOptions = (slug: string) => {
  * files
  */
 
+const FILES_PAGE_SIZE = 60;
+
 export const filesQueryOptions = (slug: string) => {
-	return queryOptions({
+	return infiniteQueryOptions({
 		queryKey: fileKeys.all(slug),
-		queryFn: () => apiClient.files.getFiles(slug),
+		queryFn: ({ pageParam }) =>
+			apiClient.files.getFiles(slug, { limit: FILES_PAGE_SIZE, cursor: pageParam }),
+		initialPageParam: undefined as string | undefined,
+		getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
 	});
 };
 

@@ -372,16 +372,19 @@ const files = {
 		const { data } = await response.json();
 		return data;
 	},
-	getFiles: async (slug: string) => {
+	getFiles: async (slug: string, params?: { limit?: number; cursor?: string }) => {
 		const response = await honoClient.bff.files.workspace.$get({
-			query: { workspaceIdOrSlug: slug },
+			query: {
+				workspaceIdOrSlug: slug,
+				...(params?.limit ? { limit: String(params.limit) } : {}),
+				...(params?.cursor ? { cursor: params.cursor } : {}),
+			},
 		});
 		if (!response.ok) {
 			const { message } = await response.json();
 			throw new Error(message);
 		}
-		const { data } = await response.json();
-		return data;
+		return response.json();
 	},
 	scanReceipt: async (slug: string, imagesBase64: string[]) => {
 		const response = await honoClient.bff.files["scan-receipt"].$post({

@@ -1,4 +1,4 @@
-import { Button, type ButtonProps } from "@hoalu/ui/button";
+import { Button } from "@hoalu/ui/button";
 import {
 	DialogClose,
 	DialogDescription,
@@ -11,66 +11,29 @@ import {
 import { Field as UIField, FieldGroup } from "@hoalu/ui/field";
 import { useValue } from "@legendapp/state/react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import * as z from "zod";
 
 import {
 	archiveRecurringBillDialog,
-	createRecurringBillDialog,
 	deleteRecurringBillDialog,
 	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
-import { Field, FieldControl, FieldMessage } from "#app/components/forms/components.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
-import { type SyncedRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 import {
-	BorderlessTitleInput,
-	TransactionPageGrid,
-	TransactionPageHeader,
-	TransactionSectionLabel,
-} from "#app/components/transactions/transaction-layout.tsx";
-import { useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
+	BillFormSchema,
+	CADENCE_OPTIONS,
+	DOM_OPTIONS,
+	DOW_OPTIONS,
+	toCreateBillPayload,
+} from "#app/components/recurring-bills/recurring-bill-form.ts";
+import { buildWalletGroups, useLiveQueryWallets } from "#app/components/wallets/use-wallets.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
-import { AVAILABLE_REPEAT_OPTIONS } from "#app/helpers/constants.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import {
 	useArchiveRecurringBill,
 	useCreateRecurringBill,
 	useDeleteRecurringBill,
-	useEditRecurringBill,
 	useUnarchiveRecurringBill,
 } from "#app/services/mutations.ts";
-
-import { HotKey } from "../hotkey";
-
-import type { ReactNode } from "react";
-
-const BillFormSchema = z.object({
-	title: z.string().min(1),
-	description: z.string().optional(),
-	// dueDay stored as string because SelectField emits strings; parsed to number at submit
-	dueDay: z.string().optional(),
-	// anchorDate: full date, only used when repeat=yearly
-	anchorDate: z.string().optional(),
-	transaction: z.object({
-		value: z.number().min(0),
-		currency: z.string().min(1),
-	}),
-	walletId: z.string().min(1),
-	categoryId: z.string().optional(),
-	eventId: z.string().optional(),
-	repeat: z.string().min(1),
-});
-
-type BillFormSchema = z.infer<typeof BillFormSchema>;
-
-export function CreateRecurringBillDialogTrigger(props: ButtonProps) {
-	const setDialog = createRecurringBillDialog.set;
-	return (
-		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
-			New recurring bill
-		</Button>
-	);
-}
 
 interface CreateRecurringBillFormProps {
 	defaultDate?: string;
@@ -78,42 +41,10 @@ interface CreateRecurringBillFormProps {
 	onSuccess?: (newBillId?: string) => void;
 }
 
-export function CreateRecurringBillDialogContent(props: CreateRecurringBillFormProps) {
-	return (
-		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[600px]">
-			<DialogHeader>
-				<DialogTitle>Set up recurring bill</DialogTitle>
-				<DialogDescription>Track this as a recurring payment going forward.</DialogDescription>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<CreateRecurringBillForm {...props} />
-		</DialogPopup>
-	);
-}
-
-const DOW_OPTIONS = [
-	{ value: "1", label: "Monday" },
-	{ value: "2", label: "Tuesday" },
-	{ value: "3", label: "Wednesday" },
-	{ value: "4", label: "Thursday" },
-	{ value: "5", label: "Friday" },
-	{ value: "6", label: "Saturday" },
-	{ value: "0", label: "Sunday" },
-];
-
-const DOM_OPTIONS = Array.from({ length: 31 }, (_, i) => ({
-	value: String(i + 1),
-	label: String(i + 1),
-}));
-
 export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurringBillFormProps) {
 	const workspace = useWorkspace();
 	const mutation = useCreateRecurringBill();
-	const setDialog = createRecurringBillDialog.set;
 	const wallets = useLiveQueryWallets();
-
-	if (!wallets.length) return null;
-
 	const walletGroups = buildWalletGroups(wallets);
 	const defaultWallet = wallets[0];
 
@@ -138,24 +69,13 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 		validators: { onSubmit: BillFormSchema },
 		onSubmit: async ({ value }) => {
 			const bill = await mutation.mutateAsync({
-				payload: {
-					title: value.title,
-					description: value.description,
-					amount: value.transaction.value,
-					currency: value.transaction.currency,
-					repeat: value.repeat,
-					walletId: value.walletId,
-					categoryId: value.categoryId || null,
-					workspaceId: workspace.id,
-					...(value.repeat === "yearly"
-						? { anchorDate: value.anchorDate }
-						: { dueDay: value.dueDay ? Number(value.dueDay) : undefined }),
-				},
+				payload: toCreateBillPayload(value, workspace.id),
 			});
-			setDialog({ state: false });
 			onSuccess?.(bill?.id);
 		},
 	});
+
+	if (!wallets.length) return null;
 
 	return (
 		<form.AppForm>
@@ -170,12 +90,7 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 								<form.AppField
 									name="repeat"
 									children={(field) => (
-										<field.SelectField
-											label="Repeat"
-											options={AVAILABLE_REPEAT_OPTIONS.filter(
-												(o) => o.value !== "one-time" && o.value !== "custom",
-											)}
-										/>
+										<field.SelectField label="Repeat" options={CADENCE_OPTIONS} />
 									)}
 								/>
 								{repeat === "yearly" ? (
@@ -213,18 +128,24 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 						<form.AppField
 							name="walletId"
 							children={(field) => (
-								<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
+								<field.SelectWithGroupsField
+									label="Wallet"
+									groups={walletGroups}
+									appearance="field"
+								/>
 							)}
 						/>
 						<form.AppField
 							name="categoryId"
-							children={(field) => <field.SelectCategoryField type="expense" label="Category" />}
+							children={(field) => (
+								<field.SelectCategoryField type="expense" label="Category" appearance="field" />
+							)}
 						/>
 					</div>
 
 					<form.AppField
 						name="eventId"
-						children={(field) => <field.SelectEventField label="Event" />}
+						children={(field) => <field.SelectEventField label="Event" appearance="field" />}
 					/>
 
 					<form.AppField
@@ -238,179 +159,6 @@ export function CreateRecurringBillForm({ defaultDate, onSuccess }: CreateRecurr
 						<form.SubscribeButton>Create bill</form.SubscribeButton>
 					</UIField>
 				</DialogFooter>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
-interface EditRecurringBillFormProps {
-	bill: SyncedRecurringBill;
-	headerActions?: ReactNode;
-}
-
-export function EditRecurringBillForm({ bill, headerActions }: EditRecurringBillFormProps) {
-	const mutation = useEditRecurringBill();
-	const wallets = useLiveQueryWallets();
-	const walletGroups = buildWalletGroups(wallets);
-
-	const form = useAppForm({
-		defaultValues: {
-			title: bill.title,
-			description: bill.description ?? "",
-			dueDay: String(bill.due_day ?? new Date().getDate()),
-			anchorDate: bill.anchor_date,
-			transaction: {
-				value: bill.amount,
-				currency: bill.currency,
-			},
-			walletId: bill.wallet_id,
-			categoryId: bill.category_id ?? "",
-			eventId: bill.event_id ?? "",
-			repeat: bill.repeat,
-		} as BillFormSchema,
-		validators: { onSubmit: BillFormSchema },
-		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				id: bill.id,
-				payload: {
-					title: value.title,
-					description: value.description,
-					amount: value.transaction.value,
-					currency: value.transaction.currency,
-					walletId: value.walletId,
-					// `null` clears the relation; `undefined` would omit the key and leave the
-					// previous value in place.
-					categoryId: value.categoryId || null,
-					eventId: value.eventId || null,
-					repeat: value.repeat,
-					...(value.repeat === "yearly"
-						? {
-								dueDay: new Date(`${value.anchorDate}T00:00:00`).getDate(),
-								dueMonth: new Date(`${value.anchorDate}T00:00:00`).getMonth() + 1,
-							}
-						: { dueDay: value.dueDay ? Number(value.dueDay) : undefined }),
-				},
-			});
-		},
-	});
-
-	return (
-		<form.AppForm>
-			<TransactionPageHeader
-				className="bg-card sticky top-0 z-10"
-				title={
-					<form.Subscribe selector={(s) => s.values.title}>
-						{(title) => title || "Untitled bill"}
-					</form.Subscribe>
-				}
-				actions={headerActions}
-			/>
-			<form.Form>
-				<TransactionPageGrid
-					keepAsideColumn
-					main={
-						<div className="flex flex-col gap-6">
-							<div className="bg-card flex flex-col gap-4 rounded-lg border p-4">
-								<form.AppField
-									name="title"
-									children={(field) => (
-										<Field>
-											<FieldControl>
-												<BorderlessTitleInput
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(e) => field.handleChange(e.target.value)}
-													placeholder="Untitled bill"
-													autoFocus
-												/>
-											</FieldControl>
-											<FieldMessage />
-										</Field>
-									)}
-								/>
-								<div className="flex flex-col gap-3 md:flex-row">
-									<div className="flex-1">
-										<form.AppField
-											name="transaction"
-											children={(field) => <field.TransactionAmountSplitField sign="expense" />}
-										/>
-									</div>
-									<div className="md:w-[190px]">
-										<form.Subscribe
-											selector={(s) => s.values.repeat}
-											children={(repeat) =>
-												repeat === "yearly" ? (
-													<form.AppField
-														name="anchorDate"
-														children={(field) => <field.DatepickerInputField />}
-													/>
-												) : repeat === "weekly" ? (
-													<form.AppField
-														name="dueDay"
-														children={(field) => <field.SelectField options={DOW_OPTIONS} />}
-													/>
-												) : repeat === "monthly" ? (
-													<form.AppField
-														name="dueDay"
-														children={(field) => <field.SelectField options={DOM_OPTIONS} />}
-													/>
-												) : null
-											}
-										/>
-									</div>
-								</div>
-							</div>
-
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Details</TransactionSectionLabel>
-								<div className="bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2">
-									<form.AppField
-										name="walletId"
-										children={(field) => (
-											<field.SelectWithGroupsField label="Wallet" groups={walletGroups} />
-										)}
-									/>
-									<form.AppField
-										name="categoryId"
-										children={(field) => (
-											<field.SelectCategoryField type="expense" label="Category" />
-										)}
-									/>
-									<form.AppField
-										name="repeat"
-										children={(field) => (
-											<field.SelectField
-												label="Repeat"
-												options={AVAILABLE_REPEAT_OPTIONS.filter(
-													(o) => o.value !== "one-time" && o.value !== "custom",
-												)}
-											/>
-										)}
-									/>
-									<form.AppField
-										name="eventId"
-										children={(field) => <field.SelectEventField label="Event" showClosed />}
-									/>
-								</div>
-							</div>
-
-							<div className="flex flex-col gap-3">
-								<TransactionSectionLabel>Note</TransactionSectionLabel>
-								<form.AppField name="description" children={(field) => <field.TiptapField />} />
-							</div>
-
-							<div className="flex items-center justify-between">
-								<div className="text-muted-foreground text-sm">
-									<form.Subscribe selector={(s) => s.isDirty}>
-										{(isDirty) => (isDirty ? "Unsaved changes" : "")}
-									</form.Subscribe>
-								</div>
-								<form.SubscribeButton>Update</form.SubscribeButton>
-							</div>
-						</div>
-					}
-				/>
 			</form.Form>
 		</form.AppForm>
 	);
@@ -529,31 +277,5 @@ export function DeleteRecurringBillDialogContent() {
 				</Button>
 			</DialogFooter>
 		</DialogPopup>
-	);
-}
-
-function buildWalletGroups(wallets: any[]) {
-	return wallets.reduce(
-		(result: any, current: any) => {
-			// if (!current.isActive) return result;
-			const owner = current.owner;
-			if (!result[owner.id]) {
-				result[owner.id] = {
-					name: owner.name,
-					options: [{ label: current.name, value: current.id, currency: current.currency }],
-				};
-			} else {
-				result[owner.id].options.push({
-					label: current.name,
-					value: current.id,
-					currency: current.currency,
-				});
-			}
-			return result;
-		},
-		{} as Record<
-			string,
-			{ name: string; options: { label: string; value: string; currency: string }[] }
-		>,
 	);
 }

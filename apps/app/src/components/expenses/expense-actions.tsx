@@ -1,13 +1,5 @@
-import { datetime, toFromToDateObject } from "@hoalu/datetime/datetime";
-import {
-	CopyIcon,
-	MagnifyingGlassIcon,
-	TrashIcon,
-	CalendarBlankIcon,
-	MoneyIcon,
-} from "@hoalu/icons/phosphor";
+import { CopyIcon, MagnifyingGlassIcon, TrashIcon, MoneyIcon } from "@hoalu/icons/phosphor";
 import { Button, type ButtonProps } from "@hoalu/ui/button";
-import { Calendar } from "@hoalu/ui/calendar";
 import {
 	DialogClose,
 	DialogDescription,
@@ -18,7 +10,6 @@ import {
 	DialogTitle,
 } from "@hoalu/ui/dialog";
 import { Input } from "@hoalu/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@hoalu/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useValue } from "@legendapp/state/react";
 import { Link, getRouteApi, useNavigate, useParams } from "@tanstack/react-router";
@@ -29,7 +20,6 @@ import { WarningMessage } from "#app/components/warning-message.tsx";
 import { useDeleteExpense, useDuplicateExpense } from "#app/services/mutations.ts";
 
 const routeApi = getRouteApi("/_dashboard/$slug");
-const expenseRouteApi = getRouteApi("/_dashboard/$slug/_toolbar-and-queue/transactions");
 
 export function CreateExpenseTrigger(props: ButtonProps) {
 	const { slug } = routeApi.useParams();
@@ -129,54 +119,6 @@ export function DuplicateExpense(props: { data: SyncedExpense }) {
 	);
 }
 
-export function ExpenseCalendar() {
-	const { date: searchDate } = expenseRouteApi.useSearch();
-	const navigate = expenseRouteApi.useNavigate();
-	const range = toFromToDateObject(searchDate);
-
-	const formatDateRange = () => {
-		if (range?.from && range?.to) {
-			return `${datetime.format(range.from, "MMM dd")} - ${datetime.format(range.to, "MMM dd, yyyy")}`;
-		}
-		return "Select date";
-	};
-
-	return (
-		<Popover>
-			<PopoverTrigger
-				render={
-					<Button
-						variant="outline"
-						className="h-auto w-full justify-start text-xs leading-none font-normal"
-					/>
-				}
-			>
-				<CalendarBlankIcon className="size-4" />
-				{formatDateRange()}
-			</PopoverTrigger>
-			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
-				<Calendar
-					mode="range"
-					captionLayout="dropdown"
-					selected={range}
-					onSelect={(selected) => {
-						if (!selected) {
-							navigate({ search: (s) => ({ ...s, date: undefined }) });
-							return;
-						}
-						const { from, to } = selected;
-						if (from && to) {
-							const query = `${from.getTime()}-${to.getTime()}`;
-							navigate({ search: (s) => ({ ...s, date: query }) });
-						}
-					}}
-					className="[--cell-size:--spacing(9)]"
-				/>
-			</PopoverContent>
-		</Popover>
-	);
-}
-
 export function ExpenseSearch() {
 	const value = useValue(searchKeywords$);
 	const setValue = searchKeywords$.set;
@@ -186,6 +128,7 @@ export function ExpenseSearch() {
 			<Input
 				type="search"
 				size="sm"
+				aria-label="Search transactions"
 				placeholder="Search title, description..."
 				className="peer ps-6 focus-visible:ring-0"
 				value={value}

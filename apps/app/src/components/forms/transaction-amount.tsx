@@ -1,4 +1,4 @@
-import { CalculatorIcon } from "@hoalu/icons/phosphor";
+import { CalculatorIcon, CaretDownIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Input } from "@hoalu/ui/input";
 import { NumberField, NumberFieldGroup, NumberFieldInput } from "@hoalu/ui/number-field";
@@ -28,6 +28,13 @@ interface TransactionAmountInputProps {
 	onValueChange: (value: number) => void;
 	onCurrencyChange: (currency: string) => void;
 	onBlur?: () => void;
+	/** `hero` is the transaction page's display-scale figure; `compact` is a bordered field. */
+	variant?: "compact" | "hero";
+	sign?: "expense" | "income";
+	/** Enter pressed outside calculator mode, used to advance or commit the form. */
+	onEnter?: () => void;
+	/** Lets the surrounding form move focus here, e.g. from the title field. */
+	inputId?: string;
 }
 
 function evaluateExpression(expression: string): number | null {
@@ -47,12 +54,44 @@ function evaluateExpression(expression: string): number | null {
 	}
 }
 
+function CurrencySuffix(props: {
+	currency: string;
+	onCurrencyChange: (currency: string) => void;
+	onBlur?: () => void;
+}) {
+	return (
+		<span className="relative flex shrink-0 items-center">
+			<select
+				aria-label="Amount currency"
+				value={props.currency}
+				onBlur={props.onBlur}
+				onChange={(e) => props.onCurrencyChange(e.target.value)}
+				className="text-muted-foreground hover:bg-accent/40 hover:text-foreground focus-visible:ring-ring/40 h-6 cursor-pointer appearance-none rounded-sm bg-transparent ps-1.5 pe-4 text-xs font-medium tracking-wide uppercase tabular-nums transition-colors outline-none focus-visible:ring-2"
+			>
+				{AVAILABLE_CURRENCY_OPTIONS.map((c) => (
+					<option key={c.value} value={c.value}>
+						{c.label}
+					</option>
+				))}
+			</select>
+			<CaretDownIcon
+				aria-hidden="true"
+				className="text-muted-foreground pointer-events-none absolute end-0.5 size-3"
+			/>
+		</span>
+	);
+}
+
 export function TransactionAmountInput({
 	value,
 	currency,
 	onValueChange,
 	onCurrencyChange,
 	onBlur,
+	variant = "compact",
+	sign,
+	onEnter,
+	inputId,
 }: TransactionAmountInputProps) {
 	const [isCalculatorMode, setIsCalculatorMode] = useState(false);
 	const [expression, setExpression] = useState("");
@@ -111,10 +150,122 @@ export function TransactionAmountInput({
 		});
 	};
 
+	const calculator = (
+		<Button
+			type="button"
+			onClick={toggleCalculatorMode}
+			title={isCalculatorMode ? "Calculator off" : "Calculator on"}
+			aria-pressed={isCalculatorMode}
+			variant="ghost"
+			size={variant === "hero" ? "icon-sm" : "icon"}
+			tabIndex={-1}
+			className={cn(variant === "hero" && "text-muted-foreground shrink-0")}
+		>
+			<CalculatorIcon className="size-4" />
+		</Button>
+	);
+
+	const calculatorInput = (className: string) => (
+		<div className="relative min-w-0 flex-1">
+			<Input
+				ref={inputRef}
+				value={expression}
+				onChange={handleExpressionChange}
+				onKeyDown={handleKeyDown}
+				onBlur={handleCalculatorBlur}
+				placeholder="100+50*2"
+				className={className}
+			/>
+			{calculatedValue !== null && (
+				<div className="text-muted-foreground absolute right-3 -bottom-6 left-3 text-xs">
+					= {formatCurrency(calculatedValue, currency)}
+				</div>
+			)}
+		</div>
+	);
+
+	const hero = variant === "hero";
+
+	const handleAmountKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined = onEnter
+		? (e) => {
+				if (e.key === "Enter") {
+					e.preventDefault();
+					onEnter();
+				}
+			}
+		: undefined;
+
+	const amountInput = (
+		<NumberField
+			value={value}
+			format={{
+				style: "currency",
+				currency,
+				currencyDisplay: "symbol",
+				currencySign: "accounting",
+			}}
+			onBlur={onBlur}
+			onValueChange={(v) => onValueChange(v ?? 0)}
+			min={0}
+			step={0.01}
+			className="min-w-0"
+		>
+			<NumberFieldGroup
+				className={cn(
+					hero
+						? "flex min-w-0 items-center"
+						: "border-input data-focus-within:border-ring data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]",
+				)}
+			>
+				{sign && (
+					<span
+						aria-hidden="true"
+						className={cn(
+							"shrink-0 select-none",
+							hero
+								? "text-muted-foreground pe-1 text-xl font-medium"
+								: cn(
+										"px-3 text-base font-semibold",
+										sign === "expense" ? "text-destructive" : "text-success",
+									),
+						)}
+					>
+						{sign === "expense" ? "−" : "+"}
+					</span>
+				)}
+				<NumberFieldInput
+					id={inputId}
+					aria-label="Amount"
+					onKeyDown={handleAmountKeyDown}
+					className={cn(
+						hero
+							? "field-sizing-content h-10 max-w-full min-w-6 border-none bg-transparent p-0 text-3xl font-medium tracking-tight tabular-nums outline-none"
+							: "bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none",
+						hero && !value && "text-muted-foreground/50",
+					)}
+				/>
+			</NumberFieldGroup>
+		</NumberField>
+	);
+
+	if (hero) {
+		return (
+			<div className="flex w-full min-w-0 items-center gap-1.5">
+				{isCalculatorMode
+					? calculatorInput(
+							"h-10 max-w-xs border-none bg-transparent px-0 shadow-none *:h-10! *:text-2xl!",
+						)
+					: amountInput}
+				<CurrencySuffix currency={currency} onCurrencyChange={onCurrencyChange} onBlur={onBlur} />
+				{calculator}
+			</div>
+		);
+	}
+
 	return (
-		<div className="isolate flex rounded-md">
+		<div className="isolate flex items-center gap-2">
 			<SelectNative
-				className="bg-muted w-[80px] rounded-e-none"
+				className="bg-muted w-[88px] shrink-0"
 				value={currency}
 				onBlur={onBlur}
 				onChange={(e) => onCurrencyChange(e.target.value)}
@@ -123,59 +274,8 @@ export function TransactionAmountInput({
 					<option key={c.value}>{c.label}</option>
 				))}
 			</SelectNative>
-			{isCalculatorMode ? (
-				<div className="relative -ms-px flex-1">
-					<Input
-						ref={inputRef}
-						value={expression}
-						onChange={handleExpressionChange}
-						onKeyDown={handleKeyDown}
-						onBlur={handleCalculatorBlur}
-						placeholder="100+50*2"
-						className="h-9 rounded-s-none *:h-9!"
-					/>
-					{calculatedValue !== null && (
-						<div className="text-muted-foreground absolute right-3 -bottom-6 left-3 text-xs">
-							= {formatCurrency(calculatedValue, currency)}
-						</div>
-					)}
-				</div>
-			) : (
-				<div className="relative -ms-px flex-1">
-					<NumberField
-						value={value}
-						format={{
-							style: "currency",
-							currency,
-							currencyDisplay: "symbol",
-							currencySign: "accounting",
-						}}
-						onBlur={onBlur}
-						onValueChange={(v) => onValueChange(v ?? 0)}
-						min={0}
-						step={0.01}
-						className="flex-1"
-					>
-						<NumberFieldGroup
-							className={cn(
-								"border-input data-focus-within:border-ring data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:ring-[3px]",
-								"rounded-s-none data-focus-within:z-10",
-							)}
-						>
-							<NumberFieldInput className="bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none" />
-						</NumberFieldGroup>
-					</NumberField>
-					<Button
-						onClick={toggleCalculatorMode}
-						className="absolute top-1/2 right-2 -translate-y-1/2"
-						title="Calculator ON"
-						variant="ghost"
-						size="icon"
-					>
-						<CalculatorIcon className="text-muted-foreground size-4" />
-					</Button>
-				</div>
-			)}
+			{isCalculatorMode ? calculatorInput("h-9 *:h-9!") : amountInput}
+			{calculator}
 		</div>
 	);
 }
@@ -202,164 +302,30 @@ export function TransactionAmountField(props: Props) {
 }
 
 interface SplitProps extends Props {
-	sign: "expense" | "income";
+	/** Omitted for a figure with no direction, like an event's budget. */
+	sign?: "expense" | "income";
+	onEnter?: () => void;
+	inputId?: string;
 }
 
-function TransactionAmountSplitInput({
-	value,
-	currency,
-	sign,
-	onValueChange,
-	onCurrencyChange,
-	onBlur,
-}: TransactionAmountInputProps & { sign: "expense" | "income" }) {
-	const [isCalculatorMode, setIsCalculatorMode] = useState(false);
-	const [expression, setExpression] = useState("");
-	const [calculatedValue, setCalculatedValue] = useState<number | null>(null);
-	const inputRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		if (isCalculatorMode) {
-			if (inputRef.current) {
-				inputRef.current.focus();
-			}
-			if (value) {
-				setExpression(`${value}`);
-				const result = evaluateExpression(`${value}`);
-				setCalculatedValue(result);
-			}
-		}
-	}, [isCalculatorMode, value]);
-
-	const handleExpressionChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-		const v = e.target.value;
-		setExpression(v);
-		const result = evaluateExpression(v);
-		setCalculatedValue(result);
-	};
-
-	const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-		e.stopPropagation();
-		if (e.key === "Enter" && calculatedValue !== null) {
-			onValueChange(calculatedValue);
-			setIsCalculatorMode(false);
-			setExpression("");
-			setCalculatedValue(null);
-		}
-		if (e.key === "Escape") {
-			setIsCalculatorMode(false);
-			setExpression("");
-			setCalculatedValue(null);
-		}
-	};
-
-	const handleCalculatorBlur = () => {
-		if (calculatedValue !== null) {
-			onValueChange(calculatedValue);
-		}
-		setIsCalculatorMode(false);
-		setExpression("");
-		setCalculatedValue(null);
-		onBlur?.();
-	};
-
-	const toggleCalculatorMode = () => {
-		setIsCalculatorMode((prev) => {
-			if (!prev) setExpression(value.toString());
-			return !prev;
-		});
-	};
-
-	return (
-		<div className="flex items-start gap-3">
-			<SelectNative
-				className="bg-muted w-[88px]"
-				value={currency}
-				onBlur={onBlur}
-				onChange={(e) => onCurrencyChange(e.target.value)}
-			>
-				{AVAILABLE_CURRENCY_OPTIONS.map((c) => (
-					<option key={c.value}>{c.label}</option>
-				))}
-			</SelectNative>
-			{isCalculatorMode ? (
-				<div className="relative flex-1">
-					<Input
-						ref={inputRef}
-						value={expression}
-						onChange={handleExpressionChange}
-						onKeyDown={handleKeyDown}
-						onBlur={handleCalculatorBlur}
-						placeholder="100+50*2"
-						className="h-9 *:h-9!"
-					/>
-					{calculatedValue !== null && (
-						<div className="text-muted-foreground absolute right-3 -bottom-6 left-3 text-xs">
-							= {formatCurrency(calculatedValue, currency)}
-						</div>
-					)}
-				</div>
-			) : (
-				<div className="relative flex-1">
-					<NumberField
-						value={value}
-						format={{
-							style: "currency",
-							currency,
-							currencyDisplay: "symbol",
-							currencySign: "accounting",
-						}}
-						onBlur={onBlur}
-						onValueChange={(v) => onValueChange(v ?? 0)}
-						min={0}
-						step={0.01}
-						className="flex-1"
-					>
-						<NumberFieldGroup className="border-input data-focus-within:border-ring data-focus-within:ring-ring/20 data-focus-within:has-aria-invalid:border-destructive data-focus-within:has-aria-invalid:ring-destructive/20 dark:data-focus-within:has-aria-invalid:ring-destructive/40 relative inline-flex h-9 w-full items-center overflow-hidden rounded-md border text-sm whitespace-nowrap outline-none focus-visible:outline-none data-disabled:opacity-50 data-focus-within:z-10 data-focus-within:ring-[3px]">
-							<span
-								className={cn(
-									"px-3 text-base font-semibold",
-									sign === "expense" ? "text-destructive" : "text-success",
-								)}
-							>
-								{sign === "expense" ? "-" : "+"}
-							</span>
-							<NumberFieldInput className="bg-background text-foreground flex-1 px-2 py-2 tabular-nums outline-none" />
-						</NumberFieldGroup>
-					</NumberField>
-					<Button
-						onClick={toggleCalculatorMode}
-						className="absolute top-1/2 right-2 -translate-y-1/2"
-						title="Calculator ON"
-						variant="ghost"
-						size="icon"
-						tabIndex={-1}
-					>
-						<CalculatorIcon className="text-muted-foreground size-4" />
-					</Button>
-				</div>
-			)}
-		</div>
-	);
-}
-
-export function TransactionAmountSplitField(props: SplitProps) {
+export function TransactionAmountHeroField(props: SplitProps) {
 	const field = useFieldContext<TransactionAmountValue>();
 
 	return (
-		<Field>
-			{props.label && <FieldLabel>{props.label}</FieldLabel>}
+		<Field className="gap-1">
 			<FieldControl>
-				<TransactionAmountSplitInput
+				<TransactionAmountInput
+					inputId={props.inputId}
 					value={field.state.value.value}
 					currency={field.state.value.currency}
 					sign={props.sign}
+					variant="hero"
 					onValueChange={(v) => field.setValue((s) => ({ ...s, value: v }))}
 					onCurrencyChange={(c) => field.setValue((s) => ({ ...s, currency: c }))}
 					onBlur={field.handleBlur}
+					onEnter={props.onEnter}
 				/>
 			</FieldControl>
-			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />
 		</Field>
 	);

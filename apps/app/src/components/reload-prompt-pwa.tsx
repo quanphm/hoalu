@@ -8,40 +8,64 @@ import {
 	AlertDialogPopup,
 	AlertDialogTitle,
 } from "@hoalu/ui/alert-dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
+const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+const UPDATE_CHECK_THROTTLE_MS = 5 * 60 * 1000;
+
 export function ReloadPromptPwa() {
+	const registrationRef = useRef<ServiceWorkerRegistration | undefined>(undefined);
 	const {
-		offlineReady: [offlineReady, setOfflineReady],
 		needRefresh: [needRefresh, setNeedRefresh],
 		updateServiceWorker,
-	} = useRegisterSW();
-	const [open, setOpen] = useState(false);
+	} = useRegisterSW({
+		onRegisteredSW(_swUrl, registration) {
+			registrationRef.current = registration;
+		},
+	});
 
 	useEffect(() => {
-		setOpen(needRefresh || offlineReady);
-	}, [needRefresh, offlineReady]);
+		let lastCheckedAt = 0;
+		const checkForUpdate = () => {
+			const now = Date.now();
+			if (
+				document.visibilityState !== "visible" ||
+				now - lastCheckedAt < UPDATE_CHECK_THROTTLE_MS
+			) {
+				return;
+			}
+			lastCheckedAt = now;
+			void registrationRef.current?.update();
+		};
 
-	const close = () => {
-		setOfflineReady(false);
-		setNeedRefresh(false);
-		setOpen(false);
-	};
+		const interval = window.setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
+		document.addEventListener("visibilitychange", checkForUpdate);
+
+		return () => {
+			window.clearInterval(interval);
+			document.removeEventListener("visibilitychange", checkForUpdate);
+		};
+	}, []);
 
 	return (
-		<AlertDialog open={open} onOpenChange={setOpen}>
+		<AlertDialog
+			open={needRefresh}
+			onOpenChange={(open) => {
+				if (!open) {
+					setNeedRefresh(false);
+				}
+			}}
+		>
 			<AlertDialogPopup>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Application status</AlertDialogTitle>
+					<AlertDialogTitle>Application update available</AlertDialogTitle>
 					<AlertDialogDescription>
-						{offlineReady
-							? "App ready to work offline"
-							: "New content available, click on reload button to update."}
+						A new version of Hoalu is ready. Reload to pick up the latest changes.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={() => close()}>Close</AlertDialogCancel>
+					<AlertDialogCancel onClick={() => setNeedRefresh(false)}>Later</AlertDialogCancel>
 					<AlertDialogAction onClick={() => updateServiceWorker()}>Reload</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogPopup>

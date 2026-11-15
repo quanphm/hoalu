@@ -1,15 +1,6 @@
 import { PlusIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
-	Combobox,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-	ComboboxPopup,
-	ComboboxSeparator,
-} from "@hoalu/ui/combobox";
-import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -17,6 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { CreateRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
@@ -24,15 +16,18 @@ import { useLiveQueryRecurringBills } from "#app/components/recurring-bills/use-
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
-
-interface RecurringBillOption {
-	label: string;
-	value: string;
-}
+import { PillPicker, type PillOption } from "./pill-picker";
 
 interface Props {
 	label?: React.ReactNode;
 	description?: React.ReactNode;
+	placeholder?: string;
+	appearance?: "pill" | "field";
+	/**
+	 * `navigate` sends the user to the bill page and back with the new id, which the host form
+	 * can only afford when it keeps a draft. Hosts without one keep the in-place dialog.
+	 */
+	createAction?: "dialog" | "navigate";
 	disabled?: boolean;
 	/**
 	 * Filter bills by repeat cadence to only show relevant bills.
@@ -46,69 +41,57 @@ interface Props {
 
 export function SelectRecurringBillField(props: Props) {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [comboboxOpen, setComboboxOpen] = useState(false);
-
 	const field = useFieldContext<string | undefined>();
-	const { value } = field.state;
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	const bills = useLiveQueryRecurringBills();
-	const filtered = props.repeat ? bills.filter((b) => b.repeat === props.repeat) : bills;
+	const filtered = props.repeat ? bills.filter((bill) => bill.repeat === props.repeat) : bills;
 
-	const options: RecurringBillOption[] = [
-		{ value: "", label: "None" },
-		...filtered.map((b) => ({ value: b.id, label: b.title })),
+	const options: PillOption[] = [
+		{ value: "", label: "No bill" },
+		...filtered.map((bill) => ({ value: bill.id, label: bill.title })),
 	];
 
-	const selectedOption = options.find((o) => o.value === (value ?? "")) ?? options[0];
-
-	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === "Enter" && !comboboxOpen) {
-			event.preventDefault();
-			setComboboxOpen(true);
-		}
-	};
+	const placeholder =
+		props.placeholder ?? (typeof props.label === "string" ? props.label : "Recurring bill");
 
 	return (
-		<Field>
+		<Field className={props.appearance === "field" ? "gap-1" : "w-fit! gap-1 [&>*]:w-auto!"}>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-				<Combobox<RecurringBillOption>
-					value={selectedOption}
-					onValueChange={(newValue) => {
-						field.handleChange(newValue?.value || undefined);
-					}}
-					items={options}
+				<PillPicker
+					options={options}
+					value={field.state.value ?? ""}
+					onValueChange={(value) => field.handleChange(value || undefined)}
+					placeholder={placeholder}
+					appearance={props.appearance}
+					searchPlaceholder="Search bills…"
 					disabled={props.disabled}
-					open={comboboxOpen}
-					onOpenChange={setComboboxOpen}
-				>
-					<ComboboxInput
-						placeholder="Select"
-						inputClassName="h-9 items-center"
-						onKeyDown={handleComboboxInputKeyDown}
-					/>
-					<ComboboxPopup className="max-h-64">
-						<ComboboxEmpty>No result.</ComboboxEmpty>
-						<ComboboxList>
-							{(item: RecurringBillOption) => (
-								<ComboboxItem
-									key={item.value}
-									value={item}
-									className="grid-cols-[1fr_1rem] ps-3 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1"
-								>
-									{item.label}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-						<ComboboxSeparator />
-						<div className="px-1 py-1">
+					emptyMessage="No bills found."
+					footer={
+						props.createAction === "navigate" ? (
+							<Button
+								variant="ghost"
+								className="w-full justify-start"
+								render={
+									<Link
+										to="/$slug/recurring-bills/new"
+										params={{ slug }}
+										search={{ returnTo: "transaction" }}
+									/>
+								}
+							>
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
+								Set up recurring bill
+							</Button>
+						) : (
 							<DialogTrigger render={<Button variant="ghost" className="w-full justify-start" />}>
-								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
 								Set up recurring bill
 							</DialogTrigger>
-						</div>
-					</ComboboxPopup>
-				</Combobox>
+						)
+					}
+				/>
 				<DialogContent className="sm:max-w-[600px]">
 					<DialogHeader>
 						<DialogTitle>Set up recurring bill</DialogTitle>

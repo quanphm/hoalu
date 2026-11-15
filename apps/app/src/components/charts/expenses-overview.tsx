@@ -1,9 +1,15 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { CameraIcon } from "@hoalu/icons/nucleo";
-import { CheckIcon, CircleNotchIcon, LightningIcon } from "@hoalu/icons/phosphor";
+import { DotsThreeVerticalIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@hoalu/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@hoalu/ui/chart";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@hoalu/ui/dropdown-menu";
+import { toastManager } from "@hoalu/ui/toast";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
 import { getRouteApi } from "@tanstack/react-router";
@@ -15,10 +21,13 @@ import { redactedAmount$ } from "#app/atoms/redacted.ts";
 import { CurrencyValue } from "#app/components/currency-value.tsx";
 import { PercentageChangeDisplay } from "#app/components/percentage-change.tsx";
 import { formatCurrency } from "#app/helpers/currency.ts";
+import { formatAxisDate, formatDate } from "#app/helpers/format-date.ts";
+import { REDACTED_AMOUNT, redactTick } from "#app/helpers/redacted.ts";
 import { useScreenshot } from "#app/hooks/use-screenshot.ts";
 import { seriesForRange, type DashboardModel } from "#app/services/dashboard-model.ts";
 
 import { ChartCategoryFilter, ChartGroupByFilter } from "./dashboard-date-filter.tsx";
+import { useTooltipDismiss } from "./use-tooltip-dismiss.ts";
 
 import type { SyncedCategory } from "#app/components/categories/use-categories.ts";
 import type { ColorSchema } from "@hoalu/schema/schema";
@@ -110,6 +119,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const chartRef = useRef<HTMLDivElement>(null);
 	const { takeScreenshot, status } = useScreenshot();
+	const { containerRef: chartContainerRef, active: tooltipActive } =
+		useTooltipDismiss<HTMLDivElement>();
 
 	const isCategoryMode = selectedCategoryIds.length > 0 && !isIncomeTab;
 	const isMonthlyBucket = range.bucket === "month";
@@ -308,14 +319,30 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 
 	const handleScreenshot = () => {
 		if (!chartRef.current) return;
-		if (!("clipboard" in navigator) || typeof ClipboardItem === "undefined") return;
-		navigator.clipboard.write([
-			new ClipboardItem({
-				"image/png": new Promise((resolve, reject) => {
-					takeScreenshot(chartRef.current).then(resolve).catch(reject);
+		if (!("clipboard" in navigator) || typeof ClipboardItem === "undefined") {
+			toastManager.add({
+				title: "Can't copy the chart",
+				description: "This browser doesn't support images on the clipboard.",
+				type: "error",
+			});
+			return;
+		}
+		navigator.clipboard
+			.write([
+				new ClipboardItem({
+					"image/png": new Promise((resolve, reject) => {
+						takeScreenshot(chartRef.current).then(resolve).catch(reject);
+					}),
 				}),
-			}),
-		]);
+			])
+			.then(() => toastManager.add({ title: "Chart copied to clipboard" }))
+			.catch(() =>
+				toastManager.add({
+					title: "Couldn't copy the chart",
+					description: "The clipboard rejected the image.",
+					type: "error",
+				}),
+			);
 	};
 
 	const getCategoryColor = (catId: string) => {
@@ -335,7 +362,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 	} satisfies ChartConfig;
 
 	return (
-		<Card ref={chartRef} className={cn("flex flex-col gap-2 md:py-3")}>
+		<Card ref={chartRef} className={cn("flex h-full flex-col gap-2 md:py-3")}>
 			<CardHeader className="flex flex-col md:grid">
 				<CardDescription className="text-base">
 					{isIncomeTab ? "Incomes" : "Expenses"}
@@ -357,30 +384,15 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						</div>
 						<PercentageChangeDisplay
 							change={stats.amountChange}
-							comparisonText={range.comparisonText || undefined}
-							onComparisonClick={handleComparisonClick}
+							comparison={range.comparison}
+							onJumpToPeriod={handleComparisonClick}
 							invertColor={!isIncomeTab}
 						/>
 					</div>
 				</CardDescription>
 				<CardAction>
-					{axisDomainCap && (
-						<Button
-							variant={clampOutliers ? "outline" : "ghost"}
-							size="icon-sm"
-							onClick={() => setClampOutliers((v) => !v)}
-							className="hide-in-screenshot"
-							title={
-								clampOutliers
-									? "Smart scale on — click to see full range"
-									: "Full scale — click to restore smart scale"
-							}
-						>
-							<LightningIcon />
-						</Button>
-					)}
 					{range.selected === "custom" && (
-						<div data-slot="chart-group-by hidden md:block">
+						<div data-slot="chart-group-by" className="hidden md:block">
 							<ChartGroupByFilter />
 						</div>
 					)}
@@ -406,25 +418,37 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 						</Button>
 					</div>
 
-					<Button
-						variant="outline"
-						size="icon-sm"
-						onClick={handleScreenshot}
-						disabled={status === "pending"}
-						className="hide-in-screenshot"
-						title={status === "success" ? "Copied to clipboard!" : "Take screenshot"}
-					>
-						{(status === "idle" || status === "error") && <CameraIcon />}
-						{status === "pending" && <CircleNotchIcon className="animate-spin" />}{" "}
-						{status === "success" && <CheckIcon className="text-green-600" />}{" "}
-					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									variant="ghost"
+									size="icon-sm"
+									aria-label="Chart options"
+									className="hide-in-screenshot"
+								/>
+							}
+						>
+							<DotsThreeVerticalIcon />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							{axisDomainCap && (
+								<DropdownMenuItem onClick={() => setClampOutliers((value) => !value)}>
+									{clampOutliers ? "Show the full value range" : "Clip outliers again"}
+								</DropdownMenuItem>
+							)}
+							<DropdownMenuItem onClick={handleScreenshot} disabled={status === "pending"}>
+								Copy chart image
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</CardAction>
 			</CardHeader>
-			<CardContent className="flex-1 px-3 pt-0 pb-0">
+			<CardContent ref={chartContainerRef} className="flex-1 px-3 pt-0 pb-0">
 				<ChartContainer
 					config={chartConfig}
 					className={cn(
-						"aspect-auto h-62.5 w-full select-none **:focus:outline-none",
+						"aspect-auto h-full min-h-62.5 w-full select-none **:focus:outline-none",
 						isIncomeTab
 							? "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--success)/5"
 							: "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-(--destructive)/5",
@@ -449,18 +473,15 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							axisLine={false}
 							tickLine={false}
 							tickMargin={8}
-							tickFormatter={(value) => {
-								const date = datetime.parse(value, "yyyy-MM-dd", new Date());
-								return isMonthlyBucket
-									? datetime.format(date, "MMM yyyy")
-									: datetime.format(date, "MMM dd");
-							}}
+							tickFormatter={(value) => formatAxisDate(value, isMonthlyBucket ? "month" : "day")}
 							interval="preserveStartEnd"
 						/>
 						<YAxis
 							tickLine={false}
 							axisLine={false}
-							tickFormatter={(value) => (value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`)}
+							tickFormatter={(value) =>
+								redactTick(value === 0 ? "0" : `${(value / 1000000).toFixed(1)}M`, isRedacted)
+							}
 							domain={activeDomainCap ? [0, activeDomainCap] : undefined}
 							allowDataOverflow={!!activeDomainCap}
 						/>
@@ -507,9 +528,8 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 												fill="var(--foreground)"
 												fontSize={10}
 												fontWeight="bold"
-												className="font-mono"
 											>
-												{isRedacted ? "*****" : text}
+												{isRedacted ? REDACTED_AMOUNT : text}
 											</text>
 										</g>
 									);
@@ -517,23 +537,16 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 							/>
 						)}
 						<ChartTooltip
+							active={tooltipActive}
 							// oxlint-disable-next-line react/no-unstable-nested-components
-							content={({ active, payload, label, coordinate }) => {
-								if (active && payload && payload.length && label && coordinate) {
-									const date = datetime.parse(label as string, "yyyy-MM-dd", new Date());
-									const formattedDate = isMonthlyBucket
-										? datetime.format(date, "MMMM yyyy")
-										: datetime.format(date, "dd/MM/yyyy");
+							content={({ active, payload, label }) => {
+								if (active && payload && payload.length && label) {
+									const formattedDate = formatDate(label as string);
 
-									const tooltipStyle: React.CSSProperties = {
-										position: "absolute",
-										left: coordinate.x,
-										top: 225,
-										transform: "translateX(-80%)",
-										pointerEvents: "none",
-										zIndex: 9999,
-									};
-
+									// Left unpositioned on purpose: Recharts positions and clamps
+									// the wrapper (allowEscapeViewBox defaults to false). The old
+									// hand-placed `top: 225` put this outside the card and over
+									// the axis labels at every height but one.
 									if (isCategoryMode) {
 										// Calculate total for stacked bars (2+ categories)
 										const total = payload.reduce(
@@ -543,7 +556,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 										const showTotal = selectedCategoryIds.length >= 2;
 
 										return (
-											<div className="glass grid min-w-max gap-2 p-2" style={tooltipStyle}>
+											<div className="bg-popover text-popover-foreground border-border/60 grid min-w-max gap-2 rounded-md border p-2 shadow-lg">
 												<span className="text-muted-foreground text-xs tracking-wider">
 													{formattedDate}
 												</span>
@@ -585,7 +598,7 @@ export function ExpenseOverview(props: ExpenseOverviewProps) {
 									}
 
 									return (
-										<div className="glass grid min-w-max gap-2 p-2" style={tooltipStyle}>
+										<div className="bg-popover text-popover-foreground border-border/60 grid min-w-max gap-2 rounded-md border p-2 shadow-lg">
 											<span className="text-muted-foreground text-xs tracking-wider">
 												{formattedDate}
 											</span>

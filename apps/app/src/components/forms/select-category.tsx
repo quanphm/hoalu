@@ -1,113 +1,114 @@
 import { PlusIcon } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
-import {
-	Combobox,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-	ComboboxPopup,
-	ComboboxSeparator,
-} from "@hoalu/ui/combobox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@hoalu/ui/dialog";
-import { useState } from "react";
+import { useLocalStorage } from "@hoalu/ui/hooks";
+import { Link, useParams } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 
 import { CreateCategoryForm } from "#app/components/categories/category-actions.tsx";
 import { useLiveQueryCategories } from "#app/components/categories/use-categories.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
+import { PillPicker, type PillOption } from "./pill-picker";
 
-interface CategoryOption {
-	label: string;
-	value: string;
-}
+const RECENT_CATEGORIES = 6;
 
 interface Props {
 	label?: React.ReactNode;
 	description?: React.ReactNode;
-	actions?: React.ReactNode;
+	placeholder?: string;
+	appearance?: "pill" | "field";
+	/**
+	 * `navigate` sends the user to the category page and back with the new id, which the host form
+	 * can only afford when it keeps a draft. Hosts without one keep the in-place dialog.
+	 */
+	createAction?: "dialog" | "navigate";
 	disabled?: boolean;
 	type?: "expense" | "income";
 }
 
 export function SelectCategoryField(props: Props) {
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [comboboxOpen, setComboboxOpen] = useState(false);
-
 	const field = useFieldContext<string>();
-	const { value } = field.state;
+	const workspace = useWorkspace();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const type = props.type ?? "expense";
+	const [recentIds, setRecentIds] = useLocalStorage<string[]>(
+		`recent_${type}_categories_${workspace.slug}`,
+		[],
+	);
 
 	const allCategories = useLiveQueryCategories();
-	const categories = props.type
-		? (allCategories?.filter((c) => c.type === props.type) ?? [])
-		: (allCategories ?? []);
-	const categoryOptions: CategoryOption[] = categories.map((c) => ({
-		label: c.name,
-		value: c.id,
-	}));
 
-	const selectedOption = categoryOptions.find((opt) => opt.value === value) ?? null;
+	const options = useMemo<PillOption[]>(() => {
+		const rank = (id: string) => {
+			const index = recentIds.indexOf(id);
+			return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+		};
+		return (allCategories ?? [])
+			.filter((category) => category.type === type)
+			.sort((a, b) => rank(a.id) - rank(b.id) || a.name.localeCompare(b.name))
+			.map((category) => ({ value: category.id, label: category.name }));
+	}, [allCategories, type, recentIds]);
 
-	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === "Enter" && !comboboxOpen) {
-			event.preventDefault();
-			setComboboxOpen(true);
-		}
+	const handleChange = (id: string) => {
+		field.handleChange(id);
+		if (!id) return;
+		setRecentIds((current) =>
+			[id, ...current.filter((entry) => entry !== id)].slice(0, RECENT_CATEGORIES),
+		);
 	};
 
+	const placeholder =
+		props.placeholder ?? (typeof props.label === "string" ? props.label : "Category");
+
 	return (
-		<Field>
+		<Field className={props.appearance === "field" ? "gap-1" : "w-fit! gap-1 [&>*]:w-auto!"}>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-				<Combobox<CategoryOption>
-					value={selectedOption}
-					onValueChange={(newValue) => {
-						field.handleChange(newValue?.value ?? "");
-					}}
-					items={categoryOptions}
+				<PillPicker
+					options={options}
+					value={field.state.value}
+					onValueChange={handleChange}
+					placeholder={placeholder}
+					appearance={props.appearance}
+					searchPlaceholder="Search categories…"
 					disabled={props.disabled}
-					open={comboboxOpen}
-					onOpenChange={setComboboxOpen}
-				>
-					<ComboboxInput
-						placeholder="Select"
-						inputClassName="h-9 items-center"
-						onKeyDown={handleComboboxInputKeyDown}
-					/>
-					<ComboboxPopup className="max-h-64">
-						<ComboboxEmpty>No result.</ComboboxEmpty>
-						<ComboboxList>
-							{(item: CategoryOption) => (
-								<ComboboxItem
-									key={item.value}
-									value={item}
-									className="grid-cols-[1fr_1rem] ps-3 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1"
-								>
-									{item.label}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-						<ComboboxSeparator />
-						<div className="px-1 py-1">
+					emptyMessage="No category found."
+					footer={
+						props.createAction === "navigate" ? (
+							<Button
+								variant="ghost"
+								className="w-full justify-start"
+								render={
+									<Link
+										to="/$slug/categories/new"
+										params={{ slug }}
+										search={{ type, returnTo: "transaction", transactionType: type }}
+									/>
+								}
+							>
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
+								New category
+							</Button>
+						) : (
 							<DialogTrigger render={<Button variant="ghost" className="w-full justify-start" />}>
-								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
-								Create new
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
+								New category
 							</DialogTrigger>
-						</div>
-					</ComboboxPopup>
-				</Combobox>
-				<DialogContent className="sm:max-w-[420px]">
-					<DialogHeader>
-						<DialogTitle>Create new category</DialogTitle>
-					</DialogHeader>
-					<CreateCategoryForm
-						type={props.type}
-						callback={() => {
-							setDialogOpen(false);
-						}}
-					/>
-				</DialogContent>
+						)
+					}
+				/>
+				{props.createAction !== "navigate" && (
+					<DialogContent className="sm:max-w-[420px]">
+						<DialogHeader>
+							<DialogTitle>Create new category</DialogTitle>
+						</DialogHeader>
+						<CreateCategoryForm type={type} callback={() => setDialogOpen(false)} />
+					</DialogContent>
+				)}
 			</Dialog>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}
 			<FieldMessage />

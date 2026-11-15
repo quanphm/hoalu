@@ -13,6 +13,7 @@ import {
 } from "#app/lib/collections/index.ts";
 
 import type { BillDefinition, BillingAnomaly, Payment } from "@hoalu/finance/billing";
+import type { RepeatSchema } from "@hoalu/schema/schema";
 
 /**
  * A projected occurrence, joined to its bill's display data.
@@ -30,7 +31,7 @@ export interface ProjectedBill {
 	title: string;
 	amount: number;
 	currency: string;
-	repeat: string;
+	repeat: RepeatSchema;
 	walletId: string;
 	walletName: string;
 	categoryId: string | null;

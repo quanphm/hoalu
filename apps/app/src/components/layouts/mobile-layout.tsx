@@ -24,9 +24,12 @@ export function MobileLayout({ children }: LayoutProps) {
 	const hasSlug = !!params.slug;
 
 	return (
-		<div className="bg-background flex flex-col">
+		<div className="bg-background flex h-dvh flex-col">
 			{hasSlug && <MobileHeader />}
-			<main data-slot="main-content" className="pb-16">
+			<main
+				data-slot="main-content"
+				className="min-h-0 flex-1 overflow-y-auto pb-[calc(4.25rem+env(safe-area-inset-bottom))]"
+			>
 				{children}
 			</main>
 			{hasSlug && <MobileBottomNav />}

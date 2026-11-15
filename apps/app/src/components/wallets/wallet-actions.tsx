@@ -1,9 +1,9 @@
 import {
-	CurrencyBtcIcon,
-	WalletIcon as CashIcon,
-	CreditCardIcon,
 	BankIcon,
+	CreditCardIcon,
+	CurrencyBtcIcon,
 	DotsThreeVerticalIcon,
+	WalletIcon as CashIcon,
 } from "@hoalu/icons/phosphor";
 import { Button } from "@hoalu/ui/button";
 import {
@@ -20,243 +20,51 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@hoalu/ui/dropdown-menu";
-import { Field, FieldGroup } from "@hoalu/ui/field";
 import { cn } from "@hoalu/ui/utils";
 import { useValue } from "@legendapp/state/react";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { createWalletDialog, deleteWalletDialog, editWalletDialog } from "#app/atoms/index.ts";
-import { useAppForm } from "#app/components/forms/index.tsx";
+import { deleteWalletDialog } from "#app/atoms/index.ts";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { createWalletTheme } from "#app/helpers/colors.ts";
-import {
-	AVAILABLE_CURRENCY_OPTIONS,
-	AVAILABLE_WALLET_TYPE_OPTIONS,
-} from "#app/helpers/constants.ts";
-import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { WalletFormSchema, type WalletPatchSchema } from "#app/lib/schema.ts";
-import { useCreateWallet, useDeleteWallet, useEditWallet } from "#app/services/mutations.ts";
-import { walletWithIdQueryOptions } from "#app/services/query-options.ts";
+import { useDeleteWallet } from "#app/services/mutations.ts";
 
 import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
-export function CreateWalletDialogTrigger() {
-	const setDialog = createWalletDialog.set;
-	return (
-		<Button size="sm" onClick={() => setDialog({ state: true })}>
-			Create wallet
-		</Button>
-	);
-}
-
-export function CreateWalletDialogContent() {
-	return (
-		<DialogPopup className="sm:max-w-[520px]" showCloseButton={false}>
-			<DialogHeader>
-				<DialogTitle>Create new wallet</DialogTitle>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<CreateWalletForm />
-		</DialogPopup>
-	);
-}
-
-function CreateWalletForm() {
-	const {
-		metadata: { currency: workspaceCurrency },
-	} = useWorkspace();
-	const setDialog = createWalletDialog.set;
-	const mutation = useCreateWallet();
-
-	const form = useAppForm({
-		defaultValues: {
-			name: "",
-			description: "",
-			currency: workspaceCurrency,
-			type: "cash",
-		} as WalletFormSchema,
-		validators: {
-			onSubmit: WalletFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				payload: {
-					name: value.name,
-					description: value.description,
-					currency: value.currency,
-					type: value.type,
-				},
-			});
-			setDialog({ state: false });
-		},
-	});
+export function WalletDropdownMenu({ id }: { id: string }) {
+	const setDeleteDialog = deleteWalletDialog.set;
 
 	return (
-		<form.AppForm>
-			<form.Form>
-				<FieldGroup>
-					<form.AppField
-						name="name"
-						children={(field) => (
-							<field.InputField label="Name" placeholder="My cash wallet" required />
-						)}
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				render={
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
 					/>
-					<form.AppField
-						name="description"
-						children={(field) => (
-							<field.InputField
-								placeholder="Physical wallet"
-								label="Description"
-								autoComplete="off"
-							/>
-						)}
-					/>
-				</FieldGroup>
-				<FieldGroup className="grid grid-cols-2 gap-4">
-					<form.AppField
-						name="type"
-						children={(field) => (
-							<field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />
-						)}
-					/>
-					<form.AppField
-						name="currency"
-						children={(field) => (
-							<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
-						)}
-					/>
-				</FieldGroup>
-
-				<DialogFooter>
-					<Field orientation="horizontal">
-						<form.SubscribeButton className="ml-auto w-fit">Create wallet</form.SubscribeButton>
-					</Field>
-				</DialogFooter>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
-function EditWalletForm(props: { id: string }) {
-	const workspace = useWorkspace();
-	const { data: wallet } = useQuery(walletWithIdQueryOptions(workspace.slug, props.id));
-	const mutation = useEditWallet();
-	const setDialog = editWalletDialog.set;
-
-	const form = useAppForm({
-		defaultValues: {
-			name: wallet?.name ?? "",
-			description: wallet?.description ?? "",
-			currency: wallet?.currency ?? "",
-			type: wallet?.type ?? "",
-			isActive: wallet?.isActive ?? true,
-			ownerId: wallet?.owner.id ?? "",
-		} as WalletPatchSchema,
-		validators: {
-			onSubmit: WalletFormSchema,
-		},
-		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				id: props.id,
-				payload: {
-					name: value.name,
-					description: value.description,
-					currency: value.currency,
-					type: value.type,
-					isActive: value.isActive,
-					ownerId: value.ownerId,
-				},
-			});
-			setDialog({ state: false });
-		},
-	});
-
-	return (
-		<form.AppForm>
-			<form.Form>
-				<FieldGroup>
-					<form.AppField
-						name="name"
-						children={(field) => (
-							<field.InputField label="Name" placeholder="My cash wallet" required />
-						)}
-					/>
-					<form.AppField
-						name="description"
-						children={(field) => (
-							<field.InputField
-								placeholder="Physical wallet"
-								label="Description"
-								autoComplete="off"
-							/>
-						)}
-					/>
-					<div className="grid grid-cols-2 gap-4">
-						<form.AppField
-							name="type"
-							children={(field) => (
-								<field.SelectField label="Type" options={AVAILABLE_WALLET_TYPE_OPTIONS} />
-							)}
-						/>
-						<form.AppField
-							name="currency"
-							children={(field) => (
-								<field.SelectField label="Default currency" options={AVAILABLE_CURRENCY_OPTIONS} />
-							)}
-						/>
-					</div>
-					<form.AppField
-						name="isActive"
-						children={(field) => (
-							<field.SwitchField
-								label="In use"
-								description={
-									field.state.value === false
-										? "You won't be able to create new expense with this wallet"
-										: ""
-								}
-							/>
-						)}
-					/>
-					<form.AppField
-						name="ownerId"
-						children={(field) => (
-							<field.SelectField
-								label="Owner"
-								description="Give wallet ownership to the others"
-								options={workspace.members.map((member) => {
-									return {
-										label: member.user.name,
-										value: member.user.id,
-									};
-								})}
-							/>
-						)}
-					/>
-				</FieldGroup>
-				<Field orientation="horizontal">
-					<form.SubscribeButton className="ml-auto w-fit">Update</form.SubscribeButton>
-				</Field>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
-export function EditWalletDialogContent() {
-	const dialog = useValue(editWalletDialog.$);
-
-	return (
-		<DialogPopup className="sm:max-w-[480px]">
-			<DialogHeader>
-				<DialogTitle>Edit wallet</DialogTitle>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<EditWalletForm key={dialog?.data?.id} id={dialog?.data?.id} />
-		</DialogPopup>
+				}
+			>
+				<span className="sr-only">Open menu</span>
+				<DotsThreeVerticalIcon className="size-4" />
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end">
+				<DropdownMenuItem
+					variant="destructive"
+					onClick={() => setDeleteDialog({ state: true, data: { id } })}
+				>
+					Delete
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 
 export function DeleteWalletDialogContent() {
+	const navigate = useNavigate();
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
 	const dialog = useValue(deleteWalletDialog.$);
 	const setDialog = deleteWalletDialog.set;
 	const mutation = useDeleteWallet();
@@ -266,6 +74,7 @@ export function DeleteWalletDialogContent() {
 			return;
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
+		navigate({ to: "/$slug/wallets", params: { slug } });
 		setDialog({ state: false });
 	};
 
@@ -286,31 +95,6 @@ export function DeleteWalletDialogContent() {
 				</Button>
 			</DialogFooter>
 		</DialogPopup>
-	);
-}
-
-export function WalletDropdownMenuWithModal({ id }: { id: string }) {
-	const setEditDialog = editWalletDialog.set;
-	const setDeleteDialog = deleteWalletDialog.set;
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-				<span className="sr-only">Open menu</span>
-				<DotsThreeVerticalIcon className="size-4" />
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
-				<DropdownMenuItem onClick={() => setEditDialog({ state: true, data: { id } })}>
-					Edit
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					variant="destructive"
-					onClick={() => setDeleteDialog({ state: true, data: { id } })}
-				>
-					Delete
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
 	);
 }
 

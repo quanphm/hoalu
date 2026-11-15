@@ -55,7 +55,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 						<Button
 							variant="link"
 							size="icon-sm"
-							className="size-4 [&_svg:not([class*='size-'])]:size-3"
+							aria-label="Hoalu on GitHub"
+							className="size-6 [&_svg:not([class*='size-'])]:size-3"
 							render={
 								<a href="https://github.com/quanphm/hoalu" target="_blank" rel="noreferrer">
 									<GithubLogoIcon />
@@ -65,7 +66,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 						<Button
 							variant="link"
 							size="icon-sm"
-							className="size-4 [&_svg:not([class*='size-'])]:size-3"
+							aria-label="Hoalu on X"
+							className="size-6 [&_svg:not([class*='size-'])]:size-3"
 							render={
 								<a href="https://x.com/quanphmm" target="_blank" rel="noreferrer">
 									<XLogoIcon />

@@ -11,17 +11,19 @@
 		"lint:fix": "oxlint --fix",
 		"format": "oxfmt --write .",
 		"format:check": "oxfmt --check .",
-		"knip": "knip"
+		"knip": "knip",
+		"repos:sync": "bash scripts/sync-repos.sh"
 	},
 	"devDependencies": {
 		"@types/node": "^25.9.9",
-		"knip": "^6.44.0",
+		"knip": "^6.45.0",
 		"oxfmt": "^0.53.0",
-		"oxlint": "^1.90.0",
+		"oxlint": "^1.93.0",
+		"oxlint-tsgolint": "^7.0.2007",
 		"tsx": "^4.23.15",
 		"turbo": "^2.11.10",
 		"typescript": "^7.0.2",
-		"vite": "^8.3.5"
+		"vite": "^8.3.8"
 	},
-	"packageManager": "pnpm@12.10.1"
+	"packageManager": "pnpm@12.18.0"
 }

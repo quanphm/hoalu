@@ -1,10 +1,14 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-08-28
-TECH_STACK: Node.js 24, pnpm 11, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
+LAST_UPDATED: 2026-11-15
+TECH_STACK: Node.js 24, pnpm 12, React 19, Hono, PostgreSQL 18, Electric SQL, TanStack ecosystem
 ---
 
 # AGENTS.md
+
+This file is the repo-wide contract. Per-app detail lives next door: `apps/app/AGENTS.md`
+(screens, components, data layer) and `apps/api/AGENTS.md` (routes, middleware, infra). Read the
+app-specific file before changing that app; read this one for anything shared.
 
 ## Quick Reference for AI Agents
 
@@ -19,48 +23,47 @@ When debug with browser, please refer to these addresses to access the applicati
 ### Common Tasks Cheat Sheet
 
 - **Add new API route**: Follow 3-file pattern in `apps/api/src/routes/[resource]/` (index.ts, repository.ts, schema.ts)
-- **Add database table**: Update `apps/api/src/db/schema.ts:1-480` → `pnpm run db:generate` → `pnpm run db:migrate`
+- **Add database table**: Update `apps/api/src/db/schema.ts:1-461` → `pnpm run db:generate` → `pnpm run db:migrate`
 - **Add frontend route**: Create file in `apps/app/src/routes/` (file-based routing with TanStack Router)
 - **Add UI component**: Place in `apps/app/src/components/` or `packages/ui/src/components/` if reusable
 - **Add collection**: Create in `apps/app/src/lib/collections/[resource].ts` with Electric SQL
+- **Add a date/range input**: Use `RangeCalendar` from `@hoalu/ui/calendar-range` — never wire `Calendar mode="range"` by hand (see [Date Inputs & Ranges](#date-inputs--ranges))
 - **Fix type errors**: Restart dev servers to regenerate RPC types and route definitions
 - **Run lint**: `pnpm run lint` (oxlint) or `pnpm run format` (oxfmt)
 
 ### File Location Quick Lookup
 
-| What                       | Where                                                           | Lines                         |
-| -------------------------- | --------------------------------------------------------------- | ----------------------------- |
-| Database schema            | `apps/api/src/db/schema.ts`                                     | 480                           |
-| API client types           | `apps/app/src/lib/api-client.ts`                                | 634                           |
-| Frontend schemas           | `apps/app/src/lib/schema.ts`                                    | 167                           |
-| Expense API routes         | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)           |
-| Expense components         | `apps/app/src/components/expenses/`                             | 5 files                       |
-| Expense live queries       | `apps/app/src/components/expenses/use-expenses.ts`              | 60                            |
-| Dashboard read pipeline    | `apps/app/src/services/dashboard-model.ts`                      | 628                           |
-| Category components        | `apps/app/src/components/categories/`                           | 3 files                       |
-| Wallet components          | `apps/app/src/components/wallets/`                              | 4 files                       |
-| Recurring bills components | `apps/app/src/components/recurring-bills/`                      | 5 files                       |
-| Upcoming bills components  | `apps/app/src/components/upcoming-bills/`                       | 2 files                       |
-| Income components          | `apps/app/src/components/incomes/`                              | 2 files                       |
-| Event components           | `apps/app/src/components/events/`                               | 5 files                       |
-| Transactions components    | `apps/app/src/components/transactions/`                         | 5 files                       |
-| Auth setup                 | `apps/api/src/lib/auth.ts`                                      | 177                           |
-| Sync proxy                 | `apps/api/src/modules/sync.ts`                                  | -                             |
-| PGlite provider            | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                             |
-| Collections                | `apps/app/src/lib/collections/*.ts`                             | 9 files (7 + index + factory) |
-| Collection factory         | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63                            |
-| Query options              | `apps/app/src/services/query-options.ts`                        | 239                           |
-| Mutations                  | `apps/app/src/services/mutations.ts`                            | 1088                          |
-| Categories API routes      | `apps/api/src/routes/categories/`                               | 3 files (350 total)           |
-| Exchange rates API routes  | `apps/api/src/routes/exchange-rates/`                           | 3 files (154 total)           |
-| Expenses API routes        | `apps/api/src/routes/expenses/`                                 | 3 files (714 total)           |
-| Files API routes           | `apps/api/src/routes/files/`                                    | 3 files (532 total)           |
-| Incomes API routes         | `apps/api/src/routes/incomes/`                                  | 3 files (462 total)           |
-| Recurring bills API routes | `apps/api/src/routes/recurring-bills/`                          | 3 files (862 total)           |
-| Tasks API routes           | `apps/api/src/routes/tasks/`                                    | 3 files (324 total)           |
-| Events API routes          | `apps/api/src/routes/events/`                                   | 3 files (407 total)           |
-| Wallets API routes         | `apps/api/src/routes/wallets/`                                  | 3 files (444 total)           |
-| Workspaces API routes      | `apps/api/src/routes/workspaces/`                               | 3 files (362 total)           |
+| What                     | Where                                                           | Size                          |
+| ------------------------ | --------------------------------------------------------------- | ----------------------------- |
+| Database schema          | `apps/api/src/db/schema.ts`                                     | 461 lines                     |
+| API client types         | `apps/app/src/lib/api-client.ts`                                | 637 lines                     |
+| Frontend schemas         | `apps/app/src/lib/schema.ts`                                    | 167 lines                     |
+| Dashboard read pipeline  | `apps/app/src/services/dashboard-model.ts`                      | 650 lines                     |
+| Dashboard date filter    | `apps/app/src/components/charts/dashboard-date-filter.tsx`      | -                             |
+| Range calendar primitive | `packages/ui/src/components/calendar-range.tsx`                 | -                             |
+| Date formatting          | `apps/app/src/helpers/format-date.ts`                           | -                             |
+| Query options            | `apps/app/src/services/query-options.ts`                        | 236 lines                     |
+| Mutations                | `apps/app/src/services/mutations.ts`                            | 1088 lines                    |
+| Auth setup               | `apps/api/src/lib/auth.ts`                                      | 177 lines                     |
+| Sync proxy               | `apps/api/src/modules/sync.ts`                                  | -                             |
+| PGlite provider          | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                             |
+| Collections              | `apps/app/src/lib/collections/*.ts`                             | 9 files (7 + index + factory) |
+| Collection factory       | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63 lines                      |
+
+Frontend component folders (`apps/app/src/components/`): `expenses` 6 files, `categories` 6,
+`wallets` 8, `recurring-bills` 8, `upcoming-bills` 3, `incomes` 2, `events` 9, `transactions` 6,
+`charts` 6, `forms` 23. `packages/ui` ships 43 components; `apps/app/AGENTS.md` maps what each one
+does.
+
+API routes, each a 3-file folder (`index.ts`, `repository.ts`, `schema.ts`):
+
+| Resource     | Lines | Resource          | Lines |
+| ------------ | ----- | ----------------- | ----- |
+| `expenses`   | 661   | `recurring-bills` | 865   |
+| `files`      | 709   | `incomes`         | 462   |
+| `wallets`    | 446   | `events`          | 407   |
+| `workspaces` | 362   | `categories`      | 350   |
+| `tasks`      | 324   | `exchange-rates`  | 154   |
 
 ### Critical Constraints
 
@@ -69,7 +72,7 @@ When debug with browser, please refer to these addresses to access the applicati
 - ❌ Modify `apps/app/src/lib/api-client.ts` - auto-generated from Hono RPC (hono/client hc)
 - ❌ Edit `apps/app/src/routeTree.gen.ts` - generated by TanStack Router
 - ❌ Use relative imports like `../../` - use path aliases instead
-- ❌ Omit `.ts`/`.tsx` extensions in imports - Bun requirement
+- ❌ Omit `.ts`/`.tsx` extensions in imports - ESM resolution needs them
 - ❌ Skip migrations after schema changes - data loss risk
 - ❌ Modify database directly without migrations - Electric SQL will break
 - ❌ Create routes without workspace scoping - security issue
@@ -78,7 +81,7 @@ When debug with browser, please refer to these addresses to access the applicati
 **ALWAYS do these:**
 
 - ✅ Use path aliases (`#app/*`, `#api/*`) instead of relative imports
-- ✅ Include `.ts`/`.tsx` extensions in all imports (Bun requirement)
+- ✅ Include `.ts`/`.tsx` extensions in all imports (ESM resolution needs them)
 - ✅ Run migrations after schema changes: `db:generate` → `db:migrate`
 - ✅ Validate with Zod v4 before database operations
 - ✅ Scope all data by `workspace_id` foreign key (multi-tenancy)
@@ -160,19 +163,20 @@ Paid status is therefore derived, not stored: an occurrence is settled iff an ex
 
 ### Key Libraries & Versions
 
-| Package           | Version (catalog) |
-| ----------------- | ----------------- |
-| node              | 24                |
-| pnpm              | 11                |
-| typescript        | ^7.0.2            |
-| vite              | ^8.2.0            |
-| hono              | ^4.13.0           |
-| better-auth       | ^1.6.20           |
-| zod               | ^4.4.3            |
-| react / react-dom | ^19.2.8           |
-| tailwindcss       | ^4.3.3            |
-| drizzle-orm       | ^0.45.2           |
-| turbo             | ^2.10.8           |
+| Package           | Version (catalog / workspace) |
+| ----------------- | ----------------------------- |
+| node              | 24                            |
+| pnpm              | 12                            |
+| postgres          | 18 (`postgres:18-alpine`)     |
+| typescript        | ^7.0.2                        |
+| vite              | ^8.3.8                        |
+| hono              | ^4.13.17                      |
+| better-auth       | 1.6.20                        |
+| zod               | ^4.6.7                        |
+| react / react-dom | ^19.3.1                       |
+| tailwindcss       | ^4.3.5                        |
+| drizzle-orm       | ^0.45.4                       |
+| turbo             | ^2.11.10                      |
 
 ### Workspace Lifecycle
 
@@ -239,6 +243,18 @@ Always include `.ts` or `.tsx` extensions in imports:
 
 - ✅ `import { schema } from "./schema.ts"`
 - ❌ `import { schema } from "./schema"`
+
+### Comments
+
+Code comments are a last resort. Do not write comments that narrate or explain code — next-line narration, section banners, step markers (`// 1. Validate`), restated signatures, history notes, workaround confessions, commented-out code.
+
+- If a fact is readable from the code, delete the comment.
+- If it is not readable but should be, change the code: rename, extract a named function, narrow the type, add a test.
+- Keep a comment only when it cites something outside our control: license headers, public API contracts the types cannot carry, dependency or platform quirks, issue links.
+- `@ts-expect-error` / `oxlint-disable` only when the rule itself is wrong. A `TODO` inside a suppression is not a fix.
+- Architecture prose belongs in `docs/`, `DESIGN.md`, or `AGENTS.md` — never in source.
+
+Loaded as an instruction? Use the `no-comments` skill for the full catalog and sweep workflow.
 
 ### Zod v4 Coercion
 
@@ -363,6 +379,48 @@ export function ExpenseList() {
 }
 ```
 
+### Date Inputs & Ranges
+
+`RangeCalendar` (`@hoalu/ui/calendar-range`) is the only range picker. Every date range in the app
+— the dashboard filter, the transaction filter facet, the event date chip and its form field — goes
+through it. Do not wire `<Calendar mode="range">` by hand; do not re-implement the two-click logic.
+
+**Why it exists.** `react-day-picker` sits on `addToRange`, which treats a seeded range as an anchor:
+clicking one day inside an already-complete range _moves an endpoint_ and reports a **finished**
+range. The click that starts a pick is therefore indistinguishable from the click that ends one —
+which is why a picker seeded with the current range used to apply and close on the first click.
+
+**The contract:**
+
+- Two clicks are one range. The first click reports `{ from }` with **no** `to`; callers tell
+  "picking" from "picked" by `to` alone, so a half-picked range can be shown without being applied.
+- `value` is the committed range; `onChange` fires on every click. Echo partial values back and the
+  calendar shows the pending start, or ignore them and it still shows them.
+- `resetOnSelect` is baked in: a click always starts a new range instead of extending the old one.
+
+**The dashboard filter** (`components/charts/dashboard-date-filter.tsx`) is the reference shape: a
+`Select` of named ranges, with the custom `RangeCalendar` permanently visible below it — never a
+"Custom" menu item that reveals it. Choosing a preset applies and closes; picking two days applies
+and closes; the one-line status above the calendar states the live range (`Nov 12, 2026 – ?` while
+picking) and `aria-live="polite"` announces it. The select shows `Custom` whenever the applied range
+is custom.
+
+**Formatting.** `formatDateRange` collapses a single-day range to one date — never print
+`Nov 10, 2026 – Nov 10, 2026`. Ranges are `from`/`to` `Date`s in client state and `yyyy-MM-dd`
+strings at the edges; parse a bare calendar date locally (`format-date.ts`), not with `new Date()`.
+
+### Base UI State Attributes
+
+`packages/ui` wraps Base UI, which does not expose interaction state through native pseudo-classes.
+Style the data attributes it sets, not `:focus`:
+
+- Option/menu rows get `data-highlighted` (`data-highlighted:bg-accent`), also during keyboard
+  navigation. `:focus` never matches on select rows — they are `div[role="option"]` and never
+  receive DOM focus, so `focus:bg-accent` silently renders no hover at all. This was a real bug in
+  `select.tsx`; `combobox.tsx` and `autocomplete.tsx` show the correct pattern.
+- `data-disabled`, `data-selected`, `data-pressed`, `data-open` / `data-closed` are the equivalents
+  for the other states. `data-[x]:` arbitrary syntax still works but prefer the bare attribute.
+
 ## Packages
 
 | Package            | Path                 | Purpose                                                                          |
@@ -383,7 +441,7 @@ export function ExpenseList() {
 | `@hoalu/themes`    | `packages/themes`    | CSS theme layers                                                                 |
 | `@hoalu/tsconfig`  | `packages/tsconfig`  | Shared TypeScript configs                                                        |
 | `@hoalu/typekit`   | `packages/typekit`   | Type utilities                                                                   |
-| `@hoalu/ui`        | `packages/ui`        | Shared UI components (42 components)                                             |
+| `@hoalu/ui`        | `packages/ui`        | Shared UI components (43 components)                                             |
 
 ---
 
@@ -394,3 +452,9 @@ Never run `git commit`, `git add`, `git push`, `git rebase`, `git reset`, or any
 - Show the diff and wait for confirmation before committing.
 - Do not stage or commit files as part of "finishing up" or "wrapping up" a task.
 - The user must explicitly approve every commit.
+
+## Vendored reference
+
+`repos/effect`, `repos/maple`, `repos/flexlayout` are read-only local checkouts of upstream repositories. They are **not committed** — `repos/` is gitignored and refreshed on demand with `bun run repos:sync` (shallow, single-branch clones). Do not edit; do not import from them — app code imports normal package deps. For Effect idioms, treat `repos/effect/` as source of truth over guesses or web search.
+
+A fresh clone has no `repos/` until `repos:sync` is run; nothing in the build or CI depends on it. Because the directory is gitignored, it is invisible to git, to `oxlint`/`oxfmt`, to editor search/auto-import (`.vscode/settings.json`), and to pattern-based file search — address files by explicit path, as the skills under `.opencode/skills/` do.

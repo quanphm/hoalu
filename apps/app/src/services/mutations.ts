@@ -854,8 +854,8 @@ export function useUploadExpenseFiles() {
 			const ids = await Promise.all(
 				files.map(async (file) => {
 					const response = await apiClient.files.uploadWithPresignedUrl(slug, file, {
+						title,
 						tags: ["expense"],
-						description: `${new Date(date)} - ${title}`,
 					});
 					return response.id;
 				}),

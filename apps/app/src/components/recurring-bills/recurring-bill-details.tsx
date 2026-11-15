@@ -15,7 +15,7 @@ import {
 	unarchiveRecurringBillDialog,
 } from "#app/atoms/index.ts";
 import { HotKey } from "#app/components/hotkey.tsx";
-import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
+import { EditRecurringBillForm } from "#app/components/recurring-bills/recurring-bill-edit.tsx";
 import { type SyncedAllRecurringBill } from "#app/components/recurring-bills/use-recurring-bills.ts";
 
 interface RecurringBillDetailPanelProps {
@@ -115,21 +115,20 @@ export function RecurringBillDetailPanel({
 					</Tooltip>
 				</>
 			)}
-			<Tooltip>
-				<TooltipTrigger render={<Button size="icon-sm" variant="outline" onClick={onClose} />}>
-					<XIcon />
-				</TooltipTrigger>
-				<TooltipContent side="bottom">Close</TooltipContent>
-			</Tooltip>
 		</>
 	);
 
 	return (
 		<div
 			data-slot="recurring-bill-details"
-			className="bg-card text-card-foreground h-[calc(100vh-94px)] overflow-auto"
+			className="bg-background text-card-foreground h-[calc(100dvh-94px)] overflow-auto"
 		>
-			<EditRecurringBillForm key={bill.id} bill={bill} headerActions={headerActions} />
+			<EditRecurringBillForm
+				key={bill.id}
+				bill={bill}
+				headerActions={headerActions}
+				onClose={onClose}
+			/>
 		</div>
 	);
 }
