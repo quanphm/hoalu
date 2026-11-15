@@ -33,6 +33,7 @@ import {
 	TransactionCloseAction,
 	TransactionPageGrid,
 	TransactionPageHeader,
+	TransactionResetButton,
 	TransactionSubmitRow,
 	type TransactionNavigation,
 } from "#app/components/transactions/transaction-layout.tsx";
@@ -216,6 +217,31 @@ export function CreateExpenseForm() {
 		[form],
 	);
 
+	// Clears what the draft contributed without touching the URL's round-trip params, so resetting
+	// lands on the same page a fresh visit would open.
+	function resetDraft() {
+		attachmentsRef.current?.clearFiles();
+		setScannedReceipts([]);
+		if (scannedReceiptJobId) {
+			removeReceiptJob(scannedReceiptJobId);
+			setScannedReceiptJobId(null);
+		}
+		setLogPayment({ recurringBillId: null });
+		draftExpense$.set(makeDraftExpense());
+		form.reset({
+			title: "",
+			description: "",
+			date: toLocalISOString(datetime.format(new Date(), "yyyy-MM-dd")),
+			transaction: { value: 0, currency: defaultWallet.currency },
+			walletId: validLastWallet || defaultWallet.value,
+			categoryId: returned.categoryId || validLastCategory || "",
+			repeat: returnedBill?.repeat ?? "one-time",
+			recurringBillId: returned.recurringBillId || undefined,
+			eventId: returned.eventId || undefined,
+			attachments: [],
+		});
+	}
+
 	if (!wallets.length) return null;
 
 	return (
@@ -343,6 +369,7 @@ export function CreateExpenseForm() {
 							</TransactionPanel>
 
 							<TransactionSubmitRow>
+								<TransactionResetButton onClick={resetDraft} />
 								<form.SubscribeButton>Create expense</form.SubscribeButton>
 							</TransactionSubmitRow>
 						</div>

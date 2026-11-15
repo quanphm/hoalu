@@ -1,16 +1,17 @@
 import {
-	GearSixIcon,
+	DotsThreeIcon,
+	ImagesIcon,
 	MagnifyingGlassIcon,
 	ReceiptIcon,
 	SquaresFourIcon,
 } from "@hoalu/icons/phosphor";
-import { Button } from "@hoalu/ui/button";
 import { cn } from "@hoalu/ui/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { Link, useLocation, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { commandPaletteOpen$ } from "#app/atoms/index.ts";
-import { ButtonLink } from "#app/components/button-link.tsx";
+import { MobileMoreDrawer } from "#app/components/layouts/mobile-more-drawer.tsx";
 import { WorkspaceSwitcher } from "#app/components/layouts/workspace-switcher.tsx";
 import { listWorkspacesOptions } from "#app/services/query-options.ts";
 
@@ -65,81 +66,120 @@ function MobileHeader() {
 
 	return (
 		<header className="bg-background z-40 shrink-0 border-b pt-[env(safe-area-inset-top)]">
-			<div className="flex min-h-14 items-center justify-between gap-2 px-3">
-				<div className="flex min-w-0 items-center gap-2">
-					<WorkspaceSwitcher variant="compact" selectedWorkspace={currentWorkspace} />
-				</div>
-				<Button
-					variant="outline"
-					size="icon-lg"
-					aria-label="Search"
-					className="shrink-0 touch-manipulation"
-					onClick={() => commandPaletteOpen$.set(true)}
-				>
-					<MagnifyingGlassIcon />
-				</Button>
+			<div className="flex min-h-14 items-center gap-2 px-3">
+				<WorkspaceSwitcher variant="compact" selectedWorkspace={currentWorkspace} />
 			</div>
 		</header>
 	);
 }
 
-const navItemClass = cn(
-	"relative flex h-full w-full flex-col items-center justify-center gap-1 px-2 py-1",
-	"text-sm font-medium",
-	"text-muted-foreground hover:text-foreground touch-manipulation",
+const navTabClass = cn(
+	"relative isolate flex h-full w-full flex-col items-center justify-center rounded-lg",
+	"text-muted-foreground touch-manipulation select-none",
+	"transition-colors duration-150 ease-out outline-none",
+	"data-[status=active]:text-foreground",
+	"active:text-foreground",
+	"[@media(hover:hover)_and_(pointer:fine)]:hover:text-foreground",
+	"focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-inset",
+	"before:bg-accent before:pointer-events-none before:absolute before:inset-1 before:-z-10 before:rounded-lg before:opacity-0 before:transition-opacity before:duration-150 before:content-['']",
+	"active:before:opacity-100",
 );
 
-const activeNavItemClass = cn(
-	"bg-muted text-foreground",
-	"before:bg-primary before:absolute before:top-0 before:left-1/2 before:h-0.5 before:w-12 before:-translate-x-1/2 before:rounded-full",
-);
+const moreSegments = [
+	"/recurring-bills",
+	"/events",
+	"/categories",
+	"/wallets",
+	"/settings",
+] as const;
 
 function MobileBottomNav() {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const { pathname } = useLocation();
+	const [moreOpen, setMoreOpen] = useState(false);
+	const isMoreActive = moreSegments.some((segment) => pathname.startsWith(`/${slug}${segment}`));
 
 	return (
-		<nav
-			aria-label="Main navigation"
-			className="bg-background/85 supports-backdrop-filter:bg-background/70 absolute inset-x-0 bottom-0 z-50 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
-		>
-			<div className="grid h-(--mobile-nav-height) grid-cols-3 gap-1 p-1">
-				<ButtonLink
-					to="/$slug"
-					params={{ slug }}
-					size="sm"
-					variant="ghost"
-					activeOptions={{ exact: true }}
-					className={navItemClass}
-					activeProps={{ className: activeNavItemClass }}
-				>
-					<SquaresFourIcon className="size-6" aria-hidden="true" />
-					<span className="truncate text-xs leading-none">Dashboard</span>
-				</ButtonLink>
-				<ButtonLink
-					to="/$slug/transactions"
-					params={{ slug }}
-					size="sm"
-					variant="ghost"
-					activeOptions={{ exact: true }}
-					className={navItemClass}
-					activeProps={{ className: activeNavItemClass }}
-				>
-					<ReceiptIcon className="size-6" aria-hidden="true" />
-					<span className="truncate text-xs leading-none">Transactions</span>
-				</ButtonLink>
-				<ButtonLink
-					to="/$slug/settings/workspace"
-					params={{ slug }}
-					size="sm"
-					variant="ghost"
-					activeOptions={{ exact: true }}
-					className={navItemClass}
-					activeProps={{ className: activeNavItemClass }}
-				>
-					<GearSixIcon className="size-6" aria-hidden="true" />
-					<span className="truncate text-xs leading-none">Settings</span>
-				</ButtonLink>
-			</div>
-		</nav>
+		<>
+			<nav
+				aria-label="Main"
+				className="bg-background/85 supports-backdrop-filter:bg-background/70 absolute inset-x-0 bottom-0 z-50 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+			>
+				<div className="grid h-(--mobile-nav-height) grid-cols-5">
+					<Link
+						to="/$slug"
+						params={{ slug }}
+						activeOptions={{ exact: true }}
+						activeProps={{ "aria-current": "page" }}
+						preload="render"
+						aria-label="Dashboard"
+						className={navTabClass}
+					>
+						{({ isActive }) => (
+							<SquaresFourIcon
+								className="size-6"
+								weight={isActive ? "fill" : "regular"}
+								aria-hidden="true"
+							/>
+						)}
+					</Link>
+					<Link
+						to="/$slug/transactions"
+						params={{ slug }}
+						activeProps={{ "aria-current": "page" }}
+						preload="render"
+						aria-label="Transactions"
+						className={navTabClass}
+					>
+						{({ isActive }) => (
+							<ReceiptIcon
+								className="size-6"
+								weight={isActive ? "fill" : "regular"}
+								aria-hidden="true"
+							/>
+						)}
+					</Link>
+					<Link
+						to="/$slug/files"
+						params={{ slug }}
+						activeProps={{ "aria-current": "page" }}
+						preload="render"
+						aria-label="Files"
+						className={navTabClass}
+					>
+						{({ isActive }) => (
+							<ImagesIcon
+								className="size-6"
+								weight={isActive ? "fill" : "regular"}
+								aria-hidden="true"
+							/>
+						)}
+					</Link>
+					<button
+						type="button"
+						aria-label="Search"
+						onClick={() => commandPaletteOpen$.set(true)}
+						className={navTabClass}
+					>
+						<MagnifyingGlassIcon className="size-6" aria-hidden="true" />
+					</button>
+					<button
+						type="button"
+						aria-label="More"
+						aria-haspopup="dialog"
+						aria-expanded={moreOpen}
+						onClick={() => setMoreOpen(true)}
+						className={cn(navTabClass, isMoreActive && "text-foreground")}
+					>
+						<DotsThreeIcon
+							className="size-6"
+							weight={isMoreActive ? "bold" : "regular"}
+							aria-hidden="true"
+						/>
+					</button>
+				</div>
+			</nav>
+			<MobileMoreDrawer slug={slug} open={moreOpen} onOpenChange={setMoreOpen} />
+		</>
 	);
 }

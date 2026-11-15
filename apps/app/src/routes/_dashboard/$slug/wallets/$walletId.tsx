@@ -68,22 +68,20 @@ function RouteComponent() {
 	if (!current) return null;
 
 	return (
-		<div className="bg-card overflow-auto max-md:h-auto md:h-[calc(100dvh-94px)]">
-			<WalletEditForm
-				key={current.id}
-				wallet={current}
-				onClose={handleClose}
-				headerActions={
-					<WalletHeaderActions
-						wallet={current}
-						onGoUp={handleGoUp}
-						onGoDown={handleGoDown}
-						canGoUp={currentIndex > 0}
-						canGoDown={currentIndex < wallets.length - 1}
-					/>
-				}
-			/>
-		</div>
+		<WalletEditForm
+			key={current.id}
+			wallet={current}
+			onClose={handleClose}
+			headerActions={
+				<WalletHeaderActions
+					wallet={current}
+					onGoUp={handleGoUp}
+					onGoDown={handleGoDown}
+					canGoUp={currentIndex > 0}
+					canGoDown={currentIndex < wallets.length - 1}
+				/>
+			}
+		/>
 	);
 }
 

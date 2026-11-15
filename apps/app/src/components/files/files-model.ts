@@ -44,10 +44,6 @@ export interface FileGroup {
 	entries: FileEntry[];
 }
 
-export type SheetRow =
-	| { type: "month"; key: string; label: string }
-	| { type: "tiles"; key: string; entries: FileEntry[] };
-
 const KIND_BY_MIME: [string, FileKind][] = [
 	["image/", "image"],
 	["application/pdf", "document"],
@@ -166,32 +162,14 @@ const MIN_TILE_WIDTH = 180;
 const MAX_COLUMNS = 8;
 
 /**
- * The sheet's column count is measured in JS so the virtualizer and the CSS
- * grid can never disagree about row height. Columns follow the container's
- * width, not the viewport's: the navigation rail already takes 224px.
+ * The sheet's column count is measured in JS so keyboard navigation and the CSS
+ * grid agree on the row a tile sits in. Columns follow the container's width,
+ * not the viewport's: the navigation rail already takes 224px.
  */
 export function columnsForWidth(width: number): number {
 	if (width <= 0) return 2;
 	const columns = Math.floor((width + TILE_GAP) / (MIN_TILE_WIDTH + TILE_GAP));
 	return Math.min(MAX_COLUMNS, Math.max(2, columns));
-}
-
-export function buildSheetRows(groups: FileGroup[], columns: number): SheetRow[] {
-	const rows: SheetRow[] = [];
-
-	for (const group of groups) {
-		rows.push({ type: "month", key: `month-${group.key}`, label: group.label });
-
-		for (let index = 0; index < group.entries.length; index += columns) {
-			rows.push({
-				type: "tiles",
-				key: `tiles-${group.key}-${index}`,
-				entries: group.entries.slice(index, index + columns),
-			});
-		}
-	}
-
-	return rows;
 }
 
 export function formatFileSize(bytes: number | null): string | null {
