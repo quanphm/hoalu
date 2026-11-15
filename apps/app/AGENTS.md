@@ -1,6 +1,6 @@
 ---
 AI_CONTEXT: true
-LAST_UPDATED: 2026-08-28
+LAST_UPDATED: 2026-11-15
 TECH_STACK: Bun 1.4.0, React 19, Hono, PostgreSQL 17, Electric SQL, TanStack ecosystem
 ---
 
@@ -196,6 +196,12 @@ A form that keeps a draft (the transaction forms: `draftExpense$` / `draftIncome
 - Pickers expose this through `createAction="navigate"`; hosts **without** a draft (the edit pages, the bill form) leave it at `"dialog"` and keep the in-place dialog, because navigating away would discard their unsaved work.
 - A created recurring bill brings its cadence back: the bill picker only lists bills of the current `repeat`, so `?recurringBillId=` sets `repeat` from the bill.
 - Manually dropped attachments do not survive the trip (`useFilesUpload` holds them in component state); scanned receipts do (`scannedReceipts$` is a module observable).
+
+### Scrolling
+
+The two shells scroll different things: on desktop `SidebarInset` grows and the **window** scrolls; on mobile the shell is pinned (`fixed inset-0`) and an inner `<main data-slot="main-content">` scrolls. So nothing in a page may assume `window.scrollY` moves — a `useWindowVirtualizer` there renders offset 0 forever, tiles and load-more triggers included.
+
+Anchor scroll work to a real element (`useVirtualizer` with `getScrollElement`, as the transaction table does) or to a viewport-relative `IntersectionObserver` sentinel, which already clips against every scrolling ancestor. `FileLoadMore` is the file page's example.
 
 ### Data Layer
 

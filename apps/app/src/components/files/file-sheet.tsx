@@ -1,10 +1,7 @@
 import { datetime } from "@hoalu/datetime/datetime";
-import { defaultRangeExtractor, useWindowVirtualizer } from "@tanstack/react-virtual";
-import type { Range } from "@tanstack/react-virtual";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import {
-	buildSheetRows,
 	columnsForWidth,
 	type FileEntry,
 	type FileGroup,
@@ -12,27 +9,15 @@ import {
 } from "#app/components/files/files-model.ts";
 
 const GAP = TILE_GAP;
-const CAPTION_HEIGHT = 46;
-const MONTH_ROW_HEIGHT = 30;
 
 interface FileSheetProps {
 	groups: FileGroup[];
-	hasNextPage: boolean;
-	isFetchingNextPage: boolean;
-	onLoadMore: () => void;
 	onOpen: (id: string) => void;
 }
 
-export function FileSheet({
-	groups,
-	hasNextPage,
-	isFetchingNextPage,
-	onLoadMore,
-	onOpen,
-}: FileSheetProps) {
+export function FileSheet({ groups, onOpen }: FileSheetProps) {
 	const listRef = useRef<HTMLDivElement>(null);
 	const [width, setWidth] = useState(0);
-	const [scrollMargin, setScrollMargin] = useState(0);
 	const [activeId, setActiveId] = useState<string | null>(null);
 
 	useLayoutEffect(() => {
@@ -48,77 +33,17 @@ export function FileSheet({
 		return () => observer.disconnect();
 	}, []);
 
-	useLayoutEffect(() => {
-		const element = listRef.current;
-		if (!element) return undefined;
-
-		const measure = () => setScrollMargin(element.getBoundingClientRect().top + window.scrollY);
-		measure();
-		window.addEventListener("resize", measure);
-
-		const observer = new ResizeObserver(measure);
-		observer.observe(document.body);
-
-		return () => {
-			window.removeEventListener("resize", measure);
-			observer.disconnect();
-		};
-	}, []);
-
 	const columns = columnsForWidth(width);
-	const rows = useMemo(() => buildSheetRows(groups, columns), [groups, columns]);
 	const entries = useMemo(() => groups.flatMap((group) => group.entries), [groups]);
-	const tileWidth = columns > 0 ? (width - GAP * (columns - 1)) / columns : 0;
-
-	const rowIndexById = useMemo(() => {
-		const index = new Map<string, number>();
-		rows.forEach((row, rowIndex) => {
-			if (row.type !== "tiles") return;
-			for (const entry of row.entries) index.set(entry.id, rowIndex);
-		});
-		return index;
-	}, [rows]);
-
 	const activeIndex = useMemo(() => {
 		const index = entries.findIndex((entry) => entry.id === activeId);
 		return index === -1 ? 0 : index;
 	}, [entries, activeId]);
 
-	const activeRowIndex = useMemo(() => {
-		const entry = entries[activeIndex];
-		return entry ? (rowIndexById.get(entry.id) ?? -1) : -1;
-	}, [entries, activeIndex, rowIndexById]);
-
-	// oxlint-disable-next-line react/incompatible-library -- TanStack Virtual hands back non-memoizable handles by design; the compiler skips this component.
-	const virtualizer = useWindowVirtualizer({
-		count: rows.length,
-		overscan: 4,
-		scrollMargin,
-		estimateSize: (index) =>
-			rows[index]?.type === "month" ? MONTH_ROW_HEIGHT : tileWidth * 1.25 + CAPTION_HEIGHT,
-		measureElement: (element) => element.getBoundingClientRect().height,
-		rangeExtractor: useCallback(
-			(range: Range) => {
-				const next = new Set(defaultRangeExtractor(range));
-				if (activeRowIndex >= 0) next.add(activeRowIndex);
-				return [...next].sort((a, b) => a - b);
-			},
-			[activeRowIndex],
-		),
-	});
-
 	const focusEntry = useCallback((id: string) => {
 		setActiveId(id);
 		requestAnimationFrame(() => document.getElementById(`file-tile-${id}`)?.focus());
 	}, []);
-
-	const virtualItems = virtualizer.getVirtualItems();
-	const lastVisibleIndex = virtualItems.at(-1)?.index ?? 0;
-
-	useEffect(() => {
-		if (!hasNextPage || isFetchingNextPage) return;
-		if (lastVisibleIndex >= rows.length - 2) onLoadMore();
-	}, [hasNextPage, isFetchingNextPage, lastVisibleIndex, rows.length, onLoadMore]);
 
 	function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, entryId: string) {
 		const index = entries.findIndex((entry) => entry.id === entryId);
@@ -139,64 +64,71 @@ export function FileSheet({
 	}
 
 	return (
-		<div>
-			<div ref={listRef}>
-				<div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
-					{virtualItems.map((virtualRow) => {
-						const row = rows[virtualRow.index];
-						if (!row) return null;
-
-						return (
-							<div
-								key={virtualRow.key}
-								data-index={virtualRow.index}
-								ref={virtualizer.measureElement}
-								style={{
-									position: "absolute",
-									top: 0,
-									left: 0,
-									width: "100%",
-									transform: `translateY(${virtualRow.start - scrollMargin}px)`,
-								}}
-							>
-								{row.type === "month" ? (
-									<div className="flex items-center gap-3 pt-3 pb-1.5">
-										<h3 className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
-											{row.label}
-										</h3>
-										<span aria-hidden="true" className="bg-border h-px flex-1" />
-									</div>
-								) : (
-									<div
-										className="pb-2"
-										style={{
-											display: "grid",
-											gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-											gap: GAP,
-										}}
-									>
-										{row.entries.map((entry) => (
-											<FileTile
-												key={entry.id}
-												entry={entry}
-												isActive={entry.id === entries[activeIndex]?.id}
-												onFocus={() => setActiveId(entry.id)}
-												onKeyDown={(event) => handleKeyDown(event, entry.id)}
-												onOpen={() => onOpen(entry.id)}
-											/>
-										))}
-									</div>
-								)}
-							</div>
-						);
-					})}
+		<div ref={listRef} className="flex flex-col">
+			{groups.map((group) => (
+				<div key={group.key}>
+					<div className="flex items-center gap-3 pt-3 pb-1.5">
+						<h3 className="text-muted-foreground text-2xs font-medium tracking-widest uppercase">
+							{group.label}
+						</h3>
+						<span aria-hidden="true" className="bg-border h-px flex-1" />
+					</div>
+					<div
+						className="grid pb-2"
+						style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: GAP }}
+					>
+						{group.entries.map((entry) => (
+							<FileTile
+								key={entry.id}
+								entry={entry}
+								isActive={entry.id === entries[activeIndex]?.id}
+								onFocus={() => setActiveId(entry.id)}
+								onKeyDown={(event) => handleKeyDown(event, entry.id)}
+								onOpen={() => onOpen(entry.id)}
+							/>
+						))}
+					</div>
 				</div>
-			</div>
+			))}
+		</div>
+	);
+}
 
+interface FileLoadMoreProps {
+	hasNextPage: boolean;
+	isFetchingNextPage: boolean;
+	onLoadMore: () => void;
+}
+
+export function FileLoadMore({ hasNextPage, isFetchingNextPage, onLoadMore }: FileLoadMoreProps) {
+	const sentinelRef = useRef<HTMLDivElement>(null);
+
+	/**
+	 * The page shell scrolls an inner element on mobile, so the viewport-relative root is the only
+	 * one that works everywhere: it already clips against every scrolling ancestor.
+	 */
+	useEffect(() => {
+		const element = sentinelRef.current;
+		if (!element || !hasNextPage || isFetchingNextPage) return undefined;
+
+		const observer = new IntersectionObserver(
+			(records) => {
+				if (records.some((record) => record.isIntersecting)) onLoadMore();
+			},
+			{ rootMargin: "0px 0px 800px 0px" },
+		);
+		observer.observe(element);
+
+		return () => observer.disconnect();
+	}, [hasNextPage, isFetchingNextPage, onLoadMore]);
+
+	return (
+		<>
+			<div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
 			{isFetchingNextPage && (
 				<p className="text-muted-foreground text-2xs pt-2 tabular-nums">Loading older files…</p>
 			)}
-		</div>
+		</>
 	);
 }
 

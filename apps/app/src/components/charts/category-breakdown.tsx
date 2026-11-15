@@ -9,6 +9,7 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
+import { useState } from "react";
 import { Pie, PieChart } from "recharts";
 
 import { expenseCategoryFilter$ } from "#app/atoms/filters.ts";
@@ -29,17 +30,18 @@ export function CategoryBreakdown(props: { model: DashboardModel }) {
 
 	const all = model.categories.breakdown;
 	const top = all.slice(0, TOP_N_CATEGORY);
-	const othersTotal = all.slice(TOP_N_CATEGORY).reduce((sum, item) => sum + item.value, 0);
+	const rest = all.slice(TOP_N_CATEGORY);
+	const restTotal = rest.reduce((sum, item) => sum + item.value, 0);
+	const [expanded, setExpanded] = useState(false);
 
-	const rows: CategoryBreakdownEntry[] = [...top];
-	if (othersTotal > 0) {
-		rows.push({ id: "others", name: "Everything else", color: "gray", value: othersTotal });
-	}
+	const rows: CategoryBreakdownEntry[] =
+		restTotal > 0
+			? [...top, { id: "others", name: "Others", color: "gray", value: restTotal }]
+			: [...top];
 
-	const total = rows.reduce((sum, item) => sum + item.value, 0);
+	const total = all.reduce((sum, item) => sum + item.value, 0);
 
 	const openCategory = (id: string) => {
-		if (id === "others") return;
 		setSelectedCategories([id]);
 		const range = model.range.custom;
 		navigate({
@@ -68,16 +70,51 @@ export function CategoryBreakdown(props: { model: DashboardModel }) {
 					<div className="grid h-full items-center gap-6 md:grid-cols-[minmax(0,240px)_1fr]">
 						<Donut data={rows} currency={model.currency} />
 						<ul className="grid gap-x-8 sm:grid-cols-2">
-							{rows.map((row) => (
+							{top.map((row) => (
 								<li key={row.id} className="border-border/50 flex min-w-0 items-center border-b">
 									<LegendRow
 										row={row}
 										total={total}
 										currency={model.currency}
-										onOpen={openCategory}
+										onOpen={() => openCategory(row.id)}
 									/>
 								</li>
 							))}
+							{rest.length > 0 && (
+								<li className="sm:col-span-2">
+									<div className="border-border/50 border-b">
+										<LegendRow
+											row={{
+												id: "others",
+												name: "Others",
+												color: "gray",
+												value: restTotal,
+											}}
+											total={total}
+											currency={model.currency}
+											toggle={{ expanded }}
+											onOpen={() => setExpanded((value) => !value)}
+										/>
+									</div>
+									{expanded && (
+										<ul className="grid gap-x-8 pb-1 pl-4 sm:grid-cols-2">
+											{rest.map((row) => (
+												<li
+													key={row.id}
+													className="border-border/50 flex min-w-0 items-center border-b"
+												>
+													<LegendRow
+														row={row}
+														total={total}
+														currency={model.currency}
+														onOpen={() => openCategory(row.id)}
+													/>
+												</li>
+											))}
+										</ul>
+									)}
+								</li>
+							)}
 						</ul>
 					</div>
 				)}
@@ -133,20 +170,30 @@ function LegendRow({
 	row,
 	total,
 	currency,
+	toggle,
 	onOpen,
 }: {
 	row: CategoryBreakdownEntry;
 	total: number;
 	currency: string;
-	onOpen: (id: string) => void;
+	toggle?: { expanded: boolean };
+	onOpen: () => void;
 }) {
 	const share = total > 0 ? ((row.value / total) * 100).toFixed(1) : "0.0";
-	const isLink = row.id !== "others";
 
 	const content = (
 		<>
 			<span className={cn("size-2.5 shrink-0 rounded-[3px]", createChartColor(row.color))} />
-			<span className="min-w-0 flex-1 truncate text-sm font-medium">{row.name}</span>
+			<span
+				className={cn(
+					"min-w-0 flex-1 text-sm font-medium",
+					toggle
+						? "decoration-muted-foreground underline decoration-dashed underline-offset-2"
+						: "truncate",
+				)}
+			>
+				{row.name}
+			</span>
 			<span className="text-muted-foreground w-11 shrink-0 text-right text-sm tabular-nums">
 				{share}%
 			</span>
@@ -158,14 +205,11 @@ function LegendRow({
 		</>
 	);
 
-	if (!isLink) {
-		return <div className="flex w-full items-center gap-3 py-2.5">{content}</div>;
-	}
-
 	return (
 		<Button
 			variant="ghost"
-			onClick={() => onOpen(row.id)}
+			onClick={onOpen}
+			aria-expanded={toggle?.expanded}
 			className="focus-visible:ring-ring h-auto w-full justify-start gap-3 rounded-sm px-0 py-2.5 text-left font-normal hover:bg-transparent"
 		>
 			{content}

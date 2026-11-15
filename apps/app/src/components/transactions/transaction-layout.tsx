@@ -125,3 +125,15 @@ export function TransactionSubmitRow(props: { status?: ReactNode; children: Reac
 		</div>
 	);
 }
+
+/**
+ * Sits beside the submit button of a create page. A create form is seeded from a persisted draft,
+ * so its fields can be filled before the user types anything; this throws that draft away.
+ */
+export function TransactionResetButton(props: { onClick: () => void }) {
+	return (
+		<Button variant="ghost" onClick={props.onClick}>
+			Reset
+		</Button>
+	);
+}

@@ -10,7 +10,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@h
 import { Input } from "@hoalu/ui/input";
 import { useCallback, useDeferredValue, useMemo, useState } from "react";
 
-import { FileSheet } from "#app/components/files/file-sheet.tsx";
+import { FileSheet, FileLoadMore } from "#app/components/files/file-sheet.tsx";
 import { FileViewer } from "#app/components/files/file-viewer.tsx";
 import {
 	fileSearchAmount,
@@ -122,13 +122,7 @@ export function FileLibrary({
 							</Empty>
 						) : null
 					) : (
-						<FileSheet
-							groups={imageGroups}
-							hasNextPage={hasNextPage}
-							isFetchingNextPage={isFetchingNextPage}
-							onLoadMore={onLoadMore}
-							onOpen={(id) => setSelectedId(id)}
-						/>
+						<FileSheet groups={imageGroups} onOpen={(id) => setSelectedId(id)} />
 					)}
 				</Section>
 			)}
@@ -170,6 +164,12 @@ export function FileLibrary({
 					</ul>
 				</Section>
 			)}
+
+			<FileLoadMore
+				hasNextPage={hasNextPage}
+				isFetchingNextPage={isFetchingNextPage}
+				onLoadMore={onLoadMore}
+			/>
 
 			<FileViewer
 				entries={images}

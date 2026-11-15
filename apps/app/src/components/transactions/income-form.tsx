@@ -18,6 +18,7 @@ import {
 	TransactionCloseAction,
 	TransactionPageGrid,
 	TransactionPageHeader,
+	TransactionResetButton,
 	TransactionSubmitRow,
 	type TransactionNavigation,
 } from "#app/components/transactions/transaction-layout.tsx";
@@ -133,6 +134,20 @@ export function CreateIncomeForm() {
 		[form],
 	);
 
+	// Clears what the draft contributed without touching the URL's round-trip params, so resetting
+	// lands on the same page a fresh visit would open.
+	function resetDraft() {
+		draftIncome$.set(makeDraftIncome());
+		form.reset({
+			title: "",
+			description: "",
+			date: toLocalISOString(datetime.format(new Date(), "yyyy-MM-dd")),
+			transaction: { value: 0, currency: defaultWallet.currency },
+			walletId: validLastWallet || defaultWallet.value,
+			categoryId: returned.categoryId || lastUsedCategoryId || "",
+		});
+	}
+
 	if (!wallets.length) return null;
 
 	return (
@@ -221,6 +236,7 @@ export function CreateIncomeForm() {
 							</TransactionPanel>
 
 							<TransactionSubmitRow>
+								<TransactionResetButton onClick={resetDraft} />
 								<form.SubscribeButton>Create income</form.SubscribeButton>
 							</TransactionSubmitRow>
 						</div>
