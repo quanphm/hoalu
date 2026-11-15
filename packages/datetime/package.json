@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/datetime",
-	"version": "0.34.2",
+	"version": "0.34.3",
 	"private": true,
 	"description": "Date and time utilities for Hoalu",
 	"type": "module",

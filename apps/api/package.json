@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/api",
-	"version": "0.34.2",
+	"version": "0.34.3",
 	"files": [
 		"dist"
 	],
