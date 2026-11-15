@@ -54,6 +54,24 @@
 		min-height: 100dvh;
 	}
 
+	/* WebKit refuses to paint content in the home-indicator zone and fills it from the document
+	   background instead, so it has to match the surface of the bar sitting above it. */
+	html {
+		@apply bg-background;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-text-size-adjust: 100%;
+	}
+
+	/* iOS zooms the page when focus lands on a field it renders under 16px, and never zooms back.
+	   Floors the inherited size only — a field with its own `text-*` utility keeps it. */
+	@media (pointer: coarse) {
+		input,
+		textarea,
+		select {
+			font-size: 16px;
+		}
+	}
+
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {
 		cursor: pointer;

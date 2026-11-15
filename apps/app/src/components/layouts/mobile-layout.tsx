@@ -29,7 +29,12 @@ export function MobileLayout({ children }: LayoutProps) {
 	const hasSlug = !!params.slug;
 
 	return (
-		<div className={cn("bg-background relative flex h-dvh flex-col overflow-hidden", NAV_HEIGHT)}>
+		<div
+			className={cn(
+				"bg-background relative flex h-[var(--app-height,100dvh)] flex-col overflow-hidden",
+				NAV_HEIGHT,
+			)}
+		>
 			{hasSlug && <MobileHeader />}
 			<main
 				data-slot="main-content"

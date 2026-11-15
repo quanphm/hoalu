@@ -42,7 +42,7 @@ export function DeleteIncome({ id }: { id: string }) {
 			<TooltipTrigger
 				render={
 					<Button
-						size="icon"
+						size="icon-sm"
 						variant="outline"
 						aria-label="Delete this income"
 						onClick={() => setDialog({ state: true, data: { id } })}
@@ -70,7 +70,7 @@ export function DeleteIncomeDialogContent() {
 		}
 		await mutation.mutateAsync({ id: dialog.data.id });
 		setDialog({ state: false });
-		navigate({ to: "/$slug/transactions", params: { slug } });
+		void navigate({ to: "/$slug/transactions", params: { slug } });
 	};
 
 	return (
@@ -103,7 +103,7 @@ export function DuplicateIncome(props: { data: SyncedIncome }) {
 			<TooltipTrigger
 				render={
 					<Button
-						size="icon"
+						size="icon-sm"
 						variant="outline"
 						aria-label="Duplicate this income"
 						onClick={onDuplicate}

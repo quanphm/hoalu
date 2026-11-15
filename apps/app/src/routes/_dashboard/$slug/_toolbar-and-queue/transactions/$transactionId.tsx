@@ -39,7 +39,7 @@ function RouteComponent() {
 		const target = f[targetIdx];
 		if (!target) return;
 
-		navigate({
+		void navigate({
 			to: "/$slug/transactions/$transactionId",
 			params: { slug: s, transactionId: target.public_id },
 			replace: true,
@@ -57,7 +57,7 @@ function RouteComponent() {
 	const handleGoDown = useCallback(() => debouncedNav("down"), []);
 
 	const handleClose = useCallback(() => {
-		navigate({ to: "/$slug/transactions", params: { slug } });
+		void navigate({ to: "/$slug/transactions", params: { slug } });
 	}, [navigate, slug]);
 
 	useHotkeys("j", handleGoDown, [handleGoDown]);
