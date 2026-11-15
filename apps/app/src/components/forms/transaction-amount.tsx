@@ -208,7 +208,7 @@ export function TransactionAmountInput({
 			onValueChange={(v) => onValueChange(v ?? 0)}
 			min={0}
 			step={0.01}
-			className="min-w-0"
+			className="min-w-0 flex-1"
 		>
 			<NumberFieldGroup
 				className={cn(
@@ -240,7 +240,7 @@ export function TransactionAmountInput({
 					className={cn(
 						hero
 							? "field-sizing-content h-10 max-w-full min-w-6 border-none bg-transparent p-0 text-3xl font-medium tracking-tight tabular-nums outline-none"
-							: "bg-background text-foreground flex-1 px-3 py-2 tabular-nums outline-none",
+							: "bg-background text-foreground min-w-0 flex-1 px-3 py-2 tabular-nums outline-none",
 						hero && !value && "text-muted-foreground/50",
 					)}
 				/>
@@ -263,7 +263,7 @@ export function TransactionAmountInput({
 	}
 
 	return (
-		<div className="isolate flex items-center gap-2">
+		<div className="isolate flex min-w-0 items-center gap-2">
 			<SelectNative
 				className="bg-muted w-[88px] shrink-0"
 				value={currency}

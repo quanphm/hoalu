@@ -5,7 +5,7 @@ function Toolbar({ className, ...props }: React.ComponentPropsWithRef<"div">) {
 		<div
 			data-slot="toolbar"
 			className={cn(
-				"bg-card relative flex min-h-7 w-full flex-col items-stretch justify-between gap-3 border-b px-4 py-2.5 md:flex-row md:items-center",
+				"bg-card relative flex min-h-7 w-full shrink-0 flex-col items-stretch justify-between gap-3 border-b px-4 py-2.5 md:flex-row md:items-center",
 				className,
 			)}
 			{...props}
@@ -41,9 +41,7 @@ function ToolbarActions({ className, ...props }: React.ComponentPropsWithRef<"di
 			data-slot="toolbar-actions"
 			className={cn(
 				"flex min-w-0 items-center gap-2 md:justify-end",
-				"max-md:w-full max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pb-1",
-				"max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden",
-				"max-md:[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)]",
+				"max-md:scroll-x max-md:w-full max-md:py-1",
 				className,
 			)}
 			{...props}

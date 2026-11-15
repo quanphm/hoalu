@@ -23,7 +23,7 @@ export default defineConfig({
 		viteReact(),
 		VitePWA({
 			strategies: "generateSW",
-			registerType: "prompt",
+			registerType: "autoUpdate",
 			includeAssets: [
 				"images/favicon.ico",
 				"images/favicon-96x96.png",
@@ -76,7 +76,7 @@ export default defineConfig({
 			},
 			workbox: {
 				cleanupOutdatedCaches: true,
-				maximumFileSizeToCacheInBytes: 4_000_000,
+				maximumFileSizeToCacheInBytes: 10_000_000,
 				globPatterns: ["**/*.{js,css,html,svg,woff2,data,wasm}"],
 				navigateFallbackDenylist: [/^\/api\//],
 			},

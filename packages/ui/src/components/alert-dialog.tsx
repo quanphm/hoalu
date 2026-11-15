@@ -23,7 +23,23 @@ function AlertDialogOverlay({
 		<AlertDialogPrimitive.Backdrop
 			data-slot="alert-dialog-backdrop"
 			className={cn(
-				"data-open:fade-in-0 data-closed:fade-out-0 data-closed:animation-duration-[200ms] data-closed:animate-out data-open:animate-in fixed inset-0 z-50 bg-black/50",
+				"fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 ease-out data-ending-style:opacity-0 data-starting-style:opacity-0",
+				className,
+			)}
+			{...props}
+		/>
+	);
+}
+
+function AlertDialogViewport({
+	className,
+	...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Viewport>) {
+	return (
+		<AlertDialogPrimitive.Viewport
+			data-slot="alert-dialog-viewport"
+			className={cn(
+				"fixed inset-0 z-50 grid grid-rows-[1fr_auto_3fr] justify-items-center p-4",
 				className,
 			)}
 			{...props}
@@ -38,14 +54,16 @@ function AlertDialogPopup({
 	return (
 		<AlertDialogPortal>
 			<AlertDialogOverlay />
-			<AlertDialogPrimitive.Popup
-				data-slot="alert-dialog-popup"
-				className={cn(
-					"ed]:zoom-out-95 data-[state=open]:zoom-in-95 dabg-background dabg-background nslate-y-[-50%] d ta-[state=open]:animate-in trata-[state=open]:animate-in bg-background data-[state=closed]:animate-out data-[state=open]:animate-in fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg",
-					className,
-				)}
-				{...props}
-			/>
+			<AlertDialogViewport>
+				<AlertDialogPrimitive.Popup
+					data-slot="alert-dialog-popup"
+					className={cn(
+						"bg-background relative z-50 row-start-2 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border p-6 shadow-lg transition-[scale,opacity] duration-200 ease-out data-ending-style:scale-[0.95] data-ending-style:opacity-0 data-starting-style:scale-[0.95] data-starting-style:opacity-0 sm:max-w-lg dark:outline-gray-300",
+						className,
+					)}
+					{...props}
+				/>
+			</AlertDialogViewport>
 		</AlertDialogPortal>
 	);
 }
@@ -54,7 +72,11 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">)
 	return (
 		<div
 			data-slot="alert-dialog-header"
-			className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+			className={cn(
+				"bg-muted/50 @container/alert-dialog-header -mx-6 -mt-6 grid auto-rows-min items-start gap-1 border-b p-4",
+				"has-data-[slot=alert-dialog-description]:grid-rows-[auto_auto]",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -64,7 +86,10 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
 	return (
 		<div
 			data-slot="alert-dialog-footer"
-			className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+			className={cn(
+				"bg-muted/50 -mx-6 -mb-6 flex flex-col-reverse gap-2 border-t p-4 sm:flex-row sm:justify-end sm:rounded-b-lg",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -77,7 +102,7 @@ function AlertDialogTitle({
 	return (
 		<AlertDialogPrimitive.Title
 			data-slot="alert-dialog-title"
-			className={cn("font-sesemibosemibold", className)}
+			className={cn("font-heading text-md leading-relaxed font-semibold", className)}
 			{...props}
 		/>
 	);
@@ -119,6 +144,7 @@ export {
 	AlertDialog,
 	AlertDialogPortal,
 	AlertDialogOverlay,
+	AlertDialogViewport,
 	AlertDialogTrigger,
 	AlertDialogPopup,
 	AlertDialogHeader,

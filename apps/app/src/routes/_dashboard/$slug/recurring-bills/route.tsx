@@ -1,5 +1,6 @@
 import { Button } from "@hoalu/ui/button";
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
+import { cn } from "@hoalu/ui/utils";
 import { createFileRoute, Link, Outlet, useMatches } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
@@ -49,8 +50,8 @@ function LayoutComponent() {
 				</ToolbarActions>
 			</Toolbar>
 
-			<PageContent>
-				<Section className="gap-0">
+			<PageContent fill={!billId && !creating}>
+				<Section className={cn("gap-0", !billId && !creating && "max-md:min-h-0 max-md:flex-1")}>
 					{billId || creating ? (
 						<Outlet />
 					) : (
@@ -75,7 +76,7 @@ function LayoutComponent() {
 							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100dvh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
+								className="grid-cols-1 overflow-hidden max-md:min-h-0 max-md:flex-1 max-md:grid-rows-1 md:h-[calc(100dvh-(--spacing(24)))] md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 									<RecurringBillList statusFilter={statusFilter} scrollRef={listScrollRef} />

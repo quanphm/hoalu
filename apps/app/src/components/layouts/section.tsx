@@ -108,7 +108,7 @@ function SectionItem({
 	if (shouldUseMobileLayout) {
 		return (
 			<div
-				className={cn("flex-1 overflow-auto", className)}
+				className={cn("min-h-0 flex-1 overflow-auto", className)}
 				style={{ order: mobileOrder }}
 				{...props}
 			>

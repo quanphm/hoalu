@@ -37,7 +37,7 @@ function LayoutComponent() {
 	const listScrollRef = useRef(0);
 
 	return (
-		<Section>
+		<Section className={showOutlet ? undefined : "max-md:min-h-0 max-md:flex-1"}>
 			{showOutlet ? (
 				<Outlet />
 			) : (
@@ -67,7 +67,7 @@ function LayoutComponent() {
 
 					<SectionContent
 						columns={12}
-						className="h-[calc(100dvh-(--spacing(33)-1px))] grid-cols-1 overflow-hidden md:gap-0"
+						className="grid-cols-1 overflow-hidden max-md:min-h-0 max-md:flex-1 max-md:grid-rows-1 md:h-[calc(100dvh-(--spacing(33)-1px))] md:gap-0"
 					>
 						<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 							<ExpenseList expenses={filteredExpenses} scrollRef={listScrollRef} />

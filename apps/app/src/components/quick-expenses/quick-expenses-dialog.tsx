@@ -13,7 +13,7 @@ export function QuickExpensesDialogContent() {
 	};
 
 	return (
-		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[500px]">
+		<DialogPopup className="max-h-[92vh] overflow-x-hidden overflow-y-auto sm:max-w-[500px]">
 			<DialogHeader>
 				<DialogTitle>Create expense</DialogTitle>
 				<DialogHeaderAction />
