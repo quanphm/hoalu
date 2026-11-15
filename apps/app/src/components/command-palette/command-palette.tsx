@@ -10,16 +10,20 @@ import {
 } from "@hoalu/ui/command";
 import { Kbd, KbdGroup } from "@hoalu/ui/kbd";
 import { Separator } from "@hoalu/ui/separator";
+import { toastManager } from "@hoalu/ui/toast";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useFuzzyFilter } from "#app/hooks/use-fuzzy-search.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
 
 import { useExpenseSearch } from "./use-expense-search.ts";
 import { VirtualizedList } from "./virtualized-list.tsx";
 
 import type { ActionItem, AutocompleteItem, UpcomingBillItem, VirtualizedItem } from "./types.ts";
+
+const APP_VERSION = `v${import.meta.env.PUBLIC_APP_VERSION}`;
 
 interface CommandPaletteProps {
 	open: boolean;
@@ -92,9 +96,30 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 					runAction(() => navigate({ to: "/$slug/categories/new", params: { slug } })),
 				meta: <CommandShortcut>⇧C</CommandShortcut>,
 			},
+			{
+				id: "version",
+				label: "Version",
+				keywords: ["about", "build", "deploy", "release"],
+				onAction: () =>
+					runAction(() => {
+						navigator.clipboard
+							.writeText(APP_VERSION)
+							.then(() => toastManager.add({ title: "Version copied", description: APP_VERSION }))
+							.catch(() => toastManager.add({ title: "Version", description: APP_VERSION }));
+					}),
+				meta: (
+					<span className="text-muted-foreground font-mono text-xs leading-none">
+						{APP_VERSION}
+					</span>
+				),
+			},
 		],
 		[runAction, navigate, slug],
 	);
+
+	const matchingActions = useFuzzyFilter(actions, search, {
+		getTextFields: (action) => [action.label, action.keywords?.join(" ")],
+	});
 
 	const virtualizedItems: VirtualizedItem[] = useMemo(() => {
 		const items: VirtualizedItem[] = [];
@@ -123,10 +148,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			}
 		}
 
-		if (!hasSearchResults) {
-			// Actions section
+		if (matchingActions.length > 0) {
 			items.push({ type: "header", label: "Actions" });
-			for (const action of actions) {
+			for (const action of matchingActions) {
 				items.push({ type: "action", data: action, itemIndex });
 				itemIndex++;
 			}
@@ -140,7 +164,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		recentExpenses,
 		hasUpcomingBills,
 		upcomingBills,
-		actions,
+		matchingActions,
 	]);
 
 	// Build items array for base-ui Autocomplete (only actual selectable items, not headers)
@@ -154,8 +178,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		const billItems = hasUpcomingBills
 			? upcomingBills.map((b) => ({ id: b.recurringBillId, title: b.title }))
 			: [];
-		// Exclude actions from keyboard nav when searching — they aren't rendered in the virtual list
-		const actionItems = !hasSearchResults ? actions.map((a) => ({ id: a.id, label: a.label })) : [];
+		const actionItems = matchingActions.map((a) => ({ id: a.id, label: a.label }));
 		return [...expenseItems, ...billItems, ...actionItems];
 	}, [
 		hasSearchResults,
@@ -164,7 +187,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 		recentExpenses,
 		hasUpcomingBills,
 		upcomingBills,
-		actions,
+		matchingActions,
 	]);
 
 	// Ref to hold the scroll function from VirtualizedList

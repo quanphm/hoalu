@@ -37,7 +37,7 @@ export function CreateWalletPage() {
 		validators: { onSubmit: WalletFormSchema },
 		onSubmit: async ({ value }) => {
 			await mutation.mutateAsync({ payload: toCreateWalletPayload(value) });
-			navigate({ to: "/$slug/wallets", params: { slug } });
+			void navigate({ to: "/$slug/wallets", params: { slug } });
 		},
 	});
 

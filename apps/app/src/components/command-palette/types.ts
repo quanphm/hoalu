@@ -19,6 +19,8 @@ export interface ExpenseSearchResult {
 export interface ActionItem {
 	id: string;
 	label: string;
+	/** Extra search terms that should surface this action without changing its label. */
+	keywords?: string[];
 	meta?: React.ReactNode;
 	onAction: () => void;
 }
