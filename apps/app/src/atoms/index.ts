@@ -1,3 +1,4 @@
+export * from "./amount-view";
 export * from "./categories";
 export * from "./command-palette";
 export * from "./dialogs";

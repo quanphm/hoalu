@@ -14,7 +14,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { createCategoryDialog, createWalletDialog } from "#app/atoms/index.ts";
 import { unifiedBillsQueryOptions } from "#app/services/query-options.ts";
 
 import { useExpenseSearch } from "./use-expense-search.ts";
@@ -32,8 +31,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 	const { slug } = useParams({ from: "/_dashboard/$slug" });
 
 	const navigate = useNavigate();
-	const setCreateWalletDialog = createWalletDialog.set;
-	const setCreateCategoryDialog = createCategoryDialog.set;
 
 	const { filtered: filteredExpenses, recent: recentExpenses } = useExpenseSearch(
 		open ? slug : undefined,
@@ -85,17 +82,18 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 			{
 				id: "create-wallet",
 				label: "Create Wallet",
-				onAction: () => runAction(() => setCreateWalletDialog({ state: true })),
+				onAction: () => runAction(() => navigate({ to: "/$slug/wallets/new", params: { slug } })),
 				meta: <CommandShortcut>⇧W</CommandShortcut>,
 			},
 			{
 				id: "create-category",
 				label: "Create Category",
-				onAction: () => runAction(() => setCreateCategoryDialog({ state: true })),
+				onAction: () =>
+					runAction(() => navigate({ to: "/$slug/categories/new", params: { slug } })),
 				meta: <CommandShortcut>⇧C</CommandShortcut>,
 			},
 		],
-		[runAction, navigate, slug, setCreateWalletDialog, setCreateCategoryDialog],
+		[runAction, navigate, slug],
 	);
 
 	const virtualizedItems: VirtualizedItem[] = useMemo(() => {

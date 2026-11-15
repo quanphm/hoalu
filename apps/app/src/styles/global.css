@@ -36,10 +36,31 @@
 	html,
 	body {
 		@apply min-h-screen w-full;
+		/* dvh follows the iOS URL bar; the vh above is the fallback where dvh is unsupported. */
+		min-height: 100dvh;
 	}
 
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {
 		cursor: pointer;
+	}
+}
+
+/* The only global guard for `prefers-reduced-motion`; the button primitive guards its own press-scale. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-property:
+			color, background-color, border-color, text-decoration-color, fill, stroke, opacity,
+			box-shadow !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+	}
+
+	/* Nothing moves, but a press still reads: keep the state change, drop the travel. */
+	:where(button, a, [role="button"]):active {
+		transform: none !important;
 	}
 }

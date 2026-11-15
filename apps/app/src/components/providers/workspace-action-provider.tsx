@@ -3,13 +3,7 @@ import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import {
-	commandPaletteOpen$,
-	createCategoryDialog,
-	createRecurringBillDialog,
-	createWalletDialog,
-	dialog$,
-} from "#app/atoms/index.ts";
+import { commandPaletteOpen$, dialog$ } from "#app/atoms/index.ts";
 import { CommandPalette } from "#app/components/command-palette/index.ts";
 import { KEYBOARD_SHORTCUTS } from "#app/helpers/constants.ts";
 
@@ -24,10 +18,6 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 
 	const isAnyDialogOpen = useValue(dialog$.open);
 	const allowShortcutNavigate = !isAnyDialogOpen;
-
-	const setWalletOpen = createWalletDialog.set;
-	const setCategoryOpen = createCategoryDialog.set;
-	const setRecurringBillOpen = createRecurringBillDialog.set;
 
 	const commandPaletteOpen = useValue(commandPaletteOpen$);
 
@@ -64,34 +54,34 @@ export function WorkspaceActionProvider({ children }: { children: React.ReactNod
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_recurring_bill.hotkey,
 		() => {
-			setRecurringBillOpen({ state: true });
+			navigate({ to: "/$slug/recurring-bills/new", params: { slug } });
 		},
 		{
 			preventDefault: true,
 		},
-		[],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_wallet.hotkey,
 		() => {
-			setWalletOpen({ state: true });
+			navigate({ to: "/$slug/wallets/new", params: { slug } });
 		},
 		{
 			preventDefault: true,
 		},
-		[],
+		[slug],
 	);
 
 	useHotkeys(
 		KEYBOARD_SHORTCUTS.create_category.hotkey,
 		() => {
-			setCategoryOpen({ state: true });
+			navigate({ to: "/$slug/categories/new", params: { slug } });
 		},
 		{
 			preventDefault: true,
 		},
-		[],
+		[slug],
 	);
 
 	useHotkeys(

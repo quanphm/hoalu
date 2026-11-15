@@ -5,6 +5,8 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const THEME_COLOR = "#0f1012";
+
 export default defineConfig({
 	envPrefix: "PUBLIC_",
 	plugins: [
@@ -21,23 +23,48 @@ export default defineConfig({
 		viteReact(),
 		VitePWA({
 			strategies: "generateSW",
-			registerType: "autoUpdate",
-			includeAssets: ["favicon.ico"],
+			registerType: "prompt",
+			includeAssets: [
+				"images/favicon.ico",
+				"images/favicon-96x96.png",
+				"images/apple-touch-icon.png",
+			],
 			manifest: {
+				id: "/",
 				name: "Hoalu",
 				short_name: "Hoalu",
+				description:
+					"Offline-first personal finance tracker for expenses, incomes, wallets and bills.",
+				lang: "en",
+				start_url: "/",
+				scope: "/",
+				display: "standalone",
+				theme_color: THEME_COLOR,
+				background_color: THEME_COLOR,
 				icons: [
-					{
-						src: "/images/web-app-manifest-192x192.png",
-						sizes: "192x192",
-						type: "image/png",
-						purpose: "maskable",
-					},
 					{
 						src: "/images/web-app-manifest-144x144.png",
 						sizes: "144x144",
 						type: "image/png",
 						purpose: "any",
+					},
+					{
+						src: "/images/web-app-manifest-192x192.png",
+						sizes: "192x192",
+						type: "image/png",
+						purpose: "any",
+					},
+					{
+						src: "/images/web-app-manifest-512x512.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "any",
+					},
+					{
+						src: "/images/web-app-manifest-192x192.png",
+						sizes: "192x192",
+						type: "image/png",
+						purpose: "maskable",
 					},
 					{
 						src: "/images/web-app-manifest-512x512.png",
@@ -49,8 +76,9 @@ export default defineConfig({
 			},
 			workbox: {
 				cleanupOutdatedCaches: true,
-				maximumFileSizeToCacheInBytes: 10_000_000,
-				globPatterns: ["**/*.{js,css,html,svg,data,wasm,woff2}"],
+				maximumFileSizeToCacheInBytes: 4_000_000,
+				globPatterns: ["**/*.{js,css,html,svg,woff2,data,wasm}"],
+				navigateFallbackDenylist: [/^\/api\//],
 			},
 			devOptions: {
 				enabled: process.env.SW_DEV === "true",
@@ -68,16 +96,8 @@ export default defineConfig({
 		modulePreload: { polyfill: false },
 		rollupOptions: {
 			output: {
-				manualChunks(id) {
-					if (id.includes("node_modules")) {
-						const match = id.match(
-							/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/,
-						)?.[1];
-						if (match) {
-							return `vendor-${match.replace("@", "").replace("/", "-")}`;
-						}
-					}
-					return null;
+				codeSplitting: {
+					groups: [{ name: "vendor", test: /[\\/]node_modules[\\/]/ }],
 				},
 			},
 		},

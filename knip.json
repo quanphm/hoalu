@@ -1,7 +1,15 @@
 {
-	"$schema": "https://unpkg.com/knip@5/schema.json",
-	"ignore": ["apps/api/drizzle.config.ts", "apps/app/src/routeTree.gen.ts"],
-	"ignoreDependencies": ["tailwind.+"],
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"ignore": ["apps/api/drizzle.config.ts", "apps/app/src/styles/*.css", ".agents/**"],
+	"ignoreDependencies": ["tailwind.+", "@hoalu/themes", "@react-email/ui"],
+	"ignoreBinaries": ["caddy"],
+	"ignoreExportsUsedInFile": true,
+	"ignoreIssues": {
+		"packages/datetime/package.json": ["subpaths"],
+		"packages/finance/package.json": ["subpaths"],
+		"packages/ids/package.json": ["subpaths"],
+		"packages/stdlib/package.json": ["subpaths"]
+	},
 	"ignoreWorkspaces": ["packages/icons", "packages/countries"],
 	"drizzle": false,
 	"tanstack-router": {

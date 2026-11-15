@@ -59,11 +59,11 @@ export function useFilesUpload({
 		[acceptedFileTypes, files.length, maxFiles, maxSizeMB],
 	);
 
-	const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+	const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};
-	const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+	const handleDragLeave = (event: React.DragEvent<HTMLElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};
@@ -85,7 +85,7 @@ export function useFilesUpload({
 			if (onUpload) onUpload(updatedFiles);
 		}
 	};
-	const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+	const handleDrop = (event: React.DragEvent<HTMLElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 		onFilesChange(event.dataTransfer.files);

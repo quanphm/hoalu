@@ -2,9 +2,8 @@ import { createFormHook } from "@tanstack/react-form";
 
 import { ColorsField } from "./color";
 import { fieldContext, formContext } from "./context";
-import { DatepickerField } from "./datepicker";
+import { DateChipField } from "./date-chip";
 import { DatepickerInputField } from "./datepicker-input";
-import { FilesField } from "./files";
 import { Form } from "./form";
 import { InputField } from "./input";
 import { InputWithEmojiPickerField } from "./input-with-emoji-picker";
@@ -16,9 +15,8 @@ import { SelectRecurringBillField } from "./select-recurring-bill";
 import { SelectWithGroupsField } from "./select-with-groups";
 import { SelectWithSearchField } from "./select-with-search";
 import { SubscribeButton } from "./subscribe-button";
-import { SwitchField } from "./switch";
 import { TiptapField } from "./tiptap";
-import { TransactionAmountField, TransactionAmountSplitField } from "./transaction-amount";
+import { TransactionAmountField, TransactionAmountHeroField } from "./transaction-amount";
 
 const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
@@ -31,14 +29,12 @@ const { useAppForm, withForm } = createFormHook({
 		SelectCategoryField,
 		SelectEventField,
 		SelectRecurringBillField,
-		DatepickerField,
+		DateChipField,
 		DatepickerInputField,
 		TransactionAmountField,
-		TransactionAmountSplitField,
-		SwitchField,
+		TransactionAmountHeroField,
 		ColorsField,
 		TiptapField,
-		FilesField,
 	},
 	formComponents: {
 		Form,

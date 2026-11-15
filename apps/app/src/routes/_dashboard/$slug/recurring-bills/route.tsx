@@ -1,5 +1,6 @@
+import { Button } from "@hoalu/ui/button";
 import { Tabs, TabsList, TabsTab } from "@hoalu/ui/tabs";
-import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatches } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
 import { PageContent } from "#app/components/layouts/page-content.tsx";
@@ -11,7 +12,6 @@ import {
 	ToolbarSeparator,
 	ToolbarTitle,
 } from "#app/components/layouts/toolbar.tsx";
-import { CreateRecurringBillDialogTrigger } from "#app/components/recurring-bills/recurring-bill-actions.tsx";
 import RecurringBillList, {
 	type RecurringBillStatusFilter,
 } from "#app/components/recurring-bills/recurring-bill-list.tsx";
@@ -22,9 +22,11 @@ export const Route = createFileRoute("/_dashboard/$slug/recurring-bills")({
 });
 
 function LayoutComponent() {
+	const { slug } = Route.useParams();
 	const matches = useMatches();
 	const billMatch = matches.find((m) => m.routeId === "/_dashboard/$slug/recurring-bills/$billId");
 	const billId = billMatch ? (billMatch.params as Record<string, string>).billId : undefined;
+	const creating = matches.some((m) => m.routeId === "/_dashboard/$slug/recurring-bills/new");
 	const [statusFilter, setStatusFilter] = useState<RecurringBillStatusFilter>("active");
 	const listScrollRef = useRef(0);
 
@@ -35,7 +37,13 @@ function LayoutComponent() {
 					<ToolbarTitle>Recurring Bills</ToolbarTitle>
 				</ToolbarGroup>
 				<ToolbarActions>
-					<CreateRecurringBillDialogTrigger />
+					<Button
+						size="sm"
+						disabled={creating}
+						render={<Link to="/$slug/recurring-bills/new" params={{ slug }} />}
+					>
+						New recurring bill
+					</Button>
 					<ToolbarSeparator />
 					<RedactedAmountToggle />
 				</ToolbarActions>
@@ -43,7 +51,7 @@ function LayoutComponent() {
 
 			<PageContent>
 				<Section className="gap-0">
-					{billId ? (
+					{billId || creating ? (
 						<Outlet />
 					) : (
 						<>
@@ -67,7 +75,7 @@ function LayoutComponent() {
 							</div>
 							<SectionContent
 								columns={12}
-								className="h-[calc(100vh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
+								className="h-[calc(100dvh-(--spacing(24)))] grid-cols-1 overflow-hidden md:gap-0"
 							>
 								<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 									<RecurringBillList statusFilter={statusFilter} scrollRef={listScrollRef} />

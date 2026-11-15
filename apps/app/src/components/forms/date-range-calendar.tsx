@@ -1,6 +1,6 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
 import { CalendarBlankIcon } from "@hoalu/icons/phosphor";
-import { Calendar } from "@hoalu/ui/calendar";
+import { RangeCalendar } from "@hoalu/ui/calendar-range";
 import { Field, FieldLabel } from "@hoalu/ui/field";
 import { Input } from "@hoalu/ui/input";
 import { useState } from "react";
@@ -57,13 +57,13 @@ export function DateRangeCalendarField({
 	};
 
 	const handleRangeSelect = (range: { from?: Date; to?: Date } | undefined) => {
-		if (!range) return;
-		if (range.from) {
-			onStartChange(toLocalISOString(datetime.format(range.from, "yyyy-MM-dd")));
+		if (!range?.from) {
+			onStartChange("");
+			onEndChange("");
+			return;
 		}
-		if (range.to) {
-			onEndChange(toLocalISOString(datetime.format(range.to, "yyyy-MM-dd")));
-		}
+		onStartChange(toLocalISOString(datetime.format(range.from, "yyyy-MM-dd")));
+		onEndChange(range.to ? toLocalISOString(datetime.format(range.to, "yyyy-MM-dd")) : "");
 	};
 
 	return (
@@ -102,11 +102,10 @@ export function DateRangeCalendarField({
 			</div>
 
 			<div className="flex items-center justify-center">
-				<Calendar
-					mode="range"
+				<RangeCalendar
 					className="min-h-[300px] [--cell-size:--spacing(10)]"
-					selected={{ from: startDate, to: endDate }}
-					onSelect={handleRangeSelect}
+					value={{ from: startDate, to: endDate }}
+					onChange={handleRangeSelect}
 					month={month}
 					onMonthChange={setMonth}
 					numberOfMonths={1}

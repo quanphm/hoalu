@@ -15,10 +15,10 @@ catalogs:
     "@types/react": ^19.3.0
     "@types/react-dom": ^19.3.0
     better-auth: 1.6.20
-    hono: ^4.13.14
+    hono: ^4.13.17
     react: ^19.3.1
     react-dom: ^19.3.1
-    tailwindcss: ^4.3.3
+    tailwindcss: ^4.3.5
     zod: ^4.6.7
 
 minimumReleaseAge: 1440

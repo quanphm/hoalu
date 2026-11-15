@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { expenseCollectionFactory, walletCollectionFactory } from "#app/lib/collections/index.ts";
 
+import type { WalletTypeSchema } from "@hoalu/schema/schema";
+
 export function useLiveQueryWallets() {
 	const workspace = useWorkspace();
 	const walletCollection = walletCollectionFactory(workspace.slug);
@@ -65,6 +67,7 @@ export interface WalletGroupOption {
 	label: string;
 	value: string;
 	currency: string;
+	type: WalletTypeSchema;
 }
 export type WalletGroups = Record<string, { name: string; options: WalletGroupOption[] }>;
 
@@ -80,13 +83,21 @@ export function buildWalletGroups(
 		if (!result[owner.id]) {
 			result[owner.id] = {
 				name: owner.name,
-				options: [{ label: current.name, value: current.id, currency: current.currency }],
+				options: [
+					{
+						label: current.name,
+						value: current.id,
+						currency: current.currency,
+						type: current.type,
+					},
+				],
 			};
 		} else {
 			result[owner.id].options.push({
 				label: current.name,
 				value: current.id,
 				currency: current.currency,
+				type: current.type,
 			});
 		}
 		return result;

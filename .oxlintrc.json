@@ -1,6 +1,10 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"plugins": ["react", "typescript", "jsx-a11y", "import"],
+	"options": {
+		"typeAware": true,
+		"typeCheck": true
+	},
 	"categories": {
 		"correctness": "error",
 		"suspicious": "warn",
@@ -32,10 +36,13 @@
 		}
 	],
 	"ignorePatterns": [
+		"**/node_modules/**",
 		"**/routeTree.gen.ts",
 		"**/dist/**",
 		"**/build/**",
+		"**/repos/**",
 		"**/.output/**",
-		"**/node_modules/**"
+		"**/.agents/**/*.js",
+		"**/.opencode/**/*.js"
 	]
 }

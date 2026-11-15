@@ -14,17 +14,41 @@ import { batchExtractReceiptData, extractReceiptData } from "#api/lib/ocr.ts";
 import { s3Client, S3_BUCKET } from "#api/lib/s3.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
-import { FileRepository } from "#api/routes/files/repository.ts";
-import { FileMetaSchema, FilesSchema, UploadUrlSchema } from "#api/routes/files/schema.ts";
+import { type FileCursor, FileRepository } from "#api/routes/files/repository.ts";
+import {
+	FileMetaSchema,
+	FilePageSchema,
+	FilesQuerySchema,
+	FilesSchema,
+	UploadUrlSchema,
+} from "#api/routes/files/schema.ts";
 import { getS3Path, isValidFileType } from "#api/utils/io.ts";
 import { idParamValidator } from "#api/validators/id-param.ts";
 import { jsonBodyValidator } from "#api/validators/json-body.ts";
+import { zValidatorWrapper } from "#api/validators/validator-wrapper.ts";
 import { workspaceQueryValidator } from "#api/validators/workspace-query.ts";
 
 const app = createHonoInstance();
 const fileRepository = new FileRepository();
 const categoryRepository = new CategoryRepository();
 const TAGS = ["Files"];
+
+const TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/;
+
+function encodeFileCursor(cursor: FileCursor) {
+	return Buffer.from(`${cursor.createdAt}|${cursor.id}`, "utf8").toString("base64url");
+}
+
+function decodeFileCursor(value: string | undefined): FileCursor | null {
+	if (!value) return null;
+
+	const [createdAt, id] = Buffer.from(value, "base64url").toString("utf8").split("|");
+	if (!createdAt || !id) return null;
+	if (!TIMESTAMP_PATTERN.test(createdAt)) return null;
+	if (!z.uuid().safeParse(id).success) return null;
+
+	return { createdAt, id };
+}
 
 const ConversationTurnSchema = z.object({
 	role: z.enum(["user", "assistant"]),
@@ -95,6 +119,9 @@ const route = app
 			const fileSlot = await fileRepository.insert({
 				id: generateId({ use: "uuid" }),
 				name: fileName,
+				title: payload.title ?? null,
+				mimeType: payload.type,
+				size: payload.size,
 				tags: payload.tags,
 				description: payload.description,
 				s3Url,
@@ -118,22 +145,34 @@ const route = app
 		"/workspace",
 		describeRoute({
 			tags: TAGS,
-			summary: "Get all files from workspace",
+			summary: "Get a page of files from workspace",
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(z.object({ data: FilesSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(FilePageSchema, HTTPStatus.codes.OK),
 			},
 		}),
 		workspaceQueryValidator,
 		workspaceMember,
+		zValidatorWrapper("query", FilesQuerySchema),
 		async (c) => {
 			const workspace = c.get("workspace");
+			const { limit, cursor } = c.req.valid("query");
 
-			const files = await fileRepository.findAllByWorkspaceId({ workspaceId: workspace.id });
+			const decoded = decodeFileCursor(cursor);
+			if (cursor && !decoded) {
+				return c.json({ message: "Invalid cursor" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const page = await fileRepository.findPage({
+				workspaceId: workspace.id,
+				limit,
+				cursor: decoded,
+			});
+
 			const filesWithPresignedUrl = await Promise.all(
-				files.map(async (file) => {
+				page.files.map(async (file) => {
 					const path = getS3Path(file.s3Url);
 					const presignedUrl = await getSignedUrl(
 						s3Client,
@@ -144,7 +183,11 @@ const route = app
 				}),
 			);
 
-			const parsed = FilesSchema.safeParse(filesWithPresignedUrl);
+			const parsed = FilePageSchema.safeParse({
+				data: filesWithPresignedUrl,
+				nextCursor: page.nextCursor ? encodeFileCursor(page.nextCursor) : null,
+				totals: page.totals,
+			});
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -152,7 +195,7 @@ const route = app
 				);
 			}
 
-			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
+			return c.json(parsed.data, HTTPStatus.codes.OK);
 		},
 	)
 	.get(
@@ -289,6 +332,11 @@ const route = app
 				workspaceId: workspace.id,
 			});
 
+			const links = await fileRepository.findLinksByFileIds({
+				fileIds: files.map((file) => file.id),
+				workspaceId: workspace.id,
+			});
+
 			const filesWithPresignedUrl = await Promise.all(
 				files.map(async (file) => {
 					const path = getS3Path(file.s3Url);
@@ -297,7 +345,16 @@ const route = app
 						new GetObjectCommand({ Bucket: S3_BUCKET, Key: path }),
 						{ expiresIn: TIME_IN_SECONDS.DAY },
 					);
-					return { ...file, presignedUrl };
+					const link = links.get(file.id);
+					return {
+						...file,
+						expensePublicId: link?.expensePublicId ?? null,
+						expenseTitle: link?.expenseTitle ?? null,
+						expenseCategory: link?.expenseCategory ?? null,
+						expenseBill: link?.expenseBill ?? null,
+						expenseAmount: link?.expenseAmount ?? null,
+						presignedUrl,
+					};
 				}),
 			);
 

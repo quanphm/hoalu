@@ -3,7 +3,7 @@ import { RadioGroup, RadioGroupItem } from "@hoalu/ui/radio-group";
 import { cn } from "@hoalu/ui/utils";
 import { useId } from "react";
 
-import { createCategoryTheme } from "#app/helpers/colors.ts";
+import { createChartColor } from "#app/helpers/colors.ts";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
@@ -21,7 +21,8 @@ export function ColorsField(props: Props) {
 		<Field>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<RadioGroup
-				className="flex gap-1.5"
+				className="flex flex-wrap items-center gap-1.5"
+				aria-label={typeof props.label === "string" ? props.label : undefined}
 				value={field.state.value}
 				onValueChange={(value) => {
 					field.handleChange(value as string);
@@ -33,7 +34,17 @@ export function ColorsField(props: Props) {
 						key={color}
 						id={`${id}-${color}`}
 						value={color}
-						className={cn("sm:size-6", createCategoryTheme(color))}
+						aria-label={`${color.charAt(0).toUpperCase()}${color.slice(1)} color`}
+						title={color}
+						className={cn(
+							createChartColor(color),
+							"size-6 shrink-0 rounded-full shadow-none",
+							"border border-white/20",
+							"transition-[border-color] duration-150 ease-out",
+							"data-checked:border-foreground data-checked:border-2",
+							"active:scale-95",
+							"[&_[data-slot=radio-group-indicator]]:hidden",
+						)}
 					/>
 				))}
 			</RadioGroup>

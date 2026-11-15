@@ -6,8 +6,8 @@ import * as z from "zod";
 
 import { type TransactionKindFilter, transactionKindFilter$ } from "#app/atoms/index.ts";
 import { ExpenseSearch } from "#app/components/expenses/expense-actions.tsx";
-import { ExpenseFilterDropdown } from "#app/components/expenses/expense-filter-dropdown.tsx";
 import ExpenseList from "#app/components/expenses/expense-list.tsx";
+import { TransactionFilters } from "#app/components/expenses/transaction-filters.tsx";
 import { Section, SectionContent, SectionItem } from "#app/components/layouts/section.tsx";
 import { useFilteredTransactions } from "#app/components/transactions/use-transactions.ts";
 
@@ -42,32 +42,32 @@ function LayoutComponent() {
 				<Outlet />
 			) : (
 				<>
-					<div className="flex flex-col items-center justify-between border-b px-4 py-2 md:flex-row">
-						<div className="flex flex-wrap items-center gap-2">
+					<div className="flex w-full min-w-0 flex-col items-center justify-between gap-2 border-b px-4 py-2 md:flex-row md:gap-0">
+						<div className="flex w-full min-w-0 flex-wrap items-center gap-2 md:w-auto">
 							<Tabs
 								value={kindFilter}
 								onValueChange={(v) => setKindFilter(v as TransactionKindFilter)}
 							>
 								<TabsList>
-									<TabsTab value="all" className="h-5.5!">
+									<TabsTab value="all" className="h-6!">
 										All
 									</TabsTab>
-									<TabsTab value="income" className="h-5.5!">
+									<TabsTab value="income" className="h-6!">
 										Incomes
 									</TabsTab>
-									<TabsTab value="expense" className="h-5.5!">
+									<TabsTab value="expense" className="h-6!">
 										Expenses
 									</TabsTab>
 								</TabsList>
 							</Tabs>
 							<ExpenseSearch />
-							<ExpenseFilterDropdown />
+							<TransactionFilters />
 						</div>
 					</div>
 
 					<SectionContent
 						columns={12}
-						className="h-[calc(100vh-(--spacing(33)-1px))] grid-cols-1 overflow-hidden md:gap-0"
+						className="h-[calc(100dvh-(--spacing(33)-1px))] grid-cols-1 overflow-hidden md:gap-0"
 					>
 						<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 							<ExpenseList expenses={filteredExpenses} scrollRef={listScrollRef} />

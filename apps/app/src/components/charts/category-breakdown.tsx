@@ -1,5 +1,5 @@
 import { Button } from "@hoalu/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@hoalu/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -9,7 +9,6 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@hoalu/ui/empty";
 import { cn } from "@hoalu/ui/utils";
 import { getRouteApi } from "@tanstack/react-router";
-import { useState } from "react";
 import { Pie, PieChart } from "recharts";
 
 import { expenseCategoryFilter$ } from "#app/atoms/filters.ts";
@@ -22,24 +21,79 @@ const TOP_N_CATEGORY = 5;
 
 const routeApi = getRouteApi("/_dashboard/$slug");
 
-function DonutBreakdown(props: {
-	data: CategoryBreakdownEntry[];
-	totalAmount: number;
-	currency: string;
-}) {
-	const chartData = props.data.map((item) => ({
-		...item,
-		fill: `var(--color-${item.id})`,
-	}));
+export function CategoryBreakdown(props: { model: DashboardModel }) {
+	const { model } = props;
+	const { slug } = routeApi.useParams();
+	const navigate = routeApi.useNavigate();
+	const setSelectedCategories = expenseCategoryFilter$.set;
+
+	const all = model.categories.breakdown;
+	const top = all.slice(0, TOP_N_CATEGORY);
+	const othersTotal = all.slice(TOP_N_CATEGORY).reduce((sum, item) => sum + item.value, 0);
+
+	const rows: CategoryBreakdownEntry[] = [...top];
+	if (othersTotal > 0) {
+		rows.push({ id: "others", name: "Everything else", color: "gray", value: othersTotal });
+	}
+
+	const total = rows.reduce((sum, item) => sum + item.value, 0);
+
+	const openCategory = (id: string) => {
+		if (id === "others") return;
+		setSelectedCategories([id]);
+		const range = model.range.custom;
+		navigate({
+			to: "/$slug/transactions",
+			params: { slug },
+			search: range ? { date: `${range.from.getTime()}-${range.to.getTime()}` } : {},
+		});
+	};
+
+	return (
+		<Card className="flex h-full flex-col">
+			<CardHeader>
+				<CardTitle className="text-base">Categories</CardTitle>
+			</CardHeader>
+			<CardContent className="flex-1">
+				{rows.length === 0 ? (
+					<Empty>
+						<EmptyHeader>
+							<EmptyTitle>No data yet</EmptyTitle>
+							<EmptyDescription>
+								You haven&apos;t created any expenses in this period yet.
+							</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
+				) : (
+					<div className="grid h-full items-center gap-6 md:grid-cols-[minmax(0,240px)_1fr]">
+						<Donut data={rows} currency={model.currency} />
+						<ul className="grid gap-x-8 sm:grid-cols-2">
+							{rows.map((row) => (
+								<li key={row.id} className="border-border/50 flex min-w-0 items-center border-b">
+									<LegendRow
+										row={row}
+										total={total}
+										currency={model.currency}
+										onOpen={openCategory}
+									/>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+			</CardContent>
+		</Card>
+	);
+}
+
+function Donut({ data, currency }: { data: CategoryBreakdownEntry[]; currency: string }) {
+	const chartData = data.map((item) => ({ ...item, fill: `var(--color-${item.id})` }));
 	const chartConfig = Object.fromEntries(
-		props.data.map((item) => [
-			item.id,
-			{ label: item.name, theme: createChartColorTheme(item.color) },
-		]),
+		data.map((item) => [item.id, { label: item.name, theme: createChartColorTheme(item.color) }]),
 	) satisfies ChartConfig;
 
 	return (
-		<ChartContainer config={chartConfig} className="mx-auto aspect-auto h-[165px] w-full">
+		<ChartContainer config={chartConfig} className="mx-auto aspect-auto h-[200px] w-full">
 			<PieChart>
 				<ChartTooltip
 					isAnimationActive={false}
@@ -54,11 +108,7 @@ function DonutBreakdown(props: {
 										style={{ backgroundColor: item.payload.fill }}
 									/>
 									<span className="text-muted-foreground flex-1">{item.payload.name}</span>
-									<CurrencyValue
-										value={Number(value)}
-										currency={props.currency}
-										className="text-xs"
-									/>
+									<CurrencyValue value={Number(value)} currency={currency} className="text-xs" />
 								</div>
 							)}
 						/>
@@ -79,146 +129,46 @@ function DonutBreakdown(props: {
 	);
 }
 
-function CategoryListBreakdown(props: {
-	data: CategoryBreakdownEntry[];
-	totalAmount: number;
+function LegendRow({
+	row,
+	total,
+	currency,
+	onOpen,
+}: {
+	row: CategoryBreakdownEntry;
+	total: number;
 	currency: string;
-	customRange: DashboardModel["range"]["custom"];
-	onToggleView(): void;
+	onOpen: (id: string) => void;
 }) {
-	const { slug } = routeApi.useParams();
-	const navigate = routeApi.useNavigate();
-	const setSelectedCategories = expenseCategoryFilter$.set;
+	const share = total > 0 ? ((row.value / total) * 100).toFixed(1) : "0.0";
+	const isLink = row.id !== "others";
 
-	const handleClick = (id: string) => {
-		if (id === "others") {
-			props.onToggleView();
-			return;
-		}
-
-		setSelectedCategories([id]);
-
-		if (!props.customRange) {
-			navigate({
-				to: "/$slug/transactions",
-				params: { slug },
-			});
-		} else {
-			const searchQuery = `${props.customRange.from.getTime()}-${props.customRange.to.getTime()}`;
-			navigate({
-				to: "/$slug/transactions",
-				params: { slug },
-				search: { date: searchQuery },
-			});
-		}
-	};
-
-	return (
-		<div className="divide-border/50 divide-y">
-			{props.data.map((data) => {
-				const percentage = ((data.value / props.totalAmount) * 100).toFixed(1);
-				return (
-					<div key={data.id} className="flex items-center gap-3 py-2.5">
-						<div className={cn("size-3 shrink-0 rounded-[4px]", createChartColor(data.color))} />
-						<Button
-							variant="link"
-							onClick={() => handleClick(data.id)}
-							className="text-foreground h-auto min-w-0 truncate p-0 text-sm font-semibold"
-						>
-							{data.name}
-						</Button>
-						<div className="ml-auto flex shrink-0 items-center gap-6">
-							<span className="text-muted-foreground w-12 text-right text-sm tabular-nums">
-								{percentage}%
-							</span>
-							<CurrencyValue
-								value={data.value}
-								currency={props.currency}
-								className="text-sm font-semibold tabular-nums"
-							/>
-						</div>
-					</div>
-				);
-			})}
-		</div>
+	const content = (
+		<>
+			<span className={cn("size-2.5 shrink-0 rounded-[3px]", createChartColor(row.color))} />
+			<span className="min-w-0 flex-1 truncate text-sm font-medium">{row.name}</span>
+			<span className="text-muted-foreground w-11 shrink-0 text-right text-sm tabular-nums">
+				{share}%
+			</span>
+			<CurrencyValue
+				value={row.value}
+				currency={currency}
+				className="w-24 shrink-0 text-right text-sm font-semibold"
+			/>
+		</>
 	);
-}
 
-function EmptyData() {
-	return (
-		<Empty>
-			<EmptyHeader>
-				<EmptyTitle>No data yet</EmptyTitle>
-				<EmptyDescription>
-					You haven&apos;t created any expenses in this period yet.
-				</EmptyDescription>
-			</EmptyHeader>
-		</Empty>
-	);
-}
-
-interface CategoryBreakdownProps {
-	model: DashboardModel;
-}
-
-export function CategoryBreakdown(props: CategoryBreakdownProps) {
-	const { model } = props;
-	const [view, setView] = useState<"less" | "more">("less");
-
-	const allCategoryData = model.categories.breakdown;
-
-	const topCategories = allCategoryData.slice(0, TOP_N_CATEGORY);
-	const otherCategories = allCategoryData.slice(TOP_N_CATEGORY);
-	const othersTotal = otherCategories.reduce((sum, item) => sum + item.value, 0);
-
-	const categoryData: CategoryBreakdownEntry[] = [...topCategories];
-	if (othersTotal > 0) {
-		categoryData.push({
-			id: "others",
-			name: "Others",
-			color: "gray",
-			value: othersTotal,
-		});
+	if (!isLink) {
+		return <div className="flex w-full items-center gap-3 py-2.5">{content}</div>;
 	}
 
-	const handleToggleView = () => {
-		setView((state) => (state === "less" ? "more" : "less"));
-	};
-
-	const dataToView = view === "less" ? categoryData : allCategoryData;
-	const totalAmount = dataToView.reduce((sum, item) => sum + item.value, 0);
-
 	return (
-		<Card className="h-full pb-2">
-			<CardHeader>
-				<CardTitle className="text-base">Categories Breakdown</CardTitle>
-				<CardAction>
-					{dataToView.length > TOP_N_CATEGORY && (
-						<div className="flex justify-end">
-							<Button variant="outline" size="sm" onClick={handleToggleView}>
-								{view === "less" && "View all"}
-								{view === "more" && "View less"}
-							</Button>
-						</div>
-					)}
-				</CardAction>
-			</CardHeader>
-			<CardContent>
-				{dataToView.length === 0 ? (
-					<EmptyData />
-				) : (
-					<div className="space-y-6">
-						<DonutBreakdown data={dataToView} totalAmount={totalAmount} currency={model.currency} />
-						<CategoryListBreakdown
-							data={dataToView}
-							totalAmount={totalAmount}
-							currency={model.currency}
-							customRange={model.range.custom}
-							onToggleView={handleToggleView}
-						/>
-					</div>
-				)}
-			</CardContent>
-		</Card>
+		<Button
+			variant="ghost"
+			onClick={() => onOpen(row.id)}
+			className="focus-visible:ring-ring h-auto w-full justify-start gap-3 rounded-sm px-0 py-2.5 text-left font-normal hover:bg-transparent"
+		>
+			{content}
+		</Button>
 	);
 }

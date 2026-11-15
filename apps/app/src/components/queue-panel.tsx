@@ -254,6 +254,10 @@ export function QueuePanel() {
 		}
 	}, [totalActive]);
 
+	if (isEmpty && needsReviewCount === 0 && failedCount === 0) {
+		return null;
+	}
+
 	return (
 		<div className="bg-card col-span-full overflow-hidden border-b">
 			<button

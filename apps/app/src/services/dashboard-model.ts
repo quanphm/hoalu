@@ -270,6 +270,15 @@ function aggregateByDate(rows: DashboardRow[]): DateValue[] {
 	return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
 }
 
+/** Row counts per date, summed downstream by the same bucketing as every other series. */
+function aggregateCountByDate(rows: DashboardRow[]): DateValue[] {
+	const map = new Map<string, number>();
+	for (const row of rows) {
+		map.set(row.date, (map.get(row.date) ?? 0) + 1);
+	}
+	return Array.from(map.entries()).map(([date, value]) => ({ date, value }));
+}
+
 /**
  * Per-date, per-category aggregation for the stacked-bar category mode.
  * Shape: [{ date, [categoryId]: amount, ... }]
@@ -357,6 +366,8 @@ export interface CashFlowPoint {
 	date: string;
 	net: number;
 	balance: number;
+	/** transactions recorded in this bucket, both directions */
+	count: number;
 	isMonthly?: boolean;
 }
 
@@ -364,10 +375,14 @@ export interface CashFlowPoint {
 function cashFlowSeriesForRange(
 	incomeData: DateValue[],
 	expenseData: DateValue[],
+	countData: DateValue[],
 	selection: RangeSelection,
 ): { bucket: SeriesBucket; points: CashFlowPoint[] } {
 	const { bucket, points: incomePoints } = seriesForRange(incomeData, selection);
 	const { points: expensePoints } = seriesForRange(expenseData, selection);
+	const countByBucket = new Map(
+		seriesForRange(countData, selection).points.map((point) => [point.date, point.value]),
+	);
 
 	const merged = new Map<string, { net: number; isMonthly?: boolean }>();
 
@@ -391,7 +406,13 @@ function cashFlowSeriesForRange(
 	let balance = 0;
 	const points = sorted.map((item) => {
 		balance += item.net;
-		return { date: item.date, net: item.net, balance, isMonthly: item.isMonthly };
+		return {
+			date: item.date,
+			net: item.net,
+			balance,
+			count: countByBucket.get(item.date) ?? 0,
+			isMonthly: item.isMonthly,
+		};
 	});
 
 	return { bucket, points };
@@ -572,6 +593,7 @@ export function createDashboardModel<C extends CategoryLike>(
 	const cashFlowSeries = cashFlowSeriesForRange(
 		aggregateByDate(inRangeIncomes),
 		aggregateByDate(inRangeExpenses),
+		aggregateCountByDate([...inRangeIncomes, ...inRangeExpenses]),
 		selection,
 	);
 

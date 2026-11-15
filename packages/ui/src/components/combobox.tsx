@@ -174,7 +174,19 @@ function ComboboxPopup({
 	);
 }
 
-function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.Props) {
+function ComboboxItem({
+	className,
+	children,
+	indicator,
+	...props
+}: ComboboxPrimitive.Item.Props & {
+	/**
+	 * Replaces the checkmark drawn on the selected row. It stays mounted while unselected, so
+	 * the row can show an empty box — what turns a single-select check into a multi-select
+	 * checkbox. Style it against `in-data-[selected]`, which the indicator itself carries.
+	 */
+	indicator?: React.ReactNode;
+}) {
 	return (
 		<ComboboxPrimitive.Item
 			className={cn(
@@ -184,8 +196,8 @@ function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.
 			data-slot="combobox-item"
 			{...props}
 		>
-			<ComboboxPrimitive.ItemIndicator className="col-start-1">
-				<CheckIcon className="size-4" />
+			<ComboboxPrimitive.ItemIndicator className="col-start-1" keepMounted={indicator != null}>
+				{indicator ?? <CheckIcon className="size-4" />}
 			</ComboboxPrimitive.ItemIndicator>
 			<div className="col-start-2">{children}</div>
 		</ComboboxPrimitive.Item>

@@ -17,6 +17,7 @@ export const makeDraftExpense = (): ExpenseAtomSchema => ({
 	categoryId: "",
 	repeat: "one-time",
 	recurringBillId: undefined,
+	eventId: undefined,
 });
 
 export const draftExpense$ = observable<ExpenseAtomSchema>(makeDraftExpense());

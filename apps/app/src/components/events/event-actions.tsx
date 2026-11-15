@@ -1,8 +1,7 @@
 import { datetime, toLocalISOString } from "@hoalu/datetime/datetime";
-import { Button, type ButtonProps } from "@hoalu/ui/button";
+import { Button } from "@hoalu/ui/button";
 import {
 	DialogClose,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogHeaderAction,
@@ -12,62 +11,30 @@ import {
 import { Field, FieldGroup } from "@hoalu/ui/field";
 import { useValue } from "@legendapp/state/react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import * as z from "zod";
 
-import { createEventDialog, deleteEventDialog, editEventDialog } from "#app/atoms/dialogs.ts";
-import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { deleteEventDialog } from "#app/atoms/dialogs.ts";
+import {
+	EventFormSchema,
+	type EventFormSchema as EventFormValues,
+	toCreateEventPayload,
+} from "#app/components/events/event-form.ts";
 import { DateRangeCalendarField } from "#app/components/forms/date-range-calendar.tsx";
 import { useAppForm } from "#app/components/forms/index.tsx";
 import { WarningMessage } from "#app/components/warning-message.tsx";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
-import { useCreateEvent, useDeleteEvent, useEditEvent } from "#app/services/mutations.ts";
+import { useCreateEvent, useDeleteEvent } from "#app/services/mutations.ts";
 
-const EventFormSchema = z.object({
-	title: z.string().min(1),
-	description: z.string().optional(),
-	startDate: z.string().optional(),
-	endDate: z.string().optional(),
-	budgetTransaction: z
-		.object({
-			value: z.number(),
-			currency: z.string(),
-		})
-		.optional(),
-	status: z.enum(["open", "closed"]).optional(),
-});
-type EventFormSchema = z.infer<typeof EventFormSchema>;
-
-const EVENT_STATUS_OPTIONS = [
-	{ label: "Open", value: "open" },
-	{ label: "Closed", value: "closed" },
-];
-
-export function CreateEventDialogTrigger({ ...props }: ButtonProps) {
-	const setDialog = createEventDialog.set;
-	return (
-		<Button size="sm" {...props} onClick={() => setDialog({ state: true })}>
-			New event
-		</Button>
-	);
+interface CreateEventFormProps {
+	onSuccess?: (newEventId?: string) => void;
 }
 
-export function CreateEventDialogContent() {
-	return (
-		<DialogPopup className="sm:max-w-[800px]">
-			<DialogHeader>
-				<DialogTitle>Create event</DialogTitle>
-				<DialogDescription>Group expenses and bills under occasions.</DialogDescription>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<CreateEventForm />
-		</DialogPopup>
-	);
-}
-
-function CreateEventForm() {
+/**
+ * The dialog-shaped entry used from inside another form's event picker, where navigating away
+ * would abandon a half-typed transaction. The Events page itself creates on a page instead.
+ */
+export function CreateEventForm({ onSuccess }: CreateEventFormProps) {
 	const workspace = useWorkspace();
 	const mutation = useCreateEvent();
-	const setDialog = createEventDialog.set;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -79,20 +46,11 @@ function CreateEventForm() {
 				value: 0,
 				currency: (workspace.metadata?.currency as string) ?? "USD",
 			},
-		} as EventFormSchema,
+		} as EventFormValues,
 		validators: { onSubmit: EventFormSchema },
 		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				payload: {
-					title: value.title,
-					description: value.description,
-					startDate: value.startDate || undefined,
-					endDate: value.endDate || undefined,
-					budget: value.budgetTransaction?.value,
-					currency: value.budgetTransaction?.currency,
-				},
-			});
-			setDialog({ state: false });
+			const event = await mutation.mutateAsync({ payload: toCreateEventPayload(value) });
+			onSuccess?.(event?.id);
 		},
 	});
 
@@ -136,110 +94,6 @@ function CreateEventForm() {
 				<DialogFooter>
 					<Field orientation="horizontal" className="justify-end">
 						<form.SubscribeButton>Create event</form.SubscribeButton>
-					</Field>
-				</DialogFooter>
-			</form.Form>
-		</form.AppForm>
-	);
-}
-
-export function EditEventDialogContent() {
-	const dialog = useValue(editEventDialog.$);
-	const events = useLiveQueryEvents();
-	const event = events.find((e) => e.id === dialog?.data?.id) ?? null;
-	if (!event) return null;
-	return (
-		<DialogPopup className="sm:max-w-[800px]">
-			<DialogHeader>
-				<DialogTitle>Edit event</DialogTitle>
-				<DialogHeaderAction />
-			</DialogHeader>
-			<EditEventForm event={event} />
-		</DialogPopup>
-	);
-}
-
-function EditEventForm({ event }: { event: SyncedEvent }) {
-	const workspace = useWorkspace();
-	const mutation = useEditEvent();
-	const setDialog = editEventDialog.set;
-
-	const form = useAppForm({
-		defaultValues: {
-			title: event.title,
-			description: event.description ?? "",
-			startDate: event.start_date ?? "",
-			endDate: event.end_date ?? "",
-			budgetTransaction: {
-				value: event.realBudget ?? 0,
-				currency: event.budget_currency ?? workspace.metadata.currency,
-			},
-			status: event.status ?? "open",
-		} as EventFormSchema,
-		validators: { onSubmit: EventFormSchema },
-		onSubmit: async ({ value }) => {
-			await mutation.mutateAsync({
-				id: event.id,
-				payload: {
-					title: value.title,
-					description: value.description,
-					startDate: value.startDate ?? undefined,
-					endDate: value.endDate ?? undefined,
-					budget: value.budgetTransaction?.value,
-					currency: value.budgetTransaction?.currency,
-					status: value.status,
-				},
-			});
-			setDialog({ state: false });
-		},
-	});
-
-	return (
-		<form.AppForm>
-			<form.Form>
-				<div className="grid grid-cols-12 gap-4">
-					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
-						<form.AppField
-							name="title"
-							children={(field) => <field.InputField label="Title" required autoFocus />}
-						/>
-						<form.AppField
-							name="status"
-							children={(field) => (
-								<field.SelectField label="Status" options={EVENT_STATUS_OPTIONS} />
-							)}
-						/>
-						<form.AppField
-							name="budgetTransaction"
-							children={(field) => <field.TransactionAmountField label="Budget" />}
-						/>
-						<form.AppField
-							name="description"
-							children={(field) => <field.TiptapField label="Note" />}
-						/>
-					</FieldGroup>
-					<FieldGroup className="col-span-12 flex flex-col gap-4 md:col-span-6">
-						<form.Subscribe
-							selector={(state) => ({
-								startDate: state.values.startDate,
-								endDate: state.values.endDate,
-							})}
-						>
-							{({ startDate: sd, endDate: ed }) => (
-								<DateRangeCalendarField
-									startValue={sd}
-									endValue={ed}
-									onStartChange={(v) => form.setFieldValue("startDate", v)}
-									onEndChange={(v) => form.setFieldValue("endDate", v)}
-								/>
-							)}
-						</form.Subscribe>
-					</FieldGroup>
-				</div>
-
-				<DialogFooter>
-					<Field orientation="horizontal" className="justify-end">
-						<form.SubscribeButton>Update</form.SubscribeButton>
 					</Field>
 				</DialogFooter>
 			</form.Form>

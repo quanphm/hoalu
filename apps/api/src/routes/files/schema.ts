@@ -11,6 +11,7 @@ export const UploadUrlSchema = z.object({
 export const FileMetaSchema = z.object({
 	size: z.number().positive(),
 	type: z.string().min(1),
+	title: z.optional(z.string()),
 	tags: z.optional(z.array(z.string())),
 	description: z.optional(z.string()),
 });
@@ -18,10 +19,32 @@ export const FileMetaSchema = z.object({
 export const FileSchema = z.object({
 	id: z.uuidv7(),
 	name: z.string().min(1),
+	title: z.string().nullable(),
 	description: z.string().nullable(),
+	mimeType: z.string().nullable(),
+	size: z.number().nullable(),
 	tags: z.optional(z.array(z.string())),
+	expensePublicId: z.string().nullable(),
+	expenseTitle: z.string().nullable(),
+	expenseCategory: z.string().nullable(),
+	expenseBill: z.string().nullable(),
+	expenseAmount: z.number().nullable(),
 	presignedUrl: z.string().min(1),
 	createdAt: IsoDateSchema,
 });
 
 export const FilesSchema = z.array(FileSchema);
+
+export const FilePageSchema = z.object({
+	data: FilesSchema,
+	nextCursor: z.string().nullable(),
+	totals: z.object({
+		images: z.number().int().nonnegative(),
+		files: z.number().int().nonnegative(),
+	}),
+});
+
+export const FilesQuerySchema = z.object({
+	limit: z.coerce.number().int().min(1).max(200).default(60),
+	cursor: z.optional(z.string().min(1)),
+});

@@ -1,15 +1,6 @@
-import { PlusIcon } from "@hoalu/icons/phosphor";
+import { CalendarStarIcon, PlusIcon } from "@hoalu/icons/phosphor";
 import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
-import {
-	Combobox,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-	ComboboxPopup,
-	ComboboxSeparator,
-} from "@hoalu/ui/combobox";
 import {
 	Dialog,
 	DialogContent,
@@ -18,116 +9,103 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@hoalu/ui/dialog";
+import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
-import {
-	CreateEventDialogContent,
-	CreateEventDialogTrigger,
-} from "#app/components/events/event-actions.tsx";
+import { CreateEventForm } from "#app/components/events/event-actions.tsx";
 import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
-
-interface EventOption {
-	label: string;
-	value: string;
-	status: string;
-}
+import { PillPicker, type PillOption } from "./pill-picker";
 
 interface Props {
 	label?: React.ReactNode;
 	description?: React.ReactNode;
+	placeholder?: string;
+	appearance?: "pill" | "field";
+	/**
+	 * `navigate` sends the user to the event page and back with the new id, which the host form
+	 * can only afford when it keeps a draft. Hosts without one keep the in-place dialog.
+	 */
+	createAction?: "dialog" | "navigate";
+	/** Which transaction form the create page should return to. */
+	transactionType?: "expense" | "income";
 	disabled?: boolean;
 	showClosed?: boolean;
 }
 
 export function SelectEventField(props: Props) {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [comboboxOpen, setComboboxOpen] = useState(false);
-
 	const field = useFieldContext<string>();
-	const { value } = field.state;
+	const { slug } = useParams({ from: "/_dashboard/$slug" });
+	const transactionType = props.transactionType ?? "expense";
 
 	const allEvents = useLiveQueryEvents();
 	const events = props.showClosed
-		? allEvents
-		: (allEvents?.filter((e) => e.status === "open") ?? []);
+		? (allEvents ?? [])
+		: (allEvents ?? []).filter((event) => event.status === "open");
 
-	const eventOptions: EventOption[] = events.map((e) => ({
-		label: e.title,
-		value: e.id,
-		status: e.status,
-	}));
+	const options: PillOption[] = [
+		{ value: "", label: "No event" },
+		...events.map((event) => ({
+			value: event.id,
+			label: event.title,
+			meta: event.status ? (
+				<Badge size="sm" variant={event.status === "open" ? "success" : "error"}>
+					{event.status}
+				</Badge>
+			) : undefined,
+		})),
+	];
 
-	// Add "None" option at the beginning
-	const options: EventOption[] = [{ label: "None", value: "", status: "" }, ...eventOptions];
-
-	const selectedOption = options.find((opt) => opt.value === value) ?? options[0];
-
-	const handleComboboxInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === "Enter" && !comboboxOpen) {
-			event.preventDefault();
-			setComboboxOpen(true);
-		}
-	};
+	const placeholder =
+		props.placeholder ?? (typeof props.label === "string" ? props.label : "Event");
 
 	return (
-		<Field>
+		<Field className={props.appearance === "field" ? "gap-1" : "w-fit! gap-1 [&>*]:w-auto!"}>
 			{props.label && <FieldLabel>{props.label}</FieldLabel>}
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-				<Combobox<EventOption>
-					value={selectedOption}
-					onValueChange={(newValue) => {
-						field.handleChange(newValue?.value ?? "");
-					}}
-					items={options}
+				<PillPicker
+					options={options}
+					value={field.state.value ?? ""}
+					onValueChange={(value) => field.handleChange(value)}
+					placeholder={placeholder}
+					triggerIcon={<CalendarStarIcon className="size-3.5" aria-hidden="true" />}
+					appearance={props.appearance}
+					searchPlaceholder="Search events…"
 					disabled={props.disabled}
-					open={comboboxOpen}
-					onOpenChange={setComboboxOpen}
-				>
-					<ComboboxInput
-						placeholder="Select"
-						inputClassName="h-9 items-center"
-						onKeyDown={handleComboboxInputKeyDown}
-					/>
-					<ComboboxPopup className="max-h-64">
-						<ComboboxEmpty>No events found.</ComboboxEmpty>
-						<ComboboxList>
-							{(item: EventOption) => (
-								<ComboboxItem
-									key={item.value}
-									value={item}
-									className="grid-cols-[1fr_1rem] ps-3 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1"
-								>
-									<span>{item.label}</span>
-									{item.status && (
-										<Badge
-											size="sm"
-											variant={item.status === "open" ? "success" : "error"}
-											className="ml-2"
-										>
-											{item.status}
-										</Badge>
-									)}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-						<ComboboxSeparator />
-						<div className="px-1 py-1">
+					emptyMessage="No events found."
+					footer={
+						props.createAction === "navigate" ? (
+							<Button
+								variant="ghost"
+								className="w-full justify-start"
+								render={
+									<Link
+										to="/$slug/events/new"
+										params={{ slug }}
+										search={{ returnTo: "transaction", type: transactionType }}
+									/>
+								}
+							>
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
+								Create event
+							</Button>
+						) : (
 							<DialogTrigger render={<Button variant="ghost" className="w-full justify-start" />}>
-								<PlusIcon className="-ms-2 mr-2 size-4 opacity-60" aria-hidden="true" />
+								<PlusIcon className="-ms-1 me-2 size-3.5 opacity-60" aria-hidden="true" />
 								Create event
 							</DialogTrigger>
-						</div>
-					</ComboboxPopup>
-				</Combobox>
-				<DialogContent className="sm:max-w-[560px]">
+						)
+					}
+				/>
+				<DialogContent className="sm:max-w-[720px]">
 					<DialogHeader>
 						<DialogTitle>Create event</DialogTitle>
 						<DialogDescription>Group expenses and bills under a named occasion.</DialogDescription>
 					</DialogHeader>
-					<CreateEventDialogContent />
+					<CreateEventForm onSuccess={() => setDialogOpen(false)} />
 				</DialogContent>
 			</Dialog>
 			{props.description && <FieldDescription>{props.description}</FieldDescription>}

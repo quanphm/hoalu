@@ -3,6 +3,7 @@ import { useValue } from "@legendapp/state/react";
 
 import { redactedAmount$ } from "#app/atoms/index.ts";
 import { formatCurrency } from "#app/helpers/currency.ts";
+import { REDACTED_AMOUNT } from "#app/helpers/redacted.ts";
 
 interface CurrencyValueProps {
 	/**
@@ -28,7 +29,11 @@ export function CurrencyValue({
 	const isRedacted = useValue(redactedAmount$);
 
 	if (isRedacted) {
-		return <Component className={cn(DEFAULT_CLASSNAME, props.className)}>*****</Component>;
+		return (
+			<Component className={cn(DEFAULT_CLASSNAME, props.className)} aria-label="Amount hidden">
+				{REDACTED_AMOUNT}
+			</Component>
+		);
 	}
 
 	const formattedValue = formatCurrency(props.value, props.currency, { style });

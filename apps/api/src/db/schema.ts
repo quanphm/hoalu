@@ -405,7 +405,10 @@ export const file = pgTable(
 	{
 		id: uuid("id").primaryKey(),
 		name: text("name").notNull().unique(),
+		title: text("title"),
 		s3Url: text("s3_url").notNull(),
+		mimeType: text("mime_type"),
+		size: integer("size"),
 		description: text("description"),
 		tags: text("tags")
 			.array()
@@ -414,6 +417,7 @@ export const file = pgTable(
 	},
 	(table) => [
 		index("file_s3_url_idx").on(table.s3Url),
+		index("file_created_at_id_idx").on(table.createdAt, table.id),
 		index("file_description_idx").using("gin", sql`to_tsvector('simple', ${table.description})`),
 	],
 );

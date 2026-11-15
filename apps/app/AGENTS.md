@@ -66,26 +66,35 @@ Hoalu frontend react app.
 - `expense-filter-dropdown.tsx` - Filter controls (search, category, wallet, repeat, date)
 - `use-expenses.ts` - Expense live query with FX conversion via `dashboard-model.ts` (exports SyncedExpense type)
 
-**Categories (3 files):**
+**Categories (6 files):**
 
-- `category-table.tsx` - Table view with sorting
-- `category-actions.tsx` - CRUD actions
+- `category-list.tsx` - Grouped list view (grouped by type, type filter)
+- `category-create.tsx` - `/categories/new` page (accepts `?type=expense|income`)
+- `category-edit.tsx` - `/$categoryId` page form
+- `category-fields.tsx` - The shared card both pages render: emoji + name, type + colour pills, description
+- `category-actions.tsx` - Search, J/K navigation, delete dialog, and the dialog-shaped quick-add used from another form's category picker
 - `use-categories.ts` - Live queries and transformations
 
-**Wallets (4 files):**
+**Wallets (8 files):**
 
-- `wallet-actions.tsx` - CRUD operations
+- `wallet-list.tsx` - Grouped list view (grouped by wallet type, status filter)
+- `wallet-actions.tsx` - Delete dialog, row menu, `WalletIcon`
+- `wallet-create.tsx` - `/wallets/new` page
+- `wallet-edit.tsx` - `/$walletId` page form: owners and the in-use toggle appear here
+- `wallet-fields.tsx` - The shared card both pages render: name, type + currency pills (+ owner, in use), description
+- `wallet-form.ts` - Create/update payloads
 - `wallet-badge.tsx` - Display component
-- `wallet-table.tsx` - Table view with balances
 - `use-wallets.ts` - Live queries
 
-**Recurring Bills (5 files):**
+**Recurring Bills (8 files):**
 
 - `recurring-bill-list.tsx` - List view
-- `recurring-bill-details.tsx` - Individual bill detail
-- `recurring-bill-actions.tsx` - Create/Edit/Delete
+- `recurring-bill-details.tsx` - Detail panel: nav, archive/restore/delete header actions
+- `recurring-bill-create.tsx` - `/recurring-bills/new` page (the create flow is a page, not a dialog)
+- `recurring-bill-edit.tsx` - `/$billId` edit form, same card as create
+- `recurring-bill-fields.tsx` - The shared card both pages render: title, hero amount, pill row, note
+- `recurring-bill-form.ts` - `BillFormSchema`, cadence/day options, `toCreateBillPayload`
 - `use-recurring-bills.ts` - Live queries
-- `use-recurring-bill-navigation.ts` - Navigation helpers
 
 **Upcoming Bills (2 files):**
 
@@ -97,15 +106,19 @@ Hoalu frontend react app.
 - `income-actions.tsx` - Create trigger (navigates to `/transactions/new?type=income`), delete/duplicate actions
 - `use-incomes.ts` - Income live query with FX conversion via `dashboard-model.ts` (exports SyncedIncome type)
 
-**Events (5 files):**
+**Events (9 files):**
 
 - `event-list.tsx` - Event list
-- `event-details.tsx` - Event detail panel
-- `event-actions.tsx` - CRUD actions
-- `event-date-range.tsx` - Date range selector
+- `event-details.tsx` - `/$eventId` page: the editable card plus spent/remaining readouts and linked items
+- `event-create.tsx` - `/events/new` page
+- `event-edit.tsx` - Edit form behind `/$eventId`, same card as create
+- `event-fields.tsx` - The shared card both pages render: title, budget figure, dates + status pills, note
+- `event-form.ts` - `EventFormSchema`, status options, create/update payloads
+- `event-actions.tsx` - Dialog-shaped create form (used from another form's event picker) + delete dialog
+- `event-date-range.tsx` - Date range display
 - `use-events.ts` - Live queries
 
-**Transactions (5 files):**
+**Transactions (6 files):**
 
 - `transaction-layout.tsx` - Shared page layout (breadcrumb header, 2-col grid, section labels, borderless title input)
 - `expense-form.tsx` - Create/Edit expense page forms (used by `/transactions/new` + `/transactions/$transactionId`)
@@ -128,8 +141,7 @@ Hoalu frontend react app.
 
 - `use-dashboard-model.ts` - The one hook reading collections + filter observables; charts receive the memoized `DashboardModel` as props
 - `expenses-overview.tsx` - Bar chart with Recharts (expenses/incomes tabs, category mode)
-- `cash-flow-chart.tsx` - Cumulative net area chart
-- `cash-flow.tsx` - Cash flow summary cards
+- `cash-flow-tiles.tsx` - Net / Incomes / Expenses / Transactions stat tiles, each with its own trend
 - `category-breakdown.tsx` - Pie/donut chart for categories
 - `date-range-picker.tsx` - Date range selector component
 - `dashboard-date-filter.tsx` - Quick date filters (today, week, month, year)
@@ -176,6 +188,14 @@ atoms/
   redacted.ts     - Amount redaction toggle
   index.ts        - Re-exports
 ```
+
+### Create-page round trip
+
+A form that keeps a draft (the transaction forms: `draftExpense$` / `draftIncome$` in localStorage) can hand the user off to an entity's create page and get them back. The create page is opened with `?returnTo=transaction`, and on success it navigates to `/transactions/new` with the new id as a search param (`categoryId`, `eventId`, `recurringBillId`). The form applies that param **over** the draft, the last-used value and the default, so the round trip lands with the choice made and everything typed still there.
+
+- Pickers expose this through `createAction="navigate"`; hosts **without** a draft (the edit pages, the bill form) leave it at `"dialog"` and keep the in-place dialog, because navigating away would discard their unsaved work.
+- A created recurring bill brings its cadence back: the bill picker only lists bills of the current `repeat`, so `?recurringBillId=` sets `repeat` from the bill.
+- Manually dropped attachments do not survive the trip (`useFilesUpload` holds them in component state); scanned receipts do (`scannedReceipts$` is a module observable).
 
 ### Data Layer
 

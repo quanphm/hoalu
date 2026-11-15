@@ -1,6 +1,6 @@
 import { getCurrencyList } from "@hoalu/countries";
 
-import type { RepeatSchema, WalletTypeSchema } from "@hoalu/schema/schema";
+import type { CategoryTypeSchema, RepeatSchema, WalletTypeSchema } from "@hoalu/schema/schema";
 
 export const kbdSymbols = {
 	SHIFT: "⇧",
@@ -26,6 +26,19 @@ export const AVAILABLE_WALLET_TYPE_OPTIONS: {
 	{ label: "Credit card", value: "credit-card" },
 	{ label: "Debit card", value: "debit-card" },
 	{ label: "Digital account", value: "digital-account" },
+];
+
+export const CATEGORY_TYPE_LABELS: Record<CategoryTypeSchema, string> = {
+	expense: "Expense",
+	income: "Income",
+};
+
+export const AVAILABLE_CATEGORY_TYPE_OPTIONS: {
+	label: string;
+	value: CategoryTypeSchema;
+}[] = [
+	{ label: CATEGORY_TYPE_LABELS.expense, value: "expense" },
+	{ label: CATEGORY_TYPE_LABELS.income, value: "income" },
 ];
 
 export const AVAILABLE_REPEAT_OPTIONS: {
@@ -63,6 +76,11 @@ export const KEYBOARD_SHORTCUTS = {
 	create_income: {
 		label: `${kbdSymbols.SHIFT} I`,
 		hotkey: "shift+i",
+		enabled: true,
+	},
+	save_transaction: {
+		label: `${kbdSymbols.META} ↵`,
+		hotkey: "meta+enter",
 		enabled: true,
 	},
 	goto_home: {

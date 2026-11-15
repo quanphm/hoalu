@@ -1,5 +1,7 @@
 import { datetime, TIME_IN_MILLISECONDS } from "@hoalu/datetime/datetime";
 
+import { formatDateRange, formatMonthYear, formatYear } from "#app/helpers/format-date.ts";
+
 import type { PredefinedDateRange } from "#app/atoms/filters.ts";
 
 interface DateRangeCalculation {
@@ -260,21 +262,17 @@ export function getComparisonPeriodText(
 		if (currentRange) {
 			const isFullMonth = isRangeFullMonth(currentRange.startDate, currentRange.endDate);
 			if (isFullMonth) {
-				const monthName = datetime.format(startDate, "MMMM yyyy");
-				return `vs ${monthName}`;
+				return `vs ${formatMonthYear(startDate)}`;
 			}
 		}
-		const start = datetime.format(startDate, "MMM d, yyyy");
-		const end = datetime.format(endDate, "MMM d, yyyy");
-		return `vs ${start} - ${end}`;
-	} else if (predefinedRange === "ytd") {
-		const year = datetime.format(startDate, "yyyy");
-		return `vs ${year}`;
-	} else {
-		const start = datetime.format(startDate, "MMM d, yyyy");
-		const end = datetime.format(endDate, "MMM d, yyyy");
-		return `vs ${start} - ${end}`;
+		return `vs ${formatDateRange(startDate, endDate)}`;
 	}
+
+	if (predefinedRange === "ytd") {
+		return `vs ${formatYear(startDate)}`;
+	}
+
+	return `vs ${formatDateRange(startDate, endDate)}`;
 }
 
 /**

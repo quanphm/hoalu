@@ -49,10 +49,13 @@ export const TransactionAttachments = forwardRef<
 	useImperativeHandle(ref, () => ({ clearFiles }), [clearFiles]);
 
 	const totalCount = (existingFiles?.length ?? 0) + files.length;
+	const isEmpty = totalCount === 0;
 
 	return (
 		<div className="flex flex-col gap-3">
-			<TransactionSectionLabel>Receipt & images · {totalCount}</TransactionSectionLabel>
+			{!isEmpty && (
+				<TransactionSectionLabel>Receipt & images · {totalCount}</TransactionSectionLabel>
+			)}
 
 			{errors.length > 0 && (
 				<div className="border-destructive/20 bg-destructive/10 text-destructive rounded-md border p-3">
@@ -91,20 +94,34 @@ export const TransactionAttachments = forwardRef<
 				</ul>
 			)}
 
-			<button
-				type="button"
-				className="border-input hover:border-ring hover:ring-ring/20 relative flex w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed p-6 text-center hover:ring-[3px] hover:outline-none"
-				onDragOver={handleDragOver}
-				onDragLeave={handleDragLeave}
-				onDrop={handleDrop}
-				onClick={handleBrowseFiles}
-			>
-				<p className="flex items-center gap-1.5 text-sm font-medium">
-					<PaperclipIcon className="size-4" />
-					Drop receipt or images
-				</p>
-				<p className="text-muted-foreground text-xs">or click to browse · JPG, PNG</p>
-			</button>
+			{isEmpty ? (
+				<button
+					type="button"
+					className="border-border text-muted-foreground hover:border-input hover:bg-accent/40 hover:text-foreground focus-visible:ring-ring/40 flex w-full items-center gap-2 rounded-lg border border-dashed px-3 py-2.5 text-sm transition-colors outline-none focus-visible:ring-2"
+					onDragOver={handleDragOver}
+					onDragLeave={handleDragLeave}
+					onDrop={handleDrop}
+					onClick={handleBrowseFiles}
+				>
+					<PaperclipIcon className="size-3.5 shrink-0" aria-hidden="true" />
+					<span className="truncate">Add receipt or image</span>
+					<span className="text-muted-foreground/70 text-2xs ms-auto shrink-0 uppercase">
+						JPG · PNG
+					</span>
+				</button>
+			) : (
+				<button
+					type="button"
+					className="border-input hover:border-ring hover:ring-ring/20 focus-visible:ring-ring/40 text-muted-foreground hover:text-foreground relative flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-2.5 text-sm transition-colors outline-none focus-visible:ring-2"
+					onDragOver={handleDragOver}
+					onDragLeave={handleDragLeave}
+					onDrop={handleDrop}
+					onClick={handleBrowseFiles}
+				>
+					<PaperclipIcon className="size-3.5" aria-hidden="true" />
+					Add more
+				</button>
+			)}
 			<input
 				type="file"
 				ref={fileInputRef}

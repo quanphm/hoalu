@@ -32,3 +32,39 @@ export function formatCompactNumber(value: number): string {
 	});
 	return formatter.format(value);
 }
+
+export function niceMoneyAxis(
+	values: number[],
+	tickCount = 4,
+): { domain: [number, number]; ticks: number[] } {
+	const max = values.reduce((highest, value) => Math.max(highest, value), 0);
+	const min = values.reduce((lowest, value) => Math.min(lowest, value), 0);
+	const keepNegative = min < 0 && Math.abs(min) > max * 0.05;
+	const low = keepNegative ? min : 0;
+
+	const span = max - low || Math.abs(max) || 1;
+	const rawStep = span / tickCount;
+	const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+	const normalized = rawStep / magnitude;
+	const step =
+		(normalized <= 1
+			? 1
+			: normalized <= 2
+				? 2
+				: normalized <= 2.5
+					? 2.5
+					: normalized <= 5
+						? 5
+						: 10) * magnitude;
+
+	const floor = Math.floor(low / step) * step;
+	const ceiling = Math.ceil(max / step) * step;
+
+	const ticks: number[] = [];
+	for (let tick = floor; tick <= ceiling + step / 2; tick += step) {
+		// Round off binary drift so an axis never prints 19.999999999.
+		ticks.push(Number(tick.toFixed(6)));
+	}
+
+	return { domain: [floor, ceiling], ticks };
+}

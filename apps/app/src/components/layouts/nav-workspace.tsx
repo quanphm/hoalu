@@ -34,7 +34,7 @@ export function NavWorkspace() {
 				<SidebarGroupContent>
 					<Button
 						variant="outline"
-						className="w-full gap-2 rounded-md"
+						className="w-full justify-start gap-2 rounded-md"
 						onClick={() => commandPaletteOpen$.set(true)}
 					>
 						<MagnifyingGlassIcon className="text-muted-foreground size-4" />

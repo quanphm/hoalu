@@ -10,7 +10,9 @@ export const WalletSchema = z.object({
 	isActive: z.boolean(),
 	createdAt: IsoDateSchema,
 	owner: z.object({
-		id: z.uuidv7(),
+		// User ids come from the auth layer, not from our generator, so they are not
+		// guaranteed to be v7 — a v4 owner must not fail the whole wallet list.
+		id: z.uuid(),
 		publicId: z.string(),
 		name: z.string(),
 		email: z.email(),
@@ -36,7 +38,7 @@ export const UpdateWalletSchema = z
 		currency: CurrencySchema,
 		type: WalletTypeSchema,
 		isActive: z.boolean(),
-		ownerId: z.uuidv7(),
+		ownerId: z.uuid(),
 	})
 	.partial();
 

@@ -24,7 +24,8 @@
 	"js/ts.experimental.useTsgo": true,
 
 	"files.readonlyInclude": {
-		"**/routeTree.gen.ts": true
+		"**/routeTree.gen.ts": true,
+		"**/repos": true
 	},
 
 	"files.watcherExclude": {
@@ -35,6 +36,7 @@
 		"**/routeTree.gen.ts": true,
 		"**/.agents": true,
 		"**/node_modules": true,
-		"**/dist": true
+		"**/dist": true,
+		"**/repos": true
 	}
 }
