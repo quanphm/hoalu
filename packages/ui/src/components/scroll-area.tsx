@@ -7,18 +7,26 @@ function ScrollArea({
 	children,
 	scrollFade = false,
 	scrollbarGutter = false,
+	axis = "both",
 	...props
 }: ScrollAreaPrimitive.Root.Props & {
 	scrollFade?: boolean;
 	scrollbarGutter?: boolean;
+	/** `y` forbids sideways scrolling, for panels whose content must wrap instead of sliding. */
+	axis?: "both" | "y";
 }) {
+	const fade =
+		axis === "y"
+			? "mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] [--fade-size:1.5rem]"
+			: "mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-r-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-end)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] mask-l-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-start)))] [--fade-size:1.5rem]";
+
 	return (
 		<ScrollAreaPrimitive.Root className={cn("size-full min-h-0", className)} {...props}>
 			<ScrollAreaPrimitive.Viewport
 				className={cn(
 					"transition-shadows focus-visible:ring-ring focus-visible:ring-offset-background h-full overscroll-contain rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-offset-1 data-has-overflow-x:overscroll-x-contain",
-					scrollFade &&
-						"mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-r-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-end)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] mask-l-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-start)))] [--fade-size:1.5rem]",
+					axis === "y" && "overflow-x-hidden",
+					scrollFade && fade,
 					scrollbarGutter && "data-has-overflow-x:pb-2.5 data-has-overflow-y:pe-2.5",
 				)}
 				data-slot="scroll-area-viewport"
@@ -26,7 +34,7 @@ function ScrollArea({
 				{children}
 			</ScrollAreaPrimitive.Viewport>
 			<ScrollBar orientation="vertical" />
-			<ScrollBar orientation="horizontal" />
+			{axis === "both" && <ScrollBar orientation="horizontal" />}
 			<ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />
 		</ScrollAreaPrimitive.Root>
 	);

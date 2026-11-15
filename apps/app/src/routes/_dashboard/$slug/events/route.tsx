@@ -1,4 +1,5 @@
 import { Button } from "@hoalu/ui/button";
+import { cn } from "@hoalu/ui/utils";
 import { createFileRoute, Link, Outlet, useMatches } from "@tanstack/react-router";
 import { useRef } from "react";
 
@@ -45,14 +46,14 @@ function LayoutComponent() {
 				</ToolbarActions>
 			</Toolbar>
 
-			<PageContent>
-				<Section className="gap-0">
+			<PageContent fill={!eventId && !creating}>
+				<Section className={cn("gap-0", !eventId && !creating && "max-md:min-h-0 max-md:flex-1")}>
 					{eventId || creating ? (
 						<Outlet />
 					) : (
 						<SectionContent
 							columns={12}
-							className="h-[calc(100dvh-49px)] grid-cols-1 overflow-hidden md:gap-0"
+							className="grid-cols-1 overflow-hidden max-md:min-h-0 max-md:flex-1 max-md:grid-rows-1 md:h-[calc(100dvh-49px)] md:gap-0"
 						>
 							<SectionItem desktopSpan="col-span-12" tabletSpan={1} mobileOrder={1}>
 								<EventList scrollRef={listScrollRef} />

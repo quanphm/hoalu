@@ -234,9 +234,9 @@ export function ScanQueueReviewDialogContent() {
 	const data = currentJob.result?.data;
 
 	return (
-		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-[750px]">
+		<DialogPopup className="max-h-[92vh] overflow-hidden sm:max-w-[750px]">
 			<DialogHeader>
-				<div className="flex items-center justify-between">
+				<div className="flex min-w-0 items-center justify-between">
 					<DialogTitle>
 						Review Receipt ({currentIndex + 1} of {completedJobs.length})
 					</DialogTitle>
@@ -259,8 +259,8 @@ export function ScanQueueReviewDialogContent() {
 			</DialogHeader>
 
 			<DialogPanel>
-				<div className="grid gap-6 md:grid-cols-2">
-					<div className="space-y-2">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+					<div className="min-w-0 space-y-2">
 						<div className="border-muted overflow-hidden rounded-md border">
 							{currentJob.input.previewBase64 ? (
 								<img
@@ -291,7 +291,7 @@ export function ScanQueueReviewDialogContent() {
 						)}
 					</div>
 
-					<div className="space-y-4">
+					<div className="min-w-0 space-y-4">
 						<div className="space-y-2">
 							<Label htmlFor="title">Merchant Name</Label>
 							<Input
@@ -345,7 +345,7 @@ export function ScanQueueReviewDialogContent() {
 									<tbody>
 										{data.items.map((item, idx) => (
 											<tr key={idx} className="border-b last:border-0">
-												<td className="py-1 pr-4">
+												<td className="wrap-anywhere py-1 pr-4">
 													{item.name}
 													{item.quantity && item.quantity > 1 && (
 														<span className="text-muted-foreground ml-1">x{item.quantity}</span>

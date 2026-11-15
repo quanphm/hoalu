@@ -78,7 +78,7 @@ export function EventDetailPanel({
 	);
 
 	return (
-		<div className="bg-background h-[calc(100dvh-94px)] overflow-auto">
+		<div className="bg-background overflow-auto max-md:h-auto md:h-[calc(100dvh-94px)]">
 			<EventEditForm key={event.id} event={event} headerActions={headerActions} onClose={onClose}>
 				<EventReadouts event={event} />
 			</EventEditForm>

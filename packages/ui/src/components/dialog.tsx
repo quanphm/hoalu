@@ -201,7 +201,7 @@ function DialogPanel({
 	};
 
 	return (
-		<ScrollArea scrollFade={scrollFade}>
+		<ScrollArea axis="y" scrollFade={scrollFade}>
 			{useRender({
 				defaultTagName: "div",
 				props: mergeProps<"div">(defaultProps, props),

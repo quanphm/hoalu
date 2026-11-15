@@ -68,7 +68,7 @@ function RouteComponent() {
 	if (!current) return null;
 
 	return (
-		<div className="bg-card h-[calc(100dvh-94px)] overflow-auto">
+		<div className="bg-card overflow-auto max-md:h-auto md:h-[calc(100dvh-94px)]">
 			<WalletEditForm
 				key={current.id}
 				wallet={current}

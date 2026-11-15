@@ -12,7 +12,7 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boundary.tsx";
-import { ReloadPromptPwa } from "#app/components/reload-prompt-pwa.tsx";
+import { ServiceWorkerUpdate } from "#app/components/service-worker-update.tsx";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -41,7 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			{children}
-			<ReloadPromptPwa />
+			<ServiceWorkerUpdate />
 			<TanStackDevtools
 				plugins={[
 					{

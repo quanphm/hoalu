@@ -25,9 +25,14 @@ function RouteComponent() {
 	const transactionMatch = matches.find(
 		(m) => m.routeId === "/_dashboard/$slug/_toolbar-and-queue/transactions",
 	);
+	const transactionDetailMatch = matches.some(
+		(m) =>
+			m.routeId === "/_dashboard/$slug/_toolbar-and-queue/transactions/new" ||
+			m.routeId === "/_dashboard/$slug/_toolbar-and-queue/transactions/$transactionId",
+	);
 
 	return (
-		<PageContent>
+		<PageContent fill={!!transactionMatch && !transactionDetailMatch}>
 			<QueuePanel />
 
 			<Toolbar>

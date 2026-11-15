@@ -9,6 +9,20 @@
 
 @source "../../../../packages/ui/**/*.{ts,tsx}";
 
+/* A row that only ever moves sideways. `overflow-x: auto` alone computes `overflow-y: auto` too, which
+   makes the row drift vertically under a thumb: the 44px coarse-pointer hit area on every button
+   overflows the row's own height, so it becomes loosely scrollable in the wrong axis. */
+@utility scroll-x {
+	overflow-x: auto;
+	overflow-y: hidden;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
 :root {
 	--font-sans: var(--inter);
 	--font-mono: var(--inter);

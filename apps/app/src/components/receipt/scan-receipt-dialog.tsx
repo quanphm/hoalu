@@ -25,7 +25,7 @@ export function ScanReceiptDialogTrigger(props: ButtonProps) {
 
 export function ScanReceiptDialogContent() {
 	return (
-		<DialogPopup className="max-h-[92vh] overflow-y-scroll sm:max-w-md">
+		<DialogPopup className="max-h-[92vh] overflow-x-hidden overflow-y-auto sm:max-w-md">
 			<DialogHeader>
 				<DialogTitle>Scan Receipts</DialogTitle>
 				<DialogDescription>
