@@ -31,7 +31,13 @@ export function MobileLayout({ children }: LayoutProps) {
 	return (
 		<div
 			className={cn(
-				"bg-background relative flex h-[var(--app-height,100dvh)] flex-col overflow-hidden",
+				/**
+				 * Pinned, not sized. In an installed iOS web app every height API lies by about the status
+				 * bar (`innerHeight`, `100dvh`, `100svh`), which floats a bottom-anchored bar off the real
+				 * screen edge; `fixed` resolves against the actual viewport rect instead. Do not swap this
+				 * back to a `h-*` class.
+				 */
+				"bg-background fixed inset-0 flex flex-col overflow-hidden",
 				NAV_HEIGHT,
 			)}
 		>
