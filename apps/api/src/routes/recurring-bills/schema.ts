@@ -8,44 +8,59 @@ import {
 } from "@hoalu/schema/schema";
 import * as z from "zod";
 
-export const RecurringBillSchema = z
-	.object({
+const BasedRecurringBillSchema = z.object({
+	id: z.uuidv7(),
+	publicId: z.string(),
+	title: z.string(),
+	description: z.string().nullable(),
+	amount: z.coerce.number(),
+	currency: CurrencySchema,
+	repeat: RepeatSchema,
+	anchorDate: z.string(),
+	dueDay: z.number().int().nullable(),
+	dueMonth: z.number().int().nullable(),
+	isActive: z.boolean(),
+	wallet: z.object({
 		id: z.uuidv7(),
-		publicId: z.string(),
-		title: z.string(),
-		description: z.string().nullable(),
-		amount: z.coerce.number(),
+		name: z.string(),
 		currency: CurrencySchema,
-		repeat: RepeatSchema,
-		anchorDate: z.string(),
-		dueDay: z.number().int().nullable(),
-		dueMonth: z.number().int().nullable(),
-		isActive: z.boolean(),
-		wallet: z.object({
+		type: WalletTypeSchema,
+	}),
+	category: z
+		.object({
 			id: z.uuidv7(),
 			name: z.string(),
-			currency: CurrencySchema,
-			type: WalletTypeSchema,
-		}),
-		category: z
-			.object({
-				id: z.uuidv7(),
-				name: z.string(),
-				color: ColorSchema,
-			})
-			.nullable(),
-		createdAt: IsoDateSchema,
-		updatedAt: IsoDateSchema,
-	})
-	.transform((val) => ({
-		...val,
-		realAmount: val.amount,
-		amount: monetary.fromRealAmount(val.amount, val.currency),
-	}));
+			color: ColorSchema,
+		})
+		.nullable(),
+	createdAt: IsoDateSchema,
+	updatedAt: IsoDateSchema,
+});
+
+export const RecurringBillSchema = BasedRecurringBillSchema.transform((val) => ({
+	...val,
+	realAmount: val.amount,
+	amount: monetary.fromRealAmount(val.amount, val.currency),
+}));
 
 export const RecurringBillsSchema = z.array(RecurringBillSchema);
 
+export const LiteRecurringBillSchema = BasedRecurringBillSchema.extend({
+	txid: z.coerce.number(),
+}).transform((val) => ({
+	...val,
+	realAmount: val.amount,
+	amount: monetary.fromRealAmount(val.amount, val.currency),
+}));
+
+export const DeleteRecurringBillSchema = z.object({
+	id: z.uuidv7(),
+	txid: z.coerce.number(),
+});
+
 export const InsertRecurringBillSchema = z.object({
+	id: z.uuidv7().optional(),
+	publicId: z.string().optional(),
 	title: z.string().min(1),
 	description: z.string().optional(),
 	amount: z.number(),
@@ -71,7 +86,11 @@ export const InsertRecurringBillSchema = z.object({
 export const UpdateRecurringBillSchema = InsertRecurringBillSchema.omit({
 	anchorDate: true,
 	workspaceId: true,
-}).partial();
+	id: true,
+	publicId: true,
+})
+	.extend({ isActive: z.boolean() })
+	.partial();
 
 /**
  * A projected occurrence, joined to the bill's display data.

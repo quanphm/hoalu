@@ -18,6 +18,7 @@ readonly REPOS=(
 	"effect|https://github.com/Effect-TS/effect.git|main"
 	"maple|https://github.com/Makisuo/maple.git|main"
 	"flexlayout|https://github.com/caplin/FlexLayout.git|master"
+	"tanstack-db|https://github.com/TanStack/db.git|main"
 )
 
 status=0

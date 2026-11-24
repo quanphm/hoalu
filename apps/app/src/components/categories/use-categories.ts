@@ -11,8 +11,8 @@ export function useLiveQueryCategories() {
 	const workspace = useWorkspace();
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 
-	const { data } = useLiveQuery(
-		(q) => {
+	const { data } = useLiveQuery({
+		query: (q) => {
 			return q.from({ category: categoryCollection }).select(({ category }) => ({
 				id: category.id,
 				name: category.name,
@@ -21,8 +21,7 @@ export function useLiveQueryCategories() {
 				type: category.type,
 			}));
 		},
-		[workspace.slug],
-	);
+	});
 
 	return data;
 }

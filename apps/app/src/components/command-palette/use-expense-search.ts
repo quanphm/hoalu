@@ -18,8 +18,8 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 	const expenseCollection = useMemo(() => (slug ? expenseCollectionFactory(slug) : null), [slug]);
 	const categoryCollection = useMemo(() => (slug ? categoryCollectionFactory(slug) : null), [slug]);
 
-	const { data: expenses } = useLiveQuery(
-		(q) => {
+	const { data: expenses } = useLiveQuery({
+		query: (q) => {
 			if (!expenseCollection || !categoryCollection) return null;
 			return q
 				.from({ expense: expenseCollection })
@@ -39,8 +39,7 @@ export function useExpenseSearch(slug: string | undefined, search: string): UseE
 					categoryColor: category?.color,
 				}));
 		},
-		[slug],
-	);
+	});
 
 	const fuzzyResults = useFuzzySearch(expenses, search, {
 		getTextFields: (e) => [e.title, htmlToText(e.description)],

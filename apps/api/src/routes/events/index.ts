@@ -4,11 +4,14 @@ import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
 import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { generateId } from "@hoalu/ids/generate-id";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
+import { db } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { EventRepository } from "#api/routes/events/repository.ts";
 import {
@@ -117,29 +120,47 @@ const route = app
 			}
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
-			const { budget, currency, ...rest } = payload;
+			const { budget, currency, id, publicId, ...rest } = payload;
 
 			// Default budgetCurrency to workspace currency if not provided
 			const realAmount = budget && currency ? monetary.toRealAmount(budget, currency) : null;
 			const workspaceCurrency = (workspace.metadata?.currency as string) ?? "USD";
+			const eventId = id ?? generateId({ use: "uuid" });
 
-			const event = await repository.insert({
-				...rest,
-				id: generateId({ use: "uuid" }),
-				publicId: generateId({ use: "nanoid", kind: "event" }),
-				workspaceId: workspace.id,
-				creatorId: user.id,
-				startDate: rest.startDate ? extractDateFromISO(rest.startDate) : null,
-				endDate: rest.endDate ? extractDateFromISO(rest.endDate) : null,
-				budget: realAmount ? `${realAmount}` : null,
-				currency: currency ?? workspaceCurrency,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const inserted = await repository.insert(
+						{
+							...rest,
+							id: eventId,
+							publicId: publicId ?? generateId({ use: "nanoid", kind: "event" }),
+							workspaceId: workspace.id,
+							creatorId: user.id,
+							startDate: rest.startDate ? extractDateFromISO(rest.startDate) : null,
+							endDate: rest.endDate ? extractDateFromISO(rest.endDate) : null,
+							budget: realAmount ? `${realAmount}` : null,
+							currency: currency ?? workspaceCurrency,
+						},
+						tx,
+					);
 
+					const row =
+						inserted ?? (await repository.findOne({ id: eventId, workspaceId: workspace.id }, tx));
+
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const event = result.data.row;
 			if (!event) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteEventSchema.safeParse(event);
+			const parsed = LiteEventSchema.safeParse({ ...event, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -203,16 +224,29 @@ const route = app
 				updatePayload.status = payload.status;
 			}
 
-			const event = await repository.update({
-				id,
-				workspaceId: workspace.id,
-				payload: updatePayload,
-			});
-			if (!event) {
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const updated = await repository.update(
+						{
+							id,
+							workspaceId: workspace.id,
+							payload: updatePayload,
+						},
+						tx,
+					);
+
+					return { updated, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error || !result.data.updated) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteEventSchema.safeParse(event);
+			const parsed = LiteEventSchema.safeParse({
+				...result.data.updated,
+				txid: result.data.txid,
+			});
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -231,7 +265,6 @@ const route = app
 			responses: {
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
-				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
 				...OpenAPI.response(z.object({ data: DeleteEventSchema }), HTTPStatus.codes.OK),
 			},
@@ -243,14 +276,18 @@ const route = app
 			const workspace = c.get("workspace");
 			const { id } = c.req.valid("param");
 
-			const existing = await repository.findOne({ id, workspaceId: workspace.id });
-			if (!existing) {
-				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.delete({ id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const result = await repository.delete({ id, workspaceId: workspace.id });
-
-			const parsed = DeleteEventSchema.safeParse(result);
+			const parsed = DeleteEventSchema.safeParse({ id, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

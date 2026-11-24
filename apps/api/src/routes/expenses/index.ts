@@ -12,6 +12,7 @@ import * as z from "zod";
 import { db, schema } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
 import { parseExpense } from "#api/lib/parse-with-ai.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import { ExpenseRepository } from "#api/routes/expenses/repository.ts";
@@ -136,18 +137,19 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const { amount, currency, date, recurringBillId, ...rest } = payload;
+			const { amount, currency, date, recurringBillId, id, publicId, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 			const expenseDate = date || new Date().toISOString();
+			const expenseId = id ?? generateId({ use: "uuid" });
 
-			const { expense, txid } = await db.transaction(async (tx) => {
-				const result = await tryCatch.async(
-					tx
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const [inserted] = await tx
 						.insert(schema.expense)
 						.values({
 							...rest,
-							id: generateId({ use: "uuid" }),
-							publicId: generateId({ use: "nanoid", kind: "expense" }),
+							id: expenseId,
+							publicId: publicId ?? generateId({ use: "nanoid", kind: "expense" }),
 							workspaceId: workspace.id,
 							creatorId: user.id,
 							date: expenseDate,
@@ -155,29 +157,27 @@ const route = app
 							currency,
 							recurringBillId: recurringBillId ?? null,
 						})
-						.returning(),
-				);
+						.onConflictDoNothing({ target: schema.expense.id })
+						.returning();
 
-				if (result.error) {
-					return { expense: null, txid: 0 };
-				}
+					const row =
+						inserted ??
+						(await expenseRepository.findOne({ id: expenseId, workspaceId: workspace.id }, tx));
 
-				const [expense] = result.data;
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
 
-				const txidResult = await tx.execute<{ txid: number }>(
-					sql`SELECT txid_current()::bigint AS txid`,
-				);
+			if (result.error) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
-				const txid = txidResult.rows[0]?.txid ?? 0;
-
-				return { expense, txid };
-			});
-
+			const expense = result.data.row;
 			if (!expense) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteExpenseSchema.safeParse({ ...expense, txid });
+			const parsed = LiteExpenseSchema.safeParse({ ...expense, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -318,12 +318,7 @@ const route = app
 
 				const [updated] = result.data;
 
-				const txidResult = await tx.execute<{ txid: number }>(
-					sql`SELECT txid_current()::bigint AS txid`,
-				);
-				const txid = txidResult.rows[0]?.txid ?? 0;
-
-				return { expense: updated ?? null, txid };
+				return { expense: updated ?? null, txid: await currentXactId(tx) };
 			});
 
 			if (!updatedExpense) {
@@ -360,31 +355,23 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const { expense, txid } = await db.transaction(async (tx) => {
-				const result = await tryCatch.async(
-					tx
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await tx
 						.delete(schema.expense)
 						.where(
 							and(eq(schema.expense.id, param.id), eq(schema.expense.workspaceId, workspace.id)),
-						)
-						.returning(),
-				);
+						);
 
-				if (result.error) {
-					return { expense: null, txid: 0 };
-				}
+					return currentXactId(tx);
+				}),
+			);
 
-				const [expense] = result.data;
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
-				const txidResult = await tx.execute<{ txid: number }>(
-					sql`SELECT txid_current()::bigint AS txid`,
-				);
-				const txid = txidResult.rows[0]?.txid ?? 0;
-
-				return { expense: expense ?? null, txid };
-			});
-
-			const parsed = DeleteExpenseSchema.safeParse({ ...expense, txid });
+			const parsed = DeleteExpenseSchema.safeParse({ id: param.id, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

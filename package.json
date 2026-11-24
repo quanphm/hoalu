@@ -16,12 +16,12 @@
 	},
 	"devDependencies": {
 		"@types/node": "^25.9.9",
-		"knip": "^6.45.0",
+		"knip": "^6.48.0",
 		"oxfmt": "^0.53.0",
-		"oxlint": "^1.93.0",
-		"oxlint-tsgolint": "^7.0.2007",
+		"oxlint": "^1.94.0",
+		"oxlint-tsgolint": "^7.0.2008",
 		"tsx": "^4.23.15",
-		"turbo": "^2.11.10",
+		"turbo": "^2.11.13",
 		"typescript": "^7.0.2",
 		"vite": "^8.3.8"
 	},

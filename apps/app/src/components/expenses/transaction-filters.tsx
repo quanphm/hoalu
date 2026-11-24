@@ -137,10 +137,7 @@ export function TransactionFilters() {
 
 	return (
 		<div
-			className={cn(
-				"flex min-w-0 items-center gap-1",
-				"max-md:scroll-x max-md:py-1 md:flex-wrap",
-			)}
+			className={cn("flex min-w-0 items-center gap-1", "max-md:scroll-x max-md:py-1 md:flex-wrap")}
 		>
 			<div className="bg-border mx-1 hidden h-5 w-px shrink-0 md:block" aria-hidden="true" />
 			<DateFacet summary={dateSummary} value={dateRange} onChange={setDateRange} />

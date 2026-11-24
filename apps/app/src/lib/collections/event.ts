@@ -1,9 +1,15 @@
 import { CurrencySchema, IsoDateSchema } from "@hoalu/schema/schema";
+import { persistedCollectionOptions } from "@tanstack/browser-db-sqlite-persistence";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
 import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
+import {
+	getPersistence,
+	INITIAL_RENDER,
+	SCHEMA_VERSION,
+} from "#app/lib/collections/persistence.ts";
 
 const EventCollectionSchema = z.object({
 	id: z.uuidv7(),
@@ -20,18 +26,30 @@ const EventCollectionSchema = z.object({
 	updated_at: IsoDateSchema,
 });
 
-const factory = createCollectionFactory("event", (slug: string) =>
-	createCollection(
-		electricCollectionOptions({
-			id: `event-${slug}`,
-			getKey: (item) => item.id,
-			shapeOptions: {
-				url: `${import.meta.env.PUBLIC_API_URL}/sync/events?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
-			},
-			schema: EventCollectionSchema,
+const factory = createCollectionFactory("event", (slug: string) => {
+	const options = electricCollectionOptions({
+		id: `event-${slug}`,
+		getKey: (item) => item.id,
+		shapeOptions: {
+			url: `${import.meta.env.PUBLIC_API_URL}/sync/events?workspaceIdOrSlug=${encodeURIComponent(slug)}`,
+		},
+		schema: EventCollectionSchema,
+	});
+
+	const persistence = getPersistence();
+	if (!persistence) {
+		return createCollection(options);
+	}
+
+	return createCollection(
+		persistedCollectionOptions({
+			...options,
+			persistence,
+			schemaVersion: SCHEMA_VERSION,
+			initialRender: INITIAL_RENDER,
 		}),
-	),
-);
+	);
+});
 
 export const eventCollectionFactory = factory.get;
 export const clearEventCollection = factory.clear;

@@ -3,11 +3,14 @@ import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
 import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { generateId } from "@hoalu/ids/generate-id";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
+import { db } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { IncomeRepository } from "#api/routes/incomes/repository.ts";
 import {
@@ -123,36 +126,46 @@ const route = app
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
 
-			const { amount, currency, date, ...rest } = payload;
+			const { amount, currency, date, id, publicId, ...rest } = payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
 			const incomeDate = date || new Date().toISOString();
+			const incomeId = id ?? generateId({ use: "uuid" });
 
-			const inserted = await incomeRepository.insert({
-				...rest,
-				id: generateId({ use: "uuid" }),
-				publicId: generateId({ use: "nanoid", kind: "income" }),
-				workspaceId: workspace.id,
-				creatorId: user.id,
-				date: incomeDate,
-				amount: `${realAmount}`,
-				currency,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await incomeRepository.insert(
+						{
+							...rest,
+							id: incomeId,
+							publicId: publicId ?? generateId({ use: "nanoid", kind: "income" }),
+							workspaceId: workspace.id,
+							creatorId: user.id,
+							date: incomeDate,
+							amount: `${realAmount}`,
+							currency,
+						},
+						tx,
+					);
 
-			if (!inserted) {
+					const row = await incomeRepository.findOne(
+						{ id: incomeId, workspaceId: workspace.id },
+						tx,
+					);
+
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			// Fetch the full record with joins for the response
-			const income = await incomeRepository.findOne({
-				id: inserted.id,
-				workspaceId: workspace.id,
-			});
-
+			const income = result.data.row;
 			if (!income) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteIncomeSchema.safeParse(income);
+			const parsed = LiteIncomeSchema.safeParse({ ...income, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -209,13 +222,22 @@ const route = app
 			if (walletId !== undefined) updateSet.walletId = walletId;
 			if (categoryId !== undefined) updateSet.categoryId = categoryId;
 
-			const updated = await incomeRepository.update({
-				id: param.id,
-				workspaceId: workspace.id,
-				payload: updateSet,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const updated = await incomeRepository.update(
+						{
+							id: param.id,
+							workspaceId: workspace.id,
+							payload: updateSet,
+						},
+						tx,
+					);
 
-			if (!updated) {
+					return { updated, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error || !result.data.updated) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
@@ -229,7 +251,7 @@ const route = app
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteIncomeSchema.safeParse(income);
+			const parsed = LiteIncomeSchema.safeParse({ ...income, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -259,12 +281,18 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const income = await incomeRepository.delete({
-				id: param.id,
-				workspaceId: workspace.id,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await incomeRepository.delete({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
 
-			const parsed = DeleteIncomeSchema.safeParse(income);
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = DeleteIncomeSchema.safeParse({ id: param.id, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

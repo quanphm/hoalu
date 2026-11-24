@@ -19,8 +19,8 @@ export function useLiveQueryWallets() {
 		return map;
 	}, [workspace.members]);
 
-	const { data } = useLiveQuery(
-		(q) => {
+	const { data } = useLiveQuery({
+		query: (q) => {
 			return q
 				.from({ wallet: walletCollection })
 				.leftJoin({ expense: expenseCollection }, ({ wallet, expense }) =>
@@ -46,8 +46,7 @@ export function useLiveQueryWallets() {
 					total: count(wallet.id),
 				}));
 		},
-		[workspace.slug],
-	);
+	});
 
 	return useMemo(() => {
 		if (!data) return [];

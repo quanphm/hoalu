@@ -26,7 +26,7 @@ It exists so that its owner can answer three questions without doing bookkeeping
 
 A neighbouring expense tracker could not truthfully copy Hoalu without rebuilding its stack and its arithmetic. All four of these are load-bearing, and none may be ranked below the others or traded away for polish:
 
-1. **Offline-first, real-time sync.** The browser runs a real Postgres (PGlite) and syncs through Electric SQL. It works with no network and converges across devices when the network returns.
+1. **Offline-first, real-time sync.** Reads sync through Electric SQL into TanStack DB collections persisted in a browser SQLite database; writes go through a durable IndexedDB outbox. It works with no network — reads render from cache and writes replay when the network returns.
 2. **Multi-currency truth.** Amounts in different currencies fold into one honest number through exchange rates. The conversion pipeline is the hard part, and every surface must share it rather than re-derive it.
 3. **Bills as projection.** A bill occurrence is a calendar *period*, never a stored row. Editing a bill's due date therefore never orphans a payment already recorded against it. Paid status is derived, not stored.
 4. **Zero-friction capture.** Command palette, quick-expense queue, natural-language parsing, and receipt OCR. The premise is that if logging costs more than a few seconds, the user stops logging, and the ledger dies.

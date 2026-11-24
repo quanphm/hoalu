@@ -13,16 +13,23 @@ export const CategorySchema = z.object({
 export const CategoriesSchema = z.array(CategorySchema);
 
 export const InsertCategorySchema = z.object({
+	id: z.uuidv7().optional(),
+	publicId: z.string().optional(),
 	name: z.string().min(1),
 	description: z.optional(z.string()),
 	color: ColorSchema.default("gray"),
 	type: CategoryTypeSchema,
 });
 
-export const UpdateCategorySchema = InsertCategorySchema.omit({ type: true }).partial();
+export const UpdateCategorySchema = InsertCategorySchema.omit({
+	type: true,
+	id: true,
+	publicId: true,
+}).partial();
 
 export const DeleteCategorySchema = z.object({
 	id: z.uuidv7(),
+	txid: z.coerce.number(),
 });
 
 export const LiteCategorySchema = CategorySchema.pick({
@@ -31,4 +38,4 @@ export const LiteCategorySchema = CategorySchema.pick({
 	description: true,
 	color: true,
 	type: true,
-});
+}).extend({ txid: z.coerce.number() });

@@ -56,8 +56,8 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"react-day-picker": "^10.0.2",
-		"recharts": "^3.10.1",
-		"tailwind-merge": "^3.7.0",
+		"recharts": "^3.11.0",
+		"tailwind-merge": "^3.7.1",
 		"usehooks-ts": "^3.1.1",
 		"vaul": "^1.1.2"
 	},

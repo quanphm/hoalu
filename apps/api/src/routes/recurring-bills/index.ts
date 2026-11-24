@@ -3,17 +3,21 @@ import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
 import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { generateId } from "@hoalu/ids/generate-id";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
+import { db } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { RecurringBillRepository } from "#api/routes/recurring-bills/repository.ts";
 import {
+	DeleteRecurringBillSchema,
 	InsertRecurringBillSchema,
+	LiteRecurringBillSchema,
 	ProjectedBillsSchema,
-	RecurringBillSchema,
 	RecurringBillsSchema,
 	UnifiedBillsSchema,
 	UpdateRecurringBillSchema,
@@ -137,7 +141,7 @@ const route = app
 				...OpenAPI.unauthorized(),
 				...OpenAPI.bad_request(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(z.object({ data: RecurringBillSchema }), HTTPStatus.codes.CREATED),
+				...OpenAPI.response(z.object({ data: LiteRecurringBillSchema }), HTTPStatus.codes.CREATED),
 			},
 		}),
 		workspaceQueryValidator,
@@ -153,8 +157,10 @@ const route = app
 
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
-			const { amount, currency, dueDay, dueMonth, anchorDate, repeat, ...rest } = payload;
+			const { amount, currency, dueDay, dueMonth, anchorDate, repeat, id, publicId, ...rest } =
+				payload;
 			const realAmount = monetary.toRealAmount(amount, currency);
+			const billId = id ?? generateId({ use: "uuid" });
 
 			// Derive anchorDate and due_day/due_month from the payload:
 			// - yearly: anchorDate is required, dueDay/dueMonth extracted from it
@@ -197,26 +203,41 @@ const route = app
 				resolvedAnchorDate = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
 			}
 
-			const bill = await repository.insert({
-				id: generateId({ use: "uuid" }),
-				publicId: generateId({ use: "nanoid", kind: "recurring_bill" }),
-				...rest,
-				repeat,
-				amount: `${realAmount}`,
-				currency,
-				anchorDate: resolvedAnchorDate,
-				dueDay: resolvedDueDay,
-				dueMonth: resolvedDueMonth,
-				workspaceId: workspace.id,
-				creatorId: user.id,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.insert(
+						{
+							id: billId,
+							publicId: publicId ?? generateId({ use: "nanoid", kind: "recurring_bill" }),
+							...rest,
+							repeat,
+							amount: `${realAmount}`,
+							currency,
+							anchorDate: resolvedAnchorDate,
+							dueDay: resolvedDueDay,
+							dueMonth: resolvedDueMonth,
+							workspaceId: workspace.id,
+							creatorId: user.id,
+						},
+						tx,
+					);
 
-			if (!bill) {
+					const row = await repository.findOne({ id: billId, workspaceId: workspace.id }, tx);
+
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const full = await repository.findOne({ id: bill.id, workspaceId: workspace.id });
-			const parsed = RecurringBillSchema.safeParse(full);
+			const full = result.data.row;
+			if (!full) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = LiteRecurringBillSchema.safeParse({ ...full, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -237,7 +258,7 @@ const route = app
 				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
 				...OpenAPI.server_parse_error(),
-				...OpenAPI.response(z.object({ data: RecurringBillSchema }), HTTPStatus.codes.OK),
+				...OpenAPI.response(z.object({ data: LiteRecurringBillSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -269,21 +290,34 @@ const route = app
 				updatedAnchorDate = `${year}-${pad(resolvedDueMonth)}-${pad(dueDay)}`;
 			}
 
-			await repository.update({
-				id: param.id,
-				workspaceId: workspace.id,
-				payload: {
-					...rest,
-					amount: `${realAmount}`,
-					currency: resolvedCurrency,
-					...(dueDay !== undefined && { dueDay }),
-					...(dueMonth !== undefined && { dueMonth }),
-					...(updatedAnchorDate !== undefined && { anchorDate: updatedAnchorDate }),
-				},
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.update(
+						{
+							id: param.id,
+							workspaceId: workspace.id,
+							payload: {
+								...rest,
+								amount: `${realAmount}`,
+								currency: resolvedCurrency,
+								...(dueDay !== undefined && { dueDay }),
+								...(dueMonth !== undefined && { dueMonth }),
+								...(updatedAnchorDate !== undefined && { anchorDate: updatedAnchorDate }),
+							},
+						},
+						tx,
+					);
+
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
 
 			const full = await repository.findOne({ id: param.id, workspaceId: workspace.id });
-			const parsed = RecurringBillSchema.safeParse(full);
+			const parsed = LiteRecurringBillSchema.safeParse({ ...full, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -301,8 +335,12 @@ const route = app
 			summary: "Archive (soft-delete) a recurring bill",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
-				...OpenAPI.response(z.object({ data: z.object({ id: z.string() }) }), HTTPStatus.codes.OK),
+				...OpenAPI.response(
+					z.object({ data: z.object({ id: z.uuidv7(), txid: z.coerce.number() }) }),
+					HTTPStatus.codes.OK,
+				),
 			},
 		}),
 		idParamValidator,
@@ -317,8 +355,18 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const result = await repository.archive({ id: param.id, workspaceId: workspace.id });
-			return c.json({ data: result }, HTTPStatus.codes.OK);
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.archive({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Archive failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			return c.json({ data: { id: param.id, txid: result.data } }, HTTPStatus.codes.OK);
 		},
 	)
 	.post(
@@ -328,8 +376,12 @@ const route = app
 			summary: "Unarchive (restore) a recurring bill",
 			responses: {
 				...OpenAPI.unauthorized(),
+				...OpenAPI.bad_request(),
 				...OpenAPI.not_found(),
-				...OpenAPI.response(z.object({ data: z.object({ id: z.string() }) }), HTTPStatus.codes.OK),
+				...OpenAPI.response(
+					z.object({ data: z.object({ id: z.uuidv7(), txid: z.coerce.number() }) }),
+					HTTPStatus.codes.OK,
+				),
 			},
 		}),
 		idParamValidator,
@@ -344,8 +396,18 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const result = await repository.unarchive({ id: param.id, workspaceId: workspace.id });
-			return c.json({ data: result }, HTTPStatus.codes.OK);
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.unarchive({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Unarchive failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			return c.json({ data: { id: param.id, txid: result.data } }, HTTPStatus.codes.OK);
 		},
 	)
 	.delete(
@@ -356,8 +418,8 @@ const route = app
 				"Permanently delete an archived recurring bill (linked expenses are unlinked, not deleted)",
 			responses: {
 				...OpenAPI.unauthorized(),
-				...OpenAPI.not_found(),
-				...OpenAPI.response(z.object({ data: z.object({ id: z.uuidv7() }) }), HTTPStatus.codes.OK),
+				...OpenAPI.bad_request(),
+				...OpenAPI.response(z.object({ data: DeleteRecurringBillSchema }), HTTPStatus.codes.OK),
 			},
 		}),
 		idParamValidator,
@@ -376,31 +438,45 @@ const route = app
 			const param = c.req.valid("param");
 
 			const existing = await repository.findRaw({ id: param.id, workspaceId: workspace.id });
-			if (!existing) {
-				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
+
+			if (existing) {
+				if (existing.creatorId !== user.id && membership.role !== "owner") {
+					return c.json(
+						{ message: "You don't have permission to permanently delete this bill." },
+						HTTPStatus.codes.FORBIDDEN,
+					);
+				}
+
+				// Bills must be archived first — prevents accidental hard-delete of active bills.
+				if (existing.isActive) {
+					return c.json(
+						{ message: "Bill must be archived before it can be permanently deleted." },
+						HTTPStatus.codes.CONFLICT,
+					);
+				}
 			}
 
-			if (existing.creatorId !== user.id && membership.role !== "owner") {
+			// A retried delete must never fail: a bill that is already gone is a no-op.
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await repository.permanentDelete({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = DeleteRecurringBillSchema.safeParse({ id: param.id, txid: result.data });
+			if (!parsed.success) {
 				return c.json(
-					{ message: "You don't have permission to permanently delete this bill." },
-					HTTPStatus.codes.FORBIDDEN,
+					{ message: createIssueMsg(parsed.error.issues) },
+					HTTPStatus.codes.UNPROCESSABLE_ENTITY,
 				);
 			}
 
-			// Bills must be archived first — prevents accidental hard-delete of active bills.
-			if (existing.isActive) {
-				return c.json(
-					{ message: "Bill must be archived before it can be permanently deleted." },
-					HTTPStatus.codes.CONFLICT,
-				);
-			}
-
-			const deleted = await repository.permanentDelete({ id: param.id, workspaceId: workspace.id });
-			if (!deleted) {
-				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
-			}
-
-			return c.json({ data: { id: deleted.id } }, HTTPStatus.codes.OK);
+			return c.json({ data: parsed.data }, HTTPStatus.codes.OK);
 		},
 	);
 

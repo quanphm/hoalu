@@ -20,17 +20,16 @@ export function useLiveQueryEvents() {
 	const expenseCollection = expenseCollectionFactory(workspace.slug);
 	const fxRateData = useFxRateData();
 
-	const { data: events } = useLiveQuery(
-		(q) =>
+	const { data: events } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ event: collection })
 				.orderBy(({ event }) => event.created_at, "desc")
 				.select(({ event }) => ({ ...event })),
-		[workspace.slug],
-	);
+	});
 
-	const { data: expenses } = useLiveQuery(
-		(q) =>
+	const { data: expenses } = useLiveQuery({
+		query: (q) =>
 			q.from({ expense: expenseCollection }).select(({ expense }) => ({
 				id: expense.id,
 				event_id: expense.event_id,
@@ -38,8 +37,7 @@ export function useLiveQueryEvents() {
 				currency: expense.currency,
 				date: expense.date,
 			})),
-		[workspace.slug],
-	);
+	});
 
 	return useMemo(() => {
 		if (!events) return [];
@@ -120,8 +118,8 @@ export function useLiveQueryEventExpenses(eventId: string) {
 	const walletCollection = walletCollectionFactory(workspace.slug);
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 
-	const { data } = useLiveQuery(
-		(q) =>
+	const { data } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ expense: expenseCollection })
 				.innerJoin({ wallet: walletCollection }, ({ expense, wallet }) =>
@@ -151,8 +149,7 @@ export function useLiveQueryEventExpenses(eventId: string) {
 							}
 						: null,
 				})),
-		[workspace.slug, eventId],
-	);
+	});
 
 	return useMemo(() => {
 		if (!data) return [];
@@ -179,8 +176,8 @@ export function useLiveQueryEventRecurringBills(eventId: string) {
 	const walletCollection = walletCollectionFactory(workspace.slug);
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 
-	const { data } = useLiveQuery(
-		(q) =>
+	const { data } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ bill: collection })
 				.innerJoin({ wallet: walletCollection }, ({ bill, wallet }) =>
@@ -197,8 +194,7 @@ export function useLiveQueryEventRecurringBills(eventId: string) {
 					category_name: category?.name ?? null,
 					category_color: category?.color ?? null,
 				})),
-		[workspace.slug, eventId],
-	);
+	});
 
 	return useMemo(() => {
 		if (!data) return [];

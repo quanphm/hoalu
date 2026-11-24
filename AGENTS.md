@@ -46,7 +46,8 @@ When debug with browser, please refer to these addresses to access the applicati
 | Mutations                | `apps/app/src/services/mutations.ts`                            | 1088 lines                    |
 | Auth setup               | `apps/api/src/lib/auth.ts`                                      | 177 lines                     |
 | Sync proxy               | `apps/api/src/modules/sync.ts`                                  | -                             |
-| PGlite provider          | `apps/app/src/components/providers/local-postgres-provider.tsx` | -                             |
+| Offline executor         | `apps/app/src/lib/offline/executor.ts`                          | -                             |
+| Collection persistence   | `apps/app/src/lib/collections/persistence.ts`                   | -                             |
 | Collections              | `apps/app/src/lib/collections/*.ts`                             | 9 files (7 + index + factory) |
 | Collection factory       | `apps/app/src/lib/collections/create-collection-factory.ts`     | 63 lines                      |
 
@@ -455,6 +456,6 @@ Never run `git commit`, `git add`, `git push`, `git rebase`, `git reset`, or any
 
 ## Vendored reference
 
-`repos/effect`, `repos/maple`, `repos/flexlayout` are read-only local checkouts of upstream repositories. They are **not committed** — `repos/` is gitignored and refreshed on demand with `bun run repos:sync` (shallow, single-branch clones). Do not edit; do not import from them — app code imports normal package deps. For Effect idioms, treat `repos/effect/` as source of truth over guesses or web search.
+`repos/effect`, `repos/maple`, `repos/flexlayout`, `repos/tanstack-db` are read-only local checkouts of upstream repositories. They are **not committed** — `repos/` is gitignored and refreshed on demand with `bun run repos:sync` (shallow, single-branch clones). Do not edit; do not import from them — app code imports normal package deps. For Effect idioms, treat `repos/effect/` as source of truth over guesses or web search. For TanStack DB, Electric collections, SQLite persistence and offline transactions, always check the vendored docs at `repos/tanstack-db/docs` first (`guides/migrate-to-1-0-rc.md`, `guides/{sqlite-persistence,offline-transactions,live-queries}.md`, `collections/electric-collection.md`) instead of tanstack.com or memory. When the docs and the code disagree, `repos/tanstack-db/packages/` wins — the published docs lag the release. `repos/tanstack-db/examples/react-native/shopping-list` is the reference app for Electric + SQLite persistence + offline executor.
 
 A fresh clone has no `repos/` until `repos:sync` is run; nothing in the build or CI depends on it. Because the directory is gitignored, it is invisible to git, to `oxlint`/`oxfmt`, to editor search/auto-import (`.vscode/settings.json`), and to pattern-based file search — address files by explicit path, as the skills under `.opencode/skills/` do.

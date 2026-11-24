@@ -1,4 +1,6 @@
-type CollectionWithCleanup = { cleanup: () => void };
+type CollectionWithCleanup = {
+	cleanup: (options?: { dependents?: boolean }) => Promise<void> | void;
+};
 
 const isDev = import.meta.env.DEV;
 const debug = false;
@@ -33,20 +35,21 @@ export function createCollectionFactory<T extends CollectionWithCleanup>(
 			return instances.has(slug);
 		},
 
-		clear(slug?: string) {
+		async clear(slug?: string) {
 			if (slug) {
 				debugLog(name, `Clearing "${slug}"`);
 				const collection = instances.get(slug);
 				if (collection) {
-					collection.cleanup();
 					instances.delete(slug);
+					await collection.cleanup({ dependents: true });
 				}
 			} else {
 				debugLog(name, `Clearing all (${instances.size} instances)`);
-				for (const collection of instances.values()) {
-					collection.cleanup();
-				}
+				const collections = Array.from(instances.values());
 				instances.clear();
+				await Promise.all(
+					collections.map((collection) => collection.cleanup({ dependents: true })),
+				);
 			}
 		},
 

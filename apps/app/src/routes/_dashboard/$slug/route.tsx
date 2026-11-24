@@ -4,10 +4,11 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
 import {
 	categoryCollectionFactory,
-	exchangeRateCollection,
+	exchangeRateCollectionFactory,
 	expenseCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
+import { getOfflineExecutor } from "#app/lib/offline/executor.ts";
 import { getWorkspaceDetailsOptions } from "#app/services/query-options.ts";
 
 export const Route = createFileRoute("/_dashboard/$slug")({
@@ -21,10 +22,16 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 			expenseCollection.preload(),
 			categoryCollection.preload(),
 			walletCollection.preload(),
-			exchangeRateCollection.preload(),
+			exchangeRateCollectionFactory().preload(),
 		]);
+
+		// Restores optimistic rows that a previous session left in the outbox.
+		// Without this the executor only exists once a mutation hook renders,
+		// so a reload would show the synced rows but drop the pending writes.
+		await getOfflineExecutor(slug).waitForInit();
 	},
 	onError: (error) => {
+		console.error("[workspace route] loader failed", error);
 		toastManager.add({
 			title: "Something went wrong.",
 			description: error.message,

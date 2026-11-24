@@ -2,6 +2,8 @@ import { and, desc, eq, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
 
+import type { Transaction } from "#api/lib/xact-id.ts";
+
 type NewIncome = typeof schema.income.$inferInsert;
 
 export class IncomeRepository {
@@ -25,8 +27,8 @@ export class IncomeRepository {
 		return result;
 	}
 
-	async findOne(param: { id: string; workspaceId: string }) {
-		const queryData = await db
+	async findOne(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		const queryData = await (tx ?? db)
 			.select()
 			.from(schema.income)
 			.innerJoin(schema.user, eq(schema.income.creatorId, schema.user.id))
@@ -46,39 +48,33 @@ export class IncomeRepository {
 		return result;
 	}
 
-	async insert(param: NewIncome) {
-		try {
-			const [result] = await db.insert(schema.income).values(param).returning();
-			return result;
-		} catch (_error) {
-			return null;
-		}
+	async insert(param: NewIncome, tx?: Transaction) {
+		const [result] = await (tx ?? db)
+			.insert(schema.income)
+			.values(param)
+			.onConflictDoNothing({ target: schema.income.id })
+			.returning();
+
+		return result ?? null;
 	}
 
-	async update<T>(param: { id: string; workspaceId: string; payload: T }) {
-		try {
-			const [result] = await db
-				.update(schema.income)
-				.set({
-					updatedAt: sql`now()`,
-					...param.payload,
-				})
-				.where(
-					and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)),
-				)
-				.returning();
-
-			return result || null;
-		} catch (_error) {
-			return null;
-		}
-	}
-
-	async delete(param: { id: string; workspaceId: string }) {
-		await db
-			.delete(schema.income)
+	async update<T>(param: { id: string; workspaceId: string; payload: T }, tx?: Transaction) {
+		const [result] = await (tx ?? db)
+			.update(schema.income)
+			.set({
+				updatedAt: sql`now()`,
+				...param.payload,
+			})
 			.where(and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)))
 			.returning();
+
+		return result ?? null;
+	}
+
+	async delete(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		await (tx ?? db)
+			.delete(schema.income)
+			.where(and(eq(schema.income.id, param.id), eq(schema.income.workspaceId, param.workspaceId)));
 
 		return { id: param.id };
 	}

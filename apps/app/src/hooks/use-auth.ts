@@ -9,6 +9,7 @@ import {
 } from "#app/atoms/index.ts";
 import { authClient } from "#app/lib/auth-client.ts";
 import { clearAllWorkspaceCollections } from "#app/lib/collections/index.ts";
+import { disposeAllOfflineExecutors } from "#app/lib/offline/executor.ts";
 import { authKeys, workspaceKeys } from "#app/lib/query-key-factory.ts";
 import { sessionOptions } from "#app/services/query-options.ts";
 
@@ -25,7 +26,8 @@ export function useAuth() {
 					queryClient.removeQueries({ queryKey: workspaceKeys.all });
 					queryClient.removeQueries({ queryKey: authKeys.session });
 
-					clearAllWorkspaceCollections();
+					await disposeAllOfflineExecutors();
+					await clearAllWorkspaceCollections();
 
 					router.invalidate().finally(() => {
 						draftExpense$.set(makeDraftExpense());

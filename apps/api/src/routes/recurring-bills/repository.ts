@@ -4,6 +4,7 @@ import { and, eq, getTableColumns, isNotNull, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
 
+import type { Transaction } from "#api/lib/xact-id.ts";
 import type { BillDefinition, Payment } from "@hoalu/finance/billing";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
@@ -77,8 +78,8 @@ export class RecurringBillRepository {
 		}));
 	}
 
-	async findOne(param: { id: string; workspaceId: string }) {
-		const [row] = await db
+	async findOne(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		const [row] = await (tx ?? db)
 			.select({
 				...billColumns,
 				wallet: schema.wallet,
@@ -96,21 +97,25 @@ export class RecurringBillRepository {
 		return row ?? null;
 	}
 
-	async insert(param: NewRecurringBill) {
-		try {
-			const [result] = await db.insert(schema.recurringBill).values(param).returning();
-			return result;
-		} catch (_error) {
-			return null;
-		}
+	async insert(param: NewRecurringBill, tx?: Transaction) {
+		const [result] = await (tx ?? db)
+			.insert(schema.recurringBill)
+			.values(param)
+			.onConflictDoNothing({ target: schema.recurringBill.id })
+			.returning();
+
+		return result ?? null;
 	}
 
-	async update<T extends Record<string, unknown>>(param: {
-		id: string;
-		workspaceId: string;
-		payload: T;
-	}) {
-		const [result] = await db
+	async update<T extends Record<string, unknown>>(
+		param: {
+			id: string;
+			workspaceId: string;
+			payload: T;
+		},
+		tx?: Transaction,
+	) {
+		const [result] = await (tx ?? db)
 			.update(schema.recurringBill)
 			.set({ ...param.payload, updatedAt: sql`now()` })
 			.where(
@@ -123,8 +128,8 @@ export class RecurringBillRepository {
 		return result ?? null;
 	}
 
-	async archive(param: { id: string; workspaceId: string }) {
-		await db
+	async archive(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		await (tx ?? db)
 			.update(schema.recurringBill)
 			.set({ isActive: false, updatedAt: sql`now()` })
 			.where(
@@ -136,8 +141,8 @@ export class RecurringBillRepository {
 		return { id: param.id };
 	}
 
-	async unarchive(param: { id: string; workspaceId: string }) {
-		await db
+	async unarchive(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		await (tx ?? db)
 			.update(schema.recurringBill)
 			.set({ isActive: true, updatedAt: sql`now()` })
 			.where(
@@ -174,8 +179,8 @@ export class RecurringBillRepository {
 	 * The FK on expense.recurring_bill_id is defined with onDelete:"set null",
 	 * so linked expenses are automatically unlinked by the DB.
 	 */
-	async permanentDelete(param: { id: string; workspaceId: string }) {
-		const [deleted] = await db
+	async permanentDelete(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		const [deleted] = await (tx ?? db)
 			.delete(schema.recurringBill)
 			.where(
 				and(
