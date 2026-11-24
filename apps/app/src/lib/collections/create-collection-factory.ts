@@ -48,7 +48,9 @@ export function createCollectionFactory<T extends CollectionWithCleanup>(
 				const collections = Array.from(instances.values());
 				instances.clear();
 				await Promise.all(
-					collections.map((collection) => collection.cleanup({ dependents: true })),
+					collections.map(async (collection) => {
+						await collection.cleanup({ dependents: true });
+					}),
 				);
 			}
 		},

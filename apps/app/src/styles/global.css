@@ -78,6 +78,15 @@
 	}
 }
 
+/* TipTap renders a contenteditable div, not an `input`, so the floor above misses it — and iOS
+   zooms the note exactly the same way at 12.6px. Unlayered on purpose: `@layer base` loses to the
+   editor's own `text-sm` utility, which is what holds it under 16px in the first place. */
+@media (pointer: coarse) {
+	[contenteditable="true"] {
+		font-size: max(16px, 1em);
+	}
+}
+
 /* The only global guard for `prefers-reduced-motion`; the button primitive guards its own press-scale. */
 @media (prefers-reduced-motion: reduce) {
 	*,

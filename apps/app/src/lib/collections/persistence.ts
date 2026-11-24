@@ -10,10 +10,6 @@ const COORDINATOR_NAME = "hoalu-db";
 
 export const SCHEMA_VERSION = 1;
 
-/**
- * Renders restored rows when the shape has not answered in time, so an offline
- * reload is not stuck on `loading`.
- */
 export const INITIAL_RENDER = {
 	strategy: "network-first",
 	networkTimeoutMs: 2_000,
@@ -42,10 +38,6 @@ async function open(): Promise<void> {
 	}
 }
 
-/**
- * Opens the SQLite database that backs collection persistence. Must resolve
- * before the router renders, because collections are created during render.
- */
 export function initPersistence(): Promise<void> {
 	initPromise ??= open();
 	return initPromise;

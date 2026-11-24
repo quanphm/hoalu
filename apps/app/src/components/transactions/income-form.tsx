@@ -130,7 +130,7 @@ export function CreateIncomeForm() {
 			e.preventDefault();
 			void form.handleSubmit();
 		},
-		{ enableOnFormTags: true },
+		{ enableOnFormTags: true, enableOnContentEditable: true },
 		[form],
 	);
 
@@ -231,7 +231,9 @@ export function CreateIncomeForm() {
 							<TransactionPanel>
 								<form.AppField
 									name="description"
-									children={(field) => <field.TiptapField label="Note" />}
+									children={(field) => (
+										<field.TiptapField label="Note" onSave={() => void form.handleSubmit()} />
+									)}
 								/>
 							</TransactionPanel>
 
@@ -294,7 +296,7 @@ export function EditIncomeForm(props: { data: SyncedIncome; navigation: Transact
 			e.preventDefault();
 			void form.handleSubmit();
 		},
-		{ enableOnFormTags: true },
+		{ enableOnFormTags: true, enableOnContentEditable: true },
 		[form],
 	);
 
@@ -406,7 +408,9 @@ export function EditIncomeForm(props: { data: SyncedIncome; navigation: Transact
 							<TransactionPanel>
 								<form.AppField
 									name="description"
-									children={(field) => <field.TiptapField label="Note" />}
+									children={(field) => (
+										<field.TiptapField label="Note" onSave={() => void form.handleSubmit()} />
+									)}
 								/>
 							</TransactionPanel>
 

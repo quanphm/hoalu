@@ -1,7 +1,7 @@
 import { CurrencySchema, WalletTypeSchema } from "@hoalu/schema/schema";
 import { persistedCollectionOptions } from "@tanstack/browser-db-sqlite-persistence";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
-import { createCollection } from "@tanstack/react-db";
+import { BasicIndex, createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
 import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
@@ -32,19 +32,21 @@ const factory = createCollectionFactory("wallet", (slug: string) => {
 	});
 
 	const persistence = getPersistence();
-	if (!persistence) {
-		return createCollection(options);
-	}
+	const collection = persistence
+		? createCollection(
+				persistedCollectionOptions({
+					...options,
+					persistence,
+					schemaVersion: SCHEMA_VERSION,
+					initialRender: INITIAL_RENDER,
+				}),
+			)
+		: createCollection(options);
 
-	return createCollection(
-		persistedCollectionOptions({
-			...options,
-			persistence,
-			schemaVersion: SCHEMA_VERSION,
-			initialRender: INITIAL_RENDER,
-		}),
-	);
+	collection.createIndex((row) => row.id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.owner_id, { indexType: BasicIndex });
+	return collection;
 });
 
-export const walletCollectionFactory = factory.get;
-export const clearWalletCollection = factory.clear;
+export const walletCollectionFactory = (slug: string) => factory.get(slug);
+export const clearWalletCollection = (slug?: string) => factory.clear(slug);

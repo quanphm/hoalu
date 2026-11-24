@@ -9,7 +9,6 @@ import { queryClient } from "#app/lib/query-client.ts";
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
-/** Workspace detail, members and invitations are what the app shell needs offline. */
 const SHELL_WORKSPACE_SEGMENTS = new Set(["members", "active", "invitations"]);
 
 const persister = createAsyncStoragePersister({
@@ -29,10 +28,6 @@ function shouldPersist(query: Query) {
 	return segment === undefined || SHELL_WORKSPACE_SEGMENTS.has(segment);
 }
 
-/**
- * Restores the shell queries (session + workspace) so an offline reload can get
- * past the auth gate and render the workspace before any network request.
- */
 export async function initQueryPersistence(): Promise<void> {
 	if (typeof window === "undefined") return;
 

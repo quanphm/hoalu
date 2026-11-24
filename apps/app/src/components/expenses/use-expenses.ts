@@ -1,8 +1,9 @@
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { createLiveQueryCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { createDerivedViewCache } from "#app/lib/collections/derived-view-cache.ts";
 import {
 	categoryCollectionFactory,
 	expenseCollectionFactory,
@@ -10,15 +11,15 @@ import {
 } from "#app/lib/collections/index.ts";
 import { buildFxRateIndex, convertTransactions } from "#app/services/dashboard-model.ts";
 
-export function useLiveQueryExpenses() {
-	const workspace = useWorkspace();
-	const expenseCollection = expenseCollectionFactory(workspace.slug);
-	const categoryCollection = categoryCollectionFactory(workspace.slug);
-	const walletCollection = walletCollectionFactory(workspace.slug);
+function buildExpenseView(slug: string) {
+	const expenseCollection = expenseCollectionFactory(slug);
+	const categoryCollection = categoryCollectionFactory(slug);
+	const walletCollection = walletCollectionFactory(slug);
 
-	const { data: expensesData } = useLiveQuery({
-		query: (q) => {
-			return q
+	return createLiveQueryCollection({
+		startSync: true,
+		query: (q) =>
+			q
 				.from({ expense: expenseCollection })
 				.innerJoin({ wallet: walletCollection }, ({ expense, wallet }) =>
 					eq(expense.wallet_id, wallet.id),
@@ -40,19 +41,42 @@ export function useLiveQueryExpenses() {
 						name: wallet.name,
 						type: wallet.type,
 					},
-				}));
-		},
+				})),
 	});
+}
+
+const expenseViews = createDerivedViewCache(buildExpenseView);
+
+function getExpenseView(slug: string) {
+	return expenseViews.get(slug);
+}
+
+export function preloadExpenseView(slug: string) {
+	void getExpenseView(slug).preload();
+}
+
+export function clearExpenseView(slug?: string) {
+	if (slug) {
+		expenseViews.delete(slug);
+		return;
+	}
+	expenseViews.clear();
+}
+
+export function useLiveQueryExpenses() {
+	const workspace = useWorkspace();
+	const view = getExpenseView(workspace.slug);
+
+	const { data: expensesData } = useLiveQuery(view);
 
 	const fxRateData = useFxRateData();
 
 	const fxRateIndex = useMemo(() => buildFxRateIndex(fxRateData ?? []), [fxRateData]);
 
-	const transformedExpenses = useMemo(() => {
-		return convertTransactions(expensesData ?? [], fxRateIndex, workspace.metadata.currency);
-	}, [expensesData, fxRateIndex, workspace.metadata.currency]);
-
-	return transformedExpenses;
+	return useMemo(
+		() => convertTransactions(expensesData ?? [], fxRateIndex, workspace.metadata.currency),
+		[expensesData, fxRateIndex, workspace.metadata.currency],
+	);
 }
 
 type SyncedExpenses = ReturnType<typeof useLiveQueryExpenses>;

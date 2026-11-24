@@ -1,7 +1,10 @@
 import { toastManager } from "@hoalu/ui/toast";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
+import { preloadExpenseView } from "#app/components/expenses/use-expenses.ts";
 import { WorkspaceActionProvider } from "#app/components/providers/workspace-action-provider.tsx";
+import { preloadBillsView } from "#app/components/recurring-bills/use-recurring-bills.ts";
+import { preloadWalletView } from "#app/components/wallets/use-wallets.ts";
 import {
 	categoryCollectionFactory,
 	exchangeRateCollectionFactory,
@@ -25,9 +28,10 @@ export const Route = createFileRoute("/_dashboard/$slug")({
 			exchangeRateCollectionFactory().preload(),
 		]);
 
-		// Restores optimistic rows that a previous session left in the outbox.
-		// Without this the executor only exists once a mutation hook renders,
-		// so a reload would show the synced rows but drop the pending writes.
+		preloadExpenseView(slug);
+		preloadWalletView(slug);
+		preloadBillsView(slug);
+
 		await getOfflineExecutor(slug).waitForInit();
 	},
 	onError: (error) => {

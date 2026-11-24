@@ -1,27 +1,20 @@
-import { count, eq, useLiveQuery } from "@tanstack/react-db";
+import { count, createLiveQueryCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { createDerivedViewCache } from "#app/lib/collections/derived-view-cache.ts";
 import { expenseCollectionFactory, walletCollectionFactory } from "#app/lib/collections/index.ts";
 
 import type { WalletTypeSchema } from "@hoalu/schema/schema";
 
-export function useLiveQueryWallets() {
-	const workspace = useWorkspace();
-	const walletCollection = walletCollectionFactory(workspace.slug);
-	const expenseCollection = expenseCollectionFactory(workspace.slug);
+function buildWalletView(slug: string) {
+	const walletCollection = walletCollectionFactory(slug);
+	const expenseCollection = expenseCollectionFactory(slug);
 
-	const memberMap = useMemo(() => {
-		const map = new Map<string, { id: string; name: string }>();
-		for (const member of workspace.members) {
-			map.set(member.userId, { id: member.userId, name: member.user.name });
-		}
-		return map;
-	}, [workspace.members]);
-
-	const { data } = useLiveQuery({
-		query: (q) => {
-			return q
+	return createLiveQueryCollection({
+		startSync: true,
+		query: (q) =>
+			q
 				.from({ wallet: walletCollection })
 				.leftJoin({ expense: expenseCollection }, ({ wallet, expense }) =>
 					eq(wallet.id, expense.wallet_id),
@@ -44,9 +37,41 @@ export function useLiveQueryWallets() {
 					isActive: wallet.is_active,
 					ownerId: wallet.owner_id,
 					total: count(wallet.id),
-				}));
-		},
+				})),
 	});
+}
+
+const walletViews = createDerivedViewCache(buildWalletView);
+
+function getWalletView(slug: string) {
+	return walletViews.get(slug);
+}
+
+export function preloadWalletView(slug: string) {
+	void getWalletView(slug).preload();
+}
+
+export function clearWalletView(slug?: string) {
+	if (slug) {
+		walletViews.delete(slug);
+		return;
+	}
+	walletViews.clear();
+}
+
+export function useLiveQueryWallets() {
+	const workspace = useWorkspace();
+	const view = getWalletView(workspace.slug);
+
+	const memberMap = useMemo(() => {
+		const map = new Map<string, { id: string; name: string }>();
+		for (const member of workspace.members) {
+			map.set(member.userId, { id: member.userId, name: member.user.name });
+		}
+		return map;
+	}, [workspace.members]);
+
+	const { data } = useLiveQuery(view);
 
 	return useMemo(() => {
 		if (!data) return [];
