@@ -82,12 +82,12 @@ export function useCreateWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
-			haptics.trigger("success");
+			void haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace created.",
 				type: "success",
 			});
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+			void queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 			navigate({
 				to: "/$slug",
 				params: {
@@ -96,7 +96,7 @@ export function useCreateWorkspace() {
 			});
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -127,21 +127,21 @@ export function useEditWorkspace() {
 			return data;
 		},
 		onSuccess: (data) => {
-			haptics.trigger("success");
+			void haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace updated.",
 				type: "success",
 			});
 			if (slug !== data.slug) {
 				queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(slug) });
-				navigate({
+				void navigate({
 					to: "/$slug/settings/workspace",
 					params: {
 						slug: data.slug,
 					},
 				});
 			} else {
-				queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
+				void queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 			}
 		},
 	});
@@ -165,12 +165,12 @@ export function useEditWorkspaceMetadata() {
 			return data;
 		},
 		onSuccess: () => {
-			haptics.trigger("success");
+			void haptics.trigger("success");
 			toastManager.add({
 				title: "Workspace updated.",
 				type: "success",
 			});
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
+			void queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 	});
 	return mutation;
@@ -188,17 +188,17 @@ export function useDeleteWorkspace() {
 			return data;
 		},
 		onSuccess: async (data) => {
-			haptics.trigger("warning");
+			void haptics.trigger("warning");
 			toastManager.add({
 				title: "Workspace deleted.",
 				type: "success",
 			});
 			queryClient.removeQueries({ queryKey: workspaceKeys.withSlug(data.slug) });
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-			navigate({ to: "/" });
+			void queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+			void navigate({ to: "/" });
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -224,13 +224,13 @@ export function useRemoveMember() {
 			return data;
 		},
 		onSuccess: async () => {
-			haptics.trigger("warning");
+			void haptics.trigger("warning");
 			playDropSound();
 			queryClient.removeQueries({ queryKey: workspaceKeys.all });
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+			void queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -253,12 +253,12 @@ export function useCancelInvitation() {
 			return data;
 		},
 		onSuccess: () => {
-			haptics.trigger("warning");
+			void haptics.trigger("warning");
 			playDropSound();
-			queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
+			void queryClient.invalidateQueries({ queryKey: workspaceKeys.withSlug(slug) });
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -356,12 +356,13 @@ export function useDeleteExpense() {
 export function useParseQuickExpense() {
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
+		networkMode: "always",
 		mutationFn: async ({ text }: { text: string }) => {
 			const result = await apiClient.expenses.parseQuickEntry(slug, text);
 			return result;
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Couldn't parse expense",
 				description: error.message,
@@ -472,7 +473,7 @@ export function useDuplicateIncome() {
 				walletId: sourceIncome.wallet.id,
 				categoryId: sourceIncome.category?.id ?? "",
 			});
-			navigate({
+			void navigate({
 				to: "/$slug/transactions/new",
 				params: { slug },
 				search: { type: "income" },
@@ -773,7 +774,7 @@ export function useDuplicateExpense() {
 				categoryId: sourceExpense.category?.id ?? "",
 				repeat: sourceExpense.repeat,
 			});
-			navigate({
+			void navigate({
 				to: "/$slug/transactions/new",
 				params: { slug },
 				search: { type: "expense" },
@@ -790,6 +791,7 @@ export function useUploadExpenseFiles() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
+		networkMode: "always",
 		mutationFn: async ({
 			id,
 			title,
@@ -814,11 +816,13 @@ export function useUploadExpenseFiles() {
 			return id;
 		},
 		onSuccess: (expenseId) => {
-			haptics.trigger("success");
-			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
+			void haptics.trigger("success");
+			void queryClient.invalidateQueries({
+				queryKey: [...fileKeys.all(slug), "expense", expenseId],
+			});
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,
@@ -833,16 +837,19 @@ export function useDeleteExpenseFile() {
 	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
 	const mutation = useMutation({
+		networkMode: "always",
 		mutationFn: async ({ expenseId, fileId }: { expenseId: string; fileId: string }) => {
 			await apiClient.files.deleteExpenseFile(slug, expenseId, fileId);
 			return { expenseId, fileId };
 		},
 		onSuccess: ({ expenseId }) => {
-			haptics.trigger("warning");
-			queryClient.invalidateQueries({ queryKey: [...fileKeys.all(slug), "expense", expenseId] });
+			void haptics.trigger("warning");
+			void queryClient.invalidateQueries({
+				queryKey: [...fileKeys.all(slug), "expense", expenseId],
+			});
 		},
 		onError: (error) => {
-			haptics.trigger("error");
+			void haptics.trigger("error");
 			toastManager.add({
 				title: "Uh oh! Something went wrong.",
 				description: error.message,

@@ -23,12 +23,27 @@ export function toMutationError(status: number, message: string): Error {
 	return new HttpError(status, message);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+function readMessage(value: unknown): string | undefined {
+	if (!isRecord(value)) return undefined;
+	return typeof value.message === "string" ? value.message : undefined;
+}
+
 export async function readApiResponse<T>(response: Response): Promise<T> {
 	if (!response.ok) {
-		const body = (await response.json().catch(() => null)) as { message?: string } | null;
-		throw toMutationError(response.status, body?.message ?? `Request failed (${response.status})`);
+		const body: unknown = await response.json().catch(() => null);
+		throw toMutationError(
+			response.status,
+			readMessage(body) ?? `Request failed (${response.status})`,
+		);
 	}
 
-	const body = (await response.json()) as { data: T };
-	return body.data;
+	const body: unknown = await response.json();
+	if (!isRecord(body) || !("data" in body)) {
+		throw toMutationError(response.status, "Malformed response body");
+	}
+	return body.data as T;
 }
