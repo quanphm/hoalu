@@ -16,8 +16,8 @@ export function useLiveQueryExpenses() {
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 	const walletCollection = walletCollectionFactory(workspace.slug);
 
-	const { data: expensesData } = useLiveQuery(
-		(q) => {
+	const { data: expensesData } = useLiveQuery({
+		query: (q) => {
 			return q
 				.from({ expense: expenseCollection })
 				.innerJoin({ wallet: walletCollection }, ({ expense, wallet }) =>
@@ -42,8 +42,7 @@ export function useLiveQueryExpenses() {
 					},
 				}));
 		},
-		[workspace.slug],
-	);
+	});
 
 	const fxRateData = useFxRateData();
 

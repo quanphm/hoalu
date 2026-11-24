@@ -2,10 +2,13 @@ import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
 import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { generateId } from "@hoalu/ids/generate-id";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { describeRoute } from "hono-openapi";
 import * as z from "zod";
 
+import { db } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { CategoryRepository } from "#api/routes/categories/repository.ts";
 import {
@@ -117,17 +120,40 @@ const route = app
 		async (c) => {
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
+			// `category` has no `public_id` column: the client may still send one for a
+			// uniform create payload, so it is accepted here and dropped.
+			const { id, publicId: _publicId, ...rest } = payload;
+			const categoryId = id ?? generateId({ use: "uuid" });
 
-			const category = await categoryRepository.insert({
-				...payload,
-				id: generateId({ use: "uuid" }),
-				workspaceId: workspace.id,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const inserted = await categoryRepository.insert(
+						{
+							...rest,
+							id: categoryId,
+							workspaceId: workspace.id,
+						},
+						tx,
+					);
+
+					const row =
+						inserted ??
+						(await categoryRepository.findOne({ id: categoryId, workspaceId: workspace.id }, tx));
+
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const category = result.data.row;
 			if (!category) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteCategorySchema.safeParse(category);
+			const parsed = LiteCategorySchema.safeParse({ ...category, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -168,16 +194,29 @@ const route = app
 				return c.json({ message: HTTPStatus.phrases.NOT_FOUND }, HTTPStatus.codes.NOT_FOUND);
 			}
 
-			const queryData = await categoryRepository.update({
-				id: param.id,
-				workspaceId: workspace.id,
-				payload,
-			});
-			if (!queryData) {
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const updated = await categoryRepository.update(
+						{
+							id: param.id,
+							workspaceId: workspace.id,
+							payload,
+						},
+						tx,
+					);
+
+					return { updated, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error || !result.data.updated) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteCategorySchema.safeParse(queryData);
+			const parsed = LiteCategorySchema.safeParse({
+				...result.data.updated,
+				txid: result.data.txid,
+			});
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -207,12 +246,18 @@ const route = app
 			const workspace = c.get("workspace");
 			const param = c.req.valid("param");
 
-			const category = await categoryRepository.delete({
-				id: param.id,
-				workspaceId: workspace.id,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await categoryRepository.delete({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
 
-			const parsed = DeleteCategorySchema.safeParse(category);
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const parsed = DeleteCategorySchema.safeParse({ id: param.id, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

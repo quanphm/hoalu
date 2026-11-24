@@ -30,8 +30,8 @@ export function useLiveQueryRecurringBills() {
 	const walletCollection = walletCollectionFactory(workspace.slug);
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 
-	const { data } = useLiveQuery(
-		(q) =>
+	const { data } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ bill: collection })
 				.innerJoin({ wallet: walletCollection }, ({ bill, wallet }) =>
@@ -47,8 +47,7 @@ export function useLiveQueryRecurringBills() {
 					category_name: category?.name ?? null,
 					category_color: category?.color ?? null,
 				})),
-		[workspace.slug],
-	);
+	});
 
 	const fxRateData = useFxRateData();
 
@@ -125,8 +124,8 @@ export function useAllRecurringBills() {
 	const walletCollection = walletCollectionFactory(workspace.slug);
 	const categoryCollection = categoryCollectionFactory(workspace.slug);
 
-	const { data } = useLiveQuery(
-		(q) =>
+	const { data } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ bill: collection })
 				.innerJoin({ wallet: walletCollection }, ({ bill, wallet }) =>
@@ -143,8 +142,7 @@ export function useAllRecurringBills() {
 					category_name: category?.name ?? null,
 					category_color: category?.color ?? null,
 				})),
-		[workspace.slug],
-	);
+	});
 
 	const fxRateData = useFxRateData();
 

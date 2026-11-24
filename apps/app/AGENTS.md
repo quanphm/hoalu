@@ -17,9 +17,9 @@ Hoalu frontend react app.
 - **Forms**: TanStack Form v1.33+ with Zod v4 validation
 - **State Management**: Legendapp State v3 (`@legendapp/state` beta) observables for local state
 - **Real-time Sync**:
-  - Electric SQL with `@electric-sql/pglite` v0.5.4
+  - TanStack DB 1.0.0-rc collections persisted in browser SQLite (`@tanstack/browser-db-sqlite-persistence` + wa-sqlite)
   - `@tanstack/electric-db-collection` v0.3.15 for reactive collections
-  - PGlite Sync v0.6.5 for offline-first PostgreSQL in browser
+  - `@tanstack/offline-transactions` — durable IndexedDB write outbox with retry
 - **Styling**:
   - TailwindCSS v4.3+ with `@tailwindcss/vite`
   - shadcn/ui components via `@hoalu/ui` (~42 components)
@@ -48,7 +48,10 @@ Hoalu frontend react app.
   - `src/lib/query-client.ts` - TanStack Query client setup
   - `src/lib/query-key-factory.ts` - Query key factory for all resources
   - `src/lib/queues/` - Background job queues (task, quick-expense, receipt-scan)
-  - `src/lib/pglite-worker.ts` - PGlite sync worker for offline-first Postgres
+  - `src/lib/collections/persistence.ts` - Opens the browser SQLite database that backs collection persistence
+  - `src/lib/offline/executor.ts` - Offline executor per workspace (outbox + mutation functions)
+  - `src/lib/offline/mutation-fns.ts` - Row → API payload mapping and `awaitTxId` reconciliation
+  - `src/lib/query-persistence.ts` - Persists session + workspace queries so an offline reload can boot
   - `src/lib/sound-effects.ts` - Sound effect utilities
   - `src/hooks/use-queue.ts` - Queue subscription hooks
   - `src/hooks/use-workspace.ts` - Workspace context hook (slug-based)
@@ -151,7 +154,6 @@ deep pure module `src/services/dashboard-model.ts` — charts never assemble the
 
 **Providers (6 files):**
 
-- `local-postgres-provider.tsx` - PGlite setup with IndexedDB (idb://hoalu-db)
 - `dialog-provider.tsx` - Global dialog state management
 - `ui-provider.tsx` - Theme provider and toast notifications
 - `workspace-action-provider.tsx` - Workspace context menu actions
@@ -202,6 +204,18 @@ A form that keeps a draft (the transaction forms: `draftExpense$` / `draftIncome
 The two shells scroll different things: on desktop `SidebarInset` grows and the **window** scrolls; on mobile the shell is pinned (`fixed inset-0`) and an inner `<main data-slot="main-content">` scrolls. So nothing in a page may assume `window.scrollY` moves — a `useWindowVirtualizer` there renders offset 0 forever, tiles and load-more triggers included.
 
 Anchor scroll work to a real element (`useVirtualizer` with `getScrollElement`, as the transaction table does) or to a viewport-relative `IntersectionObserver` sentinel, which already clips against every scrolling ancestor. `FileLoadMore` is the file page's example.
+
+### Offline-first write path
+
+Reads sync through Electric into TanStack DB collections persisted in browser SQLite. Writes never call the API directly from a component or hook:
+
+1. `useLocalMutation` (`lib/offline/use-local-mutation.ts`) wraps `executor.createOfflineAction`. `prepare` adds client-generated ids, `onMutate` applies `collection.insert/update/delete` **synchronously**, `mutationFns` does the network call.
+2. `lib/offline/mutation-fns.ts` maps a collection row (snake_case) to the API payload (camelCase), calls `honoClient.bff.*`, then awaits `awaitTxId`. It enters permanent failures as `NonRetriableError` (rollback) and everything else as `HttpError` (retry).
+3. The executor is created per workspace in `lib/offline/executor.ts` and started from the `/_dashboard/$slug` loader — that loader call is what restores pending optimistic rows after a reload, so do not remove it.
+
+Collections must stay handler-free (`onInsert`/`onUpdate`/`onDelete`): the executor supplies its own mutation function, so a handler would either never run or run twice. Adding a write means adding a named mutation function, not a handler.
+
+Offline reload also depends on `lib/query-persistence.ts` (session + workspace queries) and `lib/collections/persistence.ts` (SQLite opened before the router mounts).
 
 ### Data Layer
 

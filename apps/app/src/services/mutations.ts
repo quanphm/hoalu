@@ -1,3 +1,4 @@
+import { generateId } from "@hoalu/ids/generate-id";
 import { toastManager } from "@hoalu/ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
@@ -5,8 +6,19 @@ import { WebHaptics } from "web-haptics";
 
 import { draftIncome$ } from "#app/atoms/incomes.ts";
 import { draftExpense$ } from "#app/atoms/index.ts";
+import { useWorkspace } from "#app/hooks/use-workspace.ts";
 import { apiClient } from "#app/lib/api-client.ts";
 import { authClient } from "#app/lib/auth-client.ts";
+import {
+	categoryCollectionFactory,
+	eventCollectionFactory,
+	expenseCollectionFactory,
+	incomeCollectionFactory,
+	recurringBillCollectionFactory,
+	walletCollectionFactory,
+} from "#app/lib/collections/index.ts";
+import { MUTATION_FNS } from "#app/lib/offline/mutation-fns.ts";
+import { useCurrentUserId, useLocalMutation } from "#app/lib/offline/use-local-mutation.ts";
 import {
 	categoryKeys,
 	eventKeys,
@@ -39,6 +51,14 @@ import type {
 const haptics = new WebHaptics();
 
 const routeApi = getRouteApi("/_dashboard/$slug");
+
+const REPEAT_VALUES = ["one-time", "daily", "weekly", "monthly", "yearly", "custom"] as const;
+
+type RepeatValue = (typeof REPEAT_VALUES)[number];
+
+function toRepeat(value: unknown, fallback: RepeatValue = "one-time"): RepeatValue {
+	return REPEAT_VALUES.includes(value as RepeatValue) ? (value as RepeatValue) : fallback;
+}
 
 /**
  * workspaces
@@ -254,100 +274,83 @@ export function useCancelInvitation() {
  */
 
 export function useCreateExpense() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: ExpensePostSchema }) => {
-			const result = await apiClient.expenses.create(slug, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Expense created.",
-				type: "success",
+	const collection = expenseCollectionFactory(slug);
+	const creatorId = useCurrentUserId();
+
+	return useLocalMutation<
+		{ payload: ExpensePostSchema },
+		{ payload: ExpensePostSchema; id: string; publicId: string }
+	>({
+		mutationFnName: MUTATION_FNS.expense,
+		prepare: ({ payload }) => ({
+			payload,
+			id: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "expense" }),
+		}),
+		onMutate: ({ payload, id, publicId }) => {
+			collection.insert({
+				id,
+				public_id: publicId,
+				title: payload.title,
+				description: payload.description ?? null,
+				amount: payload.amount,
+				currency: payload.currency,
+				repeat: payload.repeat ?? "one-time",
+				date: payload.date ?? new Date().toISOString(),
+				wallet_id: payload.walletId,
+				category_id: payload.categoryId ?? null,
+				recurring_bill_id: payload.recurringBillId ?? null,
+				event_id: payload.eventId ?? null,
+				creator_id: creatorId,
+				created_at: new Date().toISOString(),
 			});
-			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Expense created.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useEditExpense() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: ExpensePatchSchema }) => {
-			const result = await apiClient.expenses.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Expense updated.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = expenseCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: ExpensePatchSchema },
+		{ id: string; payload: ExpensePatchSchema }
+	>({
+		mutationFnName: MUTATION_FNS.expense,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (payload.title !== undefined) draft.title = payload.title;
+				if (payload.description !== undefined) draft.description = payload.description;
+				if (payload.amount !== undefined) draft.amount = payload.amount;
+				if (payload.currency !== undefined) draft.currency = payload.currency;
+				if (payload.repeat !== undefined) draft.repeat = payload.repeat;
+				if (payload.date !== undefined) draft.date = payload.date;
+				if (payload.walletId !== undefined) draft.wallet_id = payload.walletId;
+				if (payload.categoryId !== undefined) draft.category_id = payload.categoryId;
+				if (payload.recurringBillId !== undefined)
+					draft.recurring_bill_id = payload.recurringBillId;
+				if (payload.eventId !== undefined) draft.event_id = payload.eventId;
 			});
 		},
+		success: { title: "Expense updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteExpense() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.expenses.delete(slug, id);
-			return result;
+	const collection = expenseCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.expense,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: (rs) => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Expense deleted.",
-				type: "success",
-			});
-			queryClient.removeQueries({ queryKey: expenseKeys.withId(slug, rs.id) });
-			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Expense deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 export function useParseQuickExpense() {
@@ -374,91 +377,79 @@ export function useParseQuickExpense() {
  */
 
 export function useCreateIncome() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: IncomePostSchema }) => {
-			const result = await apiClient.incomes.create(slug, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Income created.",
-				type: "success",
+	const collection = incomeCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ payload: IncomePostSchema },
+		{ payload: IncomePostSchema; id: string; publicId: string }
+	>({
+		mutationFnName: MUTATION_FNS.income,
+		prepare: ({ payload }) => ({
+			payload,
+			id: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "income" }),
+		}),
+		onMutate: ({ payload, id, publicId }) => {
+			const timestamp = new Date().toISOString();
+			collection.insert({
+				id,
+				public_id: publicId,
+				title: payload.title,
+				description: payload.description ?? null,
+				amount: payload.amount,
+				currency: payload.currency,
+				repeat: payload.repeat ?? "one-time",
+				date: payload.date ?? timestamp,
+				wallet_id: payload.walletId,
+				category_id: payload.categoryId ?? null,
+				created_at: timestamp,
+				updated_at: timestamp,
 			});
-			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Income created.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useEditIncome() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: IncomePatchSchema }) => {
-			const result = await apiClient.incomes.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Income updated.",
-				type: "success",
+	const collection = incomeCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: IncomePatchSchema },
+		{ id: string; payload: IncomePatchSchema }
+	>({
+		mutationFnName: MUTATION_FNS.income,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (payload.title !== undefined) draft.title = payload.title;
+				if (payload.description !== undefined) draft.description = payload.description;
+				if (payload.amount !== undefined) draft.amount = payload.amount;
+				if (payload.currency !== undefined) draft.currency = payload.currency;
+				if (payload.repeat !== undefined) draft.repeat = payload.repeat;
+				if (payload.date !== undefined) draft.date = payload.date;
+				if (payload.walletId !== undefined) draft.wallet_id = payload.walletId;
+				if (payload.categoryId !== undefined) draft.category_id = payload.categoryId;
+				draft.updated_at = new Date().toISOString();
 			});
-			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Income updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteIncome() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.incomes.delete(slug, id);
-			return result;
+	const collection = incomeCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.income,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: (rs) => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Income deleted.",
-				type: "success",
-			});
-			queryClient.removeQueries({ queryKey: incomeKeys.withId(slug, rs.id) });
-			queryClient.invalidateQueries({ queryKey: incomeKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Income deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 export function useDuplicateIncome() {
@@ -475,7 +466,7 @@ export function useDuplicateIncome() {
 				description: sourceIncome.description ?? "",
 				date: new Date().toISOString(),
 				transaction: {
-					value: sourceIncome.amount,
+					value: sourceIncome.realAmount,
 					currency: sourceIncome.currency,
 				},
 				walletId: sourceIncome.wallet.id,
@@ -495,35 +486,48 @@ export function useDuplicateIncome() {
 }
 
 export function useCreateRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: Record<string, unknown> }) => {
-			const result = await apiClient.recurringBills.create(slug, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Recurring bill created.",
-				type: "success",
+	const collection = recurringBillCollectionFactory(slug);
+	const workspace = useWorkspace();
+
+	return useLocalMutation<
+		{ payload: Record<string, unknown> },
+		{ payload: Record<string, unknown>; id: string; publicId: string }
+	>({
+		mutationFnName: MUTATION_FNS.recurringBill,
+		prepare: ({ payload }) => ({
+			payload,
+			id: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "recurring_bill" }),
+		}),
+		onMutate: ({ payload, id, publicId }) => {
+			const timestamp = new Date().toISOString();
+			const repeat = toRepeat(payload.repeat, "monthly");
+			collection.insert({
+				id,
+				public_id: publicId,
+				title: typeof payload.title === "string" ? payload.title : "",
+				description: typeof payload.description === "string" ? payload.description : null,
+				amount: Number(payload.amount ?? 0),
+				currency: typeof payload.currency === "string" ? payload.currency : "USD",
+				repeat,
+				anchor_date:
+					typeof payload.anchorDate === "string"
+						? payload.anchorDate
+						: new Date().toISOString().slice(0, 10),
+				due_day: typeof payload.dueDay === "number" ? payload.dueDay : null,
+				due_month: typeof payload.dueMonth === "number" ? payload.dueMonth : null,
+				wallet_id: typeof payload.walletId === "string" ? payload.walletId : "",
+				category_id: typeof payload.categoryId === "string" ? payload.categoryId : null,
+				event_id: typeof payload.eventId === "string" ? payload.eventId : null,
+				workspace_id: workspace.id,
+				is_active: true,
+				created_at: timestamp,
+				updated_at: timestamp,
 			});
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill created.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 /**
@@ -531,192 +535,141 @@ export function useCreateRecurringBill() {
  * Used by the "Set up recurring bill" prompt in the expense detail panel.
  */
 export function useSetUpRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({
+	const billCollection = recurringBillCollectionFactory(slug);
+	const expenseCollection = expenseCollectionFactory(slug);
+
+	type SetupPayload = {
+		id: string;
+		title: string;
+		amount: number;
+		currency: string;
+		repeat: string;
+		date: string;
+		walletId: string;
+		categoryId: string | null | undefined;
+		workspaceId: string;
+	};
+
+	return useLocalMutation<
+		{ payload: SetupPayload },
+		{ payload: SetupPayload; billId: string; publicId: string }
+	>({
+		mutationFnName: MUTATION_FNS.setupRecurringBill,
+		prepare: ({ payload }) => ({
 			payload,
-		}: {
-			payload: {
-				id: string;
-				title: string;
-				amount: number;
-				currency: string;
-				repeat: string;
-				date: string;
-				walletId: string;
-				categoryId: string | null | undefined;
-				workspaceId: string;
-			};
-		}) => {
-			// Step 1: create the bill
-			const bill = await apiClient.recurringBills.create(slug, {
+			billId: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "recurring_bill" }),
+		}),
+		onMutate: ({ payload, billId, publicId }) => {
+			const timestamp = new Date().toISOString();
+			billCollection.insert({
+				id: billId,
+				public_id: publicId,
 				title: payload.title,
+				description: null,
 				amount: payload.amount,
 				currency: payload.currency,
-				repeat: payload.repeat,
-				anchorDate: payload.date,
-				walletId: payload.walletId,
-				categoryId: payload.categoryId ?? null,
-				workspaceId: payload.workspaceId,
+				repeat: toRepeat(payload.repeat, "monthly"),
+				anchor_date: payload.date.slice(0, 10),
+				due_day: null,
+				due_month: null,
+				wallet_id: payload.walletId,
+				category_id: payload.categoryId ?? null,
+				event_id: null,
+				workspace_id: payload.workspaceId,
+				is_active: true,
+				created_at: timestamp,
+				updated_at: timestamp,
 			});
-			// Step 2: link the expense to the new bill (no anchor advance — just linking)
-			await apiClient.expenses.edit(slug, payload.id, {
-				recurringBillId: bill.id,
-			});
-			return bill;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Recurring bill set up.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: expenseKeys.all(slug) });
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+			expenseCollection.update(payload.id, (draft) => {
+				draft.recurring_bill_id = billId;
 			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill set up.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useEditRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: Record<string, unknown> }) => {
-			const result = await apiClient.recurringBills.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Recurring bill updated.",
-				type: "success",
+	const collection = recurringBillCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: Record<string, unknown> },
+		{ id: string; payload: Record<string, unknown> }
+	>({
+		mutationFnName: MUTATION_FNS.recurringBill,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (typeof payload.title === "string") draft.title = payload.title;
+				if (typeof payload.description === "string") draft.description = payload.description;
+				if (typeof payload.amount === "number") draft.amount = payload.amount;
+				if (typeof payload.currency === "string") draft.currency = payload.currency;
+				if (typeof payload.repeat === "string")
+					draft.repeat = toRepeat(payload.repeat, draft.repeat);
+				if (typeof payload.dueDay === "number") draft.due_day = payload.dueDay;
+				if (typeof payload.dueMonth === "number") draft.due_month = payload.dueMonth;
+				if (typeof payload.anchorDate === "string") draft.anchor_date = payload.anchorDate;
+				if (typeof payload.walletId === "string") draft.wallet_id = payload.walletId;
+				if (payload.categoryId !== undefined)
+					draft.category_id = typeof payload.categoryId === "string" ? payload.categoryId : null;
+				if (payload.eventId !== undefined)
+					draft.event_id = typeof payload.eventId === "string" ? payload.eventId : null;
+				if (typeof payload.isActive === "boolean") draft.is_active = payload.isActive;
+				draft.updated_at = new Date().toISOString();
 			});
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useArchiveRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.recurringBills.archive(slug, id);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Recurring bill removed.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+	const collection = recurringBillCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string; payload: { isActive: boolean } }>({
+		mutationFnName: MUTATION_FNS.recurringBill,
+		prepare: ({ id }) => ({ id, payload: { isActive: false } }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				draft.is_active = payload.isActive;
+				draft.updated_at = new Date().toISOString();
 			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill removed.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 export function useUnarchiveRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.recurringBills.unarchive(slug, id);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Recurring bill restored.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
+	const collection = recurringBillCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string; payload: { isActive: boolean } }>({
+		mutationFnName: MUTATION_FNS.recurringBill,
+		prepare: ({ id }) => ({ id, payload: { isActive: true } }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				draft.is_active = payload.isActive;
+				draft.updated_at = new Date().toISOString();
 			});
 		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill restored.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteRecurringBill() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.recurringBills.permanentDelete(slug, id);
-			return result;
+	const collection = recurringBillCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.recurringBill,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: () => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Recurring bill deleted.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: recurringBillKeys.all(slug) });
-			queryClient.invalidateQueries({
-				queryKey: [...workspaceKeys.withSlug(slug), "unified-bills"],
-			});
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Recurring bill deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 /**
@@ -724,82 +677,79 @@ export function useDeleteRecurringBill() {
  */
 
 export function useCreateEvent() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: EventPostSchema }) => {
-			const result = await apiClient.events.create(slug, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({ title: "Event created.", type: "success" });
-			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = eventCollectionFactory(slug);
+	const workspace = useWorkspace();
+
+	return useLocalMutation<
+		{ payload: EventPostSchema },
+		{ payload: EventPostSchema; id: string; publicId: string }
+	>({
+		mutationFnName: MUTATION_FNS.event,
+		prepare: ({ payload }) => ({
+			payload,
+			id: generateId({ use: "uuid" }),
+			publicId: generateId({ use: "nanoid", kind: "event" }),
+		}),
+		onMutate: ({ payload, id, publicId }) => {
+			const timestamp = new Date().toISOString();
+			collection.insert({
+				id,
+				public_id: publicId,
+				title: payload.title,
+				description: payload.description ?? null,
+				start_date: payload.startDate ?? null,
+				end_date: payload.endDate ?? null,
+				budget: payload.budget ?? null,
+				budget_currency: payload.currency ?? workspace.metadata.currency,
+				status: "open",
+				workspace_id: workspace.id,
+				created_at: timestamp,
+				updated_at: timestamp,
 			});
 		},
+		success: { title: "Event created.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useEditEvent() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: EventPatchSchema }) => {
-			const result = await apiClient.events.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({ title: "Event updated.", type: "success" });
-			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = eventCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: EventPatchSchema },
+		{ id: string; payload: EventPatchSchema }
+	>({
+		mutationFnName: MUTATION_FNS.event,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (payload.title !== undefined) draft.title = payload.title;
+				if (payload.description !== undefined) draft.description = payload.description;
+				if (payload.startDate !== undefined) draft.start_date = payload.startDate;
+				if (payload.endDate !== undefined) draft.end_date = payload.endDate;
+				if (payload.budget !== undefined) draft.budget = payload.budget;
+				if (payload.currency !== undefined) draft.budget_currency = payload.currency;
+				if (payload.status !== undefined) draft.status = payload.status;
+				draft.updated_at = new Date().toISOString();
 			});
 		},
+		success: { title: "Event updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteEvent() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.events.delete(slug, id);
-			return result;
+	const collection = eventCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.event,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: (rs) => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({ title: "Event deleted.", type: "success" });
-			queryClient.removeQueries({ queryKey: eventKeys.withId(slug, rs.id) });
-			queryClient.invalidateQueries({ queryKey: eventKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Event deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 export function useDuplicateExpense() {
@@ -816,7 +766,7 @@ export function useDuplicateExpense() {
 				description: sourceExpense.description ?? "",
 				date: new Date().toISOString(),
 				transaction: {
-					value: sourceExpense.amount,
+					value: sourceExpense.realAmount,
 					currency: sourceExpense.currency,
 				},
 				walletId: sourceExpense.wallet.id,
@@ -908,91 +858,65 @@ export function useDeleteExpenseFile() {
  */
 
 export function useCreateWallet() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: WalletPostSchema }) => {
-			const result = await apiClient.wallets.create(slug, payload);
-			return result;
+	const collection = walletCollectionFactory(slug);
+	const ownerId = useCurrentUserId();
+
+	return useLocalMutation<{ payload: WalletPostSchema }, { payload: WalletPostSchema; id: string }>(
+		{
+			mutationFnName: MUTATION_FNS.wallet,
+			prepare: ({ payload }) => ({ payload, id: generateId({ use: "uuid" }) }),
+			onMutate: ({ payload, id }) => {
+				collection.insert({
+					id,
+					name: payload.name,
+					description: payload.description ?? null,
+					currency: payload.currency,
+					type: payload.type,
+					is_active: payload.isActive ?? true,
+					owner_id: ownerId,
+				});
+			},
+			success: { title: "Wallet created.", sound: playConfirmSound },
 		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Wallet created.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
-	});
-	return mutation;
+	);
 }
 
 export function useEditWallet() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: WalletPatchSchema }) => {
-			const result = await apiClient.wallets.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Wallet updated.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = walletCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: WalletPatchSchema },
+		{ id: string; payload: WalletPatchSchema }
+	>({
+		mutationFnName: MUTATION_FNS.wallet,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (payload.name !== undefined) draft.name = payload.name;
+				if (payload.description !== undefined) draft.description = payload.description;
+				if (payload.currency !== undefined) draft.currency = payload.currency;
+				if (payload.type !== undefined) draft.type = payload.type;
+				if (payload.isActive !== undefined) draft.is_active = payload.isActive;
 			});
 		},
+		success: { title: "Wallet updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteWallet() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.wallets.delete(slug, id);
-			return result;
+	const collection = walletCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.wallet,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: async (rs) => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Wallet deleted.",
-				type: "success",
-			});
-			queryClient.removeQueries({ queryKey: walletKeys.withId(slug, rs.id) });
-			queryClient.invalidateQueries({ queryKey: walletKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Wallet deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }
 
 /**
@@ -1000,89 +924,59 @@ export function useDeleteWallet() {
  */
 
 export function useCreateCategory() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ payload }: { payload: CategoryPostSchema }) => {
-			const result = await apiClient.categories.create(slug, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Category created.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = categoryCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ payload: CategoryPostSchema },
+		{ payload: CategoryPostSchema; id: string }
+	>({
+		mutationFnName: MUTATION_FNS.category,
+		prepare: ({ payload }) => ({ payload, id: generateId({ use: "uuid" }) }),
+		onMutate: ({ payload, id }) => {
+			collection.insert({
+				id,
+				name: payload.name,
+				description: payload.description ?? null,
+				color: payload.color ?? "gray",
+				type: payload.type,
 			});
 		},
+		success: { title: "Category created.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useEditCategory() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id, payload }: { id: string; payload: CategoryPatchSchema }) => {
-			const result = await apiClient.categories.edit(slug, id, payload);
-			return result;
-		},
-		onSuccess: () => {
-			haptics.trigger("success");
-			playConfirmSound();
-			toastManager.add({
-				title: "Category updated.",
-				type: "success",
-			});
-			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
+	const collection = categoryCollectionFactory(slug);
+
+	return useLocalMutation<
+		{ id: string; payload: CategoryPatchSchema },
+		{ id: string; payload: CategoryPatchSchema }
+	>({
+		mutationFnName: MUTATION_FNS.category,
+		prepare: ({ id, payload }) => ({ id, payload }),
+		onMutate: ({ id, payload }) => {
+			collection.update(id, (draft) => {
+				if (payload.name !== undefined) draft.name = payload.name;
+				if (payload.description !== undefined) draft.description = payload.description;
+				if (payload.color !== undefined) draft.color = payload.color;
 			});
 		},
+		success: { title: "Category updated.", sound: playConfirmSound },
 	});
-	return mutation;
 }
 
 export function useDeleteCategory() {
-	const queryClient = useQueryClient();
 	const { slug } = routeApi.useParams();
-	const mutation = useMutation({
-		mutationFn: async ({ id }: { id: string }) => {
-			const result = await apiClient.categories.delete(slug, id);
-			return result;
+	const collection = categoryCollectionFactory(slug);
+
+	return useLocalMutation<{ id: string }, { id: string }>({
+		mutationFnName: MUTATION_FNS.category,
+		prepare: ({ id }) => ({ id }),
+		onMutate: ({ id }) => {
+			collection.delete(id);
 		},
-		onSuccess: async (rs) => {
-			haptics.trigger("warning");
-			playDropSound();
-			toastManager.add({
-				title: "Category deleted.",
-				type: "success",
-			});
-			queryClient.removeQueries({ queryKey: categoryKeys.withId(slug, rs.id) });
-			queryClient.invalidateQueries({ queryKey: categoryKeys.all(slug) });
-		},
-		onError: (error) => {
-			haptics.trigger("error");
-			toastManager.add({
-				title: "Uh oh! Something went wrong.",
-				description: error.message,
-				type: "error",
-			});
-		},
+		success: { title: "Category deleted.", haptic: "warning", sound: playDropSound },
 	});
-	return mutation;
 }

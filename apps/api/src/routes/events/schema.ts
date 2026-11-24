@@ -36,17 +36,21 @@ export const LiteEventSchema = BasedEventSchema.pick({
 	currency: true,
 	startDate: true,
 	endDate: true,
-}).transform((val) => ({
-	...val,
-	realBudget: val.budget,
-	budget:
-		val.budget != null && val.currency !== null
-			? monetary.fromRealAmount(val.budget, val.currency)
-			: null,
-}));
+})
+	.extend({ txid: z.coerce.number() })
+	.transform((val) => ({
+		...val,
+		realBudget: val.budget,
+		budget:
+			val.budget != null && val.currency !== null
+				? monetary.fromRealAmount(val.budget, val.currency)
+				: null,
+	}));
 
 export const InsertEventSchema = z
 	.object({
+		id: z.uuidv7().optional(),
+		publicId: z.string().optional(),
 		title: z.string().min(1),
 		description: z.string().optional(),
 		startDate: z.string().optional(),
@@ -87,4 +91,5 @@ export const UpdateEventSchema = z
 
 export const DeleteEventSchema = z.object({
 	id: z.uuidv7(),
+	txid: z.coerce.number(),
 });

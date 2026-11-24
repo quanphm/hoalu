@@ -27,7 +27,7 @@ npm-debug.log*
 .playwright-mcp
 .playwright-cli
 
-# Read-only reference checkouts (repos/effect, repos/maple, repos/flexlayout).
+# Read-only reference checkouts (repos/effect, repos/maple, repos/flexlayout, repos/tanstack-db).
 # Not committed — refresh with `bun run repos:sync`. Ignored so they stay out of
 # git status and out of tool walks: `oxlint --lsp` finds nested configs with the
 # `ignore` crate, which reads .gitignore but not .ignore, so the upstream

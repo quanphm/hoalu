@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@hoalu/http": "workspace:*",
-		"hono-openapi": "^1.5.0",
+		"hono-openapi": "^1.6.0",
 		"hono-pino": "^0.10.3",
 		"hono-rate-limiter": "^0.5.4",
 		"pino": "^10.4.0",

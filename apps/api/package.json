@@ -22,8 +22,8 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.1166.0",
-		"@aws-sdk/s3-request-presigner": "^3.1166.0",
+		"@aws-sdk/client-s3": "^3.1175.0",
+		"@aws-sdk/s3-request-presigner": "^3.1175.0",
 		"@better-auth/api-key": "catalog:",
 		"@better-auth/core": "catalog:",
 		"@electric-sql/client": "^1.5.28",
@@ -36,7 +36,7 @@
 		"@hoalu/ids": "workspace:*",
 		"@hoalu/schema": "workspace:*",
 		"@hoalu/stdlib": "workspace:*",
-		"@hono/node-server": "^2.1.6",
+		"@hono/node-server": "^2.1.11",
 		"@hono/zod-validator": "^0.8.0",
 		"@react-email/render": "^2.3.1",
 		"@scalar/hono-api-reference": "^0.10.20",
@@ -46,7 +46,7 @@
 		"better-auth": "catalog:",
 		"drizzle-orm": "^0.45.4",
 		"hono": "catalog:",
-		"hono-openapi": "^1.5.0",
+		"hono-openapi": "^1.6.0",
 		"ioredis": "^5.11.0",
 		"nodemailer": "^8.0.11",
 		"pg": "^8.23.1",

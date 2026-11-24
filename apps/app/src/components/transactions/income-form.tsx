@@ -262,7 +262,7 @@ export function EditIncomeForm(props: { data: SyncedIncome; navigation: Transact
 			description: props.data.description ?? "",
 			date: toLocalISOString(datetime.format(new Date(props.data.date), "yyyy-MM-dd")),
 			transaction: {
-				value: props.data.amount ?? 0,
+				value: props.data.realAmount ?? 0,
 				currency: props.data.currency ?? workspace.metadata.currency,
 			},
 			walletId: props.data.wallet.id,

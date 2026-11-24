@@ -194,8 +194,8 @@ export function CreateExpenseForm() {
 			if (value.attachments.length > 0) {
 				await expenseFilesMutation.mutateAsync({
 					id: expense.id,
-					title: expense.title,
-					date: expense.date,
+					title: value.title,
+					date: value.date,
 					files: value.attachments,
 				});
 				attachmentsRef.current?.clearFiles();
@@ -408,7 +408,7 @@ function SetUpRecurringBillPrompt({ expense }: { expense: SyncedExpense }) {
 						payload: {
 							id: expense.id,
 							title: expense.title,
-							amount: expense.amount,
+							amount: expense.realAmount,
 							currency: expense.currency,
 							repeat: expense.repeat,
 							date: expense.date,
@@ -471,7 +471,7 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 			description: props.data.description ?? "",
 			date: toLocalISOString(datetime.format(new Date(props.data.date), "yyyy-MM-dd")),
 			transaction: {
-				value: props.data.amount ?? 0,
+				value: props.data.realAmount ?? 0,
 				currency: props.data.currency ?? workspace.metadata.currency,
 			},
 			walletId: props.data.wallet.id ?? "",

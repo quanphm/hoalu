@@ -24,6 +24,8 @@ export const WalletSchema = z.object({
 export const WalletsSchema = z.array(WalletSchema);
 
 export const InsertWalletSchema = z.object({
+	id: z.uuidv7().optional(),
+	publicId: z.string().optional(),
 	name: z.string().min(1),
 	description: z.optional(z.string()),
 	currency: CurrencySchema,
@@ -44,6 +46,7 @@ export const UpdateWalletSchema = z
 
 export const DeleteWalletSchema = z.object({
 	id: z.uuidv7(),
+	txid: z.coerce.number(),
 });
 
 export const LiteWalletSchema = WalletSchema.pick({
@@ -53,4 +56,4 @@ export const LiteWalletSchema = WalletSchema.pick({
 	currency: true,
 	type: true,
 	isActive: true,
-});
+}).extend({ txid: z.coerce.number() });

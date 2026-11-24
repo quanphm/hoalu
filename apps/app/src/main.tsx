@@ -6,12 +6,17 @@ import { createRoot } from "react-dom/client";
 import { DefaultCatchBoundary } from "#app/components/layouts/default-catch-boundary.tsx";
 import { NotFound } from "#app/components/not-found.tsx";
 import { UiProvider } from "#app/components/providers/ui-provider.tsx";
+import { initPersistence } from "#app/lib/collections/persistence.ts";
 import { verifyEnv } from "#app/lib/env.ts";
+import { requestPersistentStorage } from "#app/lib/persistent-storage.ts";
 import { queryClient } from "#app/lib/query-client.ts";
+import { initQueryPersistence } from "#app/lib/query-persistence.ts";
 
 import { routeTree } from "./routeTree.gen";
 
 verifyEnv();
+
+void requestPersistentStorage();
 
 const router = createTanStackRouter({
 	routeTree,
@@ -60,9 +65,16 @@ function App() {
 
 if (rootElement) {
 	const root = createRoot(rootElement);
-	root.render(
-		<StrictMode>
-			<App />
-		</StrictMode>,
-	);
+
+	async function bootstrap() {
+		await initPersistence();
+		await initQueryPersistence();
+		root.render(
+			<StrictMode>
+				<App />
+			</StrictMode>,
+		);
+	}
+
+	void bootstrap();
 }

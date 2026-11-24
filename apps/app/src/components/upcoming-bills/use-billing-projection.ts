@@ -68,8 +68,8 @@ function localToday(): string {
 export function useBillingProjection(): BillingProjection {
 	const workspace = useWorkspace();
 
-	const { data: bills } = useLiveQuery(
-		(q) =>
+	const { data: bills } = useLiveQuery({
+		query: (q) =>
 			q
 				.from({ bill: recurringBillCollectionFactory(workspace.slug) })
 				.innerJoin({ wallet: walletCollectionFactory(workspace.slug) }, ({ bill, wallet }) =>
@@ -84,13 +84,11 @@ export function useBillingProjection(): BillingProjection {
 					category_name: category?.name ?? null,
 					category_color: category?.color ?? null,
 				})),
-		[workspace.slug],
-	);
+	});
 
-	const { data: expenses } = useLiveQuery(
-		(q) => q.from({ expense: expenseCollectionFactory(workspace.slug) }),
-		[workspace.slug],
-	);
+	const { data: expenses } = useLiveQuery({
+		query: (q) => q.from({ expense: expenseCollectionFactory(workspace.slug) }),
+	});
 
 	const today = localToday();
 

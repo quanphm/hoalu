@@ -2,11 +2,14 @@ import { OpenAPI } from "@hoalu/furnace";
 import { HTTPStatus } from "@hoalu/http/http-status";
 import { createIssueMsg } from "@hoalu/http/standard-validate";
 import { generateId } from "@hoalu/ids/generate-id";
+import { tryCatch } from "@hoalu/stdlib/try-catch";
 import { describeRoute } from "hono-openapi";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
+import { db } from "#api/db/index.ts";
 import { createHonoInstance } from "#api/lib/create-app.ts";
+import { currentXactId } from "#api/lib/xact-id.ts";
 import { workspaceMember } from "#api/middlewares/workspace-member.ts";
 import { WalletRepository } from "#api/routes/wallets/repository.ts";
 import {
@@ -122,18 +125,41 @@ const route = app
 			}
 			const workspace = c.get("workspace");
 			const payload = c.req.valid("json");
+			// `wallet` has no `public_id` column: the client may still send one for a
+			// uniform create payload, so it is accepted here and dropped.
+			const { id, publicId: _publicId, ...rest } = payload;
+			const walletId = id ?? generateId({ use: "uuid" });
 
-			const wallet = await walletRepository.insert({
-				...payload,
-				id: generateId({ use: "uuid" }),
-				ownerId: user.id,
-				workspaceId: workspace.id,
-			});
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const inserted = await walletRepository.insert(
+						{
+							...rest,
+							id: walletId,
+							ownerId: user.id,
+							workspaceId: workspace.id,
+						},
+						tx,
+					);
+
+					const row =
+						inserted ??
+						(await walletRepository.findOne({ id: walletId, workspaceId: workspace.id }, tx));
+
+					return { row, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
+			}
+
+			const wallet = result.data.row;
 			if (!wallet) {
 				return c.json({ message: "Create failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteWalletSchema.safeParse(wallet);
+			const parsed = LiteWalletSchema.safeParse({ ...wallet, txid: result.data.txid });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -212,16 +238,29 @@ const route = app
 				}
 			}
 
-			const queryData = await walletRepository.update({
-				id: wallet.id,
-				workspaceId: workspace.id,
-				payload,
-			});
-			if (!queryData) {
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					const updated = await walletRepository.update(
+						{
+							id: wallet.id,
+							workspaceId: workspace.id,
+							payload,
+						},
+						tx,
+					);
+
+					return { updated, txid: await currentXactId(tx) };
+				}),
+			);
+
+			if (result.error || !result.data.updated) {
 				return c.json({ message: "Update failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const parsed = LiteWalletSchema.safeParse(queryData);
+			const parsed = LiteWalletSchema.safeParse({
+				...result.data.updated,
+				txid: result.data.txid,
+			});
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },
@@ -263,32 +302,42 @@ const route = app
 				id: param.id,
 				workspaceId: workspace.id,
 			});
-			if (!wallet || (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE)) {
-				return c.json(
-					{ message: "You don't have permission to delete this wallet" },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
+
+			// A retried delete must never fail: a wallet that is already gone is a no-op.
+			if (wallet) {
+				if (wallet.owner.id !== user.id && membership.role !== WORKSPACE_CREATOR_ROLE) {
+					return c.json(
+						{ message: "You don't have permission to delete this wallet" },
+						HTTPStatus.codes.BAD_REQUEST,
+					);
+				}
+
+				// workspace must has atleast 1 active wallet
+				// Prevent deactivate the last available wallet
+				const wallets = await walletRepository.findAllByWorkspaceId({
+					workspaceId: workspace.id,
+				});
+				const activeWallets = wallets.filter((w) => w.isActive);
+				if (activeWallets.length === 1 && wallet.isActive) {
+					return c.json(
+						{ message: "This wallet cannot be deleted because it's the only available wallet" },
+						HTTPStatus.codes.BAD_REQUEST,
+					);
+				}
 			}
 
-			// workspace must has atleast 1 active wallet
-			// Prevent deactivate the last available wallet
-			const wallets = await walletRepository.findAllByWorkspaceId({
-				workspaceId: workspace.id,
-			});
-			const activeWallets = wallets.filter((w) => w.isActive);
-			if (activeWallets.length === 1 && wallet.isActive) {
-				return c.json(
-					{ message: "This wallet cannot be deleted because it's the only available wallet" },
-					HTTPStatus.codes.BAD_REQUEST,
-				);
+			const result = await tryCatch.async(
+				db.transaction(async (tx) => {
+					await walletRepository.delete({ id: param.id, workspaceId: workspace.id }, tx);
+					return currentXactId(tx);
+				}),
+			);
+
+			if (result.error) {
+				return c.json({ message: "Delete failed" }, HTTPStatus.codes.BAD_REQUEST);
 			}
 
-			const queryData = await walletRepository.delete({
-				id: wallet.id,
-				workspaceId: workspace.id,
-			});
-
-			const parsed = DeleteWalletSchema.safeParse(queryData);
+			const parsed = DeleteWalletSchema.safeParse({ id: param.id, txid: result.data });
 			if (!parsed.success) {
 				return c.json(
 					{ message: createIssueMsg(parsed.error.issues) },

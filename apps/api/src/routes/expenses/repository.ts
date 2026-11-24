@@ -2,6 +2,8 @@ import { and, desc, eq, sql } from "drizzle-orm";
 
 import { db, schema } from "#api/db/index.ts";
 
+import type { Transaction } from "#api/lib/xact-id.ts";
+
 type NewExpense = typeof schema.expense.$inferInsert;
 
 export class ExpenseRepository {
@@ -25,8 +27,8 @@ export class ExpenseRepository {
 		return result;
 	}
 
-	async findOne(param: { id: string; workspaceId: string }) {
-		const queryData = await db
+	async findOne(param: { id: string; workspaceId: string }, tx?: Transaction) {
+		const queryData = await (tx ?? db)
 			.select()
 			.from(schema.expense)
 			.innerJoin(schema.user, eq(schema.expense.creatorId, schema.user.id))
