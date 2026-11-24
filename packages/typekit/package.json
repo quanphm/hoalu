@@ -1,6 +1,6 @@
 {
 	"name": "@hoalu/typekit",
-	"version": "0.34.4",
+	"version": "0.35.0",
 	"description": "A collection of essential TypeScript types - inspired by sindresorhus/type-fest",
 	"files": [
 		"index.d.ts"
