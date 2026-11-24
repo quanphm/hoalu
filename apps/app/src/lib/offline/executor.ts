@@ -83,6 +83,9 @@ export function getOfflineExecutor(slug: string) {
 
 	const executor = createExecutor(slug);
 	executorBySlug.set(slug, executor);
+	if (import.meta.env.DEV) {
+		Object.assign(window, { __hoaluExecutor: executor });
+	}
 	return executor;
 }
 

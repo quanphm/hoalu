@@ -1,7 +1,6 @@
 import { toastManager } from "@hoalu/ui/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useMemo, useRef } from "react";
 import { WebHaptics } from "web-haptics";
 
 import { getOfflineExecutor } from "#app/lib/offline/executor.ts";
@@ -21,7 +20,7 @@ interface LocalMutationOptions<TInput, TVars> {
 }
 
 function showError(error: Error) {
-	haptics.trigger("error");
+	void haptics.trigger("error");
 	toastManager.add({
 		title: "Uh oh! Something went wrong.",
 		description: error.message,
@@ -39,33 +38,23 @@ export function useLocalMutation<TInput, TVars>(options: LocalMutationOptions<TI
 	const { slug } = routeApi.useParams();
 	const executor = getOfflineExecutor(slug);
 
-	const prepareRef = useRef(options.prepare);
-	prepareRef.current = options.prepare;
-	const onMutateRef = useRef(options.onMutate);
-	onMutateRef.current = options.onMutate;
-
-	const action = useMemo(
-		() =>
-			executor.createOfflineAction<TVars>({
-				mutationFnName: options.mutationFnName,
-				onMutate: (vars) => onMutateRef.current(vars),
-			}),
-		[executor, options.mutationFnName],
-	);
-
-	const successRef = useRef(options.success);
-	successRef.current = options.success;
-
 	return useMutation({
+		// React Query pauses mutations while `navigator.onLine` is false. The
+		// executor is exactly what makes an offline write work, so it must run.
+		networkMode: "always",
 		mutationFn: async (input: TInput) => {
-			const vars = prepareRef.current(input);
+			const vars = options.prepare(input);
+			const action = executor.createOfflineAction<TVars>({
+				mutationFnName: options.mutationFnName,
+				onMutate: options.onMutate,
+			});
 			const transaction = action(vars);
 			void transaction.when("settled").catch(showError);
 			return vars;
 		},
 		onSuccess: () => {
-			const { title, haptic, sound } = successRef.current;
-			haptics.trigger(haptic ?? "success");
+			const { title, haptic, sound } = options.success;
+			void haptics.trigger(haptic ?? "success");
 			sound?.();
 			toastManager.add({ title, type: "success" });
 		},
