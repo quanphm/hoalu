@@ -3,16 +3,19 @@ import { calculateCrossRate, lookupExchangeRate } from "@hoalu/finance/exchange-
 import { monetary } from "@hoalu/finance/monetary";
 import { observable } from "@legendapp/state";
 import { useValue } from "@legendapp/state/react";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { createLiveQueryCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 
 import { useFxRateData } from "#app/hooks/use-fx-rate-data.ts";
 import { useWorkspace } from "#app/hooks/use-workspace.ts";
+import { createDerivedViewCache } from "#app/lib/collections/derived-view-cache.ts";
 import {
 	categoryCollectionFactory,
 	recurringBillCollectionFactory,
 	walletCollectionFactory,
 } from "#app/lib/collections/index.ts";
+
+import type { FxRateRow } from "#app/services/dashboard-model.ts";
 
 export const REPEAT_ORDER = ["daily", "weekly", "monthly", "yearly", "one-time"];
 
@@ -24,107 +27,13 @@ export function useSelectedRecurringBill() {
 	return { bill, onSelectBill };
 }
 
-export function useLiveQueryRecurringBills() {
-	const workspace = useWorkspace();
-	const collection = recurringBillCollectionFactory(workspace.slug);
-	const walletCollection = walletCollectionFactory(workspace.slug);
-	const categoryCollection = categoryCollectionFactory(workspace.slug);
+function buildBillsView(slug: string) {
+	const collection = recurringBillCollectionFactory(slug);
+	const walletCollection = walletCollectionFactory(slug);
+	const categoryCollection = categoryCollectionFactory(slug);
 
-	const { data } = useLiveQuery({
-		query: (q) =>
-			q
-				.from({ bill: collection })
-				.innerJoin({ wallet: walletCollection }, ({ bill, wallet }) =>
-					eq(bill.wallet_id, wallet.id),
-				)
-				.leftJoin({ category: categoryCollection }, ({ bill, category }) =>
-					eq(bill.category_id, category.id),
-				)
-				.orderBy(({ bill }) => bill.created_at, "desc")
-				.select(({ bill, wallet, category }) => ({
-					...bill,
-					wallet_name: wallet.name,
-					category_name: category?.name ?? null,
-					category_color: category?.color ?? null,
-				})),
-	});
-
-	const fxRateData = useFxRateData();
-
-	return useMemo(() => {
-		if (!data) return [];
-		return data
-			.filter((b) => b.is_active)
-			.map((b) => {
-				const amount = monetary.fromRealAmount(Number(b.amount), b.currency);
-				const workspaceCurrency = workspace.metadata.currency;
-				const date = b.anchor_date ?? new Date().toISOString().slice(0, 10);
-
-				let convertedAmount = amount;
-				if (b.currency !== workspaceCurrency) {
-					const exchangeRate = lookupExchangeRate(
-						{
-							findDirect: ([from, to], d) => {
-								const match = fxRateData.find((rate) => {
-									const inRange =
-										new Date(rate.validFrom) <= new Date(d) &&
-										new Date(d) <= new Date(rate.validTo);
-									const correctPair =
-										(rate.from === from && rate.to === to) ||
-										(rate.from === to && rate.to === from);
-									return inRange && correctPair;
-								});
-								if (!match) return null;
-								return {
-									fromCurrency: match.from,
-									toCurrency: match.to,
-									exchangeRate: match.exchangeRate,
-									inverseRate: match.inverseRate,
-								};
-							},
-							findCrossRate: ([from, to], d) => {
-								const usdRates = fxRateData.filter((rate) => {
-									const inRange =
-										new Date(rate.validFrom) <= new Date(d) &&
-										new Date(d) <= new Date(rate.validTo);
-									return inRange && (rate.to === from || rate.to === to);
-								});
-								return calculateCrossRate({
-									pair: [from, to],
-									usdToFrom: usdRates.find((r) => r.to === from),
-									usdToTo: usdRates.find((r) => r.to === to),
-								});
-							},
-						},
-						[b.currency, workspaceCurrency],
-						date,
-					);
-
-					const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
-					const factor = isNoCent ? 1 : 100;
-					convertedAmount =
-						Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
-				}
-
-				return {
-					...b,
-					amount,
-					realAmount: Number(b.amount),
-					convertedAmount,
-				};
-			});
-	}, [data, fxRateData, workspace.metadata.currency]);
-}
-
-export type SyncedRecurringBill = ReturnType<typeof useLiveQueryRecurringBills>[number];
-
-export function useAllRecurringBills() {
-	const workspace = useWorkspace();
-	const collection = recurringBillCollectionFactory(workspace.slug);
-	const walletCollection = walletCollectionFactory(workspace.slug);
-	const categoryCollection = categoryCollectionFactory(workspace.slug);
-
-	const { data } = useLiveQuery({
+	return createLiveQueryCollection({
+		startSync: true,
 		query: (q) =>
 			q
 				.from({ bill: collection })
@@ -143,66 +52,111 @@ export function useAllRecurringBills() {
 					category_color: category?.color ?? null,
 				})),
 	});
+}
 
+const billViews = createDerivedViewCache(buildBillsView);
+
+function getBillsView(slug: string) {
+	return billViews.get(slug);
+}
+
+export function preloadBillsView(slug: string) {
+	void getBillsView(slug).preload();
+}
+
+export function clearBillsView(slug?: string) {
+	if (slug) {
+		billViews.delete(slug);
+		return;
+	}
+	billViews.clear();
+}
+
+interface ConvertibleBill {
+	amount: unknown;
+	currency: string;
+	anchor_date: string | null;
+}
+
+function convertBill(bill: ConvertibleBill, fxRateData: FxRateRow[], workspaceCurrency: string) {
+	const amount = monetary.fromRealAmount(Number(bill.amount), bill.currency);
+	const date = bill.anchor_date ?? new Date().toISOString().slice(0, 10);
+
+	let convertedAmount = amount;
+	if (bill.currency !== workspaceCurrency) {
+		const exchangeRate = lookupExchangeRate(
+			{
+				findDirect: ([from, to], d) => {
+					const match = fxRateData.find((rate) => {
+						const inRange =
+							new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
+						const correctPair =
+							(rate.from === from && rate.to === to) || (rate.from === to && rate.to === from);
+						return inRange && correctPair;
+					});
+					if (!match) return null;
+					return {
+						fromCurrency: match.from,
+						toCurrency: match.to,
+						exchangeRate: match.exchangeRate,
+						inverseRate: match.inverseRate,
+					};
+				},
+				findCrossRate: ([from, to], d) => {
+					const usdRates = fxRateData.filter((rate) => {
+						const inRange =
+							new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
+						return inRange && (rate.to === from || rate.to === to);
+					});
+					return calculateCrossRate({
+						pair: [from, to],
+						usdToFrom: usdRates.find((r) => r.to === from),
+						usdToTo: usdRates.find((r) => r.to === to),
+					});
+				},
+			},
+			[bill.currency, workspaceCurrency],
+			date,
+		);
+
+		const isNoCent = zeroDecimalCurrencies.find((c) => c === bill.currency);
+		const factor = isNoCent ? 1 : 100;
+		convertedAmount =
+			Number(bill.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
+	}
+
+	return { amount, realAmount: Number(bill.amount), convertedAmount };
+}
+
+export function useLiveQueryRecurringBills() {
+	const workspace = useWorkspace();
+	const { data } = useLiveQuery(getBillsView(workspace.slug));
 	const fxRateData = useFxRateData();
 
 	return useMemo(() => {
 		if (!data) return [];
-		return data.map((b) => {
-			const amount = monetary.fromRealAmount(Number(b.amount), b.currency);
-			const workspaceCurrency = workspace.metadata.currency;
-			const date = b.anchor_date ?? new Date().toISOString().slice(0, 10);
+		return data
+			.filter((bill) => bill.is_active)
+			.map((bill) => ({
+				...bill,
+				...convertBill(bill, fxRateData, workspace.metadata.currency),
+			}));
+	}, [data, fxRateData, workspace.metadata.currency]);
+}
 
-			let convertedAmount = amount;
-			if (b.currency !== workspaceCurrency) {
-				const exchangeRate = lookupExchangeRate(
-					{
-						findDirect: ([from, to], d) => {
-							const match = fxRateData.find((rate) => {
-								const inRange =
-									new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
-								const correctPair =
-									(rate.from === from && rate.to === to) || (rate.from === to && rate.to === from);
-								return inRange && correctPair;
-							});
-							if (!match) return null;
-							return {
-								fromCurrency: match.from,
-								toCurrency: match.to,
-								exchangeRate: match.exchangeRate,
-								inverseRate: match.inverseRate,
-							};
-						},
-						findCrossRate: ([from, to], d) => {
-							const usdRates = fxRateData.filter((rate) => {
-								const inRange =
-									new Date(rate.validFrom) <= new Date(d) && new Date(d) <= new Date(rate.validTo);
-								return inRange && (rate.to === from || rate.to === to);
-							});
-							return calculateCrossRate({
-								pair: [from, to],
-								usdToFrom: usdRates.find((r) => r.to === from),
-								usdToTo: usdRates.find((r) => r.to === to),
-							});
-						},
-					},
-					[b.currency, workspaceCurrency],
-					date,
-				);
+export type SyncedRecurringBill = ReturnType<typeof useLiveQueryRecurringBills>[number];
 
-				const isNoCent = zeroDecimalCurrencies.find((c) => c === b.currency);
-				const factor = isNoCent ? 1 : 100;
-				convertedAmount =
-					Number(b.amount) * ((exchangeRate ? exchangeRate.exchangeRate : 0) / factor);
-			}
+export function useAllRecurringBills() {
+	const workspace = useWorkspace();
+	const { data } = useLiveQuery(getBillsView(workspace.slug));
+	const fxRateData = useFxRateData();
 
-			return {
-				...b,
-				amount,
-				realAmount: Number(b.amount),
-				convertedAmount,
-			};
-		});
+	return useMemo(() => {
+		if (!data) return [];
+		return data.map((bill) => ({
+			...bill,
+			...convertBill(bill, fxRateData, workspace.metadata.currency),
+		}));
 	}, [data, fxRateData, workspace.metadata.currency]);
 }
 

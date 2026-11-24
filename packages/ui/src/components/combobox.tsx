@@ -135,11 +135,13 @@ function ComboboxPopup({
 	sideOffset = 4,
 	alignOffset,
 	align = "start",
+	collisionPadding = 16,
 	...props
 }: ComboboxPrimitive.Popup.Props & {
 	align?: ComboboxPrimitive.Positioner.Props["align"];
 	sideOffset?: ComboboxPrimitive.Positioner.Props["sideOffset"];
 	alignOffset?: ComboboxPrimitive.Positioner.Props["alignOffset"];
+	collisionPadding?: ComboboxPrimitive.Positioner.Props["collisionPadding"];
 	side?: ComboboxPrimitive.Positioner.Props["side"];
 }) {
 	const { chipsRef } = React.useContext(ComboboxContext);
@@ -151,6 +153,7 @@ function ComboboxPopup({
 				alignOffset={alignOffset}
 				anchor={chipsRef}
 				className="z-50 select-none"
+				collisionPadding={collisionPadding}
 				data-slot="combobox-positioner"
 				side={side}
 				sideOffset={sideOffset}
@@ -199,7 +202,7 @@ function ComboboxItem({
 			<ComboboxPrimitive.ItemIndicator className="col-start-1" keepMounted={indicator != null}>
 				{indicator ?? <CheckIcon className="size-4" />}
 			</ComboboxPrimitive.ItemIndicator>
-			<div className="col-start-2">{children}</div>
+			<div className="col-start-2 min-w-0">{children}</div>
 		</ComboboxPrimitive.Item>
 	);
 }

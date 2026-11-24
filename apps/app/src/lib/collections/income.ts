@@ -1,7 +1,7 @@
 import { CurrencySchema, IsoDateSchema, RepeatSchema } from "@hoalu/schema/schema";
 import { persistedCollectionOptions } from "@tanstack/browser-db-sqlite-persistence";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
-import { createCollection } from "@tanstack/react-db";
+import { BasicIndex, createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
 import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
@@ -39,19 +39,22 @@ const factory = createCollectionFactory("income", (slug: string) => {
 	});
 
 	const persistence = getPersistence();
-	if (!persistence) {
-		return createCollection(options);
-	}
+	const collection = persistence
+		? createCollection(
+				persistedCollectionOptions({
+					...options,
+					persistence,
+					schemaVersion: SCHEMA_VERSION,
+					initialRender: INITIAL_RENDER,
+				}),
+			)
+		: createCollection(options);
 
-	return createCollection(
-		persistedCollectionOptions({
-			...options,
-			persistence,
-			schemaVersion: SCHEMA_VERSION,
-			initialRender: INITIAL_RENDER,
-		}),
-	);
+	collection.createIndex((row) => row.wallet_id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.category_id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.date, { indexType: BasicIndex });
+	return collection;
 });
 
-export const incomeCollectionFactory = factory.get;
-export const clearIncomeCollection = factory.clear;
+export const incomeCollectionFactory = (slug: string) => factory.get(slug);
+export const clearIncomeCollection = (slug?: string) => factory.clear(slug);

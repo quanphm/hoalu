@@ -1,5 +1,4 @@
 import { CalendarStarIcon, PlusIcon } from "@hoalu/icons/phosphor";
-import { Badge } from "@hoalu/ui/badge";
 import { Button } from "@hoalu/ui/button";
 import {
 	Dialog,
@@ -13,11 +12,11 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { CreateEventForm } from "#app/components/events/event-actions.tsx";
-import { useLiveQueryEvents } from "#app/components/events/use-events.ts";
+import { type SyncedEvent, useLiveQueryEvents } from "#app/components/events/use-events.ts";
 
 import { Field, FieldDescription, FieldLabel, FieldMessage } from "./components";
 import { useFieldContext } from "./context";
-import { PillPicker, type PillOption } from "./pill-picker";
+import { PillPicker, type PillOption, type PillSection } from "./pill-picker";
 
 interface Props {
 	label?: React.ReactNode;
@@ -46,18 +45,28 @@ export function SelectEventField(props: Props) {
 		? (allEvents ?? [])
 		: (allEvents ?? []).filter((event) => event.status === "open");
 
-	const options: PillOption[] = [
-		{ value: "", label: "No event" },
-		...events.map((event) => ({
-			value: event.id,
-			label: event.title,
-			meta: event.status ? (
-				<Badge size="sm" variant={event.status === "open" ? "success" : "error"}>
-					{event.status}
-				</Badge>
-			) : undefined,
-		})),
-	];
+	const toOption = (event: SyncedEvent): PillOption => ({
+		value: event.id,
+		label: event.title,
+	});
+	const noEvent: PillOption = { value: "", label: "No event" };
+	const options: PillOption[] = [noEvent, ...events.map(toOption)];
+
+	// A heading replaces the badge a row would otherwise carry, so grouping only pays off when the
+	// list can mix statuses — an open-only picker stays flat.
+	const sections: PillSection[] | undefined = props.showClosed
+		? [
+				{ label: "", options: [noEvent] },
+				{
+					label: "Open",
+					options: events.filter((event) => event.status === "open").map(toOption),
+				},
+				{
+					label: "Closed",
+					options: events.filter((event) => event.status === "closed").map(toOption),
+				},
+			].filter((section) => section.options.length > 0)
+		: undefined;
 
 	const placeholder =
 		props.placeholder ?? (typeof props.label === "string" ? props.label : "Event");
@@ -68,6 +77,7 @@ export function SelectEventField(props: Props) {
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 				<PillPicker
 					options={options}
+					sections={sections}
 					value={field.state.value ?? ""}
 					onValueChange={(value) => field.handleChange(value)}
 					placeholder={placeholder}

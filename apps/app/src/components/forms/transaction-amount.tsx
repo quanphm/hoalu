@@ -239,7 +239,7 @@ export function TransactionAmountInput({
 					onKeyDown={handleAmountKeyDown}
 					className={cn(
 						hero
-							? "field-sizing-content h-10 max-w-full min-w-6 border-none bg-transparent p-0 text-3xl font-medium tracking-tight tabular-nums outline-none"
+							? "h-10 w-full min-w-0 border-none bg-transparent p-0 text-3xl font-medium tracking-tight tabular-nums outline-none"
 							: "bg-background text-foreground min-w-0 flex-1 px-3 py-2 tabular-nums outline-none",
 						hero && !value && "text-muted-foreground/50",
 					)}

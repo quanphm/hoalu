@@ -17,9 +17,8 @@ type MutationTransaction = { transaction: { mutations: Array<PendingMutation> } 
 
 type Row = Record<string, unknown>;
 
-/** Maps only the fields a PATCH actually changed, in the API's camelCase shape. */
 function changedFields(mutation: PendingMutation, mapping: Record<string, string>): Row {
-	const changes: Row = mutation.changes ?? {};
+	const changes = (mutation.changes ?? {}) as Row;
 	const payload: Row = {};
 	for (const [column, field] of Object.entries(mapping)) {
 		if (column in changes) payload[field] = changes[column] ?? null;
@@ -195,24 +194,6 @@ function recurringBillBody(row: Row) {
 	};
 }
 
-function buildPatch(
-	mutation: PendingMutation,
-	mapping: Record<string, string>,
-	fallback: Row,
-): Row {
-	const mapped = changedFields(mutation, mapping);
-	const payload: Row = {};
-	for (const [field, value] of Object.entries(mapped)) {
-		payload[field] = value;
-	}
-	// A create that was retried after a partial apply arrives as an update for a
-	// row the server already has; send the full body so the row converges.
-	if (!("walletId" in payload) && "wallet_id" in (mutation.modified as Row)) {
-		payload.walletId = text((mutation.modified as Row).wallet_id);
-	}
-	return { ...fallback, ...payload };
-}
-
 async function persist(
 	response: () => Promise<Response>,
 	awaitTx: (txid: number) => Promise<unknown>,
@@ -240,7 +221,7 @@ export function createMutationFns(
 								query,
 								json: expenseBody(row) as never,
 							}),
-						awaitTx.expense,
+						awaitTx.expense!,
 					);
 					continue;
 				}
@@ -250,9 +231,9 @@ export function createMutationFns(
 							honoClient.bff.expenses[":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, EXPENSE_FIELDS, {}) as never,
+								json: changedFields(mutation, EXPENSE_FIELDS) as never,
 							}),
-						awaitTx.expense,
+						awaitTx.expense!,
 					);
 					continue;
 				}
@@ -262,7 +243,7 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.expense,
+					awaitTx.expense!,
 				);
 			}
 		},
@@ -277,7 +258,7 @@ export function createMutationFns(
 								query,
 								json: incomeBody(row) as never,
 							}),
-						awaitTx.income,
+						awaitTx.income!,
 					);
 					continue;
 				}
@@ -287,9 +268,9 @@ export function createMutationFns(
 							honoClient.bff.incomes[":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, INCOME_FIELDS, {}) as never,
+								json: changedFields(mutation, INCOME_FIELDS) as never,
 							}),
-						awaitTx.income,
+						awaitTx.income!,
 					);
 					continue;
 				}
@@ -299,7 +280,7 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.income,
+					awaitTx.income!,
 				);
 			}
 		},
@@ -314,7 +295,7 @@ export function createMutationFns(
 								query,
 								json: categoryBody(row) as never,
 							}),
-						awaitTx.category,
+						awaitTx.category!,
 					);
 					continue;
 				}
@@ -324,9 +305,9 @@ export function createMutationFns(
 							honoClient.bff.categories[":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, CATEGORY_FIELDS, {}) as never,
+								json: changedFields(mutation, CATEGORY_FIELDS) as never,
 							}),
-						awaitTx.category,
+						awaitTx.category!,
 					);
 					continue;
 				}
@@ -336,7 +317,7 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.category,
+					awaitTx.category!,
 				);
 			}
 		},
@@ -351,7 +332,7 @@ export function createMutationFns(
 								query,
 								json: walletBody(row) as never,
 							}),
-						awaitTx.wallet,
+						awaitTx.wallet!,
 					);
 					continue;
 				}
@@ -361,9 +342,9 @@ export function createMutationFns(
 							honoClient.bff.wallets[":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, WALLET_FIELDS, {}) as never,
+								json: changedFields(mutation, WALLET_FIELDS) as never,
 							}),
-						awaitTx.wallet,
+						awaitTx.wallet!,
 					);
 					continue;
 				}
@@ -373,7 +354,7 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.wallet,
+					awaitTx.wallet!,
 				);
 			}
 		},
@@ -388,7 +369,7 @@ export function createMutationFns(
 								query,
 								json: eventBody(row) as never,
 							}),
-						awaitTx.event,
+						awaitTx.event!,
 					);
 					continue;
 				}
@@ -398,9 +379,9 @@ export function createMutationFns(
 							honoClient.bff.events[":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, EVENT_FIELDS, {}) as never,
+								json: changedFields(mutation, EVENT_FIELDS) as never,
 							}),
-						awaitTx.event,
+						awaitTx.event!,
 					);
 					continue;
 				}
@@ -410,7 +391,7 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.event,
+					awaitTx.event!,
 				);
 			}
 		},
@@ -425,7 +406,7 @@ export function createMutationFns(
 								query,
 								json: recurringBillBody(row) as never,
 							}),
-						awaitTx.recurringBill,
+						awaitTx.recurringBill!,
 					);
 					continue;
 				}
@@ -435,9 +416,9 @@ export function createMutationFns(
 							honoClient.bff["recurring-bills"][":id"].$patch({
 								query,
 								param: { id: text(row.id) },
-								json: buildPatch(mutation, RECURRING_BILL_FIELDS, {}) as never,
+								json: changedFields(mutation, RECURRING_BILL_FIELDS) as never,
 							}),
-						awaitTx.recurringBill,
+						awaitTx.recurringBill!,
 					);
 					continue;
 				}
@@ -447,12 +428,11 @@ export function createMutationFns(
 							query,
 							param: { id: text((mutation.original as Row).id) },
 						}),
-					awaitTx.recurringBill,
+					awaitTx.recurringBill!,
 				);
 			}
 		},
 
-		/** Bill create + expense link as one outbox entry; both are idempotent. */
 		async [MUTATION_FNS.setupRecurringBill]({ transaction }: MutationTransaction) {
 			const billMutation = transaction.mutations.find((mutation) =>
 				String(mutation.collection.id).startsWith("recurring-bill"),
@@ -469,7 +449,7 @@ export function createMutationFns(
 						query,
 						json: recurringBillBody(billRow) as never,
 					}),
-				awaitTx.recurringBill,
+				awaitTx.recurringBill!,
 			);
 
 			if (!expenseMutation) return;
@@ -481,7 +461,7 @@ export function createMutationFns(
 						param: { id: text(expenseRow.id) },
 						json: { recurringBillId: text(billRow.id) } as never,
 					}),
-				awaitTx.expense,
+				awaitTx.expense!,
 			);
 		},
 	};

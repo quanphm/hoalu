@@ -4,7 +4,7 @@ import { Button } from "@hoalu/ui/button";
 import { useLocalStorage } from "@hoalu/ui/hooks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@hoalu/ui/tooltip";
 import { useValue } from "@legendapp/state/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Suspense, useEffect, useId, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -213,7 +213,7 @@ export function CreateExpenseForm() {
 			e.preventDefault();
 			void form.handleSubmit();
 		},
-		{ enableOnFormTags: true },
+		{ enableOnFormTags: true, enableOnContentEditable: true },
 		[form],
 	);
 
@@ -364,7 +364,9 @@ export function CreateExpenseForm() {
 							<TransactionPanel>
 								<form.AppField
 									name="description"
-									children={(field) => <field.TiptapField label="Note" />}
+									children={(field) => (
+										<field.TiptapField label="Note" onSave={() => void form.handleSubmit()} />
+									)}
 								/>
 							</TransactionPanel>
 
@@ -431,9 +433,10 @@ function EditExpenseAttachments(props: {
 	onFilesChange: (files: File[]) => void;
 }) {
 	const workspace = useWorkspace();
-	const { data: files } = useSuspenseQuery(
-		expenseFilesQueryOptions(workspace.slug, props.expenseId),
-	);
+	const { data: files } = useQuery({
+		...expenseFilesQueryOptions(workspace.slug, props.expenseId),
+		placeholderData: [],
+	});
 	const deleteMutation = useDeleteExpenseFile();
 
 	return (
@@ -524,7 +527,7 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 			e.preventDefault();
 			void form.handleSubmit();
 		},
-		{ enableOnFormTags: true },
+		{ enableOnFormTags: true, enableOnContentEditable: true },
 		[form],
 	);
 
@@ -685,7 +688,9 @@ export function EditExpenseForm(props: { data: SyncedExpense; navigation: Transa
 								<TransactionPanel>
 									<form.AppField
 										name="description"
-										children={(field) => <field.TiptapField label="Note" />}
+										children={(field) => (
+											<field.TiptapField label="Note" onSave={() => void form.handleSubmit()} />
+										)}
 									/>
 								</TransactionPanel>
 

@@ -13,7 +13,6 @@ const routeApi = getRouteApi("/_dashboard/$slug");
 
 interface LocalMutationOptions<TInput, TVars> {
 	mutationFnName: string;
-	/** Adds client-generated ids and defaults before the optimistic insert. */
 	prepare: (input: TInput) => TVars;
 	onMutate: (vars: TVars) => void;
 	success: { title: string; haptic?: HapticInput; sound?: () => void };

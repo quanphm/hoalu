@@ -38,7 +38,7 @@ export function DateChipField(props: { relative?: boolean }) {
 		isRelative || !field.state.value
 			? relativeDateLabel(field.state.value)
 			: formatDateNear(selected ?? new Date());
-	const isToday = label === "Today";
+	const hasValue = Boolean(field.state.value);
 
 	const handleSelect = (date: Date | undefined) => {
 		if (!date) return;
@@ -58,7 +58,7 @@ export function DateChipField(props: { relative?: boolean }) {
 						aria-label={`Date: ${label}`}
 						className={cn(
 							pillClass.base,
-							isToday ? pillClass.idle : pillClass.active,
+							hasValue ? pillClass.active : pillClass.idle,
 							"tabular-nums",
 						)}
 					>

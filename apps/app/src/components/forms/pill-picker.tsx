@@ -61,8 +61,10 @@ export function PillPickerPanel<Value extends string, Option extends PillOption<
 	popupClassName,
 }: PillPickerPanelProps<Value, Option>) {
 	return (
-		<ComboboxPopup className={cn("w-72", popupClassName)}>
-			<div className={cn("p-1.5", !searchable && "sr-only h-0 p-0")}>
+		<ComboboxPopup className={cn("w-72 max-sm:w-(--available-width)", popupClassName)}>
+			<div
+				className={cn("border-border/70 border-b p-1.5", !searchable && "sr-only h-0 border-0 p-0")}
+			>
 				<ComboboxInput
 					showTrigger={false}
 					placeholder={searchPlaceholder}
@@ -75,7 +77,9 @@ export function PillPickerPanel<Value extends string, Option extends PillOption<
 				{sections
 					? (group: { value: string; items: Option[] }) => (
 							<ComboboxGroup key={group.value} items={group.items} className="pb-1 last:pb-0">
-								<ComboboxGroupLabel className="pt-2 pb-1">{group.value}</ComboboxGroupLabel>
+								{group.value && (
+									<ComboboxGroupLabel className="pt-2 pb-1">{group.value}</ComboboxGroupLabel>
+								)}
 								<ComboboxCollection>{(option: Option) => renderOption(option)}</ComboboxCollection>
 							</ComboboxGroup>
 						)
@@ -149,13 +153,13 @@ export function PillPicker<Value extends string>({
 		<ComboboxItem
 			key={option.value}
 			value={option}
-			className="grid-cols-[1fr_1rem] ps-2 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1"
+			className="grid-cols-[1fr_1rem] ps-2.5 pe-2 *:first:col-start-2 *:last:col-start-1 *:last:row-start-1 pointer-coarse:min-h-10"
 		>
 			<span className="flex min-w-0 items-center gap-2">
 				{option.icon}
-				<span className="truncate">{option.label}</span>
+				<span className="min-w-0 flex-1 truncate">{option.label}</span>
 				{option.meta && (
-					<span className="text-muted-foreground ms-auto shrink-0 text-xs">{option.meta}</span>
+					<span className="text-muted-foreground shrink-0 text-xs">{option.meta}</span>
 				)}
 			</span>
 		</ComboboxItem>

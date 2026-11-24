@@ -345,7 +345,7 @@ export function ScanQueueReviewDialogContent() {
 									<tbody>
 										{data.items.map((item, idx) => (
 											<tr key={idx} className="border-b last:border-0">
-												<td className="wrap-anywhere py-1 pr-4">
+												<td className="py-1 pr-4 wrap-anywhere">
 													{item.name}
 													{item.quantity && item.quantity > 1 && (
 														<span className="text-muted-foreground ml-1">x{item.quantity}</span>

@@ -1,7 +1,7 @@
 import { CurrencySchema, RepeatSchema } from "@hoalu/schema/schema";
 import { persistedCollectionOptions } from "@tanstack/browser-db-sqlite-persistence";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
-import { createCollection } from "@tanstack/react-db";
+import { BasicIndex, createCollection } from "@tanstack/react-db";
 import * as z from "zod";
 
 import { createCollectionFactory } from "#app/lib/collections/create-collection-factory.ts";
@@ -42,21 +42,25 @@ const factory = createCollectionFactory("recurring-bill", (slug: string) => {
 	});
 
 	const persistence = getPersistence();
-	if (!persistence) {
-		return createCollection(options);
-	}
+	const collection = persistence
+		? createCollection(
+				persistedCollectionOptions({
+					...options,
+					persistence,
+					schemaVersion: SCHEMA_VERSION,
+					initialRender: INITIAL_RENDER,
+				}),
+			)
+		: createCollection(options);
 
-	return createCollection(
-		persistedCollectionOptions({
-			...options,
-			persistence,
-			schemaVersion: SCHEMA_VERSION,
-			initialRender: INITIAL_RENDER,
-		}),
-	);
+	collection.createIndex((row) => row.id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.wallet_id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.category_id, { indexType: BasicIndex });
+	collection.createIndex((row) => row.event_id, { indexType: BasicIndex });
+	return collection;
 });
 
-export const recurringBillCollectionFactory = factory.get;
-export const clearRecurringBillCollection = factory.clear;
+export const recurringBillCollectionFactory = (slug: string) => factory.get(slug);
+export const clearRecurringBillCollection = (slug?: string) => factory.clear(slug);
 
 export type RecurringBillCollectionItem = z.infer<typeof RecurringBillCollectionSchema>;
